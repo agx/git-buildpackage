@@ -1,0 +1,48 @@
+#!/usr/bin/python
+#
+# run debuild in a git repository
+#
+# (c) 2006 Guido Guenther <agx@sigxcpu.org>
+# License: GPLv2
+
+import sys,os,commands,re
+import optparse
+
+def get_version():
+    versionre=re.compile('^Version:\s+(?P<version>[\d\w~\-\.]+)$')
+    (status, out) = commands.getstatusoutput('dpkg-parsechangelog')
+    for line in out.split('\n'):
+        m=versionre.match(line)
+        if m:
+            return m.group('version')
+
+def main(argv):
+    args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
+    dpkg_args = [ arg for arg in argv[1:] if arg.find('--git-') == -1 ]
+
+    parser=optparse.OptionParser()
+    parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
+                      help="build with incommited changes in the source tree")
+    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
+                      help="build with uncommited changes in the source tree")
+    (options, args) = parser.parse_args(args)
+
+    (status, out) = commands.getstatusoutput('git status')
+    msgs=out.split('\n')
+    if msgs[0] != 'nothing to commit' and not options.ignore_new:
+        print out
+        sys.exit(1)
+    cmd='debuild -i.git '+" ".join(dpkg_args)
+    print "Running:", cmd
+    os.system('debuild -i.git '+" ".join(dpkg_args))
+    version=get_version()
+    if version and options.tag:
+        print "Tagging", version
+        os.system('git-tag %s' % version)
+    else:
+        print >>sys.stderr,"Can't parse version from changes file"
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:

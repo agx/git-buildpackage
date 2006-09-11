@@ -1,0 +1,91 @@
+#!/usr/bin/python
+#
+# make a git archive out of a Debian source package
+
+# (c) 2006 Guido Guenther <agx@sigxcpu.org>
+# License: GPLv2
+#
+# FIXME: - error handling
+#        - better use 'dpkg-source -x'
+#        - import debian native packages
+
+import sys,re,os,tempfile,glob
+
+class CorruptDsc:
+    pass
+
+class DscPackage(object):
+    pkgre=re.compile('Source: (?P<pkg>[\w\-]+)')
+    versionre=re.compile('Version: (?P<upstream>[a-z\d\-\.]+)-(?P<debian>[a-z\d\.~]+)')
+    origre=re.compile('^ [\da-z]+ \d+ (?P<orig>[a-z\d-]+_[a-z\d\.\~\-]+\.orig\.tar\.gz)')
+    diffre=re.compile('^ [\da-z]+ \d+ (?P<diff>[a-z\d-]+_[a-z\d\.\~\-]+\.diff\.gz)')
+
+    def __init__(self, dscfile):
+        self.dscfile=dscfile
+    	f=file(self.dscfile)
+        for line in f:
+            m=self.versionre.match(line)
+            if m:
+                self.upstream_version = m.group('upstream')
+                self.debian_version = m.group('debian')
+                continue
+            m=self.pkgre.match(line)
+            if m: 
+                self.pkg= m.group('pkg')
+                continue
+            m=self.origre.match(line)
+            if m:
+                self.orig = m.group('orig')
+                continue
+            m=self.diffre.match(line)
+            if m:
+                self.diff = m.group('diff')
+                continue
+        f.close()
+        self.workdir=''
+  
+def import_upstream(src):
+    src.tempdir=tempfile.mkdtemp(dir='.')
+    os.system('tar -C %s -zxf %s' % (src.tempdir, src.orig))
+    src.workdir=glob.glob('%s/%s*' % (src.tempdir, src.pkg))[0]
+    os.chdir(src.workdir)
+    os.system('git-init-db')
+    os.system('git-add .')
+    os.system('git-commit -m"Imported upstream version %s"' % (src.upstream_version, ))
+    os.system('git-tag %s' % (src.upstream_version, ))
+    os.system('git-branch upstream') # create upstream branch
+
+def apply_debian_patch(src):
+    os.system('gunzip -c ../../%s | patch -p1' % (src.diff, ))
+    os.chmod('debian/rules', 0755)
+    os.system('git-add .') 
+    os.system('git-commit -a -m"import debian debian patch"')
+    os.system('git-tag %s-%s' % (src.upstream_version, src.debian_version))
+
+def move_tree(src):
+    os.chdir('../..')
+    os.rename(src.workdir, src.pkg)
+    os.rmdir(src.tempdir)
+
+def usage():
+    print >>sys.stderr,'Usage: gbp-import-dsc dscfile'
+    sys.exit(0)
+
+def main(argv):
+    if len(argv) != 2:
+        usage()
+    else:        
+        try:
+            src=DscPackage(argv[1])
+        except CorruptDsc:
+            print >>sys.stderr,"Dsc corrupt"
+            sys.exit(1)
+        import_upstream(src)
+        apply_debian_patch(src)
+        move_tree(src)
+        print 'Everything imported under %s' % (src.pkg, )
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+	    
+# vim:et:ts=4:sw=4:
