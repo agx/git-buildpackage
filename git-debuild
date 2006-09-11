@@ -8,6 +8,9 @@
 import sys,os,commands,re
 import optparse
 
+build_cmd='debuild'
+clean_cmd='%s clean' % build_cmd
+    
 def get_version():
     versionre=re.compile('^Version:\s+(?P<version>[\d\w~\-\.]+)$')
     (status, out) = commands.getstatusoutput('dpkg-parsechangelog')
@@ -15,6 +18,15 @@ def get_version():
         m=versionre.match(line)
         if m:
             return m.group('version')
+
+def exec_command(cmd):
+    print "Running:", cmd
+    ret=os.system(cmd)
+    if ret:
+        print >>sys.stderr,"%s failed" % cmd
+        return False, ret
+    else:
+        return True, 0
 
 def main(argv):
     args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
@@ -27,18 +39,21 @@ def main(argv):
                       help="build with uncommited changes in the source tree")
     (options, args) = parser.parse_args(args)
 
-    (status, out) = commands.getstatusoutput('git status')
-    msgs=out.split('\n')
-    if msgs[0] != 'nothing to commit' and not options.ignore_new:
-        print out
-        sys.exit(1)
-    cmd='debuild -i.git '+" ".join(dpkg_args)
-    print "Running:", cmd
-    os.system('debuild -i.git '+" ".join(dpkg_args))
+    if not options.ignore_new:
+        if not exec_command(clean_cmd)[0]: sys.exit(1)
+        (status, out) = commands.getstatusoutput('git status')
+        msgs=out.split('\n')
+        if msgs[0] != 'nothing to commit':
+            print "You have uncommitted changes in your source tree:"
+            print out
+            print "Use --git-ignore_new to ovverride"
+            sys.exit(1)
+    cmd=build_cmd+' -i.git '+" ".join(dpkg_args)
+    if not exec_command(cmd)[0]: sys.exit(1)
     version=get_version()
     if version and options.tag:
         print "Tagging", version
-        os.system('git-tag %s' % version)
+        if not exec_command('git-tag %s' % version)[0]: sys.exit(1)
     else:
         print >>sys.stderr,"Can't parse version from changes file"
 
