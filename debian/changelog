@@ -1,0 +1,6 @@
+git-buildpackage (0.01) unstable; urgency=low
+
+  * Initial release
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 12 Sep 2006 14:55:57 +0200
+
