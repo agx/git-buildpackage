@@ -59,7 +59,7 @@ class DscPackage(object):
 def import_upstream(src):
     src.tempdir=tempfile.mkdtemp(dir='.')
     os.system('tar -C %s -zxf %s' % (src.tempdir, src.orig))
-    src.workdir=glob.glob('%s/%s*' % (src.tempdir, src.pkg))[0]
+    src.workdir=glob.glob('%s/*' % (src.tempdir, ))[0]
     os.chdir(src.workdir)
     os.system('git-init-db')
     os.system('git-add .')
