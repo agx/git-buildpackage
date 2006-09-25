@@ -21,6 +21,6 @@ from distutils.core import setup
 setup(name = "git_build_package",
       author = 'Guido Guenther',
       author_email = 'agx@sigxcpu.org',
-      scripts = ['git-import-dsc', 'git-debuild', 'git-import-orig']
+      scripts = [ 'git-buildpackage', 'git-import-dsc', 'git-import-orig']
 )
 
