@@ -21,7 +21,6 @@ import sys,os,commands,re
 import optparse
 
 build_cmd='debuild'
-clean_cmd='%s clean' % build_cmd
     
 def get_version():
     versionre=re.compile('^Version:\s+(?P<version>[\d\w~\-\.]+)$')
@@ -49,8 +48,11 @@ def main(argv):
                       help="build with incommited changes in the source tree")
     parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
                       help="build with uncommited changes in the source tree")
+    parser.add_option("--git-buildcmd", dest="build_cmd", default=build_cmd,
+                      help="command to build the package e.g. default is 'debuild'")
     (options, args) = parser.parse_args(args)
 
+    clean_cmd='%s clean' % options.build_cmd
     if not options.ignore_new:
         if not exec_command(clean_cmd)[0]: sys.exit(1)
         (status, out) = commands.getstatusoutput('git status')
@@ -58,9 +60,9 @@ def main(argv):
         if msgs[0] != 'nothing to commit':
             print "You have uncommitted changes in your source tree:"
             print out
-            print "Use --git-ignore_new to ovverride"
+            print "Use --git-ignore_new to override"
             sys.exit(1)
-    cmd=build_cmd+' -i.git '+" ".join(dpkg_args)
+    cmd=options.build_cmd+' -i.git '+" ".join(dpkg_args)
     if not exec_command(cmd)[0]: sys.exit(1)
     version=get_version()
     if version and options.tag:
