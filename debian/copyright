@@ -1,22 +1,14 @@
 This package was debianized by Guido Guenther <agx@sigxcpu.org> on
 Tue, 12 Sep 2006 14:55:57 +0200.
 
-It was downloaded from <fill in http/ftp site>
+It was downloaded from http://honk.sigxcpu.org/git/git-buildpackage/
 
-Upstream Author: <put author(s) name and email here>
+Upstream Author: Guido Günther <agx@sigxcpu.org>
 
-Copyright: <put the year(s) of the copyright, and the names of the
-            copyright holder(s) here>
+Copyright: 2006, Guido Günther
 
 License:
 
-<Put the license of the package here>
-
-
-The Debian packaging is (C) 2006, Guido Guenther <agx@sigxcpu.org> and
-is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
-
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
-
+You are free to distribute this software under the terms of the GNU General
+Public License Version 2. The full text of this license can be found in the
+file /usr/share/common-licenses/GPL-2

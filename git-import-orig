@@ -1,0 +1,195 @@
+#!/usr/bin/python
+#
+# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Import a new upstream version
+
+import sys
+import os
+import subprocess
+import tempfile
+import re
+import glob
+from optparse import OptionParser
+
+class CommandExecFailed:
+    pass
+
+class Command(object):
+    def __init__(self, cmd, args=[]):
+        self.cmd=cmd
+        self.args=args
+
+    def run(self):
+        try:
+            retcode = subprocess.call([self.cmd]+self.args)
+            if retcode < 0:
+                print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
+            elif retcode > 0:
+                print >>sys.stderr, "%s returned %d" % (self.cmd,  retcode)
+        except OSError, e:
+            print >>sys.stderr, "Execution failed:", e
+            retcode=1
+        return retcode
+
+    def __call__(self):
+        if self.run():
+            raise CommandExecFailed
+
+
+class UnpackTGZ(Command):
+    def __init__(self, tgz, dir):
+        self.tgz=tgz
+        self.dir=dir
+        Command.__init__(self, 'tar', [ '-C', dir, '-zxf', tgz ])
+        self.run_error="Couldn't unpack", self.tgz
+
+class RemoveTree(Command):
+    "Remove a whole directory tree"
+    def __init__(self, tree):
+        self.tree=tree
+        Command.__init__(self, 'rm', [ '-rf', tree ])
+        self.run_error="Couldn't remove ", self.tree
+
+class Dch(Command):
+    def __init__(self, version, msg):
+        args=['-v', version]
+        if msg:
+            args.append(msg)
+        Command.__init__(self, 'dch', args)
+        self.run_error="Dch failed."
+
+class GitLoadDirs(Command):
+    def __init__(self, upstream_dir):
+        self.upstream_dir=upstream_dir
+        Command.__init__(self, 'git_load_dirs', [ self.upstream_dir ])
+        self.run_error="Couldn't import %s", self.upstream_dir
+
+class GitCommand(Command):
+    "Mother/Father of all git commands"
+    def __init__(self, cmd, args=[]):
+        Command.__init__(self, 'git-'+cmd, args)
+
+class GitShowBranch(GitCommand):
+    def __init__(self):
+        GitCommand.__init__(self,'branch')
+        self.run_error="Couldn't list branches"
+
+class GitCheckoutBranch(GitCommand):
+    def __init__(self, branch):
+        GitCommand.__init__(self,'checkout', [branch])
+        self.branch=branch
+        self.run_error="Couldn't switch to %s branch" % self.branch
+
+class GitPull(GitCommand):
+    def __init__(self, repo, branch):
+        GitCommand.__init__(self,'pull', [repo, branch]) 
+        self.run_error="Couldn't pull %s to %s" % (branch, repo)
+
+class GitTag(GitCommand):
+    def __init__(self, version):
+        GitCommand.__init__(self,'tag', [version]) 
+        self.run_error="Couldn't tag %s" % (version,)
+
+# Used GIT Commands
+gitCheckoutUpstream=GitCheckoutBranch('upstream')
+gitCheckoutMaster=GitCheckoutBranch('master')
+gitShowBranch=GitShowBranch()
+gitPullUpstream=GitPull('.', 'upstream')
+
+def cleanupTmpTree(tree):
+    RemoveTree(tree)()
+
+
+def unpackOrig(tgz):
+    try:
+        unpackTGZ=UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
+        unpackTGZ()
+    except CommandExecFailed:
+        print "Unpacking of %s failed" % (tgz,)
+        cleanupTmpTree(unpackTGZ.dir)
+        return
+    return unpackTGZ.dir
+
+
+def get_version(tgz):
+    origre=re.compile('^[a-z\d-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.gz')
+    m=origre.match(os.path.basename(tgz))
+    if m:
+        return m.group('version')    
+
+def main():
+    parser = OptionParser('%prog [-u version] /path/to/upstream-version.tar.gz')
+
+    parser.add_option("-u", "--upstreamversion", dest="version",
+                      help="Upstream Version")
+    (options, args) = parser.parse_args()
+
+    if len(args) != 1:
+        parser.print_help()
+        return 1
+    else:
+        tgz=args[0]
+
+    try:
+        os.stat('.git')
+    except:
+        print >>sys.stderr,"%s not a git repository" % (os.path.abspath('.'),)
+        return 1
+
+    if options.version:
+        version = options.version
+    else:
+        version=get_version(tgz)
+    if version:
+        print "Upstream version is %s" % (version,)
+    else:
+        print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % (tgz,)
+        parser.print_help()
+        return 1
+
+    tmpdir=unpackOrig(tgz)
+    if not tmpdir:
+        return 1
+    else: 
+        print "Unpacked orig to %s" % (tmpdir, )
+        origdir=glob.glob(tmpdir+'/*')[0]
+  
+    try:
+        print "Importing %s to upstream branch..." % (tgz,)
+        gitCheckoutUpstream()
+        gitShowBranch()
+        GitLoadDirs(origdir)()
+        GitTag(version)()
+
+        print "Merging to master..."
+        gitCheckoutMaster()
+        gitShowBranch()
+        gitPullUpstream()
+        Dch("%s-1" % (version,), 'New Upstream Version')()
+    except CommandExecFailed:
+        print >>sys.stderr, "Import of %s failed" % (tgz,)
+        cleanupTmpTree(tmpdir)
+        return 1
+    cleanupTmpTree(tmpdir)
+
+    print "Merged version %s of %s into ." % (version, tgz)
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+# vim:et:ts=4:sw=4:
