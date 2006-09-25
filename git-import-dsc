@@ -2,10 +2,6 @@
 #
 # make a git archive out of a Debian source package
 #
-# FIXME: - error handling
-#        - better use 'dpkg-source -x'
-#        - import debian native packages
-#
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

@@ -1,0 +1,9 @@
+- git-import-dsc:
+    - error handling
+    - better use 'dpkg-source -x'
+    - import debian native packages
+    - use classes from git-import-orig
+    - allow to set use individual branch names
+- git-import-orig:
+    - allow to set use individual branch names
+- git-buildpackage:
