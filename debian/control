@@ -12,5 +12,6 @@ Description: bunch of scripts to ease the development of Debian packages with gi
   This package contains the following tools:
   * git-import-dsc: import an existing Debian source package into a git
    repository
+  * git-import-orig: import a new upstream version into the git repository
   * git-debuild: build a package out of a git repository, check for local
     modifications and tag appropriately

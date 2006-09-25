@@ -64,12 +64,13 @@ def main(argv):
             sys.exit(1)
     cmd=options.build_cmd+' -i.git '+" ".join(dpkg_args)
     if not exec_command(cmd)[0]: sys.exit(1)
-    version=get_version()
-    if version and options.tag:
-        print "Tagging", version
-        if not exec_command('git-tag %s' % version)[0]: sys.exit(1)
-    else:
-        print >>sys.stderr,"Can't parse version from changes file"
+    if options.tag:
+        version=get_version()
+        if version:
+            print "Tagging", version
+            if not exec_command('git-tag %s' % version)[0]: sys.exit(1)
+        else:
+            print >>sys.stderr,"Can't parse version from changes file"
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
