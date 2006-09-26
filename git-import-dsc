@@ -17,80 +17,125 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import sys,re,os,tempfile,glob
+import sys
+import re
+import os
+import tempfile
+import glob
+from optparse import OptionParser
+from git_buildpackage import *
 
-class CorruptDsc:
-    pass
+gitAdd=GitAdd()
+gitCommitAll=GitCommitAll()
+gitTag=GitTag()
 
 class DscPackage(object):
+    """Parse the dsc file for verions, package names, etc"""
     pkgre=re.compile('Source: (?P<pkg>[\w\-]+)')
-    versionre=re.compile('Version: (?P<upstream>[a-z\d\-\.]+)-(?P<debian>[a-z\d\.~]+)')
-    origre=re.compile('^ [\da-z]+ \d+ (?P<orig>[a-z\d-]+_[a-z\d\.\~\-]+\.orig\.tar\.gz)')
-    diffre=re.compile('^ [\da-z]+ \d+ (?P<diff>[a-z\d-]+_[a-z\d\.\~\-]+\.diff\.gz)')
+    versionre=re.compile('Version: (?P<upstream>[a-z\d\.]+)(-(?P<debian>[a-z\d\.~]+))?')
+    tarre=re.compile ('^ [\da-z]+ \d+ (?P<tar>[a-z\d-]+_[a-z\d\.\~\-]+(\.orig)?\.tar\.gz)')
 
     def __init__(self, dscfile):
-        self.dscfile=dscfile
+        self.dscfile=os.path.abspath(dscfile)
     	f=file(self.dscfile)
         for line in f:
             m=self.versionre.match(line)
             if m:
                 self.upstream_version = m.group('upstream')
-                self.debian_version = m.group('debian')
+                if m.group('debian'):
+                    self.debian_version = m.group('debian')
+                    self.native = False
+                else:
+                    print "Debian Native Package"
+                    self.native = True # Debian native package
                 continue
             m=self.pkgre.match(line)
-            if m: 
+            if m:
                 self.pkg= m.group('pkg')
                 continue
-            m=self.origre.match(line)
+            m=self.tarre.match(line)
             if m:
-                self.orig = m.group('orig')
-                continue
-            m=self.diffre.match(line)
-            if m:
-                self.diff = m.group('diff')
+                self.tgz= os.path.dirname(dscfile)+'/'+m.group('tar')
                 continue
         f.close()
-        self.workdir=''
   
-def import_upstream(src):
-    src.tempdir=tempfile.mkdtemp(dir='.')
-    os.system('tar -C %s -zxf %s' % (src.tempdir, src.orig))
-    src.workdir=glob.glob('%s/*' % (src.tempdir, ))[0]
-    os.chdir(src.workdir)
-    os.system('git-init-db')
-    os.system('git-add .')
-    os.system('git-commit -m"Imported upstream version %s"' % (src.upstream_version, ))
-    os.system('git-tag %s' % (src.upstream_version, ))
-    os.system('git-branch upstream') # create upstream branch
 
-def apply_debian_patch(src):
-    os.system('gunzip -c ../../%s | patch -p1' % (src.diff, ))
-    os.chmod('debian/rules', 0755)
-    os.system('git-add .') 
-    os.system('git-commit -a -m"import debian debian patch"')
-    os.system('git-tag %s-%s' % (src.upstream_version, src.debian_version))
+def import_upstream(src, dirs):
+    try:
+        unpackTGZ=UnpackTGZ(src.tgz, dirs['tmp'])
+        unpackTGZ()
+    except CommandExecFailed:
+        print >>sys.stderr,"Unpacking of %s failed" % (src.tgz,)
+        RemoveTree(dirs['tmp'])()
+        return 1
 
-def move_tree(src):
-    os.chdir('../..')
-    os.rename(src.workdir, src.pkg)
-    os.rmdir(src.tempdir)
+    try:
+        dirs['git']=glob.glob('%s/*' % (unpackTGZ.dir, ))[0]
+        os.chdir(dirs['git'])
+        GitInitDB()()
+        gitAdd(['.'])
+        gitCommitAll(msg="Imported upstream version %s" % (src.upstream_version,))
+        gitTag(src.upstream_version)
+        if not src.native:
+            GitBranch()('upstream')
+    except CommandExecFailed:
+        print >>sys.stderr,"Creation of git repository failed"
+        RemoveTree(unpackTGZ.dir)()
+        return 1
+    return 0
 
-def usage():
-    print >>sys.stderr,'Usage: gbp-import-dsc dscfile'
+
+def apply_debian_patch(src, dirs):
+    try:
+        DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
+        os.chdir(dirs['git'])
+        GitLoadDirs()(dirs['dpkg-src'], 'Imported debian patch')
+        gitTag('%s-%s' % (src.upstream_version, src.debian_version))
+    except CommandExecFailed:
+        print >>sys.stderr,"Failed to import debian package"
+        return 1
+    return 0
+
+
+def move_tree(src, dirs):
+    os.rename(dirs['git'], src.pkg)
+    RemoveTree(dirs['tmp'])()
+
+
+def usage(parser):
+    parser.print_help()
     sys.exit(0)
 
+
 def main(argv):
-    if len(argv) != 2:
-        usage()
+    dirs={'top': os.path.abspath(os.curdir)}
+
+    parser = OptionParser('%prog [options] /path/to/package.dsc')
+
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                      help="verbose command execution")
+    (options, args) = parser.parse_args()
+
+    if options.verbose:
+        Command.verbose = True
+
+    if len(args) != 1:
+        usage(parser)
     else:        
-        try:
-            src=DscPackage(argv[1])
-        except CorruptDsc:
-            print >>sys.stderr,"Dsc corrupt"
-            sys.exit(1)
-        import_upstream(src)
-        apply_debian_patch(src)
-        move_tree(src)
+        src=DscPackage(args[0])
+
+        dirs['tmp']=os.path.abspath(tempfile.mkdtemp(dir='.'))
+        if import_upstream(src, dirs):
+            return 1
+        os.chdir(dirs['top'])
+        if not src.native:
+            dirs['unpack']=dirs['tmp']+'/unpack'
+            os.mkdir(dirs['unpack'])
+            dirs['dpkg-src']="%s/%s-%s-%s" % (dirs['unpack'], src.pkg, src.upstream_version, src.debian_version)
+            if apply_debian_patch(src, dirs):
+                return 1
+        os.chdir(dirs['top'])
+        move_tree(src, dirs)
         print 'Everything imported under %s' % (src.pkg, )
 
 if __name__ == '__main__':
