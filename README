@@ -13,6 +13,9 @@ This is a bunch of scripts to ease the development of Debian packages with git:
          --git-ignore-new: ignore uncommited changes
 	 --git-tag: tag after building (version number is fetched from the changelog)
 
-To import new upstream sources tla-load-dirs from Debian with this patch (to
-add a git-load-dirs command) is used:
-    http://honk.sigxcpu.org/unsorted-patches/tla-load-dir_git-support.diff
+To import new upstream sources  a pached tla-load-dirs is required. A prebuild
+version can be found here:
+    deb http://honk.sigxcpu.org/linux-ppc/debian/ git-buildpackage/
+It has this patch applied:
+    https://honk.sigxcpu.org/unsorted-patches/tla-load-dir_git-support.diff
+
