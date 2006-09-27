@@ -36,6 +36,9 @@ def main(argv):
     args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
     dpkg_args = [ arg for arg in argv[1:] if arg.find('--git-') == -1 ]
 
+    if "--help" in dpkg_args:
+        args.append('--help')
+
     parser=optparse.OptionParser()
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with incommited changes in the source tree")
