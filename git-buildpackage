@@ -19,6 +19,7 @@
 
 import sys,os,commands,re
 import optparse
+from git_buildpackage.utils import is_repository_clean
 
 build_cmd='debuild'
     
@@ -55,12 +56,11 @@ def main(argv):
     clean_cmd='%s clean' % options.build_cmd
     if not options.ignore_new:
         if not exec_command(clean_cmd)[0]: return 1
-        (status, out) = commands.getstatusoutput('git status')
-        msgs=out.split('\n')
-        if msgs[0] != 'nothing to commit':
-            print "You have uncommitted changes in your source tree:"
-            print out
-            print "Use --git-ignore_new to override"
+        (ret, out) = is_repository_clean('.')
+        if not ret:
+            print >>sys.stderr, "You have uncommitted changes in your source tree:"
+            print >>sys.stderr, out
+            print >>sys.stderr, "Use --git-ignore_new to ignore."
             return 1
     cmd=options.build_cmd+' -i.git '+" ".join(dpkg_args)
     if not exec_command(cmd)[0]: return 1

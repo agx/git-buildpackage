@@ -24,7 +24,7 @@ import re
 import glob
 from optparse import OptionParser
 from git_buildpackage import *
-
+from git_buildpackage.utils import is_repository_clean
 
 # Used GIT Commands
 gitCheckoutUpstream=GitCheckoutBranch('upstream')
@@ -86,6 +86,12 @@ def main():
     else:
         print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % (tgz,)
         parser.print_help()
+        return 1
+
+    (ret, out) = is_repository_clean('.')
+    if not ret:
+        print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
+        print >>sys.stderr, out
         return 1
 
     tmpdir=unpackOrig(tgz)
