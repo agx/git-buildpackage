@@ -19,6 +19,7 @@
 
 import sys,os,commands,re
 import optparse
+from git_buildpackage import GitTag, Command, CommandExecFailed
 from git_buildpackage.utils import is_repository_clean
 
 build_cmd='debuild'
@@ -30,15 +31,6 @@ def get_version():
         m=versionre.match(line)
         if m:
             return m.group('version')
-
-def exec_command(cmd):
-    print "Running:", cmd
-    ret=os.system(cmd)
-    if ret:
-        print >>sys.stderr,"%s failed" % cmd
-        return False, ret
-    else:
-        return True, 0
 
 def main(argv):
     args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
@@ -53,24 +45,25 @@ def main(argv):
                       help="command to build the package e.g. default is 'debuild'")
     (options, args) = parser.parse_args(args)
 
-    clean_cmd='%s clean' % options.build_cmd
-    if not options.ignore_new:
-        if not exec_command(clean_cmd)[0]: return 1
-        (ret, out) = is_repository_clean('.')
-        if not ret:
-            print >>sys.stderr, "You have uncommitted changes in your source tree:"
-            print >>sys.stderr, out
-            print >>sys.stderr, "Use --git-ignore_new to ignore."
-            return 1
-    cmd=options.build_cmd+' -i.git '+" ".join(dpkg_args)
-    if not exec_command(cmd)[0]: return 1
-    if options.tag:
-        version=get_version()
-        if version:
-            print "Tagging", version
-            if not exec_command('git-tag %s' % version)[0]: return 1
-        else:
-            print >>sys.stderr,"Can't parse version from changes file"
+    try:
+        if not options.ignore_new:
+            Command(options.build_cmd,['clean'])()
+            (ret, out) = is_repository_clean('.')
+            if not ret:
+                print >>sys.stderr, "You have uncommitted changes in your source tree:"
+                print >>sys.stderr, out
+                print >>sys.stderr, "Use --git-ignore_new to ignore."
+                return 1
+        Command(options.build_cmd,['-i.git']+dpkg_args)()
+        if options.tag:
+            version=get_version()
+            if version:
+                print "Tagging", version
+                if not GitTag()(version): return 1
+            else:
+                print >>sys.stderr,"Can't parse version from changes file"
+    except CommandExecFailed:
+        return 1
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

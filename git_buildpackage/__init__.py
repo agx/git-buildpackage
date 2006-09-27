@@ -13,6 +13,7 @@ class Command(object):
     def __init__(self, cmd, args=[]):
         self.cmd=cmd
         self.args=args
+        self.run_error="Couldn't run '%s %s'" % (cmd," ".join(args))
 
     def __run(self, args):
         try:

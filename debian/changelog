@@ -1,10 +1,10 @@
 git-buildpackage (0.2.1) git-buildpackage; urgency=low
 
-  * UNRELEASED
   * git-import-orig: don't try import new upstream versions when there
     are uncommitted changes
+  * git-buildpackage: use helpers from git_buildpackage 
 
- -- Guido Guenther <agx@sigxcpu.org>  Wed, 27 Sep 2006 12:00:03 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 27 Sep 2006 12:15:47 +0200
 
 git-buildpackage (0.2) git-buildpackage; urgency=low
 
