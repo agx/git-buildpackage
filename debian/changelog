@@ -1,3 +1,10 @@
+git-buildpackage (0.2.2) git-buildpackage; urgency=low
+
+  * UNRELEASED
+  * git-buildpackage: add --git-verbose option 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 28 Sep 2006 14:13:46 +0200
+
 git-buildpackage (0.2.1) git-buildpackage; urgency=low
 
   * git-import-orig: don't try import new upstream versions when there
