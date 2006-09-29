@@ -51,16 +51,19 @@ class DscPackage(object):
                 continue
             m=self.pkgre.match(line)
             if m:
-                self.pkg= m.group('pkg')
+                self.pkg = m.group('pkg')
                 continue
             m=self.tarre.match(line)
             if m:
-                self.tgz= os.path.dirname(dscfile)+'/'+m.group('tar')
+                dir=os.path.dirname(dscfile)
+                if len(dir):
+                    dir+='/'
+                self.tgz = dir+m.group('tar')
                 continue
         f.close()
   
 
-def import_upstream(src, dirs):
+def import_upstream(src, dirs, upstream_branch):
     try:
         unpackTGZ=UnpackTGZ(src.tgz, dirs['tmp'])
         unpackTGZ()
@@ -77,7 +80,7 @@ def import_upstream(src, dirs):
         gitCommitAll(msg="Imported upstream version %s" % (src.upstream_version,))
         gitTag(src.upstream_version)
         if not src.native:
-            GitBranch()('upstream')
+            GitBranch()(upstream_branch)
     except CommandExecFailed:
         print >>sys.stderr,"Creation of git repository failed"
         RemoveTree(unpackTGZ.dir)()
@@ -114,6 +117,8 @@ def main(argv):
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_option("--upstream-branch", dest="upstream_branch", default='upstream',
+                      help="name of the upstream branch, default is 'upstream'")
     (options, args) = parser.parse_args()
 
     if options.verbose:
@@ -125,7 +130,7 @@ def main(argv):
         src=DscPackage(args[0])
 
         dirs['tmp']=os.path.abspath(tempfile.mkdtemp(dir='.'))
-        if import_upstream(src, dirs):
+        if import_upstream(src, dirs, options.upstream_branch):
             return 1
         os.chdir(dirs['top'])
         if not src.native:

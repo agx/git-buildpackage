@@ -26,11 +26,6 @@ from optparse import OptionParser
 from git_buildpackage import *
 from git_buildpackage.utils import is_repository_clean
 
-# Used GIT Commands
-gitCheckoutUpstream=GitCheckoutBranch('upstream')
-gitCheckoutMaster=GitCheckoutBranch('master')
-gitShowBranch=GitShowBranch()
-gitPullUpstream=GitPull('.', 'upstream')
 
 def cleanupTmpTree(tree):
     RemoveTree(tree)()
@@ -60,7 +55,16 @@ def main():
                       help="Upstream Version")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_option("--upstream-branch", dest="upstream", default='upstream',
+                      help="name of the upstream branch, default is 'upstream'")
+    parser.add_option("--debian-branch", dest='debian', default='master',
+                      help="name of the branch the debian being package is developed on, default is 'master'")
     (options, args) = parser.parse_args()
+
+    gitCheckoutUpstream=GitCheckoutBranch(options.upstream)
+    gitCheckoutMaster=GitCheckoutBranch(options.debian)
+    gitShowBranch=GitShowBranch()
+    gitPullUpstream=GitPull('.', options.upstream)
 
     if options.verbose:
         Command.verbose = True

@@ -1,9 +1,11 @@
 git-buildpackage (0.2.2) git-buildpackage; urgency=low
 
-  * UNRELEASED
-  * git-buildpackage: add --git-verbose option 
+  * git-import-dsc: don't fail if the dsc is a plain filename without a
+    directory component
+  * git-buildpackage: add --git-verbose option
+  * git-import-{orig,dsc}: allow to set the name of the upstream branch 
 
- -- Guido Guenther <agx@sigxcpu.org>  Thu, 28 Sep 2006 14:13:46 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 29 Sep 2006 19:08:08 +0200
 
 git-buildpackage (0.2.1) git-buildpackage; urgency=low
 

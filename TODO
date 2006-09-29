@@ -1,6 +1,4 @@
-- git-import-dsc:
-    - allow to set use individual branch names
-- git-import-orig:
-    - allow to set use individual branch names
 - git-buildpackage:
     - allow to export the hole source tree to tmpdir before building
+    - easy push to remote repositories (like alioth) after a successful build 
+- manpages
