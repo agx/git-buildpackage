@@ -67,7 +67,7 @@ def main(argv):
             version=get_version()
             if version:
                 print "Tagging", version
-                if not GitTag()(version): return 1
+                if not GitTag()(version.replace('~','.'): return 1
             else:
                 print >>sys.stderr,"Can't parse version from changes file"
     except CommandExecFailed:

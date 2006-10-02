@@ -1,3 +1,9 @@
+git-buildpackage (0.2.3) git-buildpackage; urgency=low
+
+  * git doesn't like '~' in tag names so replace this with a dot when tagging 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon,  2 Oct 2006 18:30:20 +0200
+
 git-buildpackage (0.2.2) git-buildpackage; urgency=low
 
   * git-import-dsc: don't fail if the dsc is a plain filename without a
