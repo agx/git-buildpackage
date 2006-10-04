@@ -1,3 +1,9 @@
+git-buildpackage (0.2.4) git-buildpackage; urgency=low
+
+  * add manpages 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed,  4 Oct 2006 19:39:13 +0200
+
 git-buildpackage (0.2.3) git-buildpackage; urgency=low
 
   * git doesn't like '~' in tag names so replace this with a dot when tagging 
