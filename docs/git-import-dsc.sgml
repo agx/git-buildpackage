@@ -1,0 +1,102 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+ <!ENTITY % ENTS SYSTEM "entities">
+   %ENTS;
+  <!ENTITY dhucpackage 		"<refentrytitle>git-import-dsc</refentrytitle>">
+   ]>
+<refentry>
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+    <copyright>
+      <year>2006</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+    &dhdate;
+  </refentryinfo>
+  <refmeta>
+    &dhucpackage;
+
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&git-import-dsc;</refname>
+
+    <refpurpose>Import Debian packages into a Git repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &git-import-dsc;
+
+      <arg><option>--verbose</option></arg>
+      <arg><option>--upstream-branch=<replaceable>branch_name</replaceable></option></arg>
+      <arg choice="plain"><replaceable>dsc_file</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &git-import-dsc; imports a Debian source package into a &git-buildpackage;
+    repository, notes the package version in the commit logs, and commits the
+    change.  All information, including package name,  version,  Debian  diffs,
+    and upstream source, is automatically detected from the source package.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+
+    <variablelist>
+      <varlistentry>
+        <term><option>--upstream-branch</option>
+        </term>
+        <listitem>
+	  <para>The branch in the Git repository the upstream sources are put onto. Default is 'upstream'</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--verbose</option>,
+        <option>-v</option>
+        </term>
+        <listitem>
+          <para>Verbose execution.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>git-buildpackage (1), git-import-orig (1), git (1), git_load_dirs (1)</para>
+
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>
+
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
+
+

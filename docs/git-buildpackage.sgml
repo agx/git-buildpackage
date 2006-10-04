@@ -1,0 +1,128 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+ <!ENTITY % ENTS SYSTEM "entities">
+   %ENTS;
+  <!ENTITY dhucpackage 		"<refentrytitle>git-buildpackage</refentrytitle>">
+   ]>
+<refentry>
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+    <copyright>
+      <year>2006</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+    &dhdate;
+  </refentryinfo>
+  <refmeta>
+    &dhucpackage;
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&git-buildpackage;</refname>
+    <refpurpose>Build Debian packages from a Git repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &git-buildpackage;
+
+      <arg><option>--git-ignore-new</option></arg>
+      <arg><option>--git-tag</option></arg>
+      <arg><option>--git-verbose</option></arg>
+      <arg><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &git-buildpackage; is used to build Debian source and .deb packages from a GIT repository.
+    </para>
+    <para>
+        &git-buildpackage; will, in order:
+   </para>
+    <itemizedlist>
+        <listitem><para>Verify that it is being executed from the
+            proper location.</para>
+        </listitem>
+        <listitem><para>Call <application>debuild</application> (1)
+            (or the application specified via --git-builder)
+            with arguments instructing it to ignore Git meta-data in
+            the diff.gz, passing along all arguments given to
+            &git-buildpackage; that don't start with --git-.
+          </para>
+        </listitem>
+    </itemizedlist>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+
+    <variablelist>
+      <varlistentry>
+        <term><option>--git-ignore-new</option>
+        </term>
+        <listitem>
+	  <para>Build the .diff.gz and debian package although there are
+	  uncommitted changes in the source tree.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tag</option>
+        </term>
+        <listitem>
+          <para>Add a git tag after a successfull build.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></term>
+        <listitem>
+          <para>Use <replaceable>BUILD_CMD</replaceable> instead of <command>debuild</command></para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <variablelist>
+      <varlistentry>
+        <term><option>--git-verbose</option>
+        </term>
+        <listitem>
+          <para>Verbose execution</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1)</para>
+
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>
+
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
+
+

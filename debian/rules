@@ -1,11 +1,19 @@
 #!/usr/bin/make -f
   
-DEB_TAR_SRCDIR                  := python-dateutil
-DEB_AUTO_CLEANUP_RCS            := yes
-
 DEB_PYTHON_SYSTEM = pysupport
 DEB_PYTHON_CLEAN_ARGS = --all
 
 # Add here any variable or target overrides you need
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
+
+COMMANDS=git-buildpackage git-import-dsc git-import-orig
+MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
+
+docs/%.1: docs/%.sgml
+	docbook-to-man $< > $@
+
+build/git-buildpackage:: $(MANPAGES)
+
+clean::
+	-rm docs/*.1 docs/manpages.*

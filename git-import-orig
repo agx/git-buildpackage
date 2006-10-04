@@ -58,7 +58,7 @@ def main():
     parser.add_option("--upstream-branch", dest="upstream", default='upstream',
                       help="name of the upstream branch, default is 'upstream'")
     parser.add_option("--debian-branch", dest='debian', default='master',
-                      help="name of the branch the debian being package is developed on, default is 'master'")
+                      help="name of the branch the debian package is being developed on, default is 'master'")
     (options, args) = parser.parse_args()
 
     gitCheckoutUpstream=GitCheckoutBranch(options.upstream)

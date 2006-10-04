@@ -1,0 +1,14 @@
+  <!ENTITY dhfirstname 		"<firstname>Guido</firstname>">
+  <!ENTITY dhsurname   		"<surname>Guenther</surname>">
+  <!ENTITY dhdate      		"<date>2006-10-02</date>">
+  <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
+  <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
+  <!ENTITY dhusername  		"&dhfirstname; &dhsurname">
+  <!ENTITY git-buildpackage 	"<command>git-buildpackage</command>">
+  <!ENTITY git-import-orig	"<command>git-import-orig</command>">
+  <!ENTITY git-import-dsc	"<command>git-import-dsc</command>">
+
+  <!ENTITY debian      "<productname>Debian</productname>">
+  <!ENTITY gnu         "<acronym>GNU</acronym>">
+  <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
+
