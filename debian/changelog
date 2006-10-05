@@ -2,8 +2,10 @@ git-buildpackage (0.2.6) git-buildpackage; urgency=low
 
   * UNRELEASED
   * run pychecker during build
+  * also filter out git metadata when building tarballs, not only when
+    building diffs (affects Debian native packages)
 
- -- Guido Guenther <agx@sigxcpu.org>  Thu,  5 Oct 2006 19:13:34 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Thu,  5 Oct 2006 19:30:00 +0200
 
 git-buildpackage (0.2.5) git-buildpackage; urgency=low
 

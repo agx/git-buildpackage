@@ -62,7 +62,7 @@ def main(argv):
                 print >>sys.stderr, out
                 print >>sys.stderr, "Use --git-ignore_new to ignore."
                 return 1
-        Command(options.build_cmd,['-i.git']+dpkg_args)()
+        Command(options.build_cmd,[ '-i.git', '-I.git' ]+dpkg_args)()
         if options.tag:
             version=get_version()
             if version:
