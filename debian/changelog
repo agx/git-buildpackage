@@ -4,8 +4,10 @@ git-buildpackage (0.2.6) git-buildpackage; urgency=low
   * run pychecker during build
   * also filter out git metadata when building tarballs, not only when
     building diffs (affects Debian native packages)
+  * git-import-dsc: allow for '+' in Debian as well as upstream version
+    numbers 
 
- -- Guido Guenther <agx@sigxcpu.org>  Thu,  5 Oct 2006 19:30:00 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Thu,  5 Oct 2006 19:35:31 +0200
 
 git-buildpackage (0.2.5) git-buildpackage; urgency=low
 
