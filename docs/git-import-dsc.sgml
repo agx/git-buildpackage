@@ -51,15 +51,14 @@
 
     <variablelist>
       <varlistentry>
-        <term><option>--upstream-branch</option>
+        <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
 	  <para>The branch in the Git repository the upstream sources are put onto. Default is 'upstream'</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option>,
-        <option>-v</option>
+        <term><option>--verbose</option>, <option>-v</option>
         </term>
         <listitem>
           <para>Verbose execution.</para>

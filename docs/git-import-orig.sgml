@@ -77,8 +77,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option>,
-        <option>-v</option>
+        <term><option>--verbose</option>, <option>-v</option>
         </term>
         <listitem>
           <para>Verbose execution.</para>
