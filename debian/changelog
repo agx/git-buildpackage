@@ -1,9 +1,10 @@
 git-buildpackage (0.2.5) git-buildpackage; urgency=low
 
   * fix syntax error in tag replacement
-  * minor manpage reformating
+  * minor manpage reformating 
+  * cleanup generated manpage.* files
 
- -- Guido Guenther <agx@sigxcpu.org>  Thu,  5 Oct 2006 11:19:59 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Thu,  5 Oct 2006 11:21:01 +0200
 
 git-buildpackage (0.2.4) git-buildpackage; urgency=low
 

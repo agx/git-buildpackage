@@ -16,4 +16,4 @@ docs/%.1: docs/%.sgml
 build/git-buildpackage:: $(MANPAGES)
 
 clean::
-	-rm docs/*.1 docs/manpages.*
+	-rm docs/*.1 docs/manpage.*
