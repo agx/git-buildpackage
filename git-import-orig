@@ -24,7 +24,7 @@ import re
 import glob
 from optparse import OptionParser
 from git_buildpackage import *
-from git_buildpackage.utils import is_repository_clean
+from git_buildpackage.utils import is_repository_clean, is_repository
 
 
 def cleanupTmpTree(tree):
@@ -75,10 +75,8 @@ def main():
     else:
         tgz=args[0]
 
-    try:
-        os.stat('.git')
-    except:
-        print >>sys.stderr,"%s not a git repository" % (os.path.abspath('.'),)
+    if not is_repository('.'):
+        print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'),)
         return 1
 
     if options.version:

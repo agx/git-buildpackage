@@ -21,4 +21,14 @@ def is_repository_clean(path):
     os.chdir(dir)
     return (ret, "".join(out))
 
+def is_repository(path):
+    """Is there a git repository at path?"""
+    if not path:
+        return False
+    try:
+        os.stat(path+'/.git')
+    except:
+        return False
+    return True
+
 # vim:et:ts=4:sw=4:

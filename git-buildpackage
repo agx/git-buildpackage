@@ -20,7 +20,7 @@
 import sys,os,commands,re
 import optparse
 from git_buildpackage import GitTag, Command, CommandExecFailed
-from git_buildpackage.utils import is_repository_clean
+from git_buildpackage.utils import is_repository_clean, is_repository
 
 build_cmd='debuild'
     
@@ -52,6 +52,10 @@ def main(argv):
 
     if options.verbose:
         Command.verbose = True
+
+    if not is_repository('.'):
+        print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
+        return 1
 
     try:
         if not options.ignore_new:
