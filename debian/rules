@@ -9,11 +9,17 @@ include /usr/share/cdbs/1/class/python-distutils.mk
 
 COMMANDS=git-buildpackage git-import-dsc git-import-orig
 MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
+PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
+PYCHECK_LEVEL=Error
 
 docs/%.1: docs/%.sgml
 	docbook-to-man $< > $@
 
-build/git-buildpackage:: $(MANPAGES)
+%.py: %
+	ln -s $< $@
+	PYTHONPATH=. pychecker -e $(PYCHECK_LEVEL) -q $<
+
+build/git-buildpackage:: $(MANPAGES) $(PYCHECKS)
 
 clean::
-	-rm docs/*.1 docs/manpage.*
+	-rm docs/*.1 docs/manpage.* git-*.py
