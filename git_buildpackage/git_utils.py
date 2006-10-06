@@ -31,4 +31,8 @@ def is_repository(path):
         return False
     return True
 
+def sanitize_version(version):
+    """sanitize a version so git accepts it as a tag"""
+    return version.replace('~','.')
+
 # vim:et:ts=4:sw=4:

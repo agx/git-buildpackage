@@ -20,12 +20,12 @@
 import sys,os,commands,re
 import optparse
 from git_buildpackage import GitTag, Command, CommandExecFailed
-from git_buildpackage.utils import is_repository_clean, is_repository
+from git_buildpackage.git_utils import *
 
 build_cmd='debuild'
     
 def get_version():
-    versionre=re.compile('^Version:\s+(?P<version>[\d\w~\-\.]+)$')
+    versionre=re.compile('^Version:\s+(?P<version>.+)\s*$')
     (status, out) = commands.getstatusoutput('dpkg-parsechangelog')
     for line in out.split('\n'):
         m=versionre.match(line)
@@ -71,7 +71,7 @@ def main(argv):
             version=get_version()
             if version:
                 print "Tagging", version
-                if not GitTag()(version.replace('~','.')): return 1
+                if not GitTag()(sanitize_version(version)): return 1
             else:
                 print >>sys.stderr,"Can't parse version from changes file"
     except CommandExecFailed:

@@ -1,3 +1,10 @@
+git-buildpackage (0.2.7) git-buildpackage; urgency=low
+
+  * more robust regex matching 
+  * sanitze all version numbers before running git-tag
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri,  6 Oct 2006 18:40:12 +0200
+
 git-buildpackage (0.2.6) git-buildpackage; urgency=low
 
   * UNRELEASED

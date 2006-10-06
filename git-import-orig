@@ -24,7 +24,7 @@ import re
 import glob
 from optparse import OptionParser
 from git_buildpackage import *
-from git_buildpackage.utils import is_repository_clean, is_repository
+from git_buildpackage.git_utils import *
 
 
 def cleanupTmpTree(tree):
@@ -108,7 +108,7 @@ def main():
         gitCheckoutUpstream()
         gitShowBranch()
         GitLoadDirs()(origdir)
-        GitTag()(version)
+        GitTag()(sanitize_version(version))
 
         print "Merging to master..."
         gitCheckoutMaster()

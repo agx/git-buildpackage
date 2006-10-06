@@ -24,6 +24,8 @@ import tempfile
 import glob
 from optparse import OptionParser
 from git_buildpackage import *
+from git_buildpackage.git_utils import *
+from git_buildpackage.deb_utils import *
 
 gitAdd=GitAdd()
 gitCommitAll=GitCommitAll()
@@ -31,9 +33,10 @@ gitTag=GitTag()
 
 class DscPackage(object):
     """Parse the dsc file for verions, package names, etc"""
-    pkgre=re.compile('Source: (?P<pkg>[\w\-]+)')
-    versionre=re.compile('Version: (?P<upstream>[a-z\d\.\+]+)(-(?P<debian>[a-z\d\.~\+]+))?')
-    tarre=re.compile ('^ [\da-z]+ \d+ (?P<tar>[a-z\d\-]+_[a-z\d\.\~\+\-]+(\.orig)?\.tar\.gz)')
+    pkgre=re.compile('Source:\s+(?P<pkg>.+)\s*')
+    versionre=re.compile("Version:\s(\d+\:)?(?P<upstream>[%s]+)(-(?P<debian>[%s]+))?\s*$" %
+                            (debian_version_chars, debian_version_chars))
+    tarre=re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
 
     def __init__(self, dscfile):
         self.dscfile=os.path.abspath(dscfile)
@@ -45,9 +48,12 @@ class DscPackage(object):
                 if m.group('debian'):
                     self.debian_version = m.group('debian')
                     self.native = False
+                    print "Upstream version:", self.upstream_version
+                    print "Debian version:", self.debian_version
                 else:
                     print "Debian Native Package"
                     self.native = True # Debian native package
+                    print "Version:", self.upstream_version
                 continue
             m=self.pkgre.match(line)
             if m:
@@ -61,7 +67,7 @@ class DscPackage(object):
                 self.tgz = dir+m.group('tar')
                 continue
         f.close()
-  
+    
 
 def import_upstream(src, dirs, upstream_branch):
     try:
@@ -78,7 +84,7 @@ def import_upstream(src, dirs, upstream_branch):
         GitInitDB()()
         gitAdd(['.'])
         gitCommitAll(msg="Imported %s version %s" % (['upstream','Debian'][src.native],src.upstream_version,))
-        gitTag(src.upstream_version)
+        gitTag(sanitize_version(src.upstream_version))
         if not src.native:
             GitBranch()(upstream_branch)
     except CommandExecFailed:
@@ -93,7 +99,7 @@ def apply_debian_patch(src, dirs):
         DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
         GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
-        gitTag('%s-%s' % (src.upstream_version, src.debian_version))
+        gitTag(sanitize_version('%s-%s' % (src.upstream_version, src.debian_version)))
     except CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
         return 1
