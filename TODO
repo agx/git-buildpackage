@@ -1,5 +1,7 @@
 - git-buildpackage:
-    - allow to export the hole source tree to tmpdir before building
-    - easy push/pull to/from remote repositories (like alioth) after a
-      successful build/for getting the sources
-    - build orig.tar.gz if not available
+  - allow to export the hole source tree to tmpdir before building
+  - easy push/pull to/from remote repositories (like alioth) after a
+    successful build/for getting the sources
+  - build orig.tar.gz if not available
+- git-import-orig:
+  - allow to import from an unpacked source tree

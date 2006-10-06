@@ -42,9 +42,9 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-orig; tar.gz file given by tar_gz into the git-buildpackage
-    repository. It tries to guess the version information from the tarball's
-    filename but it can also be specified on the command line.
+    &git-import-orig; import a tar.gz file given by tar_gz into the
+    git-buildpackage repository. It tries to guess the version information from
+    the tarball's filename but it can also be specified on the command line.
    
     When importing the new version <command>git_load_dirs</command> is being
     used to detect file renames and removals.
@@ -73,7 +73,10 @@
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the Debian package is being developed on, default is 'master'</para>
+	  <para>The branch in the Git repository the Debian package is being
+	  developed on, default is 'master'. After importing the new sources on
+	  the upstream branch, &git-import-orig; will try to merge the new
+	  version onto this branch.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

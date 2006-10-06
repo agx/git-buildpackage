@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # make a git archive out of a Debian source package
 #
@@ -61,10 +62,10 @@ class DscPackage(object):
                 continue
             m=self.tarre.match(line)
             if m:
-                dir=os.path.dirname(dscfile)
-                if len(dir):
-                    dir+='/'
-                self.tgz = dir+m.group('tar')
+                fromdir=os.path.dirname(dscfile)
+                if len(fromdir):
+                    fromdir+='/'
+                self.tgz = fromdir+m.group('tar')
                 continue
         f.close()
     
@@ -111,12 +112,7 @@ def move_tree(src, dirs):
     RemoveTree(dirs['tmp'])()
 
 
-def usage(parser):
-    parser.print_help()
-    sys.exit(0)
-
-
-def main(argv):
+def main():
     dirs={'top': os.path.abspath(os.curdir)}
 
     parser = OptionParser('%prog [options] /path/to/package.dsc')
@@ -131,7 +127,8 @@ def main(argv):
         Command.verbose = True
 
     if len(args) != 1:
-        usage(parser)
+        parser.print_help()
+        return 1
     else:        
         src=DscPackage(args[0])
 
@@ -150,6 +147,6 @@ def main(argv):
         print 'Everything imported under %s' % (src.pkg, )
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    sys.exit(main())
 	    
 # vim:et:ts=4:sw=4:

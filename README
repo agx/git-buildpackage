@@ -5,7 +5,8 @@ This is a bunch of scripts to ease the development of Debian packages with git:
    This will import the upstream source onto the upstream branch and add the Debian
    paches on the master branch
 
- - git-import-orig: import a new upstream version into the repository
+ - git-import-orig: import a new upstream version into the repository and merge
+   it onto the onto the master branch
 
  - git-debuild: build a package out of a git repository, check for local
    modifications and tag appropriately

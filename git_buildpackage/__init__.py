@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # helper classes for git-buildpackge and friends
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
 

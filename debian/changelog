@@ -1,3 +1,10 @@
+git-buildpackage (0.2.8) git-buildpackage; urgency=low
+
+  * UNRELEASED
+  * minor cosmetic cleanups all over the place
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri,  6 Oct 2006 23:13:05 +0200
+
 git-buildpackage (0.2.7) git-buildpackage; urgency=low
 
   * more robust regex matching 
