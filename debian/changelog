@@ -1,10 +1,18 @@
+git-buildpackage (0.2.9) git-buildpackage; urgency=low
+
+  * UNRELEASED 
+  * README: no need to mention git-load-dirs anymore, it's in unstable now.
+    Thanks John.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 29 Oct 2006 12:28:49 +0100
+
 git-buildpackage (0.2.8) git-buildpackage; urgency=low
 
-  * UNRELEASED
   * sanitze_version: strip of epochs
   * minor cosmetic cleanups all over the place
+  *  
 
- -- Guido Guenther <agx@sigxcpu.org>  Mon,  9 Oct 2006 12:53:22 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 29 Oct 2006 12:28:23 +0100
 
 git-buildpackage (0.2.7) git-buildpackage; urgency=low
 
