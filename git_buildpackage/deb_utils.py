@@ -4,5 +4,5 @@
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
-debian_version_chars='a-zA-Z\d.~+'
+debian_version_chars='a-zA-Z\d.~+-'
 

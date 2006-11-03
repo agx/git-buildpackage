@@ -1,29 +1,22 @@
-git-buildpackage (0.2.9) git-buildpackage; urgency=low
-
-  * UNRELEASED 
-  * README: no need to mention git-load-dirs anymore, it's in unstable now.
-    Thanks John.
-
- -- Guido Guenther <agx@sigxcpu.org>  Sun, 29 Oct 2006 12:28:49 +0100
-
 git-buildpackage (0.2.8) git-buildpackage; urgency=low
 
   * sanitze_version: strip of epochs
+  * don't use a regexp for version parsing on import
   * minor cosmetic cleanups all over the place
-  *  
+  * README: no need to mention git-load-dirs anymore, it's in unstable now.
+    Thanks John.
 
- -- Guido Guenther <agx@sigxcpu.org>  Sun, 29 Oct 2006 12:28:23 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Fri,  3 Nov 2006 17:21:12 +0100
 
 git-buildpackage (0.2.7) git-buildpackage; urgency=low
 
   * more robust regex matching 
-  * sanitze all version numbers before running git-tag
+  * sanitize all version numbers before running git-tag
 
  -- Guido Guenther <agx@sigxcpu.org>  Fri,  6 Oct 2006 18:40:12 +0200
 
 git-buildpackage (0.2.6) git-buildpackage; urgency=low
 
-  * UNRELEASED
   * run pychecker during build
   * also filter out git metadata when building tarballs, not only when
     building diffs (affects Debian native packages)
