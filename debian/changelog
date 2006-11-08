@@ -5,8 +5,9 @@ git-buildpackage (0.2.8) git-buildpackage; urgency=low
   * minor cosmetic cleanups all over the place
   * README: no need to mention git-load-dirs anymore, it's in unstable now.
     Thanks John.
+  * git-import-orig: implement "--no-merge"
 
- -- Guido Guenther <agx@sigxcpu.org>  Fri,  3 Nov 2006 17:21:12 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Wed,  8 Nov 2006 10:36:55 +0100
 
 git-buildpackage (0.2.7) git-buildpackage; urgency=low
 

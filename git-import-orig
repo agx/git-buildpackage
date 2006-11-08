@@ -60,6 +60,8 @@ def main():
                       help="name of the upstream branch, default is 'upstream'")
     parser.add_option("--debian-branch", dest='debian', default='master',
                       help="name of the branch the debian package is being developed on, default is 'master'")
+    parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
+                      help="after import dont do any merging to another branch")
     (options, args) = parser.parse_args()
 
     gitCheckoutUpstream=GitCheckoutBranch(options.upstream)
@@ -110,12 +112,13 @@ def main():
         gitShowBranch()
         GitLoadDirs()(origdir)
         GitTag()(sanitize_version(version))
-
-        print "Merging to master..."
-        gitCheckoutMaster()
-        gitShowBranch()
-        gitPullUpstream()
-        Dch("%s-1" % (version,), 'New Upstream Version')()
+   
+        if options.merge:
+            print "Merging to master..."
+            gitCheckoutMaster()
+            gitShowBranch()
+            gitPullUpstream()
+            Dch("%s-1" % (version,), 'New Upstream Version')()
     except CommandExecFailed:
         print >>sys.stderr, "Import of %s failed" % (tgz,)
         cleanupTmpTree(tmpdir)
