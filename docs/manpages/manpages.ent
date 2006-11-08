@@ -1,0 +1,3 @@
+<!ENTITY man.git.importorig SYSTEM "git-import-orig.sgml">
+<!ENTITY man.git.importdsc SYSTEM "git-import-dsc.sgml">
+<!ENTITY man.git.buildpackage SYSTEM "git-buildpackage.sgml">
