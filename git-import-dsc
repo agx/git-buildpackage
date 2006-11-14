@@ -53,7 +53,7 @@ class DscPackage(object):
                 else:
                     print "Debian Native Package"
                     self.native = True # Debian native package
-                    upstream_version=m.group('version')
+                    self.upstream_version=m.group('version')
                     print "Version:", self.upstream_version
                 continue
             m=self.pkgre.match(line)
