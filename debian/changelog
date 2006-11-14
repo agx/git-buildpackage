@@ -1,3 +1,10 @@
+git-buildpackage (0.2.9) git-buildpackage; urgency=low
+
+  * depend on a fixed git-load-dirs that contains the git_load_dirs executable
+  * git-import-dsc: fix importing debian native packages 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 14 Nov 2006 12:39:26 +0100
+
 git-buildpackage (0.2.8) git-buildpackage; urgency=low
 
   * sanitze_version: strip of epochs
