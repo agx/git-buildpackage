@@ -1,4 +1,4 @@
-git-buildpackage (0.2.9buildorig0) git-buildpackage; urgency=low
+git-buildpackage (0.2.10) git-buildpackage; urgency=low
 
   * build an orig.tar.gz if nones there
 
