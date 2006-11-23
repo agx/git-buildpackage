@@ -22,16 +22,42 @@ import sys,os,commands,re
 import optparse
 from git_buildpackage import GitTag, Command, CommandExecFailed
 from git_buildpackage.git_utils import *
+from git_buildpackage.deb_utils import *
 
 build_cmd='debuild'
+output_dir='../'
     
-def get_version():
-    versionre=re.compile('^Version:\s+(?P<version>.+)\s*$')
-    (status, out) = commands.getstatusoutput('dpkg-parsechangelog')
-    for line in out.split('\n'):
-        m=versionre.match(line)
-        if m:
-            return m.group('version')
+
+def orig_file(cp):
+    "The name of the orig.tar.gz belongig to changelog cp"
+    return "%s_%s.orig.tar.gz" % (cp['Source'], cp['Upstream-Version'])
+
+
+def is_native(cp):
+    "Is this a debian native package"
+    return [ True, False ]['-' in cp['Version']]
+
+
+def has_orig(cp, dir):
+    "Check if orig.tar.gz exists in dir"
+    try:
+        os.stat("%s%s" % (dir,orig_file(cp)))
+    except OSError:
+        return False
+    return True
+
+
+def create_orig(cp, dir, branch):
+    "create an orig.tar.gz"
+    output='%s%s' % (dir, orig_file(cp))
+    try: # subprocess modules uses memory buffers, so we use '|' directly here:
+        os.system('git-archive --format=tar --prefix=%s-%s/ %s | gzip -c -9 > %s'
+              % (cp['Source'], cp['Upstream-Version'], branch, output))
+    except:
+        print("Error creating %s" % (output))
+        return False
+    return True
+
 
 def main(argv):
     args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
@@ -49,6 +75,8 @@ def main(argv):
                       help="command to build the package e.g. default is 'debuild'")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_option("--upstream-branch", dest="upstream_branch", default='upstream',
+                      help="name of the upstream branch, default is 'upstream'")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
@@ -67,16 +95,24 @@ def main(argv):
                 print >>sys.stderr, out
                 print >>sys.stderr, "Use --git-ignore_new to ignore."
                 return 1
+        cp = parse_changelog('debian/changelog')
+        if not is_native(cp) and not has_orig(cp, output_dir):
+            print "%s does not exist, creating from branch %s" % (orig_file(cp), options.upstream_branch)
+            if not create_orig(cp, output_dir, options.upstream_branch):
+                return 1
         Command(options.build_cmd,[ '-i.git', '-I.git' ]+dpkg_args)()
         if options.tag:
-            version=get_version()
-            if version:
+            try:
+                version=cp['Version']
+            except KeyError:
+                print >>sys.stderr,"Can't parse version from changes file"
+                return 1
+            else:
                 print "Tagging", version
                 if not GitTag()(sanitize_version(version)): return 1
-            else:
-                print >>sys.stderr,"Can't parse version from changes file"
     except CommandExecFailed:
         return 1
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

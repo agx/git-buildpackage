@@ -23,7 +23,7 @@ def is_repository_clean(path):
     return (ret, "".join(out))
 
 def is_repository(path):
-    """Is there a git repository at path?"""
+    """Is there a git repository at path"""
     if not path:
         return False
     try:

@@ -1,3 +1,9 @@
+git-buildpackage (0.2.9buildorig0) git-buildpackage; urgency=low
+
+  * build an orig.tar.gz if nones there
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 19 Nov 2006 14:17:40 +0100
+
 git-buildpackage (0.2.9) git-buildpackage; urgency=low
 
   * depend on a fixed git-load-dirs that contains the git_load_dirs executable
