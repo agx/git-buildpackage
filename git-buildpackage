@@ -18,7 +18,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import sys,os,commands,re
+import sys,os,commands,re,pipes
 import optparse
 from git_buildpackage import GitTag, Command, CommandExecFailed
 from git_buildpackage.git_utils import *
@@ -26,35 +26,21 @@ from git_buildpackage.deb_utils import *
 
 build_cmd='debuild'
 output_dir='../'
-    
-
-def orig_file(cp):
-    "The name of the orig.tar.gz belongig to changelog cp"
-    return "%s_%s.orig.tar.gz" % (cp['Source'], cp['Upstream-Version'])
-
-
-def is_native(cp):
-    "Is this a debian native package"
-    return [ True, False ]['-' in cp['Version']]
-
-
-def has_orig(cp, dir):
-    "Check if orig.tar.gz exists in dir"
-    try:
-        os.stat("%s%s" % (dir,orig_file(cp)))
-    except OSError:
-        return False
-    return True
 
 
 def create_orig(cp, dir, branch):
     "create an orig.tar.gz"
     output='%s%s' % (dir, orig_file(cp))
-    try: # subprocess modules uses memory buffers, so we use '|' directly here:
-        os.system('git-archive --format=tar --prefix=%s-%s/ %s | gzip -c -9 > %s'
-              % (cp['Source'], cp['Upstream-Version'], branch, output))
+    pipe=pipes.Template()
+    pipe.prepend('git-archive --format=tar --prefix=%s-%s/ %s' % (cp['Source'], cp['Upstream-Version'], branch), '.-')
+    pipe.append('gzip -c -9',  '--')
+    try:
+        pipe.copy('',output)
+    except OSError, err:
+        print("Error creating %s: %s" % (output, err[0]))
+        return False
     except:
-        print("Error creating %s" % (output))
+        print("Error creating %s" % (output,))
         return False
     return True
 
