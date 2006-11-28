@@ -114,7 +114,7 @@ def main():
         GitTag()(sanitize_version(version))
    
         if options.merge:
-            print "Merging to master..."
+            print "Merging to %s" % (options.debian,)
             gitCheckoutMaster()
             gitShowBranch()
             gitPullUpstream()
