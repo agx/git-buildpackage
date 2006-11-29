@@ -1,3 +1,10 @@
+git-buildpackage (0.2.11) git-buildpackage; urgency=low
+
+  * git-buildpackage: use pipes module instead of os.system
+  * git-import-orig: fix printout of branch name 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 28 Nov 2006 16:33:54 +0100
+
 git-buildpackage (0.2.10) git-buildpackage; urgency=low
 
   * build an orig.tar.gz if nones there
