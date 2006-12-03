@@ -54,14 +54,14 @@ def main(argv):
 
     parser=optparse.OptionParser()
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
-                      help="build with incommited changes in the source tree")
-    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
                       help="build with uncommited changes in the source tree")
+    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
+                      help="tag after a successful build")
     parser.add_option("--git-builder", dest="build_cmd", default=build_cmd,
-                      help="command to build the package e.g. default is 'debuild'")
+                      help="command to build the package with, default is 'debuild'")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_option("--upstream-branch", dest="upstream_branch", default='upstream',
+    parser.add_option("--git-upstream-branch", dest="upstream_branch", default='upstream',
                       help="name of the upstream branch, default is 'upstream'")
     (options, args) = parser.parse_args(args)
 
