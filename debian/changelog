@@ -1,3 +1,9 @@
+git-buildpackage (0.2.14) experimental; urgency=low
+
+  * config file parsing to set default branches and build commands
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 23 Nov 2006 20:43:03 +0100
+
 git-buildpackage (0.2.13) experimental; urgency=low
 
   * fix typos in 'git-buildpackage -v'

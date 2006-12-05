@@ -28,6 +28,7 @@
       <arg><option>--git-ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
+      <arg><option>--upstream-branch=<replaceable>branch_name</replaceable></option></arg>
       <arg><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -42,6 +43,8 @@
     <itemizedlist>
         <listitem><para>Verify that it is being executed from the
             proper location.</para>
+        </listitem>
+        <listitem><para>Build an orig.tar.gz if it doesn't exist.</para>
         </listitem>
         <listitem><para>Call <application>debuild</application> (1)
             (or the application specified via --git-builder)
@@ -86,7 +89,39 @@
           <para>Verbose execution</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--git-upstream-branch</option>=<replaceable>branch_name</replaceable>
+        </term>
+        <listitem>
+	  <para>Branch to build the orig.tar.gz from. Default is 'upstream'</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>CONFIGURATION FILES</title>
+    Three configuration files are parsed:
+    <variablelist>
+      <varlistentry>
+      <term>/etc/git-buildpacakge/gbp.conf</term>
+      </varlistentry>
+      <varlistitem>- system wide configuraton</varlistitem>
+      <varlistentry>
+      <term>~/.gbp.conf</term>
+      </varlistentry>
+      <varlistentry>
+      - per user configuration
+      </varlistentry>
+      <varlistentry>
+      <term>\.git/gbp.conf</term>
+      </varlistentry> 
+      <varlistentry>
+      - per repository configuration
+      </varlistentry> 
+    </variablelist>
+      <para>
+      See /etc/git-buildpacakge/gbp.conf for an example.
+      </para>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>

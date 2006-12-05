@@ -27,6 +27,7 @@ from optparse import OptionParser
 from git_buildpackage import *
 from git_buildpackage.git_utils import *
 from git_buildpackage.deb_utils import *
+from git_buildpackage.config import GBPOptionParser
 
 gitAdd=GitAdd()
 gitCommitAll=GitCommitAll()
@@ -112,16 +113,17 @@ def move_tree(src, dirs):
     RemoveTree(dirs['tmp'])()
 
 
-def main():
-    dirs={'top': os.path.abspath(os.curdir)}
+def main(argv):
+    dirs = {'top': os.path.abspath(os.curdir)}
 
-    parser = OptionParser('%prog [options] /path/to/package.dsc')
+    parser = GBPOptionParser(command=os.path.basename(argv[0]), prefix='',
+                             usage='%prog [options] /path/to/package.dsc')
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_option("--upstream-branch", dest="upstream_branch", default='upstream',
-                      help="name of the upstream branch, default is 'upstream'")
-    (options, args) = parser.parse_args()
+    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
+                      help="upstream branch, default is '%(upstream-branch)s'")
+    (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
         Command.verbose = True
@@ -147,6 +149,6 @@ def main():
         print 'Everything imported under %s' % (src.pkg, )
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))
 	    
 # vim:et:ts=4:sw=4:

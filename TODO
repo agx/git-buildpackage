@@ -1,8 +1,7 @@
-- (global/per user/per repository) config files
 - git-buildpackage:
   - allow to export the hole source tree to tmpdir before building
   - easy push/pull to/from remote repositories (like alioth) after a
-    successful build/for getting the sources
+    successful build/for getting the sources (--git-post-tag-hook)
 - git-import-orig:
   - allow to import from an unpacked source tree
 - git-import-dsc:

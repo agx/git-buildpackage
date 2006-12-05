@@ -23,9 +23,9 @@ import os
 import tempfile
 import re
 import glob
-from optparse import OptionParser
 from git_buildpackage import *
 from git_buildpackage.git_utils import *
+from git_buildpackage.config import GBPOptionParser
 
 
 def cleanupTmpTree(tree):
@@ -49,20 +49,21 @@ def get_version(tgz):
     if m:
         return m.group('version')    
 
-def main():
-    parser = OptionParser('%prog [-u version] /path/to/upstream-version.tar.gz')
+def main(argv):
+    parser=GBPOptionParser(command=os.path.basename(argv[0]), prefix='',
+                           usage='%prog [-u version] /path/to/upstream-version.tar.gz')
 
     parser.add_option("-u", "--upstreamversion", dest="version",
                       help="Upstream Version")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_option("--upstream-branch", dest="upstream", default='upstream',
-                      help="name of the upstream branch, default is 'upstream'")
-    parser.add_option("--debian-branch", dest='debian', default='master',
-                      help="name of the branch the debian package is being developed on, default is 'master'")
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
                       help="after import dont do any merging to another branch")
-    (options, args) = parser.parse_args()
+    parser.add_config_file_option(option_name="debian-branch", dest='debian',
+                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
+    parser.add_config_file_option(option_name="upstream-branch", dest="upstream",
+                      help="upstream branch, default is '%(upstream-branch)s'")
+    (options, args) = parser.parse_args(argv[1:])
 
     gitCheckoutUpstream=GitCheckoutBranch(options.upstream)
     gitCheckoutMaster=GitCheckoutBranch(options.debian)
@@ -129,6 +130,6 @@ def main():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))
 
 # vim:et:ts=4:sw=4:

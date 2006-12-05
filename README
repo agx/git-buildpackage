@@ -14,3 +14,4 @@ This is a bunch of scripts to ease the development of Debian packages with git:
          --git-ignore-new: ignore uncommited changes
 	 --git-tag: tag after building (version number is fetched from the changelog)
 
+See the manpages for more details.

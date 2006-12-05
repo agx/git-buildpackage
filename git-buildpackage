@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# run debuild in a git repository
-#
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,16 +15,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# run commands to build a debian package out of a git repository
 
 import sys,os,commands,re,pipes
 import optparse
 from git_buildpackage import GitTag, Command, CommandExecFailed
 from git_buildpackage.git_utils import *
 from git_buildpackage.deb_utils import *
+from git_buildpackage.config import GBPOptionParser
 
-build_cmd='debuild'
 output_dir='../'
-
 
 def create_orig(cp, dir, branch):
     "create an orig.tar.gz"
@@ -52,17 +51,18 @@ def main(argv):
     if "--help" in dpkg_args:
         args.append('--help')
 
-    parser=optparse.OptionParser()
+    parser=GBPOptionParser(command=os.path.basename(argv[0]), prefix='git-')
+
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with uncommited changes in the source tree")
     parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
                       help="tag after a successful build")
-    parser.add_option("--git-builder", dest="build_cmd", default=build_cmd,
-                      help="command to build the package with, default is 'debuild'")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_option("--git-upstream-branch", dest="upstream_branch", default='upstream',
-                      help="name of the upstream branch, default is 'upstream'")
+    parser.add_config_file_option(option_name="builder", dest="build_cmd",
+                      help="command to build the package e.g. default is '%(builder)s'")
+    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
+                      help="upstream branch, default is '%(upstream-branch)s'")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:

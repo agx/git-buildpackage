@@ -22,6 +22,7 @@ setup(name = "git_build_package",
       author = 'Guido Guenther',
       author_email = 'agx@sigxcpu.org',
       scripts = [ 'git-buildpackage', 'git-import-dsc', 'git-import-orig'],
-      packages = [ 'git_buildpackage' ]
+      packages = [ 'git_buildpackage' ],
+      data_files = [("/etc/git-buildpackage/", ["gbp.conf" ]),],
 )
 

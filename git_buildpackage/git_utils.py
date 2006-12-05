@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# utility functions for git-buildpackge and friends
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
+"""provides some git repository related helpers"""
 
 import subprocess
 import os.path

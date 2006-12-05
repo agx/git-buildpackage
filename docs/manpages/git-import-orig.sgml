@@ -85,6 +85,31 @@
     </variablelist>
   </refsect1>
   <refsect1>
+    <title>CONFIGURATION FILES</title>
+    Three configuration files are parsed:
+    <variablelist>
+      <varlistentry>
+      <term>/etc/git-buildpacakge/gbp.conf</term>
+      </varlistentry>
+      <varlistitem>- system wide configuraton</varlistitem>
+      <varlistentry>
+      <term>~/.gbp.conf</term>
+      </varlistentry>
+      <varlistentry>
+      - per user configuration
+      </varlistentry>
+      <varlistentry>
+      <term>\.git/gbp.conf</term>
+      </varlistentry> 
+      <varlistentry>
+      - per repository configuration
+      </varlistentry> 
+    </variablelist>
+      <para>
+      See /etc/git-buildpacakge/gbp.conf for an example.
+      </para>
+  </refsect1>
+  <refsect1>
     <title>SEE ALSO</title>
 
     <para>git-buildpackage (1), git-import-dsc (1), git (1), git_load_dirs (1)</para>

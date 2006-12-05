@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
-# helper classes for git-buildpackge and friends
+#
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
+"""Simple class wrappers for the various commands needed by git-buildpackage"""
 
 import subprocess
 import sys
 
+
 class CommandExecFailed(Exception):
+    """Exception raised by the Command class"""
     pass
 
 class Command(object):
+    """
+    Wraps a shell command, so we don't have to store any kind of command line options in 
+    one of the git-buildpackage commands
+    """
     verbose=False
 
     def __init__(self, cmd, args=[]):
@@ -38,6 +45,7 @@ class Command(object):
 
 
 class UnpackTGZ(Command):
+    """Wrap tar to Unpack a gzipped tar archive"""
     def __init__(self, tgz, dir):
         self.tgz=tgz
         self.dir=dir
@@ -46,7 +54,7 @@ class UnpackTGZ(Command):
 
 
 class RemoveTree(Command):
-    "Remove a whole directory tree"
+    "Wrap rm to remove a whole directory tree"
     def __init__(self, tree):
         self.tree=tree
         Command.__init__(self, 'rm', [ '-rf', tree ])
@@ -54,6 +62,7 @@ class RemoveTree(Command):
 
 
 class Dch(Command):
+    """Wrap dch and set a specific version"""
     def __init__(self, version, msg):
         args=['-v', version]
         if msg:
@@ -63,6 +72,10 @@ class Dch(Command):
 
 
 class DpkgSourceExtract(Command):
+    """
+    Wrap dpkg-source to extract a Debian source package into a certain
+    directory, this needs
+    """
     def __init__(self):
         Command.__init__(self, 'dpkg-source', ['-x'])
     
@@ -72,6 +85,7 @@ class DpkgSourceExtract(Command):
 
 
 class GitLoadDirs(Command):
+    """Wrap git_load_dirs"""
     def __init__(self):
         Command.__init__(self, 'git_load_dirs')
 
@@ -89,18 +103,21 @@ class GitCommand(Command):
 
 
 class GitInitDB(GitCommand):
+    """Wrap git-init-db"""
     def __init__(self):
         GitCommand.__init__(self,'init-db')
         self.run_error="Couldn't init git repository"
 
 
 class GitShowBranch(GitCommand):
+    """Wrap git-show-branch"""
     def __init__(self):
         GitCommand.__init__(self,'branch')
         self.run_error="Couldn't list branches"
 
 
 class GitBranch(GitCommand):
+    """Wrap git-branch"""
     def __init__(self):
         GitCommand.__init__(self,'branch')
 
@@ -110,6 +127,7 @@ class GitBranch(GitCommand):
 
 
 class GitCheckoutBranch(GitCommand):
+    """Wrap git-checkout in order tos switch to a certain branch"""
     def __init__(self, branch):
         GitCommand.__init__(self,'checkout', [branch])
         self.branch=branch
@@ -117,12 +135,14 @@ class GitCheckoutBranch(GitCommand):
 
 
 class GitPull(GitCommand):
+    """Wrap git-pull"""
     def __init__(self, repo, branch):
         GitCommand.__init__(self,'pull', [repo, branch]) 
         self.run_error="Couldn't pull %s to %s" % (branch, repo)
 
 
 class GitTag(GitCommand):
+    """Wrap git-tag"""
     def __init__(self):
         GitCommand.__init__(self,'tag') 
 
@@ -132,14 +152,14 @@ class GitTag(GitCommand):
 
 
 class GitAdd(GitCommand):
-    """add a lists of files"""
+    """Wrap git-add to add new files"""
     def __init__(self):
         GitCommand.__init__(self,'add')
         self.run_error="Couldn't add files"
 
 
 class GitCommitAll(GitCommand):
-    """Commit files to the repository"""
+    """Wrap git-commit to commit all changes"""
     def __init__(self):
         GitCommand.__init__(self,'commit', ['-a'])
 
