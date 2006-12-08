@@ -19,19 +19,19 @@ class Command(object):
     verbose=False
 
     def __init__(self, cmd, args=[]):
-        self.cmd=cmd
+        self.cmd=cmd.split()
         self.args=args
-        self.run_error="Couldn't run '%s %s'" % (cmd," ".join(args))
+        self.run_error="Couldn't run '%s'" % (" ".join(self.cmd+args))
 
     def __run(self, args):
         try:
             if self.verbose:
                 print self.cmd, self.args, args
-            retcode = subprocess.call([self.cmd]+self.args+args)
+            retcode = subprocess.call(self.cmd + self.args + args)
             if retcode < 0:
-                print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
+                print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd[0],  -retcode)
             elif retcode > 0:
-                print >>sys.stderr, "%s returned %d" % (self.cmd,  retcode)
+                print >>sys.stderr, "%s returned %d" % (self.cmd[0],  retcode)
         except OSError, e:
             print >>sys.stderr, "Execution failed:", e
             retcode=1
