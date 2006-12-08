@@ -1,3 +1,12 @@
+git-buildpackage (0.2.15) experimental; urgency=low
+
+  * git-buildpackage now supports signed tags via the "sign-tag" and "keyid"
+    options. This allows us to have a nice "trustable" history. See:
+         http://www.kernel.org/pub/software/scm/git/docs/
+    on how this ensured.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed,  6 Dec 2006 22:04:41 +0100
+
 git-buildpackage (0.2.14) experimental; urgency=low
 
   * config file parsing to set default branches and build commands

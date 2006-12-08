@@ -31,7 +31,6 @@ from git_buildpackage.config import GBPOptionParser
 
 gitAdd=GitAdd()
 gitCommitAll=GitCommitAll()
-gitTag=GitTag()
 
 class DscPackage(object):
     """Parse the dsc file for verions, package names, etc"""
@@ -71,7 +70,7 @@ class DscPackage(object):
         f.close()
     
 
-def import_upstream(src, dirs, upstream_branch):
+def import_upstream(src, dirs, upstream_branch, tagger):
     try:
         unpackTGZ=UnpackTGZ(src.tgz, dirs['tmp'])
         unpackTGZ()
@@ -86,7 +85,7 @@ def import_upstream(src, dirs, upstream_branch):
         GitInitDB()()
         gitAdd(['.'])
         gitCommitAll(msg="Imported %s version %s" % (['upstream','Debian'][src.native],src.upstream_version,))
-        gitTag(sanitize_version(src.upstream_version))
+        tagger(sanitize_version(src.upstream_version))
         if not src.native:
             GitBranch()(upstream_branch)
     except CommandExecFailed:
@@ -96,12 +95,12 @@ def import_upstream(src, dirs, upstream_branch):
     return 0
 
 
-def apply_debian_patch(src, dirs):
+def apply_debian_patch(src, dirs, tagger):
     try:
         DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
         GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
-        gitTag(sanitize_version('%s-%s' % (src.upstream_version, src.debian_version)))
+        tagger(sanitize_version('%s-%s' % (src.upstream_version, src.debian_version)))
     except CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
         return 1
@@ -123,10 +122,16 @@ def main(argv):
                       help="verbose command execution")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
+    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
+                      help="sign git tags", action="store_true")
+    parser.add_config_file_option(option_name="keyid", dest="keyid",
+                      help="keyid to sign tags with")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
         Command.verbose = True
+
+    gitTag=GitTag(options.sign_tags, options.keyid)
 
     if len(args) != 1:
         parser.print_help()
@@ -135,14 +140,14 @@ def main(argv):
         src=DscPackage(args[0])
 
         dirs['tmp']=os.path.abspath(tempfile.mkdtemp(dir='.'))
-        if import_upstream(src, dirs, options.upstream_branch):
+        if import_upstream(src, dirs, options.upstream_branch, gitTag):
             return 1
         os.chdir(dirs['top'])
         if not src.native:
             dirs['unpack']=dirs['tmp']+'/unpack'
             os.mkdir(dirs['unpack'])
             dirs['dpkg-src']="%s/%s-%s-%s" % (dirs['unpack'], src.pkg, src.upstream_version, src.debian_version)
-            if apply_debian_patch(src, dirs):
+            if apply_debian_patch(src, dirs, gitTag):
                 return 1
         os.chdir(dirs['top'])
         move_tree(src, dirs)

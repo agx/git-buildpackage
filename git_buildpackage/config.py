@@ -22,9 +22,12 @@ class GBPOptionParser(OptionParser):
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
-    defaults={ 'builder':         'debuild',
+    defaults={ 'builder'         : 'debuild',
                'debian-branch'   : 'debian',
                'upstream-branch' : 'upstream',
+               'upstream-branch' : 'upstream',
+	       'sign-tags'	 : '',		# empty means False
+	       'keyid'		 : '',
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),
@@ -45,7 +48,7 @@ class GBPOptionParser(OptionParser):
         OptionParser.__init__(self, usage=usage)
 
 
-    def add_config_file_option(self, option_name, dest, help):
+    def add_config_file_option(self, option_name, dest, help, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
         @var option_name: name of the option
@@ -56,6 +59,6 @@ class GBPOptionParser(OptionParser):
         @type help: string
         """
         OptionParser.add_option(self,"--%s%s" % (self.prefix, option_name), dest=dest,
-                                         default=self.config[option_name], help=help % self.config)
-
+                                         default=self.config[option_name], 
+					 help=help % self.config, **kwargs)
 

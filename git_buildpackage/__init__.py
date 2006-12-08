@@ -138,24 +138,33 @@ class GitPull(GitCommand):
     """Wrap git-pull"""
     def __init__(self, repo, branch):
         GitCommand.__init__(self,'pull', [repo, branch]) 
-        self.run_error="Couldn't pull %s to %s" % (branch, repo)
+        self.run_error = "Couldn't pull %s to %s" % (branch, repo)
 
 
 class GitTag(GitCommand):
     """Wrap git-tag"""
-    def __init__(self):
-        GitCommand.__init__(self,'tag') 
+    def __init__(self, sign_tag=False, keyid=None):
+        GitCommand.__init__(self,'tag')
+        self.sign_tag = sign_tag
+        self.keyid = keyid
 
-    def __call__(self, tag):
-        self.run_error="Couldn't tag %s" % (tag,)
-        GitCommand.__call__(self, [tag])
+    def __call__(self, version, msg="Tagging %(version)s"):
+        self.run_error="Couldn't tag %s" % (version,)
+        if self.sign_tag:
+            if self.keyid:
+                sign_opts = [ '-u', self.keyid ]
+            else:
+                sign_opts = [ '-s' ]
+        else:
+            sign_opts = []
+        GitCommand.__call__(self, sign_opts+[ '-m', msg % locals(), version])
 
 
 class GitAdd(GitCommand):
     """Wrap git-add to add new files"""
     def __init__(self):
         GitCommand.__init__(self,'add')
-        self.run_error="Couldn't add files"
+        self.run_error = "Couldn't add files"
 
 
 class GitCommitAll(GitCommand):

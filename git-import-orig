@@ -63,6 +63,10 @@ def main(argv):
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream",
                       help="upstream branch, default is '%(upstream-branch)s'")
+    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
+                      help="sign git tags", action="store_true")
+    parser.add_config_file_option(option_name="keyid", dest="keyid",
+                      help="keyid to sign tags with")
     (options, args) = parser.parse_args(argv[1:])
 
     gitCheckoutUpstream=GitCheckoutBranch(options.upstream)
@@ -112,7 +116,7 @@ def main(argv):
         gitCheckoutUpstream()
         gitShowBranch()
         GitLoadDirs()(origdir)
-        GitTag()(sanitize_version(version))
+        GitTag(options.sign_tags, options.keyid)(sanitize_version(version))
    
         if options.merge:
             print "Merging to %s" % (options.debian,)
