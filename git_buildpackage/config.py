@@ -23,8 +23,7 @@ class GBPOptionParser(OptionParser):
     @type config_files: list
     """
     defaults={ 'builder'         : 'debuild',
-               'debian-branch'   : 'debian',
-               'upstream-branch' : 'upstream',
+               'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
 	       'sign-tags'	 : '',		# empty means False
 	       'keyid'		 : '',
