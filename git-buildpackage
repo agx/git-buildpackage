@@ -83,7 +83,7 @@ def main(argv):
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
                 print >>sys.stderr, out
-                print >>sys.stderr, "Use --git-ignore_new to ignore."
+                print >>sys.stderr, "Use --git-ignore-new to ignore."
                 return 1
         cp = parse_changelog('debian/changelog')
         if not is_native(cp) and not has_orig(cp, output_dir):
