@@ -1,3 +1,10 @@
+git-buildpackage (0.2.17) experimental; urgency=low
+
+  * fix wrong default debian branch
+  * git-buildpackage: fix typo in git-ignore-new
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat,  9 Dec 2006 13:22:33 +0100
+
 git-buildpackage (0.2.16) experimental; urgency=low
 
   * git-buildpackage: properly pass builder args
