@@ -63,6 +63,8 @@ def main(argv):
                       help="command to build the package e.g. default is '%(builder)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
+    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
+                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tag",
                       help="sign git tags", action="store_true")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
@@ -85,11 +87,18 @@ def main(argv):
                 print >>sys.stderr, out
                 print >>sys.stderr, "Use --git-ignore-new to ignore."
                 return 1
+        branch=get_repository_branch('.')
+        if branch != options.debian_branch and not options.ignore_new:
+                print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
+                print >>sys.stderr, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
+                return 1
+
         cp = parse_changelog('debian/changelog')
         if not is_native(cp) and not has_orig(cp, output_dir):
             print "%s does not exist, creating from branch %s" % (orig_file(cp), options.upstream_branch)
             if not create_orig(cp, output_dir, options.upstream_branch):
                 return 1
+
         Command(options.build_cmd,[ '-i.git', '-I.git' ]+dpkg_args)()
         if options.tag:
             try:

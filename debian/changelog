@@ -1,3 +1,11 @@
+git-buildpackage (0.2.18) experimental; urgency=low
+
+  * git-buildpackage: detect the branch we're on and bail out if it's not the
+    debian branch 
+  * doc updates
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 10 Dec 2006 14:57:35 +0100
+
 git-buildpackage (0.2.17) experimental; urgency=low
 
   * fix wrong default debian branch

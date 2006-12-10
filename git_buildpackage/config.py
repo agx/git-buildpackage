@@ -25,6 +25,7 @@ class GBPOptionParser(OptionParser):
     defaults={ 'builder'         : 'debuild',
                'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
+               'upstream-branch' : 'upstream',
 	       'sign-tags'	 : '',		# empty means False
 	       'keyid'		 : '',
              }

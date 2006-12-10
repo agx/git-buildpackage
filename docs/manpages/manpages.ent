@@ -1,3 +1,24 @@
 <!ENTITY man.git.importorig SYSTEM "git-import-orig.sgml">
 <!ENTITY man.git.importdsc SYSTEM "git-import-dsc.sgml">
 <!ENTITY man.git.buildpackage SYSTEM "git-buildpackage.sgml">
+<!ENTITY man.git.config-files "
+    <title>CONFIGURATION FILES</title>
+    Three configuration files are parsed to set defaults for the above
+    commandline arguments:
+    <variablelist>
+      <varlistentry>
+      <term>/etc/git-buildpacakge/gbp.conf</term>
+      <listitem><para>system wide configuraton</para></listitem>
+      </varlistentry>
+      <varlistentry>
+      <term>~/.gbp.conf</term>
+      <listitem><para>per user configuration</para></listitem>
+      </varlistentry>
+      <varlistentry>
+      <term>.git/gbp.conf</term>
+      <listitem><para>per repository configuration</para></listitem> 
+      </varlistentry> 
+    </variablelist>
+      <para>
+      See /etc/git-buildpacakge/gbp.conf for an example.
+      </para>">
