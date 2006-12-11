@@ -66,7 +66,7 @@ def main(argv):
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
                       help="sign git tags", action="store_true")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
-                      help="keyid to sign tags with")
+                      help="GPG keyid to sign tags with")
     (options, args) = parser.parse_args(argv[1:])
 
     gitCheckoutUpstream=GitCheckoutBranch(options.upstream)
