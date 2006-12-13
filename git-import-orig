@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# Import a new upstream version
+"""Import a new upstream version"""
 
 import sys
 import os
@@ -33,8 +33,9 @@ def cleanupTmpTree(tree):
 
 
 def unpackOrig(tgz):
+    """unpack a .orig.tar.gz"""
     try:
-        unpackTGZ=UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
+        unpackTGZ = UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
         unpackTGZ()
     except CommandExecFailed:
         print "Unpacking of %s failed" % (tgz,)
@@ -44,13 +45,14 @@ def unpackOrig(tgz):
 
 
 def get_version(tgz):
-    origre=re.compile('^[a-z\d-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.gz')
-    m=origre.match(os.path.basename(tgz))
+    """get the version from the filename of a .orig.tar.gz"""
+    origre = re.compile('^[a-z\d-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.gz')
+    m = origre.match(os.path.basename(tgz))
     if m:
         return m.group('version')    
 
 def main(argv):
-    parser=GBPOptionParser(command=os.path.basename(argv[0]), prefix='',
+    parser = GBPOptionParser(command=os.path.basename(argv[0]), prefix='',
                            usage='%prog [-u version] /path/to/upstream-version.tar.gz')
 
     parser.add_option("-u", "--upstreamversion", dest="version",
@@ -69,10 +71,10 @@ def main(argv):
                       help="GPG keyid to sign tags with")
     (options, args) = parser.parse_args(argv[1:])
 
-    gitCheckoutUpstream=GitCheckoutBranch(options.upstream)
-    gitCheckoutMaster=GitCheckoutBranch(options.debian)
-    gitShowBranch=GitShowBranch()
-    gitPullUpstream=GitPull('.', options.upstream)
+    gitCheckoutUpstream = GitCheckoutBranch(options.upstream)
+    gitCheckoutMaster = GitCheckoutBranch(options.debian)
+    gitShowBranch = GitShowBranch()
+    gitPullUpstream = GitPull('.', options.upstream)
 
     if options.verbose:
         Command.verbose = True
@@ -81,7 +83,7 @@ def main(argv):
         parser.print_help()
         return 1
     else:
-        tgz=args[0]
+        tgz = args[0]
 
     if not is_repository('.'):
         print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'),)
@@ -90,7 +92,7 @@ def main(argv):
     if options.version:
         version = options.version
     else:
-        version=get_version(tgz)
+        version = get_version(tgz)
     if version:
         print "Upstream version is %s" % (version,)
     else:
@@ -104,7 +106,7 @@ def main(argv):
         print >>sys.stderr, out
         return 1
 
-    tmpdir=unpackOrig(tgz)
+    tmpdir = unpackOrig(tgz)
     if not tmpdir:
         return 1
     else: 

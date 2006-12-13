@@ -16,30 +16,32 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# run commands to build a debian package out of a git repository
+"""run commands to build a debian package out of a git repository"""
 
-import sys,os,commands,re,pipes
-import optparse
+import sys,os,os.path,pipes
 from git_buildpackage import GitTag, Command, CommandExecFailed
 from git_buildpackage.git_utils import *
 from git_buildpackage.deb_utils import *
 from git_buildpackage.config import GBPOptionParser
 
-output_dir='../'
+output_dir = '../'
 
 def create_orig(cp, dir, branch):
     "create an orig.tar.gz"
-    output='%s%s' % (dir, orig_file(cp))
-    pipe=pipes.Template()
+    output = os.path.join(dir, orig_file(cp))
+    pipe = pipes.Template()
     pipe.prepend('git-archive --format=tar --prefix=%s-%s/ %s' % (cp['Source'], cp['Upstream-Version'], branch), '.-')
     pipe.append('gzip -c -9',  '--')
     try:
-        pipe.copy('',output)
+        ret = pipe.copy('', output)
+        if ret:
+            print >>sys.stderr, "Error creating %s: %d" % (output, ret)
+            return False
     except OSError, err:
-        print("Error creating %s: %s" % (output, err[0]))
+        print >>sys.stderr, "Error creating %s: %s" % (output, err[0])
         return False
     except:
-        print("Error creating %s" % (output,))
+        print >>sys.stderr, "Error creating %s" % (output,)
         return False
     return True
 
@@ -51,7 +53,7 @@ def main(argv):
     if "--help" in dpkg_args:
         args.append('--help')
 
-    parser=GBPOptionParser(command=os.path.basename(argv[0]), prefix='git-')
+    parser = GBPOptionParser(command=os.path.basename(argv[0]), prefix='git-')
 
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with uncommited changes in the source tree")
@@ -80,7 +82,7 @@ def main(argv):
 
     try:
         if not options.ignore_new:
-            Command(options.build_cmd,['clean'])()
+            Command(options.build_cmd, ['clean'])()
             (ret, out) = is_repository_clean('.')
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
@@ -89,9 +91,9 @@ def main(argv):
                 return 1
         branch=get_repository_branch('.')
         if branch != options.debian_branch and not options.ignore_new:
-                print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
-                print >>sys.stderr, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
-                return 1
+            print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
+            print >>sys.stderr, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
+            return 1
 
         cp = parse_changelog('debian/changelog')
         if not is_native(cp) and not has_orig(cp, output_dir):
@@ -99,7 +101,7 @@ def main(argv):
             if not create_orig(cp, output_dir, options.upstream_branch):
                 return 1
 
-        Command(options.build_cmd,[ '-i.git', '-I.git' ]+dpkg_args)()
+        Command(options.build_cmd, [ '-i.git', '-I.git' ] + dpkg_args)()
         if options.tag:
             try:
                 version=cp['Version']

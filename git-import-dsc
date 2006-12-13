@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# make a git archive out of a Debian source package
 #
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -17,6 +16,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"""make a git archive out of a Debian source package"""
 
 import sys
 import re
@@ -29,20 +29,20 @@ from git_buildpackage.git_utils import *
 from git_buildpackage.deb_utils import *
 from git_buildpackage.config import GBPOptionParser
 
-gitAdd=GitAdd()
-gitCommitAll=GitCommitAll()
+gitAdd = GitAdd()
+gitCommitAll = GitCommitAll()
 
 class DscPackage(object):
     """Parse the dsc file for verions, package names, etc"""
-    pkgre=re.compile('Source:\s+(?P<pkg>.+)\s*')
-    versionre=re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % (debian_version_chars,))
-    tarre=re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
+    pkgre = re.compile('Source:\s+(?P<pkg>.+)\s*')
+    versionre = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % (debian_version_chars,))
+    tarre = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
 
     def __init__(self, dscfile):
-        self.dscfile=os.path.abspath(dscfile)
-    	f=file(self.dscfile)
+        self.dscfile = os.path.abspath(dscfile)
+        f = file(self.dscfile)
         for line in f:
-            m=self.versionre.match(line)
+            m = self.versionre.match(line)
             if m:
                 if '-' in m.group('version'):
                     self.debian_version = m.group('version').split("-")[-1]
@@ -53,26 +53,24 @@ class DscPackage(object):
                 else:
                     print "Debian Native Package"
                     self.native = True # Debian native package
-                    self.upstream_version=m.group('version')
+                    self.upstream_version = m.group('version')
                     print "Version:", self.upstream_version
                 continue
-            m=self.pkgre.match(line)
+            m = self.pkgre.match(line)
             if m:
                 self.pkg = m.group('pkg')
                 continue
-            m=self.tarre.match(line)
+            m = self.tarre.match(line)
             if m:
-                fromdir=os.path.dirname(dscfile)
-                if len(fromdir):
-                    fromdir+='/'
-                self.tgz = fromdir+m.group('tar')
+                fromdir = os.path.dirname(dscfile)
+                self.tgz = os.path.join(fromdir, m.group('tar'))
                 continue
         f.close()
     
 
 def import_upstream(src, dirs, upstream_branch, tagger):
     try:
-        unpackTGZ=UnpackTGZ(src.tgz, dirs['tmp'])
+        unpackTGZ = UnpackTGZ(src.tgz, dirs['tmp'])
         unpackTGZ()
     except CommandExecFailed:
         print >>sys.stderr,"Unpacking of %s failed" % (src.tgz,)
@@ -80,7 +78,7 @@ def import_upstream(src, dirs, upstream_branch, tagger):
         return 1
 
     try:
-        dirs['git']=glob.glob('%s/*' % (unpackTGZ.dir, ))[0]
+        dirs['git'] = glob.glob('%s/*' % (unpackTGZ.dir, ))[0]
         os.chdir(dirs['git'])
         GitInitDB()()
         gitAdd(['.'])
@@ -131,22 +129,23 @@ def main(argv):
     if options.verbose:
         Command.verbose = True
 
-    gitTag=GitTag(options.sign_tags, options.keyid)
+    gitTag = GitTag(options.sign_tags, options.keyid)
 
     if len(args) != 1:
         parser.print_help()
         return 1
     else:        
-        src=DscPackage(args[0])
+        src = DscPackage(args[0])
 
-        dirs['tmp']=os.path.abspath(tempfile.mkdtemp(dir='.'))
+        dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
         if import_upstream(src, dirs, options.upstream_branch, gitTag):
             return 1
         os.chdir(dirs['top'])
         if not src.native:
-            dirs['unpack']=dirs['tmp']+'/unpack'
+            dirs['unpack'] = os.path.join(dirs['tmp'], 'unpack')
             os.mkdir(dirs['unpack'])
-            dirs['dpkg-src']="%s/%s-%s-%s" % (dirs['unpack'], src.pkg, src.upstream_version, src.debian_version)
+            dirs['dpkg-src'] = os.path.join(dirs['unpack'],
+                                            "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
             if apply_debian_patch(src, dirs, gitTag):
                 return 1
         os.chdir(dirs['top'])
