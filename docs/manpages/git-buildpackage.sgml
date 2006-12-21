@@ -30,6 +30,7 @@
       <arg><option>--upstream-branch=<replaceable>branch_name</replaceable></option></arg>
       <arg><option>--debian-branch=<replaceable>branch_name</replaceable></option></arg>
       <arg><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></arg>
+      <arg><option>--git-cleaner=<replaceable>CLEAN_CMD</replaceable></option></arg>
       <arg><option>--git-sign-tags</option></arg>
       <arg><option>--git-keyid</option></arg>
     </cmdsynopsis>
@@ -86,6 +87,12 @@
         <term><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></term>
         <listitem>
           <para>Use <replaceable>BUILD_CMD</replaceable> instead of <command>debuild</command></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-cleaner=<replaceable>CLEAN_CMD</replaceable></option></term>
+        <listitem>
+          <para>Use <replaceable>CLEAN_CMD</replaceable> instead of <command>debuild clean</command></para>
         </listitem>
       </varlistentry>
       <varlistentry>

@@ -1,11 +1,12 @@
-git-buildpackage (0.2.19) experimental; urgency=low
+git-buildpackage (0.2.19) unstable; urgency=low
 
-  * UNRELEASED
+  * git-buildpackage: add an option (--git-cleaner) that allows to specify
+    a different clean command (Closes: #403987)
   * depend on a git-core that has git-archive
   * s/keyid/GPG keyid/
   * minor fixes all over the place
 
- -- Guido Guenther <agx@sigxcpu.org>  Wed, 13 Dec 2006 22:39:42 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 21 Dec 2006 15:18:40 +0100
 
 git-buildpackage (0.2.18) experimental; urgency=low
 

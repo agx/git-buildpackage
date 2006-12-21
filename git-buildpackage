@@ -63,6 +63,8 @@ def main(argv):
                       help="verbose command execution")
     parser.add_config_file_option(option_name="builder", dest="build_cmd",
                       help="command to build the package e.g. default is '%(builder)s'")
+    parser.add_config_file_option(option_name="cleaner", dest="clean_cmd",
+                      help="command to build the package e.g. default is '%(cleaner)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
@@ -82,7 +84,7 @@ def main(argv):
 
     try:
         if not options.ignore_new:
-            Command(options.build_cmd, ['clean'])()
+            Command(options.clean_cmd)()
             (ret, out) = is_repository_clean('.')
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"

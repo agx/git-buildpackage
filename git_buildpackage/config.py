@@ -23,11 +23,12 @@ class GBPOptionParser(OptionParser):
     @type config_files: list
     """
     defaults={ 'builder'         : 'debuild',
+               'cleaner'	     : 'debuild clean',
                'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
                'upstream-branch' : 'upstream',
-	       'sign-tags'	 : '',		# empty means False
-	       'keyid'		 : '',
+               'sign-tags'	     : '',		# empty means False
+               'keyid'		     : '',
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),
@@ -59,6 +60,7 @@ class GBPOptionParser(OptionParser):
         @type help: string
         """
         OptionParser.add_option(self,"--%s%s" % (self.prefix, option_name), dest=dest,
-                                         default=self.config[option_name], 
-					 help=help % self.config, **kwargs)
+                                default=self.config[option_name], 
+                                help=help % self.config, **kwargs)
 
+# vim:et:ts=4:sw=4:
