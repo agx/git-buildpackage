@@ -1,6 +1,6 @@
 <chapter id="gbp.special">
     <title>Special usage cases</title>
-    <sect1 id="dbp.special.dfsgfree">
+    <sect1 id="gbp.special.dfsgfree">
     <title>Handling non-DFSG clean upstream sources</title>
     <para>If you have to handle non DFSG clean upstream sources you can use a
     different branch which you have to create once:
@@ -37,7 +37,7 @@ cleanup-script.sh
 &gitcmd; pull . dfsg_clean
     </screen>
 
-    <sect1 id="dbp.special.nmus">
+    <sect1 id="gbp.special.nmus">
     <title>Importing NMUs</title>
     <para>
     First create a branch that holds the NMUs once:
@@ -65,7 +65,7 @@ cleanup-script.sh
     </note>
     </sect1>
 
-    <sect1 id="dbp.special.pbuilder">
+    <sect1 id="gbp.special.pbuilder">
     <title>Using &pbuilder;</title>
     <para>
     Since pbuilder use different command line arguments than

@@ -1,8 +1,13 @@
 git-buildpackage (0.2.20) unstable; urgency=low
 
+  * git-import-orig: improve error message when the upstream branch cannot be
+    found. We cannot create the branch automatically since on repositories
+    not created by git-import-dsc it's not clear where to branch from.
+    (Closes: #403990)
+  * remove pointless patch arguments from most of the git helper functions
   * add some more documentation
 
- -- Guido Guenther <agx@sigxcpu.org>  Fri, 22 Dec 2006 15:05:09 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 22 Dec 2006 17:30:11 +0100
 
 git-buildpackage (0.2.19) unstable; urgency=low
 

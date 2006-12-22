@@ -89,6 +89,14 @@ def main(argv):
         print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'),)
         return 1
 
+    if not has_branch(options.upstream):
+        print >>sys.stderr, """
+Repository does not have branch '%s' for upstream sources. If there is none see
+/usr/share/doc/git-buildpackage/manual-html/gbp.import.convert.html on howto
+create it otherwise use --upstream-branch to specify it.
+"""  % options.upstream
+        return 1
+
     if options.version:
         version = options.version
     else:
@@ -100,7 +108,7 @@ def main(argv):
         parser.print_help()
         return 1
 
-    (ret, out) = is_repository_clean('.')
+    (ret, out) = is_repository_clean()
     if not ret:
         print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
         print >>sys.stderr, out
@@ -109,12 +117,13 @@ def main(argv):
     tmpdir = unpackOrig(tgz)
     if not tmpdir:
         return 1
-    else: 
-        print "Unpacked orig to %s" % (tmpdir, )
+    else:
+        if options.verbose:
+            print "Unpacked orig to %s" % tmpdir
         origdir=glob.glob(tmpdir+'/*')[0]
   
     try:
-        print "Importing %s to upstream branch..." % (tgz,)
+        print "Importing %s to upstream branch..." % tgz
         gitCheckoutUpstream()
         gitShowBranch()
         GitLoadDirs()(origdir)

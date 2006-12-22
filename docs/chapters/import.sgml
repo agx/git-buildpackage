@@ -1,6 +1,6 @@
 <chapter id="gbp.import">
     <title>Importing Sources</title>
-    <sect1 id="dbp.import.existing">
+    <sect1 id="gbp.import.existing">
     <title>Importing already existing &debian; packages</title>
     <para>Imporing an already exsting debian package into a git repository is as easy as:
     <screen>
@@ -12,7 +12,7 @@
     used.
     </para>
     </sect1>
-    <sect1 id="dbp.import.new.upstream">
+    <sect1 id="gbp.import.new.upstream">
     <title>Importing a new upstream version</title>
     <para>Change into your git repository, make sure it has all local
     modifications committed and do:
@@ -21,8 +21,11 @@
     </screen>
     </para>
     </sect1>
-    <sect1 id="dbp.import.convert">
+    <sect1 id="gbp.import.convert">
     <title>Converting an existing &git; repository</title>
+    <para>
+    If the &git; repository wasn't created with &git-import-dsc; you have to tell
+    &git-buildpackage; and friends where to find the upstream sources.
     <sect2>
     <title>Upstream sources on a branch</title>
     <para>

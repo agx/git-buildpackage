@@ -85,13 +85,13 @@ def main(argv):
     try:
         if not options.ignore_new:
             Command(options.clean_cmd)()
-            (ret, out) = is_repository_clean('.')
+            (ret, out) = is_repository_clean()
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
                 print >>sys.stderr, out
                 print >>sys.stderr, "Use --git-ignore-new to ignore."
                 return 1
-        branch=get_repository_branch('.')
+        branch=get_repository_branch()
         if branch != options.debian_branch and not options.ignore_new:
             print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
             print >>sys.stderr, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."

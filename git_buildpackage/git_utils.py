@@ -8,14 +8,9 @@ import os.path
 import re
 
 
-def is_repository_clean(path):
-    """Does the repository at path contain any uncommitted modifications"""
+def is_repository_clean():
+    """Does the repository contain any uncommitted modifications"""
     clean_msg='nothing to commit'
-    try:
-        curdir=os.path.abspath(os.path.curdir)
-        os.chdir(path)
-    except OSError:
-        return False
     popen = subprocess.Popen(['git','status'], stdout=subprocess.PIPE)
     popen.wait()
     out=popen.stdout.readlines()
@@ -25,22 +20,26 @@ def is_repository_clean(path):
         ret=True
     else:
         ret=False
-    os.chdir(curdir)
     return (ret, "".join(out))
 
 
-def get_repository_branch(path):
-    """on what branch is the repository at path?"""
-    try:
-        curdir=os.path.abspath(os.path.curdir)
-        os.chdir(path)
-    except OSError:
-        return None
+def get_repository_branch():
+    """on what branch is the repository"""
     popen = subprocess.Popen(['git','branch'], stdout=subprocess.PIPE)
     popen.wait()
     for line in popen.stdout:
         if line.startswith('*'):
             return line.split(' ',1)[1].strip()
+
+
+def has_branch(branch):
+    """check if the repository has branch branch"""
+    popen = subprocess.Popen(['git','branch'], stdout=subprocess.PIPE)
+    popen.wait()
+    for line in popen.stdout:
+        if line.split(' ',1)[1].strip() == branch:
+            return True
+    return False
 
 
 def is_repository(path):
