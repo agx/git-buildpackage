@@ -1,3 +1,10 @@
+git-buildpackage (0.2.21) unstable; urgency=low
+
+  * While dpkg-buildpackage's -i argument takes a regexp -I doesn't - fix
+    inclusion of git metadata in debian native packages
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 22 Dec 2006 17:59:49 +0100
+
 git-buildpackage (0.2.20) unstable; urgency=low
 
   * git-import-orig: improve error message when the upstream branch cannot be
