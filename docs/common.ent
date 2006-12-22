@@ -3,14 +3,21 @@
   <!ENTITY dhdate      		"<date>2006-10-02</date>">
   <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
   <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
-  <!ENTITY dhusername  		"&dhfirstname; &dhsurname">
+  <!ENTITY dhusername  		"Guido Guenther">
   <!ENTITY git-buildpackage 	"<command>git-buildpackage</command>">
   <!ENTITY git-import-orig	"<command>git-import-orig</command>">
   <!ENTITY git-import-dsc	"<command>git-import-dsc</command>">
   <!ENTITY gitcmd		"<command>git</command>">
+  <!ENTITY gitkcmd		"<command>gitk</command>">
+  <!ENTITY pbuildercmd		"<command>pbuilder</command>">
+  <!ENTITY pdebuildcmd		"<command>pdebuild</command>">
+  <!ENTITY debuildcmd		"<command>debuild</command>">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY git	       "<productname>Git</productname>">
+  <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
+  <!ENTITY debuild     "<productname>Debuild</productname>">
+  <!ENTITY dpkg-buildpackage "<productname>Dpkg-buildpackage</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">
   <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
 

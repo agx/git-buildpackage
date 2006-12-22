@@ -50,7 +50,8 @@
         <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the upstream sources are put onto. Default is 'upstream'</para>
+	  <para>The branch in the Git repository the upstream sources are put
+	  onto. Default is <replaceable>upstream</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>

@@ -106,7 +106,7 @@
         <term><option>--git-upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>Branch to build the orig.tar.gz from. Default is 'upstream'</para>
+	  <para>Branch to build the orig.tar.gz from. Default is <replaceable>upstream</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -114,8 +114,8 @@
         </term>
         <listitem>
 	  <para>If you're not on this branch when invoking &git-buildpackage;
-	  it will fail. Default is 'master'.  This option will be ignored
-	  when using <option>--git-ignore-new</option>.
+	  it will fail. Default is <replaceable>master</replaceable>.  This
+	  option will be ignored when using <option>--git-ignore-new</option>.
 	  </para>
         </listitem>
       </varlistentry>
@@ -123,7 +123,7 @@
   </refsect1>
   <refsect1>
       &man.git.config-files;
-      <para>All options in the config files are specified without the 'git-' prefix.
+      <para>All options in the config files are specified without the 'git-' prefix.</para>
   <refsect1>
     <title>SEE ALSO</title>
 

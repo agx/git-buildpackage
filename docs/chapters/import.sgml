@@ -1,0 +1,69 @@
+<chapter id="gbp.import">
+    <title>Importing Sources</title>
+    <sect1 id="dbp.import.existing">
+    <title>Importing already existing &debian; packages</title>
+    <para>Imporing an already exsting debian package into a git repository is as easy as:
+    <screen>
+&git-import-dsc; package_0.1-1.dsc
+    </screen>
+    This will put the upstream sources onto the <option>upstream</option>
+    branch and the debian patch on the <option>master</option> branch. In case
+    of a debian native package only the <option>master</option> branch is being
+    used.
+    </para>
+    </sect1>
+    <sect1 id="dbp.import.new.upstream">
+    <title>Importing a new upstream version</title>
+    <para>Change into your git repository, make sure it has all local
+    modifications committed and do:
+    <screen>
+&git-import-orig; /path/to/package_0.2.orig.tar.gz
+    </screen>
+    </para>
+    </sect1>
+    <sect1 id="dbp.import.convert">
+    <title>Converting an existing &git; repository</title>
+    <sect2>
+    <title>Upstream sources on a branch</title>
+    <para>
+    If the upstream sources are already on a separate branch things are pretty
+    simple. You can either rename that branch to <emphasis>upstream</emphasis>
+    with:
+    <screen>
+mv .git/theupstream-branch .git/upstream
+    </screen> 
+    or you can tell &git-buildpackage; the name of the branch:
+    <screen>
+cat &lt;&lt;EOF &gt; <filename>.git/gbp.conf</filename>
+[DEFAULT]
+# this is the upstream-branch:
+upstream-branch=theupstream-branch
+    </screen>
+    If you use &git-import-orig; to import new upstream sources, they will
+    end up on <emphasis>theupstream-branch</emphasis> and merged to
+    <emphasis>master</emphasis>.
+    </para>
+    </sect2>
+    <sect2>
+    <title>Upstream sources not on a branch</title>
+    <para>
+    If you don't have an upstream branch but started you repository with only
+    the upstream sources (not the debian patch) you can simply branch from that
+    point. So use &gitkcmd; or &gitcmd;-log to locate the commit-id of that commit
+    and create the upstream branch from there, e.g.:
+<screen>
+    COMMIT_ID=`&gitcmd; log --pretty=oneline | tail -1 | awk '{ print $1 }'`
+    &gitcmd; branch upstream $COMMIT_ID
+</screen>
+    The important thing here is that the <envar>COMMIT_ID</envar> specifies a
+    point on the master branch that carried <emphasis>only</emphasis> the
+    upstream sources and not the debian modifications. The above example
+    assumes that this was the first commit to that repository.
+    </para>
+    <warning><para>There's currently no easy way to use &git-import-orig; with
+    a repository that never had the upstream sources as a single commit. Using
+    it on such repositories might lead to unexpected merge results. You can use
+    <command>git_load_dirs</command> instead.</para></warning>
+    </sect2>
+    </sect1>
+</chapter>

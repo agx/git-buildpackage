@@ -1,0 +1,22 @@
+  <para>
+    git-buildpackage, all associated scripts and programs, this manual,
+    and all build scripts are Copyright &copy; 2006 Guido Guenther.
+  </para>
+      <para>
+        This program is free software; you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation; Version 2 of the License.
+      </para>
+
+      <para>
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+      </para>
+
+      <para>
+        You should have received a copy of the GNU General Public License
+        along with this program; if not, write to the Free Software
+        Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+      </para>

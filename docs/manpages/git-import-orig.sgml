@@ -39,7 +39,7 @@
     <title>DESCRIPTION</title>
     <para>
     &git-import-orig; imports a tar.gz file given by
-    <replaceable>tar_gz<replaceable> into the git-buildpackage repository. If
+    <replaceable>tar_gz</replaceable> into the git-buildpackage repository. If
     <replaceable>tar_gz</replaceable> is already of the form
     package_version.orig.tar.gz, it reads the version information from the
     tarball's filename otherwise it can be specified on the commandline.
@@ -64,7 +64,8 @@
         <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the upstream sources are put onto. Default is 'upstream'</para>
+	  <para>The branch in the Git repository the upstream sources are put
+	  onto. Default is <replaceable>upstream</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -72,9 +73,9 @@
         </term>
         <listitem>
 	  <para>The branch in the Git repository the Debian package is being
-	  developed on, default is 'master'. After importing the new sources on
-	  the upstream branch, &git-import-orig; will try to merge the new
-	  version onto this branch.</para>
+	  developed on, default is <replaceable>master</replaceable>. After
+	  importing the new sources on the upstream branch, &git-import-orig;
+	  will try to merge the new version onto this branch.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

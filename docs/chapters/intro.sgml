@@ -1,0 +1,51 @@
+<chapter id="gbp.intro">
+    <title>Introduction</title>
+    <para>
+      Welcome to &git-buildpackage;, a system that integrates the
+      <ulink url="http://www.debian.org/">Debian</ulink> package build
+      system with <ulink url="http://git.or.cz/">Git</ulink>.
+    </para>
+
+<sect1 id="gbp.repository">
+	<title>Repository Layout</title>
+	<para>
+	Since &git; knows about branches (and in fact handles them very well)
+	the git repository usually looks like: a so called
+	<emphasis>master</emphasis> branch (the default branch) holds your
+	current development work. Another branch called
+	<emphasis>upstream</emphasis> holds the upstream sources. Other
+	branches like <emphasis>nmu</emphasis> or
+	<emphasis>dfsg_free</emphasis> might help with certain kinds of
+	packages.  Git-Buildpackage currently only works with your local
+	git-repository, in order to publish your changes simply use
+	<command>git-push</command>.
+	</para>
+</sect1> 
+
+<sect1 id="gbp.workflow">
+    <title>Workflow</title>
+    <para>
+    	A typical workflow consists of the following steps:
+    </para>
+    <orderedlist>
+	<listitem><para>Import a Debian package via &git-import-dsc;. This
+	imports the &debian; Package on the master branch and the upstream
+	sources on the upstream branch.</para></listitem>
+	<listitem><para>Develop, test, commit changes. During this time you can
+	always build the package with &git-buildpackage; In case you have
+	uncommitted changes in your source tree you can use the
+	<option>--git-ignore-new</option> option.</para></listitem>
+	<listitem><para>Once satisfied you can build the final package with
+	&git-buildpackage; <option>--git-tag</option>. This
+	additionally creates a tag within &git; so you can switch back to that
+	version later at any time.</para></listitem>
+	<listitem><para>When a new upstream version is released you can import
+	this via &git-import-orig; onto the upstream branch.
+	&git-import-orig; will also try to merge the new upstream version onto
+	the master branch. After resolving any potential conflicts go back to 2.
+	</para></listitem>
+    </orderedlist>
+    <para>These steps will be explaind in more details in the following sections.</para>
+</sect1>
+
+</chapter>

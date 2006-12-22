@@ -1,0 +1,5 @@
+<!ENTITY ch.intro SYSTEM "intro.sgml">
+<!ENTITY ch.workflow SYSTEM "workflow.sgml">
+<!ENTITY ch.import SYSTEM "import.sgml">
+<!ENTITY ch.building SYSTEM "building.sgml">
+<!ENTITY ch.special SYSTEM "special.sgml">

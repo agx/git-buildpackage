@@ -1,3 +1,9 @@
+git-buildpackage (0.2.20) unstable; urgency=low
+
+  * add some more documentation
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 22 Dec 2006 15:05:09 +0100
+
 git-buildpackage (0.2.19) unstable; urgency=low
 
   * git-buildpackage: add an option (--git-cleaner) that allows to specify

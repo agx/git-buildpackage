@@ -1,0 +1,104 @@
+<chapter id="gbp.special">
+    <title>Special usage cases</title>
+    <sect1 id="dbp.special.dfsgfree">
+    <title>Handling non-DFSG clean upstream sources</title>
+    <para>If you have to handle non DFSG clean upstream sources you can use a
+    different branch which you have to create once:
+    <screen>
+&gitcmd; branch dfsg_clean upstream
+    </screen>
+    <para>
+    This creates the <emphasis>dfsg_clean</emphasis> branch from the tip of
+    your <emphasis>upstream</emphasis> branch.  Then, when importing a new
+    upstream version you import the new version on the
+    <emphasis>upstream</emphasis> branch as usual and just don't merge to the
+    master branch by default:
+    </para>
+    <screen>
+&git-import-orig; --no-merge nondfsg-clean-package_10.4.orig.tar.gz
+&gitcmd; tag; 10.4
+    </screen>
+    <para>
+    After the import you can switch to the dfsg branch and get the newly
+    imported changes from the upstream branch:
+    </para>
+    <screen>
+&gitcmd; checkout dfsg_clean
+&gitcmd; pull . upstream
+    </screen>
+    <para>
+    Now make this dfsg clean (preverably by a cleanup script), commit your changes and merge to the master branch:
+    </para>
+    <screen>
+cleanup-script.sh
+&gitcmd; commit -a -m "Make source dfsg clean"
+&gitcmd; tag 10.4.dfsg
+&gitcmd; checkout master
+&gitcmd; pull . dfsg_clean
+    </screen>
+
+    <sect1 id="dbp.special.nmus">
+    <title>Importing NMUs</title>
+    <para>
+    First create a branch that holds the NMUs once:
+    </para>
+    <screen>
+&gitcmd; <option>branch</option> <replaceable>nmu</replaceable>
+    </screen>
+    <para>
+    To import an NMU instead of a new upstream version you can use:
+    </para>
+    <screen>
+&gitcmd; checkout master
+&git-import-orig; -u 10-1.1 --upstream-branch=nmu nmu-10-1.1.tar.gz
+    </screen>
+    <para>
+    This will import the NMU on the <emphasis>nmu</emphasis> branch instead of
+    the <emphasis>upstream</emphasis> branch but merge the changes to the
+    <emphasis>master</emphasis> branch as usual.
+    </para>
+    <note>
+    <para>
+    You need to have the NMU as a single tar.gz, you can't use the
+    dsc and diff.gz here, this will be fixed in a later version.
+    <para>
+    </note>
+    </sect1>
+
+    <sect1 id="dbp.special.pbuilder">
+    <title>Using &pbuilder;</title>
+    <para>
+    Since pbuilder use different command line arguments than
+    &debuild; and &dpkg-buildpackage; we have to use a small script that's
+    invoked by &git-buildpackage;:
+<programlisting>
+cat &lt;&lt;EOF &gt;/usr/local/bin/git-pbuilder
+#!/bin/sh
+# pass all options to dpkg-buildpackage:
+pdebuild --debbuildopts "$*"
+EOF
+chmod a+x /usr/local/bin/git-pbuilder
+</programlisting>
+
+    Furthermore we need a different clean command, since &pdebuildcmd;
+    <option>clean</option> means something different than &debuildcmd;
+    <option>clean</option>. We could put all this on the command line, but
+    let's put it into the config file to safe typing:
+
+<programlisting>
+cat &lt;&lt;EOF &gt; <filename>~/.gbp.conf</filename>
+[DEFAULT]
+# tell git-buildpackage howto clean the source tree
+cleaner = fakeroot debian/rules clean
+# this is how we invoke pbuilder, arguments passed to git-buildpackage will be
+# passed to dpkg-buildpackge in the chroot
+builder = /usr/local/bin/git-pbuilder
+</programlisting>
+	
+     Invoking &git-buildpackage; will now invoke &pdebuildcmd;</para>
+     <para>
+     If you don't want this for all your invocations of &git-buildpackage; you can instead
+     put this into <filename>.git/gbp.conf</filename> in one of your &git; repositories.
+    </para>
+
+</chapter>
