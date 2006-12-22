@@ -1,17 +1,3 @@
-This is a bunch of scripts to ease the development of Debian packages with git:
-
- - git-import-dsc: import an existing Debian source package into a git repository
-      Usage: git-import-dsc dsc-file
-   This will import the upstream source onto the upstream branch and add the Debian
-   paches on the master branch
-
- - git-import-orig: import a new upstream version into the repository and merge
-   it onto the onto the master branch
-
- - git-debuild: build a package out of a git repository, check for local
-   modifications and tag appropriately
-      Usage: git-debuild [--git-ignore-new] [-git-tag]
-         --git-ignore-new: ignore uncommited changes
-	 --git-tag: tag after building (version number is fetched from the changelog)
-
-See the manpages for more details.
+This is a bunch of scripts to ease the development of Debian packages with git.
+For more documentation see the manual. On Debian systems this can be found in
+/usr/share/doc/git-buildpackage/manual-html.
