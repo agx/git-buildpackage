@@ -114,8 +114,10 @@
         </term>
         <listitem>
 	  <para>If you're not on this branch when invoking &git-buildpackage;
-	  it will fail. Default is <replaceable>master</replaceable>.  This
-	  option will be ignored when using <option>--git-ignore-new</option>.
+	  it will fail. Default is <replaceable>master</replaceable>. This is
+	  done to make sure you don't accidentally release from a topic branch.
+	  Not being on this branch will be ignored when using
+	  <option>--git-ignore-new</option>.
 	  </para>
         </listitem>
       </varlistentry>
