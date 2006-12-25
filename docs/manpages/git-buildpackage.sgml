@@ -27,18 +27,18 @@
       <arg><option>--git-ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
-      <arg><option>--upstream-branch=<replaceable>branch_name</replaceable></option></arg>
-      <arg><option>--debian-branch=<replaceable>branch_name</replaceable></option></arg>
-      <arg><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></arg>
-      <arg><option>--git-cleaner=<replaceable>CLEAN_CMD</replaceable></option></arg>
+      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
+      <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
       <arg><option>--git-sign-tags</option></arg>
-      <arg><option>--git-keyid</option></arg>
+      <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-buildpackage; is used to build Debian source and .deb packages from a GIT repository.
+    &git-buildpackage; is used to build Debian source and .deb packages from a &git; repository.
     </para>
     <para>
         &git-buildpackage; will, in order:
@@ -55,9 +55,9 @@
         </listitem>
         <listitem><para>Build an orig.tar.gz if it doesn't exist.</para>
         </listitem>
-        <listitem><para>Call <application>debuild</application> (1)
-            (or the application specified via --git-builder)
-            with arguments instructing it to ignore Git meta-data in
+        <listitem><para>Call <application>debuild</application>(1)
+            (or the application specified via <option>--git-builder</option>)
+            with arguments instructing it to ignore &git; meta-data in
             the diff.gz, passing along all arguments given to
             &git-buildpackage; that don't start with --git-.
           </para>
@@ -99,7 +99,7 @@
         <term><option>--git-verbose</option>
         </term>
         <listitem>
-          <para>Verbose execution</para>
+          <para>verbose execution</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -121,11 +121,26 @@
 	  </para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--git-sign-tags</option>
+        </term>
+        <listitem>
+	  <para>GPG sign all created tags</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable>
+        </term>
+        <listitem>
+	  <para>use this keyid for gpg signing tags</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
       &man.git.config-files;
       <para>All options in the config files are specified without the 'git-' prefix.</para>
+  </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
 

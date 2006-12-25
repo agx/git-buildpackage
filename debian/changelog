@@ -1,3 +1,10 @@
+git-buildpackage (0.2.22) unstable; urgency=low
+
+  * UNRELEASED
+  * update manpages
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 25 Dec 2006 18:03:05 +0100
+
 git-buildpackage (0.2.21) unstable; urgency=low
 
   * While dpkg-buildpackage's -i argument takes a regexp -I doesn't - fix

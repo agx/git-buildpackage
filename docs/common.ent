@@ -2,7 +2,7 @@
   <!ENTITY dhsurname   		"<surname>Guenther</surname>">
   <!ENTITY dhdate      		"<date>2006-10-02</date>">
   <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
-  <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
+  <!ENTITY dhemail     		"<email>&lt;agx@sigxcpu.org&gt;</email>">
   <!ENTITY dhusername  		"Guido Guenther">
   <!ENTITY git-buildpackage 	"<command>git-buildpackage</command>">
   <!ENTITY git-import-orig	"<command>git-import-orig</command>">

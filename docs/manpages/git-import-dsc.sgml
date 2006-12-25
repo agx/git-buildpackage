@@ -27,19 +27,19 @@
       &git-import-dsc;
 
       <arg><option>--verbose</option></arg>
-      <arg><option>--upstream-branch=<replaceable>branch_name</replaceable></option></arg>
+      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--sign-tags</option></arg>
-      <arg><option>--keyid</option></arg>
-      <arg choice="plain"><replaceable>dsc_file</replaceable></arg>
+      <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
+      <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-dsc; imports a Debian source package into a &git-buildpackage;
-    repository, notes the package version in the commit logs, and commits the
-    change.  All information, including package name,  version,  Debian  diffs,
-    and upstream source, is automatically detected from the source package.
+    &git-import-dsc; imports a Debian source package into a &git; repository,
+    notes the package version in the commit logs, and commits the change. All
+    information, including package name, version, Debian  diffs, and upstream
+    source is automatically detected from the source package.
     </para>
   </refsect1>
   <refsect1>
@@ -50,18 +50,32 @@
         <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the upstream sources are put
-	  onto. Default is <replaceable>upstream</replaceable></para>
+	  <para>The branch in the &git; repository the upstream sources are put
+	  onto. Default is <replaceable>upstream</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--verbose</option>, <option>-v</option>
         </term>
         <listitem>
-          <para>Verbose execution.</para>
+          <para>verbose execution</para>
         </listitem>
       </varlistentry>
-    </variablelist>
+      <varlistentry>
+        <term><option>--sign-tags</option>
+        </term>
+        <listitem>
+          <para>GPG sign all created tags</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--keyid=</option><replaceable>gpg-keyid</replaceable>
+        </term>
+        <listitem>
+          <para>use this keyid for gpg signing tags</para>
+        </listitem>
+      </varlistentry>
+     </variablelist>
   </refsect1>
   <refsect1>
     &man.git.config-files;

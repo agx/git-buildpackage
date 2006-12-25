@@ -20,29 +20,30 @@
   <refnamediv>
     <refname>&git-import-orig;</refname>
 
-    <refpurpose>Import an upstream source into a git-buildpackage repository</refpurpose>
+    <refpurpose>Import an upstream source into a git repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
       &git-import-orig;
 
       <arg><option>--verbose</option></arg>
-      <arg><option>--upstream-branch=<replaceable>branch_name</replaceable></option></arg>
-      <arg><option>--debian-branch=<replaceable>branch_name</replaceable></option></arg>
-      <arg><option>--upstream-version=<replaceable>version</replaceable></option></arg>
+      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--sign-tags</option></arg>
-      <arg><option>--keyid</option></arg>
-      <arg choice="plain"><replaceable>tar_gz</replaceable></arg>
+      <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
+      <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-orig; imports a tar.gz file given by
-    <replaceable>tar_gz</replaceable> into the git-buildpackage repository. If
-    <replaceable>tar_gz</replaceable> is already of the form
-    package_version.orig.tar.gz, it reads the version information from the
-    tarball's filename otherwise it can be specified on the commandline.
+    &git-import-orig; imports the tar.gz archive given by
+    <replaceable>upstream-source</replaceable> into the &git; repository. If
+    <replaceable>upstream-source</replaceable> is already of the form
+    <replaceable>package-name_version.orig.tar.gz</replaceable>, it reads the
+    version information from the tarball's filename otherwise it can be
+    specified on the commandline via <option>--upstream-version</option>.
    
     When importing the new version <command>git_load_dirs</command> is being
     used to detect file renames and removals.
@@ -54,8 +55,7 @@
     <variablelist>
       <varlistentry>
         <term><option>--upstream-version</option>=<replaceable>version</replaceable>,
-        <option>-u</option><replaceable>version</replaceable>
-        </term>
+        <option>-u</option><replaceable>version</replaceable></term>
         <listitem>
 	  <para>The upstream version number</para>
         </listitem>
@@ -65,7 +65,7 @@
         </term>
         <listitem>
 	  <para>The branch in the Git repository the upstream sources are put
-	  onto. Default is <replaceable>upstream</replaceable></para>
+	  onto. Default is <replaceable>upstream</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -82,7 +82,21 @@
         <term><option>--verbose</option>, <option>-v</option>
         </term>
         <listitem>
-          <para>Verbose execution.</para>
+          <para>verbose execution</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--sign-tags</option>
+        </term>
+        <listitem>
+          <para>GPG sign all created tags</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--keyid=</option><replaceable>gpg-keyid</replaceable>
+        </term>
+        <listitem>
+          <para>use this keyid for gpg signing tags</para>
         </listitem>
       </varlistentry>
     </variablelist>
