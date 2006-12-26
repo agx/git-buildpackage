@@ -23,44 +23,37 @@ import re
 import os
 import tempfile
 import glob
-from optparse import OptionParser
-from git_buildpackage import *
-from git_buildpackage.git_utils import *
-from git_buildpackage.deb_utils import *
+import git_buildpackage
+from git_buildpackage.deb_utils import debian_version_chars
+from git_buildpackage.git_utils import sanitize_version
 from git_buildpackage.config import GBPOptionParser
 
-gitAdd = GitAdd()
-gitCommitAll = GitCommitAll()
 
-class DscPackage(object):
-    """Parse the dsc file for verions, package names, etc"""
-    pkgre = re.compile('Source:\s+(?P<pkg>.+)\s*')
-    versionre = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % (debian_version_chars,))
-    tarre = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
+class DscFile(object):
+    """Keeps all needed data read from a dscfile"""
+    pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
+    version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
+    tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
 
     def __init__(self, dscfile):
         self.dscfile = os.path.abspath(dscfile)
         f = file(self.dscfile)
         for line in f:
-            m = self.versionre.match(line)
+            m = self.version_re.match(line)
             if m:
                 if '-' in m.group('version'):
                     self.debian_version = m.group('version').split("-")[-1]
                     self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
                     self.native = False
-                    print "Upstream version:", self.upstream_version
-                    print "Debian version:", self.debian_version
                 else:
-                    print "Debian Native Package"
                     self.native = True # Debian native package
                     self.upstream_version = m.group('version')
-                    print "Version:", self.upstream_version
                 continue
-            m = self.pkgre.match(line)
+            m = self.pkg_re.match(line)
             if m:
                 self.pkg = m.group('pkg')
                 continue
-            m = self.tarre.match(line)
+            m = self.tar_re.match(line)
             if m:
                 fromdir = os.path.dirname(dscfile)
                 self.tgz = os.path.join(fromdir, m.group('tar'))
@@ -68,46 +61,82 @@ class DscPackage(object):
         f.close()
     
 
-def import_upstream(src, dirs, upstream_branch, tagger):
+def parse_dsc(dscfile):
+    """parse dsc by creating a DscFile object"""
     try:
-        unpackTGZ = UnpackTGZ(src.tgz, dirs['tmp'])
+        dsc = DscFile(dscfile)
+    except IOError, err:
+        print >>sys.stderr, "Error reading dsc file: %s" % err
+        dsc = None
+    else:
+        try:
+            if dsc.native:
+                print "Debian Native Package"
+                print "Version:", dsc.upstream_version
+            else:
+                print "Upstream version:", dsc.upstream_version
+                print "Debian version:", dsc.debian_version
+        except AttributeError:
+            print >>sys.stderr, "Error parsing dsc file %s" % dscfile 
+            dsc = None
+    return dsc
+
+
+def import_upstream(src, dirs, upstream_branch, tagger):
+    """
+    import a new upstream version on the upstream branch and tag
+    appropriately
+    """
+    try:
+        unpackTGZ = git_buildpackage.UnpackTGZ(src.tgz, dirs['tmp'])
         unpackTGZ()
-    except CommandExecFailed:
-        print >>sys.stderr,"Unpacking of %s failed" % (src.tgz,)
-        RemoveTree(dirs['tmp'])()
-        return 1
+    except git_buildpackage.CommandExecFailed:
+        print >>sys.stderr,"Unpacking of %s failed" % src.tgz
+        git_buildpackage.RemoveTree(dirs['tmp'])()
+        return False
 
     try:
-        dirs['git'] = glob.glob('%s/*' % (unpackTGZ.dir, ))[0]
+        dirs['git'] = glob.glob('%s/*' % unpackTGZ.dir)[0]
         os.chdir(dirs['git'])
-        GitInitDB()()
-        gitAdd(['.'])
-        gitCommitAll(msg="Imported %s version %s" % (['upstream','Debian'][src.native],src.upstream_version,))
+        git_buildpackage.GitInitDB()()
+        git_buildpackage.GitAdd()(['.'])
+        git_buildpackage.GitCommitAll()(
+             msg="Imported %s version %s" % (['upstream', 'Debian'][src.native],
+             src.upstream_version))
         tagger(sanitize_version(src.upstream_version))
         if not src.native:
-            GitBranch()(upstream_branch)
-    except CommandExecFailed:
+            git_buildpackage.GitBranch()(upstream_branch)
+    except git_buildpackage.CommandExecFailed:
         print >>sys.stderr,"Creation of git repository failed"
-        RemoveTree(unpackTGZ.dir)()
-        return 1
-    return 0
+        git_buildpackage.RemoveTree(unpackTGZ.dir)()
+        return False
+    return True
 
 
 def apply_debian_patch(src, dirs, tagger):
+    """apply the debian patch and tag appropriately"""
     try:
-        DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
+        git_buildpackage.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
-        GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
+        git_buildpackage.GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
         tagger(sanitize_version('%s-%s' % (src.upstream_version, src.debian_version)))
-    except CommandExecFailed:
+    except git_buildpackage.CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
-        return 1
-    return 0
+        return False
+    return True
 
 
 def move_tree(src, dirs):
-    os.rename(dirs['git'], src.pkg)
-    RemoveTree(dirs['tmp'])()
+    """rename the temporary unpack directory to it's final name"""
+    try:
+        os.rename(dirs['git'], src.pkg)
+    except OSError, err:
+        print >>sys.stderr, "Cannot move git repository '%s' to it's final location '%s': %s" % (dirs['git'],
+              os.path.abspath(src.pkg), err)
+        return False
+    else:
+        git_buildpackage.RemoveTree(dirs['tmp'])()
+    return True
 
 
 def main(argv):
@@ -127,18 +156,20 @@ def main(argv):
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
-        Command.verbose = True
+        git_buildpackage.Command.verbose = True
 
-    gitTag = GitTag(options.sign_tags, options.keyid)
+    gitTag = git_buildpackage.GitTag(options.sign_tags, options.keyid)
 
     if len(args) != 1:
         parser.print_help()
         return 1
     else:        
-        src = DscPackage(args[0])
+        src = parse_dsc(args[0])
+        if not src:
+            return 1
 
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-        if import_upstream(src, dirs, options.upstream_branch, gitTag):
+        if not import_upstream(src, dirs, options.upstream_branch, gitTag):
             return 1
         os.chdir(dirs['top'])
         if not src.native:
@@ -146,11 +177,12 @@ def main(argv):
             os.mkdir(dirs['unpack'])
             dirs['dpkg-src'] = os.path.join(dirs['unpack'],
                                             "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-            if apply_debian_patch(src, dirs, gitTag):
+            if not apply_debian_patch(src, dirs, gitTag):
                 return 1
         os.chdir(dirs['top'])
-        move_tree(src, dirs)
-        print 'Everything imported under %s' % (src.pkg, )
+        if not move_tree(src, dirs):
+            return 1
+        print 'Everything imported under %s' % src.pkg
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

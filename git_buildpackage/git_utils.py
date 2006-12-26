@@ -7,50 +7,62 @@ import subprocess
 import os.path
 import re
 
-
-def is_repository_clean():
-    """Does the repository contain any uncommitted modifications"""
-    clean_msg='nothing to commit'
-    popen = subprocess.Popen(['git','status'], stdout=subprocess.PIPE)
-    popen.wait()
-    out=popen.stdout.readlines()
-    if out[0].strip() == clean_msg:
-        ret=True
-    elif out[0].startswith('#') and out[1].strip() == clean_msg:
-        ret=True
-    else:
-        ret=False
-    return (ret, "".join(out))
+class GitRepositoryError(Exception):
+    pass
 
 
-def get_repository_branch():
-    """on what branch is the repository"""
-    popen = subprocess.Popen(['git','branch'], stdout=subprocess.PIPE)
-    popen.wait()
-    for line in popen.stdout:
-        if line.startswith('*'):
-            return line.split(' ',1)[1].strip()
+class GitRepository(object):
+    """Represents a git repository at path"""
+
+    def __init__(self, path):
+        try:
+            os.stat(os.path.join(path,'.git'))
+        except:
+            raise GitRepositoryError
+        self.path=os.path.abspath(path)
+
+    
+    def __check_path(self):
+        if os.getcwd() != self.path:
+            raise GitRepositoryError
 
 
-def has_branch(branch):
-    """check if the repository has branch branch"""
-    popen = subprocess.Popen(['git','branch'], stdout=subprocess.PIPE)
-    popen.wait()
-    for line in popen.stdout:
-        if line.split(' ',1)[1].strip() == branch:
-            return True
-    return False
+    def __git_getoutput(self, command):
+        """Exec a git command and return the output"""
+        popen = subprocess.Popen(['git',command], stdout=subprocess.PIPE)
+        popen.wait()
+        return popen.stdout.readlines()
 
 
-def is_repository(path):
-    """Is there a git repository at path"""
-    if not path:
+    def has_branch(self, branch):
+        """check if the repository has branch 'branch'"""
+        self.__check_path()
+        for line in self.__git_getoutput('branch'):
+            if line.split(' ',1)[1].strip() == branch:
+                return True
         return False
-    try:
-        os.stat(path+'/.git')
-    except:
-        return False
-    return True
+
+
+    def get_branch(self):
+        """on what branch is the current working copy"""
+        self.__check_path()
+        for line in self.__git_getoutput('branch'):
+            if line.startswith('*'):
+                return line.split(' ',1)[1].strip()
+        
+
+    def is_clean(self):
+        """does the repository contain any uncommitted modifications"""
+        self.__check_path()
+        clean_msg='nothing to commit'
+        out = self.__git_getoutput('status')
+        if out[0].strip() == clean_msg:
+            ret=True
+        elif out[0].startswith('#') and out[1].strip() == clean_msg:
+            ret=True
+        else:
+            ret=False
+        return (ret, "".join(out))
 
 
 def sanitize_version(version):

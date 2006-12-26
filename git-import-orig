@@ -23,21 +23,24 @@ import os
 import tempfile
 import re
 import glob
-from git_buildpackage import *
-from git_buildpackage.git_utils import *
+import git_buildpackage
+from git_buildpackage.git_utils import (GitRepositoryError,
+                                        GitRepository, 
+                                        sanitize_version)
 from git_buildpackage.config import GBPOptionParser
 
 
 def cleanupTmpTree(tree):
-    RemoveTree(tree)()
+    """remove a tree of temporary files"""
+    git_buildpackage.RemoveTree(tree)()
 
 
 def unpackOrig(tgz):
     """unpack a .orig.tar.gz"""
     try:
-        unpackTGZ = UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
+        unpackTGZ = git_buildpackage.UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
         unpackTGZ()
-    except CommandExecFailed:
+    except git_buildpackage.CommandExecFailed:
         print "Unpacking of %s failed" % (tgz,)
         cleanupTmpTree(unpackTGZ.dir)
         return
@@ -71,13 +74,13 @@ def main(argv):
                       help="GPG keyid to sign tags with")
     (options, args) = parser.parse_args(argv[1:])
 
-    gitCheckoutUpstream = GitCheckoutBranch(options.upstream)
-    gitCheckoutMaster = GitCheckoutBranch(options.debian)
-    gitShowBranch = GitShowBranch()
-    gitPullUpstream = GitPull('.', options.upstream)
+    gitCheckoutUpstream = git_buildpackage.GitCheckoutBranch(options.upstream)
+    gitCheckoutMaster = git_buildpackage.GitCheckoutBranch(options.debian)
+    gitShowBranch = git_buildpackage.GitShowBranch()
+    gitPullUpstream = git_buildpackage.GitPull('.', options.upstream)
 
     if options.verbose:
-        Command.verbose = True
+        git_buildpackage.Command.verbose = True
 
     if len(args) != 1:
         parser.print_help()
@@ -85,11 +88,13 @@ def main(argv):
     else:
         tgz = args[0]
 
-    if not is_repository('.'):
-        print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'),)
+    try:
+        repo=GitRepository('.')
+    except GitRepositoryError:
+        print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
         return 1
 
-    if not has_branch(options.upstream):
+    if not repo.has_branch(options.upstream):
         print >>sys.stderr, """
 Repository does not have branch '%s' for upstream sources. If there is none see
 /usr/share/doc/git-buildpackage/manual-html/gbp.import.convert.html on howto
@@ -108,7 +113,7 @@ create it otherwise use --upstream-branch to specify it.
         parser.print_help()
         return 1
 
-    (ret, out) = is_repository_clean()
+    (ret, out) = repo.is_clean()
     if not ret:
         print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
         print >>sys.stderr, out
@@ -126,16 +131,16 @@ create it otherwise use --upstream-branch to specify it.
         print "Importing %s to upstream branch..." % tgz
         gitCheckoutUpstream()
         gitShowBranch()
-        GitLoadDirs()(origdir)
-        GitTag(options.sign_tags, options.keyid)(sanitize_version(version))
+        git_buildpackage.GitLoadDirs()(origdir)
+        git_buildpackage.GitTag(options.sign_tags, options.keyid)(sanitize_version(version))
    
         if options.merge:
             print "Merging to %s" % (options.debian,)
             gitCheckoutMaster()
             gitShowBranch()
             gitPullUpstream()
-            Dch("%s-1" % (version,), 'New Upstream Version')()
-    except CommandExecFailed:
+            git_buildpackage.Dch("%s-1" % (version,), 'New Upstream Version')()
+    except git_buildpackage.CommandExecFailed:
         print >>sys.stderr, "Import of %s failed" % (tgz,)
         cleanupTmpTree(tmpdir)
         return 1

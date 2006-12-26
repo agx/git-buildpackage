@@ -20,8 +20,13 @@
 
 import sys,os,os.path,pipes
 from git_buildpackage import GitTag, Command, CommandExecFailed
-from git_buildpackage.git_utils import *
-from git_buildpackage.deb_utils import *
+from git_buildpackage.git_utils import (GitRepositoryError,
+                                        GitRepository, 
+                                        sanitize_version)
+from git_buildpackage.deb_utils import (parse_changelog,
+                                        is_native,
+                                        orig_file,
+                                        has_orig)
 from git_buildpackage.config import GBPOptionParser
 
 output_dir = '../'
@@ -78,20 +83,22 @@ def main(argv):
     if options.verbose:
         Command.verbose = True
 
-    if not is_repository('.'):
+    try:
+        repo=GitRepository('.')
+    except GitRepositoryError:
         print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
         return 1
 
     try:
         if not options.ignore_new:
             Command(options.clean_cmd)()
-            (ret, out) = is_repository_clean()
+            (ret, out) = repo.is_clean()
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
                 print >>sys.stderr, out
                 print >>sys.stderr, "Use --git-ignore-new to ignore."
                 return 1
-        branch=get_repository_branch()
+        branch = repo.get_branch()
         if branch != options.debian_branch and not options.ignore_new:
             print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
             print >>sys.stderr, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
@@ -100,6 +107,9 @@ def main(argv):
         cp = parse_changelog('debian/changelog')
         if not is_native(cp) and not has_orig(cp, output_dir):
             print "%s does not exist, creating from branch %s" % (orig_file(cp), options.upstream_branch)
+            if not repo.has_branch(options.upstream_branch):
+                print >>sys.stderr,"Upstream branch '%s' does not exist" % options.upstream
+                return 1
             if not create_orig(cp, output_dir, options.upstream_branch):
                 return 1
 

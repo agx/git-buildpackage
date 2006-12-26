@@ -11,6 +11,7 @@ class CommandExecFailed(Exception):
     """Exception raised by the Command class"""
     pass
 
+
 class Command(object):
     """
     Wraps a shell command, so we don't have to store any kind of command line options in 

@@ -1,9 +1,12 @@
 git-buildpackage (0.2.22) unstable; urgency=low
 
-  * UNRELEASED
+  * git-buildpackage: check if upstream branch exists
+  * git-import-dsc: improve error handling
+  * add GitRepository class
+  * make pylint a bit happier
   * update manpages
 
- -- Guido Guenther <agx@sigxcpu.org>  Mon, 25 Dec 2006 18:03:05 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 26 Dec 2006 00:27:44 +0100
 
 git-buildpackage (0.2.21) unstable; urgency=low
 
