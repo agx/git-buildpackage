@@ -1,4 +1,21 @@
 <chapter id="gbp.building">
-    <title>Building Packages from the &git; repository</title>
-    <para>TBD</para>
+    <title>Building packages from the &git; repository</title>
+    <para>
+    In order to build a &debian; package from the &git; repository you use:
+    &git-buildpackage;. During the development phase (when you're either not
+    on the <emphasis>master</emphasis>-branch or when you have uncommitted
+    changes in your repository) you'll usually use:
+<screen>
+&git-buildpackage; <option>--git-ignore-new</option>
+</screen>
+    Once you're satisfied with the build and want to do a relese you commit all
+    you changes and issue:
+<screen>
+&git-buildpackage; <option>--git-tag</option>
+</screen>
+    This will again build the debian package and tag the final result after
+    extracting the current version from the changelog. If you want &gpg; signed
+    tags you can use the <option>--git-sign</option> and
+    <option>--git-keyid</option> options.
+    </para>
 </chapter>

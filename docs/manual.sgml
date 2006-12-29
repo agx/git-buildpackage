@@ -19,9 +19,8 @@
 
   &ch.intro;
   &ch.import;
-<!---
   &ch.building;
--->
+  &ch.cfgfile;
   &ch.special;
 
   <appendix id="gbp.man.reference">

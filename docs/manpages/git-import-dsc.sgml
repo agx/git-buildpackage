@@ -7,11 +7,6 @@
       &dhfirstname;
       &dhsurname;
     </author>
-    <copyright>
-      <year>2006</year>
-      <holder>&dhusername;</holder>
-    </copyright>
-    &dhdate;
   </refentryinfo>
   <refmeta>
     <refentrytitle>git-import-dsc</refentrytitle>

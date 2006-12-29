@@ -6,10 +6,12 @@
     <screen>
 &git-import-dsc; package_0.1-1.dsc
     </screen>
-    This will put the upstream sources onto the <option>upstream</option>
-    branch and the debian patch on the <option>master</option> branch. In case
-    of a debian native package only the <option>master</option> branch is being
+    This will put the upstream sources onto the <emphasis>upstream</emphasis>
+    branch and the debian patch on the <emphasis>master</emphasis> branch. In case
+    of a debian native package only the <emphasis>master</emphasis> branch is being
     used.
+    You can specify different branch names via the
+    <option>--upstream-branch</option> and <option>--debian-branch</option> options.
     </para>
     </sect1>
     <sect1 id="gbp.import.new.upstream">
@@ -19,6 +21,12 @@
     <screen>
 &git-import-orig; /path/to/package_0.2.orig.tar.gz
     </screen>
+    This puts the upstream souces onto the <emphasis>upsream</emphasis> branch
+    using &git_load_dirs; to handle file removals and renames. The result of
+    this is then merged onto the <emphasis>master</emphasis> branch and a new
+    changelog entry gets created. You can again specify different branch names
+    via the <option>--upstream-branch</option> and
+    <option>--debian-branch</option> options.
     </para>
     </sect1>
     <sect1 id="gbp.import.convert">

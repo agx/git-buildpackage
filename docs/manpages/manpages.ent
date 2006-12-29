@@ -7,7 +7,7 @@
     commandline arguments: </para>
     <variablelist>
       <varlistentry>
-      <term>/etc/git-buildpacakge/gbp.conf</term>
+      <term>/etc/git-buildpackage/gbp.conf</term>
       <listitem><para>system wide configuraton</para></listitem>
       </varlistentry>
       <varlistentry>
