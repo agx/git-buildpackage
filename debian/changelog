@@ -1,3 +1,11 @@
+git-buildpackage (0.2.23) unstable; urgency=low
+
+  * depend on gtk-doc-tools, sgml2x and jade (Closes: #404673)
+  * use docbook-utils insted of docbook-to-man
+  * docbook updates
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 29 Dec 2006 18:18:50 +0100
+
 git-buildpackage (0.2.22) unstable; urgency=low
 
   * git-buildpackage: check if upstream branch exists

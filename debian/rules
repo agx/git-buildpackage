@@ -14,7 +14,7 @@ PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
 PYCHECK_LEVEL=Error
 
 docs/%.1: docs/man.%.sgml
-	docbook-to-man $< > $@
+	docbook2man -o docs/ $<
 
 $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	docbook-2-html -s gtk $<
@@ -26,6 +26,7 @@ $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(PYCHECKS)
 
 clean::
-	-rm docs/*.1  git-*.py
-	-rm -rf docs/manual-html/
+	-rm git-*.py
+	-rm docs/*.1 docs/manpage.*
+	-rm -r docs/manual-html/
 
