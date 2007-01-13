@@ -106,9 +106,9 @@ def main(argv):
 
         cp = parse_changelog('debian/changelog')
         if not is_native(cp) and not has_orig(cp, output_dir):
-            print "%s does not exist, creating from branch %s" % (orig_file(cp), options.upstream_branch)
+            print "%s does not exist, creating from branch '%s'" % (orig_file(cp), options.upstream_branch)
             if not repo.has_branch(options.upstream_branch):
-                print >>sys.stderr,"Upstream branch '%s' does not exist" % options.upstream
+                print >>sys.stderr,"Upstream branch '%s' does not exist" % options.upstream_branch
                 return 1
             if not create_orig(cp, output_dir, options.upstream_branch):
                 return 1
