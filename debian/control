@@ -5,6 +5,7 @@ Maintainer: Guido Guenther <agx@sigxcpu.org>
 Build-Depends: cdbs, debhelper (>= 5), python-dev, python-support (>= 0.3),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade
 Standards-Version: 3.7.2
+XS-Vcs-Git: http://honk.sigxcpu.org/git/git-buildpackage.git/
 
 Package: git-buildpackage
 Architecture: all
