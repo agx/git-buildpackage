@@ -1,3 +1,10 @@
+git-buildpackage (0.2.24) unstable; urgency=low
+
+  * add XS-Vcs-Git
+  * fix error message in case the upstream branch doesn't exist
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 13 Jan 2007 22:05:23 +0100
+
 git-buildpackage (0.2.23) unstable; urgency=low
 
   * depend on gtk-doc-tools, sgml2x and jade (Closes: #404673)
