@@ -29,7 +29,11 @@ from git_buildpackage.deb_utils import (parse_changelog,
                                         has_orig)
 from git_buildpackage.config import GBPOptionParser
 
-output_dir = '../'
+
+class GbpError(Exception):
+    """Generic exception raised in git-buildpackage commands"""
+    pass
+
 
 def create_orig(cp, dir, branch):
     "create an orig.tar.gz"
@@ -52,6 +56,8 @@ def create_orig(cp, dir, branch):
 
 
 def main(argv):
+    output_dir = '..'
+
     args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
     dpkg_args = [ arg for arg in argv[1:] if arg.find('--git-') == -1 ]
 
@@ -84,7 +90,7 @@ def main(argv):
         Command.verbose = True
 
     try:
-        repo=GitRepository('.')
+        repo = GitRepository('.')
     except GitRepositoryError:
         print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
         return 1
@@ -96,34 +102,34 @@ def main(argv):
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
                 print >>sys.stderr, out
-                print >>sys.stderr, "Use --git-ignore-new to ignore."
-                return 1
+                raise GbpError, "Use --git-ignore-new to ignore."
         branch = repo.get_branch()
         if branch != options.debian_branch and not options.ignore_new:
             print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
-            print >>sys.stderr, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
-            return 1
+            raise GbpError, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
 
         cp = parse_changelog('debian/changelog')
         if not is_native(cp) and not has_orig(cp, output_dir):
             print "%s does not exist, creating from branch '%s'" % (orig_file(cp), options.upstream_branch)
             if not repo.has_branch(options.upstream_branch):
-                print >>sys.stderr,"Upstream branch '%s' does not exist" % options.upstream_branch
-                return 1
+                raise GbpError, "Upstream branch '%s' does not exist" % options.upstream_branch
             if not create_orig(cp, output_dir, options.upstream_branch):
-                return 1
+                raise GbpError
 
         Command(options.build_cmd, [ '-i\.git/', '-I.git' ] + dpkg_args)()
         if options.tag:
             try:
-                version=cp['Version']
+                version = cp['Version']
             except KeyError:
-                print >>sys.stderr,"Can't parse version from changes file"
-                return 1
+                raise GbpError, "Can't parse version from changes file"
             else:
                 print "Tagging", version
-                if not GitTag(options.sign_tag, options.keyid)(sanitize_version(version)): return 1
+                GitTag(options.sign_tag, options.keyid)(sanitize_version(version))
     except CommandExecFailed:
+        return 1
+    except GbpError, err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
         return 1
     return 0
 
