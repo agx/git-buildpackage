@@ -15,12 +15,12 @@ def parse_changelog(changelog):
     status, output = commands.getstatusoutput('dpkg-parsechangelog -l%s' % (changelog, ))
     if status:
         return None
-    cl=email.message_from_string(output)
-    if '-' in cl['Version']:
-        cl['Upstream-Version'], cl['Debian-Version'] = cl['Version'].rsplit('-',1)
+    cp=email.message_from_string(output)
+    if '-' in cp['Version']:
+        cp['Upstream-Version'], cp['Debian-Version'] = cp['Version'].rsplit('-',1)
     else:
-        cl['Debian-Version']=cl['Version']
-    return cl
+        cp['Debian-Version']=cp['Version']
+    return cp
  
 
 def orig_file(cp):
@@ -36,7 +36,7 @@ def is_native(cp):
 def has_orig(cp, dir):
     "Check if orig.tar.gz exists in dir"
     try:
-        os.stat("%s%s" % (dir,orig_file(cp)))
+        os.stat( os.path.join(dir, orig_file(cp)) )
     except OSError:
         return False
     return True
