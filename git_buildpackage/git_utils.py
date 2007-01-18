@@ -5,7 +5,6 @@
 
 import subprocess
 import os.path
-import re
 
 class GitRepositoryError(Exception):
     pass
@@ -19,7 +18,7 @@ class GitRepository(object):
             os.stat(os.path.join(path,'.git'))
         except:
             raise GitRepositoryError
-        self.path=os.path.abspath(path)
+        self.path = os.path.abspath(path)
 
     
     def __check_path(self):
@@ -29,7 +28,7 @@ class GitRepository(object):
 
     def __git_getoutput(self, command):
         """Exec a git command and return the output"""
-        popen = subprocess.Popen(['git',command], stdout=subprocess.PIPE)
+        popen = subprocess.Popen(['git', command], stdout=subprocess.PIPE)
         popen.wait()
         return popen.stdout.readlines()
 
@@ -38,7 +37,7 @@ class GitRepository(object):
         """check if the repository has branch 'branch'"""
         self.__check_path()
         for line in self.__git_getoutput('branch'):
-            if line.split(' ',1)[1].strip() == branch:
+            if line.split(' ', 1)[1].strip() == branch:
                 return True
         return False
 
@@ -48,27 +47,27 @@ class GitRepository(object):
         self.__check_path()
         for line in self.__git_getoutput('branch'):
             if line.startswith('*'):
-                return line.split(' ',1)[1].strip()
+                return line.split(' ', 1)[1].strip()
         
 
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
         self.__check_path()
-        clean_msg='nothing to commit'
+        clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')
         if out[0].strip() == clean_msg:
-            ret=True
+            ret = True
         elif out[0].startswith('#') and out[1].strip() == clean_msg:
-            ret=True
+            ret = True
         else:
-            ret=False
+            ret = False
         return (ret, "".join(out))
 
 
 def sanitize_version(version):
     """sanitize a version so git accepts it as a tag"""
     if ':' in version: # strip of any epochs
-        version=version.split(':',1)[1]
-    return version.replace('~','.')
+        version=version.split(':', 1)[1]
+    return version.replace('~', '.')
 
 # vim:et:ts=4:sw=4:
