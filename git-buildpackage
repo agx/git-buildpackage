@@ -82,6 +82,8 @@ def main(argv):
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tag",
                       help="sign git tags", action="store_true")
+    parser.add_config_file_option(option_name="posttag", dest="posttag_hook",
+                      help="hook to execute after a successfull tag operation")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
     (options, args) = parser.parse_args(args)
@@ -97,7 +99,7 @@ def main(argv):
 
     try:
         if not options.ignore_new:
-            Command(options.clean_cmd)()
+            Command(options.clean_cmd, shell=True)()
             (ret, out) = repo.is_clean()
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
@@ -116,7 +118,7 @@ def main(argv):
             if not create_orig(cp, output_dir, options.upstream_branch):
                 raise GbpError
 
-        Command(options.build_cmd, [ '-i\.git/', '-I.git' ] + dpkg_args)()
+        Command(options.build_cmd, [ '-i\.git/', '-I.git' ] + dpkg_args, shell=True)()
         if options.tag:
             try:
                 version = cp['Version']
@@ -125,6 +127,8 @@ def main(argv):
             else:
                 print "Tagging", version
                 GitTag(options.sign_tag, options.keyid)(sanitize_version(version))
+                if(options.posttag_hook):
+                    Command(options.posttag_hook, shell=True)()
     except CommandExecFailed:
         return 1
     except GbpError, err:

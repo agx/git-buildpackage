@@ -29,6 +29,7 @@ class GBPOptionParser(OptionParser):
                'upstream-branch' : 'upstream',
                'sign-tags'	     : '',		# empty means False
                'keyid'		     : '',
+               'posttag'         : '',
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),

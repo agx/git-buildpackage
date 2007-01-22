@@ -17,25 +17,30 @@ class Command(object):
     Wraps a shell command, so we don't have to store any kind of command line options in 
     one of the git-buildpackage commands
     """
-    verbose=False
+    verbose = False
 
-    def __init__(self, cmd, args=[]):
-        self.cmd=cmd.split()
-        self.args=args
-        self.run_error="Couldn't run '%s'" % (" ".join(self.cmd+args))
+    def __init__(self, cmd, args=[], shell=False):
+        self.cmd = cmd
+        self.args = args
+        self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] + self.args))
+        self.shell = shell
 
     def __run(self, args):
+        """run self.cmd adding args as additional arguments"""
         try:
             if self.verbose:
                 print self.cmd, self.args, args
-            retcode = subprocess.call(self.cmd + self.args + args)
+            cmd = [ self.cmd ] + self.args + args
+            if self.shell: # subprocess.call only cares about the first argument if shell=True
+                cmd = " ".join(cmd)
+            retcode = subprocess.call(cmd, shell=self.shell)
             if retcode < 0:
-                print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd[0],  -retcode)
+                print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
             elif retcode > 0:
-                print >>sys.stderr, "%s returned %d" % (self.cmd[0],  retcode)
+                print >>sys.stderr, "%s returned %d" % (self.cmd,  retcode)
         except OSError, e:
             print >>sys.stderr, "Execution failed:", e
-            retcode=1
+            retcode = 1
         if retcode:
             print >>sys.stderr,self.run_error
         return retcode
@@ -48,28 +53,28 @@ class Command(object):
 class UnpackTGZ(Command):
     """Wrap tar to Unpack a gzipped tar archive"""
     def __init__(self, tgz, dir):
-        self.tgz=tgz
-        self.dir=dir
+        self.tgz = tgz
+        self.dir = dir
         Command.__init__(self, 'tar', [ '-C', dir, '-zxf', tgz ])
-        self.run_error="Couldn't unpack %s" % (self.tgz,)
+        self.run_error = "Couldn't unpack %s" % self.tgz
 
 
 class RemoveTree(Command):
     "Wrap rm to remove a whole directory tree"
     def __init__(self, tree):
-        self.tree=tree
+        self.tree = tree
         Command.__init__(self, 'rm', [ '-rf', tree ])
-        self.run_error="Couldn't remove %s" % (self.tree,)
+        self.run_error = "Couldn't remove %s" % self.tree
 
 
 class Dch(Command):
     """Wrap dch and set a specific version"""
     def __init__(self, version, msg):
-        args=['-v', version]
+        args = ['-v', version]
         if msg:
             args.append(msg)
         Command.__init__(self, 'dch', args)
-        self.run_error="Dch failed."
+        self.run_error = "Dch failed."
 
 
 class DpkgSourceExtract(Command):
@@ -81,7 +86,7 @@ class DpkgSourceExtract(Command):
         Command.__init__(self, 'dpkg-source', ['-x'])
     
     def __call__(self, dsc, output_dir):
-        self.run_error="Couldn't extract %s" % (dsc,)
+        self.run_error = "Couldn't extract %s" % dsc
         Command.__call__(self, [dsc, output_dir])
 
 
@@ -91,9 +96,9 @@ class GitLoadDirs(Command):
         Command.__init__(self, 'git_load_dirs')
 
     def __call__(self, dir, log=''):
-        self.dir=dir
-        self.run_error="Couldn't import %s" % self.dir
-        args=[ [],['-L', log] ] [len(log) > 0]
+        self.dir = dir
+        self.run_error = "Couldn't import %s" % self.dir
+        args =[ [],['-L', log] ] [len(log) > 0]
         Command.__call__(self, args+[dir])
 
 
@@ -106,39 +111,39 @@ class GitCommand(Command):
 class GitInitDB(GitCommand):
     """Wrap git-init-db"""
     def __init__(self):
-        GitCommand.__init__(self,'init-db')
-        self.run_error="Couldn't init git repository"
+        GitCommand.__init__(self, 'init-db')
+        self.run_error = "Couldn't init git repository"
 
 
 class GitShowBranch(GitCommand):
     """Wrap git-show-branch"""
     def __init__(self):
-        GitCommand.__init__(self,'branch')
-        self.run_error="Couldn't list branches"
+        GitCommand.__init__(self, 'branch')
+        self.run_error = "Couldn't list branches"
 
 
 class GitBranch(GitCommand):
     """Wrap git-branch"""
     def __init__(self):
-        GitCommand.__init__(self,'branch')
+        GitCommand.__init__(self, 'branch')
 
     def __call__(self, branch):
-        self.run_error="Couldn't create branch %s" % (branch,)
+        self.run_error = "Couldn't create branch %s" % (branch,)
         GitCommand.__call__(self, [branch])
 
 
 class GitCheckoutBranch(GitCommand):
     """Wrap git-checkout in order tos switch to a certain branch"""
     def __init__(self, branch):
-        GitCommand.__init__(self,'checkout', [branch])
-        self.branch=branch
-        self.run_error="Couldn't switch to %s branch" % self.branch
+        GitCommand.__init__(self, 'checkout', [branch])
+        self.branch = branch
+        self.run_error = "Couldn't switch to %s branch" % self.branch
 
 
 class GitPull(GitCommand):
     """Wrap git-pull"""
     def __init__(self, repo, branch):
-        GitCommand.__init__(self,'pull', [repo, branch]) 
+        GitCommand.__init__(self, 'pull', [repo, branch]) 
         self.run_error = "Couldn't pull %s to %s" % (branch, repo)
 
 
@@ -150,7 +155,7 @@ class GitTag(GitCommand):
         self.keyid = keyid
 
     def __call__(self, version, msg="Tagging %(version)s"):
-        self.run_error="Couldn't tag %s" % (version,)
+        self.run_error = "Couldn't tag %s" % (version,)
         if self.sign_tag:
             if self.keyid:
                 sign_opts = [ '-u', self.keyid ]
@@ -171,11 +176,11 @@ class GitAdd(GitCommand):
 class GitCommitAll(GitCommand):
     """Wrap git-commit to commit all changes"""
     def __init__(self):
-        GitCommand.__init__(self,'commit', ['-a'])
+        GitCommand.__init__(self, 'commit', ['-a'])
 
     def __call__(self, msg=''):
         args = [ [], ['-m', msg] ][len(msg) > 0]
-        self.run_error="Couldn't commit -a %s" % " ".join(args)
+        self.run_error = "Couldn't commit -a %s" % " ".join(args)
         GitCommand.__call__(self, args)
 
 
