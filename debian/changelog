@@ -4,8 +4,11 @@ git-buildpackage (0.2.25) unstable; urgency=low
   * posttag suport for git-buildpackage: use --git-posttag to run a command
     after a successfull build with tag (e.g. --git-posttag='git-push --tags
     git.alioth.org')
+  * Repositories that never had the upstream sources as a single commit can be
+    made git-import-orig compatible by using git's grafts. Mention this in the
+    manual (Closes: #403988).
 
- -- Guido Guenther <agx@sigxcpu.org>  Fri, 19 Jan 2007 00:07:14 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Thu,  1 Feb 2007 17:54:56 +0100
 
 git-buildpackage (0.2.24) unstable; urgency=low
 

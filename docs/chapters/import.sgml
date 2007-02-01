@@ -58,7 +58,7 @@ upstream-branch=theupstream-branch
     <sect2>
     <title>Upstream sources not on a branch</title>
     <para>
-    If you don't have an upstream branch but started you repository with only
+    If you don't have an upstream branch but started your repository with only
     the upstream sources (not the debian patch) you can simply branch from that
     point. So use &gitkcmd; or &gitcmd;-log to locate the commit-id of that commit
     and create the upstream branch from there, e.g.:
@@ -71,10 +71,15 @@ upstream-branch=theupstream-branch
     upstream sources and not the debian modifications. The above example
     assumes that this was the first commit to that repository.
     </para>
-    <warning><para>There's currently no easy way to use &git-import-orig; with
-    a repository that never had the upstream sources as a single commit. Using
-    it on such repositories might lead to unexpected merge results. You can use
-    <command>git_load_dirs</command> instead.</para></warning>
+    <warning><para>There's currently no <emphasis>easy</emphasis> way to create the
+    <emphasis>upstream</emphasis> branch if you never had the upstream sources
+    as a single commit. Using &git-import-orig; on such repositories might lead
+    to unexpected merge results.</para></warning>
+    <para>In order to fix this you can prepend the upstream sources as a
+    single commit to your tree using &git;'s <ulink
+    url="http://git.or.cz/gitwiki/GraftPoint">grafts</ulink>. Afterwards you
+    can simply create a branch as explained above and &git-import-orig; should
+    work as expected.</para>
     </sect2>
     </sect1>
 </chapter>
