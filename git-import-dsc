@@ -25,7 +25,7 @@ import tempfile
 import glob
 import git_buildpackage
 from git_buildpackage.deb_utils import debian_version_chars
-from git_buildpackage.git_utils import sanitize_version
+from git_buildpackage.git_utils import build_tag
 from git_buildpackage.config import GBPOptionParser
 
 
@@ -82,10 +82,10 @@ def parse_dsc(dscfile):
     return dsc
 
 
-def import_upstream(src, dirs, upstream_branch, tagger):
+def import_upstream(src, dirs, options, tagger):
     """
-    import a new upstream version on the upstream branch and tag
-    appropriately
+    import a new upstream version, create the upstream branch in case of a non
+    debian native package and tag appropriately
     """
     try:
         unpackTGZ = git_buildpackage.UnpackTGZ(src.tgz, dirs['tmp'])
@@ -103,9 +103,10 @@ def import_upstream(src, dirs, upstream_branch, tagger):
         git_buildpackage.GitCommitAll()(
              msg="Imported %s version %s" % (['upstream', 'Debian'][src.native],
              src.upstream_version))
-        tagger(sanitize_version(src.upstream_version))
+        format = [options.upstream_tag, options.debian_tag][src.native]
+        tagger(build_tag(format, src.upstream_version))
         if not src.native:
-            git_buildpackage.GitBranch()(upstream_branch)
+            git_buildpackage.GitBranch()(options.upstream_branch)
     except git_buildpackage.CommandExecFailed:
         print >>sys.stderr,"Creation of git repository failed"
         git_buildpackage.RemoveTree(unpackTGZ.dir)()
@@ -113,13 +114,13 @@ def import_upstream(src, dirs, upstream_branch, tagger):
     return True
 
 
-def apply_debian_patch(src, dirs, tagger):
+def apply_debian_patch(src, dirs, options, tagger):
     """apply the debian patch and tag appropriately"""
     try:
         git_buildpackage.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
         git_buildpackage.GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
-        tagger(sanitize_version('%s-%s' % (src.upstream_version, src.debian_version)))
+        tagger(build_tag(options.debian_tag, '%s-%s' % (src.upstream_version, src.debian_version)))
     except git_buildpackage.CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
         return False
@@ -153,6 +154,10 @@ def main(argv):
                       help="sign git tags", action="store_true")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
+    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
+                      help="Format string for debian tags, default is '%(debian-tag)s'")
+    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
+                      help="Format string for upstream tags, default is '%(upstream-tag)s'")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
@@ -169,7 +174,7 @@ def main(argv):
             return 1
 
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-        if not import_upstream(src, dirs, options.upstream_branch, gitTag):
+        if not import_upstream(src, dirs, options, gitTag):
             return 1
         os.chdir(dirs['top'])
         if not src.native:
@@ -177,7 +182,7 @@ def main(argv):
             os.mkdir(dirs['unpack'])
             dirs['dpkg-src'] = os.path.join(dirs['unpack'],
                                             "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-            if not apply_debian_patch(src, dirs, gitTag):
+            if not apply_debian_patch(src, dirs, options, gitTag):
                 return 1
         os.chdir(dirs['top'])
         if not move_tree(src, dirs):

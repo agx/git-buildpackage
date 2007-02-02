@@ -98,7 +98,7 @@ class GitLoadDirs(Command):
     def __call__(self, dir, log=''):
         self.dir = dir
         self.run_error = "Couldn't import %s" % self.dir
-        args =[ [],['-L', log] ] [len(log) > 0]
+        args = [ [], ['-L', log] ] [len(log) > 0]
         Command.__call__(self, args+[dir])
 
 

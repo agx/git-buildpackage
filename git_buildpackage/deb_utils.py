@@ -8,14 +8,14 @@ import os
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
-debian_version_chars='a-zA-Z\d.~+-'
+debian_version_chars = 'a-zA-Z\d.~+-'
 
 def parse_changelog(changelog):
     """parse changelog file changelog"""
     status, output = commands.getstatusoutput('dpkg-parsechangelog -l%s' % (changelog, ))
     if status:
         return None
-    cp=email.message_from_string(output)
+    cp = email.message_from_string(output)
     if '-' in cp['Version']:
         cp['Upstream-Version'], cp['Debian-Version'] = cp['Version'].rsplit('-', 1)
     else:

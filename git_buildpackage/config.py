@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-#
 # (C) 2006 Guido Guenther <agx@sigxcpu.org>
-"""handles command line and config file option parsing for the git-buildpackage"""
+"""handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
@@ -26,10 +25,11 @@ class GBPOptionParser(OptionParser):
                'cleaner'	     : 'debuild clean',
                'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
-               'upstream-branch' : 'upstream',
                'sign-tags'	     : '',		# empty means False
                'keyid'		     : '',
                'posttag'         : '',
+               'debian-tag'      : 'debian/%(version)s',
+               'upstream-tag'    : 'upstream/%(version)s',
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),
@@ -41,7 +41,7 @@ class GBPOptionParser(OptionParser):
         parser.read(self.config_files)
         self.config=dict(parser.defaults())
         if parser.has_section(self.command):
-            self.config=dict(parser.items(self.command))
+            self.config=dict(parser.items(self.command, raw=True))
 
     def __init__(self, command, prefix='', usage=None):
         self.command=command

@@ -7,6 +7,7 @@ import subprocess
 import os.path
 
 class GitRepositoryError(Exception):
+    """Exception thrown by GitRepository"""
     pass
 
 
@@ -64,10 +65,15 @@ class GitRepository(object):
         return (ret, "".join(out))
 
 
+def build_tag(format, version):
+    """Generate a tag from a given format and a version"""
+    return format % dict(version=sanitize_version(version))
+
+
 def sanitize_version(version):
     """sanitize a version so git accepts it as a tag"""
     if ':' in version: # strip of any epochs
-        version=version.split(':', 1)[1]
+        version = version.split(':', 1)[1]
     return version.replace('~', '.')
 
 # vim:et:ts=4:sw=4:

@@ -27,6 +27,7 @@
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -92,6 +93,13 @@
         </term>
         <listitem>
           <para>use this keyid for gpg signing tags</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
+        </term>
+        <listitem>
+          <para>use this tag format when tagging upstream versions</para>
         </listitem>
       </varlistentry>
     </variablelist>

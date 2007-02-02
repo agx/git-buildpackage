@@ -29,6 +29,7 @@
       <arg><option>--git-sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
+      <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -136,6 +137,13 @@
         </term>
         <listitem>
 	  <para>excecute <replaceable>command</replaceable> after tagging a new version</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-debian-tag=</option><replaceable>tag-format</replaceable>
+        </term>
+        <listitem>
+          <para>use this tag format when tagging Debian versions</para>
         </listitem>
       </varlistentry>
     </variablelist>
