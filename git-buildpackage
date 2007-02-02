@@ -22,7 +22,7 @@ import sys,os,os.path,pipes
 from git_buildpackage import GitTag, Command, CommandExecFailed
 from git_buildpackage.git_utils import (GitRepositoryError,
                                         GitRepository, 
-                                        sanitize_version)
+                                        build_tag)
 from git_buildpackage.deb_utils import (parse_changelog,
                                         is_native,
                                         orig_file,
@@ -73,9 +73,9 @@ def main(argv):
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="builder", dest="build_cmd",
-                      help="command to build the package e.g. default is '%(builder)s'")
+                      help="command to build the package, default is '%(builder)s'")
     parser.add_config_file_option(option_name="cleaner", dest="clean_cmd",
-                      help="command to build the package e.g. default is '%(cleaner)s'")
+                      help="command to build the package, default is '%(cleaner)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
@@ -86,6 +86,8 @@ def main(argv):
                       help="hook to execute after a successfull tag operation")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
+    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
+                      help="Format string for debian tags, default is '%(debian-tag)s'")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
@@ -126,7 +128,7 @@ def main(argv):
                 raise GbpError, "Can't parse version from changes file"
             else:
                 print "Tagging", version
-                GitTag(options.sign_tag, options.keyid)(sanitize_version(version))
+                GitTag(options.sign_tag, options.keyid)(build_tag(options.debian_tag, version))
                 if(options.posttag_hook):
                     Command(options.posttag_hook, shell=True)()
     except CommandExecFailed:

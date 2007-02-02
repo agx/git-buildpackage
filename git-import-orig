@@ -26,7 +26,7 @@ import glob
 import git_buildpackage
 from git_buildpackage.git_utils import (GitRepositoryError,
                                         GitRepository, 
-                                        sanitize_version)
+                                        build_tag)
 from git_buildpackage.config import GBPOptionParser
 
 
@@ -72,6 +72,8 @@ def main(argv):
                       help="sign git tags", action="store_true")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
+    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
+                      help="Format string for upstream tags, default is '%(upstream-tag)s'")
     (options, args) = parser.parse_args(argv[1:])
 
     gitCheckoutUpstream = git_buildpackage.GitCheckoutBranch(options.upstream)
@@ -89,7 +91,7 @@ def main(argv):
         tgz = args[0]
 
     try:
-        repo=GitRepository('.')
+        repo = GitRepository('.')
     except GitRepositoryError:
         print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
         return 1
@@ -125,14 +127,14 @@ create it otherwise use --upstream-branch to specify it.
     else:
         if options.verbose:
             print "Unpacked orig to %s" % tmpdir
-        origdir=glob.glob(tmpdir+'/*')[0]
+        origdir = glob.glob(tmpdir+'/*')[0]
   
     try:
         print "Importing %s to upstream branch..." % tgz
         gitCheckoutUpstream()
         gitShowBranch()
         git_buildpackage.GitLoadDirs()(origdir)
-        git_buildpackage.GitTag(options.sign_tags, options.keyid)(sanitize_version(version))
+        git_buildpackage.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version))
    
         if options.merge:
             print "Merging to %s" % (options.debian,)
