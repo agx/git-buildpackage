@@ -1,14 +1,19 @@
 git-buildpackage (0.2.25) unstable; urgency=low
 
-  * UNRELEASED
-  * posttag suport for git-buildpackage: use --git-posttag to run a command
-    after a successfull build with tag (e.g. --git-posttag='git-push --tags
+  * posttag support for git-buildpackage: use --git-posttag to run a command
+    after a successfull build and tag (e.g. --git-posttag='git-push --tags
     git.alioth.org')
-  * Repositories that never had the upstream sources as a single commit can be
-    made git-import-orig compatible by using git's grafts. Mention this in the
-    manual (Closes: #403988).
+  * repositories that weren't created by git-import-dsc and never had the
+    upstream sources as a single commit (let alone an upstream branch) can be
+    made git-import-orig compatible by using git's grafts - mention this in
+    the manual. This (Closes: #403988) since with this every git repo can use
+    git-import-orig (with some preparation).
+  * Allow to specify the tag format. The format of generated tags can now be
+    specified via the debian-tag and upsteam-tag options. The default now puts
+    debian tags and upstream tags into different namespaces (Closes: #408990).
+  * add example for pbuilder
 
- -- Guido Guenther <agx@sigxcpu.org>  Thu,  1 Feb 2007 17:54:56 +0100
+ -- Guido Guenther <agx@sigxcpu.org>  Fri,  2 Feb 2007 16:26:52 +0100
 
 git-buildpackage (0.2.24) unstable; urgency=low
 

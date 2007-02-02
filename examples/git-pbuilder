@@ -1,0 +1,8 @@
+#!/bin/sh -e
+#
+# pbuilder helper for git-buildpackage
+# use this as "builder" in gbp.conf
+
+# pass all options to dpkg-buildpackage:
+pdebuild --debbuildopts "$*"
+

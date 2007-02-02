@@ -1,0 +1,6 @@
+git-buildpackage (0.2.25) unstable; urgency=low
+
+  Generated tags are now by default put into debian/ and upstream/ namespaces.
+  This doesn't have any effect on already existing tags.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri,  2 Feb 2007 15:56:12 +0100
