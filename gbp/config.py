@@ -6,7 +6,7 @@ from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 import os.path
 
-class GBPOptionParser(OptionParser):
+class GbpOptionParser(OptionParser):
     """
     Handles commandline options and parsing of config files
     @ivar command: the gbp command we store the options for
