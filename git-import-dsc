@@ -82,10 +82,10 @@ def parse_dsc(dscfile):
     return dsc
 
 
-def import_upstream(src, dirs, options, tagger):
+def import_initial(src, dirs, options, tagger):
     """
-    import a new upstream version, create the upstream branch in case of a non
-    debian native package and tag appropriately
+    import the intial version and (in the case of a non native package) create
+    the 'upstream' branch. Tag everything appropriately.
     """
     try:
         unpackTGZ = gbpc.UnpackTGZ(src.tgz, dirs['tmp'])
@@ -133,7 +133,7 @@ def move_tree(src, dirs):
         os.rename(dirs['git'], src.pkg)
     except OSError, err:
         print >>sys.stderr, "Cannot move git repository '%s' to it's final location '%s': %s" % (dirs['git'],
-              os.path.abspath(src.pkg), err)
+                             os.path.abspath(src.pkg), err)
         return False
     else:
         gbpc.RemoveTree(dirs['tmp'])()
@@ -176,7 +176,7 @@ def main(argv):
                 raise GbpError
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-            if not import_upstream(src, dirs, options, gitTag):
+            if not import_initial(src, dirs, options, gitTag):
                 raise GbpError
             os.chdir(dirs['top'])
             if not src.native:
