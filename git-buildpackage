@@ -28,9 +28,9 @@ from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
 
-def create_orig(cp, dir, branch):
-    "create an orig.tar.gz"
-    output = os.path.join(dir, orig_file(cp))
+def create_orig(cp, output_dir, branch):
+    "create an orig.tar.gz in output_dir"
+    output = os.path.join(output_dir, orig_file(cp))
     pipe = pipes.Template()
     pipe.prepend('git-archive --format=tar --prefix=%s-%s/ %s' % (cp['Source'], cp['Upstream-Version'], branch), '.-')
     pipe.append('gzip -c -9',  '--')
@@ -89,7 +89,7 @@ def main(argv):
     try:
         repo = GitRepository('.')
     except GitRepositoryError:
-        print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
+        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
         return 1
 
     try:
