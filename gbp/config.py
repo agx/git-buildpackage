@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser

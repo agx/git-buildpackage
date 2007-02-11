@@ -1,3 +1,12 @@
+git-buildpackage (0.2.25.gbp0) unstable; urgency=low
+
+  * use GbpError everywhere
+  * move commands into a submodule
+  * git-import-orig: pass --verbose on to git_load_dirs
+  * use default python version in setup.py 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 11 Feb 2007 22:52:31 +0100
+
 git-buildpackage (0.2.25) unstable; urgency=low
 
   * posttag support for git-buildpackage: use --git-posttag to run a command

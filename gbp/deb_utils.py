@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 """provides some debian source package related helpers"""
 
 import email

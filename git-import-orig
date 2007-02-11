@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=utf-8 :
 #
-# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -23,26 +23,27 @@ import os
 import tempfile
 import re
 import glob
-import git_buildpackage
-from git_buildpackage.git_utils import (GitRepositoryError,
-                                        GitRepository, 
-                                        build_tag)
-from git_buildpackage.config import GBPOptionParser
+import gbp.command_wrappers as gbpc
+from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+from gbp.config import GbpOptionParser
+from gbp.errors import GbpError
 
-
-def cleanupTmpTree(tree):
+def cleanup_tmp_tree(tree):
     """remove a tree of temporary files"""
-    git_buildpackage.RemoveTree(tree)()
+    try:
+        gbpc.RemoveTree(tree)()
+    except gbpc.CommandExecFailed:
+        print >>sys.stderr, "Removal of tmptree %s failed." % tree
 
 
-def unpackOrig(tgz):
+def unpack_orig(tgz):
     """unpack a .orig.tar.gz"""
     try:
-        unpackTGZ = git_buildpackage.UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
+        unpackTGZ = gbpc.UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
         unpackTGZ()
-    except git_buildpackage.CommandExecFailed:
+    except gbpc.CommandExecFailed:
         print "Unpacking of %s failed" % (tgz,)
-        cleanupTmpTree(unpackTGZ.dir)
+        cleanup_tmp_tree(unpackTGZ.dir)
         return
     return unpackTGZ.dir
 
@@ -55,7 +56,10 @@ def get_version(tgz):
         return m.group('version')    
 
 def main(argv):
-    parser = GBPOptionParser(command=os.path.basename(argv[0]), prefix='',
+    ret = 0
+    tmpdir = ''
+
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                            usage='%prog [-u version] /path/to/upstream-version.tar.gz')
 
     parser.add_option("-u", "--upstreamversion", dest="version",
@@ -76,80 +80,85 @@ def main(argv):
                       help="Format string for upstream tags, default is '%(upstream-tag)s'")
     (options, args) = parser.parse_args(argv[1:])
 
-    gitCheckoutUpstream = git_buildpackage.GitCheckoutBranch(options.upstream)
-    gitCheckoutMaster = git_buildpackage.GitCheckoutBranch(options.debian)
-    gitShowBranch = git_buildpackage.GitShowBranch()
-    gitPullUpstream = git_buildpackage.GitPull('.', options.upstream)
-
-    if options.verbose:
-        git_buildpackage.Command.verbose = True
-
-    if len(args) != 1:
-        parser.print_help()
-        return 1
-    else:
-        tgz = args[0]
+    gitCheckoutUpstream = gbpc.GitCheckoutBranch(options.upstream)
+    gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian)
+    gitShowBranch = gbpc.GitShowBranch()
+    gitPullUpstream = gbpc.GitPull('.', options.upstream)
 
     try:
-        repo = GitRepository('.')
-    except GitRepositoryError:
-        print >>sys.stderr,"%s is not a git repository" % (os.path.abspath('.'))
-        return 1
+        if options.verbose:
+            gbpc.Command.verbose = True
 
-    if not repo.has_branch(options.upstream):
-        print >>sys.stderr, """
+        if len(args) != 1:
+            parser.print_help()
+            raise GbpError
+        else:
+            tgz = args[0]
+
+        try:
+            repo = GitRepository('.')
+        except GitRepositoryError:
+            raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
+
+        if not repo.has_branch(options.upstream):
+            print >>sys.stderr, """
 Repository does not have branch '%s' for upstream sources. If there is none see
-/usr/share/doc/git-buildpackage/manual-html/gbp.import.convert.html on howto
+/usr/share/doc/git-buildpackage/manual-html/gbpc.import.convert.html on howto
 create it otherwise use --upstream-branch to specify it.
 """  % options.upstream
-        return 1
+            raise GbpError
 
-    if options.version:
-        version = options.version
-    else:
-        version = get_version(tgz)
-    if version:
-        print "Upstream version is %s" % (version,)
-    else:
-        print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % (tgz,)
-        parser.print_help()
-        return 1
+        if options.version:
+            version = options.version
+        else:
+            version = get_version(tgz)
 
-    (ret, out) = repo.is_clean()
-    if not ret:
-        print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
-        print >>sys.stderr, out
-        return 1
+        if version:
+            print "Upstream version is %s" % (version,)
+        else:
+            print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % (tgz,)
+            parser.print_help()
+            raise GbpError
 
-    tmpdir = unpackOrig(tgz)
-    if not tmpdir:
-        return 1
-    else:
-        if options.verbose:
-            print "Unpacked orig to %s" % tmpdir
-        origdir = glob.glob(tmpdir+'/*')[0]
-  
-    try:
-        print "Importing %s to upstream branch..." % tgz
-        gitCheckoutUpstream()
-        gitShowBranch()
-        git_buildpackage.GitLoadDirs()(origdir)
-        git_buildpackage.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version))
-   
-        if options.merge:
-            print "Merging to %s" % (options.debian,)
-            gitCheckoutMaster()
+        (ret, out) = repo.is_clean()
+        if not ret:
+            print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
+            raise GbpError, out
+
+        tmpdir = unpack_orig(tgz)
+        if not tmpdir:
+            raise GbpError
+        else:
+            if options.verbose:
+                print "Unpacked orig to %s" % tmpdir
+            origdir = glob.glob(tmpdir+'/*')[0]
+      
+        try:
+            print "Importing %s to upstream branch..." % tgz
+            gitCheckoutUpstream()
             gitShowBranch()
-            gitPullUpstream()
-            git_buildpackage.Dch("%s-1" % (version,), 'New Upstream Version')()
-    except git_buildpackage.CommandExecFailed:
-        print >>sys.stderr, "Import of %s failed" % (tgz,)
-        cleanupTmpTree(tmpdir)
-        return 1
-    cleanupTmpTree(tmpdir)
+            gbpc.GitLoadDirs(verbose=options.verbose)(origdir)
+            gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version))
+       
+            if options.merge:
+                print "Merging to %s" % (options.debian,)
+                gitCheckoutMaster()
+                gitShowBranch()
+                gitPullUpstream()
+                gbpc.Dch("%s-1" % (version,), 'New Upstream Version')()
+        except gbpc.CommandExecFailed:
+            raise GbpError, "Import of %s failed" % tgz
+    except GbpError, err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
+        ret = 1
 
-    print "Merged version %s of %s into ." % (version, tgz)
-    return 0
+    if tmpdir:
+        cleanup_tmp_tree(tmpdir)
+
+    if not ret:
+        print "Succesfully merged version %s of %s into ." % (version, tgz)
+    return ret
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

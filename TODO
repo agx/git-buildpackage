@@ -1,6 +1,8 @@
 - git-buildpackage:
   - allow to export the hole source tree to tmpdir before building
 - git-import-orig:
+  - don't use git_load_dirs but use new branches for new upstream versions
+    and merge them to 'upstream' - this will trace renames, etc. properly
   - allow to import from an unpacked source tree
 - git-import-dsc:
   - allow to import into a git repository for backports

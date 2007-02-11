@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=utf-8 :
 #
-# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 """provides some git repository related helpers"""
 
 import subprocess

@@ -1,8 +1,7 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=utf-8 :
 #
-#
-# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -23,10 +22,11 @@ import re
 import os
 import tempfile
 import glob
-import git_buildpackage
-from git_buildpackage.deb_utils import debian_version_chars
-from git_buildpackage.git_utils import build_tag
-from git_buildpackage.config import GBPOptionParser
+import gbp.command_wrappers as gbpc
+from gbp.deb_utils import debian_version_chars
+from gbp.git_utils import build_tag
+from gbp.config import GbpOptionParser
+from gbp.errors import GbpError
 
 
 class DscFile(object):
@@ -88,28 +88,28 @@ def import_upstream(src, dirs, options, tagger):
     debian native package and tag appropriately
     """
     try:
-        unpackTGZ = git_buildpackage.UnpackTGZ(src.tgz, dirs['tmp'])
+        unpackTGZ = gbpc.UnpackTGZ(src.tgz, dirs['tmp'])
         unpackTGZ()
-    except git_buildpackage.CommandExecFailed:
+    except gbpc.CommandExecFailed:
         print >>sys.stderr,"Unpacking of %s failed" % src.tgz
-        git_buildpackage.RemoveTree(dirs['tmp'])()
+        gbpc.RemoveTree(dirs['tmp'])()
         return False
 
     try:
         dirs['git'] = glob.glob('%s/*' % unpackTGZ.dir)[0]
         os.chdir(dirs['git'])
-        git_buildpackage.GitInitDB()()
-        git_buildpackage.GitAdd()(['.'])
-        git_buildpackage.GitCommitAll()(
+        gbpc.GitInitDB()()
+        gbpc.GitAdd()(['.'])
+        gbpc.GitCommitAll()(
              msg="Imported %s version %s" % (['upstream', 'Debian'][src.native],
              src.upstream_version))
         format = [options.upstream_tag, options.debian_tag][src.native]
         tagger(build_tag(format, src.upstream_version))
         if not src.native:
-            git_buildpackage.GitBranch()(options.upstream_branch)
-    except git_buildpackage.CommandExecFailed:
+            gbpc.GitBranch()(options.upstream_branch)
+    except gbpc.CommandExecFailed:
         print >>sys.stderr,"Creation of git repository failed"
-        git_buildpackage.RemoveTree(unpackTGZ.dir)()
+        gbpc.RemoveTree(unpackTGZ.dir)()
         return False
     return True
 
@@ -117,11 +117,11 @@ def import_upstream(src, dirs, options, tagger):
 def apply_debian_patch(src, dirs, options, tagger):
     """apply the debian patch and tag appropriately"""
     try:
-        git_buildpackage.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
+        gbpc.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
-        git_buildpackage.GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
+        gbpc.GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
         tagger(build_tag(options.debian_tag, '%s-%s' % (src.upstream_version, src.debian_version)))
-    except git_buildpackage.CommandExecFailed:
+    except gbpc.CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
         return False
     return True
@@ -136,14 +136,15 @@ def move_tree(src, dirs):
               os.path.abspath(src.pkg), err)
         return False
     else:
-        git_buildpackage.RemoveTree(dirs['tmp'])()
+        gbpc.RemoveTree(dirs['tmp'])()
     return True
 
 
 def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
+    ret = 0
 
-    parser = GBPOptionParser(command=os.path.basename(argv[0]), prefix='',
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] /path/to/package.dsc')
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -161,33 +162,40 @@ def main(argv):
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
-        git_buildpackage.Command.verbose = True
+        gbpc.Command.verbose = True
 
-    gitTag = git_buildpackage.GitTag(options.sign_tags, options.keyid)
+    gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
 
-    if len(args) != 1:
-        parser.print_help()
-        return 1
-    else:        
-        src = parse_dsc(args[0])
-        if not src:
-            return 1
+    try:
+        if len(args) != 1:
+            parser.print_help()
+            raise GbpError
+        else:        
+            src = parse_dsc(args[0])
+            if not src:
+                raise GbpError
 
-        dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-        if not import_upstream(src, dirs, options, gitTag):
-            return 1
-        os.chdir(dirs['top'])
-        if not src.native:
-            dirs['unpack'] = os.path.join(dirs['tmp'], 'unpack')
-            os.mkdir(dirs['unpack'])
-            dirs['dpkg-src'] = os.path.join(dirs['unpack'],
-                                            "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-            if not apply_debian_patch(src, dirs, options, gitTag):
-                return 1
-        os.chdir(dirs['top'])
-        if not move_tree(src, dirs):
-            return 1
-        print 'Everything imported under %s' % src.pkg
+            dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
+            if not import_upstream(src, dirs, options, gitTag):
+                raise GbpError
+            os.chdir(dirs['top'])
+            if not src.native:
+                dirs['unpack'] = os.path.join(dirs['tmp'], 'unpack')
+                os.mkdir(dirs['unpack'])
+                dirs['dpkg-src'] = os.path.join(dirs['unpack'],
+                                                "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
+                if not apply_debian_patch(src, dirs, options, gitTag):
+                    raise GbpError
+            os.chdir(dirs['top'])
+            if not move_tree(src, dirs):
+                raise GbpError
+    except GbpError, err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
+        ret = 1
+
+        if not ret:
+            print 'Everything imported under %s' % src.pkg
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

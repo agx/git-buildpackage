@@ -1,7 +1,7 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=utf-8 :
 #
-# (C) 2006 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -18,21 +18,14 @@
 #
 """run commands to build a debian package out of a git repository"""
 
-import sys,os,os.path,pipes
-from git_buildpackage import GitTag, Command, CommandExecFailed
-from git_buildpackage.git_utils import (GitRepositoryError,
-                                        GitRepository, 
-                                        build_tag)
-from git_buildpackage.deb_utils import (parse_changelog,
-                                        is_native,
-                                        orig_file,
-                                        has_orig)
-from git_buildpackage.config import GBPOptionParser
-
-
-class GbpError(Exception):
-    """Generic exception raised in git-buildpackage commands"""
-    pass
+import sys
+import os, os.path
+import pipes
+from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+from gbp.deb_utils import (parse_changelog, is_native, orig_file, has_orig)
+from gbp.command_wrappers import (GitTag, Command, CommandExecFailed)
+from gbp.config import GbpOptionParser
+from gbp.errors import GbpError
 
 
 def create_orig(cp, dir, branch):
@@ -64,7 +57,7 @@ def main(argv):
     if "--help" in dpkg_args:
         args.append('--help')
 
-    parser = GBPOptionParser(command=os.path.basename(argv[0]), prefix='git-')
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='git-')
 
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with uncommited changes in the source tree")

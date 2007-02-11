@@ -1,5 +1,5 @@
-#!/usr/bin/env python2.3
-# Copyright (C) 2006 Guido Guenther <agx@sigxcpu.org>
+#!/usr/bin/python
+# Copyright (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ setup(name = "git_build_package",
       author = 'Guido Guenther',
       author_email = 'agx@sigxcpu.org',
       scripts = [ 'git-buildpackage', 'git-import-dsc', 'git-import-orig'],
-      packages = [ 'git_buildpackage' ],
+      packages = [ 'gbp' ],
       data_files = [("/etc/git-buildpackage/", ["gbp.conf" ]),],
 )
 
