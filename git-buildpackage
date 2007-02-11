@@ -118,7 +118,7 @@ def main(argv):
             try:
                 version = cp['Version']
             except KeyError:
-                raise GbpError, "Can't parse version from changes file"
+                raise GbpError, "Can't parse version from changelog"
             else:
                 print "Tagging", version
                 GitTag(options.sign_tag, options.keyid)(build_tag(options.debian_tag, version))
