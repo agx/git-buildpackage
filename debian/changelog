@@ -1,9 +1,12 @@
-git-buildpackage (0.2.25.gbp0) unstable; urgency=low
+git-buildpackage (0.2.26) unstable; urgency=low
 
+  * UNRELEASED
   * use GbpError everywhere
   * move commands into a submodule
   * git-import-orig: pass --verbose on to git_load_dirs
   * use default python version in setup.py 
+  * depend on a git that has the "removed files left in working copy after
+    merge" bug (#410325)
 
  -- Guido Guenther <agx@sigxcpu.org>  Sun, 11 Feb 2007 22:52:31 +0100
 
