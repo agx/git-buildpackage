@@ -56,9 +56,9 @@ class GitRepository(object):
         self.__check_path()
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')
-        if out[0].strip() == clean_msg:
+        if out[0].startswith('#') and out[1].strip().startswith(clean_msg):
             ret = True
-        elif out[0].startswith('#') and out[1].strip() == clean_msg:
+        elif out[0].strip().startswith(clean_msg): # git << 1.5
             ret = True
         else:
             ret = False
