@@ -137,7 +137,8 @@ create it otherwise use --upstream-branch to specify it.
             print "Importing %s to upstream branch..." % tgz
             gitCheckoutUpstream()
             gitShowBranch()
-            gbpc.GitLoadDirs(verbose=options.verbose)(origdir)
+            gbpc.GitLoadDirs(verbose=options.verbose)(dir=origdir,
+                             summary="Imported upstream version %s" % version)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version))
        
             if options.merge:

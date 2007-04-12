@@ -119,7 +119,8 @@ def apply_debian_patch(src, dirs, options, tagger):
     try:
         gbpc.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
-        gbpc.GitLoadDirs()(dirs['dpkg-src'], 'Imported Debian patch')
+        gbpc.GitLoadDirs()(dir=dirs['dpkg-src'],
+                           summary="Imported Debian patch %s" % src.debian_version)
         tagger(build_tag(options.debian_tag, '%s-%s' % (src.upstream_version, src.debian_version)))
     except gbpc.CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
