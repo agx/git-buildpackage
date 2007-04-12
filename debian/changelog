@@ -1,3 +1,11 @@
+git-buildpackage (0.2.27) unstable; urgency=low
+
+  * git_load_dirs now supports --summary, use this for nicer import messages
+  * bump versioned dependency on git-load-dirs therefore
+  * improve tagging messages
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 12 Apr 2007 18:25:40 +0200
+
 git-buildpackage (0.2.26) unstable; urgency=low
 
   * use GbpError everywhere
