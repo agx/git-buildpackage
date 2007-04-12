@@ -121,7 +121,8 @@ def main(argv):
                 raise GbpError, "Can't parse version from changelog"
             else:
                 print "Tagging", version
-                GitTag(options.sign_tag, options.keyid)(build_tag(options.debian_tag, version))
+                GitTag(options.sign_tag, options.keyid)(build_tag(options.debian_tag, version),
+                       msg="Debian release %s" % version)
                 if(options.posttag_hook):
                     Command(options.posttag_hook, shell=True)()
     except CommandExecFailed:

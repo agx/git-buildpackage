@@ -104,7 +104,8 @@ def import_initial(src, dirs, options, tagger):
              msg="Imported %s version %s" % (['upstream', 'Debian'][src.native],
              src.upstream_version))
         format = [options.upstream_tag, options.debian_tag][src.native]
-        tagger(build_tag(format, src.upstream_version))
+        tagger(build_tag(format, src.upstream_version),
+               msg="Upstream version %s" % src.upstream_version)
         if not src.native:
             gbpc.GitBranch()(options.upstream_branch)
     except gbpc.CommandExecFailed:
@@ -119,9 +120,11 @@ def apply_debian_patch(src, dirs, options, tagger):
     try:
         gbpc.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
+        version = "%s-%s" % (src.upstream_version, src.debian_version)
         gbpc.GitLoadDirs()(dir=dirs['dpkg-src'],
-                           summary="Imported Debian patch %s" % src.debian_version)
-        tagger(build_tag(options.debian_tag, '%s-%s' % (src.upstream_version, src.debian_version)))
+                           summary="Imported Debian patch %s" % version)
+        tagger(build_tag(options.debian_tag, version),
+               msg="Debian release %s" % version)
     except gbpc.CommandExecFailed:
         print >>sys.stderr,"Failed to import Debian package"
         return False
