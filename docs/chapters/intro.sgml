@@ -32,7 +32,7 @@
 	imports the &debian; Package on the master branch and the upstream
 	sources on the upstream branch.</para></listitem>
 	<listitem><para>Develop, test, commit changes. During this time you can
-	always build the package with &git-buildpackage; In case you have
+	always build the package with &git-buildpackage;. In case you have
 	uncommitted changes in your source tree you can use the
 	<option>--git-ignore-new</option> option.</para></listitem>
 	<listitem><para>Once satisfied you can build the final package with

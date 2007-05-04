@@ -1,6 +1,6 @@
 <chapter id="gbp.cfgfile">
     <title>Configuration files</title>
-    <para>Three configuration files a parsed in this order:
+    <para>Three configuration files are parsed in this order:
     <variablelist>
       <varlistentry>
       <term>/etc/git-buildpackage/gbp.conf</term>
