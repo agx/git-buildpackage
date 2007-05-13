@@ -1,6 +1,5 @@
 git-buildpackage (0.2.28) unstable; urgency=low
 
-  * UNRELEASED
   * git-import-orig: support import of tar.bz2 (Closes: #423254)
   * type fixes by Aurélien GÉRÔME. Thanks! (Closes: #422171)
 
