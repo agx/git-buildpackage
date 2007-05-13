@@ -36,16 +36,16 @@ def cleanup_tmp_tree(tree):
         print >>sys.stderr, "Removal of tmptree %s failed." % tree
 
 
-def unpack_orig(tgz):
+def unpack_orig(archive):
     """unpack a .orig.tar.gz"""
     try:
-        unpackTGZ = gbpc.UnpackTGZ(tgz, tempfile.mkdtemp(dir='../'))
-        unpackTGZ()
+        unpackArchive = gbpc.UnpackTarArchive(archive, tempfile.mkdtemp(dir='../'))
+        unpackArchive()
     except gbpc.CommandExecFailed:
-        print "Unpacking of %s failed" % (tgz,)
-        cleanup_tmp_tree(unpackTGZ.dir)
+        print "Unpacking of %s failed" % (archive,)
+        cleanup_tmp_tree(unpackArchive.dir)
         return
-    return unpackTGZ.dir
+    return unpackArchive.dir
 
 
 def get_version(tgz):
@@ -93,7 +93,7 @@ def main(argv):
             parser.print_help()
             raise GbpError
         else:
-            tgz = args[0]
+            archive = args[0]
 
         try:
             repo = GitRepository('.')
@@ -111,12 +111,12 @@ create it otherwise use --upstream-branch to specify it.
         if options.version:
             version = options.version
         else:
-            version = get_version(tgz)
+            version = get_version(archive)
 
         if version:
             print "Upstream version is %s" % (version,)
         else:
-            print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % (tgz,)
+            print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % archive
             parser.print_help()
             raise GbpError
 
@@ -125,7 +125,7 @@ create it otherwise use --upstream-branch to specify it.
             print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
             raise GbpError, out
 
-        tmpdir = unpack_orig(tgz)
+        tmpdir = unpack_orig(archive)
         if not tmpdir:
             raise GbpError
         else:
@@ -134,7 +134,7 @@ create it otherwise use --upstream-branch to specify it.
             origdir = glob.glob(tmpdir+'/*')[0]
       
         try:
-            print "Importing %s to upstream branch..." % tgz
+            print "Importing %s to upstream branch..." % archive
             gitCheckoutUpstream()
             gitShowBranch()
             gbpc.GitLoadDirs(verbose=options.verbose)(dir=origdir,
@@ -149,7 +149,7 @@ create it otherwise use --upstream-branch to specify it.
                 gitPullUpstream()
                 gbpc.Dch("%s-1" % (version,), 'New Upstream Version')()
         except gbpc.CommandExecFailed:
-            raise GbpError, "Import of %s failed" % tgz
+            raise GbpError, "Import of %s failed" % archive
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
@@ -159,7 +159,7 @@ create it otherwise use --upstream-branch to specify it.
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        print "Succesfully merged version %s of %s into ." % (version, tgz)
+        print "Succesfully merged version %s of %s into ." % (version, archive)
     return ret
 
 if __name__ == "__main__":

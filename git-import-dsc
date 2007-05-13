@@ -88,10 +88,10 @@ def import_initial(src, dirs, options, tagger):
     the 'upstream' branch. Tag everything appropriately.
     """
     try:
-        unpackTGZ = gbpc.UnpackTGZ(src.tgz, dirs['tmp'])
+        unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'])
         unpackTGZ()
     except gbpc.CommandExecFailed:
-        print >>sys.stderr,"Unpacking of %s failed" % src.tgz
+        print >>sys.stderr,"Unpacking of %s failed" % src.archive
         gbpc.RemoveTree(dirs['tmp'])()
         return False
 

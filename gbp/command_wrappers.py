@@ -52,13 +52,17 @@ class Command(object):
             raise CommandExecFailed
 
 
-class UnpackTGZ(Command):
+class UnpackTarArchive(Command):
     """Wrap tar to Unpack a gzipped tar archive"""
-    def __init__(self, tgz, dir):
-        self.tgz = tgz
+    def __init__(self, archive, dir):
+        self.archive = archive
         self.dir = dir
-        Command.__init__(self, 'tar', [ '-C', dir, '-zxf', tgz ])
-        self.run_error = "Couldn't unpack %s" % self.tgz
+        if archive.lower().endswith(".bz2"):
+            decompress = "--bzip2"
+        else:
+            decompress = "--gzip"
+        Command.__init__(self, 'tar', [ '-C', dir, decompress, '-xf', archive ])
+        self.run_error = "Couldn't unpack %s" % self.archive
 
 
 class RemoveTree(Command):
