@@ -1,3 +1,10 @@
+git-buildpackage (0.2.29) unstable; urgency=low
+
+  * git-import-orig: more specific error message, when the merge merge fails
+    (Closes: #423036)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 15 May 2007 23:55:07 +0200
+
 git-buildpackage (0.2.28) unstable; urgency=low
 
   * git-import-orig: support import of tar.bz2 (Closes: #423254)

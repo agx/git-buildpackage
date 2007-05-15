@@ -146,7 +146,10 @@ create it otherwise use --upstream-branch to specify it.
                 print "Merging to %s" % (options.debian,)
                 gitCheckoutMaster()
                 gitShowBranch()
-                gitPullUpstream()
+                try:
+                    gitPullUpstream()
+                except gbpc.CommandExecFailed:
+                    raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
                 gbpc.Dch("%s-1" % (version,), 'New Upstream Version')()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
