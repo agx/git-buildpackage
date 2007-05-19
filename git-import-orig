@@ -44,7 +44,7 @@ def unpack_orig(archive):
     except gbpc.CommandExecFailed:
         print "Unpacking of %s failed" % (archive,)
         cleanup_tmp_tree(unpackArchive.dir)
-        return
+        raise GbpError
     return unpackArchive.dir
 
 
@@ -116,28 +116,25 @@ create it otherwise use --upstream-branch to specify it.
         if version:
             print "Upstream version is %s" % (version,)
         else:
-            print >>sys.stderr,"Cannot determine upstream version from %s - use -u" % archive
+            print >>sys.stderr, "Cannot determine upstream version from %s - use -u <version>" % archive
             parser.print_help()
             raise GbpError
 
         (ret, out) = repo.is_clean()
         if not ret:
-            print >>sys.stderr, "Repository has uncommitted changes, commit them first: "
+            print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
             raise GbpError, out
 
         tmpdir = unpack_orig(archive)
-        if not tmpdir:
-            raise GbpError
-        else:
-            if options.verbose:
-                print "Unpacked orig to %s" % tmpdir
-            origdir = glob.glob(tmpdir+'/*')[0]
+        if options.verbose:
+            print "Unpacked orig to %s" % tmpdir
+        orig_dir = glob.glob(tmpdir+'/*')[0]
       
         try:
             print "Importing %s to upstream branch..." % archive
             gitCheckoutUpstream()
             gitShowBranch()
-            gbpc.GitLoadDirs(verbose=options.verbose)(dir=origdir,
+            gbpc.GitLoadDirs(verbose=options.verbose)(dir=orig_dir,
                              summary="Imported upstream version %s" % version)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
