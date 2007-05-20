@@ -125,11 +125,14 @@ create it otherwise use --upstream-branch to specify it.
             print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
             raise GbpError, out
 
-        tmpdir = unpack_orig(archive)
-        if options.verbose:
-            print "Unpacked orig to %s" % tmpdir
-        orig_dir = glob.glob(tmpdir+'/*')[0]
-      
+        if os.path.isdir(archive):
+            orig_dir = archive
+        else:
+            tmpdir = unpack_orig(archive)
+            if options.verbose:
+                print "Unpacked orig to %s" % tmpdir
+            orig_dir = glob.glob(tmpdir+'/*')[0]
+
         try:
             print "Importing %s to upstream branch..." % archive
             gitCheckoutUpstream()
