@@ -1,3 +1,11 @@
+git-buildpackage (0.2.31) unstable; urgency=low
+
+  * git-import-orig: rename --upstreamversion to --upstream-version, to match
+    the documentation and the uther --upstream-* options
+  * add several missing options to manpages and documentation
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 24 May 2007 09:38:35 +0200
+
 git-buildpackage (0.2.30) unstable; urgency=low
 
   * fix changelog upstream version parsing (Closes: #425615)
