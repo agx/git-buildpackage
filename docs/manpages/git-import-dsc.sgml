@@ -52,8 +52,8 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option>, <option>-v</option>
-        </term>
+        <term><option>--verbose</option></term>
+	<term><option>-v</option></term>
         <listitem>
           <para>verbose execution</para>
         </listitem>

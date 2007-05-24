@@ -22,6 +22,8 @@
       &git-import-orig;
 
       <arg><option>--verbose</option></arg>
+      <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
+      <arg><option>--no-merge</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
@@ -34,15 +36,16 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-orig; imports the tar.gz archive given by
-    <replaceable>upstream-source</replaceable> into the &git; repository. If
-    <replaceable>upstream-source</replaceable> is already of the form
-    <replaceable>package-name_version.orig.tar.gz</replaceable>, it reads the
-    version information from the tarball's filename otherwise it can be
-    specified on the commandline via <option>--upstream-version</option>.
+    &git-import-orig; imports <replaceable>upstream-source</replaceable> into
+    the &git; repository. <replaceable>upstream-source</replaceable> can either
+    be a gzip or bzip2 compressed tar archive or an alreay unpacked source
+    tree. If it is already of the form
+    <replaceable>package-name_version.orig.tar.gz</replaceable>, the version
+    information is read from the tarball's filename otherwise it can be
+    given on the command line via <option>--upstream-version</option>.
    
-    When importing the new version <command>git_load_dirs</command> is being
-    used to detect file renames and removals.
+    Upon import <command>git_load_dirs</command> is being used to detect file
+    renames and removals.
     </para>
   </refsect1>
   <refsect1>
@@ -50,10 +53,16 @@
 
     <variablelist>
       <varlistentry>
-        <term><option>--upstream-version</option>=<replaceable>version</replaceable>,
-        <option>-u</option><replaceable>version</replaceable></term>
+        <term><option>--upstream-version</option>=<replaceable>version</replaceable></term>
+        <term><option>-u</option><replaceable>version</replaceable></term>
         <listitem>
 	  <para>The upstream version number</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--no-merge</option></term>
+        <listitem>
+	  <para>Don't merge the upstream version to the development branch</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -75,8 +84,8 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option>, <option>-v</option>
-        </term>
+        <term><option>--verbose</option></term> 
+	<term><option>-v</option></term>
         <listitem>
           <para>verbose execution</para>
         </listitem>
