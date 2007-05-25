@@ -16,7 +16,7 @@
       </varlistentry>
       <varlistentry>
       <term>.git/gbp.conf</term>
-      <listitem><para>per repository configuration</para></listitem> 
+      <listitem><para>per working copy configuration</para></listitem> 
       </varlistentry> 
     </variablelist>
       <para>
