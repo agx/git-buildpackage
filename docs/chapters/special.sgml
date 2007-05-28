@@ -16,7 +16,7 @@
     </para>
     <screen>
 &git-import-orig; --no-merge nondfsg-clean-package_10.4.orig.tar.gz
-&gitcmd; tag; 10.4
+&gitcmd; tag 10.4
     </screen>
     <para>
     After the import you can switch to the dfsg branch and get the newly

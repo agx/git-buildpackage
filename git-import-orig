@@ -81,7 +81,7 @@ def main(argv):
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                            usage='%prog [-u version] /path/to/upstream-version.tar.gz')
 
-    parser.add_option("-u", "--upstreamversion", dest="version",
+    parser.add_option("-u", "--upstream-version", dest="version",
                       help="Upstream Version")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")

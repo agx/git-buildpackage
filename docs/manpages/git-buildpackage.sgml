@@ -22,8 +22,8 @@
       <arg><option>--git-ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
-      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--git-upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
       <arg><option>--git-sign-tags</option></arg>

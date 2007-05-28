@@ -18,7 +18,11 @@ def parse_changelog(changelog):
         return None
     cp = email.message_from_string(output)
     if '-' in cp['Version']:
-        cp['Upstream-Version'], cp['Debian-Version'] = cp['Version'].rsplit('-', 1)
+        upstream_version, cp['Debian-Version'] = cp['Version'].rsplit('-', 1)
+        if ':' in upstream_version:
+            cp['Epoch'], cp['Upstream-Version'] = upstream_version.split(':',1)
+        else:
+            cp['Upstream-Version'] = upstream_version
     else:
         cp['Debian-Version'] = cp['Version']
     return cp
