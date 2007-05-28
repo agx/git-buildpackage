@@ -24,7 +24,7 @@ import tempfile
 import glob
 import gbp.command_wrappers as gbpc
 from gbp.deb_utils import debian_version_chars
-from gbp.git_utils import build_tag
+from gbp.git_utils import build_tag, GitRepository
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -82,16 +82,16 @@ def parse_dsc(dscfile):
     return dsc
 
 
-def import_initial(src, dirs, options, tagger):
+def import_initial(src, dirs, options, tagger, filter):
     """
     import the intial version and (in the case of a non native package) create
     the 'upstream' branch. Tag everything appropriately.
     """
     try:
-        unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'])
+        unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'], filter=filter)
         unpackTGZ()
     except gbpc.CommandExecFailed:
-        print >>sys.stderr,"Unpacking of %s failed" % src.archive
+        print >>sys.stderr, "Unpacking of %s failed" % src.archive
         gbpc.RemoveTree(dirs['tmp'])()
         return False
 
@@ -109,24 +109,35 @@ def import_initial(src, dirs, options, tagger):
         if not src.native:
             gbpc.GitBranch()(options.upstream_branch)
     except gbpc.CommandExecFailed:
-        print >>sys.stderr,"Creation of git repository failed"
+        print >>sys.stderr, "Creation of git repository failed"
         gbpc.RemoveTree(unpackTGZ.dir)()
         return False
     return True
 
 
-def apply_debian_patch(src, dirs, options, tagger):
+def apply_debian_patch(src, dirs, options, tagger, filter):
     """apply the debian patch and tag appropriately"""
     try:
+        version = "%s-%s" % (src.upstream_version, src.debian_version)
         gbpc.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
         os.chdir(dirs['git'])
-        version = "%s-%s" % (src.upstream_version, src.debian_version)
-        gbpc.GitLoadDirs()(dir=dirs['dpkg-src'],
-                           summary="Imported Debian patch %s" % version)
+        repo = GitRepository('.')
+
+        old = set(repo.index_files())
+        new = set(gbpc.copy_from(dirs['dpkg-src'], filter))
+        gbpc.GitAdd()(['.'])
+        files = [ obj for obj in old - new if not os.path.isdir(obj)]
+        if files:
+            gbpc.GitRm()(files)
+        if not repo.is_clean()[0]:
+            gbpc.GitCommitAll()(msg="Imported Debian patch %s" % version)
+        else:
+            print "Nothing to commit, nothing imported."
+
         tagger(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version)
     except gbpc.CommandExecFailed:
-        print >>sys.stderr,"Failed to import Debian package"
+        print >>sys.stderr, "Failed to import Debian package"
         return False
     return True
 
@@ -163,6 +174,8 @@ def main(argv):
                       help="Format string for debian tags, default is '%(debian-tag)s'")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
                       help="Format string for upstream tags, default is '%(upstream-tag)s'")
+    parser.add_config_file_option(option_name="filter", dest="filter",
+                      help="files to filter out during import")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
@@ -180,7 +193,7 @@ def main(argv):
                 raise GbpError
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-            if not import_initial(src, dirs, options, gitTag):
+            if not import_initial(src, dirs, options, gitTag, options.filter):
                 raise GbpError
             os.chdir(dirs['top'])
             if not src.native:
@@ -188,7 +201,7 @@ def main(argv):
                 os.mkdir(dirs['unpack'])
                 dirs['dpkg-src'] = os.path.join(dirs['unpack'],
                                                 "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-                if not apply_debian_patch(src, dirs, options, gitTag):
+                if not apply_debian_patch(src, dirs, options, gitTag, options.filter):
                     raise GbpError
             os.chdir(dirs['top'])
             if not move_tree(src, dirs):

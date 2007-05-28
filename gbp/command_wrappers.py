@@ -8,6 +8,7 @@ git-buildpackage and friends
 
 import subprocess
 import sys
+import os.path
 
 class CommandExecFailed(Exception):
     """Exception raised by the Command class"""
@@ -54,14 +55,17 @@ class Command(object):
 
 class UnpackTarArchive(Command):
     """Wrap tar to Unpack a gzipped tar archive"""
-    def __init__(self, archive, dir):
+    def __init__(self, archive, dir, filter=""):
         self.archive = archive
         self.dir = dir
+        exclude = [ "", "--exclude=%s" % filter ][len(filter) > 0]
+
         if archive.lower().endswith(".bz2"):
             decompress = "--bzip2"
         else:
             decompress = "--gzip"
-        Command.__init__(self, 'tar', [ '-C', dir, decompress, '-xf', archive ])
+
+        Command.__init__(self, 'tar', [ exclude, '-C', dir, decompress, '-xf', archive ])
         self.run_error = "Couldn't unpack %s" % self.archive
 
 
@@ -178,8 +182,15 @@ class GitTag(GitCommand):
 class GitAdd(GitCommand):
     """Wrap git-add to add new files"""
     def __init__(self):
-        GitCommand.__init__(self,'add')
+        GitCommand.__init__(self, 'add')
         self.run_error = "Couldn't add files"
+
+
+class GitRm(GitCommand):
+    """Wrap git-rm to remove files"""
+    def __init__(self):
+        GitCommand.__init__(self, 'rm')
+        self.run_error = "Couldn't remove files"
 
 
 class GitCommitAll(GitCommand):
@@ -192,5 +203,27 @@ class GitCommitAll(GitCommand):
         self.run_error = "Couldn't commit -a %s" % " ".join(args)
         GitCommand.__call__(self, args)
 
+
+def copy_from(orig_dir, filter=""):
+    """
+    copy a source tree over via tar
+    @param orig_dir: where to copy from
+    @param exclude: tar exclude pattern
+    @return: list of copied files
+    @rtype: list
+    """
+    exclude = [ "", "--exclude=%s" % filter ][len(filter) > 0]
+
+    try:
+        p1 = subprocess.Popen(["tar", exclude, "-cSpf", "-", "." ], stdout=subprocess.PIPE, cwd=orig_dir)
+        p2 = subprocess.Popen(["tar", "-xvSpf", "-" ], stdin=p1.stdout, stdout=subprocess.PIPE)
+        files = p2.communicate()[0].split('\n')
+    except OSError, err:
+        raise GbpError, "Cannot copy files: %s" % err
+    except ValueError, err:
+        raise GbpError, "Cannot copy files: %s" % err
+    if p1.wait() or p2.wait():
+        raise GbpError, "Cannot copy files, pipe failed."
+    return [ os.path.normpath(f) for f in files if files ]
 
 # vim:et:ts=4:sw=4:

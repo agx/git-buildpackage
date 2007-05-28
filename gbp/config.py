@@ -31,6 +31,7 @@ class GbpOptionParser(OptionParser):
                'posttag'         : '',
                'debian-tag'      : 'debian/%(version)s',
                'upstream-tag'    : 'upstream/%(version)s',
+               'filter'          : '',
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),

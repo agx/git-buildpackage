@@ -65,6 +65,13 @@ class GitRepository(object):
         return (ret, "".join(out))
 
 
+    def index_files(self):
+        """List files in the index"""
+        out = self.__git_getoutput('ls-files')
+        files = [ line.strip() for line in out ]
+        return files
+
+
 def build_tag(format, version):
     """Generate a tag from a given format and a version"""
     return format % dict(version=sanitize_version(version))

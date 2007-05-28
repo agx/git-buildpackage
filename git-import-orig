@@ -23,6 +23,7 @@ import os
 import tempfile
 import re
 import glob
+import subprocess
 import gbp.command_wrappers as gbpc
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
@@ -36,16 +37,34 @@ def cleanup_tmp_tree(tree):
         print >>sys.stderr, "Removal of tmptree %s failed." % tree
 
 
-def unpack_orig(archive):
+def unpack_orig(archive, tmpdir):
     """unpack a .orig.tar.gz"""
     try:
-        unpackArchive = gbpc.UnpackTarArchive(archive, tempfile.mkdtemp(dir='../'))
+        unpackArchive = gbpc.UnpackTarArchive(archive, tmpdir)
         unpackArchive()
     except gbpc.CommandExecFailed:
-        print "Unpacking of %s failed" % (archive,)
+        print "Unpacking of %s failed" % archive
         cleanup_tmp_tree(unpackArchive.dir)
         raise GbpError
     return unpackArchive.dir
+
+
+def import_to_upstream_branch(repo, orig_dir, version, upstream, filter):
+    """import source to the upstream branch"""
+    try:
+        gbpc.GitCheckoutBranch(upstream)()
+        old = set(repo.index_files())
+        new = set(gbpc.copy_from(orig_dir, filter))
+        gbpc.GitAdd()(['.'])
+        files = [ obj for obj in old - new if not os.path.isdir(obj)]
+        if files:
+            gbpc.GitRm()(files)
+        if not repo.is_clean()[0]:
+            gbpc.GitCommitAll()(msg="Imported upstream version %s" % version)
+        else:
+            raise GbpError, "Nothing to commit, nothing imported."
+    except gbpc.CommandExecFailed:
+        raise GbpError, "Import of new upstream version failed."
 
 
 def get_version(tgz):
@@ -77,10 +96,11 @@ def main(argv):
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
-                      help="Format string for upstream tags, default is '%(upstream-tag)s'")
+                      help="format string for upstream tags, default is '%(upstream-tag)s'")
+    parser.add_config_file_option(option_name="filter", dest="filter",
+                      help="files to filter out during import")
     (options, args) = parser.parse_args(argv[1:])
 
-    gitCheckoutUpstream = gbpc.GitCheckoutBranch(options.upstream)
     gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian)
     gitShowBranch = gbpc.GitShowBranch()
     gitPullUpstream = gbpc.GitPull('.', options.upstream)
@@ -114,7 +134,7 @@ create it otherwise use --upstream-branch to specify it.
             version = get_version(archive)
 
         if version:
-            print "Upstream version is %s" % (version,)
+            print "Upstream version is %s" % version
         else:
             print >>sys.stderr, "Cannot determine upstream version from %s - use -u <version>" % archive
             parser.print_help()
@@ -128,29 +148,27 @@ create it otherwise use --upstream-branch to specify it.
         if os.path.isdir(archive):
             orig_dir = archive
         else:
-            tmpdir = unpack_orig(archive)
+            tmpdir = tempfile.mkdtemp(dir='../')
+            unpack_orig(archive, tmpdir)
             if options.verbose:
                 print "Unpacked orig to %s" % tmpdir
             orig_dir = glob.glob(tmpdir+'/*')[0]
 
         try:
             print "Importing %s to upstream branch..." % archive
-            gitCheckoutUpstream()
-            gitShowBranch()
-            gbpc.GitLoadDirs(verbose=options.verbose)(dir=orig_dir,
-                             summary="Imported upstream version %s" % version)
+            import_to_upstream_branch(repo, orig_dir, version, options.upstream, options.filter)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
        
             if options.merge:
-                print "Merging to %s" % (options.debian,)
+                print "Merging to %s" % options.debian
                 gitCheckoutMaster()
                 gitShowBranch()
                 try:
                     gitPullUpstream()
                 except gbpc.CommandExecFailed:
                     raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
-                gbpc.Dch("%s-1" % (version,), 'New Upstream Version')()
+                gbpc.Dch("%s-1" % version, 'New Upstream Version')()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpError, err:
