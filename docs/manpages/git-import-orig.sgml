@@ -30,6 +30,7 @@
       <arg><option>--sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -38,14 +39,16 @@
     <para>
     &git-import-orig; imports <replaceable>upstream-source</replaceable> into
     the &git; repository. <replaceable>upstream-source</replaceable> can either
-    be a gzip or bzip2 compressed tar archive or an alreay unpacked source
+    be a gzip or bzip2 compressed tar archive or an already unpacked source
     tree. If it is already of the form
     <replaceable>package-name_version.orig.tar.gz</replaceable>, the version
     information is read from the tarball's filename otherwise it can be
     given on the command line via <option>--upstream-version</option>.
-   
-    Upon import <command>git_load_dirs</command> is being used to detect file
-    renames and removals.
+    </para>
+     
+    <para>The sources are placed on the upstream branch (default:
+    <replaceable>upstream</replaceable>), tagged and merged onto the debian
+    branch (default: <replaceable>master</replaceable>).
     </para>
   </refsect1>
   <refsect1>
@@ -109,6 +112,13 @@
         </term>
         <listitem>
           <para>use this tag format when tagging upstream versions</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--filter=</option><replaceable>filter</replaceable>
+        </term>
+        <listitem>
+          <para>filter out these files during import</para>
         </listitem>
       </varlistentry>
     </variablelist>

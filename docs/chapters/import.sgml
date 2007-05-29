@@ -28,7 +28,11 @@
     this is then merged onto the <emphasis>master</emphasis> branch and a new
     changelog entry is created. You can again specify different branch names
     via the <option>--upstream-branch</option> and
-    <option>--debian-branch</option> options.
+    <option>--debian-branch</option> options. You can also filter out content
+    you don't want imported:
+    <screen>
+&git-import-orig; --filter='CVS/*' /path/to/package_0.2.orig.tar.gz
+    </screen>
     </para> 
     <para>
     If you expect a merge conflict you can delay the merge to

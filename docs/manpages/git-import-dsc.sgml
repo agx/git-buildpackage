@@ -27,6 +27,7 @@
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -84,6 +85,13 @@
         </term>
         <listitem>
           <para>use this tag format when tagging upstream versions</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--filter=</option><replaceable>filter</replaceable>
+        </term>
+        <listitem>
+          <para>filter out these files during import</para>
         </listitem>
       </varlistentry>
      </variablelist>
