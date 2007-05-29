@@ -11,6 +11,7 @@ Package: git-buildpackage
 Architecture: all
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, devscripts,
  git-core (>= 1:1.5.0.1-1)
+Suggests: git-load-dirs
 Description: Suite to help with Debian packages in Git repositories
  This package contains the following tools:
   * git-import-dsc: import an existing Debian source package into a git
