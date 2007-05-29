@@ -1,7 +1,19 @@
+git-buildpackage (0.3.0) unstable; urgency=low
+
+  * don't use git_load_dirs for imports, this addresses:
+      * upstream directory removal (#423363)
+      * empty dirs and files not under version control (#409606)
+      * filtering out of files (Closes: #425986)
+      * importing of an empty .diff.gz (like libx86 0.99-1.2)
+  * doc: remove stray ';' from special.sgml. Thanks to Loïc Minier
+  * doc: gbp.conf is per working copy, not per repository
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 28 May 2007 03:19:32 +0200
+
 git-buildpackage (0.2.31) unstable; urgency=low
 
   * git-import-orig: rename --upstreamversion to --upstream-version, to match
-    the documentation and the uther --upstream-* options
+    the documentation and the other --upstream-* options
   * add several missing options to manpages and documentation
 
  -- Guido Guenther <agx@sigxcpu.org>  Thu, 24 May 2007 09:38:35 +0200
