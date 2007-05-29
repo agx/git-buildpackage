@@ -140,8 +140,8 @@ create it otherwise use --upstream-branch to specify it.
             parser.print_help()
             raise GbpError
 
-        (ret, out) = repo.is_clean()
-        if not ret:
+        (clean, out) = repo.is_clean()
+        if not clean:
             print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
             raise GbpError, out
 
