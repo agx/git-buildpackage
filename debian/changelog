@@ -1,3 +1,9 @@
+git-buildpackage (0.3.0~bpo.1) etch-backports; urgency=low
+
+  * etch backport
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 29 May 2007 18:54:56 +0200
+
 git-buildpackage (0.3.0) unstable; urgency=low
 
   * don't use git_load_dirs for imports, this addresses:
