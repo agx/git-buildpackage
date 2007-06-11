@@ -1,3 +1,11 @@
+git-buildpackage (0.3.1) unstable; urgency=low
+
+  * don't fail imports on large archives 
+  * print a sensible error message, when a git repository isn't a debian
+    source package
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 11 Jun 2007 18:06:15 +0200
+
 git-buildpackage (0.3.0) unstable; urgency=low
 
   * don't use git_load_dirs for imports, this addresses:
