@@ -29,6 +29,7 @@ from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
+
 def cleanup_tmp_tree(tree):
     """remove a tree of temporary files"""
     try:
@@ -49,10 +50,9 @@ def unpack_orig(archive, tmpdir):
     return unpackArchive.dir
 
 
-def import_to_upstream_branch(repo, orig_dir, version, upstream, filter):
-    """import source to the upstream branch"""
+def import_source_tree(repo, orig_dir, version, upstream, filter):
+    """import source tree to the current branch"""
     try:
-        gbpc.GitCheckoutBranch(upstream)()
         old = set(repo.index_files())
         new = set(gbpc.copy_from(orig_dir, filter))
         gbpc.GitAdd()(['.'])
@@ -73,6 +73,7 @@ def get_version(tgz):
     m = origre.match(os.path.basename(tgz))
     if m:
         return m.group('version')    
+
 
 def main(argv):
     ret = 0
@@ -120,7 +121,13 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 
-        if not repo.has_branch(options.upstream):
+        # an empty repo has now branches:
+        if repo.get_branch():
+            is_empty = False
+        else:
+            is_empty = True
+    
+        if not repo.has_branch(options.upstream) and not is_empty:
             print >>sys.stderr, """
 Repository does not have branch '%s' for upstream sources. If there is none see
 /usr/share/doc/git-buildpackage/manual-html/gbpc.import.convert.html on howto
@@ -141,7 +148,7 @@ create it otherwise use --upstream-branch to specify it.
             raise GbpError
 
         (clean, out) = repo.is_clean()
-        if not clean:
+        if not clean and not is_empty:
             print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
             raise GbpError, out
 
@@ -151,16 +158,20 @@ create it otherwise use --upstream-branch to specify it.
             tmpdir = tempfile.mkdtemp(dir='../')
             unpack_orig(archive, tmpdir)
             if options.verbose:
-                print "Unpacked orig to %s" % tmpdir
+                print "Unpacked %s to '%s'" % (archive , tmpdir)
             orig_dir = glob.glob(tmpdir+'/*')[0]
 
         try:
-            print "Importing %s to upstream branch..." % archive
-            import_to_upstream_branch(repo, orig_dir, version, options.upstream, options.filter)
+            if not is_empty:
+                print "Importing '%s' to branch '%s'..." % (archive, options.upstream)
+                gbpc.GitCheckoutBranch(options.upstream)()
+            else:
+                print "Initial import of '%s'..." % archive
+            import_source_tree(repo, orig_dir, version, options.upstream, options.filter)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
        
-            if options.merge:
+            if options.merge and not is_empty:
                 print "Merging to %s" % options.debian
                 gitCheckoutMaster()
                 gitShowBranch()
