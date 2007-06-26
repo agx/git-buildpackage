@@ -1,5 +1,6 @@
 <chapter id="gbp.import">
     <title>Importing Sources</title>
+
     <sect1 id="gbp.import.existing">
     <title>Importing already existing &debian; packages</title>
     <para>Imporing an already exsting debian package into a git repository is as easy as:
@@ -14,6 +15,7 @@
     <option>--upstream-branch</option> and <option>--debian-branch</option> options.
     </para>
     </sect1>
+
     <sect1 id="gbp.import.new.upstream">
     <title>Importing a new upstream version</title>
     <para>Change into your git repository, make sure it has all local
@@ -41,6 +43,7 @@
     <para>
     </para>
     </sect1>
+
     <sect1 id="gbp.import.convert">
     <title>Converting an existing &git; repository</title>
     <para>
@@ -93,5 +96,26 @@ upstream-branch=theupstream-branch
     can simply create a branch as explained above and &git-import-orig; should
     work as expected.</para>
     </sect2>
+    </sect1>
+
+    <sect1 id="gbp.import.fromscratch">
+    <title>Starting a Debian package from scratch</title>
+    <para>
+    So far we assumed you already have a &debian; package to start with but
+    what if you want to start a new package? First create an empty repository:
+    </para>
+    <screen>
+mkdir package-0.1
+cd package-0.1
+git-init
+    </screen> 
+    <para>Then you import the upstream sources, branch of the
+    <emphasis>upstream</emphasis> branch and add the debian files (e.g. via dh_make):
+    <screen>
+&git-import-orig -u 0.1 ../package-0.1.tar.gz
+git-branch upstream
+dh_make
+    </screen>
+    That's it, you're done.
     </sect1>
 </chapter>
