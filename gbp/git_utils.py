@@ -29,15 +29,19 @@ class GitRepository(object):
 
     def __git_getoutput(self, command):
         """Exec a git command and return the output"""
+        output = []
         popen = subprocess.Popen(['git', command], stdout=subprocess.PIPE)
-        popen.wait()
-        return popen.stdout.readlines()
+        while popen.poll() == None:
+            output += popen.stdout.readlines()
+        ret = popen.poll()
+        output += popen.stdout.readlines()
+        return output, ret
 
 
     def has_branch(self, branch):
         """check if the repository has branch 'branch'"""
         self.__check_path()
-        for line in self.__git_getoutput('branch'):
+        for line in self.__git_getoutput('branch')[0]:
             if line.split(' ', 1)[1].strip() == branch:
                 return True
         return False
@@ -46,7 +50,7 @@ class GitRepository(object):
     def get_branch(self):
         """on what branch is the current working copy"""
         self.__check_path()
-        for line in self.__git_getoutput('branch'):
+        for line in self.__git_getoutput('branch')[0]:
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
         
@@ -55,7 +59,7 @@ class GitRepository(object):
         """does the repository contain any uncommitted modifications"""
         self.__check_path()
         clean_msg = 'nothing to commit'
-        out = self.__git_getoutput('status')
+        out = self.__git_getoutput('status')[0]
         if out[0].startswith('#') and out[1].strip().startswith(clean_msg):
             ret = True
         elif out[0].strip().startswith(clean_msg): # git << 1.5
@@ -67,7 +71,9 @@ class GitRepository(object):
 
     def index_files(self):
         """List files in the index"""
-        out = self.__git_getoutput('ls-files')
+        out, ret = self.__git_getoutput('ls-files')
+        if ret:
+            raise GitRepositoryError, "Error listing files %d" % ret
         files = [ line.strip() for line in out ]
         return files
 
