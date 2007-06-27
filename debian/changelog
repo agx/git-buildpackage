@@ -1,3 +1,11 @@
+git-buildpackage (0.3.2) unstable; urgency=low
+
+  * git-import-orig: allow to import into an empy git repository
+  * docs: we don't use git_load_dirs internally anymore 
+  * docs: howto start a package from scratch
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 27 Jun 2007 04:06:33 +0300
+
 git-buildpackage (0.3.1) unstable; urgency=low
 
   * don't fail imports on large archives 
