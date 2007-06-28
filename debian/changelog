@@ -1,4 +1,4 @@
-git-buildpackage (0.3.2~bpo.1) unstable; urgency=low
+git-buildpackage (0.3.2~bpo.1) etch-backports; urgency=low
 
   * etch backport 
 
