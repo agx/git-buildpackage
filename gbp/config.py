@@ -22,12 +22,12 @@ class GbpOptionParser(OptionParser):
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
-    defaults={ 'builder'         : 'debuild',
-               'cleaner'	     : 'debuild clean',
+    defaults={ 'builder'         : 'debuild -i\.git/ -I.git',
+               'cleaner'         : 'debuild clean',
                'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
-               'sign-tags'	     : '',		# empty means False
-               'keyid'		     : '',
+               'sign-tags'       : '',		# empty means False
+               'keyid'           : '',
                'posttag'         : '',
                'debian-tag'      : 'debian/%(version)s',
                'upstream-tag'    : 'upstream/%(version)s',

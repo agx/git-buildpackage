@@ -116,7 +116,7 @@ def main(argv):
             if not create_orig(cp, output_dir, options.upstream_branch):
                 raise GbpError
 
-        Command(options.build_cmd, [ '-i\.git/', '-I.git' ] + dpkg_args, shell=True)()
+        Command(options.build_cmd, dpkg_args, shell=True)()
         if options.tag:
             try:
                 version = cp['Version']

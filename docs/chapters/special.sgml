@@ -75,7 +75,7 @@ cleanup-script.sh
 cat &lt;&lt;EOF &gt;/usr/local/bin/git-pbuilder
 #!/bin/sh
 # pass all options to dpkg-buildpackage:
-pdebuild --debbuildopts "$*"
+pdebuild --debbuildopts "-i\.git -I.git $*"
 EOF
 chmod a+x /usr/local/bin/git-pbuilder
 </programlisting>

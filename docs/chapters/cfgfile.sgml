@@ -49,7 +49,7 @@
 <screen>
 [DEFAULT]
 # the default build command
-builder=debuild
+builder=debuild -i\.git -I.git
 # the default branch for upstream sources
 upstream-branch=upstream
 # the default branch for the debian patch
