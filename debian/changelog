@@ -1,3 +1,11 @@
+git-buildpackage (0.3.3) unstable; urgency=low
+
+  * git-buildpackage: don't hardcode -i\.git -I.git as build arguments
+    (Closes: #438669)
+  * git-import-dsc: support --debian-branch (Closes: #432084)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 20 Aug 2007 19:22:24 +0200
+
 git-buildpackage (0.3.2) unstable; urgency=low
 
   * git-import-orig: allow to import into an empy git repository
