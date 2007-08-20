@@ -155,6 +155,17 @@ def move_tree(src, dirs):
     return True
 
 
+def create_debian_branch(debian_branch, dirs):
+    os.chdir(dirs['git'])
+    repo = GitRepository('.')
+    if repo.get_branch() != debian_branch:
+        if not repo.has_branch(debian_branch):
+            print "Creating Debian branch '%s'" % debian_branch
+            gbpc.GitBranch()(debian_branch)
+        gbpc.GitCheckoutBranch(debian_branch)
+    os.chdir(dirs['top'])
+
+
 def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
     ret = 0
@@ -164,6 +175,8 @@ def main(argv):
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
+                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
@@ -203,6 +216,7 @@ def main(argv):
                                                 "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
                 if not apply_debian_patch(src, dirs, options, gitTag, options.filter):
                     raise GbpError
+                create_debian_branch(options.debian_branch, dirs)
             os.chdir(dirs['top'])
             if not move_tree(src, dirs):
                 raise GbpError
@@ -210,11 +224,12 @@ def main(argv):
         if len(err.__str__()):
             print >>sys.stderr, err
         ret = 1
+        os.chdir(dirs['top'])
 
         if not ret:
             print 'Everything imported under %s' % src.pkg
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
-	    
+
 # vim:et:ts=4:sw=4:
