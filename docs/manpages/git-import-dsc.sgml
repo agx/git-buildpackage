@@ -23,6 +23,7 @@
 
       <arg><option>--verbose</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -50,6 +51,14 @@
         <listitem>
 	  <para>The branch in the &git; repository the upstream sources are put
 	  onto. Default is <replaceable>upstream</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
+        </term>
+        <listitem>
+	  <para>The branch in the &git; repository the debian sources are put
+	  onto. Default is <replaceable>master</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
