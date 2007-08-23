@@ -27,6 +27,7 @@ class GbpOptionParser(OptionParser):
                'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
                'sign-tags'       : '',		# empty means False
+               'no-create-orig'	 : '',		# empty means False
                'keyid'           : '',
                'posttag'         : '',
                'debian-tag'      : 'debian/%(version)s',

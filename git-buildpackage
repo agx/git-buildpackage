@@ -76,6 +76,8 @@ def main(argv):
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tag",
                       help="sign git tags", action="store_true")
+    parser.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
+                      help="create orig.tar.gz", action="store_true")
     parser.add_config_file_option(option_name="posttag", dest="posttag_hook",
                       help="hook to execute after a successfull tag operation")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
@@ -109,7 +111,7 @@ def main(argv):
         cp = parse_changelog(changelog)
         if not cp:
             raise GbpError,"'%s' does not exist, not a debian package" % changelog
-        if not is_native(cp) and not has_orig(cp, output_dir):
+        if not is_native(cp) and not has_orig(cp, output_dir) and not options.no_create_orig:
             print "%s does not exist, creating from branch '%s'" % (orig_file(cp), options.upstream_branch)
             if not repo.has_branch(options.upstream_branch):
                 raise GbpError, "Upstream branch '%s' does not exist" % options.upstream_branch
