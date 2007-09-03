@@ -91,7 +91,7 @@ def import_initial(src, dirs, options, tagger, filter):
         unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'], filter=filter)
         unpackTGZ()
     except gbpc.CommandExecFailed:
-        print >>sys.stderr, "Unpacking of %s failed" % src.archive
+        print >>sys.stderr, "Unpacking of %s failed" % src.tgz
         gbpc.RemoveTree(dirs['tmp'])()
         return False
 
