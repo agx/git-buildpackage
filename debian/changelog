@@ -1,3 +1,14 @@
+git-buildpackage (0.3.4) unstable; urgency=low
+
+  * introduce --git-no-create-orig to skip building of any orig.tar.gz - this
+    is especially usefull if you're working on an NMU that has a X-0.Y version
+    number although it's a Debian native package
+  * fix the error path in case the tgz can't be unpacked
+  * git-pbuilder: add filter for git meta data and allow to pass options to
+    pbuilder vi $PBUILDER_OPTS (Closes: #439535)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 08 Sep 2007 20:40:36 +0200
+
 git-buildpackage (0.3.3) unstable; urgency=low
 
   * git-buildpackage: don't hardcode -i\.git -I.git as build arguments
