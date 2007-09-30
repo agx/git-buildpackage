@@ -28,6 +28,7 @@
     &man.git.buildpackage;
     &man.git.importdsc;
     &man.git.importorig;
+    &man.git.dch;
   </appendix>
   <appendix id="gbp.copyleft">
     <title>Copyright</title>
