@@ -2,7 +2,9 @@
   - allow to export the hole source tree to tmpdir before building
   - allow to fetch and build from a signed tag even when it's in a remote repo
 - git-import-orig:
-  - allow to import into an empty repository
   - show untracked files using 'git-ls-files -o' after import
 - git-import-dsc:
   - allow to import into a git repository for backports
+- git-dch
+  - make format of log messages more flexible
+  - don't forcibly start a new version
