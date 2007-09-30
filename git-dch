@@ -1,0 +1,129 @@
+#!/usr/bin/python
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2007 Guido Guenther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+"""Generate Debian changelog entries from git changelogs"""
+
+import sys
+import os
+import re
+import subprocess
+import gbp.command_wrappers as gbpc
+from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+from gbp.config import GbpOptionParser
+from gbp.errors import GbpError
+from gbp.deb_utils import parse_changelog
+
+
+def get_log(start, end):
+    """Get the shortlog from commit start to commit end"""
+    try:
+        p1 = subprocess.Popen(["git-log", "--no-merges", "%s...%s" % (start, end)], 
+                              stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["git-shortlog"], stdin=p1.stdout, stdout=subprocess.PIPE)
+        changes = p2.communicate()[0].split('\n')
+    except OSError, err:
+        raise GbpError, "Cannot get changes: %s" % err
+    except ValueError, err:
+        raise GbpError, "Cannot get changes: %s" % err
+    if p1.wait() or p2.wait():
+        raise GbpError, "Cannot get changes, pipe failed."
+    return changes
+
+
+def shortlog_to_dch(changes, verbose):
+    """convert the changes in git shortlog format to debian changelog format"""    
+    commit_re = re.compile('\s+(?P<msg>.*)')
+    author_re = re.compile('(?P<author>.*) \([0-9]+\)')
+    author = 'Unknown'
+    ret = 0
+
+    # FIXME: this isn't flexible enough
+    ret = os.system("dch --distribution=UNRELEASED -i UNRELEASED")
+    if ret:
+        raise GbpError, "Error executing %s: %d" % (cmd, ret)
+
+    for line in changes:
+        r = commit_re.match(line)
+        msg = ''
+        if r:
+            msg = r.group('msg')
+        else:
+            r = author_re.match(line)
+            if r:
+                author = r.group('author')
+            elif line:
+                print >>sys.stderr, "Unknown changelog line: %s" % line
+        if msg:
+            cmd = 'DEBFULLNAME="%s" dch "%s"' % (author, msg.replace('"','\"'))
+            if verbose:
+                print cmd
+            ret = os.system(cmd)
+            if ret:
+                raise GbpError, "Error executing %s: %d" % (cmd, ret)
+
+
+def main(argv):
+    ret = 0
+
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='')
+
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                      help="verbose command execution")
+    parser.add_config_file_option(option_name="debian-branch", dest='debian',
+                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
+    parser.add_option("-s", "--since", dest="from_commit", help="commit to start from")
+    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
+                      help="Format string for debian tags, default is '%(debian-tag)s'")
+    (options, args) = parser.parse_args(argv[1:])
+
+    try:
+        if options.verbose:
+            gbpc.Command.verbose = True
+
+        if args:
+            parser.print_help()
+            raise GbpError
+
+        try:
+            GitRepository('.')
+        except GitRepositoryError:
+            raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
+
+        if options.from_commit:
+            start = options.from_commit	 
+        else:
+            cp = parse_changelog('debian/changelog')	
+            start = build_tag(options.debian_tag, cp['Version'])
+
+        changes = get_log(start, options.debian)
+	if changes:
+            shortlog_to_dch(changes, options.verbose)
+	else:
+	    print "No changes detected from %s to %s." % (start, options.debian)
+
+    except GbpError, err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
+        ret = 1
+    return ret
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:
+
