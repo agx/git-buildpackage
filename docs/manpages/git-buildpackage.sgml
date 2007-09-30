@@ -45,7 +45,7 @@
         <listitem><para>Verify that it is being executed from the
             proper location.</para>
         </listitem>
-	<listitem><para>Verify that the reopository doesn't contain any
+	<listitem><para>Verify that the repository doesn't contain any
 	uncommitted source changes.</para>
 	</listitem>
         <listitem><para>Verify that it is being executed from the
