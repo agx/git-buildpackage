@@ -167,11 +167,14 @@ create it otherwise use --upstream-branch to specify it.
                 gbpc.GitCheckoutBranch(options.upstream)()
             else:
                 print "Initial import of '%s'..." % archive
+
             import_source_tree(repo, orig_dir, version, options.upstream, options.filter)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
 
-            if options.merge and not is_empty:
+            if is_empty:
+                gbpc.GitBranch()(options.upstream)
+            elif options.merge:
                 print "Merging to %s" % options.debian
                 gitCheckoutMaster()
                 gitShowBranch()
