@@ -1,3 +1,13 @@
+git-buildpackage (0.3.5) unstable; urgency=low
+
+  * add a minimalistic git-dch that creates changelog entries from git commit
+    messages
+  * s/reopsitory/repository/ - thanks to Loïc Minier (Closes: #444702)
+  * update TODO
+  * short paragraph on hacking on arbitrary debian packages
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 03 Oct 2007 14:10:05 +0200
+
 git-buildpackage (0.3.4) unstable; urgency=low
 
   * introduce --git-no-create-orig to skip building of any orig.tar.gz - this
