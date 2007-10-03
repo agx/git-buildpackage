@@ -1,3 +1,12 @@
+git-buildpackage (0.3.6) unstable; urgency=low
+
+  * create upstream branch when importing into an empty archive 
+    (Closes: #443305)
+  * detect upstream version from common tarball formats 
+    (Closes: #443306)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 03 Oct 2007 18:01:15 +0200
+
 git-buildpackage (0.3.5) unstable; urgency=low
 
   * add a minimalistic git-dch that creates changelog entries from git commit
