@@ -126,7 +126,7 @@ def main(argv):
             is_empty = False
         else:
             is_empty = True
-    
+
         if not repo.has_branch(options.upstream) and not is_empty:
             print >>sys.stderr, """
 Repository does not have branch '%s' for upstream sources. If there is none see
@@ -170,7 +170,7 @@ create it otherwise use --upstream-branch to specify it.
             import_source_tree(repo, orig_dir, version, options.upstream, options.filter)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
-       
+
             if options.merge and not is_empty:
                 print "Merging to %s" % options.debian
                 gitCheckoutMaster()
@@ -197,4 +197,4 @@ create it otherwise use --upstream-branch to specify it.
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
 
-# vim:et:ts=4:sw=4:
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
