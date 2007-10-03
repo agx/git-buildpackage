@@ -101,4 +101,29 @@ builder = /usr/local/bin/git-pbuilder
      put this into <filename>.git/gbp.conf</filename> in one of your &git; repositories.
     </para>
 
+    <sect1 id="gbp.special.hacking">
+    <title>Working on random packages</title>
+    <para>
+    Whenever you need to work on an arbitrary Debian package you can check it
+    right into &git;:
+<programlisting>
+apt-get source --download-only <filename>package</filename>
+git-import-dsc <filename>package</filename>*.dsc
+cd <filename>package</filename>
+git-branch debian
+</programlisting>
+    <para>
+    This puts the orig.tar.gz onto the <emphasis>upstream</emphasis> branch and
+    the Debian patch onto branch <emphasis>debian</emphasis>. Now you can
+    easily modify the package on the master branch, revert changes you made,
+    create other branches for testing, see what changes you made, etc.. When
+    finished just do</para>
+<programlisting>
+git-commit -a
+git-diff debian --
+</programlisting>
+    <para>
+    to get a nice patch that can be submitted to the Debian BTS.
+    </para>
+    </sect1>
 </chapter>
