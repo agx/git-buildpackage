@@ -19,3 +19,4 @@ Description: Suite to help with Debian packages in Git repositories
   * git-import-orig: import a new upstream version into the git repository
   * git-buildpackage: build a package out of a git repository, check for local
     modifications and tag appropriately
+  * git-dch: generate Debian changelog entries from Git commit messages
