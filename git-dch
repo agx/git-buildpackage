@@ -45,17 +45,25 @@ def get_log(start, end):
     return changes
 
 
-def shortlog_to_dch(changes, verbose):
+def add_changelog_entry(msg, author):
+    cmd = 'DEBFULLNAME="%s" dch "%s"' % (author, msg.replace('"','\"'))
+    ret = os.system(cmd)
+    if ret:
+        raise GbpError, "Error executing %s: %d" % (cmd, ret)
+
+
+def add_changelog_section(msg, distribution):
+    ret = os.system("dch --distribution=%s -i %s" % (distribution, msg))
+    if ret:
+        raise GbpError, "Error executing %s: %d" % (cmd, ret)
+
+
+def shortlog_to_dch(changes):
     """convert the changes in git shortlog format to debian changelog format"""    
     commit_re = re.compile('\s+(?P<msg>.*)')
     author_re = re.compile('(?P<author>.*) \([0-9]+\)')
     author = 'Unknown'
     ret = 0
-
-    # FIXME: this isn't flexible enough
-    ret = os.system("dch --distribution=UNRELEASED -i UNRELEASED")
-    if ret:
-        raise GbpError, "Error executing %s: %d" % (cmd, ret)
 
     for line in changes:
         r = commit_re.match(line)
@@ -69,12 +77,7 @@ def shortlog_to_dch(changes, verbose):
             elif line:
                 print >>sys.stderr, "Unknown changelog line: %s" % line
         if msg:
-            cmd = 'DEBFULLNAME="%s" dch "%s"' % (author, msg.replace('"','\"'))
-            if verbose:
-                print cmd
-            ret = os.system(cmd)
-            if ret:
-                raise GbpError, "Error executing %s: %d" % (cmd, ret)
+            add_changelog_entry(msg, author)
 
 
 def main(argv):
@@ -104,17 +107,20 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 
+        cp = parse_changelog('debian/changelog')
         if options.from_commit:
-            start = options.from_commit	 
+            start = options.from_commit
         else:
-            cp = parse_changelog('debian/changelog')	
             start = build_tag(options.debian_tag, cp['Version'])
 
         changes = get_log(start, options.debian)
-	if changes:
-            shortlog_to_dch(changes, options.verbose)
-	else:
-	    print "No changes detected from %s to %s." % (start, options.debian)
+        if changes:
+            # FIXME: need a way to force a new verison anyway:
+            if cp['Distribution'] != "UNRELEASED":
+                add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
+            shortlog_to_dch(changes)
+        else:
+            print "No changes detected from %s to %s." % (start, options.debian)
 
     except GbpError, err:
         if len(err.__str__()):
@@ -125,5 +131,4 @@ def main(argv):
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
 
-# vim:et:ts=4:sw=4:
-
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
