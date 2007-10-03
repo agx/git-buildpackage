@@ -67,12 +67,22 @@ def import_source_tree(repo, orig_dir, version, upstream, filter):
         raise GbpError, "Import of new upstream version failed."
 
 
-def get_version(tgz):
-    """get the version from the filename of a .orig.tar.gz"""
-    origre = re.compile('^[a-z\d-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.gz')
-    m = origre.match(os.path.basename(tgz))
-    if m:
-        return m.group('version')    
+def guess_version(archive, version_regex=r''):
+    """
+    guess the version from the filename of an upstgream archive
+    @archive: filename to guess to version for
+    @version_regex: additional version regex to apply, needs a 'version' group
+    """
+    version_filters = [ # Debian package_<version>.orig.tar.gz:
+                        r'^[a-z\d\-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.(gz|bz2)',
+                        # Upstream package-<version>.tar.gz:
+                        r'^[a-z\d\-]+-(?P<version>[a-z\d\.]+)\.tar\.(gz|bz2)' ]
+    if version_regex:
+        version_filters = version_regex + version_filters
+    for filter in version_filters:
+        m = re.match(filter, os.path.basename(archive))
+        if m:
+            return m.group('version')
 
 
 def main(argv):
@@ -138,7 +148,7 @@ create it otherwise use --upstream-branch to specify it.
         if options.version:
             version = options.version
         else:
-            version = get_version(archive)
+            version = guess_version(archive)
 
         if version:
             print "Upstream version is %s" % version
