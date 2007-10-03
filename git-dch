@@ -53,7 +53,8 @@ def add_changelog_entry(msg, author):
 
 
 def add_changelog_section(msg, distribution):
-    ret = os.system("dch --distribution=%s -i %s" % (distribution, msg))
+    cmd = "dch --distribution=%s -i %s" % (distribution, msg)
+    ret = os.system(cmd)
     if ret:
         raise GbpError, "Error executing %s: %d" % (cmd, ret)
 
