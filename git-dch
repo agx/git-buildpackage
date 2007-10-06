@@ -19,8 +19,9 @@
 """Generate Debian changelog entries from git changelogs"""
 
 import sys
-import os
 import re
+import os.path
+import shutil
 import subprocess
 import gbp.command_wrappers as gbpc
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
@@ -28,6 +29,7 @@ from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 from gbp.deb_utils import parse_changelog
 
+snapshot_re = "\s*\*\* SNAPSHOT build @[a-z0-9]+"
 
 def get_log(start, end):
     """Get the shortlog from commit start to commit end"""
@@ -41,22 +43,103 @@ def get_log(start, end):
     except ValueError, err:
         raise GbpError, "Cannot get changes: %s" % err
     if p1.wait() or p2.wait():
-        raise GbpError, "Cannot get changes, pipe failed."
+        raise GbpError, "Cannot get changes, use --since."
     return changes
+
+
+def system(cmd):
+    try:
+        ret = subprocess.call(cmd, shell=True)
+        if ret < 0:
+            raise GbpError, "Command '%s' terminated by signal %d" % (cmd, -ret)
+        elif ret > 0:
+            raise GbpError, "Command '%s' exited with %d" % (cmd, ret)
+    except OSError, e:
+        raise GbpError, "Execution of '%s' failed: %s" % (cmd, e)
 
 
 def add_changelog_entry(msg, author):
     cmd = 'DEBFULLNAME="%s" dch "%s"' % (author, msg.replace('"','\"'))
-    ret = os.system(cmd)
-    if ret:
-        raise GbpError, "Error executing %s: %d" % (cmd, ret)
+    system(cmd)
 
 
 def add_changelog_section(msg, distribution):
     cmd = "dch --distribution=%s -i %s" % (distribution, msg)
-    ret = os.system(cmd)
-    if ret:
-        raise GbpError, "Error executing %s: %d" % (cmd, ret)
+    system(cmd)
+
+
+def head_commit():
+    """get the commit id of the last commit on HEAD"""
+    commit = subprocess.Popen([ 'git-log', 'HEAD^..' ], stdout=subprocess.PIPE).stdout
+    id = commit.readline().split()[-1]
+    return id
+
+
+def snapshot_version(version):
+    """
+    get the current release and snapshot version
+    @FIXME: this causes trouble with epochs
+    """
+    try:
+        (release, suffix) = version.split('~', 1)
+        snapshot = int(suffix.split('.',1)[0])
+    except ValueError: # not a snapshot release
+        release = version
+        snapshot = 0
+    return release, snapshot
+
+
+def mangle_changelog(changelog, cp, snapshot, id="unknown"):
+    """Mangle changelog to either add or remove snapshot markers"""
+    try:
+        tmp = '%s.%s' % (changelog, str(snapshot))
+        cw = file(tmp, 'w')
+        cr = file(changelog, 'r')
+        cr.readline() # skip version and empty line
+        cr.readline()
+        print >>cw, "%(Source)s (%(MangledVersion)s) %(Distribution)s; urgency=%(urgency)s\n" % cp
+
+        line = cr.readline()
+        if re.match(snapshot_re, line):
+            cr.readline() # consume the empty line
+            line = ''
+
+        if snapshot:
+            print >>cw, "  ** SNAPSHOT build @%s **\n" % id
+
+        if line:
+            print >>cw, line.rstrip()
+        shutil.copyfileobj(cr, cw)
+        cw.close()
+        cr.close()
+        os.unlink(changelog)
+        os.rename(tmp, changelog)
+    except OSError, e:
+        raise GbpError, "Error mangling changelog %s" % e
+
+
+def release(changelog, cp):
+    (release, snapshot) = snapshot_version(cp['Version'])
+    if snapshot:
+        cp['MangledVersion'] = release
+        mangle_changelog(changelog, cp, 0)
+    cmd = "dch --release"
+    system(cmd)
+
+
+def snapshot(changelog):
+    """Add new snapshot id and banner to most recent changelog section"""
+    id = head_commit()
+
+    cp = parse_changelog(changelog)
+    (release, snapshot) = snapshot_version(cp['Version'])
+    snapshot = [1, snapshot+1][snapshot > 0]
+
+    suffix = "%d.gbp%s" % (snapshot, "".join(id[0:6]))
+    cp['MangledVersion'] = "%s~%s" % (release, suffix)
+
+    mangle_changelog(changelog, cp, snapshot, id)
+    return snapshot, id
 
 
 def shortlog_to_dch(changes):
@@ -80,20 +163,27 @@ def shortlog_to_dch(changes):
         if msg:
             add_changelog_entry(msg, author)
 
-
 def main(argv):
     ret = 0
+    changelog = 'debian/changelog'
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='')
 
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
     parser.add_config_file_option(option_name="debian-branch", dest='debian',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_option("-s", "--since", dest="from_commit", help="commit to start from")
     parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
                       help="Format string for debian tags, default is '%(debian-tag)s'")
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                      help="verbose command execution")
+    parser.add_option("-s", "--since", dest="from_commit", help="commit to start from")
+    parser.add_option("--release", action="store_true", dest="release", default=False,
+                      help="mark as release")
+    parser.add_option("--snapshot", action="store_true", dest="snapshot", default=False,
+                      help="mark as snapshot build")
     (options, args) = parser.parse_args(argv[1:])
+
+    if options.snapshot and options.release:
+        parser.error("--snapshot and --release are incompatible options")
 
     try:
         if options.verbose:
@@ -108,7 +198,7 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 
-        cp = parse_changelog('debian/changelog')
+        cp = parse_changelog(changelog)
         if options.from_commit:
             start = options.from_commit
         else:
@@ -116,12 +206,16 @@ def main(argv):
 
         changes = get_log(start, options.debian)
         if changes:
-            # FIXME: need a way to force a new verison anyway:
             if cp['Distribution'] != "UNRELEASED":
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
             shortlog_to_dch(changes)
+            if options.snapshot:
+                (snap, version) = snapshot(changelog)
+                print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
         else:
             print "No changes detected from %s to %s." % (start, options.debian)
+        if options.release:
+            release(changelog, cp)
 
     except GbpError, err:
         if len(err.__str__()):
