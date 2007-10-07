@@ -31,10 +31,10 @@ from gbp.deb_utils import parse_changelog
 
 snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
 
-def get_log(start, end, options):
+def get_log(start, end, options, paths):
     """Get the shortlog from commit 'start' to commit 'end'"""
     try:
-        p1 = subprocess.Popen("git-log %s %s...%s" % (options, start, end), shell=True,
+        p1 = subprocess.Popen("git-log %s %s...%s -- %s" % (options, start, end, paths), shell=True,
                               stdout=subprocess.PIPE)
         p2 = subprocess.Popen(["git-shortlog"], stdin=p1.stdout, stdout=subprocess.PIPE)
         changes = p2.communicate()[0].split('\n')
@@ -180,7 +180,8 @@ def main(argv):
     changelog = 'debian/changelog'
     until = 'HEAD'
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='')
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                             usage='%prog [options] paths')
 
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
@@ -204,10 +205,6 @@ def main(argv):
     try:
         if options.verbose:
             gbpc.Command.verbose = True
-
-        if args:
-            parser.print_help()
-            raise GbpError
 
         try:
             repo = GitRepository('.')
@@ -234,7 +231,9 @@ def main(argv):
             if not since:
                 since = build_tag(options.debian_tag, cp['Version'])
 
-        changes = get_log(since, until, options.git_log)
+        if args:
+            print "Only looking for changes on '%s'" % " ".join(args)
+        changes = get_log(since, until, options.git_log, " ".join(args))
         if changes:
             if cp['Distribution'] != "UNRELEASED":
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
