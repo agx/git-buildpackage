@@ -31,10 +31,10 @@ from gbp.deb_utils import parse_changelog
 
 snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
 
-def get_log(start, end):
+def get_log(start, end, options):
     """Get the shortlog from commit 'start' to commit 'end'"""
     try:
-        p1 = subprocess.Popen(["git-log", "--no-merges", "%s...%s" % (start, end)], 
+        p1 = subprocess.Popen("git-log %s %s...%s" % (options, start, end), shell=True,
                               stdout=subprocess.PIPE)
         p2 = subprocess.Popen(["git-shortlog"], stdin=p1.stdout, stdout=subprocess.PIPE)
         changes = p2.communicate()[0].split('\n')
@@ -195,6 +195,7 @@ def main(argv):
                       help="mark as snapshot build")
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
+    parser.add_option("--git-log", dest="git_log", help="options to pass to git-log", default="--no-merges")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
@@ -233,7 +234,7 @@ def main(argv):
             if not since:
                 since = build_tag(options.debian_tag, cp['Version'])
 
-        changes = get_log(since, until)
+        changes = get_log(since, until, options.git_log)
         if changes:
             if cp['Distribution'] != "UNRELEASED":
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
