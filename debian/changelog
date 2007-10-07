@@ -1,3 +1,21 @@
+git-buildpackage (0.4.0) experimental; urgency=low
+
+  * add support for automatic snapshot releases as suggested by Ottavio
+    Salvador
+  * make git-dch actually useful:
+      * --auto: guess last changelogged commit from the snapshot header
+      * add short options for --snapshot and --release
+      * don't fail if the commit msg starts with '--'
+      * add a check for the debian branch instead of always using it as the
+        tip
+      * handle versions containing epochs
+      * add --git-log to pass options along to git-log
+      * allow to specify paths to look at: git-dch path1 path2 - useful if
+        upstream uses git
+  * add some basic documentation for git-dch
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 07 Oct 2007 15:32:40 +0200
+
 git-buildpackage (0.3.6) unstable; urgency=low
 
   * create upstream branch when importing into an empty archive 
