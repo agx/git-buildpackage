@@ -111,7 +111,7 @@
   <refsect1>
     <title>SEE ALSO</title>
 
-    <para>git-buildpackage (1), git-import-orig (1), git (1), git_load_dirs (1)</para>
+    <para>git-buildpackage (1), git-import-orig (1), git (1), git_load_dirs (1), git-dch (1)</para>
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>

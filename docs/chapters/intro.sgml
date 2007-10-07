@@ -35,6 +35,9 @@
 	always build the package with &git-buildpackage;. In case you have
 	uncommitted changes in your source tree you can use the
 	<option>--git-ignore-new</option> option.</para></listitem>
+	<listitem><para>Optionally you can create the Debian changelog entries
+	using &git-dch; and create snapshot releases for testing using the
+	<option>--snapshot</option> option.</para></listitem>
 	<listitem><para>Once satisfied you can build the final package with
 	&git-buildpackage; <option>--git-tag</option>. This
 	additionally creates a tag within &git; so you can switch back to that

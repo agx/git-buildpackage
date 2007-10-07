@@ -1,0 +1,62 @@
+<chapter id="gbp.releases">
+    <title>Releases and Snapshots</title>
+    <para>When branching and merging frequently, the different Debian changelog
+    entries on the different branches tend to get into the way of the automatic
+    merge and the the merge fails - leaving the (patholigical) merge to the
+    committer. In order to avoid this &git-dch; offers a way for creating
+    changelog entries from &git; commits before doing a
+    release or anytime between releases.</para> 
+    <para>
+    The simplest way is doing all the changes to the
+    <emphasis>debian</emphasis>-branch without touching
+    <emphasis>debian/changelog</emphasis> at all. Then, when done, do:
+    </para>
+<screen>
+&git-dch; --release
+</screen>
+    <para> This will look up the latest released version in the changelog,
+    increment the version in the &debian; changelog, generate changelog
+    messages from the corresponding &git; commit id up to the branch head and
+    finally spawns an editor for final changelog file editing by invoking &dch;
+    <option>--release</option>.</para>
+    <para>
+    But what if you want to have an (unreleased) snapshot for intermediate testing:
+<screen>
+&git-dch; --snapshot
+</screen>
+   <para>will generate a snapshot release with a specially crafted version number
+   and a warning in the changelog that this is a snapshort release:
+   </para>
+<programlisting>
+git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @470ce29ec7877705c844474a2fd89869aea0406d **
+
+  * add support for automatic snapshot 
+</programlisting>
+   <para>During subsequent calls with <option>--snapshot</option> this version
+   number will continue to increase. Since the snapshot banners contains the
+   commit id of the current branch head, &git-dch; can figure out what to
+   append to the changelog by itself:
+<screen>
+&git-dch; --snapshot --auto
+</screen>
+   will fetch the commit id and add changelog entries from that point to the
+   current HEAD - again auto incrementing the version number. If you don't want
+   to start at that commit id, you can specify any id or tag with:</para>
+<screen>
+&git-dch; --since=e76a6a180a57701ae4ae381f74523cacb3152780 --snapshot
+</screen>
+   <para>
+   After testing you can remove the snapshot header by a final &git-dch; call:
+   </para>
+<screen>
+&git-dch; --since=HEAD --release
+</screen>
+   <para>
+   This will add no further entries but simply remove the specially crafted
+   version number and the snapshort header. Again you can use any commit id
+   or tag instead of <option>HEAD</option> if you want to add further changelog
+   entries - or you can (of course) use <option>--auto</option> again.
+   </para>
+</chapter>

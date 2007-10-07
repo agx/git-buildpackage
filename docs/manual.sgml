@@ -20,6 +20,7 @@
   &ch.intro;
   &ch.import;
   &ch.building;
+  &ch.releases;
   &ch.cfgfile;
   &ch.special;
 

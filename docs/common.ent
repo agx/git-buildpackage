@@ -16,6 +16,7 @@
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY git	       "<productname>Git</productname>">
+  <!ENTITY dch	       "<productname>dch</productname>">
   <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
   <!ENTITY gitloaddirs "<productname>Git_load_dirs</productname>">
   <!ENTITY debuild     "<productname>Debuild</productname>">

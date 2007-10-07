@@ -163,7 +163,7 @@
   <refsect1>
     <title>SEE ALSO</title>
 
-    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1)</para>
+    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1), git-dch (1)</para>
 
   </refsect1>
   <refsect1>

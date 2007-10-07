@@ -1,4 +1,4 @@
-<chapter id="gbp.special">
+    <chapter id="gbp.special">
     <title>Special usage cases</title>
     <sect1 id="gbp.special.dfsgfree">
     <title>Handling non-DFSG clean upstream sources</title>
