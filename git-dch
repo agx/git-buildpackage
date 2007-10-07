@@ -67,6 +67,12 @@ def add_changelog_section(msg, distribution):
     cmd = "dch --distribution=%s -i %s" % (distribution, msg)
     system(cmd)
 
+def fixup_trailer():
+    """fixup the changelog trailer's comitter and email address - it might
+    otherwise point to the last git committer instead of the person creating
+    the changelog"""
+    cmd = "dch \"\""
+    system(cmd)
 
 def head_commit():
     """get the commit id of the last commit on HEAD"""
@@ -238,6 +244,7 @@ def main(argv):
             if cp['Distribution'] != "UNRELEASED":
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
             shortlog_to_dch(changes)
+            fixup_trailer()
             if options.snapshot:
                 (snap, version) = snapshot(changelog)
                 print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
