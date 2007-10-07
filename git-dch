@@ -78,11 +78,15 @@ def head_commit():
 def snapshot_version(version):
     """
     get the current release and snapshot version
-    @FIXME: this causes trouble with epochs
+    Format is <debian-version>~<release>.gbp<short-commit-id>
     """
     try:
-        (release, suffix) = version.split('~', 1)
-        snapshot = int(suffix.split('.',1)[0])
+        (release, suffix) = version.rsplit('~', 1)
+        (snapshot, commit)  = suffix.split('.', 1)
+        if not commit.startswith('gbp'):
+            raise ValueError
+        else:
+            snapshot = int(snapshot)
     except ValueError: # not a snapshot release
         release = version
         snapshot = 0
