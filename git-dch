@@ -59,7 +59,7 @@ def system(cmd):
 
 
 def add_changelog_entry(msg, author):
-    cmd = 'DEBFULLNAME="%s" dch "%s"' % (author, msg.replace('"','\"'))
+    cmd = 'DEBFULLNAME="%s" dch --append -- "%s"' % (author, msg.replace('"','\"'))
     system(cmd)
 
 
