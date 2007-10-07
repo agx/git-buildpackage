@@ -185,9 +185,9 @@ def main(argv):
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_option("-s", "--since", dest="since", help="commit to start from")
-    parser.add_option("--release", action="store_true", dest="release", default=False,
+    parser.add_option("-R", "--release", action="store_true", dest="release", default=False,
                       help="mark as release")
-    parser.add_option("--snapshot", action="store_true", dest="snapshot", default=False,
+    parser.add_option("-S", "--snapshot", action="store_true", dest="snapshot", default=False,
                       help="mark as snapshot build")
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
