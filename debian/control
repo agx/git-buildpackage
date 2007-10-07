@@ -9,7 +9,7 @@ XS-Vcs-Git: http://honk.sigxcpu.org/git/git-buildpackage.git/
 
 Package: git-buildpackage
 Architecture: all
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, devscripts,
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, devscripts (>= 2.10.9),
  git-core (>= 1:1.5.0.1-1)
 Suggests: git-load-dirs
 Description: Suite to help with Debian packages in Git repositories
