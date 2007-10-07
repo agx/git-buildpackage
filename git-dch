@@ -166,16 +166,17 @@ def shortlog_to_dch(changes):
 def main(argv):
     ret = 0
     changelog = 'debian/changelog'
+    until = 'HEAD'
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='')
 
-    parser.add_config_file_option(option_name="debian-branch", dest='debian',
+    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
                       help="Format string for debian tags, default is '%(debian-tag)s'")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_option("-s", "--since", dest="from_commit", help="commit to start from")
+    parser.add_option("-s", "--since", dest="since", help="commit to start from")
     parser.add_option("--release", action="store_true", dest="release", default=False,
                       help="mark as release")
     parser.add_option("--snapshot", action="store_true", dest="snapshot", default=False,
@@ -194,17 +195,22 @@ def main(argv):
             raise GbpError
 
         try:
-            GitRepository('.')
+            repo = GitRepository('.')
         except GitRepositoryError:
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 
-        cp = parse_changelog(changelog)
-        if options.from_commit:
-            start = options.from_commit
-        else:
-            start = build_tag(options.debian_tag, cp['Version'])
+        branch = repo.get_branch()
+        if options.debian_branch != branch:
+            print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
+            raise GbpError, "Use --git-debian-branch to set the branch to pick changes from"
 
-        changes = get_log(start, options.debian)
+        cp = parse_changelog(changelog)
+        if options.since:
+            since = options.since
+        else:
+            since = build_tag(options.debian_tag, cp['Version'])
+
+        changes = get_log(since, until)
         if changes:
             if cp['Distribution'] != "UNRELEASED":
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
@@ -213,7 +219,7 @@ def main(argv):
                 (snap, version) = snapshot(changelog)
                 print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
         else:
-            print "No changes detected from %s to %s." % (start, options.debian)
+            print "No changes detected from %s to %s." % (since, until)
         if options.release:
             release(changelog, cp)
 
