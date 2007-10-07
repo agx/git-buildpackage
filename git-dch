@@ -29,10 +29,10 @@ from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 from gbp.deb_utils import parse_changelog
 
-snapshot_re = "\s*\*\* SNAPSHOT build @[a-z0-9]+"
+snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
 
 def get_log(start, end):
-    """Get the shortlog from commit start to commit end"""
+    """Get the shortlog from commit 'start' to commit 'end'"""
     try:
         p1 = subprocess.Popen(["git-log", "--no-merges", "%s...%s" % (start, end)], 
                               stdout=subprocess.PIPE)
@@ -163,6 +163,14 @@ def shortlog_to_dch(changes):
         if msg:
             add_changelog_entry(msg, author)
 
+
+def guess_snapshot_commit(cp):
+    """guess the last commit documented in the changelog from the snapshot banner"""
+    sr = re.search(snapshot_re, cp['Changes'])
+    if sr:
+        return sr.group('commit')
+
+
 def main(argv):
     ret = 0
     changelog = 'debian/changelog'
@@ -181,6 +189,8 @@ def main(argv):
                       help="mark as release")
     parser.add_option("--snapshot", action="store_true", dest="snapshot", default=False,
                       help="mark as snapshot build")
+    parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
+                      help="autocomplete changelog from last snapshot or tag")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
@@ -205,10 +215,19 @@ def main(argv):
             raise GbpError, "Use --git-debian-branch to set the branch to pick changes from"
 
         cp = parse_changelog(changelog)
+
         if options.since:
             since = options.since
         else:
-            since = build_tag(options.debian_tag, cp['Version'])
+            since = ''
+            if options.auto:
+                since = guess_snapshot_commit(cp)
+                if since:
+                    print "Continuing from commit '%s'" % since
+                else:
+                    print "Couldn't get snapshot header, using version info"
+            if not since:
+                since = build_tag(options.debian_tag, cp['Version'])
 
         changes = get_log(since, until)
         if changes:
