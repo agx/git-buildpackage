@@ -65,10 +65,17 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
     can give any python expression that evaluates to a positive integer to
     calculate the new snapshot number:</para>
 <screen>
-git-dch -S -a --snapshot-number=1
-git-dch -S -a --snapshot-number='snapshot + 2'
-git-dch -S -a --snapshot-number='os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
-git-dch -S -a --snapshot-number=`git-log --pretty=oneline debian/0.3.3 | wc -l`
+&git-dch; -S -a --snapshot-number=1
+&git-dch; -S -a --snapshot-number='snapshot + 2'
+&git-dch; -S -a --snapshot-number='os.popen("git-log --pretty=oneline | wc -l").readlines()[0]'
+&git-dch; -S -a --snapshot-number=`git-log --pretty=oneline debian/0.3.3 | wc -l`
 </screen>
+<para>
+You can also add the snapshot-number calculation to gbp.conf:
+</para>
+<programlisting>
+[DEFAULT]
+snapshot-number = os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
+</programlisting>
 </sect1>
 </chapter>
