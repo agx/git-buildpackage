@@ -1,3 +1,12 @@
+git-buildpackage (0.4.1) unstable; urgency=low
+
+  * make sure the changelog section's trailer points to the person
+    invoking git-dch
+  * depend on devscripts with a working 'dch ""'
+  * git-dch: eval() the snapshot number calculation
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 10 Oct 2007 18:15:54 +0200
+
 git-buildpackage (0.4.0) experimental; urgency=low
 
   * add support for automatic snapshot releases as suggested by Ottavio
