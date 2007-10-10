@@ -99,7 +99,7 @@ def snapshot_version(version):
     return release, snapshot
 
 
-def mangle_changelog(changelog, cp, snapshot, id="unknown"):
+def mangle_changelog(changelog, cp, snapshot, id):
     """Mangle changelog to either add or remove snapshot markers"""
     try:
         tmp = '%s.%s' % (changelog, str(snapshot))
@@ -137,19 +137,22 @@ def release(changelog, cp):
     system(cmd)
 
 
-def snapshot(changelog):
-    """Add new snapshot id and banner to most recent changelog section"""
-    id = head_commit()
+def snapshot(changelog, next_snapshot):
+    """
+    Add new snapshot id and banner to most recent changelog section
+    The next snapshot number is calculated by evaluating next_snapshot
+    """
+    commit = head_commit()
 
     cp = parse_changelog(changelog)
     (release, snapshot) = snapshot_version(cp['Version'])
-    snapshot = [1, snapshot+1][snapshot > 0]
+    snapshot = int(eval(next_snapshot))
 
-    suffix = "%d.gbp%s" % (snapshot, "".join(id[0:6]))
+    suffix = "%d.gbp%s" % (snapshot, "".join(commit[0:6]))
     cp['MangledVersion'] = "%s~%s" % (release, suffix)
 
-    mangle_changelog(changelog, cp, snapshot, id)
-    return snapshot, id
+    mangle_changelog(changelog, cp, snapshot, commit)
+    return snapshot, commit
 
 
 def shortlog_to_dch(changes):
@@ -193,6 +196,8 @@ def main(argv):
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
                       help="Format string for debian tags, default is '%(debian-tag)s'")
+    parser.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
+                      help="Expression to determine the next snapshot number, default is '%(snapshot-number)s'")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_option("-s", "--since", dest="since", help="commit to start from")
@@ -246,7 +251,7 @@ def main(argv):
             shortlog_to_dch(changes)
             fixup_trailer()
             if options.snapshot:
-                (snap, version) = snapshot(changelog)
+                (snap, version) = snapshot(changelog, options.snapshot_number)
                 print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
         else:
             print "No changes detected from %s to %s." % (since, until)

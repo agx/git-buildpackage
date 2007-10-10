@@ -33,6 +33,7 @@ class GbpOptionParser(OptionParser):
                'debian-tag'      : 'debian/%(version)s',
                'upstream-tag'    : 'upstream/%(version)s',
                'filter'          : '',
+               'snapshot-number' : 'snapshot + 1'
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),
