@@ -59,4 +59,16 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
    or tag instead of <option>HEAD</option> if you want to add further changelog
    entries - or you can (of course) use <option>--auto</option> again.
    </para>
+<sect1 id="gbp.release.numbers">
+    <title>Special snapshot numbers</title>
+    <para>If the auto incrementing of the snapshot number doesn't suite you needs you
+    can give any python expression that evaluates to a positive integer to
+    calculate the new snapshot number:</para>
+<screen>
+git-dch -S -a --snapshot-number=1
+git-dch -S -a --snapshot-number='snapshot + 2'
+git-dch -S -a --snapshot-number='os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
+git-dch -S -a --snapshot-number=`git-log --pretty=oneline debian/0.3.3 | wc -l`
+</screen>
+</sect1>
 </chapter>

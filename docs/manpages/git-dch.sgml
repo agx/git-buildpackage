@@ -28,6 +28,7 @@
       <arg><option>--snapshot</option></arg>
       <arg><option>--release</option></arg>
       <arg><option>--auto</option></arg>
+      <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
@@ -103,6 +104,13 @@
 	  number and a warning banner to the changelog entry. The release
 	  version number is being autoincremented with every new snapshot
 	  release to avoid packages downgrades during snapshot testing.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--snapshot-number=</option><replaceable>expression</replaceable>
+        </term>
+        <listitem>
+          <para>Python expression that gets eval()ed to the new snapshot number</para>
         </listitem>
       </varlistentry>
       <varlistentry>
