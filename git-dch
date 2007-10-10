@@ -99,7 +99,7 @@ def snapshot_version(version):
     return release, snapshot
 
 
-def mangle_changelog(changelog, cp, snapshot, id):
+def mangle_changelog(changelog, cp, snapshot, id='unknown'):
     """Mangle changelog to either add or remove snapshot markers"""
     try:
         tmp = '%s.%s' % (changelog, str(snapshot))
