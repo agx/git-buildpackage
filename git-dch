@@ -198,6 +198,8 @@ def main(argv):
                       help="Format string for debian tags, default is '%(debian-tag)s'")
     parser.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
                       help="Expression to determine the next snapshot number, default is '%(snapshot-number)s'")
+    parser.add_config_file_option(option_name="git-log", dest="git_log",
+                      help="options to pass to git-log")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_option("-s", "--since", dest="since", help="commit to start from")
@@ -207,7 +209,6 @@ def main(argv):
                       help="mark as snapshot build")
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
-    parser.add_option("--git-log", dest="git_log", help="options to pass to git-log", default="--no-merges")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:

@@ -26,14 +26,15 @@ class GbpOptionParser(OptionParser):
                'cleaner'         : 'debuild clean',
                'debian-branch'   : 'master',
                'upstream-branch' : 'upstream',
-               'sign-tags'       : '',		# empty means False
-               'no-create-orig'	 : '',		# empty means False
+               'sign-tags'       : '',      # empty means False
+               'no-create-orig'  : '',      # empty means False
                'keyid'           : '',
                'posttag'         : '',
                'debian-tag'      : 'debian/%(version)s',
                'upstream-tag'    : 'upstream/%(version)s',
                'filter'          : '',
-               'snapshot-number' : 'snapshot + 1'
+               'snapshot-number' : 'snapshot + 1',
+               'git-log'         : '--no-merges',
              }
     config_files=['/etc/git-buildpackage/gbp.conf',
                   os.path.expanduser('~/.gbp.conf'),
@@ -68,4 +69,4 @@ class GbpOptionParser(OptionParser):
                                 default=self.config[option_name], 
                                 help=help % self.config, **kwargs)
 
-# vim:et:ts=4:sw=4:
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
