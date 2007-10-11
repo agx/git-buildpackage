@@ -225,7 +225,7 @@ def main(argv):
         branch = repo.get_branch()
         if options.debian_branch != branch:
             print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
-            raise GbpError, "Use --git-debian-branch to set the branch to pick changes from"
+            raise GbpError, "Use --debian-branch to set the branch to pick changes from"
 
         cp = parse_changelog(changelog)
 
