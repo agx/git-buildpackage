@@ -10,7 +10,7 @@
     <para>
     This creates the <emphasis>dfsg_clean</emphasis> branch from the tip of
     your <emphasis>upstream</emphasis> branch.  Then, when importing a new
-    upstream version you import the new version on the
+    upstream version, you import the new version on the
     <emphasis>upstream</emphasis> branch as usual and just don't merge to the
     master branch by default:
     </para>
@@ -46,22 +46,18 @@ cleanup-script.sh
 &gitcmd; <option>branch</option> <replaceable>nmu</replaceable>
     </screen>
     <para>
-    To import an NMU instead of a new upstream version you can use:
+    To import an NMU instead of a new upstream version simply import the
+    unpacked NUMs source tree into your repository:
     </para>
     <screen>
 &gitcmd; checkout master
-&git-import-orig; -u 10-1.1 --upstream-branch=nmu nmu-10-1.1.tar.gz
+&git-import-orig; -u 10-1.1 --upstream-branch=nmu /path/to/nmu-10/
     </screen>
     <para>
     This will import the NMU on the <emphasis>nmu</emphasis> branch instead of
     the <emphasis>upstream</emphasis> branch but merge the changes to the
     <emphasis>master</emphasis> branch as usual.
     </para>
-    <note>
-    <para>
-    You need to have the NMU as a single tar.gz, you can't use the
-    dsc and diff.gz here, this will be fixed in a later version.
-    <para>
     </note>
     </sect1>
 

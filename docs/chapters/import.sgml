@@ -3,23 +3,24 @@
 
     <sect1 id="gbp.import.existing">
     <title>Importing already existing &debian; packages</title>
-    <para>Imporing an already exsting debian package into a git repository is as easy as:
+    <para>Importing an already exsting debian package into a git repository is as easy as:
     <screen>
 &git-import-dsc; package_0.1-1.dsc
     </screen>
-    This will put the upstream sources onto the <emphasis>upstream</emphasis>
-    branch and the debian patch on the <emphasis>master</emphasis> branch. In case
-    of a debian native package only the <emphasis>master</emphasis> branch is being
-    used.
+    This will create a new git repository named after the imported package, put
+    the upstream sources onto the <emphasis>upstream</emphasis> branch and the
+    debian patch on the <emphasis>master</emphasis> branch. In case of a debian
+    native package only the <emphasis>master</emphasis> branch is being used.
     You can specify different branch names via the
-    <option>--upstream-branch</option> and <option>--debian-branch</option> options.
+    <option>--upstream-branch</option> and <option>--debian-branch</option>
+    options.
     </para>
     </sect1>
 
     <sect1 id="gbp.import.new.upstream">
     <title>Importing a new upstream version</title>
-    <para>Change into your git repository, make sure it has all local
-    modifications committed and run either of:
+    <para>Change into your git repository (which can be empty), make sure it
+    has all local modifications committed and run either of:
     <screen>
 &git-import-orig; /path/to/package_0.2.orig.tar.gz
 &git-import-orig; /path/to/package_0.2.tar.bz2
