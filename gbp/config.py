@@ -36,9 +36,10 @@ class GbpOptionParser(OptionParser):
                'snapshot-number' : 'snapshot + 1',
                'git-log'         : '--no-merges',
              }
-    config_files=['/etc/git-buildpackage/gbp.conf',
-                  os.path.expanduser('~/.gbp.conf'),
-                  '.git/gbp.conf' ]
+    config_files=[ '/etc/git-buildpackage/gbp.conf',
+                   os.path.expanduser('~/.gbp.conf'),
+                   '.gbp.conf',
+                   '.git/gbp.conf' ]
 
     def __parse_config_files(self):
         """parse the possible config files and set appropriate values default values"""
