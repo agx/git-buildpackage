@@ -1,5 +1,4 @@
 - git-buildpackage:
-  - allow to export the hole source tree to tmpdir before building
   - allow to fetch and build from a signed tag even when it's in a remote repo
 - git-import-orig:
   - show untracked files using 'git-ls-files -o' after import

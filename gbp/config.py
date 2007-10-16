@@ -35,6 +35,7 @@ class GbpOptionParser(OptionParser):
                'filter'          : '',
                'snapshot-number' : 'snapshot + 1',
                'git-log'         : '--no-merges',
+               'export-dir'      : '',
              }
     config_files=[ '/etc/git-buildpackage/gbp.conf',
                    os.path.expanduser('~/.gbp.conf'),
@@ -43,18 +44,17 @@ class GbpOptionParser(OptionParser):
 
     def __parse_config_files(self):
         """parse the possible config files and set appropriate values default values"""
-        parser=SafeConfigParser(self.defaults)
+        parser = SafeConfigParser(self.defaults)
         parser.read(self.config_files)
-        self.config=dict(parser.defaults())
+        self.config = dict(parser.defaults())
         if parser.has_section(self.command):
-            self.config=dict(parser.items(self.command, raw=True))
+            self.config.update(dict(parser.items(self.command, raw=True)))
 
     def __init__(self, command, prefix='', usage=None):
-        self.command=command
-        self.prefix=prefix
+        self.command = command
+        self.prefix = prefix
         self.__parse_config_files()
         OptionParser.__init__(self, usage=usage)
-
 
     def add_config_file_option(self, option_name, dest, help, **kwargs):
         """
@@ -67,7 +67,7 @@ class GbpOptionParser(OptionParser):
         @type help: string
         """
         OptionParser.add_option(self,"--%s%s" % (self.prefix, option_name), dest=dest,
-                                default=self.config[option_name], 
+                                default=self.config[option_name],
                                 help=help % self.config, **kwargs)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

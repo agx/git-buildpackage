@@ -27,10 +27,10 @@ class GitRepository(object):
             raise GitRepositoryError
 
 
-    def __git_getoutput(self, command):
-        """Exec a git command and return the output"""
+    def __git_getoutput(self, command, args=[]):
+        """exec a git command and return the output"""
         output = []
-        popen = subprocess.Popen(['git', command], stdout=subprocess.PIPE)
+        popen = subprocess.Popen(['git', command] + args, stdout=subprocess.PIPE)
         while popen.poll() == None:
             output += popen.stdout.readlines()
         ret = popen.poll()
@@ -45,6 +45,13 @@ class GitRepository(object):
             if line.split(' ', 1)[1].strip() == branch:
                 return True
         return False
+
+
+    def has_treeish(self, treeish):
+        """check if the repository has the treeish object treeish"""
+        self.__check_path()
+        out, ret =  self.__git_getoutput('ls-tree', [ treeish ])
+        return [ True, False ][ret != 0]
 
 
     def get_branch(self):
