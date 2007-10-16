@@ -1,3 +1,18 @@
+git-buildpackage (0.4.2) experimental; urgency=low
+
+  * git-dch:
+       * make --git-log a config file option
+       * git-dch: fix help message for --debian-branch
+       * doc: snapshot-number can be used in gbp.conf too
+  * git-buildpackage:
+       * add --git-export-dir=dir/, --git-export=treeish (Closes: #446042)
+       * allow to use any treeish object for --git-upstream-branch
+  * add missing examples to gbp.conf
+  * parse .gbp.conf in the repository directory (Closes: #426009)
+  * minor doc updates and clarifications
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 17 Oct 2007 00:00:13 +0200
+
 git-buildpackage (0.4.1) unstable; urgency=low
 
   * make sure the changelog section's trailer points to the person
