@@ -8,12 +8,13 @@
 &git-import-dsc; package_0.1-1.dsc
     </screen>
     This will create a new git repository named after the imported package, put
-    the upstream sources onto the <emphasis>upstream</emphasis> branch and the
-    debian patch on the <emphasis>master</emphasis> branch. In case of a debian
-    native package only the <emphasis>master</emphasis> branch is being used.
-    You can specify different branch names via the
+    the upstream sources onto the <option>upstream-branch</option> and the
+    debian patch on the <option>debian-branch</option>. In case of a debian
+    native package only the <option>debian-branch</option> is being used.
+    You can specify alternative branch names via the
     <option>--upstream-branch</option> and <option>--debian-branch</option>
-    options.
+    options or via the <option>upstream-branch</option> and
+    <option>debian-branch</option> options in the configuration file.
     </para>
     </sect1>
 
@@ -22,24 +23,24 @@
     <para>Change into your git repository (which can be empty), make sure it
     has all local modifications committed and run either of:
     <screen>
-&git-import-orig; /path/to/package_0.2.orig.tar.gz
-&git-import-orig; /path/to/package_0.2.tar.bz2
-&git-import-orig; /path/to/package-0.2/
+&git-import-orig; <filename>/path/to/package_0.2.orig.tar.gz</filename>
+&git-import-orig; <filename>/path/to/package_0.2.tar.bz2</filename>
+&git-import-orig; <filename>/path/to/package-0.2/</filename>
     </screen>
-    This puts the upstream souces onto the <emphasis>upstream</emphasis> branch.
-    The result of this is then merged onto the <emphasis>master</emphasis>
-    branch and a new changelog entry is created. You can again specify
+    This puts the upstream souces onto the <option>upstream-branch</option>.
+    The result of this is then merged onto the <option>debian-branch</option>
+    and a new &debian; changelog entry is created. You can again specify
     different branch names via the <option>--upstream-branch</option> and
     <option>--debian-branch</option> options. You can also filter out content
     you don't want imported:
     <screen>
-&git-import-orig; --filter='CVS/*' /path/to/package_0.2.orig.tar.gz
+&git-import-orig; <option>--filter</option>=<replaceable>'CVS/*'</replaceable> <filename>/path/to/package_0.2.orig.tar.gz</filename>
     </screen>
     </para> 
     <para>
-    If you expect a merge conflict you can delay the merge to
-    <emphasis>master</emphasis> via the <option>--no-merge</option> and pull in
-    the changes from the <emphasis>upstream</emphasis> branch any time later.
+    If you expect a merge conflict you can delay the merge to the
+    <option>debian-branch</option> via the <option>--no-merge</option> and pull in
+    the changes from the <option>upstream-branch</option> later.
     </para>
     <para>
     </para>
@@ -54,21 +55,23 @@
     <title>Upstream sources on a branch</title>
     <para>
     If the upstream sources are already on a separate branch things are pretty
-    simple. You can either rename that branch to <emphasis>upstream</emphasis>
-    with:
+    simple. You can either rename that branch to the default
+    <option>upstream-branch</option> name <emphasis>upstream</emphasis> with:
     <screen>
-mv .git/theupstream-branch .git/upstream
+&gitcmd; branch upstream theupstream-branch
+&gitcmd; branch <option>-D</option> theupstream-branch
     </screen> 
-    or you can tell &git-buildpackage; the name of the branch:
+    or you can tell &git-buildpackage; the name of the branch to use as
+    <option>upstream-branch</option>:
     <screen>
-cat &lt;&lt;EOF &gt; <filename>.git/gbp.conf</filename>
+<command>cat</command> &lt;&lt;EOF &gt; <filename>.git/gbp.conf</filename>
 [DEFAULT]
 # this is the upstream-branch:
 upstream-branch=theupstream-branch
     </screen>
-    If you use &git-import-orig; to import new upstream sources, they will
-    end up on <emphasis>theupstream-branch</emphasis> and merged to
-    <emphasis>master</emphasis>.
+    If you then use &git-import-orig; to import new upstream sources, they will
+    from now on end up on <emphasis>theupstream-branch</emphasis> and
+    merged to the <option>debian-branch</option>.
     </para>
     </sect2>
     <sect2>
@@ -88,13 +91,13 @@ upstream-branch=theupstream-branch
     assumes that this was the first commit to that repository.
     </para>
     <warning><para>There's currently no <emphasis>easy</emphasis> way to create the
-    <emphasis>upstream</emphasis> branch if you never had the upstream sources
+    <option>upstream-branch</option> if you never had the upstream sources
     as a single commit. Using &git-import-orig; on such repositories might lead
     to unexpected merge results.</para></warning>
     <para>In order to fix this you can prepend the upstream sources as a
     single commit to your tree using &git;'s <ulink
     url="http://git.or.cz/gitwiki/GraftPoint">grafts</ulink>. Afterwards you
-    can simply create a branch as explained above and &git-import-orig; should
+    can simply create a branch as explained above and &git-import-orig; will 
     work as expected.</para>
     </sect2>
     </sect1>
@@ -106,16 +109,16 @@ upstream-branch=theupstream-branch
     what if you want to start a new package? First create an empty repository:
     </para>
     <screen>
-mkdir package-0.1
-cd package-0.1
-git-init
+<command>mkdir</command> package-0.1
+<command>cd</command> package-0.1
+<command>git-init</command>
     </screen> 
-    <para>Then you import the upstream sources, branch of the
-    <emphasis>upstream</emphasis> branch and add the debian files (e.g. via dh_make):
+    <para>Then you import the upstream sources, branch off the
+    <option>upstream-branch</option> branch and add the debian files (e.g. via dh_make):
     <screen>
-&git-import-orig -u 0.1 ../package-0.1.tar.gz
-git-branch upstream
-dh_make
+&git-import-orig; <option>-u</option> <replaceable>0.1</replaceable> <filename>../package-0.1.tar.gz</filename>
+&gitcmd; branch upstream
+<command>dh_make</command>
     </screen>
     That's it, you're done.
     </sect1>

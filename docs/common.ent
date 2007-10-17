@@ -20,6 +20,7 @@
   <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
   <!ENTITY gitloaddirs "<productname>Git_load_dirs</productname>">
   <!ENTITY debuild     "<productname>Debuild</productname>">
+  <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
   <!ENTITY gpg 	       "<productname>GPG</productname>">
   <!ENTITY dpkg-buildpackage "<productname>Dpkg-buildpackage</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">
