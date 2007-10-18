@@ -59,11 +59,13 @@ def system(cmd):
 
 
 def add_changelog_entry(msg, author):
+    "add aa single changelog entry"
     cmd = 'DEBFULLNAME="%s" dch --append -- "%s"' % (author, msg.replace('"','\"'))
     system(cmd)
 
 
 def add_changelog_section(msg, distribution):
+    "add a new changelog section"
     cmd = "dch --distribution=%s -i %s" % (distribution, msg)
     system(cmd)
 
@@ -75,10 +77,10 @@ def fixup_trailer():
     system(cmd)
 
 def head_commit():
-    """get the commit id of the last commit on HEAD"""
+    """get the full sha1 of the last commit on HEAD"""
     commit = subprocess.Popen([ 'git-log', 'HEAD^..' ], stdout=subprocess.PIPE).stdout
-    id = commit.readline().split()[-1]
-    return id
+    sha = commit.readline().split()[-1]
+    return sha
 
 
 def snapshot_version(version):
@@ -99,7 +101,7 @@ def snapshot_version(version):
     return release, snapshot
 
 
-def mangle_changelog(changelog, cp, snapshot, id='unknown'):
+def mangle_changelog(changelog, cp, snapshot, sha='unknown'):
     """Mangle changelog to either add or remove snapshot markers"""
     try:
         tmp = '%s.%s' % (changelog, str(snapshot))
@@ -115,7 +117,7 @@ def mangle_changelog(changelog, cp, snapshot, id='unknown'):
             line = ''
 
         if snapshot:
-            print >>cw, "  ** SNAPSHOT build @%s **\n" % id
+            print >>cw, "  ** SNAPSHOT build @%s **\n" % sha
 
         if line:
             print >>cw, line.rstrip()
@@ -128,7 +130,8 @@ def mangle_changelog(changelog, cp, snapshot, id='unknown'):
         raise GbpError, "Error mangling changelog %s" % e
 
 
-def release(changelog, cp):
+def do_release(changelog, cp):
+    "remove the snapshot header and set the distribution"
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
         cp['MangledVersion'] = release
@@ -137,10 +140,10 @@ def release(changelog, cp):
     system(cmd)
 
 
-def snapshot(changelog, next_snapshot):
+def do_snapshot(changelog, next_snapshot):
     """
-    Add new snapshot id and banner to most recent changelog section
-    The next snapshot number is calculated by evaluating next_snapshot
+    Add new snapshot banner to most recent changelog section. The next snapshot
+    number is calculated by eval()'ing next_snapshot
     """
     commit = head_commit()
 
@@ -160,7 +163,6 @@ def shortlog_to_dch(changes):
     commit_re = re.compile('\s+(?P<msg>.*)')
     author_re = re.compile('(?P<author>.*) \([0-9]+\)')
     author = 'Unknown'
-    ret = 0
 
     for line in changes:
         r = commit_re.match(line)
@@ -252,12 +254,12 @@ def main(argv):
             shortlog_to_dch(changes)
             fixup_trailer()
             if options.snapshot:
-                (snap, version) = snapshot(changelog, options.snapshot_number)
+                (snap, version) = do_snapshot(changelog, options.snapshot_number)
                 print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
         else:
             print "No changes detected from %s to %s." % (since, until)
         if options.release:
-            release(changelog, cp)
+            do_release(changelog, cp)
 
     except GbpError, err:
         if len(err.__str__()):

@@ -104,23 +104,23 @@ def main(argv):
 
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with uncommited changes in the source tree")
-    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
-                      help="tag after a successful build")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="builder", dest="build_cmd",
+    parser.add_config_file_option(option_name="builder", dest="builder",
                       help="command to build the package, default is '%(builder)s'")
-    parser.add_config_file_option(option_name="cleaner", dest="clean_cmd",
+    parser.add_config_file_option(option_name="cleaner", dest="cleaner",
                       help="command to build the package, default is '%(cleaner)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_config_file_option(option_name="sign-tags", dest="sign_tag",
+    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
+                      help="tag after a successful build")
+    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
                       help="sign git tags", action="store_true")
     parser.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
                       help="don't create orig.tar.gz", action="store_true")
-    parser.add_config_file_option(option_name="posttag", dest="posttag_hook",
+    parser.add_config_file_option(option_name="posttag", dest="posttag",
                       help="hook to execute after a successfull tag operation")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
@@ -147,7 +147,7 @@ def main(argv):
 
     try:
         if not options.ignore_new:
-            Command(options.clean_cmd, shell=True)()
+            Command(options.cleaner, shell=True)()
             (ret, out) = repo.is_clean()
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
@@ -196,7 +196,7 @@ def main(argv):
         if options.export_dir:
             os.chdir(export_dir)
 
-        Command(options.build_cmd, dpkg_args, shell=True)()
+        Command(options.builder, dpkg_args, shell=True)()
         if options.tag:
             try:
                 version = cp['Version']
@@ -204,10 +204,10 @@ def main(argv):
                 raise GbpError, "Can't parse version from changelog"
             else:
                 print "Tagging %s" % version
-                GitTag(options.sign_tag, options.keyid)(build_tag(options.debian_tag, version),
+                GitTag(options.sign_tags, options.keyid)(build_tag(options.debian_tag, version),
                        msg="Debian release %s" % version)
-                if(options.posttag_hook):
-                    Command(options.posttag_hook, shell=True)()
+                if(options.posttag):
+                    Command(options.posttag, shell=True)()
 
     except CommandExecFailed:
         retval = 1

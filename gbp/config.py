@@ -22,25 +22,25 @@ class GbpOptionParser(OptionParser):
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
-    defaults={ 'builder'         : 'debuild -i\.git/ -I.git',
-               'cleaner'         : 'debuild clean',
-               'debian-branch'   : 'master',
-               'upstream-branch' : 'upstream',
-               'sign-tags'       : '',      # empty means False
-               'no-create-orig'  : '',      # empty means False
-               'keyid'           : '',
-               'posttag'         : '',
-               'debian-tag'      : 'debian/%(version)s',
-               'upstream-tag'    : 'upstream/%(version)s',
-               'filter'          : '',
-               'snapshot-number' : 'snapshot + 1',
-               'git-log'         : '--no-merges',
-               'export-dir'      : '',
+    defaults = { 'builder'         : 'debuild -i\.git/ -I.git',
+                 'cleaner'         : 'debuild clean',
+                 'debian-branch'   : 'master',
+                 'upstream-branch' : 'upstream',
+                 'sign-tags'       : '',      # empty means False
+                 'no-create-orig'  : '',      # empty means False
+                 'keyid'           : '',
+                 'posttag'         : '',
+                 'debian-tag'      : 'debian/%(version)s',
+                 'upstream-tag'    : 'upstream/%(version)s',
+                 'filter'          : '',
+                 'snapshot-number' : 'snapshot + 1',
+                 'git-log'         : '--no-merges',
+                 'export-dir'      : '',
              }
-    config_files=[ '/etc/git-buildpackage/gbp.conf',
-                   os.path.expanduser('~/.gbp.conf'),
-                   '.gbp.conf',
-                   '.git/gbp.conf' ]
+    config_files = [ '/etc/git-buildpackage/gbp.conf',
+                     os.path.expanduser('~/.gbp.conf'),
+                     '.gbp.conf',
+                     '.git/gbp.conf' ]
 
     def __parse_config_files(self):
         """parse the possible config files and set appropriate values default values"""
@@ -53,6 +53,7 @@ class GbpOptionParser(OptionParser):
     def __init__(self, command, prefix='', usage=None):
         self.command = command
         self.prefix = prefix
+        self.config = {}
         self.__parse_config_files()
         OptionParser.__init__(self, usage=usage)
 

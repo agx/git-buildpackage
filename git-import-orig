@@ -50,7 +50,7 @@ def unpack_orig(archive, tmpdir):
     return unpackArchive.dir
 
 
-def import_source_tree(repo, orig_dir, version, upstream, filter):
+def import_source_tree(repo, orig_dir, version, filter):
     """import source tree to the current branch"""
     try:
         old = set(repo.index_files())
@@ -98,9 +98,9 @@ def main(argv):
                       help="verbose command execution")
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
                       help="after import dont do any merging to another branch")
-    parser.add_config_file_option(option_name="debian-branch", dest='debian',
+    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_config_file_option(option_name="upstream-branch", dest="upstream",
+    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
                       help="sign git tags", action="store_true")
@@ -112,9 +112,9 @@ def main(argv):
                       help="files to filter out during import")
     (options, args) = parser.parse_args(argv[1:])
 
-    gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian)
+    gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian_branch)
     gitShowBranch = gbpc.GitShowBranch()
-    gitPullUpstream = gbpc.GitPull('.', options.upstream)
+    gitPullUpstream = gbpc.GitPull('.', options.upstream_branch)
 
     try:
         if options.verbose:
@@ -142,7 +142,7 @@ def main(argv):
 Repository does not have branch '%s' for upstream sources. If there is none see
 /usr/share/doc/git-buildpackage/manual-html/gbpc.import.convert.html on howto
 create it otherwise use --upstream-branch to specify it.
-"""  % options.upstream
+"""  % options.upstream_upstream
             raise GbpError
 
         if options.version:
@@ -173,19 +173,19 @@ create it otherwise use --upstream-branch to specify it.
 
         try:
             if not is_empty:
-                print "Importing '%s' to branch '%s'..." % (archive, options.upstream)
-                gbpc.GitCheckoutBranch(options.upstream)()
+                print "Importing '%s' to branch '%s'..." % (archive, options.upstream_branch)
+                gbpc.GitCheckoutBranch(options.upstream_branch)()
             else:
                 print "Initial import of '%s'..." % archive
 
-            import_source_tree(repo, orig_dir, version, options.upstream, options.filter)
+            import_source_tree(repo, orig_dir, version, options.filter)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
 
             if is_empty:
-                gbpc.GitBranch()(options.upstream)
+                gbpc.GitBranch()(options.upstream_branch)
             elif options.merge:
-                print "Merging to %s" % options.debian
+                print "Merging to %s" % options.debian_branch
                 gitCheckoutMaster()
                 gitShowBranch()
                 try:
