@@ -1,3 +1,15 @@
+git-buildpackage (0.4.3) experimental; urgency=low
+
+  * git-dch: properly quote "" (Closes: #447211)
+  * git-dch: use Command() instead of implementing it again
+  * documentation updates
+  * don't split up the manual that much (local.dsl taken from
+    darcs-buildpackage)
+  * add version number to docs and a tools (--version)
+  * pylint and other consistency updates
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 19 Oct 2007 10:12:40 +0200
+
 git-buildpackage (0.4.2) experimental; urgency=low
 
   * git-dch:
