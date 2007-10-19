@@ -57,7 +57,7 @@ def system(cmd):
 
 def add_changelog_entry(msg, author):
     "add aa single changelog entry"
-    cmd = 'DEBFULLNAME="%s" dch --append -- "%s"' % (author, msg.replace('"','\"'))
+    cmd = """DEBFULLNAME="%s" dch --append -- "%s" """ % (author, msg.replace('"','\\\"'))
     system(cmd)
 
 
