@@ -17,7 +17,7 @@ docs/%.1: docs/man.%.sgml
 	docbook2man -o docs/ $<
 
 $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
-	docbook-2-html -s gtk $<
+	docbook-2-html -s local $<
 
 %.py: %
 	ln -s $< $@
