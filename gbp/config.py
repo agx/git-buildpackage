@@ -6,6 +6,7 @@
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 import os.path
+from gbp.gbp_version import gbp_version
 
 class GbpOptionParser(OptionParser):
     """
@@ -55,7 +56,7 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.__parse_config_files()
-        OptionParser.__init__(self, usage=usage)
+        OptionParser.__init__(self, usage=usage, version='%s %s' % (self.command, gbp_version))
 
     def add_config_file_option(self, option_name, dest, help, **kwargs):
         """

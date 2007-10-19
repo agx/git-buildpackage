@@ -93,14 +93,16 @@ def main(argv):
     changelog = 'debian/changelog'
     default_tree = 'HEAD'
     retval = 0
+    prefix = "git-"
 
-    args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
-    dpkg_args = [ arg for arg in argv[1:] if arg.find('--git-') == -1 ]
+    args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
+    dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
 
-    if "--help" in dpkg_args:
-        args.append('--help')
+    for arg in [ "--help", "-h", "--version" ]:
+        if arg in dpkg_args:
+            args.append(arg)
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='git-')
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
 
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with uncommited changes in the source tree")

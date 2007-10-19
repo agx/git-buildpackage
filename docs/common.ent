@@ -1,6 +1,5 @@
   <!ENTITY dhfirstname 		"<firstname>Guido</firstname>">
   <!ENTITY dhsurname   		"<surname>Guenther</surname>">
-  <!ENTITY dhdate      		"<date>2006-10-02</date>">
   <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
   <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhusername  		"Guido Guenther">

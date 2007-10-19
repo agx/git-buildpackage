@@ -12,9 +12,13 @@ MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 MANUAL=docs/manual-html
 PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
 PYCHECK_LEVEL=Error
+GBP_VERSION=gbp/gbp_version.py
+VERSION_ENT=docs/version.ent
 
 docs/%.1: docs/man.%.sgml
 	docbook2man -o docs/ $<
+
+docs/manual.sgml: docs/version.ent
 
 $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	docbook-2-html -s local $<
@@ -23,10 +27,16 @@ $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	ln -s $< $@
 	PYTHONPATH=. pychecker -e $(PYCHECK_LEVEL) -q $<
 
-build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(PYCHECKS)
+$(GBP_VERSION): debian/changelog
+	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)
+
+$(VERSION_ENT): debian/changelog
+	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' >  $(VERSION_ENT)
+
+build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) $(PYCHECKS) 
 
 clean::
 	-rm git-*.py
-	-rm docs/*.1 docs/manpage.*
+	-rm docs/*.1 docs/manpage.* docs/$(VERSION_ENT)
 	-rm -r docs/manual-html/
 
