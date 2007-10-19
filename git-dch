@@ -28,6 +28,7 @@ from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 from gbp.deb_utils import parse_changelog
+from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
 
@@ -49,13 +50,9 @@ def get_log(start, end, options, paths):
 
 def system(cmd):
     try:
-        ret = subprocess.call(cmd, shell=True)
-        if ret < 0:
-            raise GbpError, "Command '%s' terminated by signal %d" % (cmd, -ret)
-        elif ret > 0:
-            raise GbpError, "Command '%s' exited with %d" % (cmd, ret)
-    except OSError, e:
-        raise GbpError, "Execution of '%s' failed: %s" % (cmd, e)
+        Command(cmd, shell=True)()
+    except CommandExecFailed:
+        raise GbpError
 
 
 def add_changelog_entry(msg, author):
