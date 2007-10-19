@@ -37,6 +37,6 @@ build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) $(PYCHECKS)
 
 clean::
 	-rm git-*.py
-	-rm docs/*.1 docs/manpage.* docs/$(VERSION_ENT)
+	-rm docs/*.1 docs/manpage.* $(VERSION_ENT)
 	-rm -r docs/manual-html/
 
