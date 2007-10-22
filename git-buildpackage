@@ -185,10 +185,14 @@ def main(argv):
 
         # Build the orig.tar.gz if necessary:
         if not is_native(cp) and not has_orig(cp, output_dir) and not options.no_create_orig:
+            # --upstream-branch was given on the command line, so use this:
             if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
                 upstream_tree = options.upstream_branch
             else:
                 upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
+                # fall back to the upstream-branch tip if the tag doesn't exist
+                if not repo.has_treeish(upstream_tree):
+                    upstream_tree = GbpOptionParser.defaults['upstream-branch']
             print "%s does not exist, creating from '%s'" % (orig_file(cp), upstream_tree)
             if not repo.has_treeish(upstream_tree):
                 raise GbpError # git-ls-tree printed an error message already
