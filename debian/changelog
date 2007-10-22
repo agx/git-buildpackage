@@ -1,3 +1,9 @@
+git-buildpackage (0.4.4) unstable; urgency=low
+
+  * git-buildpackage: use upstream-branch in case the tag doesn't exist
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 22 Oct 2007 17:00:12 +0200
+
 git-buildpackage (0.4.3) experimental; urgency=low
 
   * git-dch: properly quote "" (Closes: #447211)
