@@ -1,3 +1,10 @@
+git-buildpackage (0.4.5) unstable; urgency=low
+
+  * git-import-orig: fix missing s/upstream/upstream_branch/ rename
+    (Closes: #447920) - Thanks to Arnaud Cornet
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 24 Oct 2007 22:56:24 +0200
+
 git-buildpackage (0.4.4) unstable; urgency=low
 
   * git-buildpackage: use upstream-branch in case the tag doesn't exist
