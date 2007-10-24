@@ -137,12 +137,12 @@ def main(argv):
         else:
             is_empty = True
 
-        if not repo.has_branch(options.upstream) and not is_empty:
+        if not repo.has_branch(options.upstream_branch) and not is_empty:
             print >>sys.stderr, """
 Repository does not have branch '%s' for upstream sources. If there is none see
 /usr/share/doc/git-buildpackage/manual-html/gbpc.import.convert.html on howto
 create it otherwise use --upstream-branch to specify it.
-"""  % options.upstream_upstream
+"""  % options.upstream_branch
             raise GbpError
 
         if options.version:
