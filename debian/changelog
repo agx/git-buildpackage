@@ -1,3 +1,9 @@
+git-buildpackage (0.4.5~bpo.1) etch-backports; urgency=low
+
+  * etch backport 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 03 Nov 2007 20:27:00 +0100
+
 git-buildpackage (0.4.5) unstable; urgency=low
 
   * git-import-orig: fix missing s/upstream/upstream_branch/ rename
