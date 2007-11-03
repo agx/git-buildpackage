@@ -22,7 +22,7 @@
       <arg><option>--git-ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
-      <arg><option>--git-upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--git-upstream-branch=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
@@ -30,6 +30,9 @@
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--git-no-create-orig</option></arg>
+      <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
+      <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -44,12 +47,15 @@
         <listitem><para>Verify that it is being executed from the
             proper location.</para>
         </listitem>
-	<listitem><para>Verify that the reopository doesn't contain any
+	<listitem><para>Verify that the repository doesn't contain any
 	uncommitted source changes.</para>
 	</listitem>
         <listitem><para>Verify that it is being executed from the
         correct branch.</para>
         </listitem>
+	<listitem><para>
+	(Optionally) export the source tree to a separate build area
+	</para></listitem>
         <listitem><para>Build an orig.tar.gz if it doesn't exist.</para>
         </listitem>
         <listitem><para>Call <application>debuild</application>(1)
@@ -59,6 +65,13 @@
             &git-buildpackage; that don't start with --git-.
           </para>
         </listitem>
+	<listitem><para>
+	(Optionally) tag the tree after a successful build
+	</para></listitem>
+	<listitem><para>
+	(Optionally) call a post-tag hook - e.g. to push the results to a remote
+	repository after creating the tag
+	</para></listitem>
     </itemizedlist>
   </refsect1>
   <refsect1>
@@ -83,7 +96,7 @@
       <varlistentry>
         <term><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></term>
         <listitem>
-          <para>Use <replaceable>BUILD_CMD</replaceable> instead of <command>debuild</command></para>
+          <para>Use <replaceable>BUILD_CMD</replaceable> instead of <command>debuild -i\.git -I.git</command></para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -103,7 +116,10 @@
         <term><option>--git-upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>Branch to build the orig.tar.gz from. Default is <replaceable>upstream</replaceable></para>
+	  <para>Branch to build the orig.tar.gz from if no tag matching the
+	  upstream version is found. Default is
+	  <replaceable>upstream</replaceable>. You can give any treeish object
+	  here.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -146,6 +162,27 @@
           <para>use this tag format when tagging Debian versions</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--git-no-create-orig</option>
+        </term>
+        <listitem>
+	  <para>Don't try to create any orig.tar.gz</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-export-dir=</option><replaceable>directory</replaceable>
+        </term>
+        <listitem>
+          <para>Export the current branch head to <replaceable>directory</replaceable> before building.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-export=</option><replaceable>treeish</replaceable>
+        </term>
+	<listitem> <para>Instead of exporting the current branch head export at
+	the treeish object <replaceable>treeish</replaceable>.</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
@@ -155,7 +192,7 @@
   <refsect1>
     <title>SEE ALSO</title>
 
-    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1)</para>
+    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1), git-dch (1)</para>
 
   </refsect1>
   <refsect1>

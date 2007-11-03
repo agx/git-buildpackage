@@ -20,7 +20,7 @@ def parse_changelog(changelog):
     if '-' in cp['Version']:
         upstream_version, cp['Debian-Version'] = cp['Version'].rsplit('-', 1)
         if ':' in upstream_version:
-            cp['Epoch'], cp['Upstream-Version'] = upstream_version.split(':',1)
+            cp['Epoch'], cp['Upstream-Version'] = upstream_version.split(':', 1)
         else:
             cp['Upstream-Version'] = upstream_version
     else:

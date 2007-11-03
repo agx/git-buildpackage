@@ -1,9 +1,10 @@
 <!ENTITY man.git.importorig SYSTEM "git-import-orig.sgml">
 <!ENTITY man.git.importdsc SYSTEM "git-import-dsc.sgml">
 <!ENTITY man.git.buildpackage SYSTEM "git-buildpackage.sgml">
+<!ENTITY man.git.dch SYSTEM "git-dch.sgml">
 <!ENTITY man.git.config-files "
     <title>CONFIGURATION FILES</title>
-    <para> Three configuration files are parsed to set defaults for the above
+    <para>Four configuration files are parsed to set defaults for the above
     commandline arguments: </para>
     <variablelist>
       <varlistentry>
@@ -15,10 +16,15 @@
       <listitem><para>per user configuration</para></listitem>
       </varlistentry>
       <varlistentry>
+      <term>.gbp.conf</term>
+      <listitem><para>per branch configuration, can be published with the
+      repository</para></listitem> 
+      </varlistentry> 
+      <varlistentry>
       <term>.git/gbp.conf</term>
-      <listitem><para>per working copy configuration</para></listitem> 
+      <listitem><para>per repository configuration</para></listitem> 
       </varlistentry> 
     </variablelist>
       <para>
-      See /etc/git-buildpackage/gbp.conf for an example.
+      See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
       </para>">

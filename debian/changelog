@@ -1,3 +1,108 @@
+git-buildpackage (0.4.5) unstable; urgency=low
+
+  * git-import-orig: fix missing s/upstream/upstream_branch/ rename
+    (Closes: #447920) - Thanks to Arnaud Cornet
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 24 Oct 2007 22:56:24 +0200
+
+git-buildpackage (0.4.4) unstable; urgency=low
+
+  * git-buildpackage: use upstream-branch in case the tag doesn't exist
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 22 Oct 2007 17:00:12 +0200
+
+git-buildpackage (0.4.3) experimental; urgency=low
+
+  * git-dch: properly quote "" (Closes: #447211)
+  * git-dch: use Command() instead of implementing it again
+  * documentation updates
+  * don't split up the manual that much (local.dsl taken from
+    darcs-buildpackage)
+  * add version number to docs and a tools (--version)
+  * pylint and other consistency updates
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 19 Oct 2007 10:12:40 +0200
+
+git-buildpackage (0.4.2) experimental; urgency=low
+
+  * git-dch:
+       * make --git-log a config file option
+       * git-dch: fix help message for --debian-branch
+       * doc: snapshot-number can be used in gbp.conf too
+  * git-buildpackage:
+       * add --git-export-dir=dir/, --git-export=treeish (Closes: #446042)
+       * allow to use any treeish object for --git-upstream-branch
+  * add missing examples to gbp.conf
+  * parse .gbp.conf in the repository directory (Closes: #426009)
+  * minor doc updates and clarifications
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 17 Oct 2007 00:00:13 +0200
+
+git-buildpackage (0.4.1) unstable; urgency=low
+
+  * make sure the changelog section's trailer points to the person
+    invoking git-dch
+  * depend on devscripts with a working 'dch ""'
+  * git-dch: eval() the snapshot number calculation
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 10 Oct 2007 18:15:54 +0200
+
+git-buildpackage (0.4.0) experimental; urgency=low
+
+  * add support for automatic snapshot releases as suggested by Ottavio
+    Salvador
+  * make git-dch actually useful:
+      * --auto: guess last changelogged commit from the snapshot header
+      * add short options for --snapshot and --release
+      * don't fail if the commit msg starts with '--'
+      * add a check for the debian branch instead of always using it as the
+        tip
+      * handle versions containing epochs
+      * add --git-log to pass options along to git-log
+      * allow to specify paths to look at: git-dch path1 path2 - useful if
+        upstream uses git
+  * add some basic documentation for git-dch
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 07 Oct 2007 15:32:40 +0200
+
+git-buildpackage (0.3.6) unstable; urgency=low
+
+  * create upstream branch when importing into an empty archive 
+    (Closes: #443305)
+  * detect upstream version from common tarball formats 
+    (Closes: #443306)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 03 Oct 2007 18:01:15 +0200
+
+git-buildpackage (0.3.5) unstable; urgency=low
+
+  * add a minimalistic git-dch that creates changelog entries from git commit
+    messages
+  * s/reopsitory/repository/ - thanks to Loïc Minier (Closes: #444702)
+  * update TODO
+  * short paragraph on hacking on arbitrary debian packages
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 03 Oct 2007 14:10:05 +0200
+
+git-buildpackage (0.3.4) unstable; urgency=low
+
+  * introduce --git-no-create-orig to skip building of any orig.tar.gz - this
+    is especially usefull if you're working on an NMU that has a X-0.Y version
+    number although it's a Debian native package
+  * fix the error path in case the tgz can't be unpacked
+  * git-pbuilder: add filter for git meta data and allow to pass options to
+    pbuilder vi $PBUILDER_OPTS (Closes: #439535)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 08 Sep 2007 20:40:36 +0200
+
+git-buildpackage (0.3.3) unstable; urgency=low
+
+  * git-buildpackage: don't hardcode -i\.git -I.git as build arguments
+    (Closes: #438669)
+  * git-import-dsc: support --debian-branch (Closes: #432084)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 20 Aug 2007 19:22:24 +0200
+
 git-buildpackage (0.3.2~bpo.1) etch-backports; urgency=low
 
   * etch backport 

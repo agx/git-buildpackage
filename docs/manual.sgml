@@ -1,6 +1,8 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
   <!ENTITY % COMMON SYSTEM "common.ent">
   %COMMON;
+  <!ENTITY % VERSION SYSTEM "version.ent">
+  %VERSION;
   <!ENTITY % MANPAGES SYSTEM "manpages/manpages.ent">
   %MANPAGES;
   <!ENTITY % CHAPTERS SYSTEM "chapters/chapters.ent">
@@ -11,15 +13,15 @@
 <book id="gbp">
   <bookinfo>
     <title>Building Debian Packages with git-buildpackage</title>
-    <author>
-      &dhfirstname; &dhsurname; 
-    </author>
+    <author>&dhfirstname; &dhsurname;</author>
     <address>&dhemail;</address>
+    <subtitle>Version: &gbp-version;</subtitle>
   </bookinfo>
 
   &ch.intro;
   &ch.import;
   &ch.building;
+  &ch.releases;
   &ch.cfgfile;
   &ch.special;
 
@@ -28,6 +30,7 @@
     &man.git.buildpackage;
     &man.git.importdsc;
     &man.git.importorig;
+    &man.git.dch;
   </appendix>
   <appendix id="gbp.copyleft">
     <title>Copyright</title>

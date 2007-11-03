@@ -9,6 +9,7 @@ git-buildpackage and friends
 import subprocess
 import sys
 import os.path
+from errors import GbpError
 
 class CommandExecFailed(Exception):
     """Exception raised by the Command class"""

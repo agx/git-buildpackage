@@ -1,6 +1,6 @@
 <chapter id="gbp.cfgfile">
     <title>Configuration files</title>
-    <para>Three configuration files are parsed in this order:
+    <para>Four configuration files are parsed in this order:
     <variablelist>
       <varlistentry>
       <term>/etc/git-buildpackage/gbp.conf</term>
@@ -11,16 +11,20 @@
       <listitem><para>per user configuration</para></listitem>
       </varlistentry>
       <varlistentry>
+      <term>.gbp.conf</term>
+      <listitem><para>per repository/branch configuration</para></listitem> 
+      </varlistentry> 
+      <varlistentry>
       <term>.git/gbp.conf</term>
-      <listitem><para>per working copy configuration</para></listitem> 
+      <listitem><para>per (local) repository configuration</para></listitem> 
       </varlistentry> 
     </variablelist>
-    All three have the same format. They consist of (at most) four sections, all of them are optional:
+    All four have the same format. They consist of (at most) five sections, all of them are optional:
     <variablelist>
       <varlistentry>
       <term>[DEFAULT]</term>
       <listitem><para>Options in this section apply to &git-buildpackage;,
-      &git-import-orig; and &git-import-dsc;.</para></listitem>
+      &git-import-orig;, &git-import-dsc; and &git-dch;.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-buildpackage]</term>
@@ -37,6 +41,11 @@
       <listitem><para>Options in this section apply to &git-import-dsc; only and override options from the
       [DEFAULT] section.</listitem>
       </varlistentry>
+      <varlistentry>
+      <term>[git-dch]</term>
+      <listitem><para>Options in this section apply to &git-dch; only and override options from the
+      [DEFAULT] section.</listitem>
+      </varlistentry>
     </variablelist>
     The actual options in these sections are the command line options without
     the '--' prefix. So <option>--upstream-branch=</option><replaceable>dfsgfree</replaceable> would read:
@@ -44,18 +53,16 @@
 <option>upstream-branch</option>=<replaceable>dfsgfree</replaceable>
 </screen>
     in the config file. In the special case of &git-buildpackage; the stripped
-    prefix is not '--' but '--git-'.
-    Here's a full example:
-<screen>
+    prefix is not '--' but '--git-'. Here's a more complete example:
+<programlisting>
 [DEFAULT]
 # the default build command
-builder=debuild
+builder=debuild -i\.git -I.git
 # the default branch for upstream sources
 upstream-branch=upstream
 # the default branch for the debian patch
 debian-branch=master
 
-# Special options for git-buildpackage
 [git-buildpackage]
 upstream-branch=dfsgclean
 # Sign tags with GPG:
@@ -63,13 +70,14 @@ sign-tags = True
 # Keyid to sign tags with
 #keyid = 0xdeadbeef
 
-# Special options for git-import-orig
 [git-import-orig]
 upstream-branch=notdfsgclean
 
-# Special options for git-import-dsc
 [git-import-dsc]
 upstream-branch=notdfsgclean
-</screen>
+
+[git-dch]
+git-log=--no-merges
+</programlisting>
     </para>
 </chapter>

@@ -1,0 +1,147 @@
+<refentry id="gbp.man.git.dch">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+   <refentrytitle>git-dch</refentrytitle> 
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&git-dch;</refname>
+
+    <refpurpose>Generate the Debian changelog from git commit messages</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &git-dch;
+
+      <arg><option>--verbose</option></arg>
+      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+      <arg><option>--snapshot</option></arg>
+      <arg><option>--release</option></arg>
+      <arg><option>--auto</option></arg>
+      <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
+      <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
+      <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &git-dch; reads git commit messages and generates the debian changelog from
+    it. If no arguments are given &git-dch; starts from the last tagged debian
+    package version up to the current tip of the current branch. If the
+    distribution of the topmost section in
+    <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>
+    the changelog entries will be inserted into this section. Otherwise a new
+    section will be created.</para>
+    <para>If <option>--auto</option> is given &git-dch; tries to guess the
+    last &git; commit documented in the changelog - this only works in snapshot
+    mode. Otherwise <option>--since</option> can be used to tell &git-dch;
+    at which point it should start in the &git; history.</para>
+    <para>
+    The additional path arguments can be used to restrict the repository paths
+    &git-dch; looks at. Setting <replaceable>path</replaceable> to
+    <emphasis>debian/</emphasis> is a good choice if upstream uses &git; and
+    all Debian packaging changes are restricted to the
+    <replaceable>debian/</replaceable> subdir. In more sophisticated cases
+    (like backports) you can use <option>--git-log</option> to restrict the
+    generated changelog entries further. E.g. by using 
+    <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.</para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+
+    <variablelist>
+      <varlistentry>
+        <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
+        </term>
+        <listitem>
+	  <para>The branch in the Git repository the Debian package is being
+	  developed on, default is <replaceable>master</replaceable>.
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--verbose</option></term> 
+	<term><option>-v</option></term>
+        <listitem>
+          <para>verbose execution</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--debian-tag=</option><replaceable>tag-format</replaceable>
+        </term>
+        <listitem>
+          <para>tag format used, when tagging debian versions</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--since=</option><replaceable>committish</replaceable>
+        </term>
+        <listitem>
+          <para>start reading commit messages at <replaceable>committish</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--auto</option></term>
+        <listitem>
+	  <para>Guess the last commit documented in the changelog from the
+	  snapshot banner (or from the last tag if no snapshot banner exists).
+	  </para>
+        </listitem>
+      <varlistentry>
+        <term><option>--snapshot</option></term>
+        <listitem>
+	  <para>create a snapshot release entry. This adds a snapshot release
+	  number and a warning banner to the changelog entry. The release
+	  version number is being autoincremented with every new snapshot
+	  release to avoid packages downgrades during snapshot testing.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--snapshot-number=</option><replaceable>expression</replaceable>
+        </term>
+        <listitem>
+          <para>Python expression that gets eval()ed to the new snapshot number</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--release</option></term>
+        <listitem>
+	  <para>Remove any snapshot release banners and version suffixes, set
+	  the current distribution to <replaceable>unstable</replaceable> and
+	  open the changelog for final tweaking.</para>
+        </listitem>
+      <varlistentry>
+        <term><option>--git-log=</option><replaceable>git-log-options</replaceable>
+        </term>
+        <listitem>
+          <para>options passed on verbatim to git-log(1)</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+      &man.git.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>git-buildpackage (1), git-import-dsc (1), git-import-orig (1), git (1), git_load_dirs (1)</para>
+
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>

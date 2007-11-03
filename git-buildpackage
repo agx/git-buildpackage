@@ -20,20 +20,19 @@
 
 import sys
 import os, os.path
+import errno
 import pipes
+import time
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.deb_utils import (parse_changelog, is_native, orig_file, has_orig)
-from gbp.command_wrappers import (GitTag, Command, CommandExecFailed)
+from gbp.command_wrappers import (GitTag, Command, CommandExecFailed, RemoveTree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
 
-def create_orig(cp, output_dir, branch):
-    "create an orig.tar.gz in output_dir"
-    output = os.path.join(output_dir, orig_file(cp))
-    pipe = pipes.Template()
-    pipe.prepend('git-archive --format=tar --prefix=%s-%s/ %s' % (cp['Source'], cp['Upstream-Version'], branch), '.-')
-    pipe.append('gzip -c -9',  '--')
+def git_archive_pipe(prefix, pipe, output, treeish):
+    """run the git_archive pipe"""
+    pipe.prepend('git-archive --format=tar --prefix=%s/ %s' % (prefix, treeish), '.-')
     try:
         ret = pipe.copy('', output)
         if ret:
@@ -48,95 +47,188 @@ def create_orig(cp, output_dir, branch):
     return True
 
 
+def create_orig(cp, output_dir, treeish):
+    "create an orig.tar.gz in output_dir"
+    output = os.path.join(output_dir, orig_file(cp))
+    prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
+
+    pipe = pipes.Template()
+    pipe.append('gzip -c -9',  '--')
+    return git_archive_pipe(prefix, pipe, output, treeish)
+
+
+def dump_tree(export_dir, treeish):
+    "dump a tree to output_dir"
+    output_dir = os.path.dirname(export_dir)
+    prefix = os.path.basename(export_dir)
+    pipe = pipes.Template()
+    pipe.append('tar -C %s -xf -' % output_dir,  '-.')
+    return git_archive_pipe(prefix, pipe, '', treeish)
+
+
+def move_old_export(target):
+    """move a build tree away if it exists"""
+    try:
+        os.mkdir(target)
+    except OSError, (e, msg):
+        if e == errno.EEXIST:
+            os.rename(target, "%s.obsolete.%s" % (target, time.time()))
+
+
+def prepare_output_dir(dir):
+    output_dir = dir
+    if not dir:
+        output_dir = '..'
+    output_dir = os.path.abspath(output_dir)
+
+    try:
+        os.mkdir(output_dir)
+    except OSError, (e, msg):
+        if e != errno.EEXIST:
+            raise GbpError, "Cannot create output dir %s" % output_dir
+    return output_dir
+
+
 def main(argv):
-    output_dir = '..'
     changelog = 'debian/changelog'
+    default_tree = 'HEAD'
+    retval = 0
+    prefix = "git-"
 
-    args = [ arg for arg in argv[1:] if arg.find('--git-') == 0 ]
-    dpkg_args = [ arg for arg in argv[1:] if arg.find('--git-') == -1 ]
+    args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
+    dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
 
-    if "--help" in dpkg_args:
-        args.append('--help')
+    for arg in [ "--help", "-h", "--version" ]:
+        if arg in dpkg_args:
+            args.append(arg)
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='git-')
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
 
     parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
                       help="build with uncommited changes in the source tree")
-    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
-                      help="tag after a successful build")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="builder", dest="build_cmd",
+    parser.add_config_file_option(option_name="builder", dest="builder",
                       help="command to build the package, default is '%(builder)s'")
-    parser.add_config_file_option(option_name="cleaner", dest="clean_cmd",
+    parser.add_config_file_option(option_name="cleaner", dest="cleaner",
                       help="command to build the package, default is '%(cleaner)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_config_file_option(option_name="sign-tags", dest="sign_tag",
+    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
+                      help="tag after a successful build")
+    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
                       help="sign git tags", action="store_true")
-    parser.add_config_file_option(option_name="posttag", dest="posttag_hook",
+    parser.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
+                      help="don't create orig.tar.gz", action="store_true")
+    parser.add_config_file_option(option_name="posttag", dest="posttag",
                       help="hook to execute after a successfull tag operation")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with")
     parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
-                      help="Format string for debian tags, default is '%(debian-tag)s'")
+                      help="format string for debian tags, default is '%(debian-tag)s'")
+    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
+                      help="format string for upstream tags, default is '%(upstream-tag)s'")
+    parser.add_config_file_option(option_name="export-dir", dest="export_dir",
+                      help="before building export into EXPORT_DIR")
+    parser.add_option("--git-export", dest="treeish", default=default_tree,
+                      help="export treeish object TREEISH, default is '%s'" % default_tree)
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
         Command.verbose = True
 
     try:
-        repo = GitRepository('.')
+        repo = GitRepository(os.path.curdir)
     except GitRepositoryError:
         print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
         return 1
+    else:
+        repo_dir = os.path.abspath(os.path.curdir)
 
     try:
         if not options.ignore_new:
-            Command(options.clean_cmd, shell=True)()
+            Command(options.cleaner, shell=True)()
             (ret, out) = repo.is_clean()
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
                 print >>sys.stderr, out
                 raise GbpError, "Use --git-ignore-new to ignore."
-        branch = repo.get_branch()
-        if branch != options.debian_branch and not options.ignore_new:
-            print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
-            raise GbpError, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
+
+            branch = repo.get_branch()
+            if branch != options.debian_branch:
+                print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
+                raise GbpError, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
 
         cp = parse_changelog(changelog)
         if not cp:
             raise GbpError,"'%s' does not exist, not a debian package" % changelog
-        if not is_native(cp) and not has_orig(cp, output_dir):
-            print "%s does not exist, creating from branch '%s'" % (orig_file(cp), options.upstream_branch)
-            if not repo.has_branch(options.upstream_branch):
-                raise GbpError, "Upstream branch '%s' does not exist" % options.upstream_branch
-            if not create_orig(cp, output_dir, options.upstream_branch):
-                raise GbpError
 
-        Command(options.build_cmd, [ '-i\.git/', '-I.git' ] + dpkg_args, shell=True)()
+        output_dir = prepare_output_dir(options.export_dir)
+        if not repo.has_treeish(options.treeish):
+            raise GbpError # git-ls-tree printed an error message already
+        # Export to another build dir if requested:
+        if options.export_dir:
+            tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
+            print "Exporting '%s' to '%s'" % (options.treeish, tmp_dir)
+            dump_tree(tmp_dir, options.treeish)
+            cp = parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
+            if is_native(cp):
+                version = cp['Debian-Version']
+            else:
+                version = cp['Upstream-Version']
+            export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], version))
+            print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
+            move_old_export(export_dir)
+            os.rename(tmp_dir, export_dir)
+
+        # Build the orig.tar.gz if necessary:
+        if not is_native(cp) and not has_orig(cp, output_dir) and not options.no_create_orig:
+            # --upstream-branch was given on the command line, so use this:
+            if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
+                upstream_tree = options.upstream_branch
+            else:
+                upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
+                # fall back to the upstream-branch tip if the tag doesn't exist
+                if not repo.has_treeish(upstream_tree):
+                    upstream_tree = GbpOptionParser.defaults['upstream-branch']
+            print "%s does not exist, creating from '%s'" % (orig_file(cp), upstream_tree)
+            if not repo.has_treeish(upstream_tree):
+                raise GbpError # git-ls-tree printed an error message already
+            if not create_orig(cp, output_dir, upstream_tree):
+                raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
+
+        if options.export_dir:
+            os.chdir(export_dir)
+
+        Command(options.builder, dpkg_args, shell=True)()
         if options.tag:
             try:
                 version = cp['Version']
             except KeyError:
                 raise GbpError, "Can't parse version from changelog"
             else:
-                print "Tagging", version
-                GitTag(options.sign_tag, options.keyid)(build_tag(options.debian_tag, version),
+                print "Tagging %s" % version
+                GitTag(options.sign_tags, options.keyid)(build_tag(options.debian_tag, version),
                        msg="Debian release %s" % version)
-                if(options.posttag_hook):
-                    Command(options.posttag_hook, shell=True)()
+                if(options.posttag):
+                    Command(options.posttag, shell=True)()
+
     except CommandExecFailed:
-        return 1
+        retval = 1
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
-        return 1
-    return 0
+        retval = 1
+
+    if options.export_dir and not retval:
+        RemoveTree(export_dir)()
+
+    os.chdir(repo_dir)
+    return retval
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
 
-# vim:et:ts=4:sw=4:
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

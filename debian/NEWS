@@ -1,3 +1,18 @@
+git-buildpackage (0.3.3) unstable; urgency=low
+
+  As of this version git-buildpackage doesn't pass hardcoded '-i\.git -I.git'
+  to the build command specified via --git-builder (or via the builder config
+  file options). So if you're not using the default build command (which is
+  now 'debuild -i\.git -I.git' instead of just plain 'debuild') you'll have to
+  add these options to your build command in order to exclude git metadata
+  from your diffs and source tarballs.
+  This was done to make the invocation of the build command more flexible, we
+  don't rely on debuild behaviour from now on.
+  Again: if you didn't change the default build command, you don't have to
+  change anything.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 20 Aug 2007 18:08:37 +0200
+
 git-buildpackage (0.2.25) unstable; urgency=low
 
   Generated tags are now by default put into debian/ and upstream/ namespaces.

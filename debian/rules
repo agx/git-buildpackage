@@ -7,26 +7,36 @@ DEB_PYTHON_CLEAN_ARGS = --all
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
-COMMANDS=git-buildpackage git-import-dsc git-import-orig
+COMMANDS=git-buildpackage git-import-dsc git-import-orig git-dch
 MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 MANUAL=docs/manual-html
 PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
 PYCHECK_LEVEL=Error
+GBP_VERSION=gbp/gbp_version.py
+VERSION_ENT=docs/version.ent
 
 docs/%.1: docs/man.%.sgml
 	docbook2man -o docs/ $<
 
+docs/manual.sgml: docs/version.ent
+
 $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
-	docbook-2-html -s gtk $<
+	docbook-2-html -s local $<
 
 %.py: %
 	ln -s $< $@
 	PYTHONPATH=. pychecker -e $(PYCHECK_LEVEL) -q $<
 
-build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(PYCHECKS)
+$(GBP_VERSION): debian/changelog
+	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)
+
+$(VERSION_ENT): debian/changelog
+	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' >  $(VERSION_ENT)
+
+build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) $(PYCHECKS) 
 
 clean::
 	-rm git-*.py
-	-rm docs/*.1 docs/manpage.*
+	-rm docs/*.1 docs/manpage.* $(VERSION_ENT)
 	-rm -r docs/manual-html/
 

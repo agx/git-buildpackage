@@ -5,45 +5,93 @@
       <ulink url="http://www.debian.org/">Debian</ulink> package build
       system with <ulink url="http://git.or.cz/">Git</ulink>.
     </para>
+    <para>
+    What can these tools do for you:
+    <itemizedlist>
+    <listitem><para>Import an existing &debian; package into &git;</para></listitem>
+    <listitem><para>Import new upstream versions, NMUs etc. with optional filters</para></listitem>
+    <listitem><para>Automatic upstream tarball generation</para></listitem>
+    <listitem><para>Maintain a consistent branch an tag naming across
+    repositires or across a team of developers</para></listitem>
+    <listitem><para>Automatically sign tags</para></listitem>
+    <listitem><para>Automatically push changes to remote repositories</para></listitem>
+    <listitem><para>Make sure you have committed all changes to the right
+    branch before releasing</para></listitem>
+    <listitem><para>Export to a clean build area before building</para></listitem>
+    <listitem><para>Automatic debian/changelog generation</para></listitem>
+    <listitem><para>Automatic generation of snapshot releases for local testing</para></listitem>
+    </itemizedlist>
+    All of this is (hopefully) being done without restricting the user to certain usage patterns.
+    </para>
 
 <sect1 id="gbp.repository">
-	<title>Repository Layout</title>
-	<para>
-	Since &git; knows about branches (and in fact handles them very well)
-	the git repository usually looks like: a so called
-	<emphasis>master</emphasis> branch (the default branch) holds your
-	current development work. Another branch called
-	<emphasis>upstream</emphasis> holds the upstream sources. Other
-	branches like <emphasis>nmu</emphasis> or
-	<emphasis>dfsg_free</emphasis> might help with certain kinds of
-	packages.  Git-Buildpackage currently only works with your local
-	git-repository, in order to publish your changes simply use
-	<command>git-push</command>.
+	<title>Repository Layout and Terminology</title>
+	<para>The only requirement on the repository layout for using
+	&git-buildpackage; and friends is, that the branch the debian work is
+	being done on is different from the branch the upstream sources are
+	being maintained on (this, of course, has no meaning for Debian native
+	packages). This is necessary to be able to build upstream tarballs and
+	to merge in new upstream versions. To distinguish these two branches
+	the following terminology <footnote><para>corresponding to the command
+	line and config file options</para></footnote> is used:
 	</para>
-</sect1> 
+	<itemizedlist>
+	<listitem><para>The <option>debian-branch</option> (the default branch
+	name used in the &git; repository is <emphasis>master</emphasis>) holds
+	your current development work.  That's the branch you usually cut your
+	releases from and the default branch new upstream releases are merged
+	onto.</para></listitem>
+	<listitem><para> The <option>upstream-branch</option> (the default
+	branch name used in the &git; repository is
+	<emphasis>upstream</emphasis>) holds the upstream releases. This can
+	either be a branch you import to or a branch of an upstream repository
+	you pull from.</para></listitem></itemizedlist> <para>You're completely
+	free to pick any repository layout and the branch names above are only
+	&git-buildpackage;'s defaults. They can be changed at any point in time
+	and you can work with an arbitrary number of branches.
+	For example branches like  <emphasis>nmu</emphasis>,
+	<emphasis>bpo</emphasis> or <emphasis>stable</emphasis> might
+	(temporarilly or permanent) become your <option>debian-branch</option>
+	and branches like <emphasis>dfsg_free</emphasis> or
+	<emphasis>snapshots</emphasis> might become your
+	<option>upstream-branch</option> - it doesn't matter if these branches
+	are maintend with &git-import-orig; or not.</para>
+	<para>Since Git-Buildpackage only works with local &git;-repositories
+	you have to use <command>git-push</command> in order to publish your
+	changes to remote repositories like <ulink
+	url="http://git.debian.org/">git.debian.org</ulink>, this can also be
+	automized with &git-buildpackage;'s <option>post-tag</option>
+	hook.</para>
+</sect1>
 
 <sect1 id="gbp.workflow">
     <title>Workflow</title>
     <para>
-    	A typical workflow consists of the following steps:
+    	A typical, simple workflow consists of the following steps:
     </para>
     <orderedlist>
-	<listitem><para>Import a Debian package via &git-import-dsc;. This
-	imports the &debian; Package on the master branch and the upstream
-	sources on the upstream branch.</para></listitem>
+	<listitem><para>Import a new Debian package via &git-import-dsc;. This
+	imports the &debian; Package on the <option>debian-branch</option>
+	and the upstream sources on the <option>upstream-branch</option>.</para></listitem>
 	<listitem><para>Develop, test, commit changes. During this time you can
 	always build the package with &git-buildpackage;. In case you have
 	uncommitted changes in your source tree you can use the
 	<option>--git-ignore-new</option> option.</para></listitem>
+	<listitem><para>Optionally you can create the Debian changelog entries
+	using &git-dch; and create snapshot releases for testing using it's
+	<option>--snapshot</option> option.</para></listitem>
 	<listitem><para>Once satisfied you can build the final package with
-	&git-buildpackage; <option>--git-tag</option>. This
-	additionally creates a tag within &git; so you can switch back to that
-	version later at any time.</para></listitem>
-	<listitem><para>When a new upstream version is released you can import
-	this via &git-import-orig; onto the upstream branch.
-	&git-import-orig; will also try to merge the new upstream version onto
-	the master branch. After resolving any potential conflicts go back to 2.
-	</para></listitem>
+	&git-buildpackage; <option>--git-tag</option>. This additionally
+	creates a tag within &git; so you can switch back to that version later
+	at any time. The format of the tags can be specified, tags can
+	be &gpg; signed.</para></listitem>
+	<listitem><para>When a new upstream version is released and upstream
+	isn't using &git; you can import the new version via &git-import-orig;
+	onto the <option>upstream-branch</option>.  &git-import-orig; will
+	by default try to merge the new upstream version onto the
+	<option>debian-branch</option>. You can skip the merge with
+	<option>--no-merge</option>.  After resolving any potential conflicts
+	go back to the second step.  </para></listitem>
     </orderedlist>
     <para>These steps will be explaind in more details in the following sections.</para>
 </sect1>

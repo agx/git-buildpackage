@@ -6,6 +6,7 @@
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 import os.path
+from gbp.gbp_version import gbp_version
 
 class GbpOptionParser(OptionParser):
     """
@@ -22,35 +23,40 @@ class GbpOptionParser(OptionParser):
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
-    defaults={ 'builder'         : 'debuild',
-               'cleaner'	     : 'debuild clean',
-               'debian-branch'   : 'master',
-               'upstream-branch' : 'upstream',
-               'sign-tags'	     : '',		# empty means False
-               'keyid'		     : '',
-               'posttag'         : '',
-               'debian-tag'      : 'debian/%(version)s',
-               'upstream-tag'    : 'upstream/%(version)s',
-               'filter'          : '',
+    defaults = { 'builder'         : 'debuild -i\.git/ -I.git',
+                 'cleaner'         : 'debuild clean',
+                 'debian-branch'   : 'master',
+                 'upstream-branch' : 'upstream',
+                 'sign-tags'       : '',      # empty means False
+                 'no-create-orig'  : '',      # empty means False
+                 'keyid'           : '',
+                 'posttag'         : '',
+                 'debian-tag'      : 'debian/%(version)s',
+                 'upstream-tag'    : 'upstream/%(version)s',
+                 'filter'          : '',
+                 'snapshot-number' : 'snapshot + 1',
+                 'git-log'         : '--no-merges',
+                 'export-dir'      : '',
              }
-    config_files=['/etc/git-buildpackage/gbp.conf',
-                  os.path.expanduser('~/.gbp.conf'),
-                  '.git/gbp.conf' ]
+    config_files = [ '/etc/git-buildpackage/gbp.conf',
+                     os.path.expanduser('~/.gbp.conf'),
+                     '.gbp.conf',
+                     '.git/gbp.conf' ]
 
     def __parse_config_files(self):
         """parse the possible config files and set appropriate values default values"""
-        parser=SafeConfigParser(self.defaults)
+        parser = SafeConfigParser(self.defaults)
         parser.read(self.config_files)
-        self.config=dict(parser.defaults())
+        self.config = dict(parser.defaults())
         if parser.has_section(self.command):
-            self.config=dict(parser.items(self.command, raw=True))
+            self.config.update(dict(parser.items(self.command, raw=True)))
 
     def __init__(self, command, prefix='', usage=None):
-        self.command=command
-        self.prefix=prefix
+        self.command = command
+        self.prefix = prefix
+        self.config = {}
         self.__parse_config_files()
-        OptionParser.__init__(self, usage=usage)
-
+        OptionParser.__init__(self, usage=usage, version='%s %s' % (self.command, gbp_version))
 
     def add_config_file_option(self, option_name, dest, help, **kwargs):
         """
@@ -63,7 +69,7 @@ class GbpOptionParser(OptionParser):
         @type help: string
         """
         OptionParser.add_option(self,"--%s%s" % (self.prefix, option_name), dest=dest,
-                                default=self.config[option_name], 
+                                default=self.config[option_name],
                                 help=help % self.config, **kwargs)
 
-# vim:et:ts=4:sw=4:
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

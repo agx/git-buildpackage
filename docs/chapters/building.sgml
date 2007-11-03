@@ -3,19 +3,55 @@
     <para>
     In order to build a &debian; package from the &git; repository you use:
     &git-buildpackage;. During the development phase (when you're either not
-    on the <emphasis>master</emphasis>-branch or when you have uncommitted
+    on the <emphasis>debian-branch</emphasis> or when you have uncommitted
     changes in your repository) you'll usually use:
 <screen>
 &git-buildpackage; <option>--git-ignore-new</option>
 </screen>
-    Once you're satisfied with the build and want to do a relese you commit all
-    your changes and issue:
+    <para>If &git-buildpackage; doesn't find a valid upstream tarball it will create
+    one by looking at the tag matching the upstream version, if no tag can be
+    found it uses the tip of the current <option>upstream-branch</option>. Any
+    other treeish objecto to create the upstream tarball from can be given with
+    the <option>--upstream-branch</option> option.</para>
+    <para>Once you're satisfied with the build and want to do a relese you commit all
+    your changes and issue:</para>
 <screen>
 &git-buildpackage; <option>--git-tag</option>
 </screen>
-    This will again build the debian package and tag the final result after
+    <para>This will again build the debian package and tag the final result after
     extracting the current version from the changelog. If you want &gpg; signed
     tags you can use the <option>--git-sign</option> and
-    <option>--git-keyid</option> options.
+    <option>--git-keyid</option> options. To safe typing these option can be
+    specified via the configuration files. You can futhermore change the tag
+    format used when creating tags with the <option>debian-tag</option>
+    option.</para>
+    <sect1 id="gbp.building.export">
+    <title>Using a separate build dir</title>
+    <para>Tools like &svn-buildpackage; use a separate build-area. To achieve a similar behaviour
+    with &git-buildpackage; use the <option>--export-dir</option> option:</para>
+<screen>
+&git-buildpackage; <option>--export-dir</option>=<replaceable>../build-area/</replaceable>
+</screen>
+    <para>This will export the current branch head to
+    <replaceable>../build-area/package-version</replaceable>, check out the corresponding
+    upstream tree to build the .orig.tar.gz  if necessary and build the
+    package. If you don't want to export the current branch head you can use
+    <option>--export</option> to export any treeish object, here are some
+    examples:</para>
+<screen>
+&git-buildpackage; <option>--export-dir</option>=<replaceable>../build-area</replaceable> <option>--export</option>=<replaceable>debian/0.4.3</replaceable>
+&git-buildpackage; <option>--export-dir</option>=<replaceable>../build-area</replaceable> <option>--export</option>=<replaceable>etch</replaceable>
+&git-buildpackage; <option>--export-dir</option>=<replaceable>../build-area</replaceable> <option>--export</option>=<replaceable>8caed309653d69b7ab440e3d35abc090eb4c6697</replaceable>
+</screen>
+    <para>If you want to default to build in a separate build area you can
+    specify the directory to use in the gbp.conf.
     </para>
+<programlisting>
+[git-buildpackage]
+# use a build area relative to the git repository
+build-area=../build-area
+# to use the same build area for all packages use an absolute path:
+#build-area=/home/debian-packages/build-area
+</programlisting>
+    </sect1>
 </chapter>
