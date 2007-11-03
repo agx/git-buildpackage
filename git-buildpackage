@@ -51,9 +51,10 @@ def create_orig(cp, output_dir, treeish):
     "create an orig.tar.gz in output_dir"
     output = os.path.join(output_dir, orig_file(cp))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
+    gzip_opts = "-9 -n"
 
     pipe = pipes.Template()
-    pipe.append('gzip -c -9',  '--')
+    pipe.append('gzip -c %s' % gzip_opts,  '--')
     return git_archive_pipe(prefix, pipe, output, treeish)
 
 
