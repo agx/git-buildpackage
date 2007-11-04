@@ -181,12 +181,13 @@ class GitRm(GitCommand):
 
 class GitCommitAll(GitCommand):
     """Wrap git-commit to commit all changes"""
-    def __init__(self):
-        GitCommand.__init__(self, 'commit', ['-a'])
+    def __init__(self, verbose=False):
+        args = ['-a'] + [ ['-q'], [] ][verbose]
+        GitCommand.__init__(self, cmd='commit', args=args)
 
     def __call__(self, msg=''):
         args = [ [], ['-m', msg] ][len(msg) > 0]
-        self.run_error = "Couldn't commit -a %s" % " ".join(args)
+        self.run_error = "Couldn't %s %s" % (self.cmd, " ".join(self.args + args))
         GitCommand.__call__(self, args)
 
 

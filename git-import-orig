@@ -50,7 +50,7 @@ def unpack_orig(archive, tmpdir):
     return unpackArchive.dir
 
 
-def import_source_tree(repo, orig_dir, version, filter):
+def import_source_tree(repo, orig_dir, version, filter, verbose):
     """import source tree to the current branch"""
     try:
         old = set(repo.index_files())
@@ -60,7 +60,7 @@ def import_source_tree(repo, orig_dir, version, filter):
         if files:
             gbpc.GitRm()(files)
         if not repo.is_clean()[0]:
-            gbpc.GitCommitAll()(msg="Imported upstream version %s" % version)
+            gbpc.GitCommitAll(verbose=verbose)(msg="Imported upstream version %s" % version)
         else:
             raise GbpError, "Nothing to commit, nothing imported."
     except gbpc.CommandExecFailed:
@@ -178,7 +178,7 @@ create it otherwise use --upstream-branch to specify it.
             else:
                 print "Initial import of '%s'..." % archive
 
-            import_source_tree(repo, orig_dir, version, options.filter)
+            import_source_tree(repo, orig_dir, version, options.filter, verbose=not is_empty)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
 
