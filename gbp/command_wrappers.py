@@ -46,7 +46,7 @@ class Command(object):
             print >>sys.stderr, "Execution failed:", e
             retcode = 1
         if retcode:
-            print >>sys.stderr,self.run_error
+            print >>sys.stderr, self.run_error
         return retcode
 
     def __call__(self, args=[]):
@@ -99,21 +99,6 @@ class DpkgSourceExtract(Command):
     def __call__(self, dsc, output_dir):
         self.run_error = "Couldn't extract %s" % dsc
         Command.__call__(self, [dsc, output_dir])
-
-
-class GitLoadDirs(Command):
-    """Wrap git_load_dirs"""
-    def __init__(self, verbose=False):
-        Command.__init__(self, 'git_load_dirs')
-        if verbose:
-            self.args = [ '-v' ]
-
-    def __call__(self, dir, summary, log=''):
-        self.dir = dir
-        self.run_error = "Couldn't import %s" % self.dir
-        args = ['-s', summary]
-        args += [ [], ['-L', log] ] [len(log) > 0]
-        Command.__call__(self, self.args + args + [dir])
 
 
 class GitCommand(Command):
