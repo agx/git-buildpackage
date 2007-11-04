@@ -1,3 +1,11 @@
+git-buildpackage (0.4.6) unstable; urgency=low
+
+  * fix url (Closes: #448350)
+  * call gzip with "-n" (Closes: #449094) - thanks to Romain Francoise
+  * add .gitignore 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 04 Nov 2007 16:20:36 +0100
+
 git-buildpackage (0.4.5) unstable; urgency=low
 
   * git-import-orig: fix missing s/upstream/upstream_branch/ rename
