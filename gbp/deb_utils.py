@@ -6,6 +6,7 @@
 import email
 import commands
 import os
+import shutil
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
@@ -46,4 +47,19 @@ def has_orig(cp, dir):
         return False
     return True
 
-# vim:et:ts=4:sw=4:
+def copy_orig(cp, orig_dir, output_dir):
+    """copy orig.tar.gz from orig_dir to output_dir"""
+    orig_dir = os.path.abspath(orig_dir)
+    output_dir = os.path.abspath(output_dir)
+
+    if orig_dir == output_dir:
+        return True
+
+    try:
+        shutil.copyfile(os.path.join(orig_dir, orig_file(cp)),
+            os.path.join(output_dir, orig_file(cp)))
+    except IOError:
+        return False
+    return True
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

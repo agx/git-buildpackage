@@ -37,6 +37,7 @@ class GbpOptionParser(OptionParser):
                  'snapshot-number' : 'snapshot + 1',
                  'git-log'         : '--no-merges',
                  'export-dir'      : '',
+                 'tarball-dir'     : '',
              }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

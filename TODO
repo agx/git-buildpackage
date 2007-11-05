@@ -1,5 +1,6 @@
 - git-buildpackage:
   - allow to fetch and build from a signed tag even when it's in a remote repo
+  - add --git-overlay as discussed in #448357
 - git-import-orig:
   - show untracked files using 'git-ls-files -o' after import
 - git-import-dsc:
