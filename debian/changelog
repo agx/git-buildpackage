@@ -1,3 +1,12 @@
+git-buildpackage (0.4.7) unstable; urgency=low
+
+  * add tarball-dir option losely based on patch from Sjoerd Simons
+    (Closes: #448357)
+  * don't print a commit summary when importing into empty repos
+    (addresses parts of #449075)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 05 Nov 2007 20:09:15 +0100
+
 git-buildpackage (0.4.6) unstable; urgency=low
 
   * fix url (Closes: #448350)
