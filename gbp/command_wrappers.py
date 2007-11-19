@@ -54,6 +54,19 @@ class Command(object):
             raise CommandExecFailed
 
 
+class RunAtCommand(Command):
+    """Run a command in a specific directory"""
+    def __call__(self, dir='.', *args):
+        curdir = os.path.abspath(os.path.curdir)
+        try:
+            os.chdir(dir)
+            Command.__call__(self, list(*args))
+            os.chdir(curdir)
+        except Exception:
+            os.chdir(curdir)
+            raise
+
+
 class UnpackTarArchive(Command):
     """Wrap tar to Unpack a gzipped tar archive"""
     def __init__(self, archive, dir, filter=""):
