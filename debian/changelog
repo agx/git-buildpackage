@@ -1,3 +1,11 @@
+git-buildpackage (0.4.8) unstable; urgency=low
+
+  * git-buildpacakge: make sure we don't switch directories during build
+    (Closes: #451550)
+  * debian/control: use the now official Vcs-Git 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 19 Nov 2007 18:50:08 +0100
+
 git-buildpackage (0.4.7) unstable; urgency=low
 
   * add tarball-dir option losely based on patch from Sjoerd Simons
