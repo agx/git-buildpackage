@@ -25,7 +25,7 @@ import pipes
 import time
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.deb_utils import (parse_changelog, is_native, orig_file, has_orig, copy_orig)
-from gbp.command_wrappers import (GitTag, Command, CommandExecFailed, RemoveTree)
+from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, RemoveTree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -215,9 +215,11 @@ def main(argv):
                     raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
 
         if options.export_dir:
-            os.chdir(export_dir)
+            build_dir = export_dir
+        else:
+            build_dir = repo_dir
 
-        Command(options.builder, dpkg_args, shell=True)()
+        RunAtCommand(options.builder, dpkg_args, shell=True)(dir=build_dir)
         if options.tag:
             try:
                 version = cp['Version']
@@ -240,7 +242,6 @@ def main(argv):
     if options.export_dir and not retval:
         RemoveTree(export_dir)()
 
-    os.chdir(repo_dir)
     return retval
 
 if __name__ == '__main__':
