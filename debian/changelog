@@ -1,3 +1,10 @@
+git-buildpackage (0.4.9) unstable; urgency=low
+
+  * fix "gpb gets confused by color enabled on branches..." - thanks to
+    Niv Sardi for the patch (Closes: #452921)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 26 Nov 2007 17:22:48 +0100
+
 git-buildpackage (0.4.8) unstable; urgency=low
 
   * git-buildpacakge: make sure we don't switch directories during build
