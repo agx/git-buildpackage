@@ -226,8 +226,9 @@ def main(argv):
         ret = 1
         os.chdir(dirs['top'])
 
-        if not ret:
-            print 'Everything imported under %s' % src.pkg
+    if not ret:
+        print 'Everything imported under %s' % src.pkg
+    return ret
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
