@@ -1,3 +1,11 @@
+git-buildpackage (0.4.10) unstable; urgency=low
+
+  * git-ls-files: separate filenames by '\0', based on a patch from Uwe
+    Kleine-König <Uwe.Kleine-Koenig@digi.com> (Closes: #454470)
+  * git-import-dsc: return non null on failure 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 07 Dec 2007 23:19:39 +0100
+
 git-buildpackage (0.4.9) unstable; urgency=low
 
   * fix "gpb gets confused by color enabled on branches..." - thanks to
