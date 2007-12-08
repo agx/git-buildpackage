@@ -41,7 +41,7 @@ class GitRepository(object):
     def has_branch(self, branch):
         """check if the repository has branch 'branch'"""
         self.__check_path()
-        for line in self.__git_getoutput('branch')[0]:
+        for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
             if line.split(' ', 1)[1].strip() == branch:
                 return True
         return False
@@ -57,7 +57,7 @@ class GitRepository(object):
     def get_branch(self):
         """on what branch is the current working copy"""
         self.__check_path()
-        for line in self.__git_getoutput('branch')[0]:
+        for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
         

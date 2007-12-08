@@ -46,12 +46,25 @@ class Command(object):
             print >>sys.stderr, "Execution failed:", e
             retcode = 1
         if retcode:
-            print >>sys.stderr,self.run_error
+            print >>sys.stderr, self.run_error
         return retcode
 
     def __call__(self, args=[]):
         if self.__run(args):
             raise CommandExecFailed
+
+
+class RunAtCommand(Command):
+    """Run a command in a specific directory"""
+    def __call__(self, dir='.', *args):
+        curdir = os.path.abspath(os.path.curdir)
+        try:
+            os.chdir(dir)
+            Command.__call__(self, list(*args))
+            os.chdir(curdir)
+        except Exception:
+            os.chdir(curdir)
+            raise
 
 
 class UnpackTarArchive(Command):
@@ -99,21 +112,6 @@ class DpkgSourceExtract(Command):
     def __call__(self, dsc, output_dir):
         self.run_error = "Couldn't extract %s" % dsc
         Command.__call__(self, [dsc, output_dir])
-
-
-class GitLoadDirs(Command):
-    """Wrap git_load_dirs"""
-    def __init__(self, verbose=False):
-        Command.__init__(self, 'git_load_dirs')
-        if verbose:
-            self.args = [ '-v' ]
-
-    def __call__(self, dir, summary, log=''):
-        self.dir = dir
-        self.run_error = "Couldn't import %s" % self.dir
-        args = ['-s', summary]
-        args += [ [], ['-L', log] ] [len(log) > 0]
-        Command.__call__(self, self.args + args + [dir])
 
 
 class GitCommand(Command):
@@ -196,12 +194,13 @@ class GitRm(GitCommand):
 
 class GitCommitAll(GitCommand):
     """Wrap git-commit to commit all changes"""
-    def __init__(self):
-        GitCommand.__init__(self, 'commit', ['-a'])
+    def __init__(self, verbose=False):
+        args = ['-a'] + [ ['-q'], [] ][verbose]
+        GitCommand.__init__(self, cmd='commit', args=args)
 
     def __call__(self, msg=''):
         args = [ [], ['-m', msg] ][len(msg) > 0]
-        self.run_error = "Couldn't commit -a %s" % " ".join(args)
+        self.run_error = "Couldn't %s %s" % (self.cmd, " ".join(self.args + args))
         GitCommand.__call__(self, args)
 
 

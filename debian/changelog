@@ -1,3 +1,35 @@
+git-buildpackage (0.4.9) unstable; urgency=low
+
+  * fix "gpb gets confused by color enabled on branches..." - thanks to
+    Niv Sardi for the patch (Closes: #452921)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 26 Nov 2007 17:22:48 +0100
+
+git-buildpackage (0.4.8) unstable; urgency=low
+
+  * git-buildpacakge: make sure we don't switch directories during build
+    (Closes: #451550)
+  * debian/control: use the now official Vcs-Git 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 19 Nov 2007 18:50:08 +0100
+
+git-buildpackage (0.4.7) unstable; urgency=low
+
+  * add tarball-dir option losely based on patch from Sjoerd Simons
+    (Closes: #448357)
+  * don't print a commit summary when importing into empty repos
+    (addresses parts of #449075)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 05 Nov 2007 20:09:15 +0100
+
+git-buildpackage (0.4.6) unstable; urgency=low
+
+  * fix url (Closes: #448350)
+  * call gzip with "-n" (Closes: #449094) - thanks to Romain Francoise
+  * add .gitignore 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 04 Nov 2007 16:20:36 +0100
+
 git-buildpackage (0.4.5~bpo.1) etch-backports; urgency=low
 
   * etch backport 

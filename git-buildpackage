@@ -24,8 +24,8 @@ import errno
 import pipes
 import time
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
-from gbp.deb_utils import (parse_changelog, is_native, orig_file, has_orig)
-from gbp.command_wrappers import (GitTag, Command, CommandExecFailed, RemoveTree)
+from gbp.deb_utils import (parse_changelog, is_native, orig_file, has_orig, copy_orig)
+from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, RemoveTree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -51,9 +51,10 @@ def create_orig(cp, output_dir, treeish):
     "create an orig.tar.gz in output_dir"
     output = os.path.join(output_dir, orig_file(cp))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
+    gzip_opts = "-9 -n"
 
     pipe = pipes.Template()
-    pipe.append('gzip -c -9',  '--')
+    pipe.append('gzip -c %s' % gzip_opts,  '--')
     return git_archive_pipe(prefix, pipe, output, treeish)
 
 
@@ -132,6 +133,8 @@ def main(argv):
                       help="format string for upstream tags, default is '%(upstream-tag)s'")
     parser.add_config_file_option(option_name="export-dir", dest="export_dir",
                       help="before building export into EXPORT_DIR")
+    parser.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
+                      help="location to look for external tarballs")
     parser.add_option("--git-export", dest="treeish", default=default_tree,
                       help="export treeish object TREEISH, default is '%s'" % default_tree)
     (options, args) = parser.parse_args(args)
@@ -166,6 +169,11 @@ def main(argv):
             raise GbpError,"'%s' does not exist, not a debian package" % changelog
 
         output_dir = prepare_output_dir(options.export_dir)
+        if options.tarball_dir:
+          tarball_dir = options.tarball_dir
+        else:
+          tarball_dir = output_dir
+
         if not repo.has_treeish(options.treeish):
             raise GbpError # git-ls-tree printed an error message already
         # Export to another build dir if requested:
@@ -183,26 +191,35 @@ def main(argv):
             move_old_export(export_dir)
             os.rename(tmp_dir, export_dir)
 
-        # Build the orig.tar.gz if necessary:
-        if not is_native(cp) and not has_orig(cp, output_dir) and not options.no_create_orig:
-            # --upstream-branch was given on the command line, so use this:
-            if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
-                upstream_tree = options.upstream_branch
-            else:
-                upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
-                # fall back to the upstream-branch tip if the tag doesn't exist
+        # Get the orig.tar.gz if necessary:
+        if not is_native(cp):
+            if has_orig(cp, output_dir):
+                pass
+            elif options.tarball_dir: # separate tarball dir specified
+                print "Getting orig tarbball from %s" % tarball_dir
+                if not copy_orig(cp, tarball_dir, output_dir):
+                    raise GbpError, "Cannot copy orig tarball from %s" % tarball_dir
+            elif not options.no_create_orig:
+                # --upstream-branch was given on the command line, so use this:
+                if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
+                    upstream_tree = options.upstream_branch
+                else:
+                    upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
+                    # fall back to the upstream-branch tip if the tag doesn't exist
+                    if not repo.has_treeish(upstream_tree):
+                        upstream_tree = GbpOptionParser.defaults['upstream-branch']
+                print "%s does not exist, creating from '%s'" % (orig_file(cp), upstream_tree)
                 if not repo.has_treeish(upstream_tree):
-                    upstream_tree = GbpOptionParser.defaults['upstream-branch']
-            print "%s does not exist, creating from '%s'" % (orig_file(cp), upstream_tree)
-            if not repo.has_treeish(upstream_tree):
-                raise GbpError # git-ls-tree printed an error message already
-            if not create_orig(cp, output_dir, upstream_tree):
-                raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
+                    raise GbpError # git-ls-tree printed an error message already
+                if not create_orig(cp, output_dir, upstream_tree):
+                    raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
 
         if options.export_dir:
-            os.chdir(export_dir)
+            build_dir = export_dir
+        else:
+            build_dir = repo_dir
 
-        Command(options.builder, dpkg_args, shell=True)()
+        RunAtCommand(options.builder, dpkg_args, shell=True)(dir=build_dir)
         if options.tag:
             try:
                 version = cp['Version']
@@ -225,7 +242,6 @@ def main(argv):
     if options.export_dir and not retval:
         RemoveTree(export_dir)()
 
-    os.chdir(repo_dir)
     return retval
 
 if __name__ == '__main__':
