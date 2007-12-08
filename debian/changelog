@@ -1,3 +1,9 @@
+git-buildpackage (0.4.9~bpo.1) etch-backports; urgency=low
+
+  * Rebuild for Etch backports.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 08 Dec 2007 01:17:03 +0100
+
 git-buildpackage (0.4.9) unstable; urgency=low
 
   * fix "gpb gets confused by color enabled on branches..." - thanks to
