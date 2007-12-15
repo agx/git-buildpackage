@@ -187,6 +187,7 @@ def main(argv):
     ret = 0
     changelog = 'debian/changelog'
     until = 'HEAD'
+    found_snapshot_header = False
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] paths')
@@ -237,6 +238,7 @@ def main(argv):
                 since = guess_snapshot_commit(cp)
                 if since:
                     print "Continuing from commit '%s'" % since
+                    found_snapshot_header = True
                 else:
                     print "Couldn't get snapshot header, using version info"
             if not since:
@@ -246,7 +248,7 @@ def main(argv):
             print "Only looking for changes on '%s'" % " ".join(args)
         changes = get_log(since, until, options.git_log, " ".join(args))
         if changes:
-            if cp['Distribution'] != "UNRELEASED":
+            if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
             shortlog_to_dch(changes)
             fixup_trailer()
