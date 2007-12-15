@@ -1,3 +1,12 @@
+git-buildpackage (0.4.11) unstable; urgency=low
+
+  * --export-dir and --export are actually --git-export-dir and --git-
+    export (Closes: #456384) - thanks to Frank S. Thomas for the patch.
+  * don't start a new changelog section if we found a snapshot header
+    even when distribution != UNRELEASED
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 15 Dec 2007 17:16:34 +0100
+
 git-buildpackage (0.4.10) unstable; urgency=low
 
   * git-ls-files: separate filenames by '\0', based on a patch from Uwe
