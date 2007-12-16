@@ -49,9 +49,9 @@
 <programlisting>
 [git-buildpackage]
 # use a build area relative to the git repository
-build-area=../build-area
+export-dir=../build-area
 # to use the same build area for all packages use an absolute path:
-#build-area=/home/debian-packages/build-area
+#export-dir=/home/debian-packages/build-area
 </programlisting>
     </sect1>
 </chapter>
