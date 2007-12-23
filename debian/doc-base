@@ -1,0 +1,11 @@
+Document: git-buildpackage
+Title: Git-Buildpackage Manual
+Author: Guido Guenther
+Abstract: git-buildpackage is a suite to help with Debian packages in Git
+ repositories. This manual describes the utilities in this package, their
+ configuration and possible workflows.
+Section: Apps/Programming
+
+Format: HTML
+Index: /usr/share/doc/git-buildpackage/manual-html/index.html
+Files: /usr/share/doc/git-buildpackage/manual-html/*.html
