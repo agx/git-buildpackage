@@ -1,3 +1,16 @@
+git-buildpackage (0.4.12) unstable; urgency=low
+
+  * remove unused debian/dirs
+  * bump standards version
+  * add a homepage field
+  * add doc-base file (Closes: #457495)
+  * git-import-orig: fix doc url (Closes: #456535)
+  * use export-dir instead of build-area in gbp.conf because git-
+    buildpackage has no --git-build-area option - thanks to Frank S. Thomas
+    for the patch.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 23 Dec 2007 20:35:45 +0100
+
 git-buildpackage (0.4.11) unstable; urgency=low
 
   * --export-dir and --export are actually --git-export-dir and --git-
