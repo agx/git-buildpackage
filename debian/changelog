@@ -1,3 +1,9 @@
+git-buildpackage (0.4.13) unstable; urgency=low
+
+  * git-import-orig: don't fail when importing into empty git archives
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 28 Dec 2007 23:01:29 +0100
+
 git-buildpackage (0.4.12) unstable; urgency=low
 
   * remove unused debian/dirs
