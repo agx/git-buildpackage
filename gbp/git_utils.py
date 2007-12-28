@@ -81,8 +81,10 @@ class GitRepository(object):
         out, ret = self.__git_getoutput('ls-files', ['-z'])
         if ret:
             raise GitRepositoryError, "Error listing files %d" % ret
-        files = [ file for file in out[0].split('\0') if file ]
-        return files
+        if out:
+            return [ file for file in out[0].split('\0') if file ]
+        else:
+            return []
 
 
 def build_tag(format, version):
