@@ -1,3 +1,39 @@
+git-buildpackage (0.4.13) unstable; urgency=low
+
+  * git-import-orig: don't fail when importing into empty git archives
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 28 Dec 2007 23:01:29 +0100
+
+git-buildpackage (0.4.12) unstable; urgency=low
+
+  * remove unused debian/dirs
+  * bump standards version
+  * add a homepage field
+  * add doc-base file (Closes: #457495)
+  * git-import-orig: fix doc url (Closes: #456535)
+  * use export-dir instead of build-area in gbp.conf because git-
+    buildpackage has no --git-build-area option - thanks to Frank S. Thomas
+    for the patch.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 23 Dec 2007 20:35:45 +0100
+
+git-buildpackage (0.4.11) unstable; urgency=low
+
+  * --export-dir and --export are actually --git-export-dir and --git-
+    export (Closes: #456384) - thanks to Frank S. Thomas for the patch.
+  * don't start a new changelog section if we found a snapshot header
+    even when distribution != UNRELEASED
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 15 Dec 2007 17:16:34 +0100
+
+git-buildpackage (0.4.10) unstable; urgency=low
+
+  * git-ls-files: separate filenames by '\0', based on a patch from Uwe
+    Kleine-König <Uwe.Kleine-Koenig@digi.com> (Closes: #454470)
+  * git-import-dsc: return non null on failure 
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 07 Dec 2007 23:19:39 +0100
+
 git-buildpackage (0.4.9~bpo.1) etch-backports; urgency=low
 
   * Rebuild for Etch backports.

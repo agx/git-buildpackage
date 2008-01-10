@@ -78,11 +78,13 @@ class GitRepository(object):
 
     def index_files(self):
         """List files in the index"""
-        out, ret = self.__git_getoutput('ls-files')
+        out, ret = self.__git_getoutput('ls-files', ['-z'])
         if ret:
             raise GitRepositoryError, "Error listing files %d" % ret
-        files = [ line.strip() for line in out ]
-        return files
+        if out:
+            return [ file for file in out[0].split('\0') if file ]
+        else:
+            return []
 
 
 def build_tag(format, version):
