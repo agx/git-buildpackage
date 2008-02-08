@@ -80,7 +80,8 @@
         <term><option>--debian-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>tag format used, when tagging debian versions</para>
+          <para>tag format used, when tagging debian versions,
+  	  default is <replaceable>debian/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>

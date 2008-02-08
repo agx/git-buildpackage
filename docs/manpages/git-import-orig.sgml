@@ -111,7 +111,8 @@
         <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging upstream versions</para>
+          <para>use this tag format when tagging upstream versions,
+	  default is <replaceable>upstream/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>

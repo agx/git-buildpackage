@@ -24,7 +24,7 @@
     <option>--git-keyid</option> options. To safe typing these option can be
     specified via the configuration files. You can futhermore change the tag
     format used when creating tags with the <option>debian-tag</option>
-    option.</para>
+    option, the default is <replaceable>debian/&lt;version&gt;</replaceable>.</para>
     <sect1 id="gbp.building.export">
     <title>Using a separate build dir</title>
     <para>Tools like &svn-buildpackage; use a separate build-area. To achieve a similar behaviour

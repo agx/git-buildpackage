@@ -86,14 +86,16 @@
         <term><option>--debian-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging Debian versions</para>
+          <para>use this tag format when tagging Debian versions,
+	  default is <replaceable>debian/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging upstream versions</para>
+          <para>use this tag format when tagging upstream versions, 
+	  default is <replaceable>upstream/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
