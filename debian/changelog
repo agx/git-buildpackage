@@ -1,3 +1,14 @@
+git-buildpackage (0.4.14) unstable; urgency=low
+
+  * correct several typos in the manual (Closes: #464582, #464583,
+    #464617)
+  * better dpkg-parsechangelog error reporting (Closes: #460195)
+  * document default tag formats (Closes: #464100)
+  * git-import-orig: detect flat tar archives (Closes: #463822)
+  * git-import-orig: add --no-dch options
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 08 Feb 2008 17:38:29 +0100
+
 git-buildpackage (0.4.13) unstable; urgency=low
 
   * git-import-orig: don't fail when importing into empty git archives
