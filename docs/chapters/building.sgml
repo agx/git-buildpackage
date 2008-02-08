@@ -13,7 +13,7 @@
     found it uses the tip of the current <option>upstream-branch</option>. Any
     other treeish objecto to create the upstream tarball from can be given with
     the <option>--upstream-branch</option> option.</para>
-    <para>Once you're satisfied with the build and want to do a relese you commit all
+    <para>Once you're satisfied with the build and want to do a release you commit all
     your changes and issue:</para>
 <screen>
 &git-buildpackage; <option>--git-tag</option>

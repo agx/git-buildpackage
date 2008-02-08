@@ -49,7 +49,7 @@ cleanup-script.sh
     </screen>
     <para>
     To import an NMU instead of a new upstream version simply import the
-    unpacked NUMs source tree into your repository using &git-import-orig:
+    unpacked NMUs source tree into your repository using &git-import-orig:
     </para>
     <screen>
 &gitcmd; checkout <replaceable>master</replaceable>

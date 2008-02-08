@@ -2,7 +2,7 @@
     <title>Releases and Snapshots</title>
     <para>When branching and merging frequently, the different Debian changelog
     entries on the different branches tend to get into the way of the automatic
-    merge and the the merge fails - leaving the (patholigical) merge to the
+    merge and the the merge fails - leaving the (pathological) merge to the
     committer. In order to avoid this &git-dch; offers a way for creating
     changelog entries from &git; commits before doing a
     release or anytime between releases.</para> 
