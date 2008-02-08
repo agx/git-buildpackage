@@ -98,6 +98,8 @@ def main(argv):
                       help="verbose command execution")
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
                       help="after import dont do any merging to another branch")
+    parser.add_option("--no-dch", dest='run_dch', action="store_false", default=True,
+                      help="don't call dch after the import")
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
@@ -198,7 +200,8 @@ on howto create it otherwise use --upstream-branch to specify it.
                     gitPullUpstream()
                 except gbpc.CommandExecFailed:
                     raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
-                gbpc.Dch("%s-1" % version, 'New Upstream Version')()
+                if options.run_dch:
+                    gbpc.Dch("%s-1" % version, 'New Upstream Version')()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpError, err:

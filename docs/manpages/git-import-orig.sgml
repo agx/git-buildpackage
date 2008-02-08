@@ -24,6 +24,7 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--no-merge</option></arg>
+      <arg><option>--no-dch</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
@@ -66,6 +67,12 @@
         <term><option>--no-merge</option></term>
         <listitem>
 	  <para>Don't merge the upstream version to the development branch</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--no-dch</option></term>
+        <listitem>
+	  <para>don't call dch after the import</para>
         </listitem>
       </varlistentry>
       <varlistentry>
