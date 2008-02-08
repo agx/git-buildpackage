@@ -169,7 +169,13 @@ on howto create it otherwise use --upstream-branch to specify it.
             unpack_orig(archive, tmpdir)
             if options.verbose:
                 print "Unpacked %s to '%s'" % (archive , tmpdir)
-            orig_dir = glob.glob(tmpdir+'/*')[0]
+            unpacked = glob.glob(tmpdir+'/*')
+            # archive has everything packed up in one subdir:
+            if len(unpacked) == 1:
+                orig_dir = unpacked[0]
+            # archive content not in a subdir
+            else:
+                orig_dir = tmpdir
 
         try:
             if not is_empty:
