@@ -12,11 +12,21 @@ import shutil
 # the valid characters.
 debian_version_chars = 'a-zA-Z\d.~+-'
 
+class NoChangelogError(Exception):
+    """no changelog found"""
+    pass
+
+class ParseChangeLogError(Exception):
+    """problem parsing changelog"""
+    pass
+
 def parse_changelog(changelog):
     """parse changelog file changelog"""
+    if not os.access(changelog, os.F_OK):
+        raise NoChangelogError, "Changelog %s not found" % (changelog, )
     status, output = commands.getstatusoutput('dpkg-parsechangelog -l%s' % (changelog, ))
     if status:
-        return None
+        raise ParseChangeLogError, output
     cp = email.message_from_string(output)
     if '-' in cp['Version']:
         upstream_version, cp['Debian-Version'] = cp['Version'].rsplit('-', 1)

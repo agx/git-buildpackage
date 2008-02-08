@@ -23,8 +23,8 @@ import os, os.path
 import errno
 import pipes
 import time
+import gbp.deb_utils as du
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
-from gbp.deb_utils import (parse_changelog, is_native, orig_file, has_orig, copy_orig)
 from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, RemoveTree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
@@ -49,7 +49,7 @@ def git_archive_pipe(prefix, pipe, output, treeish):
 
 def create_orig(cp, output_dir, treeish):
     "create an orig.tar.gz in output_dir"
-    output = os.path.join(output_dir, orig_file(cp))
+    output = os.path.join(output_dir, du.orig_file(cp))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
     gzip_opts = "-9 -n"
 
@@ -164,15 +164,18 @@ def main(argv):
                 print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
                 raise GbpError, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
 
-        cp = parse_changelog(changelog)
-        if not cp:
-            raise GbpError,"'%s' does not exist, not a debian package" % changelog
+        try:
+            cp = du.parse_changelog(changelog)
+        except du.NoChangelogError:
+            raise GbpError, "'%s' does not exist, not a debian package" % changelog
+        except du.ParseChangeLogError, err:
+            raise GbpError, "Error parsing Changelog: %s" % err
 
         output_dir = prepare_output_dir(options.export_dir)
         if options.tarball_dir:
-          tarball_dir = options.tarball_dir
+            tarball_dir = options.tarball_dir
         else:
-          tarball_dir = output_dir
+            tarball_dir = output_dir
 
         if not repo.has_treeish(options.treeish):
             raise GbpError # git-ls-tree printed an error message already
@@ -181,8 +184,8 @@ def main(argv):
             tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
             print "Exporting '%s' to '%s'" % (options.treeish, tmp_dir)
             dump_tree(tmp_dir, options.treeish)
-            cp = parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
-            if is_native(cp):
+            cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
+            if du.is_native(cp):
                 version = cp['Debian-Version']
             else:
                 version = cp['Upstream-Version']
@@ -192,12 +195,12 @@ def main(argv):
             os.rename(tmp_dir, export_dir)
 
         # Get the orig.tar.gz if necessary:
-        if not is_native(cp):
-            if has_orig(cp, output_dir):
+        if not du.is_native(cp):
+            if du.has_orig(cp, output_dir):
                 pass
             elif options.tarball_dir: # separate tarball dir specified
                 print "Getting orig tarbball from %s" % tarball_dir
-                if not copy_orig(cp, tarball_dir, output_dir):
+                if not du.copy_orig(cp, tarball_dir, output_dir):
                     raise GbpError, "Cannot copy orig tarball from %s" % tarball_dir
             elif not options.no_create_orig:
                 # --upstream-branch was given on the command line, so use this:
@@ -208,7 +211,7 @@ def main(argv):
                     # fall back to the upstream-branch tip if the tag doesn't exist
                     if not repo.has_treeish(upstream_tree):
                         upstream_tree = GbpOptionParser.defaults['upstream-branch']
-                print "%s does not exist, creating from '%s'" % (orig_file(cp), upstream_tree)
+                print "%s does not exist, creating from '%s'" % (du.orig_file(cp), upstream_tree)
                 if not repo.has_treeish(upstream_tree):
                     raise GbpError # git-ls-tree printed an error message already
                 if not create_orig(cp, output_dir, upstream_tree):
