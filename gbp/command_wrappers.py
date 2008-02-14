@@ -117,25 +117,25 @@ class DpkgSourceExtract(Command):
 class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[]):
-        Command.__init__(self, 'git-'+cmd, args)
+        Command.__init__(self, 'git', [cmd] + args)
 
 
 class GitInitDB(GitCommand):
-    """Wrap git-init-db"""
+    """Wrap git init-db"""
     def __init__(self):
         GitCommand.__init__(self, 'init-db')
         self.run_error = "Couldn't init git repository"
 
 
 class GitShowBranch(GitCommand):
-    """Wrap git-show-branch"""
+    """Wrap git show-branch"""
     def __init__(self):
         GitCommand.__init__(self, 'branch')
         self.run_error = "Couldn't list branches"
 
 
 class GitBranch(GitCommand):
-    """Wrap git-branch"""
+    """Wrap git branch"""
     def __init__(self):
         GitCommand.__init__(self, 'branch')
 
@@ -145,7 +145,7 @@ class GitBranch(GitCommand):
 
 
 class GitCheckoutBranch(GitCommand):
-    """Wrap git-checkout in order tos switch to a certain branch"""
+    """Wrap git checkout in order tos switch to a certain branch"""
     def __init__(self, branch):
         GitCommand.__init__(self, 'checkout', [branch])
         self.branch = branch
@@ -153,14 +153,14 @@ class GitCheckoutBranch(GitCommand):
 
 
 class GitPull(GitCommand):
-    """Wrap git-pull"""
+    """Wrap git pull"""
     def __init__(self, repo, branch):
         GitCommand.__init__(self, 'pull', [repo, branch]) 
         self.run_error = "Couldn't pull %s to %s" % (branch, repo)
 
 
 class GitTag(GitCommand):
-    """Wrap git-tag"""
+    """Wrap git tag"""
     def __init__(self, sign_tag=False, keyid=None):
         GitCommand.__init__(self,'tag')
         self.sign_tag = sign_tag
@@ -179,21 +179,21 @@ class GitTag(GitCommand):
 
 
 class GitAdd(GitCommand):
-    """Wrap git-add to add new files"""
+    """Wrap git add to add new files"""
     def __init__(self):
         GitCommand.__init__(self, 'add')
         self.run_error = "Couldn't add files"
 
 
 class GitRm(GitCommand):
-    """Wrap git-rm to remove files"""
+    """Wrap git rm to remove files"""
     def __init__(self):
         GitCommand.__init__(self, 'rm')
         self.run_error = "Couldn't remove files"
 
 
 class GitCommitAll(GitCommand):
-    """Wrap git-commit to commit all changes"""
+    """Wrap git commit to commit all changes"""
     def __init__(self, verbose=False):
         args = ['-a'] + [ ['-q'], [] ][verbose]
         GitCommand.__init__(self, cmd='commit', args=args)
