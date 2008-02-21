@@ -27,6 +27,7 @@ class GbpOptionParser(OptionParser):
                  'cleaner'         : 'debuild clean',
                  'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
+                 'pristine-tar'    : '',      # empty means False
                  'sign-tags'       : '',      # empty means False
                  'no-create-orig'  : '',      # empty means False
                  'keyid'           : '',
