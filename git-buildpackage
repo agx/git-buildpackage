@@ -25,7 +25,8 @@ import pipes
 import time
 import gbp.deb_utils as du
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
-from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, RemoveTree)
+from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, 
+                                  PristineTar, RemoveTree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -47,8 +48,8 @@ def git_archive_pipe(prefix, pipe, output, treeish):
     return True
 
 
-def create_orig(cp, output_dir, treeish):
-    "create an orig.tar.gz in output_dir"
+def git_archive(cp, output_dir, treeish):
+    "create an orig.tar.gz in output_dir using git_archive"
     output = os.path.join(output_dir, du.orig_file(cp))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
     gzip_opts = "-9 -n"
@@ -89,6 +90,35 @@ def prepare_output_dir(dir):
             raise GbpError, "Cannot create output dir %s" % output_dir
     return output_dir
 
+def pristine_tar_build_orig(repo, cp, output_dir, options):
+    """
+    build orig using pristine-tar
+    @return: True: orig.tar.gz build, False: noop
+    """
+    if options.pristine_tar:
+        pt = PristineTar()
+        if not repo.has_branch(pt.branch):
+            raise GbpError, "Pristine-tar branch '%s' not found" % pt.branch
+        pt.checkout(os.path.join(output_dir, du.orig_file(cp)))
+        return True
+    else:
+        return False
+
+def git_archive_build_orig(repo, cp, output_dir, options):
+    """build orig using git-archive"""
+    # --upstream-branch was given on the command line, so use this:
+    if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
+        upstream_tree = options.upstream_branch
+    else:
+        upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
+        # fall back to the upstream-branch tip if the tag doesn't exist
+        if not repo.has_treeish(upstream_tree):
+            upstream_tree = GbpOptionParser.defaults['upstream-branch']
+    print "%s does not exist, creating from '%s'" % (du.orig_file(cp), upstream_tree)
+    if not repo.has_treeish(upstream_tree):
+        raise GbpError # git-ls-tree printed an error message already
+    if not git_archive(cp, output_dir, upstream_tree):
+        raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
 
 def main(argv):
     changelog = 'debian/changelog'
@@ -135,6 +165,8 @@ def main(argv):
                       help="before building export into EXPORT_DIR")
     parser.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
                       help="location to look for external tarballs")
+    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
+                      help="Use pristine-tar to create .orig.tar.gz", action="store_true")
     parser.add_option("--git-export", dest="treeish", default=default_tree,
                       help="export treeish object TREEISH, default is '%s'" % default_tree)
     (options, args) = parser.parse_args(args)
@@ -194,7 +226,7 @@ def main(argv):
             move_old_export(export_dir)
             os.rename(tmp_dir, export_dir)
 
-        # Get the orig.tar.gz if necessary:
+        # Get/build the orig.tar.gz if necessary:
         if not du.is_native(cp):
             if du.has_orig(cp, output_dir):
                 pass
@@ -203,19 +235,8 @@ def main(argv):
                 if not du.copy_orig(cp, tarball_dir, output_dir):
                     raise GbpError, "Cannot copy orig tarball from %s" % tarball_dir
             elif not options.no_create_orig:
-                # --upstream-branch was given on the command line, so use this:
-                if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
-                    upstream_tree = options.upstream_branch
-                else:
-                    upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
-                    # fall back to the upstream-branch tip if the tag doesn't exist
-                    if not repo.has_treeish(upstream_tree):
-                        upstream_tree = GbpOptionParser.defaults['upstream-branch']
-                print "%s does not exist, creating from '%s'" % (du.orig_file(cp), upstream_tree)
-                if not repo.has_treeish(upstream_tree):
-                    raise GbpError # git-ls-tree printed an error message already
-                if not create_orig(cp, output_dir, upstream_tree):
-                    raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
+                if not pristine_tar_build_orig(repo, cp, output_dir, options):
+                    git_archive_build_orig(repo, cp, output_dir, options)
 
         if options.export_dir:
             build_dir = export_dir

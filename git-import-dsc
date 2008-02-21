@@ -106,8 +106,13 @@ def import_initial(src, dirs, options, tagger, filter):
         format = [options.upstream_tag, options.debian_tag][src.native]
         tagger(build_tag(format, src.upstream_version),
                msg="Upstream version %s" % src.upstream_version)
+
         if not src.native:
             gbpc.GitBranch()(options.upstream_branch)
+            if options.pristine_tar:
+                gbpc.PristineTar().commit(os.path.join(dirs['top'], src.tgz),
+                                          options.upstream_branch)
+
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Creation of git repository failed"
         gbpc.RemoveTree(unpackTGZ.dir)()
@@ -189,6 +194,8 @@ def main(argv):
                       help="Format string for upstream tags, default is '%(upstream-tag)s'")
     parser.add_config_file_option(option_name="filter", dest="filter",
                       help="files to filter out during import")
+    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
+                      help="Use pristine-tar to import the tarball", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
@@ -200,7 +207,7 @@ def main(argv):
         if len(args) != 1:
             parser.print_help()
             raise GbpError
-        else:        
+        else:
             src = parse_dsc(args[0])
             if not src:
                 raise GbpError
@@ -208,6 +215,7 @@ def main(argv):
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
             if not import_initial(src, dirs, options, gitTag, options.filter):
                 raise GbpError
+
             os.chdir(dirs['top'])
             if not src.native:
                 dirs['unpack'] = os.path.join(dirs['tmp'], 'unpack')

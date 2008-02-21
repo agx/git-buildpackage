@@ -112,6 +112,8 @@ def main(argv):
                       help="format string for upstream tags, default is '%(upstream-tag)s'")
     parser.add_config_file_option(option_name="filter", dest="filter",
                       help="files to filter out during import")
+    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
+                      help="run pristine-tar to import the tarball", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
 
     gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian_branch)
@@ -187,6 +189,8 @@ on howto create it otherwise use --upstream-branch to specify it.
                 print "Initial import of '%s'..." % archive
 
             import_source_tree(repo, orig_dir, version, options.filter, verbose=not is_empty)
+            if options.pristine_tar:
+                gbpc.PristineTar().commit(archive, options.upstream_branch)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
 
