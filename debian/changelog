@@ -1,3 +1,13 @@
+git-buildpackage (0.4.15) unstable; urgency=low
+
+  * add (for now experimental) pristine-tar support based on a patch from
+    Julian Andres Klode (Closes: #463580)
+  * document pristine-tar options
+  * suggest pristine-tar
+  * don't use the deprecated git-* command versions
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 21 Feb 2008 16:25:33 +0100
+
 git-buildpackage (0.4.14) unstable; urgency=low
 
   * correct several typos in the manual (Closes: #464582, #464583,
