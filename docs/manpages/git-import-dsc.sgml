@@ -29,6 +29,7 @@
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg><option>--pristine-tar</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -103,6 +104,13 @@
         </term>
         <listitem>
           <para>filter out these files during import</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-tar</option>
+        </term>
+        <listitem>
+          <para>generate pristine-tar delta file</para>
         </listitem>
       </varlistentry>
      </variablelist>

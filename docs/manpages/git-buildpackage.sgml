@@ -34,6 +34,7 @@
       <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
+      <arg><option>--git-pristine-tar</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -190,6 +191,13 @@
         </term>
 	<listitem> <para>Instead of exporting the current branch head export at
 	the treeish object <replaceable>treeish</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pristine-tar</option>
+        </term>
+        <listitem>
+	  <para>use pristine-tar to create the orig.tar.gz</para>
         </listitem>
       </varlistentry>
     </variablelist>
