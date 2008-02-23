@@ -127,7 +127,7 @@
         <term><option>--filter=</option><replaceable>filter</replaceable>
         </term>
         <listitem>
-          <para>filter out these files during import</para>
+          <para>filter out these files during import. Can be given multiple times.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
