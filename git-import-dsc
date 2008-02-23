@@ -82,13 +82,13 @@ def parse_dsc(dscfile):
     return dsc
 
 
-def import_initial(src, dirs, options, tagger, filter):
+def import_initial(src, dirs, options, tagger, filters):
     """
     import the intial version and (in the case of a non native package) create
     the 'upstream' branch. Tag everything appropriately.
     """
     try:
-        unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'], filter=filter)
+        unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'], filters=filters)
         unpackTGZ()
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Unpacking of %s failed" % src.tgz
@@ -120,7 +120,7 @@ def import_initial(src, dirs, options, tagger, filter):
     return True
 
 
-def apply_debian_patch(src, dirs, options, tagger, filter):
+def apply_debian_patch(src, dirs, options, tagger, filters):
     """apply the debian patch and tag appropriately"""
     try:
         version = "%s-%s" % (src.upstream_version, src.debian_version)
@@ -129,7 +129,7 @@ def apply_debian_patch(src, dirs, options, tagger, filter):
         repo = GitRepository('.')
 
         old = set(repo.index_files())
-        new = set(gbpc.copy_from(dirs['dpkg-src'], filter))
+        new = set(gbpc.copy_from(dirs['dpkg-src'], filters))
         gbpc.GitAdd()(['.'])
         files = [ obj for obj in old - new if not os.path.isdir(obj)]
         if files:
@@ -192,8 +192,9 @@ def main(argv):
                       help="Format string for debian tags, default is '%(debian-tag)s'")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
                       help="Format string for upstream tags, default is '%(upstream-tag)s'")
-    parser.add_config_file_option(option_name="filter", dest="filter",
-                      help="files to filter out during import")
+    parser.add_config_file_option(option_name="filter", dest="filters",
+                      help="files to filter out during import (can be given multiple times)",
+                      action="append")
     parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
                       help="Use pristine-tar to import the tarball", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
@@ -213,7 +214,7 @@ def main(argv):
                 raise GbpError
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-            if not import_initial(src, dirs, options, gitTag, options.filter):
+            if not import_initial(src, dirs, options, gitTag, options.filters):
                 raise GbpError
 
             os.chdir(dirs['top'])
@@ -222,7 +223,7 @@ def main(argv):
                 os.mkdir(dirs['unpack'])
                 dirs['dpkg-src'] = os.path.join(dirs['unpack'],
                                                 "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-                if not apply_debian_patch(src, dirs, options, gitTag, options.filter):
+                if not apply_debian_patch(src, dirs, options, gitTag, options.filters):
                     raise GbpError
                 create_debian_branch(options.debian_branch, dirs)
             os.chdir(dirs['top'])

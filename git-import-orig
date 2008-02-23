@@ -50,11 +50,11 @@ def unpack_orig(archive, tmpdir):
     return unpackArchive.dir
 
 
-def import_source_tree(repo, orig_dir, version, filter, verbose):
+def import_source_tree(repo, orig_dir, version, filters, verbose):
     """import source tree to the current branch"""
     try:
         old = set(repo.index_files())
-        new = set(gbpc.copy_from(orig_dir, filter))
+        new = set(gbpc.copy_from(orig_dir, filters))
         gbpc.GitAdd()(['.'])
         files = [ obj for obj in old - new if not os.path.isdir(obj)]
         if files:
@@ -110,8 +110,9 @@ def main(argv):
                       help="GPG keyid to sign tags with")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
                       help="format string for upstream tags, default is '%(upstream-tag)s'")
-    parser.add_config_file_option(option_name="filter", dest="filter",
-                      help="files to filter out during import")
+    parser.add_config_file_option(option_name="filter", dest="filters",
+                      help="files to filter out during import (can be given multiple times)",
+                      action="append")
     parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
                       help="run pristine-tar to import the tarball", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
@@ -182,13 +183,14 @@ on howto create it otherwise use --upstream-branch to specify it.
                 orig_dir = tmpdir
 
         try:
+            filter_msg = ["", " (filtering out %s)" % options.filters][len(options.filters) > 0]
             if not is_empty:
-                print "Importing '%s' to branch '%s'..." % (archive, options.upstream_branch)
+                print "Importing '%s' to branch '%s'%s..." % (archive, options.upstream_branch, filter_msg)
                 gbpc.GitCheckoutBranch(options.upstream_branch)()
             else:
-                print "Initial import of '%s'..." % archive
+                print "Initial import of '%s' %s..." % (archive, filter_msg)
 
-            import_source_tree(repo, orig_dir, version, options.filter, verbose=not is_empty)
+            import_source_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
             if options.pristine_tar:
                 gbpc.PristineTar().commit(archive, options.upstream_branch)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),

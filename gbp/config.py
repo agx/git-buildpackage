@@ -34,7 +34,7 @@ class GbpOptionParser(OptionParser):
                  'posttag'         : '',
                  'debian-tag'      : 'debian/%(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
-                 'filter'          : '',
+                 'filter'          : [],
                  'snapshot-number' : 'snapshot + 1',
                  'git-log'         : '--no-merges',
                  'export-dir'      : '',
@@ -52,6 +52,13 @@ class GbpOptionParser(OptionParser):
         self.config = dict(parser.defaults())
         if parser.has_section(self.command):
             self.config.update(dict(parser.items(self.command, raw=True)))
+        # filter can be either a list or a string, always build a list:
+        if self.config['filter']:
+            if self.config['filter'].startswith('['):
+                self.config['filter'] = eval(self.config['filter'])
+            else:
+                self.config['filter'] = [ self.config['filter'] ]
+
 
     def __init__(self, command, prefix='', usage=None):
         self.command = command

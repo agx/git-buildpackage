@@ -87,17 +87,17 @@ class PristineTar(Command):
 
 class UnpackTarArchive(Command):
     """Wrap tar to Unpack a gzipped tar archive"""
-    def __init__(self, archive, dir, filter=""):
+    def __init__(self, archive, dir, filters=[]):
         self.archive = archive
         self.dir = dir
-        exclude = [ "", "--exclude=%s" % filter ][len(filter) > 0]
+        exclude = [("--exclude=%s" % filter) for filter in filters]
 
         if archive.lower().endswith(".bz2"):
             decompress = "--bzip2"
         else:
             decompress = "--gzip"
 
-        Command.__init__(self, 'tar', [ exclude, '-C', dir, decompress, '-xf', archive ])
+        Command.__init__(self, 'tar', exclude + ['-C', dir, decompress, '-xf', archive ])
         self.run_error = "Couldn't unpack %s" % self.archive
 
 
@@ -222,7 +222,7 @@ class GitCommitAll(GitCommand):
         GitCommand.__call__(self, args)
 
 
-def copy_from(orig_dir, filter=""):
+def copy_from(orig_dir, filters=[]):
     """
     copy a source tree over via tar
     @param orig_dir: where to copy from
@@ -230,10 +230,10 @@ def copy_from(orig_dir, filter=""):
     @return: list of copied files
     @rtype: list
     """
-    exclude = [ "", "--exclude=%s" % filter ][len(filter) > 0]
+    exclude = [("--exclude=%s" % filter) for filter in filters]
 
     try:
-        p1 = subprocess.Popen(["tar", exclude, "-cSpf", "-", "." ], stdout=subprocess.PIPE, cwd=orig_dir)
+        p1 = subprocess.Popen(["tar"] + exclude + ["-cSpf", "-", "." ], stdout=subprocess.PIPE, cwd=orig_dir)
         p2 = subprocess.Popen(["tar", "-xvSpf", "-" ], stdin=p1.stdout, stdout=subprocess.PIPE)
         files = p2.communicate()[0].split('\n')
     except OSError, err:
