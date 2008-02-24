@@ -1,3 +1,15 @@
+git-buildpackage (0.4.16) unstable; urgency=low
+
+  [ Guido Guenther ]
+  * speed up git-import-dsc by using git-apply (addresses parts of
+    #449075)
+  * update docs and gbp.conf with --filter and filter = [ ... ]
+
+  [ Harald Braumann ]
+  * allow multiple file filters for git-import-{orig,dsc} (Closes: #464653)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 24 Feb 2008 14:56:47 +0100
+
 git-buildpackage (0.4.15) unstable; urgency=low
 
   * add (for now experimental) pristine-tar support based on a patch from
