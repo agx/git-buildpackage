@@ -22,6 +22,7 @@ import re
 import os
 import tempfile
 import glob
+import pipes
 import gbp.command_wrappers as gbpc
 from gbp.deb_utils import debian_version_chars
 from gbp.git_utils import build_tag, GitRepository
@@ -34,10 +35,12 @@ class DscFile(object):
     pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
     version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
     tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
+    diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
 
     def __init__(self, dscfile):
         self.dscfile = os.path.abspath(dscfile)
         f = file(self.dscfile)
+        fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
             m = self.version_re.match(line)
             if m:
@@ -55,8 +58,11 @@ class DscFile(object):
                 continue
             m = self.tar_re.match(line)
             if m:
-                fromdir = os.path.dirname(dscfile)
                 self.tgz = os.path.join(fromdir, m.group('tar'))
+                continue
+            m = self.diff_re.match(line)
+            if m:
+                self.diff = os.path.join(fromdir, m.group('diff'))
                 continue
         f.close()
 
@@ -120,31 +126,40 @@ def import_initial(src, dirs, options, tagger, filters):
     return True
 
 
-def apply_debian_patch(src, dirs, options, tagger, filters):
-    """apply the debian patch and tag appropriately"""
+def git_apply_patch(diff):
+    "Import patch via git-apply"
+    pipe = pipes.Template()
+    pipe.prepend('gunzip -c %s' % diff,  '.-')
+    pipe.append('git-apply --index --apply --whitespace=nowarn -', '-.')
     try:
-        version = "%s-%s" % (src.upstream_version, src.debian_version)
-        gbpc.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
+        ret = pipe.copy('', '')
+        if ret:
+            print >>sys.stderr, "Error import %s: %d" % (diff, ret)
+            return False
+    except OSError, err:
+        print >>sys.stderr, "Error importing %s: %s" % (diff, err[0])
+        return False
+    return True
+
+
+def apply_debian_patch(src, dirs, options, tagger):
+    """apply the debian patch and tag appropriately"""
+    version = "%s-%s" % (src.upstream_version, src.debian_version)
+    try:
         os.chdir(dirs['git'])
         repo = GitRepository('.')
-
-        old = set(repo.index_files())
-        new = set(gbpc.copy_from(dirs['dpkg-src'], filters))
-        gbpc.GitAdd()(['.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            gbpc.GitRm()(files)
+        if src.__dict__.has_key('diff') and not git_apply_patch(src.diff):
+            raise GbpError
+        os.chmod('debian/rules', 0755)
         if not repo.is_clean()[0]:
             gbpc.GitCommitAll()(msg="Imported Debian patch %s" % version)
         else:
             print "Nothing to commit, nothing imported."
-
         tagger(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version)
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Failed to import Debian package"
-        return False
-    return True
+        raise GbpError
 
 
 def move_tree(src, dirs):
@@ -223,8 +238,7 @@ def main(argv):
                 os.mkdir(dirs['unpack'])
                 dirs['dpkg-src'] = os.path.join(dirs['unpack'],
                                                 "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-                if not apply_debian_patch(src, dirs, options, gitTag, options.filters):
-                    raise GbpError
+                apply_debian_patch(src, dirs, options, gitTag)
                 create_debian_branch(options.debian_branch, dirs)
             os.chdir(dirs['top'])
             if not move_tree(src, dirs):
