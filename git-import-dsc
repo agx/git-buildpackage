@@ -234,10 +234,6 @@ def main(argv):
 
             os.chdir(dirs['top'])
             if not src.native:
-                dirs['unpack'] = os.path.join(dirs['tmp'], 'unpack')
-                os.mkdir(dirs['unpack'])
-                dirs['dpkg-src'] = os.path.join(dirs['unpack'],
-                                                "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
                 apply_debian_patch(src, dirs, options, gitTag)
                 create_debian_branch(options.debian_branch, dirs)
             os.chdir(dirs['top'])
