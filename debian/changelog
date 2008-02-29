@@ -1,3 +1,10 @@
+git-buildpackage (0.4.17) unstable; urgency=low
+
+  * make dsc import repeatable (Closes: #468120, #432082)
+  * drop now (due to git-apply) unneeded code
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 29 Feb 2008 16:09:47 +0100
+
 git-buildpackage (0.4.16) unstable; urgency=low
 
   [ Guido Guenther ]
