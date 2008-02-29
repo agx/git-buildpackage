@@ -48,19 +48,17 @@ cleanup-script.sh
 &gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>master</replaceable>
     </screen>
     <para>
-    To import an NMU instead of a new upstream version simply import the
-    unpacked NMUs source tree into your repository using &git-import-orig:
+    To import an NMU change into the git repository and use &git-import-dsc;:
     </para>
     <screen>
 &gitcmd; checkout <replaceable>master</replaceable>
-&git-import-orig; <option>-u</option> <replaceable>10-1.1</replaceable> <option>--upstream-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/nmu-10/</filename>
+&git-import-dsc; <option>--debian-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/package_1.0-1nmu0.dsc</filename>
     </screen>
     <para>
-    This will import the NMU onto the branched named <emphasis>nmu</emphasis> branch instead of
-    the default <option>upstream-branch</option> and merge the changes to the
-    <option>debian-branch</option> as usual. This method can also be used to
-    import "old" releases into the &git; repository when migrating to &git; from
-    another VCS.
+    This will import the NMU onto the branched named <emphasis>nmu</emphasis>
+    instead of the default <option>master</option>. This method can also
+    be used to import "old" releases into the &git; repository when migrating
+    to &git; from another VCS.
     </para>
     </sect1>
 
