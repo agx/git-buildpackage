@@ -43,7 +43,7 @@ def import_upstream_tree(repo, src_dir, version, filters, verbose):
     """import the source uptream tree to the current branch"""
     try:
         if replace_source_tree(repo, src_dir, filters, verbose=True):
-            gbpc.GitCommitAll(verbose=verbose)(msg="Imported upstream version %s" % version)
+            gbpc.GitCommitAll(verbose=verbose)(msg="Imported Upstream version %s" % version)
         else:
             raise GbpError, "Nothing to commit, nothing imported."
     except gbpc.CommandExecFailed:
