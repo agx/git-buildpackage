@@ -1,3 +1,12 @@
+git-buildpackage (0.4.18) unstable; urgency=low
+
+  * update documentation about git-import-dsc and --filter
+  * gbp/command_wrappers.py: make error messages more consistent
+  * git-import-dsc: don't throw a python exception on tag failures or non
+    existant branches
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 29 Feb 2008 18:05:40 +0100
+
 git-buildpackage (0.4.17) unstable; urgency=low
 
   * make dsc import repeatable (Closes: #468120, #432082)
