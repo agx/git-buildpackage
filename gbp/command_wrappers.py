@@ -77,11 +77,11 @@ class PristineTar(Command):
         Command.__init__(self, self.cmd)
 
     def commit(self, archive, branch):
-        self.run_errror = "Couldn't commit to %s" % branch
+        self.run_errror = 'Couldn\'t commit to "%s"' % branch
         self.__call__(['commit', archive, branch])
 
     def checkout(self, archive):
-        self.run_errror = "Couldn't checkout %s" % archive
+        self.run_errror = 'Couldn\'t checkout "%s"' % archive
         self.__call__(['checkout', archive])
 
 
@@ -98,7 +98,7 @@ class UnpackTarArchive(Command):
             decompress = "--gzip"
 
         Command.__init__(self, 'tar', exclude + ['-C', dir, decompress, '-xf', archive ])
-        self.run_error = "Couldn't unpack %s" % self.archive
+        self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
 
 class RemoveTree(Command):
@@ -106,7 +106,7 @@ class RemoveTree(Command):
     def __init__(self, tree):
         self.tree = tree
         Command.__init__(self, 'rm', [ '-rf', tree ])
-        self.run_error = "Couldn't remove %s" % self.tree
+        self.run_error = 'Couldn\'t remove "%s"' % self.tree
 
 
 class Dch(Command):
@@ -128,7 +128,7 @@ class DpkgSourceExtract(Command):
         Command.__init__(self, 'dpkg-source', ['-x'])
     
     def __call__(self, dsc, output_dir):
-        self.run_error = "Couldn't extract %s" % dsc
+        self.run_error = 'Couldn\'t extract "%s"' % dsc
         Command.__call__(self, [dsc, output_dir])
 
 
@@ -158,7 +158,7 @@ class GitBranch(GitCommand):
         GitCommand.__init__(self, 'branch')
 
     def __call__(self, branch):
-        self.run_error = "Couldn't create branch %s" % (branch,)
+        self.run_error = 'Couldn\'t create branch "%s"' % (branch,)
         GitCommand.__call__(self, [branch])
 
 
@@ -167,14 +167,14 @@ class GitCheckoutBranch(GitCommand):
     def __init__(self, branch):
         GitCommand.__init__(self, 'checkout', [branch])
         self.branch = branch
-        self.run_error = "Couldn't switch to %s branch" % self.branch
+        self.run_error = 'Couldn\'t switch to branch "%s"' % self.branch
 
 
 class GitPull(GitCommand):
     """Wrap git pull"""
     def __init__(self, repo, branch):
         GitCommand.__init__(self, 'pull', [repo, branch]) 
-        self.run_error = "Couldn't pull %s to %s" % (branch, repo)
+        self.run_error = 'Couldn\'t pull "%s" to "%s"' % (branch, repo)
 
 
 class GitTag(GitCommand):
@@ -185,7 +185,7 @@ class GitTag(GitCommand):
         self.keyid = keyid
 
     def __call__(self, version, msg="Tagging %(version)s"):
-        self.run_error = "Couldn't tag %s" % (version,)
+        self.run_error = 'Couldn\'t tag "%s"' % (version,)
         if self.sign_tag:
             if self.keyid:
                 sign_opts = [ '-u', self.keyid ]
