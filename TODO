@@ -3,8 +3,6 @@
   - add --git-overlay as discussed in #448357
 - git-import-orig:
   - show untracked files using 'git-ls-files -o' after import
-- git-import-dsc:
-  - allow to import into a git repository for backports
 - git-dch
   - make format of log messages more flexible
   - don't forcibly start a new version

@@ -7,6 +7,7 @@ import email
 import commands
 import os
 import shutil
+import command_wrappers as gbpc
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
@@ -71,5 +72,18 @@ def copy_orig(cp, orig_dir, output_dir):
     except IOError:
         return False
     return True
+
+def unpack_orig(archive, tmpdir, filters):
+    """
+    unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
+    an error
+    """
+    try:
+        unpackArchive = gbpc.UnpackTarArchive(archive, tmpdir, filters)
+        unpackArchive()
+    except gbpc.CommandExecFailed:
+        print >>sys.stderr, "Unpacking of %s failed" % archive
+        raise GbpError
+    return unpackArchive.dir
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

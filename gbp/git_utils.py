@@ -5,6 +5,7 @@
 
 import subprocess
 import os.path
+from command_wrappers import (GitAdd, GitRm, copy_from)
 
 class GitRepositoryError(Exception):
     """Exception thrown by GitRepository"""
@@ -21,7 +22,7 @@ class GitRepository(object):
             raise GitRepositoryError
         self.path = os.path.abspath(path)
 
-    
+
     def __check_path(self):
         if os.getcwd() != self.path:
             raise GitRepositoryError
@@ -52,6 +53,12 @@ class GitRepository(object):
         self.__check_path()
         out, ret =  self.__git_getoutput('ls-tree', [ treeish ])
         return [ True, False ][ret != 0]
+
+    def has_tag(self, tag):
+        """check if the repository has the given tag"""
+        self.__check_path()
+        out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
+        return [ False, True ][len(out)]
 
 
     def get_branch(self):
@@ -98,4 +105,19 @@ def sanitize_version(version):
         version = version.split(':', 1)[1]
     return version.replace('~', '.')
 
-# vim:et:ts=4:sw=4:
+
+def replace_source_tree(repo, src_dir, filters, verbose=False):
+        """
+        make the current wc match what's in src_dir
+        @return: True if wc was modified
+        @rtype: boolean
+        """
+        old = set(repo.index_files())
+        new = set(copy_from(src_dir, filters))
+        GitAdd()(['.'])
+        files = [ obj for obj in old - new if not os.path.isdir(obj)]
+        if files:
+            GitRm(verbose=verbose)(files)
+        return not repo.is_clean()[0]
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

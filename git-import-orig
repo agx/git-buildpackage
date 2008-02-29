@@ -25,7 +25,8 @@ import re
 import glob
 import subprocess
 import gbp.command_wrappers as gbpc
-from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+from gbp.deb_utils import unpack_orig
+from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag, replace_source_tree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -38,28 +39,10 @@ def cleanup_tmp_tree(tree):
         print >>sys.stderr, "Removal of tmptree %s failed." % tree
 
 
-def unpack_orig(archive, tmpdir):
-    """unpack a .orig.tar.gz"""
+def import_upstream_tree(repo, src_dir, version, filters, verbose):
+    """import the source uptream tree to the current branch"""
     try:
-        unpackArchive = gbpc.UnpackTarArchive(archive, tmpdir)
-        unpackArchive()
-    except gbpc.CommandExecFailed:
-        print "Unpacking of %s failed" % archive
-        cleanup_tmp_tree(unpackArchive.dir)
-        raise GbpError
-    return unpackArchive.dir
-
-
-def import_source_tree(repo, orig_dir, version, filters, verbose):
-    """import source tree to the current branch"""
-    try:
-        old = set(repo.index_files())
-        new = set(gbpc.copy_from(orig_dir, filters))
-        gbpc.GitAdd()(['.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            gbpc.GitRm()(files)
-        if not repo.is_clean()[0]:
+        if replace_source_tree(repo, src_dir, filters, verbose=True):
             gbpc.GitCommitAll(verbose=verbose)(msg="Imported upstream version %s" % version)
         else:
             raise GbpError, "Nothing to commit, nothing imported."
@@ -117,14 +100,14 @@ def main(argv):
                       help="run pristine-tar to import the tarball", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
 
+    if options.verbose:
+        gbpc.Command.verbose = True
+
     gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian_branch)
     gitShowBranch = gbpc.GitShowBranch()
     gitPullUpstream = gbpc.GitPull('.', options.upstream_branch)
 
     try:
-        if options.verbose:
-            gbpc.Command.verbose = True
-
         if len(args) != 1:
             parser.print_help()
             raise GbpError
@@ -171,7 +154,7 @@ on howto create it otherwise use --upstream-branch to specify it.
             orig_dir = archive
         else:
             tmpdir = tempfile.mkdtemp(dir='../')
-            unpack_orig(archive, tmpdir)
+            unpack_orig(archive, tmpdir, options.filters)
             if options.verbose:
                 print "Unpacked %s to '%s'" % (archive , tmpdir)
             unpacked = glob.glob(tmpdir+'/*')
@@ -190,7 +173,7 @@ on howto create it otherwise use --upstream-branch to specify it.
             else:
                 print "Initial import of '%s' %s..." % (archive, filter_msg)
 
-            import_source_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
+            import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
             if options.pristine_tar:
                 gbpc.PristineTar().commit(archive, options.upstream_branch)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
