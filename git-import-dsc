@@ -263,7 +263,8 @@ def main(argv):
                     replace_source_tree(repo, unpack_dir, options.filters)
                     apply_debian_patch(src, dirs, options)
     except gbpc.CommandExecFailed:
-           raise GbpError
+        os.chdir(dirs['top'])
+        ret = 1
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
