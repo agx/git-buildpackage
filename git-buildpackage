@@ -98,7 +98,7 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
     if options.pristine_tar:
         pt = PristineTar()
         if not repo.has_branch(pt.branch):
-            raise GbpError, "Pristine-tar branch '%s' not found" % pt.branch
+            print >>sys.stderr, 'Pristine-tar branch "%s" not found' % pt.branch
         pt.checkout(os.path.join(output_dir, du.orig_file(cp)))
         return True
     else:
