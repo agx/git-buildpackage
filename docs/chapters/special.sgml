@@ -65,22 +65,38 @@ cleanup-script.sh
     <sect1 id="gbp.special.pbuilder">
     <title>Using &pbuilder;</title>
     <para>
-    Since pbuilder use different command line arguments than
-    &debuild; and &dpkg-buildpackage; we have to use a tiny script that gets
-    invoked by &git-buildpackage;:
+    Since &pbuilder; uses different command line arguments than
+    &debuild; and &dpkg-buildpackage; we can't simply pass the options on the
+    command line but have to wrap them in the <option>--git-builder</option>
+    option instead:
+
+<programlisting>
+<command>git-buildpackage</command> <option>--git-builder="pdebuild --debbuildopts '-I.git -i\.git"</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
+</programlisting>
+
+    Note that we also used a different clean command since since &pdebuildcmd;
+    <option>clean</option> means something different than &debuildcmd;
+    <option>clean</option>.
+    
+    The above is a bit long, so using a tiny script that gets invoked by
+    &git-buildpackage; is more convienient:
+
 <programlisting>
 cat &lt;&lt;EOF &gt;/usr/local/bin/git-pbuilder
 #!/bin/sh
-# pass all options to dpkg-buildpackage:
+# pass commandline arguments to dpkg-buildpackage
 <command>pdebuild</command> <option>--debbuildopts</option> "-i\.git -I.git $*"
 EOF
 <command>chmod</command> a+x /usr/local/bin/git-pbuilder
 </programlisting>
 
-    Furthermore we need a different clean command, since &pdebuildcmd;
-    <option>clean</option> means something different than &debuildcmd;
-    <option>clean</option>. We could put all this on the command line, but
-    let's put it into the config file to safe typing:
+	This makes the above look like:
+
+<programlisting>
+<command>git-buildpackage</command> <option>--git-builder=git-pbuilder</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
+</programlisting>
+
+	We can shorten this further by using <filename>~/.gbp.conf</filename>:
 
 <programlisting>
 cat &lt;&lt;EOF &gt; <filename>~/.gbp.conf</filename>
@@ -91,11 +107,19 @@ cleaner = fakeroot debian/rules clean
 # passed to dpkg-buildpackge in the chroot
 builder = /usr/local/bin/git-pbuilder
 </programlisting>
-	
-     Invoking &git-buildpackage; will now invoke &pdebuildcmd;</para>
-     <para>
-     If you don't want this for all your invocations of &git-buildpackage; you can instead
-     put this into <filename>.git/gbp.conf</filename> in one of your &git; repositories.
+
+	Invoking &git-buildpackage; will now invoke &pdebuildcmd; by
+	default and all additional command line arguments are passed to
+	dpkg-buildpackage. If you want to use debuild again (without modifying
+	<filename>~/.gbp.conf</filename>) you can use:
+<programlisting>
+<command>git-buildpackage</command> --git-builder=debuild
+</programlisting>
+
+	Futhrermore, if you don't want this for all your invocations of
+	&git-buildpackage; you can use <filename>.git/gbp.conf</filename> in
+	one of your &git; repositories instead of
+	<filename>~/.gbp.conf</filename>.
     </para>
 
     <sect1 id="gbp.special.hacking">
