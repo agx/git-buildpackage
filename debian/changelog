@@ -1,3 +1,11 @@
+git-buildpackage (0.4.20) unstable; urgency=low
+
+  * add missing pngs (Closes: #469403)
+  * be more verbose on pbuilder (Closes: #469138)
+  * explain howto push tags and mention linda and lintian (Closes: #469436)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 06 Mar 2008 08:48:02 +0100
+
 git-buildpackage (0.4.19) unstable; urgency=low
 
   * don't fail of the pristine-tar branch doesn't exist 
