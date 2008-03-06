@@ -2,9 +2,14 @@
     <title>Building packages from the &git; repository</title>
     <para>
     In order to build a &debian; package from the &git; repository you use:
-    &git-buildpackage;. During the development phase (when you're either not
-    on the <emphasis>debian-branch</emphasis> or when you have uncommitted
-    changes in your repository) you'll usually use:
+    &git-buildpackage;. This builds the upstream tarball as will be described below and
+    invokes &debuild; to build the package. To use another build command you
+    can use the <option>--git-builder</option> option as described later in the manual
+    but &debuild; is nice since it can invoke <productname>linda</productname>
+    und <productname>lintian</productname>.
+    During the development phase (when you're either not on the
+    <emphasis>debian-branch</emphasis> or when you have uncommitted changes in
+    your repository) you'll usually use:
 <screen>
 &git-buildpackage; <option>--git-ignore-new</option>
 </screen>
@@ -45,7 +50,6 @@
 </screen>
     <para>If you want to default to build in a separate build area you can
     specify the directory to use in the gbp.conf.
-    </para>
 <programlisting>
 [git-buildpackage]
 # use a build area relative to the git repository
@@ -53,5 +57,22 @@ export-dir=../build-area
 # to use the same build area for all packages use an absolute path:
 #export-dir=/home/debian-packages/build-area
 </programlisting>
+    </para>
+    </sect1>
+    <sect1 id="gbp.building.push">
+    <title>Pushing into a remote repository:</title>
+	<para>If you want to push your changes automatically after a succesful build and tag
+	you can use &git-buildpackage;'s posttag hook:
+<programlisting>
+<command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>
+</programlisting>
+	This assumes you have set up a remote repository to push to in either
+	<filename>.git/config</filename> or
+	<filename>.git/remotes/</filename>. Setting up the posttag hook in
+	<filename>.gbp.conf</filename> looks like:
+<programlisting>
+<option>posttag</option>=<replaceable>"git push git.debian.org && git push --tags git.debian.org"</replaceable>
+</programlisting>
+    </para>
     </sect1>
 </chapter>
