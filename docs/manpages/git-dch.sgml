@@ -28,6 +28,8 @@
       <arg><option>--snapshot</option></arg>
       <arg><option>--release</option></arg>
       <arg><option>--auto</option></arg>
+      <arg><option>--full</option></arg>
+      <arg><option>--meta</option></arg>
       <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
@@ -98,6 +100,20 @@
 	  snapshot banner (or from the last tag if no snapshot banner exists).
 	  </para>
         </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--meta</option></term>
+        <listitem>
+	  <para>Parse meta tags like <option>Closes:</option> and
+	  <option>Thanks:</option>.  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--full</option></term>
+        <listitem>
+	  <para>Include the full commit message in the changelog output</para>
+        </listitem>
+      </varlistentry>
       <varlistentry>
         <term><option>--snapshot</option></term>
         <listitem>

@@ -78,4 +78,24 @@ You can also add the snapshot-number calculation to <filename>gbp.conf</filename
 snapshot-number = os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
 </programlisting>
 </sect1>
+<sect1 id="gbp.release.commit">
+    <title>More on commit messages</title>
+    <para>You can use <option>--full</option> to include the full commit
+    message in the changelog, note that you will lose the formatting though,
+    since &dch; wraps lines by itself.</para>
+    <para>Additionally you can use tags to customize the commit message, for
+    example the git commit message
+<screen>
+New upstream version
+
+Closes: #1000
+Thanks: cool upstream
+</screen>
+    would result in a changelog entry
+<screen>
+    * New upstream version (Closes: #1000) - thanks to cool upstream    
+</screen>
+You can use multiple <option>Closes:</option> tags.
+</para>
+</sect1>
 </chapter>
