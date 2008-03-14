@@ -27,7 +27,6 @@ class GitRepository(object):
         if os.getcwd() != self.path:
             raise GitRepositoryError
 
-
     def __git_getoutput(self, command, args=[]):
         """exec a git command and return the output"""
         output = []
@@ -67,7 +66,7 @@ class GitRepository(object):
         for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
-        
+
 
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
@@ -92,6 +91,22 @@ class GitRepository(object):
             return [ file for file in out[0].split('\0') if file ]
         else:
             return []
+
+    def commits(self, start, end, paths, options):
+        """get commits from start to end touching pathds"""
+        commits, ret = self.__git_getoutput('log', ['--pretty=format:%H',
+                                            options, '%s..%s' % (start, end),
+                                            '--', paths])
+        if ret:
+            raise GitRepositoryError, "Error gettint commits %s..%s on %s" % (start, end, paths)
+        return [ commit.strip() for commit in commits ]
+
+    def show(self, id):
+        """git-show id"""
+        commit, ret = self.__git_getoutput('show', [ id ])
+        if ret:
+            raise GitRepositoryError, "can't get %s" % id
+        return commit
 
 
 def build_tag(format, version):
