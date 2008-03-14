@@ -32,22 +32,6 @@ from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
 
-def get_log(start, end, options, paths):
-    """Get the shortlog from commit 'start' to commit 'end'"""
-    try:
-        p1 = subprocess.Popen("git-log %s %s...%s -- %s" % (options, start, end, paths), shell=True,
-                              stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(["git-shortlog"], stdin=p1.stdout, stdout=subprocess.PIPE)
-        changes = p2.communicate()[0].split('\n')
-    except OSError, err:
-        raise GbpError, "Cannot get changes: %s" % err
-    except ValueError, err:
-        raise GbpError, "Cannot get changes: %s" % err
-    if p1.wait() or p2.wait():
-        raise GbpError, "Cannot get changes, use --since."
-    return changes
-
-
 def system(cmd):
     try:
         Command(cmd, shell=True)()
@@ -155,25 +139,52 @@ def do_snapshot(changelog, next_snapshot):
     return snapshot, commit
 
 
-def shortlog_to_dch(changes):
-    """convert the changes in git shortlog format to debian changelog format"""    
+def parse_commit(repo, commit,meta, short):
+    """parse a commit and return message and author"""
+    author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
+    msg = ''
+    thanks = ''
+    closes = ''
+    bugs = []
+
+    commit = repo.show(commit)
+    m = author_re.match(commit[1])
+    if not m:
+        raise GbpError, "can't parse author of commit %s" % commit
+    else:
+        author = m.group('author')
+    for line in commit[4:]:
+        if line.startswith('    '): # commit body
+            if short and msg:
+                continue
+            line = line[4:]
+            if line.startswith('Closes:'):
+                bugs += [ line.split(' ', 1)[1].strip() ]
+            elif line.startswith('Thanks:'):
+                thanks = line.split(' ', 1)[1].strip()
+            else: # normal commit message
+                if line.strip(): # don't add all whitespace lines
+                    msg += line
+        else:
+            break
+    if meta:
+        if bugs:
+            closes = ' (Closes: %s)' % ' '.join(bugs)
+        if thanks:
+            thanks = ' - thanks to %s' % thanks
+        msg += closes + thanks
+    return msg, author
+
+
+def shortlog_to_dch(repo, commits, meta, short):
+    """convert the changes in git shortlog format to debian changelog format"""
     commit_re = re.compile('\s+(?P<msg>.*)')
     author_re = re.compile('(?P<author>.*) \([0-9]+\)')
     author = 'Unknown'
 
-    for line in changes:
-        r = commit_re.match(line)
-        msg = ''
-        if r:
-            msg = r.group('msg')
-        else:
-            r = author_re.match(line)
-            if r:
-                author = r.group('author')
-            elif line:
-                print >>sys.stderr, "Unknown changelog line: %s" % line
-        if msg:
-            add_changelog_entry(msg, author)
+    for commit in commits:
+        msg, author = parse_commit(repo, commit, meta, short)
+        add_changelog_entry(msg, author)
 
 
 def guess_snapshot_commit(cp):
@@ -209,6 +220,10 @@ def main(argv):
                       help="mark as snapshot build")
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
+    parser.add_option("--meta", action="store_true", dest="meta", default=False,
+                      help="parse meta tags in commit messages")
+    parser.add_option("--full", action="store_false", dest="short", default=True,
+                      help="include the full commit message")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
@@ -246,11 +261,11 @@ def main(argv):
 
         if args:
             print "Only looking for changes on '%s'" % " ".join(args)
-        changes = get_log(since, until, options.git_log, " ".join(args))
-        if changes:
+        commits = repo.commits(since, until, " ".join(args), options.git_log)
+        if commits:
             if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
-            shortlog_to_dch(changes)
+            shortlog_to_dch(repo, commits, meta=options.meta, short=options.short)
             fixup_trailer()
             if options.snapshot:
                 (snap, version) = do_snapshot(changelog, options.snapshot_number)
