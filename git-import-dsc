@@ -22,9 +22,10 @@ import re
 import os
 import tempfile
 import glob
+import pipes
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import debian_version_chars
-from gbp.git_utils import build_tag, GitRepository
+from gbp.deb_utils import debian_version_chars, unpack_orig
+from gbp.git_utils import build_tag, GitRepository, GitRepositoryError, replace_source_tree
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -34,10 +35,12 @@ class DscFile(object):
     pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
     version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
     tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
+    diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
 
     def __init__(self, dscfile):
         self.dscfile = os.path.abspath(dscfile)
         f = file(self.dscfile)
+        fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
             m = self.version_re.match(line)
             if m:
@@ -55,8 +58,11 @@ class DscFile(object):
                 continue
             m = self.tar_re.match(line)
             if m:
-                fromdir = os.path.dirname(dscfile)
                 self.tgz = os.path.join(fromdir, m.group('tar'))
+                continue
+            m = self.diff_re.match(line)
+            if m:
+                self.diff = os.path.join(fromdir, m.group('diff'))
                 continue
         f.close()
 
@@ -82,64 +88,64 @@ def parse_dsc(dscfile):
     return dsc
 
 
-def import_initial(src, dirs, options, tagger, filter):
+def import_initial(src, dirs, options):
     """
     import the intial version and (in the case of a non native package) create
     the 'upstream' branch. Tag everything appropriately.
     """
     try:
-        unpackTGZ = gbpc.UnpackTarArchive(src.tgz, dirs['tmp'], filter=filter)
-        unpackTGZ()
-    except gbpc.CommandExecFailed:
-        print >>sys.stderr, "Unpacking of %s failed" % src.tgz
-        gbpc.RemoveTree(dirs['tmp'])()
-        return False
-
-    try:
-        dirs['git'] = glob.glob('%s/*' % unpackTGZ.dir)[0]
         os.chdir(dirs['git'])
         gbpc.GitInitDB()()
         gbpc.GitAdd()(['.'])
         gbpc.GitCommitAll()(
-             msg="Imported %s version %s" % (['upstream', 'Debian'][src.native],
+             msg="Imported %s version %s" % (['Upstream', 'Debian'][src.native],
              src.upstream_version))
-        format = [options.upstream_tag, options.debian_tag][src.native]
-        tagger(build_tag(format, src.upstream_version),
-               msg="Upstream version %s" % src.upstream_version)
         if not src.native:
             gbpc.GitBranch()(options.upstream_branch)
+            if options.pristine_tar:
+                gbpc.PristineTar().commit(os.path.join(dirs['top'], src.tgz),
+                                          options.upstream_branch)
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Creation of git repository failed"
-        gbpc.RemoveTree(unpackTGZ.dir)()
         return False
     return True
 
 
-def apply_debian_patch(src, dirs, options, tagger, filter):
-    """apply the debian patch and tag appropriately"""
+def git_apply_patch(diff):
+    "Import patch via git-apply"
+    pipe = pipes.Template()
+    pipe.prepend('gunzip -c %s' % diff,  '.-')
+    pipe.append('git-apply --index --apply --whitespace=nowarn -', '-.')
     try:
-        version = "%s-%s" % (src.upstream_version, src.debian_version)
-        gbpc.DpkgSourceExtract()(src.dscfile, dirs['dpkg-src'])
+        ret = pipe.copy('', '')
+        if ret:
+            print >>sys.stderr, "Error import %s: %d" % (diff, ret)
+            return False
+    except OSError, err:
+        print >>sys.stderr, "Error importing %s: %s" % (diff, err[0])
+        return False
+    return True
+
+
+def apply_debian_patch(src, dirs, options):
+    """apply the debian patch and tag appropriately"""
+    version = "%s-%s" % (src.upstream_version, src.debian_version)
+    gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
+    try:
         os.chdir(dirs['git'])
         repo = GitRepository('.')
-
-        old = set(repo.index_files())
-        new = set(gbpc.copy_from(dirs['dpkg-src'], filter))
-        gbpc.GitAdd()(['.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            gbpc.GitRm()(files)
+        if src.__dict__.has_key('diff') and not git_apply_patch(src.diff):
+            raise GbpError
+        os.chmod('debian/rules', 0755)
         if not repo.is_clean()[0]:
             gbpc.GitCommitAll()(msg="Imported Debian patch %s" % version)
         else:
             print "Nothing to commit, nothing imported."
-
-        tagger(build_tag(options.debian_tag, version),
+        gitTag(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version)
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Failed to import Debian package"
-        return False
-    return True
+        raise GbpError
 
 
 def move_tree(src, dirs):
@@ -150,12 +156,11 @@ def move_tree(src, dirs):
         print >>sys.stderr, "Cannot move git repository '%s' to it's final location '%s': %s" % (dirs['git'],
                              os.path.abspath(src.pkg), err)
         return False
-    else:
-        gbpc.RemoveTree(dirs['tmp'])()
     return True
 
 
 def create_debian_branch(debian_branch, dirs):
+    """create the debian branch if necessary"""
     os.chdir(dirs['git'])
     repo = GitRepository('.')
     if repo.get_branch() != debian_branch:
@@ -187,8 +192,11 @@ def main(argv):
                       help="Format string for debian tags, default is '%(debian-tag)s'")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
                       help="Format string for upstream tags, default is '%(upstream-tag)s'")
-    parser.add_config_file_option(option_name="filter", dest="filter",
-                      help="files to filter out during import")
+    parser.add_config_file_option(option_name="filter", dest="filters",
+                      help="files to filter out during import (can be given multiple times)",
+                      action="append")
+    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
+                      help="Use pristine-tar to import the tarball", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
@@ -200,31 +208,71 @@ def main(argv):
         if len(args) != 1:
             parser.print_help()
             raise GbpError
-        else:        
+        else:
             src = parse_dsc(args[0])
             if not src:
                 raise GbpError
 
-            dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
-            if not import_initial(src, dirs, options, gitTag, options.filter):
-                raise GbpError
-            os.chdir(dirs['top'])
-            if not src.native:
-                dirs['unpack'] = os.path.join(dirs['tmp'], 'unpack')
-                os.mkdir(dirs['unpack'])
-                dirs['dpkg-src'] = os.path.join(dirs['unpack'],
-                                                "%s-%s-%s" % (src.pkg, src.upstream_version, src.debian_version))
-                if not apply_debian_patch(src, dirs, options, gitTag, options.filter):
+            try:
+                repo = GitRepository('.')
+                (clean, out) = repo.is_clean()
+                if not clean:
+                    print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
+                    raise GbpError, out
+                dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
+                initial = False
+            except GitRepositoryError:
+                # The initial import is different:
+                print "No git repository found, creating one."
+                dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='.'))
+                initial = True
+
+            unpack_dir = unpack_orig(src.tgz, dirs['tmp'], options.filters)
+
+            format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
+            tag = build_tag(format[0], src.upstream_version)
+            msg = "%s version %s" % (format[1], src.upstream_version)
+
+            if initial:
+                dirs['git'] = glob.glob('%s/*' % unpack_dir)[0]
+                if not import_initial(src, dirs, options):
                     raise GbpError
-                create_debian_branch(options.debian_branch, dirs)
-            os.chdir(dirs['top'])
-            if not move_tree(src, dirs):
-                raise GbpError
+                gitTag(tag, msg=msg)
+                os.chdir(dirs['top'])
+                if not src.native:
+                    apply_debian_patch(src, dirs, options)
+                    create_debian_branch(options.debian_branch, dirs)
+                os.chdir(dirs['top'])
+                if not move_tree(src, dirs):
+                    raise GbpError
+            else: # not the initial import
+                dirs['git'] = dirs['top']
+                unpack_dir = glob.glob('%s/*' % unpack_dir)[0]
+                if not repo.has_tag(tag):
+                    print "tag %s not found, importing %s tarball" % (tag, format[1])
+                    # FIXME: this is what import-orig does - merge
+                    if not src.native:
+                        gbpc.GitCheckoutBranch(options.upstream_branch)()
+                    replace_source_tree(repo, unpack_dir, options.filters, verbose=True)
+                    gbpc.GitCommitAll()(msg="Imported %s" % msg)
+                    gitTag(tag, msg=msg)
+                    if options.pristine_tar and not src.native:
+                        gbpc.PristineTar().commit(src.tgz, options.upstream_branch)
+                if not src.native:
+                    gbpc.GitCheckoutBranch(options.debian_branch)()
+                    replace_source_tree(repo, unpack_dir, options.filters)
+                    apply_debian_patch(src, dirs, options)
+    except gbpc.CommandExecFailed:
+        os.chdir(dirs['top'])
+        ret = 1
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
-        ret = 1
         os.chdir(dirs['top'])
+        ret = 1
+
+    if dirs.has_key('tmp'):
+        gbpc.RemoveTree(dirs['tmp'])()
 
     if not ret:
         print 'Everything imported under %s' % src.pkg

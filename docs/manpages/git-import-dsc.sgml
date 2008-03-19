@@ -29,6 +29,7 @@
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg><option>--pristine-tar</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -86,21 +87,30 @@
         <term><option>--debian-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging Debian versions</para>
+          <para>use this tag format when tagging Debian versions,
+	  default is <replaceable>debian/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging upstream versions</para>
+          <para>use this tag format when tagging upstream versions, 
+	  default is <replaceable>upstream/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--filter=</option><replaceable>filter</replaceable>
         </term>
         <listitem>
-          <para>filter out these files during import</para>
+          <para>filter out these files during import. Can be given multiple times.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-tar</option>
+        </term>
+        <listitem>
+          <para>generate pristine-tar delta file</para>
         </listitem>
       </varlistentry>
      </variablelist>

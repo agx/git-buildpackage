@@ -7,16 +7,27 @@ import email
 import commands
 import os
 import shutil
+import command_wrappers as gbpc
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
 debian_version_chars = 'a-zA-Z\d.~+-'
 
+class NoChangelogError(Exception):
+    """no changelog found"""
+    pass
+
+class ParseChangeLogError(Exception):
+    """problem parsing changelog"""
+    pass
+
 def parse_changelog(changelog):
     """parse changelog file changelog"""
+    if not os.access(changelog, os.F_OK):
+        raise NoChangelogError, "Changelog %s not found" % (changelog, )
     status, output = commands.getstatusoutput('dpkg-parsechangelog -l%s' % (changelog, ))
     if status:
-        return None
+        raise ParseChangeLogError, output
     cp = email.message_from_string(output)
     if '-' in cp['Version']:
         upstream_version, cp['Debian-Version'] = cp['Version'].rsplit('-', 1)
@@ -61,5 +72,18 @@ def copy_orig(cp, orig_dir, output_dir):
     except IOError:
         return False
     return True
+
+def unpack_orig(archive, tmpdir, filters):
+    """
+    unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
+    an error
+    """
+    try:
+        unpackArchive = gbpc.UnpackTarArchive(archive, tmpdir, filters)
+        unpackArchive()
+    except gbpc.CommandExecFailed:
+        print >>sys.stderr, "Unpacking of %s failed" % archive
+        raise GbpError
+    return unpackArchive.dir
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

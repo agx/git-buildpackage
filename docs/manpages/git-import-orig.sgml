@@ -24,6 +24,7 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--no-merge</option></arg>
+      <arg><option>--no-dch</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
@@ -31,6 +32,7 @@
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg><option>--pristine-tar</option></arg>
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -66,6 +68,12 @@
         <term><option>--no-merge</option></term>
         <listitem>
 	  <para>Don't merge the upstream version to the development branch</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--no-dch</option></term>
+        <listitem>
+	  <para>don't call dch after the import</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -111,14 +119,22 @@
         <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging upstream versions</para>
+          <para>use this tag format when tagging upstream versions,
+	  default is <replaceable>upstream/&lt;version&gt;</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--filter=</option><replaceable>filter</replaceable>
         </term>
         <listitem>
-          <para>filter out these files during import</para>
+          <para>filter out these files during import. Can be given multiple times.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-tar</option>
+        </term>
+        <listitem>
+          <para>generate pristine-tar delta file</para>
         </listitem>
       </varlistentry>
     </variablelist>

@@ -67,20 +67,38 @@ class RunAtCommand(Command):
             raise
 
 
+class PristineTar(Command):
+    cmd='/usr/bin/pristine-tar'
+    branch='pristine-tar'
+
+    def __init__(self):
+        if not os.access(self.cmd, os.X_OK):
+            raise GbpError, "%s not found - cannot use pristine-tar"
+        Command.__init__(self, self.cmd)
+
+    def commit(self, archive, branch):
+        self.run_errror = 'Couldn\'t commit to "%s"' % branch
+        self.__call__(['commit', archive, branch])
+
+    def checkout(self, archive):
+        self.run_errror = 'Couldn\'t checkout "%s"' % archive
+        self.__call__(['checkout', archive])
+
+
 class UnpackTarArchive(Command):
     """Wrap tar to Unpack a gzipped tar archive"""
-    def __init__(self, archive, dir, filter=""):
+    def __init__(self, archive, dir, filters=[]):
         self.archive = archive
         self.dir = dir
-        exclude = [ "", "--exclude=%s" % filter ][len(filter) > 0]
+        exclude = [("--exclude=%s" % filter) for filter in filters]
 
         if archive.lower().endswith(".bz2"):
             decompress = "--bzip2"
         else:
             decompress = "--gzip"
 
-        Command.__init__(self, 'tar', [ exclude, '-C', dir, decompress, '-xf', archive ])
-        self.run_error = "Couldn't unpack %s" % self.archive
+        Command.__init__(self, 'tar', exclude + ['-C', dir, decompress, '-xf', archive ])
+        self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
 
 class RemoveTree(Command):
@@ -88,7 +106,7 @@ class RemoveTree(Command):
     def __init__(self, tree):
         self.tree = tree
         Command.__init__(self, 'rm', [ '-rf', tree ])
-        self.run_error = "Couldn't remove %s" % self.tree
+        self.run_error = 'Couldn\'t remove "%s"' % self.tree
 
 
 class Dch(Command):
@@ -110,64 +128,64 @@ class DpkgSourceExtract(Command):
         Command.__init__(self, 'dpkg-source', ['-x'])
     
     def __call__(self, dsc, output_dir):
-        self.run_error = "Couldn't extract %s" % dsc
+        self.run_error = 'Couldn\'t extract "%s"' % dsc
         Command.__call__(self, [dsc, output_dir])
 
 
 class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[]):
-        Command.__init__(self, 'git-'+cmd, args)
+        Command.__init__(self, 'git', [cmd] + args)
 
 
 class GitInitDB(GitCommand):
-    """Wrap git-init-db"""
+    """Wrap git init-db"""
     def __init__(self):
         GitCommand.__init__(self, 'init-db')
         self.run_error = "Couldn't init git repository"
 
 
 class GitShowBranch(GitCommand):
-    """Wrap git-show-branch"""
+    """Wrap git show-branch"""
     def __init__(self):
         GitCommand.__init__(self, 'branch')
         self.run_error = "Couldn't list branches"
 
 
 class GitBranch(GitCommand):
-    """Wrap git-branch"""
+    """Wrap git branch"""
     def __init__(self):
         GitCommand.__init__(self, 'branch')
 
     def __call__(self, branch):
-        self.run_error = "Couldn't create branch %s" % (branch,)
+        self.run_error = 'Couldn\'t create branch "%s"' % (branch,)
         GitCommand.__call__(self, [branch])
 
 
 class GitCheckoutBranch(GitCommand):
-    """Wrap git-checkout in order tos switch to a certain branch"""
+    """Wrap git checkout in order tos switch to a certain branch"""
     def __init__(self, branch):
         GitCommand.__init__(self, 'checkout', [branch])
         self.branch = branch
-        self.run_error = "Couldn't switch to %s branch" % self.branch
+        self.run_error = 'Couldn\'t switch to branch "%s"' % self.branch
 
 
 class GitPull(GitCommand):
-    """Wrap git-pull"""
+    """Wrap git pull"""
     def __init__(self, repo, branch):
         GitCommand.__init__(self, 'pull', [repo, branch]) 
-        self.run_error = "Couldn't pull %s to %s" % (branch, repo)
+        self.run_error = 'Couldn\'t pull "%s" to "%s"' % (branch, repo)
 
 
 class GitTag(GitCommand):
-    """Wrap git-tag"""
+    """Wrap git tag"""
     def __init__(self, sign_tag=False, keyid=None):
         GitCommand.__init__(self,'tag')
         self.sign_tag = sign_tag
         self.keyid = keyid
 
     def __call__(self, version, msg="Tagging %(version)s"):
-        self.run_error = "Couldn't tag %s" % (version,)
+        self.run_error = 'Couldn\'t tag "%s"' % (version,)
         if self.sign_tag:
             if self.keyid:
                 sign_opts = [ '-u', self.keyid ]
@@ -179,21 +197,22 @@ class GitTag(GitCommand):
 
 
 class GitAdd(GitCommand):
-    """Wrap git-add to add new files"""
+    """Wrap git add to add new files"""
     def __init__(self):
         GitCommand.__init__(self, 'add')
         self.run_error = "Couldn't add files"
 
 
 class GitRm(GitCommand):
-    """Wrap git-rm to remove files"""
-    def __init__(self):
-        GitCommand.__init__(self, 'rm')
+    """Wrap git rm to remove files"""
+    def __init__(self, verbose=False):
+        args = [ ['-q'], [] ][verbose]
+        GitCommand.__init__(self, cmd='rm', args=args)
         self.run_error = "Couldn't remove files"
 
 
 class GitCommitAll(GitCommand):
-    """Wrap git-commit to commit all changes"""
+    """Wrap git commit to commit all changes"""
     def __init__(self, verbose=False):
         args = ['-a'] + [ ['-q'], [] ][verbose]
         GitCommand.__init__(self, cmd='commit', args=args)
@@ -204,7 +223,7 @@ class GitCommitAll(GitCommand):
         GitCommand.__call__(self, args)
 
 
-def copy_from(orig_dir, filter=""):
+def copy_from(orig_dir, filters=[]):
     """
     copy a source tree over via tar
     @param orig_dir: where to copy from
@@ -212,10 +231,10 @@ def copy_from(orig_dir, filter=""):
     @return: list of copied files
     @rtype: list
     """
-    exclude = [ "", "--exclude=%s" % filter ][len(filter) > 0]
+    exclude = [("--exclude=%s" % filter) for filter in filters]
 
     try:
-        p1 = subprocess.Popen(["tar", exclude, "-cSpf", "-", "." ], stdout=subprocess.PIPE, cwd=orig_dir)
+        p1 = subprocess.Popen(["tar"] + exclude + ["-cSpf", "-", "." ], stdout=subprocess.PIPE, cwd=orig_dir)
         p2 = subprocess.Popen(["tar", "-xvSpf", "-" ], stdin=p1.stdout, stdout=subprocess.PIPE)
         files = p2.communicate()[0].split('\n')
     except OSError, err:

@@ -22,6 +22,7 @@ docs/manual.sgml: docs/version.ent
 
 $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	docbook-2-html -s local $<
+	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
 %.py: %
 	ln -s $< $@

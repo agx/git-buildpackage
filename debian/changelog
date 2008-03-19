@@ -1,3 +1,67 @@
+git-buildpackage (0.4.20) unstable; urgency=low
+
+  * add missing pngs (Closes: #469403)
+  * be more verbose on pbuilder (Closes: #469138)
+  * explain howto push tags and mention linda and lintian (Closes: #469436)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 06 Mar 2008 08:48:02 +0100
+
+git-buildpackage (0.4.19) unstable; urgency=low
+
+  * don't fail of the pristine-tar branch doesn't exist 
+    (Closes: #468675)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 01 Mar 2008 14:22:20 +0100
+
+git-buildpackage (0.4.18) unstable; urgency=low
+
+  * update documentation about git-import-dsc and --filter
+  * gbp/command_wrappers.py: make error messages more consistent
+  * git-import-dsc: don't throw a python exception on tag failures or non
+    existant branches
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 29 Feb 2008 18:05:40 +0100
+
+git-buildpackage (0.4.17) unstable; urgency=low
+
+  * make dsc import repeatable (Closes: #468120, #432082)
+  * drop now (due to git-apply) unneeded code
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 29 Feb 2008 16:09:47 +0100
+
+git-buildpackage (0.4.16) unstable; urgency=low
+
+  [ Guido Guenther ]
+  * speed up git-import-dsc by using git-apply (addresses parts of
+    #449075)
+  * update docs and gbp.conf with --filter and filter = [ ... ]
+
+  [ Harald Braumann ]
+  * allow multiple file filters for git-import-{orig,dsc} (Closes: #464653)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 24 Feb 2008 14:56:47 +0100
+
+git-buildpackage (0.4.15) unstable; urgency=low
+
+  * add (for now experimental) pristine-tar support based on a patch from
+    Julian Andres Klode (Closes: #463580)
+  * document pristine-tar options
+  * suggest pristine-tar
+  * don't use the deprecated git-* command versions
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 21 Feb 2008 16:25:33 +0100
+
+git-buildpackage (0.4.14) unstable; urgency=low
+
+  * correct several typos in the manual (Closes: #464582, #464583,
+    #464617)
+  * better dpkg-parsechangelog error reporting (Closes: #460195)
+  * document default tag formats (Closes: #464100)
+  * git-import-orig: detect flat tar archives (Closes: #463822)
+  * git-import-orig: add --no-dch options
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 08 Feb 2008 17:38:29 +0100
+
 git-buildpackage (0.4.13~bpo40+1) etch-backports; urgency=low
 
   * Rebuild for Etch backports.
