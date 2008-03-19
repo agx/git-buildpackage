@@ -155,15 +155,15 @@ def parse_commit(repo, commit,meta, short):
         author = m.group('author')
     for line in commit[4:]:
         if line.startswith('    '): # commit body
-            if short and msg:
-                continue
             line = line[4:]
-            if line.startswith('Closes:'):
+            if line.startswith('Closes: '):
                 bugs += [ line.split(' ', 1)[1].strip() ]
-            elif line.startswith('Thanks:'):
+            elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
             else: # normal commit message
-                if line.strip(): # don't add all whitespace lines
+                if short and msg:
+                    continue
+                elif line.strip(): # don't add all whitespace lines
                     msg += line
         else:
             break
