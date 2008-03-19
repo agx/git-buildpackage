@@ -1,3 +1,9 @@
+git-buildpackage (0.4.20~bpo40+1) etch-backports; urgency=low
+
+  * Rebuild for etch-backports.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 19 Mar 2008 08:32:58 +0100
+
 git-buildpackage (0.4.20) unstable; urgency=low
 
   * add missing pngs (Closes: #469403)
