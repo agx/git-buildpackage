@@ -209,7 +209,28 @@
   <refsect1>
     <title>SEE ALSO</title>
 
-    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1), git-dch (1)</para>
+    <para>
+      <citerefentry>
+        <refentrytitle>git-import-dsc</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-orig</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>debuild</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-dch</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>
+    </para>
 
   </refsect1>
   <refsect1>
