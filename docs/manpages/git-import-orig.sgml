@@ -27,7 +27,6 @@
       <arg><option>--no-dch</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
