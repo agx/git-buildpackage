@@ -1,3 +1,18 @@
+git-buildpackage (0.4.22) unstable; urgency=low
+  * git-dch: don't skip meta tags without --force
+  * gbp: git-core 1.5.3.4 doesn't support -q so use --quiet instead
+  * fix typos in documentation  (Closes: #471582) - thanks to Michael
+    Biebl
+
+ -- Guido Guenther <agx@sigxcpu.org>  Wed, 19 Mar 2008 18:03:20 +0100
+
+git-buildpackage (0.4.21) unstable; urgency=low
+
+  * allow meta tags in the commit logs
+  * add --full and --meta options --full (Closes: #468118)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 14 Mar 2008 20:42:53 +0100
+
 git-buildpackage (0.4.20~bpo40+1) etch-backports; urgency=low
 
   * Rebuild for etch-backports.

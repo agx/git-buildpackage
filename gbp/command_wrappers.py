@@ -206,7 +206,7 @@ class GitAdd(GitCommand):
 class GitRm(GitCommand):
     """Wrap git rm to remove files"""
     def __init__(self, verbose=False):
-        args = [ ['-q'], [] ][verbose]
+        args = [ ['--quiet'], [] ][verbose]
         GitCommand.__init__(self, cmd='rm', args=args)
         self.run_error = "Couldn't remove files"
 

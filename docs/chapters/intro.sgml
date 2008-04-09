@@ -11,8 +11,8 @@
     <listitem><para>Import an existing &debian; package into &git;</para></listitem>
     <listitem><para>Import new upstream versions, NMUs etc. with optional filters</para></listitem>
     <listitem><para>Automatic upstream tarball generation</para></listitem>
-    <listitem><para>Maintain a consistent branch an tag naming across
-    repositires or across a team of developers</para></listitem>
+    <listitem><para>Maintain a consistent branch and tag naming across
+    repositories or across a team of developers</para></listitem>
     <listitem><para>Automatically sign tags</para></listitem>
     <listitem><para>Automatically push changes to remote repositories</para></listitem>
     <listitem><para>Make sure you have committed all changes to the right
@@ -51,11 +51,11 @@
 	and you can work with an arbitrary number of branches.
 	For example branches like  <emphasis>nmu</emphasis>,
 	<emphasis>bpo</emphasis> or <emphasis>stable</emphasis> might
-	(temporarilly or permanent) become your <option>debian-branch</option>
+	(temporarily or permanent) become your <option>debian-branch</option>
 	and branches like <emphasis>dfsg_free</emphasis> or
 	<emphasis>snapshots</emphasis> might become your
 	<option>upstream-branch</option> - it doesn't matter if these branches
-	are maintend with &git-import-orig; or not.</para>
+	are maintained with &git-import-orig; or not.</para>
 	<para>Since Git-Buildpackage only works with local &git;-repositories
 	you have to use <command>git-push</command> in order to publish your
 	changes to remote repositories like <ulink
