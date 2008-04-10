@@ -1,0 +1,14 @@
+      <citerefentry>
+        <refentrytitle>debuild</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git_load_dirs</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
+      <citetitle>The Git-Buildpackage Manual</citetitle></ulink>

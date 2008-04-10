@@ -28,3 +28,4 @@
       <para>
       See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
       </para>">
+<!ENTITY man.seealso.common SYSTEM "man.seealso.sgml">

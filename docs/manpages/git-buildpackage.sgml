@@ -208,7 +208,6 @@
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
-
     <para>
       <citerefentry>
         <refentrytitle>git-import-dsc</refentrytitle>
@@ -219,19 +218,11 @@
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>
-        <refentrytitle>debuild</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>git</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
         <refentrytitle>git-dch</refentrytitle>
         <manvolnum>1</manvolnum>
-      </citerefentry>
+      </citerefentry>,
+      &man.seealso.common;
     </para>
-
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>

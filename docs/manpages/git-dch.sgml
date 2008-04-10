@@ -165,14 +165,7 @@
         <refentrytitle>git-import-orig</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
-      <citerefentry>
-        <refentrytitle>git</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>git_load_dirs</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>
+      &man.seealso.common;
     </para>
 
   </refsect1>
