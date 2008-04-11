@@ -175,7 +175,8 @@ on howto create it otherwise use --upstream-branch to specify it.
 
             import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
             if options.pristine_tar:
-                gbpc.PristineTar().commit(archive, options.upstream_branch)
+                upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
+                gbpc.PristineTar().commit(archive, upstream_branch)
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
                         msg="Upstream version %s" % version)
 
