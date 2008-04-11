@@ -1,3 +1,22 @@
+git-buildpackage (0.4.23) unstable; urgency=low
+
+  [ Frank S. Thomas ]
+  * docs/manpages/*.sgml: Use the citerefentry for references to other
+    manpages.
+  * Do not list the --upstream-version option twice in the synopsis
+    section of git-import-orig's manpage. (Closes: #472496)
+
+  [ Guido Guenther ]
+  * don't pass nonexisting branches to pristine-tar (Closes: #475554)
+  * doc cleanups (Closes: 473610):
+  	* mention the html manual in the manpages
+  	* reference pristine-tar
+  	* filter uses glob
+  	* move conffiles section into separate sgml file
+  * fix doc-base section
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 11 Apr 2008 19:18:08 +0200
+
 git-buildpackage (0.4.22) unstable; urgency=low
 
   * git-dch: don't skip meta tags without --force
