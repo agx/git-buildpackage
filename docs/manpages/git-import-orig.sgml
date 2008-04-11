@@ -123,10 +123,10 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--filter=</option><replaceable>filter</replaceable>
+        <term><option>--filter=</option><replaceable>pattern</replaceable>
         </term>
         <listitem>
-          <para>filter out these files during import. Can be given multiple times.</para>
+          <para>filter out files glob-matching pattern. Can be given multiple times.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
