@@ -140,8 +140,8 @@ class DpkgSourceExtract(Command):
 
 class GitCommand(Command):
     "Mother/Father of all git commands"
-    def __init__(self, cmd, args=[]):
-        Command.__init__(self, 'git', [cmd] + args)
+    def __init__(self, cmd, args=[], **kwargs):
+        Command.__init__(self, 'git', [cmd] + args, **kwargs)
 
 
 class GitInitDB(GitCommand):
@@ -219,9 +219,9 @@ class GitRm(GitCommand):
 
 class GitCommitAll(GitCommand):
     """Wrap git commit to commit all changes"""
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, **kwargs):
         args = ['-a'] + [ ['-q'], [] ][verbose]
-        GitCommand.__init__(self, cmd='commit', args=args)
+        GitCommand.__init__(self, cmd='commit', args=args, **kwargs)
 
     def __call__(self, msg=''):
         args = [ [], ['-m', msg] ][len(msg) > 0]
