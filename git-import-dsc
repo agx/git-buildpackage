@@ -38,6 +38,9 @@ class DscFile(object):
     diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
 
     def __init__(self, dscfile):
+        self.pkg = ""
+        self.tgz = ""
+        self.diff = ""
         self.dscfile = os.path.abspath(dscfile)
         f = file(self.dscfile)
         fromdir = os.path.dirname(os.path.abspath(dscfile))
@@ -65,6 +68,10 @@ class DscFile(object):
                 self.diff = os.path.join(fromdir, m.group('diff'))
                 continue
         f.close()
+        if not self.pkg:
+            raise GbpError, "Cannot parse package name from %s" % self.dscfile
+        elif not self.tgz:
+            raise GbpError, "Cannot parse archive name from %s" % self.dscfile
 
 
 def parse_dsc(dscfile):
@@ -134,7 +141,7 @@ def apply_debian_patch(src, dirs, options):
     try:
         os.chdir(dirs['git'])
         repo = GitRepository('.')
-        if src.__dict__.has_key('diff') and not git_apply_patch(src.diff):
+        if src.diff and not git_apply_patch(src.diff):
             raise GbpError
         os.chmod('debian/rules', 0755)
         if not repo.is_clean()[0]:
