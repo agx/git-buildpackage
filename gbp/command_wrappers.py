@@ -8,6 +8,7 @@ git-buildpackage and friends
 
 import subprocess
 import sys
+import os
 import os.path
 from errors import GbpError
 
@@ -23,11 +24,16 @@ class Command(object):
     """
     verbose = False
 
-    def __init__(self, cmd, args=[], shell=False):
+    def __init__(self, cmd, args=[], shell=False, extra_env=None):
         self.cmd = cmd
         self.args = args
         self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] + self.args))
         self.shell = shell
+        if extra_env is not None:
+            self.env = os.environ.copy()
+            self.env.update(extra_env)
+        else:
+            self.env = None
 
     def __run(self, args):
         """run self.cmd adding args as additional arguments"""
@@ -37,7 +43,7 @@ class Command(object):
             cmd = [ self.cmd ] + self.args + args
             if self.shell: # subprocess.call only cares about the first argument if shell=True
                 cmd = " ".join(cmd)
-            retcode = subprocess.call(cmd, shell=self.shell)
+            retcode = subprocess.call(cmd, shell=self.shell, env=self.env)
             if retcode < 0:
                 print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
             elif retcode > 0:
