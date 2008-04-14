@@ -6,6 +6,8 @@
 import subprocess
 import os.path
 from command_wrappers import (GitAdd, GitRm, copy_from)
+import dateutil.parser
+import calendar
 
 class GitRepositoryError(Exception):
     """Exception thrown by GitRepository"""
@@ -134,5 +136,20 @@ def replace_source_tree(repo, src_dir, filters, verbose=False):
         if files:
             GitRm(verbose=verbose)(files)
         return not repo.is_clean()[0]
+
+
+def rfc822_date_to_git(rfc822_date):
+    """Parse a date in RFC822 format, and convert to a 'seconds tz' string.
+    >>> rfc822_date_to_git('Thu, 1 Jan 1970 00:00:01 +0000')
+    '1 +0000'
+    >>> rfc822_date_to_git('Thu, 20 Mar 2008 01:12:57 -0700')
+    '1206000777 -0700'
+    >>> rfc822_date_to_git('Sat, 5 Apr 2008 17:01:32 +0200')
+    '1207407692 +0200'
+    """
+    d = dateutil.parser.parse(rfc822_date)
+    seconds = calendar.timegm(d.utctimetuple())
+    tz = d.strftime("%z")
+    return '%d %s' % (seconds, tz)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
