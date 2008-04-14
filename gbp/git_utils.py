@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2008 Guido Guenther <agx@sigxcpu.org>
 """provides some git repository related helpers"""
 
 import subprocess
@@ -151,5 +151,13 @@ def rfc822_date_to_git(rfc822_date):
     seconds = calendar.timegm(d.utctimetuple())
     tz = d.strftime("%z")
     return '%d %s' % (seconds, tz)
+
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == '__main__':
+    _test()
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
