@@ -79,7 +79,7 @@ class PristineTar(Command):
 
     def __init__(self):
         if not os.access(self.cmd, os.X_OK):
-            raise GbpError, "%s not found - cannot use pristine-tar"
+            raise GbpError, "%s not found - cannot use pristine-tar" % self.cmd
         Command.__init__(self, self.cmd)
 
     def commit(self, archive, branch):
