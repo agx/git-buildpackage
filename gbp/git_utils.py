@@ -124,18 +124,18 @@ def sanitize_version(version):
 
 
 def replace_source_tree(repo, src_dir, filters, verbose=False):
-        """
-        make the current wc match what's in src_dir
-        @return: True if wc was modified
-        @rtype: boolean
-        """
-        old = set(repo.index_files())
-        new = set(copy_from(src_dir, filters))
-        GitAdd()(['.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            GitRm(verbose=verbose)(files)
-        return not repo.is_clean()[0]
+    """
+    make the current wc match what's in src_dir
+    @return: True if wc was modified
+    @rtype: boolean
+    """
+    old = set(repo.index_files())
+    new = set(copy_from(src_dir, filters))
+    GitAdd()(['.'])
+    files = [ obj for obj in old - new if not os.path.isdir(obj)]
+    if files:
+        GitRm(verbose=verbose)(files)
+    return not repo.is_clean()[0]
 
 
 def rfc822_date_to_git(rfc822_date):
