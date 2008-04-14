@@ -1,3 +1,17 @@
+git-buildpackage (0.4.24) unstable; urgency=low
+
+  [ Adeodato Simó ]
+  * Make commits from git-import-dsc get author and date from
+    debian/changelog.
+
+  [ Guido Guenther ]
+  * add rfc822_date_to_git() this function converts a date in RFC822
+    format to a string 'seconds_since_epoch tz' that can be used for eg.
+    GIT_AUTHOR_DATE.
+  * better handle broken dsc files
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 14 Apr 2008 14:39:37 +0200
+
 git-buildpackage (0.4.23) unstable; urgency=low
 
   [ Frank S. Thomas ]
@@ -565,3 +579,14 @@ git-buildpackage (0.01) unstable; urgency=low
 
  -- Guido Guenther <agx@sigxcpu.org>  Tue, 12 Sep 2006 14:55:57 +0200
 
+git-buildpackage (0.4.24+nmu1) UNRELEASED; urgency=low
+
+  * UNRELEASED
+  * Make commits from git-import-dsc get author and date from
+    debian/changelog. This is done by setting
+    GIT_AUTHOR_{NAME,EMAIL,DATE} before invoking git-commit.
+    GIT_COMMITTER_* are left alone (i.e., the date of the import will be
+    available from there). (cherry picked from commit
+    acee866d1d89327aa530b6531b50b4edcc524906)
+
+ -- Adeodato Simó <agx@sigxcpu.org>  Mon, 14 Apr 2008 14:39:16 +0200
