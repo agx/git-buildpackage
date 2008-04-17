@@ -6,8 +6,10 @@
 import email
 import commands
 import os
+import sys
 import shutil
 import command_wrappers as gbpc
+from errors import GbpError
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
