@@ -167,11 +167,11 @@ on howto create it otherwise use --upstream-branch to specify it.
 
         try:
             filter_msg = ["", " (filtering out %s)" % options.filters][len(options.filters) > 0]
-            if not is_empty:
+            if is_empty:
+                print "Initial import of '%s' %s..." % (archive, filter_msg)
+            else:
                 print "Importing '%s' to branch '%s'%s..." % (archive, options.upstream_branch, filter_msg)
                 gbpc.GitCheckoutBranch(options.upstream_branch)()
-            else:
-                print "Initial import of '%s' %s..." % (archive, filter_msg)
 
             import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
             if options.pristine_tar:
