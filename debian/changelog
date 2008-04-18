@@ -1,3 +1,13 @@
+git-buildpackage (0.4.25) unstable; urgency=low
+
+  * create a symlink archive -> <package>_<version>.orig.tar.gz this makes
+    sure pristine_tar uses the correct filename for the orig.tar.gz.  (Closes:
+    #475316)
+  * fix unpack_orig error reporting by adding the missing imports
+  * fix "pristine-tar missing" error message
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 18 Apr 2008 11:33:46 +0200
+
 git-buildpackage (0.4.24) unstable; urgency=low
 
   [ Adeodato Simó ]
