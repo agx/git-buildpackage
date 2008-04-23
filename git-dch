@@ -41,13 +41,13 @@ def system(cmd):
 
 def add_changelog_entry(msg, author):
     "add aa single changelog entry"
-    cmd = """DEBFULLNAME="%s" dch --append -- "%s" """ % (author, msg.replace('"','\\\"'))
+    cmd = """DEBFULLNAME="%s" dch --no-auto-nmu --append -- "%s" """ % (author, msg.replace('"','\\\"'))
     system(cmd)
 
 
 def add_changelog_section(msg, distribution):
     "add a new changelog section"
-    cmd = "dch --distribution=%s -i %s" % (distribution, msg)
+    cmd = "dch --no-auto-nmu --distribution=%s -i %s" % (distribution, msg)
     system(cmd)
 
 def fixup_trailer():
