@@ -100,7 +100,7 @@ class GitRepository(object):
                                             options, '%s..%s' % (start, end),
                                             '--', paths])
         if ret:
-            raise GitRepositoryError, "Error gettint commits %s..%s on %s" % (start, end, paths)
+            raise GitRepositoryError, "Error getting commits %s..%s%s" % (start, end, ["", " on %s" % paths][len(paths) > 0] )
         return [ commit.strip() for commit in commits ]
 
     def show(self, id):
