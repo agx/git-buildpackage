@@ -275,7 +275,7 @@ def main(argv):
         if options.release:
             do_release(changelog, cp)
 
-    except GbpError, err:
+    except (GbpError, GitRepositoryError), err:
         if len(err.__str__()):
             print >>sys.stderr, err
         ret = 1
