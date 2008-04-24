@@ -110,6 +110,12 @@ class GitRepository(object):
             raise GitRepositoryError, "can't get %s" % id
         return commit
 
+    def write_tree(self):
+        """write out the current index, return the SHA1"""
+        tree, ret = self.__git_getoutput('write-tree')
+        if ret:
+            raise GitRepositoryError, "can't write out current index"
+        return tree[0].strip()
 
 def build_tag(format, version):
     """Generate a tag from a given format and a version"""
