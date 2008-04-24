@@ -30,6 +30,8 @@ from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFail
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
+# when we want to reference the index in a treeish context we call it:
+index_name = "INDEX"
 
 def git_archive_pipe(prefix, pipe, output, treeish):
     """run the git_archive pipe"""
@@ -209,13 +211,18 @@ def main(argv):
         else:
             tarball_dir = output_dir
 
-        if not repo.has_treeish(options.treeish):
-            raise GbpError # git-ls-tree printed an error message already
         # Export to another build dir if requested:
         if options.export_dir:
+            # write a tree of the index if necessary:
+            if options.treeish == index_name:
+                tree = repo.write_tree()
+            else:
+                tree = options.treeish()
+            if not repo.has_treeish(tree):
+                raise GbpError # git-ls-tree printed an error message already
             tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
             print "Exporting '%s' to '%s'" % (options.treeish, tmp_dir)
-            dump_tree(tmp_dir, options.treeish)
+            dump_tree(tmp_dir, tree)
             cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
             if du.is_native(cp):
                 version = cp['Debian-Version']
