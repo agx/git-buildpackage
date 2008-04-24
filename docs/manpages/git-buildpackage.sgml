@@ -176,7 +176,18 @@
         <term><option>--git-export-dir=</option><replaceable>directory</replaceable>
         </term>
         <listitem>
-          <para>Export the current branch head to <replaceable>directory</replaceable> before building.</para>
+	  <para>Export the current branch head (or the treeish object given via
+	  <option>--git-export</option> to <replaceable>directory</replaceable>
+	  before building.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-export=</option><replaceable>treeish</replaceable>
+        </term>
+	<listitem> 
+	  <para>Instead of exporting the current branch head, export the
+	  treeish object <replaceable>treeish</replaceable>. The special name
+	  <replaceable>INDEX</replaceable> exports the current index.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -184,13 +195,6 @@
         </term>
         <listitem>
           <para>Search for original tarballs in <replaceable>directory</replaceable> instead of generating them</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--git-export=</option><replaceable>treeish</replaceable>
-        </term>
-	<listitem> <para>Instead of exporting the current branch head export at
-	the treeish object <replaceable>treeish</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
