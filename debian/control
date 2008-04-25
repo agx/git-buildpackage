@@ -3,7 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Guido Guenther <agx@sigxcpu.org>
 Build-Depends: cdbs, debhelper (>= 5), python-dev, python-support (>= 0.3),
- pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade
+ pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil
 Standards-Version: 3.7.3
 Vcs-Git: http://honk.sigxcpu.org/git/git-buildpackage.git/
 Homepage: http://honk.sigxcpu.org/projects.html#git-buildpackage
