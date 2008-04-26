@@ -137,8 +137,8 @@ def main(argv):
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
 
-    parser.add_option("--git-ignore-new", action="store_true", dest="ignore_new", default=False,
-                      help="build with uncommited changes in the source tree")
+    parser.add_config_file_option(option_name = "ignore-new", dest="ignore_new",
+                      help="build with uncommited changes in the source tree", action="store_true")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="builder", dest="builder",
