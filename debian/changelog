@@ -1,3 +1,18 @@
+git-buildpackage (0.4.26) unstable; urgency=low
+
+  * git-export=INDEX exports the index into git-export-dir
+    (Closes: #471568)
+  * make ignore-new a config file option  (Closes: #466900)
+  * build-depend on python-dateutil  (Closes: #477959)
+  * git-dch:
+      * use --no-auto-nmu
+      * error handling fixes
+  * depend on devscripts that has dch --no-auto-nmu
+  * gbp/config.py: make boolean options parsing more robust
+  * add a link to the online version of the manual
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 28 Apr 2008 16:36:44 +0200
+
 git-buildpackage (0.4.25) unstable; urgency=low
 
   * create a symlink archive -> <package>_<version>.orig.tar.gz this makes
@@ -588,15 +603,3 @@ git-buildpackage (0.01) unstable; urgency=low
   * Initial release
 
  -- Guido Guenther <agx@sigxcpu.org>  Tue, 12 Sep 2006 14:55:57 +0200
-
-git-buildpackage (0.4.24+nmu1) UNRELEASED; urgency=low
-
-  * UNRELEASED
-  * Make commits from git-import-dsc get author and date from
-    debian/changelog. This is done by setting
-    GIT_AUTHOR_{NAME,EMAIL,DATE} before invoking git-commit.
-    GIT_COMMITTER_* are left alone (i.e., the date of the import will be
-    available from there). (cherry picked from commit
-    acee866d1d89327aa530b6531b50b4edcc524906)
-
- -- Adeodato Simó <agx@sigxcpu.org>  Mon, 14 Apr 2008 14:39:16 +0200
