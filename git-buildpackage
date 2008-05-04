@@ -217,7 +217,7 @@ def main(argv):
             if options.treeish == index_name:
                 tree = repo.write_tree()
             else:
-                tree = options.treeish()
+                tree = options.treeish
             if not repo.has_treeish(tree):
                 raise GbpError # git-ls-tree printed an error message already
             tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
