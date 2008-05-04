@@ -108,7 +108,8 @@ class GitRepository(object):
         commit, ret = self.__git_getoutput('show', [ id ])
         if ret:
             raise GitRepositoryError, "can't get %s" % id
-        return commit
+        for line in commit:
+            yield line
 
     def write_tree(self):
         """write out the current index, return the SHA1"""
