@@ -30,7 +30,8 @@ from gbp.errors import GbpError
 from gbp.deb_utils import parse_changelog
 from gbp.command_wrappers import (Command, CommandExecFailed)
 
-snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
+snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
+author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
 
 def system(cmd):
     try:
@@ -39,9 +40,9 @@ def system(cmd):
         raise GbpError
 
 
-def add_changelog_entry(msg, author):
+def add_changelog_entry(msg, author, email):
     "add aa single changelog entry"
-    cmd = """DEBFULLNAME="%s" dch --no-auto-nmu --append -- "%s" """ % (author, msg.replace('"','\\\"'))
+    cmd = """DEBFULLNAME="%s" DEBEMAIL="%s" dch --no-auto-nmu --append -- "%s" """ % (author, email, msg.replace('"','\\\"'))
     system(cmd)
 
 
@@ -93,7 +94,7 @@ def mangle_changelog(changelog, cp, snapshot, sha='unknown'):
         print >>cw, "%(Source)s (%(MangledVersion)s) %(Distribution)s; urgency=%(urgency)s\n" % cp
 
         line = cr.readline()
-        if re.match(snapshot_re, line):
+        if snapshot_re.match(line):
             cr.readline() # consume the empty line
             line = ''
 
@@ -138,22 +139,25 @@ def do_snapshot(changelog, next_snapshot):
     mangle_changelog(changelog, cp, snapshot, commit)
     return snapshot, commit
 
+def get_author(commit):
+    """get the author from a commit message"""
+    for line in commit:
+        m = author_re.match(line)
+        if m:
+            return m.group('author'), m.group('email')
 
 def parse_commit(repo, commit,meta, short):
     """parse a commit and return message and author"""
-    author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
     msg = ''
     thanks = ''
     closes = ''
     bugs = []
 
     commit = repo.show(commit)
-    m = author_re.match(commit[1])
-    if not m:
+    author, email = get_author(commit)
+    if not author:
         raise GbpError, "can't parse author of commit %s" % commit
-    else:
-        author = m.group('author')
-    for line in commit[4:]:
+    for line in commit:
         if line.startswith('    '): # commit body
             line = line[4:]
             if line.startswith('Closes: '):
@@ -165,7 +169,8 @@ def parse_commit(repo, commit,meta, short):
                     continue
                 elif line.strip(): # don't add all whitespace lines
                     msg += line
-        else:
+        # start of diff output:
+        elif line.startswith('diff '):
             break
     if meta:
         if bugs:
@@ -173,7 +178,7 @@ def parse_commit(repo, commit,meta, short):
         if thanks:
             thanks = ' - thanks to %s' % thanks
         msg += closes + thanks
-    return msg, author
+    return msg, (author, email)
 
 
 def shortlog_to_dch(repo, commits, meta, short):
@@ -183,8 +188,8 @@ def shortlog_to_dch(repo, commits, meta, short):
     author = 'Unknown'
 
     for commit in commits:
-        msg, author = parse_commit(repo, commit, meta, short)
-        add_changelog_entry(msg, author)
+        msg, (author, email) = parse_commit(repo, commit, meta, short)
+        add_changelog_entry(msg, author, email)
 
 
 def guess_snapshot_commit(cp):
