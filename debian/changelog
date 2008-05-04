@@ -1,3 +1,10 @@
+git-buildpackage (0.4.27) unstable; urgency=low
+
+  * make author parsing more robust  (Closes: #479263)
+  * fix --git-export  (Closes: #479147)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 04 May 2008 16:43:43 +0200
+
 git-buildpackage (0.4.26) unstable; urgency=low
 
   * git-export=INDEX exports the index into git-export-dir
