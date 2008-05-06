@@ -82,6 +82,7 @@ cd package/
 [DEFAULT]
 # this is the upstream-branch:
 upstream-branch=theupstream-branch
+EOF
     </screen>
     If you then use &git-import-orig; to import new upstream sources, they will
     from now on end up on <emphasis>theupstream-branch</emphasis> and
