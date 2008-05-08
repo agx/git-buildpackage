@@ -183,8 +183,6 @@ def parse_commit(repo, commit,meta, short):
 
 def shortlog_to_dch(repo, commits, meta, short):
     """convert the changes in git shortlog format to debian changelog format"""
-    commit_re = re.compile('\s+(?P<msg>.*)')
-    author_re = re.compile('(?P<author>.*) \([0-9]+\)')
     author = 'Unknown'
 
     for commit in commits:
@@ -225,8 +223,8 @@ def main(argv):
                       help="mark as snapshot build")
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
-    parser.add_option("--meta", action="store_true", dest="meta", default=False,
-                      help="parse meta tags in commit messages")
+    parser.add_config_file_option(option_name="meta", dest="meta",
+                      help="parse meta tags in commit messages", action="store_true")
     parser.add_option("--full", action="store_false", dest="short", default=True,
                       help="include the full commit message")
     (options, args) = parser.parse_args(argv[1:])

@@ -40,6 +40,7 @@ class GbpOptionParser(OptionParser):
                  'export-dir'      : '',
                  'tarball-dir'     : '',
                  'ignore-new'      : 'False',
+                 'meta'            : 'False',
              }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
