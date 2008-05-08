@@ -51,7 +51,7 @@ def symlink_orig(archive, pkg, version):
     dst = "../%s_%s.orig.tar%s" % (pkg, version, ext)
     if os.path.basename(archive) != os.path.basename(dst):
         try:
-            os.symlink(archive, dst)
+            os.symlink(os.path.abspath(archive), dst)
         except OSError, err:
             raise GbpError, err
         return dst
