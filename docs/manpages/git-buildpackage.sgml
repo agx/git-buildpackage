@@ -35,6 +35,7 @@
       <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-pristine-tar</option></arg>
+      <arg><option>--git-dont-purge</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -202,6 +203,13 @@
         </term>
         <listitem>
 	  <para>use pristine-tar to create the orig.tar.gz</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-dont-purge</option>
+        </term>
+        <listitem>
+	  <para>retain exported build directory after build</para>
         </listitem>
       </varlistentry>
     </variablelist>

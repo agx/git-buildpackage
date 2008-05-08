@@ -171,6 +171,8 @@ def main(argv):
                       help="Use pristine-tar to create .orig.tar.gz", action="store_true")
     parser.add_option("--git-export", dest="treeish", default=default_tree,
                       help="export treeish object TREEISH, default is '%s'" % default_tree)
+    parser.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
+                      help="retain exported build directory after build")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
@@ -270,7 +272,7 @@ def main(argv):
             print >>sys.stderr, err
         retval = 1
 
-    if options.export_dir and not retval:
+    if options.export_dir and options.purge and not retval:
         RemoveTree(export_dir)()
 
     return retval
