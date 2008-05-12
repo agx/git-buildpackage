@@ -1,3 +1,13 @@
+git-buildpackage (0.4.28) unstable; urgency=low
+
+  * git-buildpackage: add --git-dont-purge to leave the exported build dir
+    intact (Closes: #479848) - thanks to Kurt B. Kaiser for the patch
+  * git-dch: make --meta a config file option
+  * git-import-orig: fix symlink creation
+  * docs: missing EOF (Closes: #479726) - thanks to Sedat Dilek
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 12 May 2008 18:03:47 +0200
+
 git-buildpackage (0.4.27) unstable; urgency=low
 
   * make author parsing more robust  (Closes: #479263)
