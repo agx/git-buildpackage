@@ -174,7 +174,7 @@ def parse_commit(repo, commit,meta, short):
             break
     if meta:
         if bugs:
-            closes = ' (Closes: %s)' % ', '.join(bugs)
+            closes = '(Closes: %s)' % ', '.join(bugs)
         if thanks:
             thanks = ' - thanks to %s' % thanks
         msg += closes + thanks
