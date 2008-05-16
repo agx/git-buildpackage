@@ -51,12 +51,14 @@ def add_changelog_section(msg, distribution):
     cmd = "dch --no-auto-nmu --distribution=%s -i %s" % (distribution, msg)
     system(cmd)
 
+
 def fixup_trailer():
     """fixup the changelog trailer's comitter and email address - it might
     otherwise point to the last git committer instead of the person creating
     the changelog"""
     cmd = "dch \"\""
     system(cmd)
+
 
 def head_commit():
     """get the full sha1 of the last commit on HEAD"""
@@ -139,6 +141,7 @@ def do_snapshot(changelog, next_snapshot):
     mangle_changelog(changelog, cp, snapshot, commit)
     return snapshot, commit
 
+
 def get_author(commit):
     """get the author from a commit message"""
     for line in commit:
@@ -146,14 +149,15 @@ def get_author(commit):
         if m:
             return m.group('author'), m.group('email')
 
-def parse_commit(repo, commit,meta, short):
+
+def parse_commit(repo, commitid, meta, short):
     """parse a commit and return message and author"""
     msg = ''
     thanks = ''
     closes = ''
     bugs = []
 
-    commit = repo.show(commit)
+    commit = repo.show(commitid)
     author, email = get_author(commit)
     if not author:
         raise GbpError, "can't parse author of commit %s" % commit
