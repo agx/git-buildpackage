@@ -82,10 +82,10 @@ class GbpOptionParser(OptionParser):
         default = self.config[option_name]
         if kwargs.has_key('action'):
             if kwargs['action'] in [ 'store_true', 'store_false'] and self.config[option_name]:
-                    if self.config[option_name] in  [ 'True', 'False']:
+                    if self.config[option_name] in  [ 'True', 'False' ]:
                         default = eval(self.config[option_name])
                     else:
-                        raise Exception, "Boolean options must be True or False"
+                        raise ValueError, "Boolean options must be True or False"
         OptionParser.add_option(self,"--%s%s" % (self.prefix, option_name), dest=dest,
                                 default=default,
                                 help=help % self.config, **kwargs)
