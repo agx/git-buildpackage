@@ -150,7 +150,7 @@ def get_author(commit):
             return m.group('author'), m.group('email')
 
 
-def parse_commit(repo, commitid, meta, short):
+def parse_commit(repo, commitid, options):
     """parse a commit and return message and author"""
     msg = ''
     thanks = ''
@@ -169,14 +169,14 @@ def parse_commit(repo, commitid, meta, short):
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
             else: # normal commit message
-                if short and msg:
+                if options.short and msg:
                     continue
                 elif line.strip(): # don't add all whitespace lines
                     msg += line
         # start of diff output:
         elif line.startswith('diff '):
             break
-    if meta:
+    if options.meta:
         if bugs:
             closes = '(Closes: %s)' % ', '.join(bugs)
         if thanks:
@@ -185,12 +185,12 @@ def parse_commit(repo, commitid, meta, short):
     return msg, (author, email)
 
 
-def shortlog_to_dch(repo, commits, meta, short):
+def shortlog_to_dch(repo, commits, options):
     """convert the changes in git shortlog format to debian changelog format"""
     author = 'Unknown'
 
     for commit in commits:
-        msg, (author, email) = parse_commit(repo, commit, meta, short)
+        msg, (author, email) = parse_commit(repo, commit, options)
         add_changelog_entry(msg, author, email)
 
 
@@ -272,7 +272,7 @@ def main(argv):
         if commits:
             if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
-            shortlog_to_dch(repo, commits, meta=options.meta, short=options.short)
+            shortlog_to_dch(repo, commits, options)
             fixup_trailer()
             if options.snapshot:
                 (snap, version) = do_snapshot(changelog, options.snapshot_number)
