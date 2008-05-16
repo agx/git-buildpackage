@@ -228,7 +228,7 @@ def main(argv):
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
     parser.add_config_file_option(option_name="meta", dest="meta",
-                      help="parse meta tags in commit messages", action="store_true")
+                      help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
     parser.add_option("--full", action="store_false", dest="short", default=True,
                       help="include the full commit message")
     (options, args) = parser.parse_args(argv[1:])
