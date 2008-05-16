@@ -182,6 +182,8 @@ def parse_commit(repo, commitid, options):
         if thanks:
             thanks = ' - thanks to %s' % thanks
         msg += closes + thanks
+    if options.idlen:
+        msg = "[%s] " % commitid[0:options.idlen] + msg
     return msg, (author, email)
 
 
@@ -231,6 +233,9 @@ def main(argv):
                       help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
     parser.add_option("--full", action="store_false", dest="short", default=True,
                       help="include the full commit message")
+    parser.add_config_file_option(option_name="id-length", dest="idlen",
+                      help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
+                      type="int", metavar="N")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:

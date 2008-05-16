@@ -93,9 +93,18 @@ Thanks: cool upstream
 </screen>
     would result in a changelog entry
 <screen>
-    * New upstream version (Closes: #1000) - thanks to cool upstream    
+    * New upstream version (Closes: #1000) - thanks to cool upstream
 </screen>
 You can use multiple <option>Closes:</option> tags.
+</para><para>
+Often changelog entries correspond to a single &git; commit. In this case it's
+convenient to include the commit id in the chagenlog entry. This can be done
+via the <option>--id-length</option> option. Using
+<option>--id-length</option>=<replaceable>7</replaceable>  would change the above example to:
+<screen>
+    * [571bfd4] New upstream version (Closes: #1000) - thanks to cool upstream
+</screen>
+This makes it much easier to see which commit actually fixed bug #1000.
 </para>
 </sect1>
 </chapter>

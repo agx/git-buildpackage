@@ -41,6 +41,7 @@ class GbpOptionParser(OptionParser):
                  'tarball-dir'     : '',
                  'ignore-new'      : 'False',
                  'meta'            : 'False',
+                 'id-length'       : '0',
              }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

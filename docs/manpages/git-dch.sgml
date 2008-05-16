@@ -144,6 +144,15 @@
           <para>options passed on verbatim to git-log(1)</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--id-length=</option><replaceable>N</replaceable>
+        </term>
+        <listitem>
+	  <para>include <replaceable>N</replaceable> digits of the commit id in
+	  the changelog enty. Default is to not include any commit ids at
+	  all.</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
