@@ -1,0 +1,133 @@
+#!/usr/bin/python
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2008 Guido Guenther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"""Import multiple dsc files in one go"""
+
+import sys
+import re
+import os
+import tempfile
+import glob
+import pipes
+import gbp.deb_utils
+import gbp.command_wrappers as gbpc
+from gbp.deb_utils import parse_dsc, DscFile
+from gbp.config import GbpOptionParser
+from gbp.errors import GbpError
+from gbp.git_utils import GitRepository, GitRepositoryError
+
+class DpkgCompareVersions(gbpc.Command):
+    cmd='/usr/bin/dpkg'
+
+    def __init__(self):
+        if not os.access(self.cmd, os.X_OK):
+            raise GbpError, "%s not found - cannot use compare versions" % self.cmd
+        gbpc.Command.__init__(self, self.cmd, ['--compare-versions'])
+
+    def __call__(self, version1, version2):
+        self.run_error = "Couldn't compare %s with %s" % (version1, version2)
+        res = gbpc.Command.call(self, [ version1, 'lt', version2 ])
+        if res not in [ 0, 1 ]:
+            raise gbpc.CommandExecFailed, "%s: bad return code %d" % (self.run_error, res)
+        if res == 0:
+            return -1
+        elif res == 1:
+            res = gbpc.Command.call(self, [ version1, 'gt', version2 ])
+            if res not in [ 0, 1 ]:
+                raise gbpc.CommandExecFailed, "%s: bad return code %d" % (self.run_error, res)
+            if res == 0:
+                return 1
+        return 0
+
+
+class DscCompareVersions(DpkgCompareVersions):
+    def __init__(self):
+        DpkgCompareVersions.__init__(self)
+
+    def __call__(self, dsc1, dsc2):
+        return DpkgCompareVersions.__call__(self, dsc1.version, dsc2.version)
+
+
+class GitImportDsc(gbpc.Command):
+    cmd='/usr/bin/git-import-dsc'
+    def __init__(self, args):
+        if not os.access(self.cmd, os.X_OK):
+            raise GbpError, "%s not found - can't import packages" % self.cmd
+        gbpc.Command.__init__(self, self.cmd, args)
+
+    def __call__(self, dsc):
+        gbpc.Command.__call__(self, [dsc.dscfile])
+
+
+def usage():
+    print """Usage: git-import-dscs [git-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ..."""
+
+
+def main(argv):
+    dirs = {'top': os.path.abspath(os.curdir)}
+    dscs = []
+    ret = 0
+    dsc_cmp = DscCompareVersions()
+
+    try:
+        import_args = argv[1:]
+
+        for arg in argv[::-1]:
+            if arg.endswith('.dsc'):
+                dscs.append(parse_dsc(arg))
+                import_args.remove(arg)
+
+        if not dscs:
+            usage()
+            sys.exit(1)
+
+        dscs.sort(cmp=dsc_cmp)
+        importer = GitImportDsc(import_args)
+
+        try:
+            repo = GitRepository('.')
+            (clean, out) = repo.is_clean()
+            if not clean:
+                print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
+                raise GbpError, out
+            else:
+                dirs['pkg'] = dirs['top']
+        except GitRepositoryError:
+            # no git repository there yet
+            dirs['pkg'] = os.path.join(dirs['top'], dscs[0].pkg)
+
+        importer(dscs[0])
+        os.chdir(dirs['pkg'])
+
+        for dsc in dscs[1:]:
+            importer(dsc)
+
+    except (GbpError, gbpc.CommandExecFailed), err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
+        ret = 1
+    finally:
+        os.chdir(dirs['top'])
+
+    if not ret:
+        print 'Everything imported under %s' % dirs['pkg']
+    return ret
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

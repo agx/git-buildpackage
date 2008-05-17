@@ -29,6 +29,7 @@
     <title>Command Reference</title>
     &man.git.buildpackage;
     &man.git.importdsc;
+    &man.git.importdscs;
     &man.git.importorig;
     &man.git.dch;
   </appendix>
