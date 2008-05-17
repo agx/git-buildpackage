@@ -1,3 +1,14 @@
+git-buildpackage (0.4.29~1.gbpce152d) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @ce152d4078c0fc93845865cadda816c7c9ebabe4 **
+
+  * UNRELEASED
+  * [ce152d4] git-dch: include the commit id in the changelog entry
+  * [ad6ff99] git-dch: print default value of --meta
+  * [2c1c265] git-dch: avoid extra space before "(Closes: )"
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 16 May 2008 14:25:40 +0200
+
 git-buildpackage (0.4.28) unstable; urgency=low
 
   * git-buildpackage: add --git-dont-purge to leave the exported build dir

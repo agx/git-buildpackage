@@ -68,6 +68,17 @@ class DscFile(object):
         elif not self.tgz:
             raise GbpError, "Cannot parse archive name from %s" % self.dscfile
 
+    def _get_version(self):
+        if self.native:
+            return self.upstream_version
+        else:
+            return "%s-%s" % (self.upstream_version, self.debian_version)
+
+    version = property(_get_version)
+
+    def __str__(self):
+        return "<%s object %s>" % (self.__class__.__name__, self.dscfile)
+
 
 def parse_dsc(dscfile):
     """parse dsc by creating a DscFile object"""
