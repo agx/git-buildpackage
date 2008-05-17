@@ -1,13 +1,12 @@
-git-buildpackage (0.4.29~1.gbpce152d) UNRELEASED; urgency=low
+git-buildpackage (0.4.29) unstable; urgency=low
 
-  ** SNAPSHOT build @ce152d4078c0fc93845865cadda816c7c9ebabe4 **
-
-  * UNRELEASED
   * [ce152d4] git-dch: include the commit id in the changelog entry
   * [ad6ff99] git-dch: print default value of --meta
   * [2c1c265] git-dch: avoid extra space before "(Closes: )"
+  * [6ddf168] add git-import-dscs (Closes: #471580)
+  * [2cfbf05] move dsc handling into deb_utils
 
- -- Guido Guenther <agx@sigxcpu.org>  Fri, 16 May 2008 14:25:40 +0200
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 17 May 2008 22:01:49 +0200
 
 git-buildpackage (0.4.28) unstable; urgency=low
 
