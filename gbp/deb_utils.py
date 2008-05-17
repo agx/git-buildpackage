@@ -3,11 +3,12 @@
 # (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 """provides some debian source package related helpers"""
 
-import email
 import commands
+import email
 import os
-import sys
+import re
 import shutil
+import sys
 import command_wrappers as gbpc
 from errors import GbpError
 
@@ -22,6 +23,70 @@ class NoChangelogError(Exception):
 class ParseChangeLogError(Exception):
     """problem parsing changelog"""
     pass
+
+
+class DscFile(object):
+    """Keeps all needed data read from a dscfile"""
+    pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
+    version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
+    tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
+    diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
+
+    def __init__(self, dscfile):
+        self.pkg = ""
+        self.tgz = ""
+        self.diff = ""
+        self.dscfile = os.path.abspath(dscfile)
+        f = file(self.dscfile)
+        fromdir = os.path.dirname(os.path.abspath(dscfile))
+        for line in f:
+            m = self.version_re.match(line)
+            if m:
+                if '-' in m.group('version'):
+                    self.debian_version = m.group('version').split("-")[-1]
+                    self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
+                    self.native = False
+                else:
+                    self.native = True # Debian native package
+                    self.upstream_version = m.group('version')
+                continue
+            m = self.pkg_re.match(line)
+            if m:
+                self.pkg = m.group('pkg')
+                continue
+            m = self.tar_re.match(line)
+            if m:
+                self.tgz = os.path.join(fromdir, m.group('tar'))
+                continue
+            m = self.diff_re.match(line)
+            if m:
+                self.diff = os.path.join(fromdir, m.group('diff'))
+                continue
+        f.close()
+        if not self.pkg:
+            raise GbpError, "Cannot parse package name from %s" % self.dscfile
+        elif not self.tgz:
+            raise GbpError, "Cannot parse archive name from %s" % self.dscfile
+
+
+def parse_dsc(dscfile):
+    """parse dsc by creating a DscFile object"""
+    try:
+        dsc = DscFile(dscfile)
+    except IOError, err:
+        raise GbpError, "Error reading dsc file: %s" % err
+    else:
+        try:
+            if dsc.native:
+                print "Debian Native Package"
+                print "Version:", dsc.upstream_version
+            else:
+                print "Upstream version:", dsc.upstream_version
+                print "Debian version:", dsc.debian_version
+        except AttributeError:
+            raise GbpError, "Error parsing dsc file %s" % dscfile
+    return dsc
+
 
 def parse_changelog(changelog):
     """parse changelog file changelog"""
