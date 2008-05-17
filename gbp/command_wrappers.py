@@ -35,15 +35,24 @@ class Command(object):
         else:
             self.env = None
 
+    def __call(self, args):
+        """simply wraps subprocess.call so we can be verbose"""
+        if self.verbose:
+            print self.cmd, self.args, args
+        cmd = [ self.cmd ] + self.args + args
+        if self.shell: # subprocess.call only cares about the first argument if shell=True
+            cmd = " ".join(cmd)
+        return subprocess.call(cmd, shell=self.shell, env=self.env)
+
     def __run(self, args):
-        """run self.cmd adding args as additional arguments"""
+        """
+        run self.cmd adding args as additional arguments
+
+        be verbose about errors and encode them in the return value, don't pass
+        on exceptons 
+        """
         try:
-            if self.verbose:
-                print self.cmd, self.args, args
-            cmd = [ self.cmd ] + self.args + args
-            if self.shell: # subprocess.call only cares about the first argument if shell=True
-                cmd = " ".join(cmd)
-            retcode = subprocess.call(cmd, shell=self.shell, env=self.env)
+            retcode = self.__call(args)
             if retcode < 0:
                 print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
             elif retcode > 0:
@@ -56,8 +65,20 @@ class Command(object):
         return retcode
 
     def __call__(self, args=[]):
+        """run the command, convert all errors into CommandExecFailed, assumes
+        that the lower levels printed an error message - only usefull if you
+        only expect 0 as result"""
         if self.__run(args):
             raise CommandExecFailed
+
+    def call(self, args):
+        """like __call__ but don't use stderr and let the caller handle the return status"""
+        try:
+            ret = self.__call(args)
+        except OSError, e:
+            raise CommandExecFailed, "Execution failed:", e
+        return ret
+
 
 
 class RunAtCommand(Command):
@@ -132,7 +153,7 @@ class DpkgSourceExtract(Command):
     """
     def __init__(self):
         Command.__init__(self, 'dpkg-source', ['-x'])
-    
+
     def __call__(self, dsc, output_dir):
         self.run_error = 'Couldn\'t extract "%s"' % dsc
         Command.__call__(self, [dsc, output_dir])
