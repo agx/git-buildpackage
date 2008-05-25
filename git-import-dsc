@@ -47,7 +47,7 @@ def import_initial(src, dirs, options):
             gbpc.GitBranch()(options.upstream_branch)
             if options.pristine_tar:
                 gbpc.PristineTar().commit(os.path.join(dirs['top'], src.tgz),
-                                          options.upstream_branch)
+                                          'refs/heads/%s' % options.upstream_branch)
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Creation of git repository failed"
         return False

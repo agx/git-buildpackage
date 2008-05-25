@@ -203,7 +203,7 @@ on howto create it otherwise use --upstream-branch to specify it.
             if options.pristine_tar:
                 upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
                 if pristine_orig:
-                    gbpc.PristineTar().commit(pristine_orig, upstream_branch)
+                    gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
                 else:
                     print >>sys.stderr, "Warning: '%s' not an archive, skipping pristine-tar" % archive
             gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
