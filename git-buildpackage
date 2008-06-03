@@ -239,7 +239,7 @@ def main(argv):
         if not du.is_native(cp):
             # first look up if we have a tarball at tarball_dir
             if options.tarball_dir and not du.has_orig(cp, output_dir):
-                print "Lookig for orig tarball '%s' from '%s'" % (du.orig_file(cp), tarball_dir)
+                print "Looking for orig tarball '%s' from '%s'" % (du.orig_file(cp), tarball_dir)
                 if not du.copy_orig(cp, tarball_dir, output_dir):
                     print "Orig tarball '%s' not found at '%s'" % (du.orig_file(cp), tarball_dir)
                 else:
