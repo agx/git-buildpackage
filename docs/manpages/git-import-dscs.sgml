@@ -20,7 +20,7 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &git-import-dscs;
-      <arg><option>git-import-dsc ptions</option></arg>
+      <arg><option>git-import-dsc options</option></arg>
       <arg choice="plain"><replaceable>pkg_1.dsc</replaceable></arg>
       <arg choice="plain"><replaceable>pkg_2.dsc</replaceable></arg>
       <arg choice="plain"><replaceable>...</replaceable></arg>
