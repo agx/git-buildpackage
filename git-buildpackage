@@ -173,6 +173,8 @@ def main(argv):
                       help="export treeish object TREEISH, default is '%s'" % default_tree)
     parser.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
                       help="retain exported build directory after build")
+    parser.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
+                      help="don't build, only tag and run post-tag hooks")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
@@ -207,55 +209,59 @@ def main(argv):
         except du.ParseChangeLogError, err:
             raise GbpError, "Error parsing Changelog: %s" % err
 
-        output_dir = prepare_output_dir(options.export_dir)
-        if options.tarball_dir:
-            tarball_dir = options.tarball_dir
-        else:
-            tarball_dir = output_dir
+        if not options.tag_only:
 
-        # Export to another build dir if requested:
-        if options.export_dir:
-            # write a tree of the index if necessary:
-            if options.treeish == index_name:
-                tree = repo.write_tree()
+            output_dir = prepare_output_dir(options.export_dir)
+            if options.tarball_dir:
+                tarball_dir = options.tarball_dir
             else:
-                tree = options.treeish
-            if not repo.has_treeish(tree):
-                raise GbpError # git-ls-tree printed an error message already
-            tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
-            print "Exporting '%s' to '%s'" % (options.treeish, tmp_dir)
-            dump_tree(tmp_dir, tree)
-            cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
-            if du.is_native(cp):
-                version = cp['Debian-Version']
-            else:
-                version = cp['Upstream-Version']
-            export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], version))
-            print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
-            move_old_export(export_dir)
-            os.rename(tmp_dir, export_dir)
+                tarball_dir = output_dir
 
-        # Get/build the orig.tar.gz if necessary:
-        if not du.is_native(cp):
-            # first look up if we have a tarball at tarball_dir
-            if options.tarball_dir and not du.has_orig(cp, output_dir):
-                print "Looking for orig tarball '%s' from '%s'" % (du.orig_file(cp), tarball_dir)
-                if not du.copy_orig(cp, tarball_dir, output_dir):
-                    print "Orig tarball '%s' not found at '%s'" % (du.orig_file(cp), tarball_dir)
+            # Export to another build dir if requested:
+            if options.export_dir:
+                # write a tree of the index if necessary:
+                if options.treeish == index_name:
+                    tree = repo.write_tree()
                 else:
-                    print "Orig tarball '%s' found at '%s'" % (du.orig_file(cp), tarball_dir)
-            # build an orig unless the user forbidds it
-            if not options.no_create_orig and not du.has_orig(cp, output_dir):
-                if not pristine_tar_build_orig(repo, cp, output_dir, options):
-                    git_archive_build_orig(repo, cp, output_dir, options)
+                    tree = options.treeish
+                if not repo.has_treeish(tree):
+                    raise GbpError # git-ls-tree printed an error message already
+                tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
+                print "Exporting '%s' to '%s'" % (options.treeish, tmp_dir)
+                dump_tree(tmp_dir, tree)
+                cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
+                if du.is_native(cp):
+                    version = cp['Debian-Version']
+                else:
+                    version = cp['Upstream-Version']
+                export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], version))
+                print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
+                move_old_export(export_dir)
+                os.rename(tmp_dir, export_dir)
 
-        if options.export_dir:
-            build_dir = export_dir
-        else:
-            build_dir = repo_dir
+            # Get/build the orig.tar.gz if necessary:
+            if not du.is_native(cp):
+                # first look up if we have a tarball at tarball_dir
+                if options.tarball_dir and not du.has_orig(cp, output_dir):
+                    print "Looking for orig tarball '%s' from '%s'" % (du.orig_file(cp), tarball_dir)
+                    if not du.copy_orig(cp, tarball_dir, output_dir):
+                        print "Orig tarball '%s' not found at '%s'" % (du.orig_file(cp), tarball_dir)
+                    else:
+                        print "Orig tarball '%s' found at '%s'" % (du.orig_file(cp), tarball_dir)
+                # build an orig unless the user forbidds it
+                if not options.no_create_orig and not du.has_orig(cp, output_dir):
+                    if not pristine_tar_build_orig(repo, cp, output_dir, options):
+                        git_archive_build_orig(repo, cp, output_dir, options)
 
-        RunAtCommand(options.builder, dpkg_args, shell=True)(dir=build_dir)
-        if options.tag:
+            if options.export_dir:
+                build_dir = export_dir
+            else:
+                build_dir = repo_dir
+
+            # Finally build the package:
+            RunAtCommand(options.builder, dpkg_args, shell=True)(dir=build_dir)
+
+        if options.tag or options.tag_only:
             try:
                 version = cp['Version']
             except KeyError:

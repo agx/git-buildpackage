@@ -36,6 +36,7 @@
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-pristine-tar</option></arg>
       <arg><option>--git-dont-purge</option></arg>
+      <arg><option>--git-tag-only</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -210,6 +211,13 @@
         </term>
         <listitem>
 	  <para>retain exported build directory after build</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tag-only</option>
+        </term>
+        <listitem>
+	  <para>don't build, only tag and run post-tag hooks</para>
         </listitem>
       </varlistentry>
     </variablelist>
