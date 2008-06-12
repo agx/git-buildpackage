@@ -128,6 +128,14 @@ def is_native(cp):
     return [ True, False ]['-' in cp['Version']]
 
 
+def has_epoch(cp):
+    """does the topmost version number contain an epoch"""
+    try:
+        if cp['Epoch']:
+            return True
+    except KeyError:
+        return False
+
 def has_orig(cp, dir):
     "Check if orig.tar.gz exists in dir"
     try:
