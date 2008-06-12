@@ -25,7 +25,7 @@ import re
 import glob
 import subprocess
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError
+from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag, replace_source_tree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
@@ -220,7 +220,12 @@ on howto create it otherwise use --upstream-branch to specify it.
                 except gbpc.CommandExecFailed:
                     raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
                 if options.run_dch:
-                    gbpc.Dch("%s-1" % version, 'New Upstream Version')()
+                    epoch = ''
+                    if os.access('debian/changelog', os.R_OK):
+                        cp = parse_changelog('debian/changelog')
+                        if has_epoch(cp):
+                            epoch = '%s:' % cp['Epoch']
+                    gbpc.Dch("%s%s-1" % (epoch, version), 'New Upstream Version')()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpError, err:
