@@ -1,3 +1,12 @@
+git-buildpackage (0.4.31) unstable; urgency=low
+
+  * [bf8738f] add --git-tag-only (Closes: #485114)
+  * [b06bcf0] document git-import-dscs
+  * [c1deeb2] add epoch to dch call (Closes: #483718)
+  * [6640ac7] Fix typo (Closes: #484243)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 12 Jun 2008 16:53:45 +0200
+
 git-buildpackage (0.4.30) unstable; urgency=low
 
   * [cc9c42a] Try harder to find/build the upstream tarball (Closes:
