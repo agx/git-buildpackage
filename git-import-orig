@@ -126,7 +126,6 @@ def main(argv):
 
     gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian_branch)
     gitShowBranch = gbpc.GitShowBranch()
-    gitPullUpstream = gbpc.GitPull('.', options.upstream_branch)
 
     try:
         if len(args) != 1:
@@ -206,8 +205,8 @@ on howto create it otherwise use --upstream-branch to specify it.
                     gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
                 else:
                     print >>sys.stderr, "Warning: '%s' not an archive, skipping pristine-tar" % archive
-            gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
-                        msg="Upstream version %s" % version)
+            tag = build_tag(options.upstream_tag, version)
+            gbpc.GitTag(options.sign_tags, options.keyid)(tag, msg="Upstream version %s" % version)
 
             if is_empty:
                 gbpc.GitBranch()(options.upstream_branch)
@@ -216,7 +215,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 gitCheckoutMaster()
                 gitShowBranch()
                 try:
-                    gitPullUpstream()
+                    gbpc.GitMerge(tag)()
                 except gbpc.CommandExecFailed:
                     raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
                 if not options.no_dch:
