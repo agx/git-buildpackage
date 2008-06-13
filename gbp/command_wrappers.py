@@ -204,6 +204,14 @@ class GitPull(GitCommand):
         self.run_error = 'Couldn\'t pull "%s" to "%s"' % (branch, repo)
 
 
+class GitMerge(GitCommand):
+    """Wrap git merge"""
+    def __init__(self, branch, verbose=False):
+        verbose = [ ['--no-summary'], [] ][verbose]
+        GitCommand.__init__(self, 'merge', [branch] + verbose)
+        self.run_error = 'Couldn\'t merge from "%s"' % (branch,)
+
+
 class GitTag(GitCommand):
     """Wrap git tag"""
     def __init__(self, sign_tag=False, keyid=None):
