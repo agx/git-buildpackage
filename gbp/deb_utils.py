@@ -36,12 +36,13 @@ class DscFile(object):
         self.pkg = ""
         self.tgz = ""
         self.diff = ""
+        self.upstream_version = ""
         self.dscfile = os.path.abspath(dscfile)
         f = file(self.dscfile)
         fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
             m = self.version_re.match(line)
-            if m:
+            if m and not self.upstream_version:
                 if '-' in m.group('version'):
                     self.debian_version = m.group('version').split("-")[-1]
                     self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
