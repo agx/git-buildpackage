@@ -280,8 +280,9 @@ def main(argv):
             print >>sys.stderr, err
         retval = 1
 
-    if options.export_dir and options.purge and not retval:
-        RemoveTree(export_dir)()
+    if not options.tag_only:
+        if options.export_dir and options.purge and not retval:
+            RemoveTree(export_dir)()
 
     return retval
 
