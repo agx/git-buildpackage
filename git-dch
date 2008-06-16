@@ -40,9 +40,13 @@ def system(cmd):
         raise GbpError
 
 
+def escape_commit(msg):
+    return msg.replace('"','\\\"').replace("$","\$")
+
+
 def add_changelog_entry(msg, author, email):
     "add aa single changelog entry"
-    cmd = """DEBFULLNAME="%s" DEBEMAIL="%s" dch --no-auto-nmu --append -- "%s" """ % (author, email, msg.replace('"','\\\"'))
+    cmd = """DEBFULLNAME="%s" DEBEMAIL="%s" dch --no-auto-nmu --append -- "%s" """ % (author, email, escape_commit(msg))
     system(cmd)
 
 
