@@ -1,3 +1,14 @@
+git-buildpackage (0.4.32) unstable; urgency=low
+
+  * [217263e] Don't set the version number twice - makes sure git-import-dsc
+    doesn't use the Version: line from the message instead of the signature on
+    old PGP signatures (Closes: #486397)
+  * [063fab5] escape $s in commit messages so variable names like
+    $remote_fs don't get dropped silently. (Closes: #486447)
+  * [6008c37] don't try to cleanup in case of tag_only (Closes: #486398)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 16 Jun 2008 17:54:09 +0200
+
 git-buildpackage (0.4.31) unstable; urgency=low
 
   * [bf8738f] add --git-tag-only (Closes: #485114)
