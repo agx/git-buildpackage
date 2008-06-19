@@ -154,6 +154,10 @@
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>
+        <refentrytitle>git-import-dscs</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
         <refentrytitle>git-dch</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
