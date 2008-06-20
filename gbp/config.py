@@ -42,6 +42,7 @@ class GbpOptionParser(OptionParser):
                  'ignore-new'      : 'False',
                  'meta'            : 'False',
                  'id-length'       : '0',
+                 'no-dch'          : 'False',
              }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
