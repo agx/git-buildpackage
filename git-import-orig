@@ -53,7 +53,7 @@ def symlink_orig(archive, pkg, version):
         try:
             os.symlink(os.path.abspath(archive), dst)
         except OSError, err:
-            raise GbpError, err
+            raise GbpError, "Cannot symlink '%s' to '%s': %s" % (archive, dst, err[1])
         return dst
     else:
         return archive
