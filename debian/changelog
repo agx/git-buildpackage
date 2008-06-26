@@ -1,3 +1,19 @@
+git-buildpackage (0.4.33) unstable; urgency=low
+
+  [ Adeodato Simó ]
+  * [35c92a4] git-import-orig: merge upstream by tag name instead of by
+    branch name.
+  * [f1ca044] command_wrappers.py: add a GitMerge wrapper class.
+
+  [ Guido Guenther ]
+  * [9bbd5d2] make symlink_orig's error message more helpful
+  * [26c0310] make no-dch configurable via gbp.conf
+  * [e6ce2df] bump standards version
+  * [45b060e] mention git-import-dscs
+  * [721068a] add "meta" to sample config file
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 26 Jun 2008 16:47:55 +0200
+
 git-buildpackage (0.4.32) unstable; urgency=low
 
   * [217263e] Don't set the version number twice - makes sure git-import-dsc
