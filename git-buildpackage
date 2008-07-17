@@ -164,7 +164,7 @@ def main(argv):
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
                       help="format string for upstream tags, default is '%(upstream-tag)s'")
     parser.add_config_file_option(option_name="export-dir", dest="export_dir",
-                      help="before building export into EXPORT_DIR")
+                      help="before building export source into EXPORT_DIR, default is '%(export-dir)s'")
     parser.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
                       help="location to look for external tarballs")
     parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
