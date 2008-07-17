@@ -251,7 +251,10 @@ def main(argv):
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
-        parser.error("--snapshot and --release are incompatible options")
+        parser.error("'--snapshot' and '--release' are incompatible options")
+
+    if options.since and options.auto:
+        parser.error("'--since' and '--auto' are incompatible options")
 
     try:
         if options.verbose:
