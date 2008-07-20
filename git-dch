@@ -41,7 +41,7 @@ def system(cmd):
 
 
 def escape_commit(msg):
-    return msg.replace('"','\\\"').replace("$","\$")
+    return msg.replace('"','\\\"').replace("$","\$").replace("`","\`")
 
 
 def add_changelog_entry(msg, author, email):
