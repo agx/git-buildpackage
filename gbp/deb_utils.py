@@ -145,18 +145,28 @@ def has_orig(cp, dir):
         return False
     return True
 
-def copy_orig(cp, orig_dir, output_dir):
-    """copy orig.tar.gz from orig_dir to output_dir"""
+def symlink_orig(cp, orig_dir, output_dir, force=False):
+    """
+    symlink orig.tar.gz from orig_dir to output_dir
+    @return: True if link was created or src == dst
+             False in case of errror or src doesn't exist
+    """
     orig_dir = os.path.abspath(orig_dir)
     output_dir = os.path.abspath(output_dir)
 
     if orig_dir == output_dir:
         return True
 
+    src = os.path.join(orig_dir, orig_file(cp))
+    dst = os.path.join(output_dir, orig_file(cp))
+    if not os.access(src, os.F_OK):
+        return False
     try:
-        shutil.copyfile(os.path.join(orig_dir, orig_file(cp)),
-            os.path.join(output_dir, orig_file(cp)))
-    except IOError:
+        if os.access(dst, os.F_OK) and force:
+            os.unlink(dst)
+        print src, dst
+        os.symlink(src, dst)
+    except OSError:
         return False
     return True
 
