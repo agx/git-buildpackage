@@ -288,7 +288,7 @@ def main(argv):
 
         if args:
             print "Only looking for changes on '%s'" % " ".join(args)
-        commits = repo.commits(since, until, " ".join(args), options.git_log)
+        commits = repo.commits(since, until, " ".join(args), options.git_log.split(" "))
         if commits:
             if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
