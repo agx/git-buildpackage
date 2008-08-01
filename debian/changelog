@@ -1,3 +1,9 @@
+git-buildpackage (0.4.35) unstable; urgency=low
+
+  * [e012d8b] add epoch parsing to DscFile (Closes: #493214)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 01 Aug 2008 19:32:01 +0200
+
 git-buildpackage (0.4.34) unstable; urgency=low
 
   * [4ac0aa8] git-buildpackage: always symlink orig.tar.gz from tarball dir
