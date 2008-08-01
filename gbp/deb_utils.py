@@ -28,7 +28,7 @@ class ParseChangeLogError(Exception):
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
     pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
-    version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
+    version_re = re.compile("Version:\s((?P<epoch>\d+)\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
     tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
     diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
 
@@ -50,6 +50,10 @@ class DscFile(object):
                 else:
                     self.native = True # Debian native package
                     self.upstream_version = m.group('version')
+                if m.group('epoch'):
+                    self.epoch = m.group('epoch')
+                else:
+                    self.epoch = ""
                 continue
             m = self.pkg_re.match(line)
             if m:
@@ -70,10 +74,12 @@ class DscFile(object):
             raise GbpError, "Cannot parse archive name from %s" % self.dscfile
 
     def _get_version(self):
+        version = [ "", self.epoch + ":" ][len(self.epoch) > 0]
         if self.native:
-            return self.upstream_version
+            version += self.upstream_version
         else:
-            return "%s-%s" % (self.upstream_version, self.debian_version)
+            version += "%s-%s" % (self.upstream_version, self.debian_version)
+        return version
 
     version = property(_get_version)
 
@@ -95,6 +101,8 @@ def parse_dsc(dscfile):
             else:
                 print "Upstream version:", dsc.upstream_version
                 print "Debian version:", dsc.debian_version
+            if dsc.epoch:
+                print "Epoch: %s" % dsc.epoch
         except AttributeError:
             raise GbpError, "Error parsing dsc file %s" % dscfile
     return dsc
