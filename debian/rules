@@ -7,7 +7,7 @@ DEB_PYTHON_CLEAN_ARGS = --all
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
-COMMANDS=git-buildpackage git-import-dsc git-import-dscs git-import-orig git-dch
+COMMANDS=git-buildpackage git-import-dsc git-import-orig git-dch
 MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 MANUAL=docs/manual-html
 PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
