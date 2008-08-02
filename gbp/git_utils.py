@@ -96,9 +96,9 @@ class GitRepository(object):
 
     def commits(self, start, end, paths, options):
         """get commits from start to end touching pathds"""
-        commits, ret = self.__git_getoutput('log', ['--pretty=format:%H',
-                                            options, '%s..%s' % (start, end),
-                                            '--', paths])
+        commits, ret = self.__git_getoutput('log',
+                                            ['--pretty=format:%H'] + options +
+                                            ['%s..%s' % (start, end), '--', paths])
         if ret:
             raise GitRepositoryError, "Error getting commits %s..%s%s" % (start, end, ["", " on %s" % paths][len(paths) > 0] )
         return [ commit.strip() for commit in commits ]

@@ -1,3 +1,16 @@
+git-buildpackage (0.4.34) unstable; urgency=low
+
+  * [4ac0aa8] git-buildpackage: always symlink orig.tar.gz from tarball dir
+    (Closes: 490706)
+  * [fb94fea] git-buildpackage: print default export-dir on --help
+  * [ffeb40e] git-dch: escape backticks (`) (Closes: 491104)
+  * [4e398cc] git-dch: --auto and --since are incompatible
+  * [3537f24] git-dch: use option groups
+  * [18d8405] git-dch: split git-log options into a list (Closes: #479267)
+  * [044083f] docs: readd list import line (Closes: #488120)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 22 Jul 2008 00:29:49 -0230
+
 git-buildpackage (0.4.33~bpo40+1) etch-backports; urgency=low
 
   * Rebuild for etch-backports.

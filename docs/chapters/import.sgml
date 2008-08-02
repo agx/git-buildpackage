@@ -5,6 +5,7 @@
     <title>Importing already existing &debian; packages</title>
     <para>Importing an already exsting debian package into a git repository is as easy as:
     <screen>
+&git-import-dsc; package_0.1-1.dsc
     </screen>
     This will create a new git repository named after the imported package, put
     the upstream sources onto the <option>upstream-branch</option> and the
