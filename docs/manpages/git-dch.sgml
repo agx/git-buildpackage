@@ -144,6 +144,15 @@
           <para>options passed on verbatim to git-log(1)</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--id-length=</option><replaceable>N</replaceable>
+        </term>
+        <listitem>
+	  <para>include <replaceable>N</replaceable> digits of the commit id in
+	  the changelog enty. Default is to not include any commit ids at
+	  all.</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
@@ -152,7 +161,25 @@
   <refsect1>
     <title>SEE ALSO</title>
 
-    <para>git-buildpackage (1), git-import-dsc (1), git-import-orig (1), git (1), git_load_dirs (1)</para>
+    <para>
+      <citerefentry>
+        <refentrytitle>git-buildpackage</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-dsc</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-dscs</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-orig</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      &man.seealso.common;
+    </para>
 
   </refsect1>
   <refsect1>

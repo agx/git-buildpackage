@@ -27,9 +27,9 @@ class GbpOptionParser(OptionParser):
                  'cleaner'         : 'debuild clean',
                  'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
-                 'pristine-tar'    : '',      # empty means False
-                 'sign-tags'       : '',      # empty means False
-                 'no-create-orig'  : '',      # empty means False
+                 'pristine-tar'    : 'False',
+                 'sign-tags'       : 'False',
+                 'no-create-orig'  : 'False',
                  'keyid'           : '',
                  'posttag'         : '',
                  'debian-tag'      : 'debian/%(version)s',
@@ -39,6 +39,10 @@ class GbpOptionParser(OptionParser):
                  'git-log'         : '--no-merges',
                  'export-dir'      : '',
                  'tarball-dir'     : '',
+                 'ignore-new'      : 'False',
+                 'meta'            : 'False',
+                 'id-length'       : '0',
+                 'no-dch'          : 'False',
              }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
@@ -77,8 +81,15 @@ class GbpOptionParser(OptionParser):
         @var help: help text
         @type help: string
         """
+        default = self.config[option_name]
+        if kwargs.has_key('action'):
+            if kwargs['action'] in [ 'store_true', 'store_false'] and self.config[option_name]:
+                    if self.config[option_name] in  [ 'True', 'False' ]:
+                        default = eval(self.config[option_name])
+                    else:
+                        raise ValueError, "Boolean options must be True or False"
         OptionParser.add_option(self,"--%s%s" % (self.prefix, option_name), dest=dest,
-                                default=self.config[option_name],
+                                default=default,
                                 help=help % self.config, **kwargs)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

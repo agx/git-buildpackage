@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007,2008 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -30,7 +30,8 @@ from gbp.errors import GbpError
 from gbp.deb_utils import parse_changelog
 from gbp.command_wrappers import (Command, CommandExecFailed)
 
-snapshot_re = "\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*"
+snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
+author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
 
 def system(cmd):
     try:
@@ -39,16 +40,21 @@ def system(cmd):
         raise GbpError
 
 
-def add_changelog_entry(msg, author):
+def escape_commit(msg):
+    return msg.replace('"','\\\"').replace("$","\$")
+
+
+def add_changelog_entry(msg, author, email):
     "add aa single changelog entry"
-    cmd = """DEBFULLNAME="%s" dch --append -- "%s" """ % (author, msg.replace('"','\\\"'))
+    cmd = """DEBFULLNAME="%s" DEBEMAIL="%s" dch --no-auto-nmu --append -- "%s" """ % (author, email, escape_commit(msg))
     system(cmd)
 
 
 def add_changelog_section(msg, distribution):
     "add a new changelog section"
-    cmd = "dch --distribution=%s -i %s" % (distribution, msg)
+    cmd = "dch --no-auto-nmu --distribution=%s -i %s" % (distribution, msg)
     system(cmd)
+
 
 def fixup_trailer():
     """fixup the changelog trailer's comitter and email address - it might
@@ -56,6 +62,7 @@ def fixup_trailer():
     the changelog"""
     cmd = "dch \"\""
     system(cmd)
+
 
 def head_commit():
     """get the full sha1 of the last commit on HEAD"""
@@ -93,7 +100,7 @@ def mangle_changelog(changelog, cp, snapshot, sha='unknown'):
         print >>cw, "%(Source)s (%(MangledVersion)s) %(Distribution)s; urgency=%(urgency)s\n" % cp
 
         line = cr.readline()
-        if re.match(snapshot_re, line):
+        if snapshot_re.match(line):
             cr.readline() # consume the empty line
             line = ''
 
@@ -139,21 +146,26 @@ def do_snapshot(changelog, next_snapshot):
     return snapshot, commit
 
 
-def parse_commit(repo, commit,meta, short):
+def get_author(commit):
+    """get the author from a commit message"""
+    for line in commit:
+        m = author_re.match(line)
+        if m:
+            return m.group('author'), m.group('email')
+
+
+def parse_commit(repo, commitid, options):
     """parse a commit and return message and author"""
-    author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
     msg = ''
     thanks = ''
     closes = ''
     bugs = []
 
-    commit = repo.show(commit)
-    m = author_re.match(commit[1])
-    if not m:
+    commit = repo.show(commitid)
+    author, email = get_author(commit)
+    if not author:
         raise GbpError, "can't parse author of commit %s" % commit
-    else:
-        author = m.group('author')
-    for line in commit[4:]:
+    for line in commit:
         if line.startswith('    '): # commit body
             line = line[4:]
             if line.startswith('Closes: '):
@@ -161,30 +173,31 @@ def parse_commit(repo, commit,meta, short):
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
             else: # normal commit message
-                if short and msg:
+                if options.short and msg:
                     continue
                 elif line.strip(): # don't add all whitespace lines
                     msg += line
-        else:
+        # start of diff output:
+        elif line.startswith('diff '):
             break
-    if meta:
+    if options.meta:
         if bugs:
-            closes = ' (Closes: %s)' % ', '.join(bugs)
+            closes = '(Closes: %s)' % ', '.join(bugs)
         if thanks:
             thanks = ' - thanks to %s' % thanks
         msg += closes + thanks
-    return msg, author
+    if options.idlen:
+        msg = "[%s] " % commitid[0:options.idlen] + msg
+    return msg, (author, email)
 
 
-def shortlog_to_dch(repo, commits, meta, short):
+def shortlog_to_dch(repo, commits, options):
     """convert the changes in git shortlog format to debian changelog format"""
-    commit_re = re.compile('\s+(?P<msg>.*)')
-    author_re = re.compile('(?P<author>.*) \([0-9]+\)')
     author = 'Unknown'
 
     for commit in commits:
-        msg, author = parse_commit(repo, commit, meta, short)
-        add_changelog_entry(msg, author)
+        msg, (author, email) = parse_commit(repo, commit, options)
+        add_changelog_entry(msg, author, email)
 
 
 def guess_snapshot_commit(cp):
@@ -220,10 +233,13 @@ def main(argv):
                       help="mark as snapshot build")
     parser.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
-    parser.add_option("--meta", action="store_true", dest="meta", default=False,
-                      help="parse meta tags in commit messages")
+    parser.add_config_file_option(option_name="meta", dest="meta",
+                      help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
     parser.add_option("--full", action="store_false", dest="short", default=True,
                       help="include the full commit message")
+    parser.add_config_file_option(option_name="id-length", dest="idlen",
+                      help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
+                      type="int", metavar="N")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
@@ -265,7 +281,7 @@ def main(argv):
         if commits:
             if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
-            shortlog_to_dch(repo, commits, meta=options.meta, short=options.short)
+            shortlog_to_dch(repo, commits, options)
             fixup_trailer()
             if options.snapshot:
                 (snap, version) = do_snapshot(changelog, options.snapshot_number)
@@ -275,7 +291,7 @@ def main(argv):
         if options.release:
             do_release(changelog, cp)
 
-    except GbpError, err:
+    except (GbpError, GitRepositoryError), err:
         if len(err.__str__()):
             print >>sys.stderr, err
         ret = 1

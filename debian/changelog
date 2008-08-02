@@ -1,3 +1,133 @@
+git-buildpackage (0.4.33) unstable; urgency=low
+
+  [ Adeodato Simó ]
+  * [35c92a4] git-import-orig: merge upstream by tag name instead of by
+    branch name.
+  * [f1ca044] command_wrappers.py: add a GitMerge wrapper class.
+
+  [ Guido Guenther ]
+  * [9bbd5d2] make symlink_orig's error message more helpful
+  * [26c0310] make no-dch configurable via gbp.conf
+  * [e6ce2df] bump standards version
+  * [45b060e] mention git-import-dscs
+  * [721068a] add "meta" to sample config file
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 26 Jun 2008 16:47:55 +0200
+
+git-buildpackage (0.4.32) unstable; urgency=low
+
+  * [217263e] Don't set the version number twice - makes sure git-import-dsc
+    doesn't use the Version: line from the message instead of the signature on
+    old PGP signatures (Closes: #486397)
+  * [063fab5] escape $s in commit messages so variable names like
+    $remote_fs don't get dropped silently. (Closes: #486447)
+  * [6008c37] don't try to cleanup in case of tag_only (Closes: #486398)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 16 Jun 2008 17:54:09 +0200
+
+git-buildpackage (0.4.31) unstable; urgency=low
+
+  * [bf8738f] add --git-tag-only (Closes: #485114)
+  * [b06bcf0] document git-import-dscs
+  * [c1deeb2] add epoch to dch call (Closes: #483718)
+  * [6640ac7] Fix typo (Closes: #484243)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 12 Jun 2008 16:53:45 +0200
+
+git-buildpackage (0.4.30) unstable; urgency=low
+
+  * [cc9c42a] Try harder to find/build the upstream tarball (Closes:
+    #482786)
+  * [e6dd31e] Help pristine-tar to find the branch name (Closes:
+    #481806)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 29 May 2008 13:24:51 +0200
+
+git-buildpackage (0.4.29) unstable; urgency=low
+
+  * [ce152d4] git-dch: include the commit id in the changelog entry
+  * [ad6ff99] git-dch: print default value of --meta
+  * [2c1c265] git-dch: avoid extra space before "(Closes: )"
+  * [6ddf168] add git-import-dscs (Closes: #471580)
+  * [2cfbf05] move dsc handling into deb_utils
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 17 May 2008 22:01:49 +0200
+
+git-buildpackage (0.4.28) unstable; urgency=low
+
+  * git-buildpackage: add --git-dont-purge to leave the exported build dir
+    intact (Closes: #479848) - thanks to Kurt B. Kaiser for the patch
+  * git-dch: make --meta a config file option
+  * git-import-orig: fix symlink creation
+  * docs: missing EOF (Closes: #479726) - thanks to Sedat Dilek
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 12 May 2008 18:03:47 +0200
+
+git-buildpackage (0.4.27) unstable; urgency=low
+
+  * make author parsing more robust  (Closes: #479263)
+  * fix --git-export  (Closes: #479147)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sun, 04 May 2008 16:43:43 +0200
+
+git-buildpackage (0.4.26) unstable; urgency=low
+
+  * git-export=INDEX exports the index into git-export-dir
+    (Closes: #471568)
+  * make ignore-new a config file option  (Closes: #466900)
+  * build-depend on python-dateutil  (Closes: #477959)
+  * git-dch:
+      * use --no-auto-nmu
+      * error handling fixes
+  * depend on devscripts that has dch --no-auto-nmu
+  * gbp/config.py: make boolean options parsing more robust
+  * add a link to the online version of the manual
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 28 Apr 2008 16:36:44 +0200
+
+git-buildpackage (0.4.25) unstable; urgency=low
+
+  * create a symlink archive -> <package>_<version>.orig.tar.gz this makes
+    sure pristine_tar uses the correct filename for the orig.tar.gz.  (Closes:
+    #475316)
+  * fix unpack_orig error reporting by adding the missing imports
+  * fix "pristine-tar missing" error message
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 18 Apr 2008 11:33:46 +0200
+
+git-buildpackage (0.4.24) unstable; urgency=low
+
+  [ Adeodato Simó ]
+  * Make commits from git-import-dsc get author and date from
+    debian/changelog.
+
+  [ Guido Guenther ]
+  * add rfc822_date_to_git() this function converts a date in RFC822
+    format to a string 'seconds_since_epoch tz' that can be used for eg.
+    GIT_AUTHOR_DATE.
+  * better handle broken dsc files
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 14 Apr 2008 14:39:37 +0200
+
+git-buildpackage (0.4.23) unstable; urgency=low
+
+  [ Frank S. Thomas ]
+  * docs/manpages/*.sgml: Use the citerefentry for references to other
+    manpages.
+  * Do not list the --upstream-version option twice in the synopsis
+    section of git-import-orig's manpage. (Closes: #472496)
+
+  [ Guido Guenther ]
+  * don't pass nonexisting branches to pristine-tar (Closes: #475554)
+  * doc cleanups (Closes: 473610):
+  	* mention the html manual in the manpages
+  	* reference pristine-tar
+  	* filter uses glob
+  	* move conffiles section into separate sgml file
+  * fix doc-base section
+
+ -- Guido Guenther <agx@sigxcpu.org>  Fri, 11 Apr 2008 19:18:08 +0200
+
 git-buildpackage (0.4.22~bpo40+1) etch-backports; urgency=low
 
   * Rebuild for etch-backports.
@@ -581,4 +711,3 @@ git-buildpackage (0.01) unstable; urgency=low
   * Initial release
 
  -- Guido Guenther <agx@sigxcpu.org>  Tue, 12 Sep 2006 14:55:57 +0200
-

@@ -23,69 +23,12 @@ import os
 import tempfile
 import glob
 import pipes
+from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import debian_version_chars, unpack_orig
-from gbp.git_utils import build_tag, GitRepository, GitRepositoryError, replace_source_tree
+from gbp.deb_utils import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile
+from gbp.git_utils import build_tag, GitRepository, GitRepositoryError, replace_source_tree, rfc822_date_to_git
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
-
-
-class DscFile(object):
-    """Keeps all needed data read from a dscfile"""
-    pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
-    version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
-    tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
-    diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
-
-    def __init__(self, dscfile):
-        self.dscfile = os.path.abspath(dscfile)
-        f = file(self.dscfile)
-        fromdir = os.path.dirname(os.path.abspath(dscfile))
-        for line in f:
-            m = self.version_re.match(line)
-            if m:
-                if '-' in m.group('version'):
-                    self.debian_version = m.group('version').split("-")[-1]
-                    self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
-                    self.native = False
-                else:
-                    self.native = True # Debian native package
-                    self.upstream_version = m.group('version')
-                continue
-            m = self.pkg_re.match(line)
-            if m:
-                self.pkg = m.group('pkg')
-                continue
-            m = self.tar_re.match(line)
-            if m:
-                self.tgz = os.path.join(fromdir, m.group('tar'))
-                continue
-            m = self.diff_re.match(line)
-            if m:
-                self.diff = os.path.join(fromdir, m.group('diff'))
-                continue
-        f.close()
-
-
-def parse_dsc(dscfile):
-    """parse dsc by creating a DscFile object"""
-    try:
-        dsc = DscFile(dscfile)
-    except IOError, err:
-        print >>sys.stderr, "Error reading dsc file: %s" % err
-        dsc = None
-    else:
-        try:
-            if dsc.native:
-                print "Debian Native Package"
-                print "Version:", dsc.upstream_version
-            else:
-                print "Upstream version:", dsc.upstream_version
-                print "Debian version:", dsc.debian_version
-        except AttributeError:
-            print >>sys.stderr, "Error parsing dsc file %s" % dscfile 
-            dsc = None
-    return dsc
 
 
 def import_initial(src, dirs, options):
@@ -104,7 +47,7 @@ def import_initial(src, dirs, options):
             gbpc.GitBranch()(options.upstream_branch)
             if options.pristine_tar:
                 gbpc.PristineTar().commit(os.path.join(dirs['top'], src.tgz),
-                                          options.upstream_branch)
+                                          'refs/heads/%s' % options.upstream_branch)
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Creation of git repository failed"
         return False
@@ -134,11 +77,18 @@ def apply_debian_patch(src, dirs, options):
     try:
         os.chdir(dirs['git'])
         repo = GitRepository('.')
-        if src.__dict__.has_key('diff') and not git_apply_patch(src.diff):
+        if src.diff and not git_apply_patch(src.diff):
             raise GbpError
         os.chmod('debian/rules', 0755)
         if not repo.is_clean()[0]:
-            gbpc.GitCommitAll()(msg="Imported Debian patch %s" % version)
+            dch = parse_changelog('debian/changelog')
+            name, addr = parseaddr(dch['Maintainer'])
+            env = {
+                'GIT_AUTHOR_NAME': name,
+                'GIT_AUTHOR_EMAIL': addr,
+                'GIT_AUTHOR_DATE': rfc822_date_to_git(dch['Date']),
+            }
+            gbpc.GitCommitAll(extra_env=env)(msg="Imported Debian patch %s" % version)
         else:
             print "Nothing to commit, nothing imported."
         gitTag(build_tag(options.debian_tag, version),
@@ -210,8 +160,6 @@ def main(argv):
             raise GbpError
         else:
             src = parse_dsc(args[0])
-            if not src:
-                raise GbpError
 
             try:
                 repo = GitRepository('.')

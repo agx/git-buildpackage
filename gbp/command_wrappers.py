@@ -8,6 +8,7 @@ git-buildpackage and friends
 
 import subprocess
 import sys
+import os
 import os.path
 from errors import GbpError
 
@@ -23,21 +24,35 @@ class Command(object):
     """
     verbose = False
 
-    def __init__(self, cmd, args=[], shell=False):
+    def __init__(self, cmd, args=[], shell=False, extra_env=None):
         self.cmd = cmd
         self.args = args
         self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] + self.args))
         self.shell = shell
+        if extra_env is not None:
+            self.env = os.environ.copy()
+            self.env.update(extra_env)
+        else:
+            self.env = None
+
+    def __call(self, args):
+        """simply wraps subprocess.call so we can be verbose"""
+        if self.verbose:
+            print self.cmd, self.args, args
+        cmd = [ self.cmd ] + self.args + args
+        if self.shell: # subprocess.call only cares about the first argument if shell=True
+            cmd = " ".join(cmd)
+        return subprocess.call(cmd, shell=self.shell, env=self.env)
 
     def __run(self, args):
-        """run self.cmd adding args as additional arguments"""
+        """
+        run self.cmd adding args as additional arguments
+
+        be verbose about errors and encode them in the return value, don't pass
+        on exceptons 
+        """
         try:
-            if self.verbose:
-                print self.cmd, self.args, args
-            cmd = [ self.cmd ] + self.args + args
-            if self.shell: # subprocess.call only cares about the first argument if shell=True
-                cmd = " ".join(cmd)
-            retcode = subprocess.call(cmd, shell=self.shell)
+            retcode = self.__call(args)
             if retcode < 0:
                 print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
             elif retcode > 0:
@@ -50,8 +65,20 @@ class Command(object):
         return retcode
 
     def __call__(self, args=[]):
+        """run the command, convert all errors into CommandExecFailed, assumes
+        that the lower levels printed an error message - only usefull if you
+        only expect 0 as result"""
         if self.__run(args):
             raise CommandExecFailed
+
+    def call(self, args):
+        """like __call__ but don't use stderr and let the caller handle the return status"""
+        try:
+            ret = self.__call(args)
+        except OSError, e:
+            raise CommandExecFailed, "Execution failed:", e
+        return ret
+
 
 
 class RunAtCommand(Command):
@@ -73,7 +100,7 @@ class PristineTar(Command):
 
     def __init__(self):
         if not os.access(self.cmd, os.X_OK):
-            raise GbpError, "%s not found - cannot use pristine-tar"
+            raise GbpError, "%s not found - cannot use pristine-tar" % self.cmd
         Command.__init__(self, self.cmd)
 
     def commit(self, archive, branch):
@@ -126,7 +153,7 @@ class DpkgSourceExtract(Command):
     """
     def __init__(self):
         Command.__init__(self, 'dpkg-source', ['-x'])
-    
+
     def __call__(self, dsc, output_dir):
         self.run_error = 'Couldn\'t extract "%s"' % dsc
         Command.__call__(self, [dsc, output_dir])
@@ -134,8 +161,8 @@ class DpkgSourceExtract(Command):
 
 class GitCommand(Command):
     "Mother/Father of all git commands"
-    def __init__(self, cmd, args=[]):
-        Command.__init__(self, 'git', [cmd] + args)
+    def __init__(self, cmd, args=[], **kwargs):
+        Command.__init__(self, 'git', [cmd] + args, **kwargs)
 
 
 class GitInitDB(GitCommand):
@@ -177,6 +204,14 @@ class GitPull(GitCommand):
         self.run_error = 'Couldn\'t pull "%s" to "%s"' % (branch, repo)
 
 
+class GitMerge(GitCommand):
+    """Wrap git merge"""
+    def __init__(self, branch, verbose=False):
+        verbose = [ ['--no-summary'], [] ][verbose]
+        GitCommand.__init__(self, 'merge', [branch] + verbose)
+        self.run_error = 'Couldn\'t merge from "%s"' % (branch,)
+
+
 class GitTag(GitCommand):
     """Wrap git tag"""
     def __init__(self, sign_tag=False, keyid=None):
@@ -213,9 +248,9 @@ class GitRm(GitCommand):
 
 class GitCommitAll(GitCommand):
     """Wrap git commit to commit all changes"""
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, **kwargs):
         args = ['-a'] + [ ['-q'], [] ][verbose]
-        GitCommand.__init__(self, cmd='commit', args=args)
+        GitCommand.__init__(self, cmd='commit', args=args, **kwargs)
 
     def __call__(self, msg=''):
         args = [ [], ['-m', msg] ][len(msg) > 0]
@@ -245,4 +280,12 @@ def copy_from(orig_dir, filters=[]):
         raise GbpError, "Cannot copy files, pipe failed."
     return [ os.path.normpath(f) for f in files if files ]
 
-# vim:et:ts=4:sw=4:
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == '__main__':
+    _test()
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

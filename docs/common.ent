@@ -6,6 +6,7 @@
   <!ENTITY git-buildpackage 	"<command>git-buildpackage</command>">
   <!ENTITY git-import-orig	"<command>git-import-orig</command>">
   <!ENTITY git-import-dsc	"<command>git-import-dsc</command>">
+  <!ENTITY git-import-dscs	"<command>git-import-dscs</command>">
   <!ENTITY git-dch		"<command>git-dch</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">

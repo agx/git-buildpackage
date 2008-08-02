@@ -1,0 +1,79 @@
+<refentry id="gbp.man.git.import.dscs">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>git-import-dscs</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&git-import-dscs;</refname>
+
+    <refpurpose>Import multiple versions of a Debian source packages into a Git repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &git-import-dscs;
+      <arg><option>git-import-dsc options</option></arg>
+      <arg choice="plain"><replaceable>pkg_1.dsc</replaceable></arg>
+      <arg choice="plain"><replaceable>pkg_2.dsc</replaceable></arg>
+      <arg choice="plain"><replaceable>...</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &git-import-dscs; imports several versions of a Debian source package into
+    a &git; repository. To do so it sorts the packages by their versions first
+    and then imports them via calling &git-import-dsc; on each package. 
+    </para> 
+
+    <para>
+    If the current directory isn't a &git; repository already the repository is
+    created in a subdir of the current working directory, named after the first
+    imported package, otherwise the &git; repository in the current working
+    directory is being used. This allows for incremental imports.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <para>
+    All options are passed on verbatim to &git-import-dsc;.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+      <citerefentry>
+        <refentrytitle>git-import-dsc</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-buildpackage</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-orig</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-dch</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      &man.seealso.common;
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>

@@ -5,7 +5,6 @@
     <title>Importing already existing &debian; packages</title>
     <para>Importing an already exsting debian package into a git repository is as easy as:
     <screen>
-&git-import-dsc; package_0.1-1.dsc
     </screen>
     This will create a new git repository named after the imported package, put
     the upstream sources onto the <option>upstream-branch</option> and the
@@ -25,6 +24,14 @@ cd package/
 &git-import-dsc; package_0.1-3.dsc
 &git-import-dsc; package_0.2-1.dsc
     </screen>
+    </para>
+    <para>
+Or you can import all versions at once using &git-import-dscs;:
+    <screen>
+&git-import-dscs; /path/to/history/package_*.dsc
+    </screen>
+This will create a &git; repository if necessary and import all versions sorted
+by version number.
     </para>
     </sect1>
 
@@ -82,6 +89,7 @@ cd package/
 [DEFAULT]
 # this is the upstream-branch:
 upstream-branch=theupstream-branch
+EOF
     </screen>
     If you then use &git-import-orig; to import new upstream sources, they will
     from now on end up on <emphasis>theupstream-branch</emphasis> and

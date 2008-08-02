@@ -3,11 +3,14 @@
 # (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
 """provides some debian source package related helpers"""
 
-import email
 import commands
+import email
 import os
+import re
 import shutil
+import sys
 import command_wrappers as gbpc
+from errors import GbpError
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
@@ -20,6 +23,82 @@ class NoChangelogError(Exception):
 class ParseChangeLogError(Exception):
     """problem parsing changelog"""
     pass
+
+
+class DscFile(object):
+    """Keeps all needed data read from a dscfile"""
+    pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
+    version_re = re.compile("Version:\s(\d+\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
+    tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
+    diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
+
+    def __init__(self, dscfile):
+        self.pkg = ""
+        self.tgz = ""
+        self.diff = ""
+        self.upstream_version = ""
+        self.dscfile = os.path.abspath(dscfile)
+        f = file(self.dscfile)
+        fromdir = os.path.dirname(os.path.abspath(dscfile))
+        for line in f:
+            m = self.version_re.match(line)
+            if m and not self.upstream_version:
+                if '-' in m.group('version'):
+                    self.debian_version = m.group('version').split("-")[-1]
+                    self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
+                    self.native = False
+                else:
+                    self.native = True # Debian native package
+                    self.upstream_version = m.group('version')
+                continue
+            m = self.pkg_re.match(line)
+            if m:
+                self.pkg = m.group('pkg')
+                continue
+            m = self.tar_re.match(line)
+            if m:
+                self.tgz = os.path.join(fromdir, m.group('tar'))
+                continue
+            m = self.diff_re.match(line)
+            if m:
+                self.diff = os.path.join(fromdir, m.group('diff'))
+                continue
+        f.close()
+        if not self.pkg:
+            raise GbpError, "Cannot parse package name from %s" % self.dscfile
+        elif not self.tgz:
+            raise GbpError, "Cannot parse archive name from %s" % self.dscfile
+
+    def _get_version(self):
+        if self.native:
+            return self.upstream_version
+        else:
+            return "%s-%s" % (self.upstream_version, self.debian_version)
+
+    version = property(_get_version)
+
+    def __str__(self):
+        return "<%s object %s>" % (self.__class__.__name__, self.dscfile)
+
+
+def parse_dsc(dscfile):
+    """parse dsc by creating a DscFile object"""
+    try:
+        dsc = DscFile(dscfile)
+    except IOError, err:
+        raise GbpError, "Error reading dsc file: %s" % err
+    else:
+        try:
+            if dsc.native:
+                print "Debian Native Package"
+                print "Version:", dsc.upstream_version
+            else:
+                print "Upstream version:", dsc.upstream_version
+                print "Debian version:", dsc.debian_version
+        except AttributeError:
+            raise GbpError, "Error parsing dsc file %s" % dscfile
+    return dsc
+
 
 def parse_changelog(changelog):
     """parse changelog file changelog"""
@@ -49,6 +128,14 @@ def is_native(cp):
     "Is this a debian native package"
     return [ True, False ]['-' in cp['Version']]
 
+
+def has_epoch(cp):
+    """does the topmost version number contain an epoch"""
+    try:
+        if cp['Epoch']:
+            return True
+    except KeyError:
+        return False
 
 def has_orig(cp, dir):
     "Check if orig.tar.gz exists in dir"
@@ -85,5 +172,13 @@ def unpack_orig(archive, tmpdir, filters):
         print >>sys.stderr, "Unpacking of %s failed" % archive
         raise GbpError
     return unpackArchive.dir
+
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == '__main__':
+    _test()
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

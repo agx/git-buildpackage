@@ -1,11 +1,13 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2008 Guido Guenther <agx@sigxcpu.org>
 """provides some git repository related helpers"""
 
 import subprocess
 import os.path
 from command_wrappers import (GitAdd, GitRm, copy_from)
+import dateutil.parser
+import calendar
 
 class GitRepositoryError(Exception):
     """Exception thrown by GitRepository"""
@@ -98,7 +100,7 @@ class GitRepository(object):
                                             options, '%s..%s' % (start, end),
                                             '--', paths])
         if ret:
-            raise GitRepositoryError, "Error gettint commits %s..%s on %s" % (start, end, paths)
+            raise GitRepositoryError, "Error getting commits %s..%s%s" % (start, end, ["", " on %s" % paths][len(paths) > 0] )
         return [ commit.strip() for commit in commits ]
 
     def show(self, id):
@@ -106,8 +108,15 @@ class GitRepository(object):
         commit, ret = self.__git_getoutput('show', [ id ])
         if ret:
             raise GitRepositoryError, "can't get %s" % id
-        return commit
+        for line in commit:
+            yield line
 
+    def write_tree(self):
+        """write out the current index, return the SHA1"""
+        tree, ret = self.__git_getoutput('write-tree')
+        if ret:
+            raise GitRepositoryError, "can't write out current index"
+        return tree[0].strip()
 
 def build_tag(format, version):
     """Generate a tag from a given format and a version"""
@@ -122,17 +131,40 @@ def sanitize_version(version):
 
 
 def replace_source_tree(repo, src_dir, filters, verbose=False):
-        """
-        make the current wc match what's in src_dir
-        @return: True if wc was modified
-        @rtype: boolean
-        """
-        old = set(repo.index_files())
-        new = set(copy_from(src_dir, filters))
-        GitAdd()(['.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            GitRm(verbose=verbose)(files)
-        return not repo.is_clean()[0]
+    """
+    make the current wc match what's in src_dir
+    @return: True if wc was modified
+    @rtype: boolean
+    """
+    old = set(repo.index_files())
+    new = set(copy_from(src_dir, filters))
+    GitAdd()(['.'])
+    files = [ obj for obj in old - new if not os.path.isdir(obj)]
+    if files:
+        GitRm(verbose=verbose)(files)
+    return not repo.is_clean()[0]
+
+
+def rfc822_date_to_git(rfc822_date):
+    """Parse a date in RFC822 format, and convert to a 'seconds tz' string.
+    >>> rfc822_date_to_git('Thu, 1 Jan 1970 00:00:01 +0000')
+    '1 +0000'
+    >>> rfc822_date_to_git('Thu, 20 Mar 2008 01:12:57 -0700')
+    '1206000777 -0700'
+    >>> rfc822_date_to_git('Sat, 5 Apr 2008 17:01:32 +0200')
+    '1207407692 +0200'
+    """
+    d = dateutil.parser.parse(rfc822_date)
+    seconds = calendar.timegm(d.utctimetuple())
+    tz = d.strftime("%z")
+    return '%d %s' % (seconds, tz)
+
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == '__main__':
+    _test()
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

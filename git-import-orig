@@ -25,7 +25,7 @@ import re
 import glob
 import subprocess
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import unpack_orig
+from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag, replace_source_tree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
@@ -37,6 +37,26 @@ def cleanup_tmp_tree(tree):
         gbpc.RemoveTree(tree)()
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Removal of tmptree %s failed." % tree
+
+
+def symlink_orig(archive, pkg, version):
+    """
+    create a symlink <pkg>_<version>.orig.tar.gz so pristine-tar will see the
+    correct basename
+    @return: archive path to be used by pristine tar
+    """
+    if os.path.isdir(archive):
+        return None
+    ext = os.path.splitext(archive)[1]
+    dst = "../%s_%s.orig.tar%s" % (pkg, version, ext)
+    if os.path.basename(archive) != os.path.basename(dst):
+        try:
+            os.symlink(os.path.abspath(archive), dst)
+        except OSError, err:
+            raise GbpError, "Cannot symlink '%s' to '%s': %s" % (archive, dst, err[1])
+        return dst
+    else:
+        return archive
 
 
 def import_upstream_tree(repo, src_dir, version, filters, verbose):
@@ -71,6 +91,7 @@ def guess_version(archive, version_regex=r''):
 def main(argv):
     ret = 0
     tmpdir = ''
+    pristine_orig = None
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                            usage='%prog [-u version] /path/to/upstream-version.tar.gz')
@@ -81,8 +102,8 @@ def main(argv):
                       help="verbose command execution")
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
                       help="after import dont do any merging to another branch")
-    parser.add_option("--no-dch", dest='run_dch', action="store_false", default=True,
-                      help="don't call dch after the import")
+    parser.add_config_file_option(option_name="no-dch", dest='no_dch',
+                      help="don't call dch after the import", action="store_true")
     parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
@@ -105,7 +126,6 @@ def main(argv):
 
     gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian_branch)
     gitShowBranch = gbpc.GitShowBranch()
-    gitPullUpstream = gbpc.GitPull('.', options.upstream_branch)
 
     try:
         if len(args) != 1:
@@ -164,20 +184,29 @@ on howto create it otherwise use --upstream-branch to specify it.
             # archive content not in a subdir
             else:
                 orig_dir = tmpdir
+            try:
+                cp = parse_changelog('debian/changelog')
+                pristine_orig = symlink_orig(archive, cp['Source'], version)
+            except NoChangelogError:
+                pristine_orig = archive
 
         try:
             filter_msg = ["", " (filtering out %s)" % options.filters][len(options.filters) > 0]
-            if not is_empty:
+            if is_empty:
+                print "Initial import of '%s' %s..." % (archive, filter_msg)
+            else:
                 print "Importing '%s' to branch '%s'%s..." % (archive, options.upstream_branch, filter_msg)
                 gbpc.GitCheckoutBranch(options.upstream_branch)()
-            else:
-                print "Initial import of '%s' %s..." % (archive, filter_msg)
 
             import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
             if options.pristine_tar:
-                gbpc.PristineTar().commit(archive, options.upstream_branch)
-            gbpc.GitTag(options.sign_tags, options.keyid)(build_tag(options.upstream_tag, version),
-                        msg="Upstream version %s" % version)
+                upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
+                if pristine_orig:
+                    gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
+                else:
+                    print >>sys.stderr, "Warning: '%s' not an archive, skipping pristine-tar" % archive
+            tag = build_tag(options.upstream_tag, version)
+            gbpc.GitTag(options.sign_tags, options.keyid)(tag, msg="Upstream version %s" % version)
 
             if is_empty:
                 gbpc.GitBranch()(options.upstream_branch)
@@ -186,11 +215,16 @@ on howto create it otherwise use --upstream-branch to specify it.
                 gitCheckoutMaster()
                 gitShowBranch()
                 try:
-                    gitPullUpstream()
+                    gbpc.GitMerge(tag)()
                 except gbpc.CommandExecFailed:
                     raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
-                if options.run_dch:
-                    gbpc.Dch("%s-1" % version, 'New Upstream Version')()
+                if not options.no_dch:
+                    epoch = ''
+                    if os.access('debian/changelog', os.R_OK):
+                        cp = parse_changelog('debian/changelog')
+                        if has_epoch(cp):
+                            epoch = '%s:' % cp['Epoch']
+                    gbpc.Dch("%s%s-1" % (epoch, version), 'New Upstream Version')()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpError, err:

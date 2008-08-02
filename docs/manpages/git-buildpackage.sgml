@@ -35,6 +35,8 @@
       <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-pristine-tar</option></arg>
+      <arg><option>--git-dont-purge</option></arg>
+      <arg><option>--git-tag-only</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -176,7 +178,18 @@
         <term><option>--git-export-dir=</option><replaceable>directory</replaceable>
         </term>
         <listitem>
-          <para>Export the current branch head to <replaceable>directory</replaceable> before building.</para>
+	  <para>Export the current branch head (or the treeish object given via
+	  <option>--git-export</option> to <replaceable>directory</replaceable>
+	  before building.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-export=</option><replaceable>treeish</replaceable>
+        </term>
+	<listitem> 
+	  <para>Instead of exporting the current branch head, export the
+	  treeish object <replaceable>treeish</replaceable>. The special name
+	  <replaceable>INDEX</replaceable> exports the current index.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -187,17 +200,24 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-export=</option><replaceable>treeish</replaceable>
-        </term>
-	<listitem> <para>Instead of exporting the current branch head export at
-	the treeish object <replaceable>treeish</replaceable>.</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>--git-pristine-tar</option>
         </term>
         <listitem>
 	  <para>use pristine-tar to create the orig.tar.gz</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-dont-purge</option>
+        </term>
+        <listitem>
+	  <para>retain exported build directory after build</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tag-only</option>
+        </term>
+        <listitem>
+	  <para>don't build, only tag and run post-tag hooks</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -208,9 +228,25 @@
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
-
-    <para>git-import-dsc (1), git-import-orig (1), debuild (1), git (1), git-dch (1)</para>
-
+    <para>
+      <citerefentry>
+        <refentrytitle>git-import-dsc</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-dscs</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-import-orig</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>git-dch</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      &man.seealso.common;
+    </para>
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
