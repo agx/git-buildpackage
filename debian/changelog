@@ -1,3 +1,11 @@
+git-buildpackage (0.4.33~bpo40+1) etch-backports; urgency=low
+
+  * Rebuild for etch-backports.
+  * [5db3d28] disable git-import-dscs since it uses a python 2.5
+    construct
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 02 Aug 2008 13:45:37 +0200
+
 git-buildpackage (0.4.33) unstable; urgency=low
 
   [ Adeodato Simó ]
