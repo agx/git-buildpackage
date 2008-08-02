@@ -1,3 +1,9 @@
+git-buildpackage (0.4.34~bpo40+1) etch-backports; urgency=low
+
+  * Rebuild for etch-backports.
+
+ -- Guido Guenther <agx@sigxcpu.org>  Sat, 02 Aug 2008 15:49:24 +0200
+
 git-buildpackage (0.4.34) unstable; urgency=low
 
   * [4ac0aa8] git-buildpackage: always symlink orig.tar.gz from tarball dir
