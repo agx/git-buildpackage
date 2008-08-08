@@ -188,6 +188,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 cp = parse_changelog('debian/changelog')
                 pristine_orig = symlink_orig(archive, cp['Source'], version)
             except NoChangelogError:
+                print "Warning: Can't symlink orig.tar.gz due to missing debian/changelog"
                 pristine_orig = archive
 
         try:
