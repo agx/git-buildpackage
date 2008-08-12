@@ -9,6 +9,7 @@ import os
 import re
 import shutil
 import sys
+import glob
 import command_wrappers as gbpc
 from errors import GbpError
 
@@ -190,6 +191,15 @@ def unpack_orig(archive, tmpdir, filters):
         print >>sys.stderr, "Unpacking of %s failed" % archive
         raise GbpError
     return unpackArchive.dir
+
+
+def tar_toplevel(dir):
+    """tar archives can contain a leading directory not"""
+    unpacked = glob.glob('%s/*' % dir)
+    if len(unpacked) == 1:
+        return unpacked[0]
+    else:
+        return dir
 
 
 def _test():

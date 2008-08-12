@@ -25,7 +25,7 @@ import glob
 import pipes
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile
+from gbp.deb_utils import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile, tar_toplevel
 from gbp.git_utils import build_tag, GitRepository, GitRepositoryError, replace_source_tree, rfc822_date_to_git
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
@@ -182,7 +182,7 @@ def main(argv):
             msg = "%s version %s" % (format[1], src.upstream_version)
 
             if initial:
-                dirs['git'] = glob.glob('%s/*' % unpack_dir)[0]
+                dirs['git'] = tar_toplevel(unpack_dir)
                 if not import_initial(src, dirs, options):
                     raise GbpError
                 gitTag(tag, msg=msg)
@@ -195,7 +195,7 @@ def main(argv):
                     raise GbpError
             else: # not the initial import
                 dirs['git'] = dirs['top']
-                unpack_dir = glob.glob('%s/*' % unpack_dir)[0]
+                unpack_dir = tar_toplevel(unpack_dir)
                 if not repo.has_tag(tag):
                     print "tag %s not found, importing %s tarball" % (tag, format[1])
                     # FIXME: this is what import-orig does - merge

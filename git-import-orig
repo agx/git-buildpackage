@@ -25,7 +25,7 @@ import re
 import glob
 import subprocess
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch
+from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag, replace_source_tree)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
@@ -177,13 +177,7 @@ on howto create it otherwise use --upstream-branch to specify it.
             unpack_orig(archive, tmpdir, options.filters)
             if options.verbose:
                 print "Unpacked %s to '%s'" % (archive , tmpdir)
-            unpacked = glob.glob(tmpdir+'/*')
-            # archive has everything packed up in one subdir:
-            if len(unpacked) == 1:
-                orig_dir = unpacked[0]
-            # archive content not in a subdir
-            else:
-                orig_dir = tmpdir
+            orig_dir = tar_toplevel(tmpdir)
             try:
                 cp = parse_changelog('debian/changelog')
                 pristine_orig = symlink_orig(archive, cp['Source'], version)
