@@ -1,3 +1,15 @@
+git-buildpackage (0.4.36) unstable; urgency=low
+
+  * [64808df] Warn if we can't parse the changelog - without a changelog we
+    can't parse the package name. Without that we might end up with wrong
+    names on the pristine tar branch and with missing symlinks in tarball-dir.
+    Since this might be intentional we issue a warning only.
+  * [32b2e89] detect flat tar archives in git-import-dsc too
+  * [277581c] don't fail import on non rfc822 adressess in the dsc file
+    (Closes: #494753)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Tue, 12 Aug 2008 19:31:26 +0200
+
 git-buildpackage (0.4.35) unstable; urgency=low
 
   * [e012d8b] add epoch parsing to DscFile (Closes: #493214)
