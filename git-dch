@@ -154,12 +154,15 @@ def get_author(commit):
             return m.group('author'), m.group('email')
 
 
+
 def parse_commit(repo, commitid, options):
     """parse a commit and return message and author"""
     msg = ''
     thanks = ''
     closes = ''
-    bugs = []
+    bugs = {}
+    bts_closes = re.compile(r'(?P<bts>%s):\s+#[0-9]+' % options.meta_closes)
+    bts_bug = re.compile(r'#[0-9]+')
 
     commit = repo.show(commitid)
     author, email = get_author(commit)
@@ -168,8 +171,13 @@ def parse_commit(repo, commitid, options):
     for line in commit:
         if line.startswith('    '): # commit body
             line = line[4:]
-            if line.startswith('Closes: '):
-                bugs += [ line.split(' ', 1)[1].strip() ]
+            m = bts_closes.match(line)
+            if m:
+                nums = bts_bug.findall(line)
+                try:
+                    bugs[m.group('bts')] += nums
+                except KeyError:
+                    bugs[m.group('bts')] = nums
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
             else: # normal commit message
@@ -181,10 +189,10 @@ def parse_commit(repo, commitid, options):
         elif line.startswith('diff '):
             break
     if options.meta:
-        if bugs:
-            closes = '(Closes: %s)' % ', '.join(bugs)
+        for bts in bugs:
+            closes += '(%s: %s) ' % (bts, ', '.join(bugs[bts]))
         if thanks:
-            thanks = ' - thanks to %s' % thanks
+            thanks = '- thanks to %s' % thanks
         msg += closes + thanks
     if options.idlen:
         msg = "[%s] " % commitid[0:options.idlen] + msg
@@ -243,6 +251,8 @@ def main(argv):
                       help="mark as snapshot build")
     commit_group.add_config_file_option(option_name="meta", dest="meta",
                       help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
+    commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
+                      help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
     commit_group.add_option("--full", action="store_false", dest="short", default=True,
                       help="include the full commit message instead of only the first line")
     commit_group.add_config_file_option(option_name="id-length", dest="idlen",

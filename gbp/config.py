@@ -41,6 +41,7 @@ class GbpOptionParser(OptionParser):
                  'tarball-dir'     : '',
                  'ignore-new'      : 'False',
                  'meta'            : 'False',
+                 'meta-closes'     : 'Closes|LP',
                  'id-length'       : '0',
                  'no-dch'          : 'False',
              }
