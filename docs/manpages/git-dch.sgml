@@ -30,6 +30,7 @@
       <arg><option>--auto</option></arg>
       <arg><option>--full</option></arg>
       <arg><option>--meta</option></arg>
+      <arg><option>--meta-closes=bug-close-tags</option></arg>
       <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
@@ -106,6 +107,15 @@
         <listitem>
 	  <para>Parse meta tags like <option>Closes:</option> and
 	  <option>Thanks:</option>.  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--meta-closes=</option><replaceable>bug-close-tags</replaceable>
+        </term>
+        <listitem>
+	  <para>What meta tags to look for to generate bug-closing changelog
+	  entries.  The default is 'Closes|LP' to support Debian an
+	  Launchpad</para>
         </listitem>
       </varlistentry>
       <varlistentry>
