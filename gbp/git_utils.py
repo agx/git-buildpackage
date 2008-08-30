@@ -138,7 +138,7 @@ def replace_source_tree(repo, src_dir, filters, verbose=False):
     """
     old = set(repo.index_files())
     new = set(copy_from(src_dir, filters))
-    GitAdd()(['.'])
+    GitAdd()(['-f', '.'])
     files = [ obj for obj in old - new if not os.path.isdir(obj)]
     if files:
         GitRm(verbose=verbose)(files)
