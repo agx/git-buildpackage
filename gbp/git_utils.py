@@ -101,7 +101,7 @@ class GitRepository(object):
                                             ['%s..%s' % (start, end), '--', paths])
         if ret:
             raise GitRepositoryError, "Error getting commits %s..%s%s" % (start, end, ["", " on %s" % paths][len(paths) > 0] )
-        return [ commit.strip() for commit in commits ]
+        return [ commit.strip() for commit in commits[::-1] ]
 
     def show(self, id):
         """git-show id"""
