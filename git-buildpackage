@@ -35,7 +35,7 @@ index_name = "INDEX"
 
 def git_archive_pipe(prefix, pipe, output, treeish):
     """run the git_archive pipe"""
-    pipe.prepend('git-archive --format=tar --prefix=%s/ %s' % (prefix, treeish), '.-')
+    pipe.prepend('git archive --format=tar --prefix=%s/ %s' % (prefix, treeish), '.-')
     try:
         ret = pipe.copy('', output)
         if ret:

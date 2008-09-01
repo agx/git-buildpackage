@@ -55,10 +55,10 @@ def import_initial(src, dirs, options):
 
 
 def git_apply_patch(diff):
-    "Import patch via git-apply"
+    "Import patch via git apply"
     pipe = pipes.Template()
     pipe.prepend('gunzip -c %s' % diff,  '.-')
-    pipe.append('git-apply --index --apply --whitespace=nowarn -', '-.')
+    pipe.append('git apply --index --apply --whitespace=nowarn -', '-.')
     try:
         ret = pipe.copy('', '')
         if ret:
