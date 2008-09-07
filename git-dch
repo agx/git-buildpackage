@@ -50,9 +50,13 @@ def add_changelog_entry(msg, author, email):
     system(cmd)
 
 
-def add_changelog_section(msg, distribution):
+def add_changelog_section(msg, distribution, newversion=None):
     "add a new changelog section"
-    cmd = "dch --no-auto-nmu --distribution=%s -i %s" % (distribution, msg)
+    if newversion:
+        versionopt = '--newversion=%s' % newversion
+    else:
+        versionopt = '-i'
+    cmd = "dch --no-auto-nmu --distribution=%s %s %s" % (distribution, versionopt, msg)
     system(cmd)
 
 
@@ -249,6 +253,8 @@ def main(argv):
                       help="mark as release")
     version_group.add_option("-S", "--snapshot", action="store_true", dest="snapshot", default=False,
                       help="mark as snapshot build")
+    version_group.add_option("-N", "--new-version", dest="new_version",
+                      help="use this as base for the new version number")
     commit_group.add_config_file_option(option_name="meta", dest="meta",
                       help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
@@ -300,7 +306,9 @@ def main(argv):
             print "Only looking for changes on '%s'" % " ".join(args)
         commits = repo.commits(since, until, " ".join(args), options.git_log.split(" "))
         if commits:
-            if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
+            if options.new_version:
+                add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED", newversion=options.new_version)
+            elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
                 add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
             shortlog_to_dch(repo, commits, options)
             fixup_trailer()
