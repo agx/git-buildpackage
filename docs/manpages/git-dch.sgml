@@ -147,6 +147,17 @@
 	  the current distribution to <replaceable>unstable</replaceable> and
 	  open the changelog for final tweaking.</para>
         </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--new-version=</option><replaceable>version</replaceable>
+        </term>
+        <listitem>
+	  <para>add a new changelog section with version
+	  <replaceable>newversion</replaceable>. Together with
+	  <option>--snapshot</option> the snapshot number will be appended to
+	  <replaceable>newversion</replaceable></para>
+        </listitem>
+      </varlistentry>
       <varlistentry>
         <term><option>--git-log=</option><replaceable>git-log-options</replaceable>
         </term>
