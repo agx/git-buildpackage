@@ -39,8 +39,8 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-dch; reads git commit messages and generates the debian changelog from
-    it. If no arguments are given &git-dch; starts from the last tagged debian
+    &git-dch; reads git commit messages and generates the Debian changelog from
+    it. If no arguments are given &git-dch; starts from the last tagged Debian
     package version up to the current tip of the current branch. If the
     distribution of the topmost section in
     <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>
@@ -95,7 +95,8 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--auto</option></term>
+        <term><option>--auto</option>,
+	      <option>-a</option></term>
         <listitem>
 	  <para>Guess the last commit documented in the changelog from the
 	  snapshot banner (or from the last tag if no snapshot banner exists).
@@ -125,7 +126,8 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--snapshot</option></term>
+        <term><option>--snapshot</option>,
+              <option>-S</option></term>
         <listitem>
 	  <para>create a snapshot release entry. This adds a snapshot release
 	  number and a warning banner to the changelog entry. The release
@@ -141,7 +143,8 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--release</option></term>
+        <term><option>--release</option>,
+              <option>-R</option></term>
         <listitem>
 	  <para>Remove any snapshot release banners and version suffixes, set
 	  the current distribution to <replaceable>unstable</replaceable> and
@@ -149,7 +152,8 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--new-version=</option><replaceable>version</replaceable>
+        <term><option>--new-version=</option><replaceable>version</replaceable>,
+              <option>-N</option> <replaceable>version</replaceable>
         </term>
         <listitem>
 	  <para>add a new changelog section with version
@@ -175,6 +179,25 @@
         </listitem>
       </varlistentry>
     </variablelist>
+  </refsect1>
+  <refsect1>
+      <title>Snapshot mode</title>
+      <para>
+      Snapshot mode can be used for quick test and install cycles without
+      having to worry about version numbers or changelog entries.
+      </para><para>
+      When using <option>--snapshot</option> or <option>-S</option> &git-dch;
+      uses a pseudo header in the Debian changelog to remember the last git
+      commit it added a changelog entry for. It also sets a version number
+      ending in
+      <replaceable>~&lt;snaspshotnumber&gt;.gbp&lt;commitid&gt;</replaceable>.
+      It automatically increments the snapshot number on subsequent invocations
+      of &git-dch; <option>-S</option> so that later snapshots automatically
+      have a higher version number. To leave snapshot mode invoke &git-dch;
+      with the <option>--release</option> option. This removes the pseudo
+      heaader and unmangles the version number so the released version has a
+      higher version number than the snapshots.
+      </para>
   </refsect1>
   <refsect1>
       &man.git.config-files;
