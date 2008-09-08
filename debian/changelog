@@ -1,3 +1,12 @@
+git-buildpackage (0.4.38) unstable; urgency=low
+
+  * [1623560] "git-commond" vs. "git command" cleanup (Closes: #497335)
+  * [0a34c3b] add --new-version
+  * [2a17687] document --new-version
+  * [fc67ac2] document short options and snapshot mode
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 08 Sep 2008 18:48:58 +0200
+
 git-buildpackage (0.4.37) unstable; urgency=low
 
   * [d1ea39d] allow setting the bug-closing meta tag to look for this
