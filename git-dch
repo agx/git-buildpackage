@@ -305,20 +305,31 @@ def main(argv):
         if args:
             print "Only looking for changes on '%s'" % " ".join(args)
         commits = repo.commits(since, until, " ".join(args), options.git_log.split(" "))
+
+        # add a new changelog section if:
+        if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header and commits:
+            # the last version was a release and we have pending commits
+            add_section = True
+        elif options.new_version or not found_snapshot_header:
+            # the user wants to force a new version or switch to snapshot mode
+            add_section = True
+        else:
+            add_section = False
+
+        if add_section:
+            add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED", newversion=options.new_version)
+
         if commits:
-            if options.new_version:
-                add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED", newversion=options.new_version)
-            elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_header:
-                add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED")
             shortlog_to_dch(repo, commits, options)
             fixup_trailer()
-            if options.snapshot:
-                (snap, version) = do_snapshot(changelog, options.snapshot_number)
-                print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
         else:
             print "No changes detected from %s to %s." % (since, until)
+
         if options.release:
             do_release(changelog, cp)
+        elif options.snapshot:
+            (snap, version) = do_snapshot(changelog, options.snapshot_number)
+            print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
 
     except (GbpError, GitRepositoryError), err:
         if len(err.__str__()):
