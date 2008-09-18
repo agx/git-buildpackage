@@ -298,7 +298,7 @@ def main(argv):
                     print "Continuing from commit '%s'" % since
                     found_snapshot_header = True
                 else:
-                    print "Couldn't get snapshot header, using version info"
+                    print "Couldn't find snapshot header, using version info"
             if not since:
                 since = build_tag(options.debian_tag, cp['Version'])
 
