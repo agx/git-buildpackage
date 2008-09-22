@@ -111,6 +111,13 @@ class GitRepository(object):
         for line in commit:
             yield line
 
+    def find_tag(self, branch):
+        "find the closest tag to a branch's head"
+        tag, ret = self.__git_getoutput('describe', [ "--abbrev=0", branch ])
+        if ret:
+            raise GitRepositoryError, "can't find tag for %s" % branch
+        return tag[0].strip()
+
     def write_tree(self):
         """write out the current index, return the SHA1"""
         tree, ret = self.__git_getoutput('write-tree')
