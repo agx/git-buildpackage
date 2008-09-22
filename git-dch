@@ -230,17 +230,19 @@ def main(argv):
     range_group = GbpOptionGroup(parser, "commit range options", "which commits to add to the changelog")
     version_group = GbpOptionGroup(parser, "release & version number options", "what version number and release to use")
     commit_group = GbpOptionGroup(parser, "commit message formatting", "howto format the changelog entries")
+    naming_group = GbpOptionGroup(parser, "branch and tag naming", "branch names and tag formats")
     parser.add_option_group(range_group)
     parser.add_option_group(version_group)
     parser.add_option_group(commit_group)
+    parser.add_option_group(naming_group)
 
-    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
+    naming_group.add_config_file_option(option_name="debian-branch", dest='debian_branch',
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
+    naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
                       help="format string for upstream tags, default is '%(upstream-tag)s'")
-    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
+    naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag",
                       help="format string for debian tags, default is '%(debian-tag)s'")
-    parser.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
+    naming_group.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
                       help="expression to determine the next snapshot number, default is '%(snapshot-number)s'")
     parser.add_config_file_option(option_name="git-log", dest="git_log",
                       help="options to pass to git-log, default is '%(git-log)s'")
