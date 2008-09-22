@@ -1,3 +1,25 @@
+git-buildpackage (0.4.39) unstable; urgency=low
+
+  [ Kurt B. Kaiser ]
+  * [ac30b9b] Don't buffer stdout; let git-bp messages print in-line
+    (Closes: #479846)
+
+  [ Guido Guenther ]
+  * [4da9954] git-import-dscs: likewise
+  * [2162ead] git-dch: demangle adding commits and sections
+  * [af70d4d] git-dch: improve wording
+  * [bbf5020] git-dch: more option grouping
+  * [3931f70] git-import-orig: print version number on failed imports
+  * [745fbf6] git-import-dsc: merge by default when importing into an existing archive
+    (Closes: #475571)
+  * [631c347] git-import-dsc.sgml: document --no-merge
+  * [2f46ba4] gbp: Don't honor .gitignore during replace_source_tree 
+    (Closes: #467504)
+  * [624bdc9] gbp: move replace_source_tree into GitRepository
+  * [519901e] gbp: add find_tag(branch)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon, 22 Sep 2008 20:55:07 +0200
+
 git-buildpackage (0.4.38) unstable; urgency=low
 
   * [1623560] "git-commond" vs. "git command" cleanup (Closes: #497335)
