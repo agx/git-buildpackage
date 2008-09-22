@@ -136,6 +136,8 @@ def main(argv):
                       help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
+    parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
+                      help="after import dont do any merging to another branch")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
                       help="sign git tags", action="store_true")
     parser.add_config_file_option(option_name="keyid", dest="keyid",
@@ -210,6 +212,12 @@ def main(argv):
                         gbpc.PristineTar().commit(src.tgz, options.upstream_branch)
                 if not src.native:
                     gbpc.GitCheckoutBranch(options.debian_branch)()
+                    if options.merge:
+                        print "Merging to %s" % options.debian_branch
+                        try:
+                            gbpc.GitMerge(options.upstream_branch)()
+                        except gbpc.CommandExecFailed:
+                            raise GbpError, """Merge of %s failed, please resolve manually""" % options.upstream_branch
                     repo.replace_tree(unpack_dir, options.filters)
                     apply_debian_patch(src, dirs, options)
     except gbpc.CommandExecFailed:
