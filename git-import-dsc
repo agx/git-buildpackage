@@ -26,7 +26,7 @@ import pipes
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
 from gbp.deb_utils import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile, tar_toplevel
-from gbp.git_utils import build_tag, GitRepository, GitRepositoryError, replace_source_tree, rfc822_date_to_git
+from gbp.git_utils import build_tag, GitRepository, GitRepositoryError, rfc822_date_to_git
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -203,14 +203,14 @@ def main(argv):
                     # FIXME: this is what import-orig does - merge
                     if not src.native:
                         gbpc.GitCheckoutBranch(options.upstream_branch)()
-                    replace_source_tree(repo, unpack_dir, options.filters, verbose=True)
+                    repo.replace_tree(unpack_dir, options.filters, verbose=True)
                     gbpc.GitCommitAll()(msg="Imported %s" % msg)
                     gitTag(tag, msg=msg)
                     if options.pristine_tar and not src.native:
                         gbpc.PristineTar().commit(src.tgz, options.upstream_branch)
                 if not src.native:
                     gbpc.GitCheckoutBranch(options.debian_branch)()
-                    replace_source_tree(repo, unpack_dir, options.filters)
+                    repo.replace_tree(unpack_dir, options.filters)
                     apply_debian_patch(src, dirs, options)
     except gbpc.CommandExecFailed:
         os.chdir(dirs['top'])

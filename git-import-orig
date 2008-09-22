@@ -26,7 +26,7 @@ import glob
 import subprocess
 import gbp.command_wrappers as gbpc
 from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel
-from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag, replace_source_tree)
+from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 
@@ -62,7 +62,7 @@ def symlink_orig(archive, pkg, version):
 def import_upstream_tree(repo, src_dir, version, filters, verbose):
     """import the source uptream tree to the current branch"""
     try:
-        if replace_source_tree(repo, src_dir, filters, verbose=True):
+        if repo.replace_tree(src_dir, filters, verbose=True):
             gbpc.GitCommitAll(verbose=verbose)(msg="Imported Upstream version %s" % version)
         else:
             raise GbpError, "Nothing to commit, nothing imported."

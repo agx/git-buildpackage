@@ -118,6 +118,21 @@ class GitRepository(object):
             raise GitRepositoryError, "can't write out current index"
         return tree[0].strip()
 
+    def replace_tree(self, src_dir, filters, verbose=False):
+        """
+        make the current wc match what's in src_dir
+        @return: True if wc was modified
+        @rtype: boolean
+        """
+        old = set(self.index_files())
+        new = set(copy_from(src_dir, filters))
+        GitAdd()(['-f', '.'])
+        files = [ obj for obj in old - new if not os.path.isdir(obj)]
+        if files:
+            GitRm(verbose=verbose)(files)
+        return not self.is_clean()[0]
+
+
 def build_tag(format, version):
     """Generate a tag from a given format and a version"""
     return format % dict(version=sanitize_version(version))
@@ -128,21 +143,6 @@ def sanitize_version(version):
     if ':' in version: # strip of any epochs
         version = version.split(':', 1)[1]
     return version.replace('~', '.')
-
-
-def replace_source_tree(repo, src_dir, filters, verbose=False):
-    """
-    make the current wc match what's in src_dir
-    @return: True if wc was modified
-    @rtype: boolean
-    """
-    old = set(repo.index_files())
-    new = set(copy_from(src_dir, filters))
-    GitAdd()(['-f', '.'])
-    files = [ obj for obj in old - new if not os.path.isdir(obj)]
-    if files:
-        GitRm(verbose=verbose)(files)
-    return not repo.is_clean()[0]
 
 
 def rfc822_date_to_git(rfc822_date):
