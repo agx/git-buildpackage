@@ -67,7 +67,7 @@ def import_upstream_tree(repo, src_dir, version, filters, verbose):
         else:
             raise GbpError, "Nothing to commit, nothing imported."
     except gbpc.CommandExecFailed:
-        raise GbpError, "Import of new upstream version failed."
+        raise GbpError, "Import of upstream version %s failed." % version
 
 
 def guess_version(archive, version_regex=r''):
