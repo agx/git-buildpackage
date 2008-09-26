@@ -71,12 +71,17 @@ class GitRepository(object):
         self.__check_path()
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')[0]
-        if out[0].startswith('#') and out[1].strip().startswith(clean_msg):
-            ret = True
+        ret = False
+        if out[0].startswith('#'):
+            try:
+                if out[1].strip().startswith(clean_msg):
+                    ret = True
+                elif out[3].strip().startswith(clean_msg):
+                    ret = True
+            except IndexError:
+                pass
         elif out[0].strip().startswith(clean_msg): # git << 1.5
             ret = True
-        else:
-            ret = False
         return (ret, "".join(out))
 
     def index_files(self):
