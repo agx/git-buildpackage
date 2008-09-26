@@ -24,7 +24,6 @@ class GitRepository(object):
             raise GitRepositoryError
         self.path = os.path.abspath(path)
 
-
     def __check_path(self):
         if os.getcwd() != self.path:
             raise GitRepositoryError
@@ -39,7 +38,6 @@ class GitRepository(object):
         output += popen.stdout.readlines()
         return output, ret
 
-
     def has_branch(self, branch):
         """check if the repository has branch 'branch'"""
         self.__check_path()
@@ -47,7 +45,6 @@ class GitRepository(object):
             if line.split(' ', 1)[1].strip() == branch:
                 return True
         return False
-
 
     def has_treeish(self, treeish):
         """check if the repository has the treeish object treeish"""
@@ -69,7 +66,6 @@ class GitRepository(object):
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
 
-
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
         self.__check_path()
@@ -82,7 +78,6 @@ class GitRepository(object):
         else:
             ret = False
         return (ret, "".join(out))
-
 
     def index_files(self):
         """List files in the index"""
@@ -170,6 +165,7 @@ def rfc822_date_to_git(rfc822_date):
 def _test():
     import doctest
     doctest.testmod()
+
 
 if __name__ == '__main__':
     _test()
