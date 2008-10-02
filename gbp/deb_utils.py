@@ -37,8 +37,11 @@ class DscFile(object):
         self.pkg = ""
         self.tgz = ""
         self.diff = ""
+        self.debian_version = ""
         self.upstream_version = ""
+        self.native = False
         self.dscfile = os.path.abspath(dscfile)
+
         f = file(self.dscfile)
         fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
@@ -69,10 +72,15 @@ class DscFile(object):
                 self.diff = os.path.join(fromdir, m.group('diff'))
                 continue
         f.close()
+
         if not self.pkg:
-            raise GbpError, "Cannot parse package name from %s" % self.dscfile
+            raise GbpError, "Cannot parse package name from '%s'" % self.dscfile
         elif not self.tgz:
-            raise GbpError, "Cannot parse archive name from %s" % self.dscfile
+            raise GbpError, "Cannot parse archive name from '%s'" % self.dscfile
+        if not self.upstream_version:
+            raise GbpError, "Cannot parse version number from '%s'" % self.dscfile
+        if not self.native and not self.debian_version:
+            raise GbpError, "Cannot parse Debian version number from '%s'" % self.dscfile
 
     def _get_version(self):
         version = [ "", self.epoch + ":" ][len(self.epoch) > 0]
@@ -94,18 +102,7 @@ def parse_dsc(dscfile):
         dsc = DscFile(dscfile)
     except IOError, err:
         raise GbpError, "Error reading dsc file: %s" % err
-    else:
-        try:
-            if dsc.native:
-                print "Debian Native Package"
-                print "Version:", dsc.upstream_version
-            else:
-                print "Upstream version:", dsc.upstream_version
-                print "Debian version:", dsc.debian_version
-            if dsc.epoch:
-                print "Epoch: %s" % dsc.epoch
-        except AttributeError:
-            raise GbpError, "Error parsing dsc file %s" % dscfile
+
     return dsc
 
 
