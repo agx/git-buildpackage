@@ -1,3 +1,18 @@
+git-buildpackage (0.4.40) unstable; urgency=low
+
+  [ Guido Guenther ]
+  * [d87e2ab] fix typo (Closes: #500167) - thanks to Aleksej R.  Serdyukov
+  * [632c9b4] gbp.git_utils.GitRepository: make indentation more consistent
+  * [b1a2847] adjust is_clean for git 1.6 (Closes: #500238)
+  * [3332982] gbp.deb_utils.symlink_orig: remove superflous printout
+  * [fb6187f] silence parse_dsc and move sanity checks into DscFile
+
+  [ Kurt B. Kaiser ]
+  * [bbd9946] Force tarball symlink on second export to build-area
+    (Closes: #500498)
+
+ -- Guido Guenther <agx@sigxcpu.org>  Thu, 02 Oct 2008 12:26:56 +0200
+
 git-buildpackage (0.4.39) unstable; urgency=low
 
   [ Kurt B. Kaiser ]
