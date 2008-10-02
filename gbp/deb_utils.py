@@ -158,7 +158,7 @@ def symlink_orig(cp, orig_dir, output_dir, force=False):
     """
     symlink orig.tar.gz from orig_dir to output_dir
     @return: True if link was created or src == dst
-             False in case of errror or src doesn't exist
+             False in case of error or src doesn't exist
     """
     orig_dir = os.path.abspath(orig_dir)
     output_dir = os.path.abspath(output_dir)
@@ -173,7 +173,6 @@ def symlink_orig(cp, orig_dir, output_dir, force=False):
     try:
         if os.access(dst, os.F_OK) and force:
             os.unlink(dst)
-        print src, dst
         os.symlink(src, dst)
     except OSError:
         return False
