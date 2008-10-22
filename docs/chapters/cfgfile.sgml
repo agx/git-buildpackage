@@ -15,6 +15,10 @@
       <listitem><para>per repository/branch configuration</para></listitem> 
       </varlistentry> 
       <varlistentry>
+      <term>debian/gbp.conf</term>
+      <listitem><para>per repository/branch configuration</para></listitem> 
+      </varlistentry> 
+      <varlistentry>
       <term>.git/gbp.conf</term>
       <listitem><para>per (local) repository configuration</para></listitem> 
       </varlistentry> 

@@ -16,6 +16,11 @@
       repository</para></listitem> 
       </varlistentry> 
       <varlistentry>
+      <term>debian/gbp.conf</term>
+      <listitem><para>per branch configuration, can be published with the
+      repository</para></listitem> 
+      </varlistentry>
+      <varlistentry>
       <term>.git/gbp.conf</term>
       <listitem><para>per repository configuration</para></listitem> 
       </varlistentry> 

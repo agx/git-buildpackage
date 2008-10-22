@@ -48,6 +48,7 @@ class GbpOptionParser(OptionParser):
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
                      '.gbp.conf',
+                     'debian/gbp.conf',
                      '.git/gbp.conf' ]
 
     def __parse_config_files(self):
