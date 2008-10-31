@@ -1,7 +1,7 @@
 Source: git-buildpackage
 Section: devel
 Priority: optional
-Maintainer: Guido Guenther <agx@sigxcpu.org>
+Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends: cdbs, debhelper (>= 5), python-dev, python-support (>= 0.3),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil
 Standards-Version: 3.8.0
