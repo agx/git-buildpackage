@@ -124,7 +124,6 @@ def main(argv):
     if options.verbose:
         gbpc.Command.verbose = True
 
-    gitCheckoutMaster = gbpc.GitCheckoutBranch(options.debian_branch)
     gitShowBranch = gbpc.GitShowBranch()
 
     try:
@@ -191,7 +190,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 print "Initial import of '%s' %s..." % (archive, filter_msg)
             else:
                 print "Importing '%s' to branch '%s'%s..." % (archive, options.upstream_branch, filter_msg)
-                gbpc.GitCheckoutBranch(options.upstream_branch)()
+                repo.set_branch(options.upstream_branch)
 
             import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
             if options.pristine_tar:
@@ -206,9 +205,8 @@ on howto create it otherwise use --upstream-branch to specify it.
             if is_empty:
                 gbpc.GitBranch()(options.upstream_branch)
             elif options.merge:
-                print "Merging to %s" % options.debian_branch
-                gitCheckoutMaster()
-                gitShowBranch()
+                print "Merging to '%s'" % options.debian_branch
+                repo.set_branch(options.debian_branch)
                 try:
                     gbpc.GitMerge(tag)()
                 except gbpc.CommandExecFailed:

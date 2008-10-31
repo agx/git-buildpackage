@@ -119,7 +119,7 @@ def create_debian_branch(debian_branch, dirs):
         if not repo.has_branch(debian_branch):
             print "Creating Debian branch '%s'" % debian_branch
             gbpc.GitBranch()(debian_branch)
-        gbpc.GitCheckoutBranch(debian_branch)
+        repo.set_branch(debian_branch)
     os.chdir(dirs['top'])
 
 
@@ -217,14 +217,14 @@ def main(argv):
                     print "tag %s not found, importing %s tarball" % (tag, format[1])
                     # FIXME: this is what import-orig does - merge
                     if not src.native:
-                        gbpc.GitCheckoutBranch(options.upstream_branch)()
+                        repo.set_branch(options.upstream_branch)
                     repo.replace_tree(unpack_dir, options.filters, verbose=True)
                     gbpc.GitCommitAll()(msg="Imported %s" % msg)
                     gitTag(tag, msg=msg)
                     if options.pristine_tar and not src.native:
                         gbpc.PristineTar().commit(src.tgz, options.upstream_branch)
                 if not src.native:
-                    gbpc.GitCheckoutBranch(options.debian_branch)()
+                    repo.set_branch(options.debian_branch)
                     if options.merge:
                         print "Merging to %s" % options.debian_branch
                         try:
