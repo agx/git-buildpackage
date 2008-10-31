@@ -1,3 +1,15 @@
+git-buildpackage (0.4.41) unstable; urgency=low
+
+  * [8b15994] allow for another config file $REPO/debian/gbp.conf
+    (Closes: #502253)
+  * [1ef4e04] add repo.set_branch() to switch branches
+  * [d4d4580] use repo.set_branch()
+  * [245d5f1] add GbpNothingImported exception
+  * [c410c0b] switch back to original branch on empty imports 
+    (Closes: #504029, #504072)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 31 Oct 2008 10:28:47 +0100
+
 git-buildpackage (0.4.40) unstable; urgency=low
 
   [ Guido Guenther ]
