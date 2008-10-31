@@ -5,7 +5,7 @@
 
 import subprocess
 import os.path
-from command_wrappers import (GitAdd, GitRm, copy_from)
+from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, copy_from)
 import dateutil.parser
 import calendar
 
@@ -65,6 +65,12 @@ class GitRepository(object):
         for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
+
+    def set_branch(self, branch):
+        """switch to branch 'branch'"""
+        self.__check_path()
+        if self.get_branch() != branch:
+            GitCheckoutBranch(branch)()
 
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
