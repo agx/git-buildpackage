@@ -28,7 +28,7 @@ import gbp.command_wrappers as gbpc
 from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
-from gbp.errors import GbpError
+from gbp.errors import (GbpError, GbpNothingImported)
 
 
 def cleanup_tmp_tree(tree):
@@ -65,7 +65,7 @@ def import_upstream_tree(repo, src_dir, version, filters, verbose):
         if repo.replace_tree(src_dir, filters, verbose=True):
             gbpc.GitCommitAll(verbose=verbose)(msg="Imported Upstream version %s" % version)
         else:
-            raise GbpError, "Nothing to commit, nothing imported."
+            raise GbpNothingImported
     except gbpc.CommandExecFailed:
         raise GbpError, "Import of upstream version %s failed." % version
 
@@ -139,7 +139,8 @@ def main(argv):
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 
         # an empty repo has now branches:
-        if repo.get_branch():
+        initial_branch = repo.get_branch()
+        if initial_branch:
             is_empty = False
         else:
             is_empty = True
@@ -220,6 +221,10 @@ on howto create it otherwise use --upstream-branch to specify it.
                     gbpc.Dch("%s%s-1" % (epoch, version), 'New Upstream Version')()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
+    except GbpNothingImported, err:
+        print >>sys.stderr, err
+        repo.set_branch(initial_branch)
+        ret = 1
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
