@@ -83,22 +83,30 @@ snapshot-number = os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
     <para>You can use <option>--full</option> to include the full commit
     message in the changelog, note that you will lose the formatting though,
     since &dch; wraps lines by itself.</para>
-    <para>Additionally you can use tags to customize the commit message, for
-    example the git commit message
+    <para>Additionally there are tags available to customize the commit
+message, for example the git commit message
 <screen>
 New upstream version
 
 Closes: #1000
 Thanks: cool upstream
 </screen>
-    would result in a changelog entry
+    would result in a changelog entry:
 <screen>
     * New upstream version (Closes: #1000) - thanks to cool upstream
 </screen>
 You can use multiple <option>Closes:</option> tags.
 </para><para>
-Often changelog entries correspond to a single &git; commit. In this case it's
-convenient to include the commit id in the chagenlog entry. This can be done
+Usually changelog entries should correspond to a single &git; commit. In this case it's
+convenient to include the commit id in the chagenlog entry. 
+This has the advantage that it's easy for people to identify changes without
+having to write very extensive changelog messages - the link back to Git can be
+automated via the <option>Vcs-Browser</option> and <option>Vcs-Git</option>
+fields in <filename>debian/control</filename>. See <ulink url="https:///honk.sigxcpu.org/cl2vcs">
+Cl2vcs</ulink> for how this looks.
+</para>
+<para>
+The inclusion of the commit id can be done automatically
 via the <option>--id-length</option> option. Using
 <option>--id-length</option>=<replaceable>7</replaceable>  would change the above example to:
 <screen>
