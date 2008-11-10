@@ -27,7 +27,7 @@ import gbp.deb_utils as du
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, 
                                   PristineTar, RemoveTree)
-from gbp.config import GbpOptionParser
+from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 
 # when we want to reference the index in a treeish context we call it:
@@ -136,45 +136,56 @@ def main(argv):
             args.append(arg)
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
+    tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
+    branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
+    cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke external commands and hooks")
+    orig_group = GbpOptionGroup(parser, "orig.tar.gz options", "options related to .orig.tar.gz creation")
+    export_group = GbpOptionGroup(parser, "export build-tree options", "alternative build tree related options")
+    parser.add_option_group(tag_group)
+    parser.add_option_group(orig_group)
+    parser.add_option_group(branch_group)
+    parser.add_option_group(cmd_group)
+    parser.add_option_group(export_group)
 
     parser.add_config_file_option(option_name = "ignore-new", dest="ignore_new",
                       help="build with uncommited changes in the source tree", action="store_true")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="builder", dest="builder",
-                      help="command to build the package, default is '%(builder)s'")
-    parser.add_config_file_option(option_name="cleaner", dest="cleaner",
-                      help="command to build the package, default is '%(cleaner)s'")
-    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
-                      help="upstream branch, default is '%(upstream-branch)s'")
-    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
-                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_option("--git-tag", action="store_true", dest="tag", default=False,
+    tag_group.add_option("--git-tag", action="store_true", dest="tag", default=False,
                       help="tag after a successful build")
-    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
-                      help="sign git tags", action="store_true")
-    parser.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
-                      help="don't create orig.tar.gz", action="store_true")
-    parser.add_config_file_option(option_name="posttag", dest="posttag",
-                      help="hook to execute after a successfull tag operation")
-    parser.add_config_file_option(option_name="keyid", dest="keyid",
-                      help="GPG keyid to sign tags with")
-    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
-                      help="format string for debian tags, default is '%(debian-tag)s'")
-    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
-                      help="format string for upstream tags, default is '%(upstream-tag)s'")
-    parser.add_config_file_option(option_name="export-dir", dest="export_dir",
-                      help="before building export source into EXPORT_DIR, default is '%(export-dir)s'")
-    parser.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
-                      help="location to look for external tarballs")
-    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
-                      help="Use pristine-tar to create .orig.tar.gz", action="store_true")
-    parser.add_option("--git-export", dest="treeish", default=default_tree,
-                      help="export treeish object TREEISH, default is '%s'" % default_tree)
-    parser.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
-                      help="retain exported build directory after build")
-    parser.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
+    tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
                       help="don't build, only tag and run post-tag hooks")
+    tag_group.add_config_file_option(option_name="sign-tags", dest="sign_tags",
+                      help="sign git tags, default is '%(sign-tags)s'", action="store_true")
+    tag_group.add_config_file_option(option_name="keyid", dest="keyid",
+                      help="GPG keyid to sign tags with, default is '%(keyid)s'")
+    tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag",
+                      help="format string for debian tags, default is '%(debian-tag)s'")
+    tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
+                      help="format string for upstream tags, default is '%(upstream-tag)s'")
+    orig_group.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
+                      help="use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
+                      action="store_true")
+    orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
+                      help="don't create orig.tar.gz", action="store_true")
+    orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
+                      help="location to look for external tarballs")
+    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
+                      help="upstream branch, default is '%(upstream-branch)s'")
+    branch_group.add_config_file_option(option_name="debian-branch", dest='debian_branch',
+                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
+    cmd_group.add_config_file_option(option_name="builder", dest="builder",
+                      help="command to build the package, default is '%(builder)s'")
+    cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
+                      help="command to build the package, default is '%(cleaner)s'")
+    cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
+                      help="hook to execute after a successfull tag operation, default is '%(posttag)s'")
+    export_group.add_config_file_option(option_name="export-dir", dest="export_dir",
+                      help="before building export source into EXPORT_DIR, default is '%(export-dir)s'")
+    export_group.add_option("--git-export", dest="treeish", default=default_tree,
+                      help="export treeish object TREEISH, default is '%s'" % default_tree)
+    export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
+                      help="retain exported build directory after build")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
