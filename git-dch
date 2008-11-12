@@ -50,13 +50,18 @@ def add_changelog_entry(msg, author, email):
     system(cmd)
 
 
-def add_changelog_section(msg, distribution, newversion=None):
+def add_changelog_section(msg, distribution, newversion=None, author=None, email=None):
     "add a new changelog section"
     if newversion:
         versionopt = '--newversion=%s' % newversion
     else:
         versionopt = '-i'
-    cmd = "dch --no-auto-nmu --distribution=%s %s %s" % (distribution, versionopt, msg)
+
+    if author and email:
+        env = """DEBFULLNAME="%s" DEBEMAIL="%s" """ % (author, email)
+    else:
+        env = ""
+    cmd = "%s dch --no-auto-nmu --distribution=%s %s %s" % (env, distribution, versionopt, msg)
     system(cmd)
 
 
@@ -325,7 +330,15 @@ def main(argv):
             add_section = False
 
         if add_section:
-            add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED", newversion=options.new_version)
+            if commits:
+                first_commit = commits[0]
+                commits = commits[1:]
+                commit_msg, (commit_author, commit_email) = parse_commit(repo, first_commit, options)
+            else:
+                commit_msg = "UNRELEASED"
+                commit_author = None
+                commit_email = None
+            add_changelog_section(distribution="UNRELEASED", msg=commit_msg, newversion=options.new_version, author=commit_author, email=commit_email)
 
         if commits:
             shortlog_to_dch(repo, commits, options)
