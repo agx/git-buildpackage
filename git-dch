@@ -93,23 +93,29 @@ def snapshot_version(version):
     return release, snapshot
 
 
-def mangle_changelog(changelog, cp, snapshot, sha='unknown'):
-    """Mangle changelog to either add or remove snapshot markers"""
+def mangle_changelog(changelog, cp, snapshot=''):
+    """
+    Mangle changelog to either add or remove snapshot markers
+
+    @param snapshot: SHA1 if snapshot header should be added/maintained, empty if it should be removed
+    @type  snapshot: str
+    """
     try:
-        tmp = '%s.%s' % (changelog, str(snapshot))
-        cw = file(tmp, 'w')
+        tmpfile = '%s.%s' % (changelog, snapshot)
+        cw = file(tmpfile, 'w')
         cr = file(changelog, 'r')
+
         cr.readline() # skip version and empty line
         cr.readline()
         print >>cw, "%(Source)s (%(MangledVersion)s) %(Distribution)s; urgency=%(urgency)s\n" % cp
 
         line = cr.readline()
         if snapshot_re.match(line):
-            cr.readline() # consume the empty line
+            cr.readline() # consume the empty line after the snapshot header
             line = ''
 
         if snapshot:
-            print >>cw, "  ** SNAPSHOT build @%s **\n" % sha
+            print >>cw, "  ** SNAPSHOT build @%s **\n" % snapshot
 
         if line:
             print >>cw, line.rstrip()
@@ -117,7 +123,7 @@ def mangle_changelog(changelog, cp, snapshot, sha='unknown'):
         cw.close()
         cr.close()
         os.unlink(changelog)
-        os.rename(tmp, changelog)
+        os.rename(tmpfile, changelog)
     except OSError, e:
         raise GbpError, "Error mangling changelog %s" % e
 
@@ -127,7 +133,7 @@ def do_release(changelog, cp):
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
         cp['MangledVersion'] = release
-        mangle_changelog(changelog, cp, 0)
+        mangle_changelog(changelog, cp)
     cmd = "dch --release"
     system(cmd)
 
@@ -146,7 +152,7 @@ def do_snapshot(changelog, next_snapshot):
     suffix = "%d.gbp%s" % (snapshot, "".join(commit[0:6]))
     cp['MangledVersion'] = "%s~%s" % (release, suffix)
 
-    mangle_changelog(changelog, cp, snapshot, commit)
+    mangle_changelog(changelog, cp, commit)
     return snapshot, commit
 
 
