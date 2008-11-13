@@ -1,3 +1,24 @@
+git-buildpackage (0.4.42) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [b5e8691] debian/control: fix maintainer
+  * [ee9e51d] doc: mention cl2vcs
+  * [a0c03e1] doc: fix typo
+  * [0314acc] git-buildpacakge: use option groups
+  * [2d44dad] git-dch: merge sha and snapshot parameter
+
+  [ Felipe Sateler ]
+  * [7f24b98] git-dch: Don't include first UNRELEASED line - There's not much
+    point in keeping this line when either doing a release or when having a
+    snapshot header (nor does it help much if one invokes git-dch without
+    options). (Closes: #505400)
+
+  [ Guido Günther ]
+  * [a6f5472] git-import-orig: Don't fail on symlink creation (Closes: #502565)
+  * [b7f8efd] git-dch: add missing call to escape_commit
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 13 Nov 2008 17:08:52 +0100
+
 git-buildpackage (0.4.41) unstable; urgency=low
 
   * [8b15994] allow for another config file $REPO/debian/gbp.conf
