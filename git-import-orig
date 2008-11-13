@@ -39,6 +39,14 @@ def cleanup_tmp_tree(tree):
         print >>sys.stderr, "Removal of tmptree %s failed." % tree
 
 
+def is_link_target(target, link):
+    """does symlink link already point to target?"""
+    if os.path.exists(link):
+            if os.path.samefile(target, link):
+                return True
+    return False
+
+
 def symlink_orig(archive, pkg, version):
     """
     create a symlink <pkg>_<version>.orig.tar.gz so pristine-tar will see the
@@ -48,13 +56,14 @@ def symlink_orig(archive, pkg, version):
     if os.path.isdir(archive):
         return None
     ext = os.path.splitext(archive)[1]
-    dst = "../%s_%s.orig.tar%s" % (pkg, version, ext)
-    if os.path.basename(archive) != os.path.basename(dst):
+    link = "../%s_%s.orig.tar%s" % (pkg, version, ext)
+    if os.path.basename(archive) != os.path.basename(link):
         try:
-            os.symlink(os.path.abspath(archive), dst)
+            if not is_link_target(archive, link):
+                os.symlink(os.path.abspath(archive), link)
         except OSError, err:
-            raise GbpError, "Cannot symlink '%s' to '%s': %s" % (archive, dst, err[1])
-        return dst
+                raise GbpError, "Cannot symlink '%s' to '%s': %s" % (archive, link, err[1])
+        return link
     else:
         return archive
 
