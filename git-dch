@@ -249,6 +249,7 @@ def main(argv):
     changelog = 'debian/changelog'
     until = 'HEAD'
     found_snapshot_header = False
+    first_commit = None
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] paths')
@@ -359,7 +360,7 @@ def main(argv):
         if commits:
             shortlog_to_dch(repo, commits, options)
             fixup_trailer()
-        else:
+        elif not first_commit:
             print "No changes detected from %s to %s." % (since, until)
 
         if options.release:
