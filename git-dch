@@ -44,33 +44,48 @@ def escape_commit(msg):
     return msg.replace('"','\\\"').replace("$","\$").replace("`","\`")
 
 
-def add_changelog_entry(msg, author, email):
-    "add aa single changelog entry"
-    cmd = """DEBFULLNAME="%s" DEBEMAIL="%s" dch --no-auto-nmu --append -- "%s" """ % (author, email, escape_commit(msg))
-    system(cmd)
+def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, release=False, distribution=None):
+    distopt = ""
+    versionopt = ""
+    env = ""
 
 
-def add_changelog_section(msg, distribution, newversion=None, author=None, email=None):
-    "add a new changelog section"
     if newversion:
-        versionopt = '--newversion=%s' % newversion
-    else:
-        versionopt = '-i'
+        if version:
+            versionopt = '--newversion=%s' % version
+        else:
+            versionopt = '-i'
+    elif release:
+        versionopt = "--release"
+        msg = None
 
     if author and email:
         env = """DEBFULLNAME="%s" DEBEMAIL="%s" """ % (author, email)
-    else:
-        env = ""
-    cmd = "%s dch --no-auto-nmu --distribution=%s %s %s" % (env, distribution, versionopt, escape_commit(msg))
+
+    if distribution:
+        distopt = "--distribution=%s" % distribution
+
+    cmd = '%(env)s dch --no-auto-nmu  %(distopt)s %(versionopt)s ' % locals()
+    if type(msg) == type(''):
+        cmd += '"%s"' % escape_commit(msg)
     system(cmd)
+
+
+def add_changelog_entry(msg, author, email):
+    "add aa single changelog entry"
+    spawn_dch(msg=msg, author=author, email=email)
+
+
+def add_changelog_section(msg, distribution, author=None, email=None, version=None):
+    "add a new changelog section"
+    spawn_dch(msg=msg, newversion= True, version=version, author=author, email=email, distribution=distribution)
 
 
 def fixup_trailer():
     """fixup the changelog trailer's comitter and email address - it might
     otherwise point to the last git committer instead of the person creating
     the changelog"""
-    cmd = "dch \"\""
-    system(cmd)
+    spawn_dch(msg='')
 
 
 def head_commit():
@@ -139,8 +154,7 @@ def do_release(changelog, cp):
     if snapshot:
         cp['MangledVersion'] = release
         mangle_changelog(changelog, cp)
-    cmd = "dch --release"
-    system(cmd)
+    spawn_dch(release=True)
 
 
 def do_snapshot(changelog, next_snapshot):
@@ -339,7 +353,7 @@ def main(argv):
                 commit_author = None
                 commit_email = None
             add_changelog_section(distribution="UNRELEASED", msg=commit_msg,
-                                  newversion=options.new_version, author=commit_author,
+                                  version=options.new_version, author=commit_author,
                                   email=commit_email)
 
         if commits:
