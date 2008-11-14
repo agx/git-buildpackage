@@ -1,3 +1,12 @@
+git-buildpackage (0.4.43) unstable; urgency=low
+
+  * [8b8c137] gather all invocations of dch in one function - fixes dch
+    failures due to missing quotes introduced by [7f24b98]
+  * [a328fa2] fix off by one introduced by not counting first_commit
+    when creating a new header in [7f24b98]
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 14 Nov 2008 14:12:04 +0100
+
 git-buildpackage (0.4.42) unstable; urgency=low
 
   [ Guido Günther ]
