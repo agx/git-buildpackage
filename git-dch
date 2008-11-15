@@ -51,7 +51,6 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, r
     versionopt = ""
     env = ""
 
-
     if newversion:
         if version:
             versionopt = '--newversion=%s' % version
@@ -183,7 +182,6 @@ def get_author(commit):
         m = author_re.match(line)
         if m:
             return m.group('author'), m.group('email')
-
 
 
 def parse_commit(repo, commitid, options):
