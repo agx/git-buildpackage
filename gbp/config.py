@@ -20,6 +20,8 @@ class GbpOptionParser(OptionParser):
     @cvar defaults: defaults value of an option if not in the config file or
     given on the command line
     @type defaults: dict
+    @cvar help: help messages
+    @type help: dict
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
@@ -45,11 +47,30 @@ class GbpOptionParser(OptionParser):
                  'id-length'       : '0',
                  'no-dch'          : 'False',
              }
+    help = {
+             'debian-branch':
+                  "branch the Debian package is being developed on, default is '%(debian-branch)s'",
+             'upstream-branch':
+                  "upstream branch, default is '%(upstream-branch)s'",
+             'debian-tag':
+                  "format string for debian tags, default is '%(debian-tag)s'",
+             'upstream-tag':
+                  "format string for upstream tags, default is '%(upstream-tag)s'",
+             'sign-tags':
+                  "sign tags, default is '%(sign-tags)s'",
+             'keyid':
+                  "GPG keyid to sign tags with, default is '%(keyid)s'",
+             'pristine-tar':
+                  "use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
+             'filter':
+                  "files to filter out during import (can be given multiple times)",
+           }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
                      '.gbp.conf',
                      'debian/gbp.conf',
                      '.git/gbp.conf' ]
+
 
     def __parse_config_files(self):
         """parse the possible config files and set appropriate values default values"""
@@ -83,7 +104,7 @@ class GbpOptionParser(OptionParser):
                         raise ValueError, "Boolean options must be True or False"
         return default
 
-    def add_config_file_option(self, option_name, dest, help, **kwargs):
+    def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
         @var option_name: name of the option
@@ -93,12 +114,14 @@ class GbpOptionParser(OptionParser):
         @var help: help text
         @type help: string
         """
+        if not help:
+            help = self.help[option_name]
         OptionParser.add_option(self, "--%s%s" % (self.prefix, option_name), dest=dest,
                                 default=self.get_default(option_name, **kwargs),
                                 help=help % self.config, **kwargs)
 
 class GbpOptionGroup(OptionGroup):
-    def add_config_file_option(self, option_name, dest, help, **kwargs):
+    def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
         @var option_name: name of the option
@@ -108,6 +131,8 @@ class GbpOptionGroup(OptionGroup):
         @var help: help text
         @type help: string
         """
+        if not help:
+            help = self.parser.help[option_name]
         OptionGroup.add_option(self, "--%s%s" % (self.parser.prefix, option_name), dest=dest,
                                 default=self.parser.get_default(option_name, **kwargs),
                                 help=help % self.parser.config, **kwargs)

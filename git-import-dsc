@@ -143,25 +143,16 @@ def main(argv):
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="debian-branch", dest='debian_branch',
-                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
-                      help="upstream branch, default is '%(upstream-branch)s'")
+    parser.add_config_file_option(option_name="debian-branch", dest="debian_branch")
+    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
                       help="after import dont do any merging to another branch")
-    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags",
-                      help="sign git tags", action="store_true")
-    parser.add_config_file_option(option_name="keyid", dest="keyid",
-                      help="GPG keyid to sign tags with")
-    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag",
-                      help="Format string for debian tags, default is '%(debian-tag)s'")
-    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
-                      help="Format string for upstream tags, default is '%(upstream-tag)s'")
-    parser.add_config_file_option(option_name="filter", dest="filters",
-                      help="files to filter out during import (can be given multiple times)",
-                      action="append")
-    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
-                      help="Use pristine-tar to import the tarball", action="store_true")
+    parser.add_config_file_option(option_name="sign-tags", dest="sign_tags", action="store_true")
+    parser.add_config_file_option(option_name="keyid", dest="keyid")
+    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag")
+    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    parser.add_config_file_option(option_name="filter", dest="filters", action="append")
+    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar", action="store_true")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:

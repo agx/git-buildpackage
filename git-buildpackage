@@ -155,25 +155,17 @@ def main(argv):
                       help="create a tag after a successful build")
     tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
                       help="don't build, only tag and run the posttag hook")
-    tag_group.add_config_file_option(option_name="sign-tags", dest="sign_tags",
-                      help="sign tags, default is '%(sign-tags)s'", action="store_true")
-    tag_group.add_config_file_option(option_name="keyid", dest="keyid",
-                      help="GPG keyid to sign tags with, default is '%(keyid)s'")
-    tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag",
-                      help="format string for debian tags, default is '%(debian-tag)s'")
-    tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
-                      help="format string for upstream tags, default is '%(upstream-tag)s'")
-    orig_group.add_config_file_option(option_name="pristine-tar", dest="pristine_tar",
-                      help="use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
-                      action="store_true")
+    tag_group.add_config_file_option(option_name="sign-tags", dest="sign_tags", action="store_true")
+    tag_group.add_config_file_option(option_name="keyid", dest="keyid")
+    tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
+    tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    orig_group.add_config_file_option(option_name="pristine-tar", dest="pristine_tar", action="store_true")
     orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
                       help="don't create orig.tar.gz", action="store_true")
     orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
                       help="location to look for external tarballs")
-    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
-                      help="upstream branch, default is '%(upstream-branch)s'")
-    branch_group.add_config_file_option(option_name="debian-branch", dest='debian_branch',
-                      help="branch the Debian package is being developed on, default is '%(debian-branch)s'")
+    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
+    branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
                       help="command to build the Debian package, default is '%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",

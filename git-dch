@@ -263,12 +263,9 @@ def main(argv):
     parser.add_option_group(commit_group)
     parser.add_option_group(naming_group)
 
-    naming_group.add_config_file_option(option_name="debian-branch", dest='debian_branch',
-                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
-    naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag",
-                      help="format string for upstream tags, default is '%(upstream-tag)s'")
-    naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag",
-                      help="format string for debian tags, default is '%(debian-tag)s'")
+    naming_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
+    naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
     naming_group.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
                       help="expression to determine the next snapshot number, default is '%(snapshot-number)s'")
     parser.add_config_file_option(option_name="git-log", dest="git_log",
