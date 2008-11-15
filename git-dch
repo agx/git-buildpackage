@@ -32,6 +32,8 @@ from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
+bug_r = r'(?:bug)?\#?\s?\d+'
+bug_re = re.compile(bug_r)
 
 def system(cmd):
     try:
@@ -190,8 +192,7 @@ def parse_commit(repo, commitid, options):
     thanks = ''
     closes = ''
     bugs = {}
-    bts_closes = re.compile(r'(?P<bts>%s):\s+#[0-9]+' % options.meta_closes)
-    bts_bug = re.compile(r'#[0-9]+')
+    bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r))
 
     commit = repo.show(commitid)
     author, email = get_author(commit)
@@ -202,11 +203,11 @@ def parse_commit(repo, commitid, options):
             line = line[4:]
             m = bts_closes.match(line)
             if m:
-                nums = bts_bug.findall(line)
+                bug_nums = [ bug.strip() for bug in bug_re.findall(line) ]
                 try:
-                    bugs[m.group('bts')] += nums
+                    bugs[m.group('bts')] += bug_nums
                 except KeyError:
-                    bugs[m.group('bts')] = nums
+                    bugs[m.group('bts')] = bug_nums
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
             else: # normal commit message
