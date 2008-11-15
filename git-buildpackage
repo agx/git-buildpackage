@@ -152,11 +152,11 @@ def main(argv):
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     tag_group.add_option("--git-tag", action="store_true", dest="tag", default=False,
-                      help="tag after a successful build")
+                      help="create a tag after a successful build")
     tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
-                      help="don't build, only tag and run post-tag hooks")
+                      help="don't build, only tag and run the posttag hook")
     tag_group.add_config_file_option(option_name="sign-tags", dest="sign_tags",
-                      help="sign git tags, default is '%(sign-tags)s'", action="store_true")
+                      help="sign tags, default is '%(sign-tags)s'", action="store_true")
     tag_group.add_config_file_option(option_name="keyid", dest="keyid",
                       help="GPG keyid to sign tags with, default is '%(keyid)s'")
     tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag",
@@ -173,19 +173,19 @@ def main(argv):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch",
                       help="upstream branch, default is '%(upstream-branch)s'")
     branch_group.add_config_file_option(option_name="debian-branch", dest='debian_branch',
-                      help="branch the debian patch is being developed on, default is '%(debian-branch)s'")
+                      help="branch the Debian package is being developed on, default is '%(debian-branch)s'")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
-                      help="command to build the package, default is '%(builder)s'")
+                      help="command to build the Debian package, default is '%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
-                      help="command to build the package, default is '%(cleaner)s'")
+                      help="command to clean the working copy, default is '%(cleaner)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
-                      help="hook to execute after a successfull tag operation, default is '%(posttag)s'")
+                      help="hook run after a successful tag operation, default is '%(posttag)s'")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir",
-                      help="before building export source into EXPORT_DIR, default is '%(export-dir)s'")
+                      help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_option("--git-export", dest="treeish", default=default_tree,
                       help="export treeish object TREEISH, default is '%s'" % default_tree)
     export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
-                      help="retain exported build directory after build")
+                      help="retain exported package build directory")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
