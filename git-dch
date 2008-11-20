@@ -33,7 +33,7 @@ from gbp.command_wrappers import (Command, CommandExecFailed)
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
 bug_r = r'(?:bug)?\#?\s?\d+'
-bug_re = re.compile(bug_r)
+bug_re = re.compile(bug_r, re.I)
 
 def system(cmd):
     try:
@@ -190,7 +190,7 @@ def parse_commit(repo, commitid, options):
     thanks = ''
     closes = ''
     bugs = {}
-    bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r))
+    bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r), re.I)
 
     commit = repo.show(commitid)
     author, email = get_author(commit)
@@ -201,7 +201,7 @@ def parse_commit(repo, commitid, options):
             line = line[4:]
             m = bts_closes.match(line)
             if m:
-                bug_nums = [ bug.strip() for bug in bug_re.findall(line) ]
+                bug_nums = [ bug.strip() for bug in bug_re.findall(line, re.I) ]
                 try:
                     bugs[m.group('bts')] += bug_nums
                 except KeyError:
