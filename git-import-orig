@@ -69,7 +69,7 @@ def symlink_orig(archive, pkg, version):
 
 
 def import_upstream_tree(repo, src_dir, version, filters, verbose):
-    """import the source uptream tree to the current branch"""
+    """import the upstream tree to the current branch"""
     try:
         if repo.replace_tree(src_dir, filters, verbose=True):
             gbpc.GitCommitAll(verbose=verbose)(msg="Imported Upstream version %s" % version)
