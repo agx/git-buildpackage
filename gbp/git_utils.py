@@ -5,7 +5,7 @@
 
 import subprocess
 import os.path
-from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, copy_from)
+from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, copy_from)
 import dateutil.parser
 import calendar
 
@@ -90,6 +90,14 @@ class GitRepository(object):
             ret = True
         return (ret, "".join(out))
 
+    def is_empty(self):
+        """returns True if repo is empty (doesn't have any commits)"""
+        # an empty repo has no branches:
+        if self.get_branch():
+            return False
+        else:
+            return True
+
     def index_files(self):
         """List files in the index"""
         out, ret = self.__git_getoutput('ls-files', ['-z'])
@@ -144,6 +152,22 @@ class GitRepository(object):
         if files:
             GitRm(verbose=verbose)(files)
         return not self.is_clean()[0]
+
+
+def create_repo(path):
+    """create a repository at path"""
+    abspath = os.path.abspath(path)
+    pwd = os.path.abspath(os.curdir)
+    try:
+        os.makedirs(abspath)
+        os.chdir(abspath)
+        GitInit()()
+        return GitRepository(abspath)
+    except OSError, err:
+        raise GitRepositoryError, "Cannot create Git repository at %s: %s "% err[1]
+    finally:
+        os.chdir(pwd)
+    return None
 
 
 def build_tag(format, version):
