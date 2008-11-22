@@ -165,10 +165,10 @@ class GitCommand(Command):
         Command.__init__(self, 'git', [cmd] + args, **kwargs)
 
 
-class GitInitDB(GitCommand):
-    """Wrap git init-db"""
+class GitInit(GitCommand):
+    """Wrap git init"""
     def __init__(self):
-        GitCommand.__init__(self, 'init-db')
+        GitCommand.__init__(self, 'init')
         self.run_error = "Couldn't init git repository"
 
 
