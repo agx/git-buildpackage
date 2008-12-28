@@ -58,6 +58,8 @@ class GbpOptionParser(OptionParser):
                   "format string for upstream tags, default is '%(upstream-tag)s'",
              'sign-tags':
                   "sign tags, default is '%(sign-tags)s'",
+             'no-sign-tags':
+                  "negates sign-tags",
              'keyid':
                   "GPG keyid to sign tags with, default is '%(keyid)s'",
              'pristine-tar':
