@@ -1,3 +1,18 @@
+git-buildpackage (0.4.44) unstable; urgency=low
+
+  * [c54e6dc] help option cleanup (Closes: #505787)
+  * [45541fe] don't require bugnumbers to start with '#' - use the regex
+    from Debian policy instead
+  * [77a875c] move common help messages into config.py
+  * [9223997] allow to import into empty repositories this makes git-
+    import-dsc's behaviour finally consistent with git-import-orig
+    (Closes: #500458, #504075)
+  * [aacd04a] require python 2.5
+  * [54b9a3e] better descriptions
+  * [e806326] add --no-sign-tags (Closes: #508889)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 29 Dec 2008 00:29:43 +0100
+
 git-buildpackage (0.4.43) unstable; urgency=low
 
   * [8b8c137] gather all invocations of dch in one function - fixes dch
