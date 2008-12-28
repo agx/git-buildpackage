@@ -94,14 +94,45 @@ class GbpOptionParser(OptionParser):
         self.__parse_config_files()
         OptionParser.__init__(self, usage=usage, version='%s %s' % (self.command, gbp_version))
 
+    def _is_boolean(self, option_name, *args, **kwargs):
+        """is option_name a boolean option"""
+        ret = False
+        try:
+            if kwargs['action'] in [ 'store_true', 'store_false' ]:
+                ret=True
+        except KeyError:
+            ret=False
+        return ret
+
+    def _get_bool_default(self, option_name):
+        """
+        get default for boolean options
+        this way we can handle no-foo=True and foo=False
+        """
+        if option_name.startswith('no-'):
+            pos = option_name[3:]
+            neg = option_name
+        else:
+            pos = option_name
+            neg = "no-%s" % option_name
+
+        try:
+            default = self.config[pos]
+        except KeyError:
+            default = self.config[neg]
+
+        if default in  [ 'True', 'False' ]:
+            ret = eval(default)
+        else:
+            raise ValueError, "Boolean options must be True or False"
+        return ret
+
     def get_default(self, option_name, **kwargs):
-        default = self.config[option_name]
-        if kwargs.has_key('action'):
-            if kwargs['action'] in [ 'store_true', 'store_false' ] and self.config[option_name]:
-                    if self.config[option_name] in  [ 'True', 'False' ]:
-                        default = eval(self.config[option_name])
-                    else:
-                        raise ValueError, "Boolean options must be True or False"
+        """get the default value"""
+        if self._is_boolean(self, option_name, **kwargs):
+            default = self._get_bool_default(option_name)
+        else:
+            default = self.config[option_name]
         return default
 
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
