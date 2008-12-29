@@ -33,6 +33,7 @@
       <arg><option>--meta-closes=bug-close-tags</option></arg>
       <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
+      <arg><option>--git-author</option></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -176,6 +177,13 @@
 	  <para>include <replaceable>N</replaceable> digits of the commit id in
 	  the changelog enty. Default is to not include any commit ids at
 	  all.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-author</option>
+        </term>
+        <listitem>
+          <para>Use user.name and user.email from <application>git-config</application>(1) for changelog trailer</para>
         </listitem>
       </varlistentry>
     </variablelist>

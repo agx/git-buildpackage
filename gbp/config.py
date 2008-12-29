@@ -46,6 +46,7 @@ class GbpOptionParser(OptionParser):
                  'meta-closes'     : 'Closes|LP',
                  'id-length'       : '0',
                  'no-dch'          : 'False',
+                 'git-author'      : 'False',
              }
     help = {
              'debian-branch':
@@ -66,6 +67,8 @@ class GbpOptionParser(OptionParser):
                   "use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
              'filter':
                   "files to filter out during import (can be given multiple times)",
+             'git-author':
+                  "use name and email from git-config for changelog trailer, default is '%(git-author)s'"
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

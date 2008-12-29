@@ -153,6 +153,12 @@ class GitRepository(object):
             GitRm(verbose=verbose)(files)
         return not self.is_clean()[0]
 
+    def get_config(self, name):
+        """Gets the config value associated with name"""
+        self.__check_path()
+        value, ret = self.__git_getoutput('config', [ name ])
+        if ret: raise KeyError
+        return value[0][:-1] # first line with \n ending removed
 
 def create_repo(path):
     """create a repository at path"""

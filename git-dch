@@ -82,11 +82,19 @@ def add_changelog_section(msg, distribution, author=None, email=None, version=No
     spawn_dch(msg=msg, newversion= True, version=version, author=author, email=email, distribution=distribution)
 
 
-def fixup_trailer():
+def fixup_trailer(repo, git_author=False):
     """fixup the changelog trailer's comitter and email address - it might
     otherwise point to the last git committer instead of the person creating
     the changelog"""
-    spawn_dch(msg='')
+    author = email = None
+    if git_author:
+        try: author = repo.get_config('user.name')
+        except KeyError: pass
+
+        try: email = repo.get_config('user.email')
+        except KeyError: pass
+
+    spawn_dch(msg='', author=author, email=email)
 
 
 def head_commit():
@@ -279,6 +287,7 @@ def main(argv):
                       help="mark as snapshot build")
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
+    version_group.add_config_file_option(option_name="git-author", dest="git_author", action="store_true")
     commit_group.add_config_file_option(option_name="meta", dest="meta",
                       help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
@@ -355,7 +364,7 @@ def main(argv):
 
         if commits:
             shortlog_to_dch(repo, commits, options)
-            fixup_trailer()
+            fixup_trailer(repo, git_author=options.git_author)
         elif not first_commit:
             print "No changes detected from %s to %s." % (since, until)
 
