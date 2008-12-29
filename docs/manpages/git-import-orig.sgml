@@ -27,7 +27,7 @@
       <arg><option>--no-dch</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--sign-tags</option></arg>
+      <arg><option>--[no-]sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
@@ -101,7 +101,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--sign-tags</option>
+        <term><option>--[no-]sign-tags</option>
         </term>
         <listitem>
           <para>GPG sign all created tags</para>
