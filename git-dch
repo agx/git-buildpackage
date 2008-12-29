@@ -288,6 +288,7 @@ def main(argv):
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
     version_group.add_config_file_option(option_name="git-author", dest="git_author", action="store_true")
+    version_group.add_config_file_option(option_name="no-git-author", dest="git_author", action="store_false")
     commit_group.add_config_file_option(option_name="meta", dest="meta",
                       help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",

@@ -68,7 +68,9 @@ class GbpOptionParser(OptionParser):
              'filter':
                   "files to filter out during import (can be given multiple times)",
              'git-author':
-                  "use name and email from git-config for changelog trailer, default is '%(git-author)s'"
+                  "use name and email from git-config for changelog trailer, default is '%(git-author)s'",
+             'no-git-author':
+                  "negates git-author",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
