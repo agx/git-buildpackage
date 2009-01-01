@@ -1,3 +1,16 @@
+git-buildpackage (0.4.45) unstable; urgency=low
+
+  [ Robie Basak ]
+  * [6f4af4a] Use name and email from git (Closes: #509867)
+
+  [ Guido Günther ]
+  * [b097286] document --no-sign-tags
+  * [6fe5985] add --no-git-author
+  * [7c2034c] add --no-sign-tags to git-import-{dsc,orig} too 
+    (Closes: #508889)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 01 Jan 2009 20:11:16 +0100
+
 git-buildpackage (0.4.44) unstable; urgency=low
 
   * [c54e6dc] help option cleanup (Closes: #505787)
