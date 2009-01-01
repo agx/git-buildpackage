@@ -116,6 +116,7 @@ def main(argv):
     parser.add_config_file_option(option_name="no-dch", dest='no_dch',
                       help="don't call dch after the import", action="store_true")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tags", action="store_true")
+    parser.add_config_file_option(option_name="no-sign-tags", dest="sign_tags", action="store_false")
     parser.add_config_file_option(option_name="keyid", dest="keyid")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     parser.add_config_file_option(option_name="filter", dest="filters", action="append")

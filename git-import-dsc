@@ -101,6 +101,7 @@ def main(argv):
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
                       help="after import dont do any merging to another branch")
     parser.add_config_file_option(option_name="sign-tags", dest="sign_tags", action="store_true")
+    parser.add_config_file_option(option_name="no-sign-tags", dest="sign_tags", action="store_false")
     parser.add_config_file_option(option_name="keyid", dest="keyid")
     parser.add_config_file_option(option_name="debian-tag", dest="debian_tag")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")

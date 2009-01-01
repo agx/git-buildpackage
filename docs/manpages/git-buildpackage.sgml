@@ -26,7 +26,7 @@
       <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
-      <arg><option>--git-sign-tags</option></arg>
+      <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -139,7 +139,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-sign-tags</option>
+        <term><option>--git-[no-]sign-tags</option>
         </term>
         <listitem>
 	  <para>GPG sign all created tags</para>
