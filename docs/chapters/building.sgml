@@ -16,7 +16,7 @@
     <para>If &git-buildpackage; doesn't find a valid upstream tarball it will create
     one by looking at the tag matching the upstream version, if no tag can be
     found it uses the tip of the current <option>upstream-branch</option>. Any
-    other treeish objecto to create the upstream tarball from can be given with
+    other treeish object to create the upstream tarball from can be given with
     the <option>--upstream-branch</option> option.</para>
     <para>Once you're satisfied with the build and want to do a release you commit all
     your changes and issue:</para>
@@ -26,7 +26,7 @@
     <para>This will again build the debian package and tag the final result after
     extracting the current version from the changelog. If you want &gpg; signed
     tags you can use the <option>--git-sign</option> and
-    <option>--git-keyid</option> options. To safe typing these option can be
+    <option>--git-keyid</option> options. To save typing these option can be
     specified via the configuration files. You can futhermore change the tag
     format used when creating tags with the <option>debian-tag</option>
     option, the default is <replaceable>debian/&lt;version&gt;</replaceable>.</para>
