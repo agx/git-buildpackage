@@ -71,7 +71,7 @@ cleanup-script.sh
     option instead:
 
 <programlisting>
-<command>git-buildpackage</command> <option>--git-builder="pdebuild --debbuildopts '-I.git -i\.git"</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
+<command>git-buildpackage</command> <option>--git-builder="pdebuild --debbuildopts '-I.git -i\.git'"</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
 </programlisting>
 
     Note that we also used a different clean command since since &pdebuildcmd;
