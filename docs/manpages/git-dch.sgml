@@ -116,7 +116,7 @@
         </term>
         <listitem>
 	  <para>What meta tags to look for to generate bug-closing changelog
-	  entries.  The default is 'Closes|LP' to support Debian an
+	  entries.  The default is 'Closes|LP' to support Debian and
 	  Launchpad</para>
         </listitem>
       </varlistentry>
