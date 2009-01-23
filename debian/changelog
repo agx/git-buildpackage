@@ -1,3 +1,20 @@
+git-buildpackage (0.4.46) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [746d63b] fix typos (Closes: #510479) - thanks to Jonathan Wiltshire
+  * [07ceb2c] add Vcs-Browser
+
+  [ Dietmar Winkler ]
+  * [a92c398] documentation typo
+
+  [ Jonathan Wiltshire ]
+  * [a748f52] typo in docs/manpages/git-dch.sgml (Closes: 511096)
+
+  [ Guido Günther ]
+  * [5c8de27] handle dpkg-parsechangelog errors (Closes: #512765)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 23 Jan 2009 18:32:27 +0100
+
 git-buildpackage (0.4.45) unstable; urgency=low
 
   [ Robie Basak ]
