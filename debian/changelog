@@ -1,3 +1,13 @@
+git-buildpackage (0.4.47) unstable; urgency=low
+
+  * [b5a3215] export sha1, branch and tagname into the commit hooks
+    environment this makes it possible to push out that specific tag only
+  * [2be813e] document exported env vars and add example posttag hook
+  * [a498bdf] add GitRepository.rev_parse
+  * [28973fb] fix VCS-Browser URL
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 19 Feb 2009 20:37:49 +0100
+
 git-buildpackage (0.4.46) unstable; urgency=low
 
   [ Guido Günther ]
