@@ -193,6 +193,7 @@ def main(argv):
         repo_dir = os.path.abspath(os.path.curdir)
 
     try:
+        branch = repo.get_branch()
         if not options.ignore_new:
             Command(options.cleaner, shell=True)()
             (ret, out) = repo.is_clean()
@@ -201,7 +202,6 @@ def main(argv):
                 print >>sys.stderr, out
                 raise GbpError, "Use --git-ignore-new to ignore."
 
-            branch = repo.get_branch()
             if branch != options.debian_branch:
                 print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
                 raise GbpError, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
@@ -272,10 +272,15 @@ def main(argv):
                 raise GbpError, "Can't parse version from changelog"
             else:
                 print "Tagging %s" % version
-                GitTag(options.sign_tags, options.keyid)(build_tag(options.debian_tag, version),
+                tag = build_tag(options.debian_tag, version)
+                GitTag(options.sign_tags, options.keyid)(tag,
                        msg="Debian release %s" % version)
                 if(options.posttag):
-                    Command(options.posttag, shell=True)()
+                    sha = repo.rev_parse("%s^{}" % tag)
+                    Command(options.posttag, shell=True,
+                            extra_env={'GBP_TAG': tag,
+                                       'GBP_BRANCH': branch,
+                                       'GBP_SHA1': sha})()
 
     except CommandExecFailed:
         retval = 1
