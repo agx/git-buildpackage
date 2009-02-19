@@ -62,17 +62,48 @@ export-dir=../build-area
     <sect1 id="gbp.building.push">
     <title>Pushing into a remote repository</title>
 	<para>If you want to push your changes automatically after a succesful build and tag
-	you can use &git-buildpackage;'s posttag hook:
+	you can use &git-buildpackage;'s posttag hook. A very simple invocation would look like this:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>
 </programlisting>
-	This assumes you have set up a remote repository to push to in either
-	<filename>.git/config</filename> or
-	<filename>.git/remotes/</filename>. Setting up the posttag hook in
-	<filename>.gbp.conf</filename> looks like:
+	This assumes you have set up a remote repository to push to in <filename>.git/config</filename>.
+
+	The following hook pushes out the created tag to were you pulled from
+        and forwards the remote branch to that position:
 <programlisting>
-<option>posttag</option>=<replaceable>"git push git.debian.org && git push --tags git.debian.org"</replaceable>
+#!/bin/sh -e
+#
+# gbp-push: post tag hook to push out the newly created tag and to forward the
+# remote branch to that position
+
+if ! REMOTE=$(git config --get branch."${GBP_BRANCH}".remote); then
+    REMOTE=origin
+fi
+
+if [ "$GBP_TAG" ]; then
+     echo "Pushing $GBP_TAG to $REMOTE"
+     git push "$REMOTE" "$GBP_TAG"
+else
+     echo "GBP_TAG no set."
+     exit 1
+fi
+
+if [ "$GBP_SHA1" ] && [ "$GBP_BRANCH" ]; then
+    git push "$REMOTE" "$GBP_SHA1":"$GBP_BRANCH"
+else
+    echo "GBP_SHA1 or GBP_BRANCH not set."
+    exit 1
+fi
+echo "done."
 </programlisting>
+	<replaceable>GBP_TAG</replaceable>, <replaceable>GBP_SHA1</replaceable>
+        and <replaceable>GBP_BRANCH</replaceable> are passed to the hook via the
+        environment. To call this hook automatically upon tag creation add:
+<programlisting>
+<option>posttag</option>=<replaceable>"gbp-push"</replaceable>
+</programlisting>
+	to your <filename>.gbp.conf</filename> and make sure <filename>gbp-push</filename>
+        is somewhere in your <replaceable>$PATH</replaceable>.
     </para>
     </sect1>
 </chapter>
