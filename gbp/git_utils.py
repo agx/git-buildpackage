@@ -58,7 +58,6 @@ class GitRepository(object):
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
-
     def get_branch(self):
         """on what branch is the current working copy"""
         self.__check_path()
@@ -131,6 +130,13 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError, "can't find tag for %s" % branch
         return tag[0].strip()
+
+    def rev_parse(self, name):
+        "find the SHA1"
+        sha, ret = self.__git_getoutput('rev-parse', [ "--verify", name])
+        if ret:
+            raise GitRepositoryError, "can't find SHA1 for %s" % name
+        return sha[0].strip()
 
     def write_tree(self):
         """write out the current index, return the SHA1"""
