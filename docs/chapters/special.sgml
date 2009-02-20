@@ -82,18 +82,18 @@ cleanup-script.sh
     &git-buildpackage; is more convienient:
 
 <programlisting>
-cat &lt;&lt;EOF &gt;/usr/local/bin/git-pbuilder
+cat &lt;&lt;EOF &gt;/usr/local/bin/gbp-pbuilder
 #!/bin/sh
 # pass commandline arguments to dpkg-buildpackage
 <command>pdebuild</command> <option>--debbuildopts</option> "-i\.git -I.git $*"
 EOF
-<command>chmod</command> a+x /usr/local/bin/git-pbuilder
+<command>chmod</command> a+x /usr/local/bin/gbp-pbuilder
 </programlisting>
 
 	This makes the above look like:
 
 <programlisting>
-<command>git-buildpackage</command> <option>--git-builder=git-pbuilder</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
+<command>git-buildpackage</command> <option>--git-builder=gbp-pbuilder</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
 </programlisting>
 
 	We can shorten this further by using <filename>~/.gbp.conf</filename>:
@@ -105,7 +105,7 @@ cat &lt;&lt;EOF &gt; <filename>~/.gbp.conf</filename>
 cleaner = fakeroot debian/rules clean
 # this is how we invoke pbuilder, arguments passed to git-buildpackage will be
 # passed to dpkg-buildpackge in the chroot
-builder = /usr/local/bin/git-pbuilder
+builder = /usr/local/bin/gbp-pbuilder
 </programlisting>
 
 	Invoking &git-buildpackage; will now invoke &pdebuildcmd; by
