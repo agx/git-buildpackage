@@ -37,9 +37,8 @@
 <screen>
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area/</replaceable>
 </screen>
-    <para>This will export the current branch head to
-    <replaceable>../build-area/package-version</replaceable>, check out the corresponding
-    upstream tree to build the .orig.tar.gz  if necessary and build the
+    <para>This will export the head of the ecurrent branch to
+    <replaceable>../build-area/package-version</replaceable>, build the
     package. If you don't want to export the current branch head you can use
     <option>--git-export</option> to export any treeish object, here are some
     examples:</para>
@@ -47,7 +46,11 @@
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>debian/0.4.3</replaceable>
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>etch</replaceable>
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>8caed309653d69b7ab440e3d35abc090eb4c6697</replaceable>
+&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>INDEX</replaceable>
 </screen>
+    <para>The special argument <replaceable>INDEX</replaceable> exports the
+    state of the current index which can be used to include staged but
+    uncommitted changes in the build.</para>
     <para>If you want to default to build in a separate build area you can
     specify the directory to use in the gbp.conf.
 <programlisting>
@@ -66,10 +69,13 @@ export-dir=../build-area
 <programlisting>
 <command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>
 </programlisting>
-	This assumes you have set up a remote repository to push to in <filename>.git/config</filename>.
+	This assumes you have set up a remote repository to push to in
+        <filename>.git/config</filename>.</para>
 
-	The following hook pushes out the created tag to were you pulled from
-        and forwards the remote branch to that position:
+	<para>Usually you want to make sure you don't push out any
+        unrelated changes into the remote repository. This is handled by the
+        following hook which only pushes out the created tag to where you pulled
+        from and also forwards the corresponding remote branch to that position:
 <programlisting>
 #!/bin/sh -e
 #
