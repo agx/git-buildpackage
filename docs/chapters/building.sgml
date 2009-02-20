@@ -80,8 +80,8 @@ export-dir=../build-area
 <programlisting>
 #!/bin/sh -e
 #
-# gbp-push: post tag hook to push out the newly created tag and to forward the
-# remote branch to that position
+# gbp-posttag-push: post tag hook to push out the newly created tag and to
+# forward the remote branch to that position
 
 if ! REMOTE=$(git config --get branch."${GBP_BRANCH}".remote); then
     REMOTE=origin
@@ -107,7 +107,7 @@ echo "done."
         and <replaceable>GBP_BRANCH</replaceable> are passed to the hook via the
         environment. To call this hook automatically upon tag creation add:
 <programlisting>
-<option>posttag</option>=<replaceable>"gbp-push"</replaceable>
+<option>posttag</option>=<replaceable>"gbp-posttag-push"</replaceable>
 </programlisting>
 	to your <filename>.gbp.conf</filename> and make sure <filename>gbp-push</filename>
         is somewhere in your <replaceable>$PATH</replaceable>.

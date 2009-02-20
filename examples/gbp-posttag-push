@@ -1,0 +1,106 @@
+#!/usr/bin/python
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2009 Guido Guenther <agx@sigxcpu.org>
+#
+# gbp-posttag-push: post tag hook to be called by git-buildpackage to push out
+# the newly created tag and to forward the remote branch to that position
+# 
+# it checks for explicit push destinations, if none are found it pushes back to
+# where the branch got merged from. Before pushing it checks if the tag is
+# signed.
+#
+# use:
+# [git-buildpackage]
+# posttag = gbp-posttag-push
+#
+# Options:
+# -d: dry-run
+
+import os
+import subprocess
+import sys
+import gbp.command_wrappers as gbpc
+from optparse import OptionParser
+
+
+class Env(object):
+    pass
+
+
+def get_pushs(env):
+    """get a list of push targets"""
+    dests = {}
+    cmd = "git config --get-regexp 'remote\..*\.push' '%s(:.*)?$'" % env.branch
+    for remote in subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split("\n"):
+        if not len(remote):
+            continue
+        print '"%s"' % remote
+        repo, refspec = remote.split()
+        repo = repo.split('.')[1] # remote.<repo>.push
+        try:
+            remote = refspec.split(':')[1] # src:dest
+        except IndexError:
+            remote = refspec
+        dests[repo] = remote
+    return dests
+
+
+def get_pull(env):
+    """where did we pull from?"""
+    cmd = 'git config --get branch."%s".remote' % env.branch
+    remote =  subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].strip()
+    if not remote:
+        remote = 'origin'
+    return { remote: env.branch }
+
+
+def git_push_sim(args):
+    print "git push %s" % " ".join(args)
+
+
+def main(args):
+    env = Env()
+
+    git_verify_tag = gbpc.GitCommand("tag", ["-v"])
+
+    parser = OptionParser()
+    parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
+                      action="store_true", help="dry run, don't push.")
+
+    (options, args) = parser.parse_args()
+
+    if options.dryrun:
+        print "Dry run mode. Not pushing."
+        git_push = git_push_sim
+    else:
+        git_push = gbpc.GitCommand("push")
+
+    for envvar in [ "GBP_TAG", "GBP_BRANCH", "GBP_SHA1" ]:
+        var = os.getenv(envvar)
+        if var:
+            env.__dict__.setdefault( "%s" % envvar.split("_")[1].lower(), var)
+        else:
+            print >>sys.stderr, "%s not set." % envvar 
+            return 1
+
+    dests = get_pushs(env)
+    if not dests:
+        dests = get_pull(env)
+
+    try:
+        git_verify_tag([env.tag])
+    except gbpc.CommandExecFailed:
+        print >>sys.stderr, "Not pushing unsigned tag $GBP_TAG."
+        return 0
+
+    for dest in dests:
+        print "Pushing %s to %s" % (env.sha1, dest)
+        git_push([dest, "tag", env.tag])
+        git_push([dest, "%s:%s" % (env.sha1, dests[dest])])
+        print "done."
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
