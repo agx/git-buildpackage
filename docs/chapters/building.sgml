@@ -91,7 +91,7 @@ if [ "$GBP_TAG" ]; then
      echo "Pushing $GBP_TAG to $REMOTE"
      git push "$REMOTE" "$GBP_TAG"
 else
-     echo "GBP_TAG no set."
+     echo "GBP_TAG not set."
      exit 1
 fi
 
