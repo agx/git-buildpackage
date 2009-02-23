@@ -1,3 +1,17 @@
+git-buildpackage (0.4.48) unstable; urgency=low
+
+  * [ae575e3] Add --export=WC to export the working copy into export-
+    dir. (Closes: #509138)
+  * [9f42e53] run git-cleaner with --git-ignore-new Makes running with
+    and without --git-ignore-new more consistent.
+  * [b8a35b4] docs: add --git-export=INDEX to the manual
+  * [47c8a38] docs: add --git-dont-purge to the manual
+  * [616bff3] docs: fix typo
+  * [15042e3] rename git-pbuilder to gbp-pbuilder
+  * [ffbb38a] add gbp-posttag-push example to examples/
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 23 Feb 2009 18:24:12 +0100
+
 git-buildpackage (0.4.47) unstable; urgency=low
 
   * [b5a3215] export sha1, branch and tagname into the commit hooks
