@@ -208,8 +208,8 @@ def main(argv):
 
     try:
         branch = repo.get_branch()
+        Command(options.cleaner, shell=True)()
         if not options.ignore_new:
-            Command(options.cleaner, shell=True)()
             (ret, out) = repo.is_clean()
             if not ret:
                 print >>sys.stderr, "You have uncommitted changes in your source tree:"
