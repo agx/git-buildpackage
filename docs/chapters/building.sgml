@@ -46,10 +46,12 @@
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>etch</replaceable>
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>8caed309653d69b7ab440e3d35abc090eb4c6697</replaceable>
 &git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>INDEX</replaceable>
+&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>WC</replaceable>
 </screen>
     <para>The special argument <replaceable>INDEX</replaceable> exports the
-    state of the current index which can be used to include staged but
-    uncommitted changes in the build.</para>
+    state of the current index which can be used to include staged but uncommitted
+    changes in the build. Whereas the special argument
+    <replaceable>WC</replaceable> exports the current working copy as is.</para>
     <para>If you want to default to build in a separate build area you can
     specify the directory to use in the gbp.conf.
 <programlisting>

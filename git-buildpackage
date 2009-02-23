@@ -25,13 +25,15 @@ import pipes
 import time
 import gbp.deb_utils as du
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
-from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed, 
-                                  PristineTar, RemoveTree)
+from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed,
+                                  PristineTar, RemoveTree, GitAdd)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 
 # when we want to reference the index in a treeish context we call it:
 index_name = "INDEX"
+# when we want to reference the working copy in treeish context we call it:
+wc_name = "WC"
 
 def git_archive_pipe(prefix, pipe, output, treeish):
     """run the git_archive pipe"""
@@ -106,6 +108,7 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
     else:
         return False
 
+
 def git_archive_build_orig(repo, cp, output_dir, options):
     """build orig using git-archive"""
     # --upstream-branch was given on the command line, so use this:
@@ -121,6 +124,17 @@ def git_archive_build_orig(repo, cp, output_dir, options):
         raise GbpError # git-ls-tree printed an error message already
     if not git_archive(cp, output_dir, upstream_tree):
         raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
+
+
+def write_wc(repo):
+    """write out the current working copy as a treeish object"""
+    tree = None
+    os.putenv("GIT_INDEX_FILE", ".git/gbp_index")
+    GitAdd()(['-f', '.'])
+    tree = repo.write_tree()
+    os.unsetenv("GIT_INDEX_FILE")
+    return tree
+
 
 def main(argv):
     changelog = 'debian/changelog'
@@ -226,6 +240,8 @@ def main(argv):
                 # write a tree of the index if necessary:
                 if options.treeish == index_name:
                     tree = repo.write_tree()
+                elif options.treeish == wc_name:
+                    tree = write_wc(repo)
                 else:
                     tree = options.treeish
                 if not repo.has_treeish(tree):

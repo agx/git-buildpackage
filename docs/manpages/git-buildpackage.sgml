@@ -189,7 +189,9 @@
 	<listitem> 
 	  <para>Instead of exporting the current branch head, export the
 	  treeish object <replaceable>treeish</replaceable>. The special name
-	  <replaceable>INDEX</replaceable> exports the current index.</para>
+	  <replaceable>INDEX</replaceable> exports the current index whereas
+          the special name <replaceable>WC</replaceable> exports the current working
+          copy as is.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
