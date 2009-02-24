@@ -39,6 +39,7 @@ class GbpOptionParser(OptionParser):
                  'filter'          : [],
                  'snapshot-number' : 'snapshot + 1',
                  'git-log'         : '--no-merges',
+                 'export'          : 'HEAD',
                  'export-dir'      : '',
                  'tarball-dir'     : '',
                  'ignore-new'      : 'False',

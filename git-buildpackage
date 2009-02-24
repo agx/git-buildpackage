@@ -189,8 +189,8 @@ def main(argv):
                       help="hook run after a successful tag operation, default is '%(posttag)s'")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir",
                       help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
-    export_group.add_option("--git-export", dest="treeish", default=default_tree,
-                      help="export treeish object TREEISH, default is '%s'" % default_tree)
+    export_group.add_config_file_option("export", dest="export",
+                      help="export treeish object TREEISH, default is '%(export)s'", metavar="TREEISH")
     export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
                       help="retain exported package build directory")
     (options, args) = parser.parse_args(args)
@@ -238,16 +238,16 @@ def main(argv):
             # Export to another build dir if requested:
             if options.export_dir:
                 # write a tree of the index if necessary:
-                if options.treeish == index_name:
+                if options.export == index_name:
                     tree = repo.write_tree()
-                elif options.treeish == wc_name:
+                elif options.export == wc_name:
                     tree = write_wc(repo)
                 else:
-                    tree = options.treeish
+                    tree = options.export
                 if not repo.has_treeish(tree):
                     raise GbpError # git-ls-tree printed an error message already
                 tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
-                print "Exporting '%s' to '%s'" % (options.treeish, tmp_dir)
+                print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
                 dump_tree(tmp_dir, tree)
                 cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
                 if du.is_native(cp):
