@@ -217,7 +217,7 @@ def parse_commit(repo, commitid, options):
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
             else: # normal commit message
-                if options.short and msg:
+                if msg and not options.full:
                     continue
                 elif line.strip(): # don't add all whitespace lines
                     msg += line
@@ -288,12 +288,10 @@ def main(argv):
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="git_author")
-    commit_group.add_config_file_option(option_name="meta", dest="meta",
-                      help="parse meta tags in commit messages, default is '%(meta)s'", action="store_true")
+    commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
                       help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
-    commit_group.add_option("--full", action="store_false", dest="short", default=True,
-                      help="include the full commit message instead of only the first line")
+    commit_group.add_boolean_config_file_option(option_name="full", dest="full")
     commit_group.add_config_file_option(option_name="id-length", dest="idlen",
                       help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
                       type="int", metavar="N")

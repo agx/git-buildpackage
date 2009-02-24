@@ -45,6 +45,7 @@ class GbpOptionParser(OptionParser):
                  'ignore-new'      : 'False',
                  'meta'            : 'False',
                  'meta-closes'     : 'Closes|LP',
+                 'full'            : 'False',
                  'id-length'       : '0',
                  'no-dch'          : 'False',
                  'git-author'      : 'False',
@@ -68,6 +69,10 @@ class GbpOptionParser(OptionParser):
                   "files to filter out during import (can be given multiple times)",
              'git-author':
                   "use name and email from git-config for changelog trailer, default is '%(git-author)s'",
+             'full':
+                  "include the full commit message instead of only the first line, default is '%(full)s'",
+             'meta':
+                  "parse meta tags in commit messages, default is '%(meta)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
