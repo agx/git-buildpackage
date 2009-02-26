@@ -83,8 +83,9 @@ snapshot-number = os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
     <para>You can use <option>--full</option> to include the full commit
     message in the changelog, note that you will lose the formatting though,
     since &dch; wraps lines by itself.</para>
-    <para>Additionally there are tags available to customize the commit
-message, for example the git commit message
+    <para>Additionally there are tags <option>Closes:</option> and
+<option>Thanks:</option> available to customize the commit message. Each tag
+has to start at the beginning of a single line. For example the git commit message
 <screen>
 New upstream version
 
@@ -95,7 +96,7 @@ Thanks: cool upstream
 <screen>
     * New upstream version (Closes: #1000) - thanks to cool upstream
 </screen>
-You can use multiple <option>Closes:</option> tags.
+You can use the <option>Closes:</option> tag multiple times.
 </para><para>
 Usually changelog entries should correspond to a single &git; commit. In this case it's
 convenient to include the commit id in the changelog entry. 
