@@ -60,8 +60,6 @@ class GbpOptionParser(OptionParser):
                   "format string for upstream tags, default is '%(upstream-tag)s'",
              'sign-tags':
                   "sign tags, default is '%(sign-tags)s'",
-             'no-sign-tags':
-                  "negates sign-tags",
              'keyid':
                   "GPG keyid to sign tags with, default is '%(keyid)s'",
              'pristine-tar':
@@ -70,8 +68,6 @@ class GbpOptionParser(OptionParser):
                   "files to filter out during import (can be given multiple times)",
              'git-author':
                   "use name and email from git-config for changelog trailer, default is '%(git-author)s'",
-             'no-git-author':
-                  "negates git-author",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
@@ -159,6 +155,11 @@ class GbpOptionParser(OptionParser):
                                 default=self.get_default(option_name, **kwargs),
                                 help=help % self.config, **kwargs)
 
+    def add_boolean_config_file_option(self, option_name, dest):
+        self.add_config_file_option(option_name=option_name, dest=dest, action="store_true")
+        neg_help = "negates '--%s%s'" % (self.prefix, option_name)
+        self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
+
 class GbpOptionGroup(OptionGroup):
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
@@ -175,5 +176,10 @@ class GbpOptionGroup(OptionGroup):
         OptionGroup.add_option(self, "--%s%s" % (self.parser.prefix, option_name), dest=dest,
                                 default=self.parser.get_default(option_name, **kwargs),
                                 help=help % self.parser.config, **kwargs)
+
+    def add_boolean_config_file_option(self, option_name, dest):
+        self.add_config_file_option(option_name=option_name, dest=dest, action="store_true")
+        neg_help = "negates '--%s%s'" % (self.parser.prefix, option_name)
+        self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
