@@ -31,7 +31,7 @@
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
-      <arg><option>--pristine-tar</option></arg>
+      <arg><option>--[no-]pristine-tar</option></arg>
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>

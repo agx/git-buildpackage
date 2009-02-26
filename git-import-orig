@@ -119,7 +119,7 @@ def main(argv):
     parser.add_config_file_option(option_name="keyid", dest="keyid")
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     parser.add_config_file_option(option_name="filter", dest="filters", action="append")
-    parser.add_config_file_option(option_name="pristine-tar", dest="pristine_tar", action="store_true")
+    parser.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:

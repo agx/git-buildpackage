@@ -34,7 +34,7 @@
       <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
-      <arg><option>--git-pristine-tar</option></arg>
+      <arg><option>--git-[no-]pristine-tar</option></arg>
       <arg><option>--git-dont-purge</option></arg>
       <arg><option>--git-tag-only</option></arg>
     </cmdsynopsis>
@@ -202,7 +202,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-pristine-tar</option>
+        <term><option>--git-[no-]pristine-tar</option>
         </term>
         <listitem>
 	  <para>use pristine-tar to create the orig.tar.gz</para>
