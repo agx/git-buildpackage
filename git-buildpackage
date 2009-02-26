@@ -161,8 +161,7 @@ def main(argv):
     parser.add_option_group(cmd_group)
     parser.add_option_group(export_group)
 
-    parser.add_config_file_option(option_name = "ignore-new", dest="ignore_new",
-                      help="build with uncommited changes in the source tree", action="store_true")
+    parser.add_boolean_config_file_option(option_name = "ignore-new", dest="ignore_new")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     tag_group.add_option("--git-tag", action="store_true", dest="tag", default=False,

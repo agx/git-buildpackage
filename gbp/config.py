@@ -73,6 +73,8 @@ class GbpOptionParser(OptionParser):
                   "include the full commit message instead of only the first line, default is '%(full)s'",
              'meta':
                   "parse meta tags in commit messages, default is '%(meta)s'",
+             'ignore-new':
+                  "build with uncommited changes in the source tree, default is '%(ignore-new)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

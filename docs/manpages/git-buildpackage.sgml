@@ -19,7 +19,7 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &git-buildpackage;
-      <arg><option>--git-ignore-new</option></arg>
+      <arg><option>--git-[no-]ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
       <arg><option>--git-upstream-branch=</option><replaceable>treeish</replaceable></arg>
@@ -83,7 +83,7 @@
 
     <variablelist>
       <varlistentry>
-        <term><option>--git-ignore-new</option>
+        <term><option>--git-[no-]ignore-new</option>
         </term>
         <listitem>
 	  <para>Build the .diff.gz and debian package although there are
