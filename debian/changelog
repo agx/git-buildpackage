@@ -1,3 +1,18 @@
+git-buildpackage (0.4.49) unstable; urgency=low
+
+  * [4ddcd5c] gbp-posttag-push: fix for remote repos containing '.'
+  * [1e62d1a] Pass "-d" to debuild when run as cleaner. This way build-
+    deps don't have to be fulfilled in the source tree but only in the
+    build tree. (Closes: #516876)
+  * [660acbe] better document 'Closes:' tag (Closes: #516877)
+  * [e3b7610] simplify boolean option handling
+  * [1e1a1ca] add --no-pristine-tar (Closes: #517024)
+  * [600a16d] add --git-no-ignore-new
+  * [2fa0cc8] make --[no-]full a config file option
+  * [6ccd482] make --export a config file option
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 26 Feb 2009 13:48:50 +0100
+
 git-buildpackage (0.4.48) unstable; urgency=low
 
   * [ae575e3] Add --export=WC to export the working copy into export-
