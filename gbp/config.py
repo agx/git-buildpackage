@@ -132,11 +132,13 @@ class GbpOptionParser(OptionParser):
         except KeyError:
             default = self.config[neg]
 
-        if default in  [ 'True', 'False' ]:
-            ret = eval(default)
+        if default.lower() in ["true",  "1" ]:
+            val = 'True'
+        elif default.lower() in ["false", "0" ]:
+            val = 'False'
         else:
             raise ValueError, "Boolean options must be True or False"
-        return ret
+        return eval(val)
 
     def get_default(self, option_name, **kwargs):
         """get the default value"""
