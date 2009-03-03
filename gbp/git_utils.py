@@ -77,16 +77,12 @@ class GitRepository(object):
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')[0]
         ret = False
-        if out[0].startswith('#'):
-            try:
-                if out[1].strip().startswith(clean_msg):
+        for line in out:
+            if line.startswith('#'):
+                continue
+            if line.startswith(clean_msg):
                     ret = True
-                elif out[3].strip().startswith(clean_msg):
-                    ret = True
-            except IndexError:
-                pass
-        elif out[0].strip().startswith(clean_msg): # git << 1.5
-            ret = True
+            break
         return (ret, "".join(out))
 
     def is_empty(self):
