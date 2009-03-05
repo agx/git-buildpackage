@@ -1,0 +1,37 @@
+#!/bin/bash -e
+#
+# cowbuilder helper for git-buildpackage
+# use this as builder:
+# git-buildpackage --git-builder=gbp-cowbuilder-sid
+#
+# you can use this for other dists like sarge, etch, lenny with a symlink: 
+# ln -s gbp-cowbuilder-sid gbp-cowbuilder-lenny
+#
+# and a /etc/pbuilder/pbuilderrc.$DIST
+
+DIST=${0/*gbp-cowbuilder-}
+ACTION=$1
+
+CONF=/etc/pbuilder/pbuilderrc.$DIST
+WA_OPT='--debian-etch-workaround'
+
+case $DIST in
+	sarge*|etch*)
+		echo "`basename $0`: Using $WA_OPT"
+    		OPTS="$OPTS $WA_OPT"
+		;;
+esac
+
+case $ACTION in
+    update|create|login)
+	sudo cowbuilder --$ACTION --configfile=${CONF} --dist $DIST
+	;;
+    *)
+	# pass all options to dpkg-buildpackage:
+	pdebuild --configfile ${CONF} 		     \
+	 	--pbuilder cowbuilder                \
+	 	--debbuildopts "-i\.git/ -I.git $*"  \
+		-- $OPTS
+	;;
+esac
+
