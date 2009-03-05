@@ -1,3 +1,13 @@
+git-buildpackage (0.4.50) unstable; urgency=low
+
+  * [eceac16] be less strict on the spelling of boolean config file
+    options any capitalization of 'true' or 'false' as well as '0' and
+    '1' are allowed. (Closes: #517376)
+  * [94084b0] Skip all comments before looking for clean_msg (Closes: #518008)
+  * [e56c9f5] add git-builder cowbuilder example
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 05 Mar 2009 21:08:24 +0100
+
 git-buildpackage (0.4.49) unstable; urgency=low
 
   * [4ddcd5c] gbp-posttag-push: fix for remote repos containing '.'
