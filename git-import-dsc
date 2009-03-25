@@ -152,8 +152,11 @@ def main(argv):
             if not repo.has_tag(tag):
                 print "tag %s not found, importing %s tarball" % (tag, format[1])
                 # FIXME: this is what import-orig does - merge
-                if not src.native and not is_empty:
-                    repo.set_branch(options.upstream_branch)
+                if not is_empty:
+                    if src.native:
+                        repo.set_branch(options.debian_branch)
+                    else:
+                        repo.set_branch(options.upstream_branch)
                 repo.replace_tree(unpack_dir, options.filters, verbose=True)
                 gbpc.GitCommitAll()(msg="Imported %s" % msg)
                 gitTag(tag, msg=msg)
