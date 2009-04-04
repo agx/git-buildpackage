@@ -34,6 +34,7 @@ class GbpOptionParser(OptionParser):
                  'no-create-orig'  : 'False',
                  'keyid'           : '',
                  'posttag'         : '',
+                 'postbuild'       : '',
                  'debian-tag'      : 'debian/%(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
                  'filter'          : [],

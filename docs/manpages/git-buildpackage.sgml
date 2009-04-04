@@ -29,6 +29,7 @@
       <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
+      <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-no-create-orig</option></arg>
       <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
@@ -156,7 +157,19 @@
         <term><option>--git-posttag=</option><replaceable>command</replaceable>
         </term>
         <listitem>
-	  <para>excecute <replaceable>command</replaceable> after tagging a new version</para>
+	  <para>excecute <replaceable>command</replaceable> after tagging a new
+	  version.</para><para>Exported environment variables are GBP_TAG (the name
+	  of the generated tag), GBP_BRANCH (the branch the package was build
+	  from) and GBP_SHA1 (the sha1 of the commit the tag was created at).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-postbuild=</option><replaceable>command</replaceable>
+        </term>
+        <listitem>
+	  <para>excecute <replaceable>command</replaceable> after succesful
+	  build.</para><para> The name of the generated changes file is exportes as
+	  GBP_CHANGES_FILE into the environment.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
