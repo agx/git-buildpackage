@@ -107,7 +107,15 @@ def parse_dsc(dscfile):
 
 
 def parse_changelog(changelog):
-    """parse changelog file changelog"""
+    """
+    parse changelog file changelog
+
+    cp['Version']: full version string including epoch
+    cp['Upstream-Version']: upstream version, if not debian native
+    cp['Debian-Version']: debian release
+    cp['Epoch']: epoch, if any
+    cp['NoEpoch-Version']: full version string excluding epoch
+    """
     if not os.access(changelog, os.F_OK):
         raise NoChangelogError, "Changelog %s not found" % (changelog, )
     status, output = commands.getstatusoutput('dpkg-parsechangelog -l%s' % (changelog, ))
@@ -115,14 +123,14 @@ def parse_changelog(changelog):
         raise ParseChangeLogError, output
     cp = email.message_from_string(output)
     try:
-        if '-' in cp['Version']:
-            upstream_version, cp['Debian-Version'] = cp['Version'].rsplit('-', 1)
-            if ':' in upstream_version:
-                cp['Epoch'], cp['Upstream-Version'] = upstream_version.split(':', 1)
-            else:
-                cp['Upstream-Version'] = upstream_version
+        if ':' in cp['Version']:
+            cp['Epoch'], cp['NoEpoch-Version'] = cp['Version'].split(':', 1)
         else:
-            cp['Debian-Version'] = cp['Version']
+            cp['NoEpoch-Version'] = cp['Version']
+        if '-' in cp['NoEpoch-Version']:
+            cp['Upstream-Version'], cp['Debian-Version'] = cp['NoEpoch-Version'].rsplit('-', 1)
+        else:
+            cp['Debian-Version'] = cp['NoEpoch-Version']
     except TypeError:
         raise ParseChangeLogError, output.split('\n')[0]
     return cp
