@@ -8,6 +8,7 @@ import email
 import os
 import re
 import shutil
+import subprocess
 import sys
 import glob
 import command_wrappers as gbpc
@@ -207,6 +208,12 @@ def tar_toplevel(dir):
         return unpacked[0]
     else:
         return dir
+
+
+def get_arch():
+    pipe = subprocess.Popen(["dpkg", "--print-architecture"], shell=False, stdout=subprocess.PIPE)
+    arch = pipe.stdout.readline().strip()
+    return arch
 
 
 def _test():
