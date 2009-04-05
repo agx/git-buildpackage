@@ -282,13 +282,15 @@ def main(argv):
                 build_dir = repo_dir
 
             # Finally build the package:
-            RunAtCommand(options.builder, dpkg_args, shell=True)(dir=build_dir)
+            RunAtCommand(options.builder, dpkg_args, shell=True, 
+                         extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)
             if options.postbuild:
                 arch = du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir, cp['Source'], version_no_epoch, arch))
                 Command(options.postbuild, shell=True,
-                        extra_env={'GBP_CHANGES_FILE': changes})()
+                        extra_env={'GBP_CHANGES_FILE': changes,
+                                   'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
             print "Tagging %s" % version
             tag = build_tag(options.debian_tag, version)

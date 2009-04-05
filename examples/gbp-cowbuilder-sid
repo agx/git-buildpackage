@@ -30,6 +30,7 @@ case $ACTION in
 	# pass all options to dpkg-buildpackage:
 	pdebuild --configfile ${CONF} 		     \
 	 	--pbuilder cowbuilder                \
+		--buildresult ${GBP_BUILD_DIR}/..    \
 	 	--debbuildopts "-i\.git/ -I.git $*"  \
 		-- $OPTS
 	;;
