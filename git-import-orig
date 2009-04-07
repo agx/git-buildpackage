@@ -86,9 +86,9 @@ def guess_version(archive, version_regex=r''):
     @version_regex: additional version regex to apply, needs a 'version' group
     """
     version_filters = [ # Debian package_<version>.orig.tar.gz:
-                        r'^[a-z\d\-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.(gz|bz2)',
+                        r'^[a-z\d\.\+\-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.(gz|bz2)',
                         # Upstream package-<version>.tar.gz:
-                        r'^[a-z\d\-]+-(?P<version>[a-z\d\.]+)\.tar\.(gz|bz2)' ]
+                        r'^[a-z\d\.\+\-]+-(?P<version>[a-z\d\.]+)\.tar\.(gz|bz2)' ]
     if version_regex:
         version_filters = version_regex + version_filters
     for filter in version_filters:
