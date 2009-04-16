@@ -1,3 +1,20 @@
+git-buildpackage (0.4.51) unstable; urgency=low
+
+  * [74a0954] git-import-dsc: don't ignore --debian-branch on import into non
+    empty archives
+  * [abe7de4] store version without epoch and simplify version parsing
+  * [8d2c6bd] add get_arch returns dpkg's notion of the architecture
+  * [e4db34b] add postbuild hook can be used to e.g. run lintian.
+    (Closes: #521358)
+  * [829db7c] pass GBP_BUILD_DIR to the build command this allows hooks
+    to figure out where to copy back the build result. Adjust the
+    cowbuilder example accordingly.
+  * [eaacadf] bump standards version
+  * [d113a3b] let the version detection patter match debian policy
+    (Closes: #522888)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 16 Apr 2009 11:47:27 +0200
+
 git-buildpackage (0.4.50) unstable; urgency=low
 
   * [eceac16] be less strict on the spelling of boolean config file
