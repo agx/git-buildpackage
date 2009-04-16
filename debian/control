@@ -1,5 +1,5 @@
 Source: git-buildpackage
-Section: devel
+Section: vcs
 Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends: cdbs, debhelper (>= 5), python-dev, python-support (>= 0.3),
