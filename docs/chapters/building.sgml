@@ -65,7 +65,33 @@ export-dir=../build-area
     you want to keep the build tree use <replaceable>--git-dont-purge</replaceable>.
     </para>
     </sect1>
-    <sect1 id="gbp.building.push">
+    <sect1 id="gbp.building.hooks">
+    <title>Invoking external programs</title>
+    <para>
+    Besides the commands for cleaning the package build dir
+    (<option>cleaner</option> and building the package
+    (<option>builder</option>) you can also invoke hooks during the package
+    build: after a succesful build (<option>postbuild</option>) and after
+    creating a tag (<option>posttag</option>). Typical applications are running
+    <productname>lintian</productname> or pushing changes into a remote
+    repository.
+    </para>
+    <sect2 id="gbp.building.lintian">
+    <title>Running lintian</title>
+	<para>&git-buildpackage; exports several variables into the
+	<option>posttag</option>'s environment (for details see the <xref
+	linkend="gbp.man.git.buildpackage">).
+	To invoke &lintian; we need to tell it where to find the changes file:
+<programlisting>
+<command>git-buildpackage</command> <option>--git-postbuild</option>=<replaceable>'lintian $GBP_CHANGES_FILE'</replaceable>
+</programlisting>
+        To call &lintian; automatically after each successful build add:
+<programlisting>
+<option>postbuild</option>=<replaceable>lintian $GBP_CHANGES_FILE</replaceable>
+</programlisting>
+	to your <filename>.gbp.conf</filename>.
+    </sect2>
+    <sect2 id="gbp.building.push">
     <title>Pushing into a remote repository</title>
 	<para>If you want to push your changes automatically after a succesful build and tag
 	you can use &git-buildpackage;'s posttag hook. A very simple invocation would look like this:
@@ -105,14 +131,17 @@ else
 fi
 echo "done."
 </programlisting>
-	<replaceable>GBP_TAG</replaceable>, <replaceable>GBP_SHA1</replaceable>
-        and <replaceable>GBP_BRANCH</replaceable> are passed to the hook via the
+	<envar>GBP_TAG</envar>, <envar>GBP_SHA1</envar>
+        and <envar>GBP_BRANCH</envar> are passed to the hook via the
         environment. To call this hook automatically upon tag creation add:
 <programlisting>
 <option>posttag</option>=<replaceable>"gbp-posttag-push"</replaceable>
 </programlisting>
 	to your <filename>.gbp.conf</filename> and make sure <filename>gbp-push</filename>
-        is somewhere in your <replaceable>$PATH</replaceable>.
+	is somewhere in your <envar>$PATH</envar>. On Debian
+	systems a more complete example can be found in
+	<filename>/usr/share/doc/examples/git-buildpackage/examples/gbp-posttag-push</filename>.
     </para>
+    </sect2>
     </sect1>
 </chapter>

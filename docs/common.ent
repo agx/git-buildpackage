@@ -23,5 +23,6 @@
   <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
   <!ENTITY gpg 	       "<productname>GPG</productname>">
   <!ENTITY dpkg-buildpackage "<productname>Dpkg-buildpackage</productname>">
+  <!ENTITY lintian     "<productname>lintian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">
   <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">

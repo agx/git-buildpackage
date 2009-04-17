@@ -74,7 +74,10 @@
 	(Optionally) tag the tree after a successful build
 	</para></listitem>
 	<listitem><para>
-	(Optionally) call a post-tag hook - e.g. to push the results to a remote
+	(Optionally) call a post build hook - e.g. to run &lintian;
+	</para></listitem>
+	<listitem><para>
+	(Optionally) call a post tag hook - e.g. to push the results to a remote
 	repository after creating the tag
 	</para></listitem>
     </itemizedlist>
@@ -158,9 +161,11 @@
         </term>
         <listitem>
 	  <para>excecute <replaceable>command</replaceable> after tagging a new
-	  version.</para><para>Exported environment variables are GBP_TAG (the name
-	  of the generated tag), GBP_BRANCH (the branch the package was build
-	  from) and GBP_SHA1 (the sha1 of the commit the tag was created at).</para>
+	  version.</para><para>Exported environment variables are:
+	  <envar>GBP_TAG</envar> (the name of the generated tag),
+	  <envar>GBP_BRANCH</envar> (the branch the package was build from) and
+	  <envar>GBP_SHA1</envar> (the sha1 of the commit the tag was created
+	  at).</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -168,8 +173,9 @@
         </term>
         <listitem>
 	  <para>excecute <replaceable>command</replaceable> after succesful
-	  build.</para><para> The name of the generated changes file is exportes as
-	  GBP_CHANGES_FILE into the environment.</para>
+	  build.</para><para> Exported environment variables are:
+	  <envar>GBP_CHANGES_FILE</envar> (the name of the generated changes
+	  file), <envar>GBP_BUILD_DIR</envar> (the build dir).
         </listitem>
       </varlistentry>
       <varlistentry>
