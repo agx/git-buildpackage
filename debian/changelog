@@ -1,3 +1,14 @@
+git-buildpackage (0.4.52) unstable; urgency=low
+
+  * [a2e42cd] move to section vcs
+  * [2892e7f] document postbuild hook
+  * [66f1027] promote pristine-tar to Recommends:
+  * [54b9da0] fix missing argument in error message
+  * [3e4b08e] restore default signal handlers before subprocess.call, python
+              changes them to SIG_IGN. (Closes: #525411)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 24 Apr 2009 17:35:44 +0200
+
 git-buildpackage (0.4.51) unstable; urgency=low
 
   * [74a0954] git-import-dsc: don't ignore --debian-branch on import into non
