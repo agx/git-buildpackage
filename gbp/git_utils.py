@@ -172,7 +172,7 @@ def create_repo(path):
         GitInit()()
         return GitRepository(abspath)
     except OSError, err:
-        raise GitRepositoryError, "Cannot create Git repository at %s: %s "% err[1]
+        raise GitRepositoryError, "Cannot create Git repository at %s: %s " % (path, err[1])
     finally:
         os.chdir(pwd)
     return None
