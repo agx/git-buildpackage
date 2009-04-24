@@ -10,6 +10,7 @@ import subprocess
 import sys
 import os
 import os.path
+import signal
 from errors import GbpError
 
 class CommandExecFailed(Exception):
@@ -37,12 +38,16 @@ class Command(object):
 
     def __call(self, args):
         """simply wraps subprocess.call so we can be verbose"""
+        def default_sigpipe():
+            "restore default signal handler (http://bugs.python.org/issue1652)"
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
         if self.verbose:
             print self.cmd, self.args, args
         cmd = [ self.cmd ] + self.args + args
         if self.shell: # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-        return subprocess.call(cmd, shell=self.shell, env=self.env)
+        return subprocess.call(cmd, shell=self.shell, env=self.env, preexec_fn=default_sigpipe)
 
     def __run(self, args):
         """
