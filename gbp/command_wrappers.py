@@ -224,7 +224,7 @@ class GitTag(GitCommand):
         self.sign_tag = sign_tag
         self.keyid = keyid
 
-    def __call__(self, version, msg="Tagging %(version)s"):
+    def __call__(self, version, msg="Tagging %(version)s", commit=None):
         self.run_error = 'Couldn\'t tag "%s"' % (version,)
         if self.sign_tag:
             if self.keyid:
@@ -233,7 +233,10 @@ class GitTag(GitCommand):
                 sign_opts = [ '-s' ]
         else:
             sign_opts = []
-        GitCommand.__call__(self, sign_opts+[ '-m', msg % locals(), version])
+        cmd = sign_opts + [ '-m', msg % locals(), version]
+        if commit:
+            cmd += [ commit ]
+        GitCommand.__call__(self, cmd)
 
 
 class GitAdd(GitCommand):
