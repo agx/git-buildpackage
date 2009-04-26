@@ -162,6 +162,19 @@ class GitRepository(object):
         if ret: raise KeyError
         return value[0][:-1] # first line with \n ending removed
 
+    def get_author_info(self):
+        try:
+           name =  self.get_config("user.email")
+        except KeyError:
+           name = os.getenv("USER")
+        try:
+           email =  self.get_config("user.email")
+        except KeyError:
+            email = os.getenv("EMAIL")
+        email = os.getenv("GIT_AUTHOR_EMAIL", email)
+        name = os.getenv("GIT_AUTHOR_NAME", name)
+        return (name, email)
+
 def create_repo(path):
     """create a repository at path"""
     abspath = os.path.abspath(path)
