@@ -114,7 +114,7 @@ class GitRepository(object):
 
     def show(self, id):
         """git-show id"""
-        commit, ret = self.__git_getoutput('show', [ id ])
+        commit, ret = self.__git_getoutput('show', [ "--pretty=medium", id ])
         if ret:
             raise GitRepositoryError, "can't get %s" % id
         for line in commit:
