@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006, 2007, 2009 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -24,11 +24,77 @@ import tempfile
 import re
 import glob
 import subprocess
+import tarfile
+import time
 import gbp.command_wrappers as gbpc
 from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import (GbpError, GbpNothingImported)
+
+class FastImport(object):
+    """Invoke git-fast-import"""
+    _bufsize = 1024
+
+    m_regular = 644
+    m_exec    = 755
+    m_symlink = 120000
+
+    def __init__(self):
+        try:
+            self._fi = subprocess.Popen([ 'git', 'fast-import', '--quiet'], stdin=subprocess.PIPE)
+            self._out = self._fi.stdin
+        except OSError, err:
+            raise GbpError, "Error spawning git fast-import: %s", err
+        except ValueError, err:
+            raise GbpError, "Invalid argument when spawning git fast-import: %s", err
+
+    def _do_data(self, fd, size):
+        self._out.write("data %s\n" % size)
+        while True:
+            data = fd.read(self._bufsize)
+            self._out.write(data)
+            if len(data) != self._bufsize:
+                break
+        self._out.write("\n")
+
+    def _do_file(self, filename, mode, fd, size):
+        name = "/".join(filename.split('/')[1:])
+        self._out.write("M %d inline %s\n" % (mode, name))
+        self._do_data(fd, size)
+
+    def add_file(self, filename, fd, size):
+        self._do_file(filename, self.m_regular, fd, size)
+
+    def add_executable(self, filename, fd, size):
+        self._do_file(filename, self.m_exec, fd, size)
+
+    def add_symlink(self, filename, linkname):
+        name = "/".join(filename.split('/')[1:])
+        self._out.write("M %d inline %s\n" % (self.m_symlink, name))
+        self._out.write("data %s\n" % len(linkname))
+        self._out.write("%s\n" % linkname)
+
+    def start_commit(self, branch, committer, email, time, msg):
+        length = len(msg)
+        self._out.write("""commit refs/heads/%(branch)s
+committer %(committer)s <%(email)s> %(time)s
+data %(length)s
+%(msg)s
+from refs/heads/%(branch)s^0
+""" % locals())
+
+    def do_deleteall(self):
+        self._out.write("deleteall\n")
+
+    def close(self):
+        if self._out:
+            self._out.close()
+        if self._fi:
+            self._fi.wait()
+
+    def __del__(self):
+        self.close()
 
 
 def cleanup_tmp_tree(tree):
@@ -68,15 +134,66 @@ def symlink_orig(archive, pkg, version):
         return archive
 
 
+def upstream_import_commit_msg(version):
+    return "Imported Upstream version %s" % version
+
+
 def import_upstream_tree(repo, src_dir, version, filters, verbose):
     """import the upstream tree to the current branch"""
     try:
         if repo.replace_tree(src_dir, filters, verbose=True):
-            gbpc.GitCommitAll(verbose=verbose)(msg="Imported Upstream version %s" % version)
+            gbpc.GitCommitAll(verbose=verbose)(msg=upstream_import_commit_msg(version))
         else:
             raise GbpNothingImported
     except gbpc.CommandExecFailed:
         raise GbpError, "Import of upstream version %s failed." % version
+
+
+def fast_import_upstream_tree(repo, tarball, version, options):
+    """import the upstream tree to the current branch using git fast-import"""
+
+    try:
+        compr = tarball.split('.')[-1]
+
+        if not tarfile.is_tarfile(tarball):
+            raise GbpError, "'%s' not a tarball" % tarball 
+
+        tar = tarfile.open(tarball, "r:%s" % compr)
+
+        now = "%d %s" % (time.time(), time.strftime("%z"))
+        fastimport = FastImport()
+        name, email = repo.get_author_info()
+        if options.verbose:
+            print "Starting fastimport of %s" % tarball
+        fastimport.start_commit(options.upstream_branch, name, email, now,
+                                upstream_import_commit_msg(version))
+        fastimport.do_deleteall()
+
+        for item in tar:
+            if item.isfile():
+                if item.mode & 0100:
+                    fastimport.add_executable(item.name, tar.extractfile(item.name), item.size)
+                else:
+                    fastimport.add_file(item.name, tar.extractfile(item.name), item.size)
+            elif item.isdir():
+                continue # handled by git transparently
+            elif item.issym():
+                fastimport.add_symlink(item.name, item.linkname)
+            # if tarinfo.isextended() not implemented:
+            elif item.type in ( "x", "g", "X" ):
+                if options.verbose:
+                    print "Skipping %s of type '%s'" % (item.name, item.type)
+                continue
+            else:
+                raise GbpError, "'%s' is not a regular file (%s) - don't use fastimport." % (item.name, item.type)
+    except gbpc.CommandExecFailed:
+        raise GbpError, "Fastimport of upstream version %s failed." % version
+    finally:
+        tar.close()
+        fastimport.close()
+
+    if options.verbose:
+        print "FastImport done."
 
 
 def guess_version(archive, version_regex=r''):
@@ -97,6 +214,13 @@ def guess_version(archive, version_regex=r''):
             return m.group('version')
 
 
+def turn_off_fastimport(options, msg):
+    if options.fast_import:
+        print >>sys.stderr, msg
+        print >>sys.stderr, "Turning off fastimport."
+        options.fast_import = False
+
+
 def main(argv):
     ret = 0
     tmpdir = ''
@@ -109,6 +233,8 @@ def main(argv):
                       help="Upstream Version")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_option("--fast-import", action="store_true", dest="fast_import", default=False,
+                      help="use 'git fastimport' (experimental)")
     parser.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
@@ -125,7 +251,8 @@ def main(argv):
     if options.verbose:
         gbpc.Command.verbose = True
 
-    gitShowBranch = gbpc.GitShowBranch()
+    if options.filters:
+        turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
 
     try:
         if len(args) != 1:
@@ -145,6 +272,7 @@ def main(argv):
             is_empty = False
         else:
             is_empty = True
+            turn_off_fastimport(options, "Fast importing into empty archives not yet supported.")
 
         if not repo.has_branch(options.upstream_branch) and not is_empty:
             print >>sys.stderr, """
@@ -173,12 +301,15 @@ on howto create it otherwise use --upstream-branch to specify it.
 
         if os.path.isdir(archive):
             orig_dir = archive
+            turn_off_fastimport(options, "Fastimport only supported for tar achives.")
+
         else:
-            tmpdir = tempfile.mkdtemp(dir='../')
-            unpack_orig(archive, tmpdir, options.filters)
-            if options.verbose:
-                print "Unpacked %s to '%s'" % (archive , tmpdir)
-            orig_dir = tar_toplevel(tmpdir)
+            if not options.fast_import:
+                tmpdir = tempfile.mkdtemp(dir='../')
+                unpack_orig(archive, tmpdir, options.filters)
+                if options.verbose:
+                    print "Unpacked %s to '%s'" % (archive , tmpdir)
+                orig_dir = tar_toplevel(tmpdir)
             try:
                 cp = parse_changelog('debian/changelog')
                 pristine_orig = symlink_orig(archive, cp['Source'], version)
@@ -192,9 +323,14 @@ on howto create it otherwise use --upstream-branch to specify it.
                 print "Initial import of '%s' %s..." % (archive, filter_msg)
             else:
                 print "Importing '%s' to branch '%s'%s..." % (archive, options.upstream_branch, filter_msg)
-                repo.set_branch(options.upstream_branch)
+                if not options.fast_import:
+                    repo.set_branch(options.upstream_branch)
 
-            import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
+            if options.fast_import:
+                fast_import_upstream_tree(repo, pristine_orig, version, options)
+            else:
+                import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
+
             if options.pristine_tar:
                 upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
                 if pristine_orig:
@@ -202,7 +338,9 @@ on howto create it otherwise use --upstream-branch to specify it.
                 else:
                     print >>sys.stderr, "Warning: '%s' not an archive, skipping pristine-tar" % archive
             tag = build_tag(options.upstream_tag, version)
-            gbpc.GitTag(options.sign_tags, options.keyid)(tag, msg="Upstream version %s" % version)
+            gbpc.GitTag(options.sign_tags, options.keyid)(tag,
+                                                          msg="Upstream version %s" % version,
+                                                          commit=[None, options.upstream_branch][options.fast_import])
 
             if is_empty:
                 gbpc.GitBranch()(options.upstream_branch)
