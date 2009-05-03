@@ -1,3 +1,16 @@
+git-buildpackage (0.4.53) unstable; urgency=low
+
+  * [b772300] pass --pretty=medium to git show (Closes: #525969)
+  * [5ed3078] add commit argument to GitTag
+  * [129b3c4] add get_author_email that parses git config and
+              environment
+  * [9ed19e7] add --fast-import. This uses git-fast-import to import the
+              upstream tarball, speeds up imports of upstream tarballs by a
+              factor of two. This options is experimental and will become the
+              default once it got more testing. (Closes: #449075)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 03 May 2009 18:35:52 +0200
+
 git-buildpackage (0.4.52) unstable; urgency=low
 
   * [a2e42cd] move to section vcs
