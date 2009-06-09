@@ -68,7 +68,7 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, r
 
     cmd = '%(env)s dch --no-auto-nmu  %(distopt)s %(versionopt)s ' % locals()
     if type(msg) == type(''):
-        cmd += '"%s"' % escape_commit(msg)
+        cmd += '-- "%s"' % escape_commit(msg)
     system(cmd)
 
 
