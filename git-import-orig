@@ -27,7 +27,7 @@ import subprocess
 import tarfile
 import time
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel
+from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel, guess_upstream_version
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import (GbpError, GbpNothingImported)
@@ -196,24 +196,6 @@ def fast_import_upstream_tree(repo, tarball, version, options):
         print "FastImport done."
 
 
-def guess_version(archive, version_regex=r''):
-    """
-    guess the version from the filename of an upstgream archive
-    @archive: filename to guess to version for
-    @version_regex: additional version regex to apply, needs a 'version' group
-    """
-    version_filters = [ # Debian package_<version>.orig.tar.gz:
-                        r'^[a-z\d\.\+\-]+_(?P<version>[a-z\d\.\~\-]+)\.orig\.tar\.(gz|bz2)',
-                        # Upstream package-<version>.tar.gz:
-                        r'^[a-z\d\.\+\-]+-(?P<version>[a-z\d\.]+)\.tar\.(gz|bz2)' ]
-    if version_regex:
-        version_filters = version_regex + version_filters
-    for filter in version_filters:
-        m = re.match(filter, os.path.basename(archive))
-        if m:
-            return m.group('version')
-
-
 def turn_off_fastimport(options, msg):
     if options.fast_import:
         print >>sys.stderr, msg
@@ -285,7 +267,7 @@ on howto create it otherwise use --upstream-branch to specify it.
         if options.version:
             version = options.version
         else:
-            version = guess_version(archive)
+            version = guess_upstream_version(archive)
 
         if version:
             print "Upstream version is %s" % version

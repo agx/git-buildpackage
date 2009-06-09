@@ -26,7 +26,6 @@ class ParseChangeLogError(Exception):
     """problem parsing changelog"""
     pass
 
-
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
     pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
@@ -214,6 +213,42 @@ def get_arch():
     pipe = subprocess.Popen(["dpkg", "--print-architecture"], shell=False, stdout=subprocess.PIPE)
     arch = pipe.stdout.readline().strip()
     return arch
+
+
+def guess_upstream_version(archive, version_regex=r''):
+    """
+    guess the version from the filename of an upstgream archive
+    @archive: filename to guess to version for
+    @version_regex: additional version regex to apply, needs a 'version' group
+
+    >>> guess_upstream_version('foo-bar_0.2.orig.tar.gz')
+    '0.2'
+    >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
+    >>> guess_upstream_version('git-bar-0.2.tar.gz')
+    '0.2'
+    >>> guess_upstream_version('git-bar-0.2-rc1.tar.gz')
+    '0.2-rc1'
+    >>> guess_upstream_version('git-bar-0.2:~-rc1.tar.gz')
+    '0.2:~-rc1'
+    >>> guess_upstream_version('git-Bar-0A2d:rc1.tar.bz2')
+    '0A2d:rc1'
+    >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
+    >>> guess_upstream_version('foo-Bar-a.b.tar.gz')
+    """
+    version_chars = r'[a-zA-Z\d\.\~\-\:]'
+    extensions = r'\.tar\.(gz|bz2)'
+
+    version_filters = map ( lambda x: x % (version_chars, extensions),
+                       ( # Debian package_<version>.orig.tar.gz:
+                         r'^[a-z\d\.\+\-]+_(?P<version>%s+)\.orig%s',
+                         # Upstream package-<version>.tar.gz:
+                         r'^[a-zA-Z\d\.\+\-]+-(?P<version>[0-9]%s+)%s'))
+    if version_regex:
+        version_filters = version_regex + version_filters
+    for filter in version_filters:
+        m = re.match(filter, os.path.basename(archive))
+        if m:
+            return m.group('version')
 
 
 def _test():
