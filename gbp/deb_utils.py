@@ -199,6 +199,17 @@ def unpack_orig(archive, tmpdir, filters):
         raise GbpError
     return unpackArchive.dir
 
+def repack_orig(archive, tmpdir, dest):
+    """
+    recreate a new .orig.tar.gz from tmpdir (useful when using filter option)
+    """
+    try:
+        repackArchive = gbpc.RepackTarArchive(archive, tmpdir, dest)
+        repackArchive()
+    except gbpc.CommandExecFailed:
+        print >>sys.stderr, "Failed to create %s" % archive
+        raise GbpError
+    return repackArchive.dir
 
 def tar_toplevel(dir):
     """tar archives can contain a leading directory not"""

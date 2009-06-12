@@ -30,6 +30,7 @@ class GbpOptionParser(OptionParser):
                  'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
                  'pristine-tar'    : 'False',
+                 'filter-pristine-tar' : 'False',
                  'sign-tags'       : 'False',
                  'no-create-orig'  : 'False',
                  'keyid'           : '',
@@ -66,6 +67,8 @@ class GbpOptionParser(OptionParser):
                   "GPG keyid to sign tags with, default is '%(keyid)s'",
              'pristine-tar':
                   "use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
+             'filter-pristine-tar':
+                  "Filter pristine-tar when filter option is used",
              'filter':
                   "files to filter out during import (can be given multiple times)",
              'git-author':

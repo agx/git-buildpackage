@@ -132,6 +132,19 @@ class UnpackTarArchive(Command):
         Command.__init__(self, 'tar', exclude + ['-C', dir, decompress, '-xf', archive ])
         self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
+class RepackTarArchive(Command):
+    """Wrap tar to Repack a gzipped tar archive"""
+    def __init__(self, archive, dir, dest):
+        self.archive = archive
+        self.dir = dir
+
+        if archive.lower().endswith(".bz2"):
+            compress = "--bzip2"
+        else:
+            compress = "--gzip"
+
+        Command.__init__(self, 'tar', ['-C', dir, compress, '-cf', archive, dest])
+        self.run_error = 'Couldn\'t repack "%s"' % self.archive
 
 class RemoveTree(Command):
     "Wrap rm to remove a whole directory tree"

@@ -32,6 +32,7 @@
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--[no-]filter-pristine-tar</option></arg>
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -134,6 +135,14 @@
         </term>
         <listitem>
           <para>generate pristine-tar delta file</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--filter-pristine-tar</option>
+        </term>
+        <listitem>
+	  <para>if using a filter also filter the files out of the tarball
+	  passed to pristine tar</para>
         </listitem>
       </varlistentry>
     </variablelist>

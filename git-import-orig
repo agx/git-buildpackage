@@ -27,7 +27,7 @@ import subprocess
 import tarfile
 import time
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import parse_changelog, unpack_orig, NoChangelogError, has_epoch, tar_toplevel, guess_upstream_version
+from gbp.deb_utils import parse_changelog, unpack_orig, repack_orig, NoChangelogError, has_epoch, tar_toplevel, guess_upstream_version
 from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import (GbpError, GbpNothingImported)
@@ -228,6 +228,7 @@ def main(argv):
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     parser.add_config_file_option(option_name="filter", dest="filters", action="append")
     parser.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    parser.add_boolean_config_file_option(option_name="filter-pristine-tar", dest="filter_pristine_tar")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
@@ -292,6 +293,14 @@ on howto create it otherwise use --upstream-branch to specify it.
                 if options.verbose:
                     print "Unpacked %s to '%s'" % (archive , tmpdir)
                 orig_dir = tar_toplevel(tmpdir)
+                if options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0:
+                    if options.verbose:
+                        print "Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir)
+                    archive = os.path.join(
+                        os.path.dirname(archive),
+                        os.path.basename(archive).replace(".tar", ".gbp.tar")
+                        )
+                    repack_orig(archive, tmpdir, os.path.basename(orig_dir))
             try:
                 cp = parse_changelog('debian/changelog')
                 pristine_orig = symlink_orig(archive, cp['Source'], version)
