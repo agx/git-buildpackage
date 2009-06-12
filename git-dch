@@ -341,8 +341,11 @@ def main(argv):
         if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header and commits:
             # the last version was a release and we have pending commits
             add_section = True
-        elif options.new_version or not found_snapshot_header:
-            # the user wants to force a new version or switch to snapshot mode
+        elif options.new_version:
+            # the user wants to force a new version
+            add_section = True
+        elif options.snapshot and not found_snapshot_header:
+            # the user want to switch to snapshot mode
             add_section = True
         else:
             add_section = False
