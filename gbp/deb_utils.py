@@ -243,6 +243,8 @@ def guess_upstream_version(archive, version_regex=r''):
     '0.2:~-rc1'
     >>> guess_upstream_version('git-Bar-0A2d:rc1.tar.bz2')
     '0A2d:rc1'
+    >>> guess_upstream_version('git-1.tar.bz2')
+    '1'
     >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
     >>> guess_upstream_version('foo-Bar-a.b.tar.gz')
     """
@@ -253,7 +255,7 @@ def guess_upstream_version(archive, version_regex=r''):
                        ( # Debian package_<version>.orig.tar.gz:
                          r'^[a-z\d\.\+\-]+_(?P<version>%s+)\.orig%s',
                          # Upstream package-<version>.tar.gz:
-                         r'^[a-zA-Z\d\.\+\-]+-(?P<version>[0-9]%s+)%s'))
+                         r'^[a-zA-Z\d\.\+\-]+-(?P<version>[0-9]%s*)%s'))
     if version_regex:
         version_filters = version_regex + version_filters
     for filter in version_filters:
