@@ -1,4 +1,4 @@
-git-buildpackage (0.4.54) UNRELEASED; urgency=low
+git-buildpackage (0.4.54) unstable; urgency=low
 
   [ Damyan Ivanov ]
   * [b577f01] Unconfuse git-dch when commit message starts with "--"
