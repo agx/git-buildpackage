@@ -1,3 +1,26 @@
+git-buildpackage (0.4.54) UNRELEASED; urgency=low
+
+  [ Damyan Ivanov ]
+  * [b577f01] Unconfuse git-dch when commit message starts with "--"
+    (Closes: #531985)
+
+  [ Guido Günther ]
+  * [55a89e1] allow for uppercase characters in the version pattern and
+    in the package name if it's not a debian source package's name. Also
+    allow for ':' and '~' which are allowed accoring to Debian Policy.
+    Based on a patch by Felipe Sateler. (Closes: #531819)
+  * [882f971] check for snapshot mode when checking if we need to add a
+    new section. (Closes: #532583) - thanks to Ove Kaaven for sorting
+    this out
+  * [f80ee2e] fix one digit version numbers
+  * [5edecd9] + is a valid character in version numbers
+
+  [ Mehdi Dogguy ]
+  * [7de9f12] add filter-pristine-tar to filter upstream tarball before
+    passing it to pristine-tar (Closes: #520722)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 03 Jul 2009 16:16:41 +0200
+
 git-buildpackage (0.4.53) unstable; urgency=low
 
   * [b772300] pass --pretty=medium to git show (Closes: #525969)
