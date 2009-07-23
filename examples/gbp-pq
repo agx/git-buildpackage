@@ -1,0 +1,119 @@
+#!/bin/sh
+#
+# Convert a patch-queue branch into a patch series in debian/patches and vice
+# versa.
+#
+# assumes you have your quilt patch queue for $branch on patch-queue/$branch
+#
+# See: https://honk.sigxcpu.org/piki/development/debian_packages_in_git/
+
+is_patch_queue()
+{
+    local branch=$1
+
+    if expr $branch : patch-queue/ >/dev/null; then
+         return 0
+    else
+         return 1
+    fi
+}
+
+pq_export()
+{
+    local branch=$1
+    local pq="patch-queue/$branch"
+
+    if is_patch_queue $branch; then
+        echo "On a patch-queue branch, can't redo patches."
+        return 1
+    fi
+
+    rm -f debian/patches/*
+    PATCHES=`git format-patch -N -o debian/patches $branch...$pq`
+    if [ -n "$PATCHES" ]; then
+        echo "Regenerationg patch queue in \"debian/patches\"."
+        > debian/patches/series
+        for PATCH in $PATCHES; do
+	    # delete the first line (from sha1) and last two lines (git version
+	    # info) of the patch file
+            sed -i -e '1d' -e 'N;$!P;$!D;$d' $PATCH
+            sed -i -e 's/^-- \n[0-9\.]+$//' $PATCH
+            echo $PATCH | sed -e 's%debian/patches/%%' >> debian/patches/series
+        done
+        git status -- debian/patches
+    else
+        echo "No patches on \"$pq\"."
+    fi
+}
+
+pq_rebase()
+{
+    local branch=$1
+    local pq="patch-queue/$branch"
+
+    if ! is_patch_queue $branch; then
+	echo "Switching to \"$pq\""
+        git checkout $pq
+    else
+        echo "Already on \"$branch\""
+    fi
+    git rebase $branch
+}
+
+pq_import()
+{
+    local branch=$1
+    local pq="patch-queue/$branch"
+    local patches=debian/patches/
+
+    if is_patch_queue $branch; then
+        echo "Already on a patch-queue branch \"$branch\" - doing nothing."
+        return 1
+    fi
+
+    if [ ! -r ${patches}series ]; then
+        echo "Found no series file at \"$patches\"."
+        return 1
+    fi
+
+    if ! git checkout -b $pq; then
+        echo "Cannot create patch-queue branch \"$pq\"."
+	return 1
+    fi
+    QUILT_PATCHES=$patches git quiltimport
+} 
+
+usage ()
+{
+    cat <<EOF
+$0 [ACTION]
+
+Options:
+	export		Export the associated patch-queue branch into
+                        debian/patches and update the series file.
+
+	import		Create a patch-queue branch from debian/patches.
+
+	rebase		Switch to associated patch-queue branch and rebase
+                        against current branch.
+EOF
+}
+
+branch=$(git branch --no-color | awk '/^\*/ { print $2 }')
+
+case "$1" in
+    export)
+        pq_export $branch
+        ;;
+    import)
+	pq_import $branch
+	;;
+    rebase)
+        pq_rebase $branch
+        ;;
+    *)
+	usage
+	exit 1
+	;;
+esac
+
