@@ -214,7 +214,9 @@ def repack_orig(archive, tmpdir, dest):
 def tar_toplevel(dir):
     """tar archives can contain a leading directory not"""
     unpacked = glob.glob('%s/*' % dir)
-    if len(unpacked) == 1:
+    unpacked.extend(glob.glob("%s/.*" % dir)) # include hidden files and folders
+    # Check that dir contains nothing but a single folder:
+    if len(unpacked) == 1 and os.path.isdir(unpacked[0]):
         return unpacked[0]
     else:
         return dir
