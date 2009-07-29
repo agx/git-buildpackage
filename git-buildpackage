@@ -29,6 +29,7 @@ from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFail
                                   PristineTar, RemoveTree, GitAdd)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
+from glob import glob
 
 # when we want to reference the index in a treeish context we call it:
 index_name = "INDEX"
@@ -136,6 +137,25 @@ def write_wc(repo):
     return tree
 
 
+def extract_orig(orig_tarball, dest_dir):
+    """extract orig tarball to export dir before exporting from git"""
+    print "Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir)
+
+    move_old_export(dest_dir)
+    du.unpack_orig(orig_tarball, dest_dir, '')
+
+    # Check if tarball extracts into a single folder or not:
+    tar_topdir = du.tar_toplevel(dest_dir)
+    if tar_topdir != dest_dir:
+        # If it extracts a single folder, move all of its contents to dest_dir:
+        r = glob("%s/*" % tar_topdir)
+        r.extend(glob("%s/.*" % tar_topdir)) # include hidden files and folders
+        for f in r:
+            os.rename(f, os.path.join(dest_dir, os.path.basename(f)))
+
+        # Remove that single folder:
+        os.rmdir(tar_topdir)
+
 def main(argv):
     changelog = 'debian/changelog'
     retval = 0
@@ -192,6 +212,7 @@ def main(argv):
                       help="export treeish object TREEISH, default is '%(export)s'", metavar="TREEISH")
     export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
                       help="retain exported package build directory")
+    export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
     (options, args) = parser.parse_args(args)
 
     if options.verbose:
@@ -242,26 +263,6 @@ def main(argv):
             else:
                 tarball_dir = output_dir
 
-            # Export to another build dir if requested:
-            if options.export_dir:
-                # write a tree of the index if necessary:
-                if options.export == index_name:
-                    tree = repo.write_tree()
-                elif options.export == wc_name:
-                    tree = write_wc(repo)
-                else:
-                    tree = options.export
-                if not repo.has_treeish(tree):
-                    raise GbpError # git-ls-tree printed an error message already
-                tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
-                print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
-                dump_tree(tmp_dir, tree)
-                cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
-                export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
-                print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
-                move_old_export(export_dir)
-                os.rename(tmp_dir, export_dir)
-
             # Get/build the orig.tar.gz if necessary:
             if not du.is_native(cp):
                 # look in tarball_dir first, if found force a symlink to it
@@ -275,6 +276,31 @@ def main(argv):
                 if not options.no_create_orig and not du.has_orig(cp, output_dir):
                     if not pristine_tar_build_orig(repo, cp, output_dir, options):
                         git_archive_build_orig(repo, cp, output_dir, options)
+
+            # Export to another build dir if requested:
+            if options.export_dir:
+                # write a tree of the index if necessary:
+                if options.export == index_name:
+                    tree = repo.write_tree()
+                elif options.export == wc_name:
+                    tree = write_wc(repo)
+                else:
+                    tree = options.export
+                if not repo.has_treeish(tree):
+                    raise GbpError # git-ls-tree printed an error message already
+                tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
+
+                # Extract orig tarball if git-overlay option is selected:
+                if options.overlay:
+                    extract_orig(os.path.join(output_dir, du.orig_file(cp)) , tmp_dir)
+
+                print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
+                dump_tree(tmp_dir, tree)
+                cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
+                export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
+                print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
+                move_old_export(export_dir)
+                os.rename(tmp_dir, export_dir)
 
             if options.export_dir:
                 build_dir = export_dir

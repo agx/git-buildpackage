@@ -43,6 +43,7 @@ class GbpOptionParser(OptionParser):
                  'git-log'         : '--no-merges',
                  'export'          : 'HEAD',
                  'export-dir'      : '',
+                 'overlay'         : 'False',
                  'tarball-dir'     : '',
                  'ignore-new'      : 'False',
                  'meta'            : 'False',
@@ -79,6 +80,8 @@ class GbpOptionParser(OptionParser):
                   "parse meta tags in commit messages, default is '%(meta)s'",
              'ignore-new':
                   "build with uncommited changes in the source tree, default is '%(ignore-new)s'",
+             'overlay':
+                  "extract orig tarball when using export-dir option, default is '%(overlay)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
