@@ -57,7 +57,7 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, r
         else:
             versionopt = '-i'
     elif release:
-        versionopt = "--release"
+        versionopt = "--release --no-force-save-on-release"
         msg = None
 
     if author and email:
