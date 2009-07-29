@@ -218,6 +218,9 @@ def main(argv):
     if options.verbose:
         Command.verbose = True
 
+    if options.overlay and not options.export_dir:
+        parser.error("Overlay must be used with --git-export-dir")
+
     try:
         repo = GitRepository(os.path.curdir)
     except GitRepositoryError:
@@ -292,6 +295,8 @@ def main(argv):
 
                 # Extract orig tarball if git-overlay option is selected:
                 if options.overlay:
+                    if du.is_native(cp):
+                        raise GbpError, "Cannot overlay Debian native package"
                     extract_orig(os.path.join(output_dir, du.orig_file(cp)) , tmp_dir)
 
                 print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
