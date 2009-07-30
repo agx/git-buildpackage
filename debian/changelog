@@ -1,3 +1,21 @@
+git-buildpackage (0.4.55) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [651f723] fix release
+  * [e1bdfdb] update Homepage:
+  * [8ea4747] add gbp-pq to examples (Closes: #537212)
+  * [bedacee] check for correct overlay usage
+  * [849c801] bump standards version
+  * [f636022] add --no-force-save-on-release so dch saves the changlog
+    even when there are no changes so we don't end up with UNRELEASED
+    when passing -R.
+
+  [ أحمد المحمودي ]
+  * [14915d9] make tar_toplevel safer
+  * [b86ddcc] add --git-overlay option (Closes: #411206)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 30 Jul 2009 11:27:17 +0200
+
 git-buildpackage (0.4.54) unstable; urgency=low
 
   [ Damyan Ivanov ]
