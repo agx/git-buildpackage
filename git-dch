@@ -251,6 +251,7 @@ def guess_snapshot_commit(cp):
         return sr.group('commit')
 
 
+
 def main(argv):
     ret = 0
     changelog = 'debian/changelog'
@@ -335,7 +336,7 @@ def main(argv):
 
         if args:
             print "Only looking for changes on '%s'" % " ".join(args)
-        commits = repo.commits(since, until, " ".join(args), options.git_log.split(" "))
+        commits = repo.commits(since=since, until=until, paths=" ".join(args), options=options.git_log.split(" "))
 
         # add a new changelog section if:
         if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header and commits:
