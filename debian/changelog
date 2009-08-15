@@ -1,3 +1,15 @@
+git-buildpackage (0.4.56) unstable; urgency=low
+
+  * [d6dae62] depend on devscripts >= 2.10.49 for --no-force-save-on-release
+    in dch.  (Closes: #541420)
+  * [080b1eb] make parameters for GitRepository.commits() optional
+  * [016318e] git-dch: use the last commit in which debian/changelog was
+    touched as starting point if no snapshot header was found. This can still
+    be overriden by using --since. Based on a patch by Felipe Sateler. 
+    (Closes: #511269)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 15 Aug 2009 19:24:23 +0200
+
 git-buildpackage (0.4.55) unstable; urgency=low
 
   [ Guido Günther ]
