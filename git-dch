@@ -251,7 +251,7 @@ def guess_snapshot_commit(cp, repo):
         return sr.group('commit')
     last = repo.commits(paths="debian/changelog", options=["-1"])
     if last:
-        print "Changelog last touched at %s" % last
+        print "Changelog last touched at '%s'" % last[0]
         return last[0]
 
 
