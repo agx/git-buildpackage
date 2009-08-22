@@ -83,11 +83,18 @@ class Command(object):
             raise CommandExecFailed
 
     def call(self, args):
-        """like __call__ but don't use stderr and let the caller handle the return status"""
+        """like __call__ but don't use stderr and let the caller handle the return status
+        >>> Command("/bin/true").call(["foo", "bar"])
+        0
+        >>> Command("/foo/bar").call(["foo", "bar"]) # doctest:+ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        CommandExecFailed: Execution failed: ...
+        """
         try:
             ret = self.__call(args)
         except OSError, e:
-            raise CommandExecFailed, "Execution failed:", e
+            raise CommandExecFailed, "Execution failed: %s" % e
         return ret
 
 
