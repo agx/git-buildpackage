@@ -3,7 +3,6 @@
 DEB_PYTHON_SYSTEM = pysupport
 DEB_PYTHON_CLEAN_ARGS = --all
 
-# Add here any variable or target overrides you need
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
@@ -24,6 +23,10 @@ $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	docbook-2-html -s local $<
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+checks: $(PYCHECKS)
+endif
+
 %.py: %
 	ln -s $< $@
 	PYTHONPATH=. pychecker -e $(PYCHECK_LEVEL) -q $<
@@ -34,10 +37,11 @@ $(GBP_VERSION): debian/changelog
 $(VERSION_ENT): debian/changelog
 	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' >  $(VERSION_ENT)
 
-build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) $(PYCHECKS) 
+build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) checks
 
 clean::
 	-rm git-*.py
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT)
 	-rm -r docs/manual-html/
 
+.PHONY: checks
