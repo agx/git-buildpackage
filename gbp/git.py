@@ -188,6 +188,7 @@ class GitRepository(object):
         name = os.getenv("GIT_AUTHOR_NAME", name)
         return (name, email)
 
+
 def create_repo(path):
     """create a repository at path"""
     abspath = os.path.abspath(path)
@@ -206,10 +207,10 @@ def create_repo(path):
 
 def build_tag(format, version):
     """Generate a tag from a given format and a version"""
-    return format % dict(version=sanitize_version(version))
+    return format % dict(version=__sanitize_version(version))
 
 
-def sanitize_version(version):
+def __sanitize_version(version):
     """sanitize a version so git accepts it as a tag"""
     if ':' in version: # strip of any epochs
         version = version.split(':', 1)[1]
