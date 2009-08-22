@@ -301,12 +301,4 @@ def copy_from(orig_dir, filters=[]):
         raise GbpError, "Cannot copy files, pipe failed."
     return [ os.path.normpath(f) for f in files if files ]
 
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == '__main__':
-    _test()
-
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

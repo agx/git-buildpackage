@@ -267,12 +267,4 @@ def guess_upstream_version(archive, version_regex=r''):
         if m:
             return m.group('version')
 
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == '__main__':
-    _test()
-
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

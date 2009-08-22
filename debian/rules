@@ -25,6 +25,7 @@ $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 checks: $(PYCHECKS)
+	nosetests --with-doctest
 endif
 
 %.py: %
