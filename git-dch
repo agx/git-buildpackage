@@ -24,10 +24,10 @@ import os.path
 import shutil
 import subprocess
 import gbp.command_wrappers as gbpc
-from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
-from gbp.deb_utils import parse_changelog
+from gbp.deb import parse_changelog
 from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")

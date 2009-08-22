@@ -25,8 +25,8 @@ import glob
 import pipes
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile, tar_toplevel
-from gbp.git_utils import build_tag, create_repo, GitRepository, GitRepositoryError, rfc822_date_to_git
+from gbp.deb import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile, tar_toplevel
+from gbp.git import build_tag, create_repo, GitRepository, GitRepositoryError, rfc822_date_to_git
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 

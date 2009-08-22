@@ -23,12 +23,11 @@ import os
 import tempfile
 import glob
 import pipes
-import gbp.deb_utils
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import parse_dsc, DscFile
+from gbp.deb import parse_dsc, DscFile
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
-from gbp.git_utils import GitRepository, GitRepositoryError
+from gbp.git import GitRepository, GitRepositoryError
 
 class DpkgCompareVersions(gbpc.Command):
     cmd='/usr/bin/dpkg'

@@ -27,8 +27,8 @@ import subprocess
 import tarfile
 import time
 import gbp.command_wrappers as gbpc
-from gbp.deb_utils import parse_changelog, unpack_orig, repack_orig, NoChangelogError, has_epoch, tar_toplevel, guess_upstream_version
-from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+from gbp.deb import parse_changelog, unpack_orig, repack_orig, NoChangelogError, has_epoch, tar_toplevel, guess_upstream_version
+from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser
 from gbp.errors import (GbpError, GbpNothingImported)
 

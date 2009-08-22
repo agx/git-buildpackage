@@ -23,8 +23,8 @@ import os, os.path
 import errno
 import pipes
 import time
-import gbp.deb_utils as du
-from gbp.git_utils import (GitRepositoryError, GitRepository, build_tag)
+import gbp.deb as du
+from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed,
                                   PristineTar, RemoveTree, GitAdd)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
