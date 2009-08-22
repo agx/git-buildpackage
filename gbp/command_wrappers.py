@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007,2009 Guido Guenther <agx@sigxcpu.org>
 """
 Simple class wrappers for the various external commands needed by
 git-buildpackage and friends
@@ -54,7 +54,7 @@ class Command(object):
         run self.cmd adding args as additional arguments
 
         be verbose about errors and encode them in the return value, don't pass
-        on exceptons 
+        on exceptons
         """
         try:
             retcode = self.__call(args)
@@ -72,7 +72,13 @@ class Command(object):
     def __call__(self, args=[]):
         """run the command, convert all errors into CommandExecFailed, assumes
         that the lower levels printed an error message - only usefull if you
-        only expect 0 as result"""
+        only expect 0 as result
+        >>> Command("/bin/true")(["foo", "bar"])
+        >>> Command("/foo/bar")()
+        Traceback (most recent call last):
+        ...
+        CommandExecFailed
+        """
         if self.__run(args):
             raise CommandExecFailed
 
@@ -83,7 +89,6 @@ class Command(object):
         except OSError, e:
             raise CommandExecFailed, "Execution failed:", e
         return ret
-
 
 
 class RunAtCommand(Command):
@@ -132,6 +137,7 @@ class UnpackTarArchive(Command):
         Command.__init__(self, 'tar', exclude + ['-C', dir, decompress, '-xf', archive ])
         self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
+
 class RepackTarArchive(Command):
     """Wrap tar to Repack a gzipped tar archive"""
     def __init__(self, archive, dir, dest):
@@ -145,6 +151,7 @@ class RepackTarArchive(Command):
 
         Command.__init__(self, 'tar', ['-C', dir, compress, '-cf', archive, dest])
         self.run_error = 'Couldn\'t repack "%s"' % self.archive
+
 
 class RemoveTree(Command):
     "Wrap rm to remove a whole directory tree"
