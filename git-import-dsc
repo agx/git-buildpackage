@@ -25,9 +25,11 @@ import glob
 import pipes
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
-from gbp.deb import debian_version_chars, parse_changelog, unpack_orig, parse_dsc, DscFile, tar_toplevel
-from gbp.git import build_tag, create_repo, GitRepository, GitRepositoryError, rfc822_date_to_git
-from gbp.config import GbpOptionParser
+from gbp.deb import (debian_version_chars, parse_changelog, unpack_orig,
+                     parse_dsc, DscFile, tar_toplevel)
+from gbp.git import (build_tag, create_repo, GitRepository,
+                     GitRepositoryError, rfc822_date_to_git)
+from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
 
 
@@ -94,18 +96,39 @@ def main(argv):
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] /path/to/package.dsc')
 
+    import_group = GbpOptionGroup(parser, "import options",
+                      "pristine-tar and filtering")
+    tag_group = GbpOptionGroup(parser, "tag options",
+                      "options related to git tag creation")
+    branch_group = GbpOptionGroup(parser, "version and branch naming options",
+                      "version number and branch layout options")
+
+    for group in [import_group, branch_group, tag_group ]:
+        parser.add_option_group(group)
+
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="debian-branch", dest="debian_branch")
-    parser.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    parser.add_option("--no-merge", dest='merge', action="store_false", default=True,
+    branch_group.add_config_file_option(option_name="debian-branch",
+                      dest="debian_branch")
+    branch_group.add_config_file_option(option_name="upstream-branch",
+                      dest="upstream_branch")
+    branch_group.add_option("--no-merge", dest='merge', action="store_false",
+                      default=True,
                       help="after import dont do any merging to another branch")
-    parser.add_boolean_config_file_option(option_name="sign-tags", dest="sign_tags")
-    parser.add_config_file_option(option_name="keyid", dest="keyid")
-    parser.add_config_file_option(option_name="debian-tag", dest="debian_tag")
-    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
-    parser.add_config_file_option(option_name="filter", dest="filters", action="append")
-    parser.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+
+    tag_group.add_boolean_config_file_option(option_name="sign-tags",
+                      dest="sign_tags")
+    tag_group.add_config_file_option(option_name="keyid",
+                      dest="keyid")
+    tag_group.add_config_file_option(option_name="debian-tag",
+                      dest="debian_tag")
+    tag_group.add_config_file_option(option_name="upstream-tag",
+                      dest="upstream_tag")
+
+    import_group.add_config_file_option(option_name="filter",
+                      dest="filters", action="append")
+    import_group.add_boolean_config_file_option(option_name="pristine-tar",
+                      dest="pristine_tar")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
