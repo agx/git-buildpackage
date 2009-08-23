@@ -244,15 +244,27 @@ def shortlog_to_dch(repo, commits, options):
         add_changelog_entry(msg, author, email)
 
 
-def guess_snapshot_commit(cp, repo):
-    """guess the last commit documented in the changelog from the snapshot banner"""
+def guess_snapshot_commit(cp, repo, options):
+    """
+    guess the last commit documented in the changelog from the snapshot banner
+    or the last point the changelog was touched.
+    """
     sr = re.search(snapshot_re, cp['Changes'])
     if sr:
         return sr.group('commit')
+    # If the current topmost changelog entry has already been tagged rely on
+    # the version information only. The upper level relies then on the version
+    # info anyway:
+    tag = build_tag(options.debian_tag, cp['Version'])
+    if repo.has_tag(tag):
+        return None
+    # If we didn't find a snapshot header we look at the point the changelog
+    # was last touched.
     last = repo.commits(paths="debian/changelog", options=["-1"])
     if last:
         print "Changelog last touched at '%s'" % last[0]
         return last[0]
+    return None
 
 
 def main(argv):
@@ -328,7 +340,7 @@ def main(argv):
         else:
             since = ''
             if options.auto:
-                since = guess_snapshot_commit(cp, repo)
+                since = guess_snapshot_commit(cp, repo, options)
                 if since:
                     print "Continuing from commit '%s'" % since
                     found_snapshot_header = True
