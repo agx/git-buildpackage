@@ -1,3 +1,17 @@
+git-buildpackage (0.4.57) unstable; urgency=low
+
+  git-import-orig dosn't generate changelog entries by default anymore. This
+  means you can safely remove --no-dch from all your scripts and config files.
+
+  If you want git-import-orig to behave as before add:
+     postimport = dch -v%(version)s New Upstream Version
+  to your gbp.conf. If you want to invoke git-dch instead, you can use:
+     postimport = git-dch -N%(version)s -S -a
+  The later is recommended since it creates git-dch compatible changelog
+  entries.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 23 Aug 2009 17:21:50 +0200
+
 git-buildpackage (0.3.3) unstable; urgency=low
 
   As of this version git-buildpackage doesn't pass hardcoded '-i\.git -I.git'
