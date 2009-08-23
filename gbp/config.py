@@ -36,6 +36,7 @@ class GbpOptionParser(OptionParser):
                  'keyid'           : '',
                  'posttag'         : '',
                  'postbuild'       : '',
+                 'postimport'      : '',
                  'debian-tag'      : 'debian/%(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
                  'filter'          : [],
@@ -50,7 +51,6 @@ class GbpOptionParser(OptionParser):
                  'meta-closes'     : 'Closes|LP',
                  'full'            : 'False',
                  'id-length'       : '0',
-                 'no-dch'          : 'False',
                  'git-author'      : 'False',
              }
     help = {

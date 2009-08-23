@@ -221,12 +221,10 @@ def main(argv):
                       "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "version and branch naming options",
                       "version number and branch layout options")
+    cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke external commands and hooks")
 
-    for group in [import_group, branch_group, cl_group, tag_group ]:
+    for group in [import_group, branch_group, cl_group, tag_group, cmd_group ]:
         parser.add_option_group(group)
-
-    cl_group.add_config_file_option(option_name="no-dch", dest='no_dch',
-                      help="don't call dch after the import", action="store_true")
 
     branch_group.add_option("-u", "--upstream-version", dest="version",
                       help="Upstream Version")
@@ -254,13 +252,23 @@ def main(argv):
                       dest="pristine_tar")
     import_group.add_boolean_config_file_option(option_name="filter-pristine-tar",
                       dest="filter_pristine_tar")
+    cmd_group.add_config_file_option(option_name="postimport", dest="postimport",
+                      help="hook run after a successful import, default is '%(postimport)s'")
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+
+    # Accepted for compatibility
+    parser.add_option("--no-dch", dest='no_dch', action="store_true",
+                      default=False, help="deprecated - don't use.")
+
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
         gbpc.Command.verbose = True
+
+    if options.no_dch:
+        print >>sys.stderr, "'--no-dch' passed. This is now the default, please remove this option."
 
     if options.filters:
         turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
@@ -369,14 +377,15 @@ on howto create it otherwise use --upstream-branch to specify it.
                 try:
                     gbpc.GitMerge(tag)()
                 except gbpc.CommandExecFailed:
-                    raise GbpError, """Merge failed, please resolve and run "dch -v %s-1".""" % version
-                if not options.no_dch:
+                    raise GbpError, """Merge failed, please resolve.""" % version
+                if options.postimport:
                     epoch = ''
                     if os.access('debian/changelog', os.R_OK):
                         cp = parse_changelog('debian/changelog')
                         if has_epoch(cp):
                             epoch = '%s:' % cp['Epoch']
-                    gbpc.Dch("%s%s-1" % (epoch, version), 'New Upstream Version')()
+                    info = { 'version': "%s%s-1" % (epoch, version) }
+                    cmd = gbpc.Command(options.postimport % info, shell=True)()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpNothingImported, err:
