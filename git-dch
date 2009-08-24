@@ -27,7 +27,7 @@ import gbp.command_wrappers as gbpc
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
-from gbp.deb import parse_changelog
+from gbp.deb import parse_changelog, NoChangelogError
 from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -379,7 +379,7 @@ def main(argv):
             (snap, version) = do_snapshot(changelog, options.snapshot_number)
             print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
 
-    except (GbpError, GitRepositoryError), err:
+    except (GbpError, GitRepositoryError, NoChangelogError), err:
         if len(err.__str__()):
             print >>sys.stderr, err
         ret = 1
