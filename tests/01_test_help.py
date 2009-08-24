@@ -5,7 +5,7 @@
 import os
 import unittest
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestHelp(unittest.TestCase):
 
     def testhelp(self):
         for prog in [ "buildpackage", "import-orig", "import-dsc", "dch" ]:
