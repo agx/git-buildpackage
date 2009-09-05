@@ -223,9 +223,12 @@ class GitBranch(GitCommand):
     def __init__(self):
         GitCommand.__init__(self, 'branch')
 
-    def __call__(self, branch):
+    def __call__(self, branch, remote=None):
         self.run_error = 'Couldn\'t create branch "%s"' % (branch,)
-        GitCommand.__call__(self, [branch])
+        options = [branch]
+        if remote:
+            options += [ remote ]
+        GitCommand.__call__(self, options)
 
 
 class GitCheckoutBranch(GitCommand):
