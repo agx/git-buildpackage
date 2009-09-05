@@ -1,6 +1,4 @@
-git-buildpackage (0.4.57~2.gbp98a9b8) UNRELEASED; urgency=low
-
-  ** SNAPSHOT build @98a9b8881383e49f53ac89b44e7a4368929ac82e **
+git-buildpackage (0.4.57) unstable; urgency=low
 
   * new tools:
       * [13316be] Add gbp-clone to examples. Using this to clone
@@ -38,8 +36,9 @@ git-buildpackage (0.4.57~2.gbp98a9b8) UNRELEASED; urgency=low
   * tests:
       * [6cbbddf] Add unit test for --help
       * [52d9b5a] Fix testcase name
+  * [e4abaad] document changes so far
 
- -- Guido Günther <agx@sigxcpu.org>  Sat, 05 Sep 2009 15:17:33 +0200
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 05 Sep 2009 16:06:11 +0200
 
 git-buildpackage (0.4.56) unstable; urgency=low
 
