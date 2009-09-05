@@ -38,10 +38,17 @@ class GitRepository(object):
         output += popen.stdout.readlines()
         return output, ret
 
-    def has_branch(self, branch):
-        """check if the repository has branch 'branch'"""
+    def has_branch(self, branch, remote=False):
+        """
+        check if the repository has branch 'branch'
+        @param remote: only liste remote branches
+        """
         self.__check_path()
-        for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
+        options = [ '--no-color' ]
+        if remote:
+            options += [ '-r' ]
+
+        for line in self.__git_getoutput('branch', options)[0]:
             if line.split(' ', 1)[1].strip() == branch:
                 return True
         return False
