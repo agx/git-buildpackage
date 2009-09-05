@@ -204,6 +204,13 @@ class GitInit(GitCommand):
         self.run_error = "Couldn't init git repository"
 
 
+class GitClone(GitCommand):
+    """Wrap git clone"""
+    def __init__(self):
+        GitCommand.__init__(self, 'clone')
+        self.run_error = "Couldn't clone git repository"
+
+
 class GitShowBranch(GitCommand):
     """Wrap git show-branch"""
     def __init__(self):
