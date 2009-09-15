@@ -17,6 +17,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Import a Debian source package into a git repository"""
 
+import ConfigParser
 import sys
 import re
 import os
@@ -93,8 +94,12 @@ def main(argv):
     needs_repo = False
     ret = 0
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                             usage='%prog [options] /path/to/package.dsc')
+    try:
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                                 usage='%prog [options] /path/to/package.dsc')
+    except ConfigParser.ParsingError, err:
+        print >>sys.stderr, err
+        return 1
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")

@@ -18,14 +18,15 @@
 #
 """Import a new upstream version into a git repository"""
 
-import sys
-import os
-import tempfile
-import re
+import ConfigParser
 import glob
+import os
+import sys
+import re
 import subprocess
 import tarfile
 import time
+import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (parse_changelog, unpack_orig, repack_orig,
                      NoChangelogError, has_epoch, tar_toplevel,
@@ -210,8 +211,12 @@ def main(argv):
     tmpdir = ''
     pristine_orig = None
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                      usage='%prog [-u version] /path/to/upstream-version.tar.gz')
+    try:
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                                 usage='%prog [-u version] /path/to/upstream-version.tar.gz')
+    except ConfigParser.ParsingError, err:
+        print >>sys.stderr, err
+        return 1
 
     cl_group = GbpOptionGroup(parser, "changelog mangling",
                       "options for mangling the changelog after the import")

@@ -18,10 +18,11 @@
 #
 """run commands to build a debian package out of a git repository"""
 
-import sys
-import os, os.path
+import ConfigParser
 import errno
+import os, os.path
 import pipes
+import sys
 import time
 import gbp.deb as du
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
@@ -168,7 +169,12 @@ def main(argv):
         if arg in dpkg_args:
             args.append(arg)
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
+    try:
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
+    except ConfigParser.ParsingError, err:
+        print >>sys.stderr, err
+        return 1
+
     tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
     cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke external commands and hooks")
