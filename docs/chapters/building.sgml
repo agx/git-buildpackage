@@ -20,9 +20,9 @@
     </para><para>
     If you want to recreate the original tarball using the additional
     information from the <option>pristine-tar branch</option> you have to
-    specify the <option>--pristine-tar</option> option. This will make sure the
-    upstream tarball matches exactly the one imported. Using this option is the
-    recommended way of recreating the upstream tarball.
+    specify the <option>--git-pristine-tar</option> option. This will make sure
+    the upstream tarball matches exactly the one imported. Using this option is
+    the recommended way of recreating the upstream tarball.
     </para>
     <para>Once you're satisfied with the build and want to do a release you commit all
     your changes and issue:</para>
