@@ -46,7 +46,15 @@
 	branch name used in the &git; repository is
 	<emphasis>upstream</emphasis>) holds the upstream releases. This can
 	either be a branch you import to or a branch of an upstream repository
-	you pull from.</para></listitem></itemizedlist> <para>You're completely
+	you pull from.</para></listitem>
+	<listitem><para> The <option>pristine-tar branch</option> (the default
+	branch name used in the &git; repository is
+	<emphasis>pristine-tar</emphasis>) holds the necessary additional
+	information to recreate the original tarball from the
+	<option>upstream-branch</option>. In order to use this feature you need
+	to install the &pristine-tar; package.
+	</itemizedlist>
+	<para>You're completely
 	free to pick any repository layout and the branch names above are only
 	&git-buildpackage;'s defaults. They can be changed at any point in time
 	and you can work with an arbitrary number of branches.

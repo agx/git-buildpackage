@@ -17,6 +17,11 @@
     <option>debian-branch</option> options in the configuration file.
     </para>
     <para>
+    If you want to be able to exactly recreate the original tarball
+    (orig.tar.gz) from &git; you should also specify the
+    <option>--pristine-tar</option> option.  This is recommended.
+    </para>
+    <para>
     If you want to import further versions you can change into your shiny new
     &git; repository and just continue with the same command:
     <screen>
@@ -65,6 +70,9 @@ by version number.
     the changes from the <option>upstream-branch</option> later.
     </para>
     <para>
+    If you want to be able to exactly recreate the original tarball
+    (orig.tar.gz) from &git; you should also specify the
+    <option>--pristine-tar</option> option.  This is recommended.
     </para>
     </sect1>
 
