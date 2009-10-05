@@ -390,7 +390,8 @@ on howto create it otherwise use --upstream-branch to specify it.
                         if has_epoch(cp):
                             epoch = '%s:' % cp['Epoch']
                     info = { 'version': "%s%s-1" % (epoch, version) }
-                    cmd = gbpc.Command(options.postimport % info, shell=True)()
+                    env = { 'GBP_BRANCH': options.debian_branch }
+                    cmd = gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpNothingImported, err:
