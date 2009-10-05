@@ -1,3 +1,13 @@
+git-buildpackage (0.4.58) unstable; urgency=low
+
+  * [78bcf5e] catch config file parse errors (Closes: #545690)
+  * [8a9b813] docs: mention pristine-tar branch and pristine-tar
+  * [260afa1] docs: add missing --git- prefix
+  * [af4265e] git-dch: export GBP_BRANCH to postimport hook so we can pass the
+    current branch to git-dch
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 05 Oct 2009 18:16:10 +0200
+
 git-buildpackage (0.4.57) unstable; urgency=low
 
   * new tools:
