@@ -382,7 +382,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 try:
                     gbpc.GitMerge(tag)()
                 except gbpc.CommandExecFailed:
-                    raise GbpError, """Merge failed, please resolve.""" % version
+                    raise GbpError, """Merge failed, please resolve."""
                 if options.postimport:
                     epoch = ''
                     if os.access('debian/changelog', os.R_OK):
