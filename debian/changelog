@@ -1,3 +1,24 @@
+git-buildpackage (0.4.59) unstable; urgency=low
+
+  * new tools:
+      * [9ccbcd2] add examples/gbp-pull. Addresses another part of #540185.
+  * git-buildpackage:
+      * [38fcab2] add --git-retag (Closes: #521329)
+  * git-import-orig:
+      * [ee3209c] Drop superfluous argument. Fixes TypeError on merge failures.
+        (Closes: #549885)
+  * examples/gbp-clone:
+      * [1d8fb9d] gbp-clone: import Command too. Fixes "--verbose".
+  * gbp module:
+      * [db7cbab] add GitFetch
+      * [6f03267] add GitRepository.get_merge_branch()
+      * [b543f67] add GitRepository.is_fast_forward()
+      * [5bf8201] move FastImport into gbp/git.py
+  * docs:
+      * [189ff52] fix link to "homepage"
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 24 Oct 2009 21:31:08 +0200
+
 git-buildpackage (0.4.58) unstable; urgency=low
 
   * [78bcf5e] catch config file parse errors (Closes: #545690)
