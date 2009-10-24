@@ -38,6 +38,7 @@
       <arg><option>--git-[no-]pristine-tar</option></arg>
       <arg><option>--git-dont-purge</option></arg>
       <arg><option>--git-tag-only</option></arg>
+      <arg><option>--git-retag</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -239,6 +240,14 @@
         </term>
         <listitem>
 	  <para>don't build, only tag and run post-tag hooks</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-retag</option>
+        </term>
+        <listitem>
+	  <para>don't fail tag operations if a tag with the same version
+	  already exists</para>
         </listitem>
       </varlistentry>
     </variablelist>
