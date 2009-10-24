@@ -5,7 +5,7 @@
 
 import subprocess
 import os.path
-from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, copy_from)
+from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, GitCommand, copy_from)
 import dateutil.parser
 import calendar
 
@@ -64,6 +64,12 @@ class GitRepository(object):
         self.__check_path()
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
+
+    def remove_tag(self, tag):
+        """remove a tag 'tag'"""
+        self.__check_path()
+        if self.has_tag(tag):
+            GitCommand("tag", [ "-d", tag ])()
 
     def get_branch(self):
         """on what branch is the current working copy"""
