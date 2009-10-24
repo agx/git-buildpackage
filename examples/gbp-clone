@@ -24,7 +24,7 @@ import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (GitClone, CommandExecFailed, GitBranch)
+from gbp.command_wrappers import (GitClone, Command, CommandExecFailed, GitBranch)
 from gbp.errors import GbpError
 
 
