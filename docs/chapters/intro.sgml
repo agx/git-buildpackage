@@ -4,7 +4,7 @@
       Welcome to &git-buildpackage;, a system that integrates the
       <ulink url="http://www.debian.org/">Debian</ulink> package build
       system with <ulink url="http://git.or.cz/">Git</ulink>. The current version of this manual can be found at
-      <ulink url="http://honk.sigxcpu.org/projects.html#git-buildpackage">here</ulink>.
+      <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage">here</ulink>.
     </para>
     <para>
     What can these tools do for you:
