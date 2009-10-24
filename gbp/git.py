@@ -83,6 +83,15 @@ class GitRepository(object):
         remote += merge.replace("refs/heads","", 1)
         return remote
 
+    def is_fast_forward(self, from_branch, to_branch):
+        """check if an update from from_branch to to_branch would be a fast forward"""
+        out = self.__git_getoutput('rev-list', ["--left-right",
+                                   "%s...%s" % (from_branch, to_branch)])[0]
+        for line in out:
+            if line.startswith("<"):
+                return False
+        return True
+
     def set_branch(self, branch):
         """switch to branch 'branch'"""
         self.__check_path()
