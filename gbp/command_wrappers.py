@@ -195,6 +195,7 @@ class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[], **kwargs):
         Command.__init__(self, 'git', [cmd] + args, **kwargs)
+        self.run_error = "Couldn't run git %s" % cmd
 
 
 class GitInit(GitCommand):
@@ -244,6 +245,15 @@ class GitPull(GitCommand):
     def __init__(self, repo, branch):
         GitCommand.__init__(self, 'pull', [repo, branch]) 
         self.run_error = 'Couldn\'t pull "%s" to "%s"' % (branch, repo)
+
+
+class GitFetch(GitCommand):
+    """Wrap git fetch"""
+    def __init__(self, remote = None):
+        opts = []
+        if remote:
+            opts += [remote]
+        GitCommand.__init__(self, 'fetch', opts)
 
 
 class GitMerge(GitCommand):
