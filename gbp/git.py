@@ -72,6 +72,17 @@ class GitRepository(object):
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
 
+    def get_merge_branch(self, branch):
+        """get the branch we'd merge from"""
+        self.__check_path()
+        try:
+            remote = self.get_config("branch.%s.remote" % branch)
+            merge = self.get_config("branch.%s.merge" % branch)
+        except KeyError:
+            return None
+        remote += merge.replace("refs/heads","", 1)
+        return remote
+
     def set_branch(self, branch):
         """switch to branch 'branch'"""
         self.__check_path()
