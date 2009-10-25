@@ -342,7 +342,7 @@ on howto create it otherwise use --upstream-branch to specify it.
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        print "Succesfully merged version %s of %s into ." % (version, archive)
+        print "Succesfully imported version %s of %s" % (version, archive)
     return ret
 
 if __name__ == "__main__":
