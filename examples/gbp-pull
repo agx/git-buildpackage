@@ -79,6 +79,12 @@ def main(argv):
         if repo.has_branch(pristine_tar) and options.pristine_tar:
             branches += [ pristine_tar ]
 
+        (ret, out) = repo.is_clean()
+        if not ret:
+            print >>sys.stderr, "You have uncommitted changes in your source tree:"
+            print >>sys.stderr, out
+            raise GbpError
+
         GitFetch()()
         for branch in branches:
             fast_forward_branch(branch, repo, options)
