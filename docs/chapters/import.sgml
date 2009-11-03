@@ -130,6 +130,17 @@ EOF
     url="http://git.or.cz/gitwiki/GraftPoint">grafts</ulink>. Afterwards you
     can simply create a branch as explained above and &git-import-orig; will 
     work as expected.</para>
+    <para>Alternatively, if you are only importing source from original tarballs
+    (for instance when converting from a Subversion repository where the
+    mergeWithUpstream was set for svn-buildpackage), you can create an empty
+    upstream branch with the following commands:
+<screen>
+    git symbolic-ref HEAD refs/heads/upstream
+    git rm --cached -r .
+    git commit --allow-empty -m 'Initial upstream branch.'
+    git checkout -f master
+</screen>
+    </para>
     </sect2>
     </sect1>
 
