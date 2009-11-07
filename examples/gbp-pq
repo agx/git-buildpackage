@@ -71,15 +71,16 @@ pq_import()
         return 1
     fi
 
-    if [ ! -r ${patches}series ]; then
-        echo "Found no series file at \"$patches\"."
-        return 1
-    fi
-
     if ! git checkout -b $pq; then
         echo "Cannot create patch-queue branch \"$pq\"."
 	return 1
     fi
+
+    if [ ! -r ${patches}series ]; then
+        echo "Found no series file at \"$patches\". Patch-queue branch will be empty."
+        return 0
+    fi
+
     QUILT_PATCHES=$patches git quiltimport
 } 
 
