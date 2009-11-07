@@ -7,6 +7,10 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
 COMMANDS=git-buildpackage git-import-dsc git-import-dscs git-import-orig git-dch
+EXAMPLE_SCRIPTS=gbp-clone gbp-cowbuilder-sid gbp-pbuilder gbp-posttag-push gbp-pq  gbp-pull
+
+DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
+
 MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 MANUAL=docs/manual-html
 PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
