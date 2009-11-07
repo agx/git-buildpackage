@@ -1,3 +1,29 @@
+git-buildpackage (0.4.60) unstable; urgency=low
+
+  [ Guido Günther ]
+  * gbp-pull: 
+      * [9960f24] check for clean repo
+      * [9d190a5] add --redo-pq so a "gbp-pull --redo-pq" also refreshes the
+        patch-queue branch
+  * gbp-pq:
+      * [526fc0c] add option to drop patch-queue branch
+      * [3bf8288] Don't fail when series file is missing. Create an empty
+        patch-queue branch instead.
+  * git-import-orig:
+      * [eef5eca] Use "imported" instead of "merged". This way we don't claim
+        we merged something but we possibly didn't. (Closes: #545908)
+  * debian/rules:
+      * [5372050] Don't compress the example scripts
+  * docs:
+      * [4da84c0] document --git-retag
+
+  [ Charles Plessy ]
+  * [509c1c3] Stefano Zacchiroli’s workaround for creating empty
+    upstream branches. (See ‘http://bugs.debian.org/cgi-
+    bin/bugreport.cgi?bug=471560’)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 07 Nov 2009 15:30:49 +0100
+
 git-buildpackage (0.4.59) unstable; urgency=low
 
   * new tools:
