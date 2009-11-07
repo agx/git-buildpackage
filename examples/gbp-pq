@@ -83,6 +83,20 @@ pq_import()
     QUILT_PATCHES=$patches git quiltimport
 } 
 
+pq_drop()
+{
+    local branch=$1
+    local pq="patch-queue/$branch"
+
+    if is_patch_queue $branch; then
+        echo "On a patch-queue branch, can't drop it."
+        return 1
+    else
+	git branch -D ${pq}
+	echo "Dropped ${pq}."
+    fi
+}
+
 usage ()
 {
     cat <<EOF
@@ -96,6 +110,8 @@ Options:
 
 	rebase		Switch to associated patch-queue branch and rebase
                         against current branch.
+
+	drop		Drop (delete) the corresponding patch-queue branch
 EOF
 }
 
@@ -111,6 +127,9 @@ case "$1" in
     rebase)
         pq_rebase $branch
         ;;
+    drop)
+	pq_drop $branch
+	;;
     *)
 	usage
 	exit 1
