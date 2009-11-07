@@ -54,6 +54,8 @@ def main(argv):
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     parser.add_option("--force", action="store_true", dest="force", default=False,
                       help="force update even if not fast forward")
+    parser.add_option("--redo-pq", action="store_true", dest="redo_pq", default=False,
+                      help="Redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
 
@@ -88,6 +90,11 @@ def main(argv):
         GitFetch()()
         for branch in branches:
             fast_forward_branch(branch, repo, options)
+
+        if options.redo_pq:
+            repo.set_branch(options.debian_branch)
+            Command("gbp-pq")(["drop"])
+            Command("gbp-pq")(["import"])
 
         repo.set_branch(current)
     except CommandExecFailed:
