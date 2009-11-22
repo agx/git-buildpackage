@@ -5,5 +5,5 @@
 set -e
 
 # pass all options to dpkg-buildpackage:
-pdebuild $PBUILDER_OPTS --debbuildopts "-i\.git/ -I.git $*"
+pdebuild $PBUILDER_OPTS --debbuildopts "-i -I $*"
 

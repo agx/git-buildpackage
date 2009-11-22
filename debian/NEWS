@@ -1,3 +1,12 @@
+git-buildpackage (0.4.61) unstable; urgency=low
+
+  In order to not override dpkg-buildpackge's defaults for 3.0 source packages
+  the default builder command is now "debuild -i -I" instead of "debuild
+  -i\.git/ -I.git". If you want to retain the old behaviour please adjust your
+  gbp.conf accordingly.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 22 Nov 2009 17:07:52 +0100
+
 git-buildpackage (0.4.57) unstable; urgency=low
 
   git-import-orig dosn't generate changelog entries by default anymore. This

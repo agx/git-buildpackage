@@ -31,7 +31,7 @@ case $ACTION in
 	pdebuild --configfile ${CONF} 		     \
 	 	--pbuilder cowbuilder                \
 		--buildresult ${GBP_BUILD_DIR}/..    \
-	 	--debbuildopts "-i\.git/ -I.git $*"  \
+		--debbuildopts "-i -I $*"            \
 		-- $OPTS
 	;;
 esac

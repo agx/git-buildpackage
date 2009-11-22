@@ -25,7 +25,7 @@ class GbpOptionParser(OptionParser):
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
-    defaults = { 'builder'         : 'debuild -i\.git/ -I.git',
+    defaults = { 'builder'         : 'debuild -i -I',
                  'cleaner'         : 'debuild -d clean',
                  'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
