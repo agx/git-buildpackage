@@ -18,7 +18,7 @@ EXAMPLE_SCRIPTS=gbp-cowbuilder-sid gbp-pbuilder gbp-posttag-push
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
-MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
+MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS) gbp-pq)
 MANUAL=docs/manual-html
 PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
 PYCHECK_LEVEL=Error

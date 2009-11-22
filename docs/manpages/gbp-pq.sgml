@@ -1,0 +1,47 @@
+<refentry id="gbp.man.gbp.pq">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+   <refentrytitle>gbp-pq</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&gbp-pq;</refname>
+
+    <refpurpose>Manage quilt patches on a patch-queue branch</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-pq;
+      <arg><option>export</option>|<option>import</option>|<option>rebase</option>|<option>drop</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+   See <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink> for documentation.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry>
+        <refentrytitle>git-buildpackage</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>
