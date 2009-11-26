@@ -1,3 +1,17 @@
+git-buildpackage (0.4.61) unstable; urgency=low
+
+  * [fc96f75] switch to 3.0 (native) source format
+  * [bf258de] use git;// instead of http://
+  * [043c75a] Make gbp-clone, gbp-pull and gbp-pq first class citizens
+    by moving them from examples/ to /usr/bin/
+  * [c5e4148] Add documentation for gbp-{pg,pull.clone}
+  * [06059df] Make the default build command 3.x source format safe Instead of
+    passing "-i\.git/ -I.git" to debuild use "-i -I". This makes sure we use
+    the default behaviour of dpkg-source. (Closes: #553079)
+  * [ecec4d5] gbp-pull: Don't fail if no tracking branch exists.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 26 Nov 2009 18:55:19 +0100
+
 git-buildpackage (0.4.60) unstable; urgency=low
 
   [ Guido Günther ]
