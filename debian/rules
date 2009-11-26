@@ -52,7 +52,7 @@ $(VERSION_ENT): debian/changelog
 build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) checks
 
 clean::
-	-rm git-*.py
+	-rm git-*.py gbp-*.py
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT)
 	-rm -r docs/manual-html/
 
