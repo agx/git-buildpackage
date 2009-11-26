@@ -29,13 +29,16 @@ from gbp.git import (GitRepositoryError, GitRepository)
 
 def fast_forward_branch(branch, repo, options):
     remote = repo.get_merge_branch(branch)
+    if not remote:
+        print >>sys.stderr, "Warning: no branch tracking '%s' found - skipping." % branch
+        return
     fast_forward = repo.is_fast_forward(branch, remote)
     if not fast_forward:
         if options.force:
             print "Non-fast forwarding '%s' due to --force" % branch
             fast_forward = True
         else:
-            print "Skipping non-fast forward of '%s' - use --force" % branch
+            print >>sys.stderr, "Warning: Skipping non-fast forward of '%s' - use --force" % branch
     if fast_forward:
         repo.set_branch(branch)
         GitMerge(remote)()
