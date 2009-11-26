@@ -9,8 +9,9 @@ git-buildpackage (0.4.61) unstable; urgency=low
     passing "-i\.git/ -I.git" to debuild use "-i -I". This makes sure we use
     the default behaviour of dpkg-source. (Closes: #553079)
   * [ecec4d5] gbp-pull: Don't fail if no tracking branch exists.
+  * [5539417] cleanup symlinks
 
- -- Guido Günther <agx@sigxcpu.org>  Thu, 26 Nov 2009 18:55:19 +0100
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 26 Nov 2009 19:05:53 +0100
 
 git-buildpackage (0.4.60) unstable; urgency=low
 
