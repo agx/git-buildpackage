@@ -1,3 +1,13 @@
+git-buildpackage (0.4.61~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+  * [e5dbe84] Revert "depend on devscripts >= 2.10.49" This reverts commit
+    d6dae624d35719556257043ce2212cd40511848f.
+  * [82189a1] Revert "add --no-force-save-on-release" This reverts commit
+    f636022be8a0d802f357612ca9eef5986ece887d.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 07 Dec 2009 21:43:29 +0100
+
 git-buildpackage (0.4.61) unstable; urgency=low
 
   * [fc96f75] switch to 3.0 (native) source format
