@@ -32,11 +32,13 @@ class DscFile(object):
     version_re = re.compile("Version:\s((?P<epoch>\d+)\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
     tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
     diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
+    format_re = re.compile('Format:\s+(?P<format>[0-9.]+)\s*')
 
     def __init__(self, dscfile):
         self.pkg = ""
         self.tgz = ""
         self.diff = ""
+        self.pkgformat = "1.0"
         self.debian_version = ""
         self.upstream_version = ""
         self.native = False
@@ -70,6 +72,10 @@ class DscFile(object):
             m = self.diff_re.match(line)
             if m:
                 self.diff = os.path.join(fromdir, m.group('diff'))
+                continue
+            m = self.format_re.match(line)
+            if m:
+                self.pkgformat = m.group('format')
                 continue
         f.close()
 

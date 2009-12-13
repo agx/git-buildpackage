@@ -152,6 +152,8 @@ def main(argv):
             raise GbpError
         else:
             src = parse_dsc(args[0])
+            if src.pkgformat != '1.0':
+                raise GbpError, "Importing %s source format not yet supported." % src.pkgformat
             if options.verbose:
                 print_dsc(src)
 
