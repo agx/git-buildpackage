@@ -1,3 +1,11 @@
+git-buildpackage (0.4.62) unstable; urgency=low
+
+  * [dce995d] Improve error handling on broken dsc files. (Closes: #560689)
+  * [bcdd6b5] Improve error message when trying to import 3.0 source format
+    packages until we properly support them.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 14 Dec 2009 09:15:49 +0100
+
 git-buildpackage (0.4.61) unstable; urgency=low
 
   * [fc96f75] switch to 3.0 (native) source format
