@@ -115,5 +115,23 @@ via &git-dch;'s <option>--id-length</option> option. Using
 </screen>
 This makes it much easier to see which commit actually fixed bug #1000.
 </para>
+<para>
+Finally, there is the <option>Git-Dch:</option> header that can
+currently only be set to <option>Ignore</option> (or omitted). When this
+header is set to <option>Ignore</option>, the commit message is
+completely ignored and will not be included in the changelog at all.
+This is useful for janitorial commits or other commits that really don't
+need to end up in the changelog.
+
+</para><para>
+For example, the following git commit message
+<screen>
+Set correct branchnames in debian/gbp.conf
+
+Git-Dch: Ignore
+</screen>
+will not show up in the generated changelog in any way.
+</para>
+
 </sect1>
 </chapter>

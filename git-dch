@@ -198,6 +198,7 @@ def parse_commit(repo, commitid, options):
     msg = ''
     thanks = ''
     closes = ''
+    git_dch = ''
     bugs = {}
     bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r), re.I)
 
@@ -217,6 +218,8 @@ def parse_commit(repo, commitid, options):
                     bugs[m.group('bts')] = bug_nums
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
+            elif line.startswith('Git-Dch: '):
+                git_dch = line.split(' ', 1)[1].strip()
             else: # normal commit message
                 if msg and not options.full:
                     continue
@@ -226,6 +229,8 @@ def parse_commit(repo, commitid, options):
         elif line.startswith('diff '):
             break
     if options.meta:
+        if git_dch == 'Ignore':
+            return None
         for bts in bugs:
             closes += '(%s: %s) ' % (bts, ', '.join(bugs[bts]))
         if thanks:
@@ -241,8 +246,11 @@ def shortlog_to_dch(repo, commits, options):
     author = 'Unknown'
 
     for commit in commits:
-        msg, (author, email) = parse_commit(repo, commit, options)
-        add_changelog_entry(msg, author, email)
+        parsed = parse_commit(repo, commit, options)
+        # Allow commits to be ignored.
+        if parsed:
+            msg, (author, email) = parsed
+            add_changelog_entry(msg, author, email)
 
 
 def guess_snapshot_commit(cp, repo, options):

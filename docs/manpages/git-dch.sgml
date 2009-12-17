@@ -107,8 +107,8 @@
       <varlistentry>
         <term><option>--[no-]meta</option></term>
         <listitem>
-	  <para>Parse meta tags like <option>Closes:</option> and
-	  <option>Thanks:</option>.  </para>
+	  <para>Parse meta tags like <option>Closes:</option>,
+	  <option>Thanks:</option> and <option>Git-Dch:</option>.  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
