@@ -36,6 +36,8 @@ from glob import glob
 index_name = "INDEX"
 # when we want to reference the working copy in treeish context we call it:
 wc_name = "WC"
+# index file name used to export working copy
+wc_index = ".git/gbp_index"
 
 def git_archive_pipe(prefix, pipe, output, treeish):
     """run the git_archive pipe"""
@@ -131,12 +133,16 @@ def git_archive_build_orig(repo, cp, output_dir, options):
 def write_wc(repo):
     """write out the current working copy as a treeish object"""
     tree = None
-    os.putenv("GIT_INDEX_FILE", ".git/gbp_index")
+    os.putenv("GIT_INDEX_FILE", wc_index)
     GitAdd()(['-f', '.'])
     tree = repo.write_tree()
     os.unsetenv("GIT_INDEX_FILE")
     return tree
 
+def drop_index(repo):
+    """drop our custom index"""
+    if os.path.exists(wc_index):
+        os.unlink(wc_index)
 
 def extract_orig(orig_tarball, dest_dir):
     """extract orig tarball to export dir before exporting from git"""
@@ -354,6 +360,8 @@ def main(argv):
         if len(err.__str__()):
             print >>sys.stderr, err
         retval = 1
+    finally:
+        drop_index(repo)
 
     if not options.tag_only:
         if options.export_dir and options.purge and not retval:
