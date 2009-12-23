@@ -53,6 +53,8 @@ class GbpOptionParser(OptionParser):
                  'id-length'       : '0',
                  'git-author'      : 'False',
                  'ignore-regex'    : '',
+                 'compression'     : 'gzip',
+                 'compression-level': '9',
              }
     help = {
              'debian-branch':
