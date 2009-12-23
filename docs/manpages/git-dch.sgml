@@ -180,6 +180,15 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--ignore-regex=</option><replaceable>regex</replaceable>
+        </term>
+        <listitem>
+	  <para>Ignore commit lines matching <replaceable>regex</replaceable>
+	  when generating the changelog.
+	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git-author</option>
         </term>
         <listitem>

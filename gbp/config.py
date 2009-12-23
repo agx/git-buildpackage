@@ -52,6 +52,7 @@ class GbpOptionParser(OptionParser):
                  'full'            : 'False',
                  'id-length'       : '0',
                  'git-author'      : 'False',
+                 'ignore-regex'    : '',
              }
     help = {
              'debian-branch':
