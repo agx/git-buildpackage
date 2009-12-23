@@ -24,13 +24,13 @@ import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (GitClone, Command, CommandExecFailed, GitBranch)
+from gbp.command_wrappers import (GitClone, Command, CommandExecFailed,
+                                  GitBranch, PristineTar)
 from gbp.errors import GbpError
 
 
 def main(argv):
     retval = 0
-    pristine_tar_branch = 'pristine-tar'
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] repository - clone a remote repository')
@@ -73,7 +73,7 @@ def main(argv):
         repo = GitRepository(os.path.curdir)
 
         if options.pristine_tar:
-            branches += [ pristine_tar_branch ]
+            branches += [ PristineTar.branch ]
 
         for branch in branches:
             remote = 'origin/%s' % branch
