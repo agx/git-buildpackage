@@ -18,6 +18,28 @@ from errors import GbpError
 # the valid characters.
 debian_version_chars = 'a-zA-Z\d.~+-'
 
+# Valid package names according to Debian Policy Manual 5.6.1:
+# "Package names (both source and binary, see Package, Section 5.6.7)
+# must consist only of lower case letters (a-z), digits (0-9), plus (+)
+# and minus (-) signs, and periods (.). They must be at least two
+# characters long and must start with an alphanumeric character."
+packagename_re = re.compile("^[a-z0-9][a-z0-9\.\+\-]+$")
+packagename_msg = """Package names must be at least two characters long, start with an
+alphanumeric and can only containg lower case letters (a-z), digits
+(0-9), plus signs (+), minus signs (-), and periods (.)"""
+
+# Valid upstream versions according to Debian Policy Manual 5.6.12:
+# "The upstream_version may contain only alphanumerics[32] and the
+# characters . + - : ~ (full stop, plus, hyphen, colon, tilde) and
+# should start with a digit. If there is no debian_revision then hyphens
+# are not allowed; if there is no epoch then colons are not allowed."
+# Since we don't know about any epochs and debian revisions yet, the
+# last two conditions are not checked.
+upstreamversion_re = re.compile("^[0-9][a-z0-9\.\+\-\:\~]*$")
+upstreamversion_msg = """Upstream version numbers must start with a digit and can only containg lower case
+letters (a-z), digits (0-9), full stops (.), plus signs (+), minus signs
+(-), colons (:) and tildes (~)"""
+
 # compression types, extra options and extensions
 compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
                     'bzip2' : [ '', 'bz2' ],
@@ -190,6 +212,13 @@ def is_native(cp):
     "Is this a debian native package"
     return [ True, False ]['-' in cp['Version']]
 
+def is_valid_packagename(name):
+    "Is this a valid Debian package name?"
+    return packagename_re.match(name)
+
+def is_valid_upstreamversion(version):
+    "Is this a valid upstream version number?"
+    return upstreamversion_re.match(version)
 
 def get_compression(orig_file):
     "Given an orig file return the compression used"
@@ -314,44 +343,48 @@ def get_arch():
     return arch
 
 
-def guess_upstream_version(archive, version_regex=r''):
+def guess_upstream_version(archive, extra_regex=r''):
     """
-    guess the version from the filename of an upstgream archive
+    guess the package name and version from the filename of an upstgream
+    archive. Returns a tuple with package name and version, or None.
     @archive: filename to guess to version for
-    @version_regex: additional version regex to apply, needs a 'version' group
+    @extra_regex: additional regex to apply, needs a 'package' and a
+    'version' group
 
     >>> guess_upstream_version('foo-bar_0.2.orig.tar.gz')
-    '0.2'
+    ('foo-bar', '0.2')
     >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
     >>> guess_upstream_version('git-bar-0.2.tar.gz')
-    '0.2'
+    ('git-bar', '0.2')
     >>> guess_upstream_version('git-bar-0.2-rc1.tar.gz')
-    '0.2-rc1'
+    ('git-bar', '0.2-rc1')
     >>> guess_upstream_version('git-bar-0.2:~-rc1.tar.gz')
-    '0.2:~-rc1'
+    ('git-bar', '0.2:~-rc1')
     >>> guess_upstream_version('git-Bar-0A2d:rc1.tar.bz2')
-    '0A2d:rc1'
+    ('git-Bar', '0A2d:rc1')
     >>> guess_upstream_version('git-1.tar.bz2')
-    '1'
+    ('git', '1')
     >>> guess_upstream_version('kvm_87+dfsg.orig.tar.gz')
-    '87+dfsg'
+    ('kvm', '87+dfsg')
     >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
     >>> guess_upstream_version('foo-Bar-a.b.tar.gz')
+
     """
     version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
     extensions = r'\.tar\.(gz|bz2)'
 
     version_filters = map ( lambda x: x % (version_chars, extensions),
                        ( # Debian package_<version>.orig.tar.gz:
-                         r'^[a-z\d\.\+\-]+_(?P<version>%s+)\.orig%s',
+                         r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig%s',
                          # Upstream package-<version>.tar.gz:
-                         r'^[a-zA-Z\d\.\+\-]+-(?P<version>[0-9]%s*)%s'))
-    if version_regex:
-        version_filters = version_regex + version_filters
+                         r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)%s'))
+    if extra_regex:
+        version_filters = extra_regex + version_filters
+
     for filter in version_filters:
         m = re.match(filter, os.path.basename(archive))
         if m:
-            return m.group('version')
+            return (m.group('package'), m.group('version'))
 
 
 def compare_versions(version1, version2):

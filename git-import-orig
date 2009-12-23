@@ -30,10 +30,21 @@ import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (parse_changelog, unpack_orig, repack_orig,
                      NoChangelogError, has_epoch, tar_toplevel,
-                     guess_upstream_version, do_uscan)
+                     guess_upstream_version, do_uscan,
+                     parse_changelog_repo, is_valid_packagename,
+                     packagename_msg, is_valid_upstreamversion,
+                     upstreamversion_msg)
 from gbp.git import (FastImport, GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import (GbpError, GbpNothingImported)
+
+# Try to import readline, since that will cause raw_input to get fancy
+# line editing and history capabilities. However, if readline is not
+# available, raw_input will still work.
+try:
+    import readline
+except ImportError:
+    pass
 
 def cleanup_tmp_tree(tree):
     """remove a tree of temporary files"""
@@ -129,6 +140,42 @@ def turn_off_fastimport(options, msg):
         print >>sys.stderr, "Turning off fastimport."
         options.fast_import = False
 
+
+def ask_package_name(default):
+    """
+    Ask the user for the source package name.
+    @default The default package name to suggest to the user.
+    """
+    while True:
+        sourcepackage = raw_input("What will be the source package name? [%s] " % default)
+        if not sourcepackage: # No input, use the default.
+            sourcepackage = default
+        # Valid package name, return it.
+        if is_valid_packagename(sourcepackage):
+            return sourcepackage
+
+        # Not a valid package name. Print an extra
+        # newline before the error to make the output a
+        # bit clearer.
+        print "\nNot a valid package name: '%s'.\n%s" % (sourcepackage, packagename_msg)
+
+def ask_package_version(default):
+    """
+    Ask the user for the upstream package version.
+    @default The default package version to suggest to the user.
+    """
+    while True:
+        version = raw_input("What is the upstream version? [%s] " % default)
+        if not version: # No input, use the default.
+            version = default
+        # Valid version, return it.
+        if is_valid_upstreamversion(version):
+            return version
+
+        # Not a valid upstream version. Print an extra
+        # newline before the error to make the output a
+        # bit clearer.
+        print "\nNot a valid upstream version: '%s'.\n%s" % (version, upstreamversion_msg)
 
 def main(argv):
     ret = 0
@@ -256,17 +303,22 @@ on howto create it otherwise use --upstream-branch to specify it.
 """  % options.upstream_branch
             raise GbpError
 
+        # Guess defaults for the package name and version from the
+        # original tarball.
+        (guessed_package, guessed_version) = guess_upstream_version(archive) or ('', '')
+
+        # Try to find the source package name
+        try:
+            cp = parse_changelog('debian/changelog')
+            sourcepackage = cp['Source']
+        except NoChangelogError:
+            sourcepackage = ask_package_name(guessed_package)
+
+        # Try to find the version.
         if options.version:
             version = options.version
         else:
-            version = guess_upstream_version(archive)
-
-        if version:
-            print "Upstream version is %s" % version
-        else:
-            print >>sys.stderr, "Cannot determine upstream version from %s - use -u <version>" % archive
-            parser.print_help()
-            raise GbpError
+            version = ask_package_version(guessed_version)
 
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
@@ -299,12 +351,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                         os.path.basename(archive).replace(".tar", ".gbp.tar")
                         )
                     repack_orig(archive, tmpdir, os.path.basename(orig_dir))
-            try:
-                cp = parse_changelog('debian/changelog')
-                pristine_orig = symlink_orig(archive, cp['Source'], version)
-            except NoChangelogError:
-                print "Warning: Can't symlink orig tarball due to missing debian/changelog"
-                pristine_orig = archive
+            pristine_orig = symlink_orig(archive, sourcepackage, version)
 
         try:
             upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
@@ -313,6 +360,9 @@ on howto create it otherwise use --upstream-branch to specify it.
             print "Importing '%s' to branch '%s'%s..." % (archive,
                                                           upstream_branch,
                                                           filter_msg)
+            print "Source package is %s" % sourcepackage
+            print "Upstream version is %s" % version
+
             if options.fast_import:
                 fast_import_upstream_tree(repo, pristine_orig, version, options)
                 commit = options.upstream_branch
