@@ -1,3 +1,25 @@
+git-buildpackage (0.4.63) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [a0c7a91] docs: fix git-init call - thanks to Pietro Battiston
+  * [02ab603] docs: Drop superfluous upstream branch creation
+  * [e339c70] gbp: Make sure we drop the generated custom index file 
+              (Closes: #561454)
+  * [d436612] git-dch: Add body regex filter (Closes: #544238)
+  * [cf45595] gbp-{pull,clone}: Don't hardcode pristine-tar branch
+  * [0eb4580] gbp: Allow to set compression type (Closes: #554520)
+  * [7ad35fb] tests: Add other gbp-* commands
+  * [f1f3d8e] tests: Add unpack test
+
+  [ Matthijs Kooijman ]
+  * [725b9d3] git-dch: Add support for a Git-Dch: Ignore metaheader.
+              (Closes: #561346)
+  * [e54b7bf] git-dch: There was a second use of parse_commit. Both uses of
+    parse_commit now support the None return value. The shortlog_to_dch
+    function is now superfluous and was removed.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 26 Dec 2009 18:17:39 +0100
+
 git-buildpackage (0.4.62) unstable; urgency=low
 
   * [dce995d] Improve error handling on broken dsc files. (Closes: #560689)
