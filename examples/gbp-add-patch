@@ -1,0 +1,160 @@
+#!/usr/bin/python -u
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2010 Guido Guenther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+"""Add a patch from debian/patches and autocreate the commit message from the
+patch info
+
+running
+
+    gbp-add-patch debian/patches/0010-bla-fasel
+
+commits debian/patches/0010-bla-fasel with this changelog message:
+
+    New patch 0010-bla-fasel
+
+    <patch summary>
+    Closes: <bugs>
+    Thanks: <author>
+"""
+
+import email
+import re
+import sys
+import os, os.path
+import subprocess
+import tempfile
+from gbp.command_wrappers import (Command,
+                                  CommandExecFailed,
+                                  GitAdd,
+                                  GitCommand)
+from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.errors import GbpError
+from gbp.git import (GitRepositoryError, GitRepository)
+
+class PatchInfo(object):
+        def __init__(self, patch):
+            t_body = tempfile.NamedTemporaryFile(prefix='gbp_add_patch_', dir='.git/')
+            t_patch = tempfile.NamedTemporaryFile(prefix='gbp_add_patch_', dir='.git/')
+            popen = subprocess.Popen(['git', 'mailinfo', t_body.name, t_patch.name],
+                                      stdin=subprocess.PIPE,
+                                      stdout=subprocess.PIPE)
+            self.name = patch
+            f = file(patch)
+            out, dummy = popen.communicate(f.read())
+            f.close()
+            self.header = email.message_from_string(out)
+            self.body = t_body.read()
+            t_body.close()
+            self.patch = t_patch.read()
+            t_patch.close()
+
+        def summary(self):
+            return self.header['Subject']
+
+        def author_name(self):
+            return self.header['Author']
+
+        def author(self):
+            return '%(Author)s <%(Email)s>' % self.header
+
+
+class GitCommit(GitCommand):
+    """Wrap git commit to commit staged changes"""
+    def __init__(self, verbose=False, **kwargs):
+        args = [ ['-q'], [] ][verbose]
+        GitCommand.__init__(self, cmd='commit', args=args, **kwargs)
+
+    def __call__(self, msg='', edit=False):
+        args = [ [], ['-e'] ][edit]
+        args += [ [], ['-m', msg] ][len(msg) > 0]
+        self.run_error = "Couldn't %s %s" % (self.cmd, " ".join(self.args + args))
+        GitCommand.__call__(self, args)
+
+
+def build_commit_msg(repo, patch, options):
+    bug_r = r'(?:bug)?\#?\s?\d+'
+    bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r), re.I)
+    thanks = ''
+    closes = ''
+
+    author, dummy = repo.get_author_info()
+    if author != patch.author_name():
+        thanks = "Thanks: %s" % patch.author_name()
+
+    for line in patch.body.split('\n'):
+        if bts_closes.match(line):
+            closes += line + '\n'
+
+    msg="""New patch %s
+
+%s
+%s
+%s""" % (patch.name, patch.summary(), thanks, closes)
+    return msg
+
+
+def main(argv):
+    retval = 0
+
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                             usage='%prog [options] - add a new patch')
+    parser.add_config_file_option(option_name="meta-closes", dest="meta_closes",
+                      help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
+    parser.add_option("-e", "--edit", action="store_true", dest="edit", default=False,
+                      help="edit commit message befor committing")
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                      help="verbose command execution")
+
+    (options, args) = parser.parse_args(argv)
+
+    if options.verbose:
+        Command.verbose = True
+
+    try:
+        repo = GitRepository(os.path.curdir)
+    except GitRepositoryError:
+        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
+        return 1
+
+    try:
+        if len(args) != 2:
+            parser.print_help()
+            raise GbpError
+        else:
+            patchfile = args[1]
+
+        patch = PatchInfo(patchfile)
+
+        GitAdd()([patchfile])
+        msg = build_commit_msg(repo, patch, options)
+        GitCommit()(edit=options.edit, msg=msg)
+        # FIXME: handle the series file
+
+    except CommandExecFailed:
+        retval = 1
+    except GbpError, err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
+        retval = 1
+
+    return retval
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
