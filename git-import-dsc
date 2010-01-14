@@ -93,6 +93,8 @@ def print_dsc(dsc):
     if dsc.epoch:
         print "Epoch: %s" % dsc.epoch
 
+class SkipImport(Exception):
+    pass
 
 def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
@@ -139,6 +141,9 @@ def main(argv):
                       dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
                       dest="pristine_tar")
+    import_group.add_option("--ignore-same-version", action="store_true",
+                      dest="ignore_same_version", default=False,
+                      help="don't import already imported version")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.verbose:
@@ -183,6 +188,9 @@ def main(argv):
             format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
             tag = build_tag(format[0], src.upstream_version)
             msg = "%s version %s" % (format[1], src.upstream_version)
+            if repo.has_tag(tag) and options.ignore_same_version:
+                print "Tag %s already there" % tag
+                raise SkipImport
 
             if not repo.has_tag(tag):
                 print "tag %s not found, importing %s tarball" % (tag, format[1])
@@ -215,13 +223,15 @@ def main(argv):
                 else:
                     print >>sys.stderr, "Warning: Didn't find a diff to apply."
     except gbpc.CommandExecFailed:
-        os.chdir(dirs['top'])
         ret = 1
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
-        os.chdir(dirs['top'])
         ret = 1
+    except SkipImport:
+        pass
+    finally:
+        os.chdir(dirs['top'])
 
     if dirs.has_key('tmp'):
         gbpc.RemoveTree(dirs['tmp'])()
