@@ -53,7 +53,7 @@ def is_link_target(target, link):
 
 def symlink_orig(archive, pkg, version):
     """
-    create a symlink <pkg>_<version>.orig.tar.gz so pristine-tar will see the
+    create a symlink <pkg>_<version>.orig.tar.<ext> so pristine-tar will see the
     correct basename
     @return: archive path to be used by pristine tar
     """
@@ -261,7 +261,6 @@ on howto create it otherwise use --upstream-branch to specify it.
         if os.path.isdir(archive):
             orig_dir = archive
             turn_off_fastimport(options, "Fastimport only supported for tar achives.")
-
         else:
             if not options.fast_import:
                 tmpdir = tempfile.mkdtemp(dir='../')
@@ -281,7 +280,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 cp = parse_changelog('debian/changelog')
                 pristine_orig = symlink_orig(archive, cp['Source'], version)
             except NoChangelogError:
-                print "Warning: Can't symlink orig.tar.gz due to missing debian/changelog"
+                print "Warning: Can't symlink orig tarball due to missing debian/changelog"
                 pristine_orig = archive
 
         try:

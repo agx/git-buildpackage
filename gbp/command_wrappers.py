@@ -37,7 +37,7 @@ class Command(object):
             self.env = None
 
     def __call(self, args):
-        """simply wraps subprocess.call so we can be verbose"""
+        """wraps subprocess.call so we can be verbose and fix python's SIGPIPE handling"""
         def default_sigpipe():
             "restore default signal handler (http://bugs.python.org/issue1652)"
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
@@ -54,7 +54,7 @@ class Command(object):
         run self.cmd adding args as additional arguments
 
         be verbose about errors and encode them in the return value, don't pass
-        on exceptons
+        on exceptions
         """
         try:
             retcode = self.__call(args)

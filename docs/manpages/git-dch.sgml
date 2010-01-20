@@ -107,8 +107,8 @@
       <varlistentry>
         <term><option>--[no-]meta</option></term>
         <listitem>
-	  <para>Parse meta tags like <option>Closes:</option> and
-	  <option>Thanks:</option>.  </para>
+	  <para>Parse meta tags like <option>Closes:</option>,
+	  <option>Thanks:</option> and <option>Git-Dch:</option>.  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -177,6 +177,15 @@
 	  <para>include <replaceable>N</replaceable> digits of the commit id in
 	  the changelog enty. Default is to not include any commit ids at
 	  all.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-regex=</option><replaceable>regex</replaceable>
+        </term>
+        <listitem>
+	  <para>Ignore commit lines matching <replaceable>regex</replaceable>
+	  when generating the changelog.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>

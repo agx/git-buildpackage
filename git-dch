@@ -198,8 +198,14 @@ def parse_commit(repo, commitid, options):
     msg = ''
     thanks = ''
     closes = ''
+    git_dch = ''
     bugs = {}
     bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r), re.I)
+
+    if options.ignore_regex: # Ignore r'' since it matches everything
+        ignore_re = re.compile(options.ignore_regex)
+    else:
+        ignore_re = None
 
     commit = repo.show(commitid)
     author, email = get_author(commit)
@@ -217,15 +223,21 @@ def parse_commit(repo, commitid, options):
                     bugs[m.group('bts')] = bug_nums
             elif line.startswith('Thanks: '):
                 thanks = line.split(' ', 1)[1].strip()
+            elif line.startswith('Git-Dch: '):
+                git_dch = line.split(' ', 1)[1].strip()
             else: # normal commit message
                 if msg and not options.full:
                     continue
-                elif line.strip(): # don't add all whitespace lines
+                if ignore_re and ignore_re.match(line):
+                    continue
+                if line.strip(): # don't add all whitespace lines
                     msg += line
         # start of diff output:
         elif line.startswith('diff '):
             break
     if options.meta:
+        if git_dch == 'Ignore':
+            return None
         for bts in bugs:
             closes += '(%s: %s) ' % (bts, ', '.join(bugs[bts]))
         if thanks:
@@ -234,15 +246,6 @@ def parse_commit(repo, commitid, options):
     if options.idlen:
         msg = "[%s] " % commitid[0:options.idlen] + msg
     return msg, (author, email)
-
-
-def shortlog_to_dch(repo, commits, options):
-    """convert the changes in git shortlog format to debian changelog format"""
-    author = 'Unknown'
-
-    for commit in commits:
-        msg, (author, email) = parse_commit(repo, commit, options)
-        add_changelog_entry(msg, author, email)
 
 
 def guess_snapshot_commit(cp, repo, options):
@@ -316,6 +319,8 @@ def main(argv):
     commit_group.add_config_file_option(option_name="id-length", dest="idlen",
                       help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
                       type="int", metavar="N")
+    commit_group.add_config_file_option(option_name="ignore-regex", dest="ignore_regex",
+                      help="Ignore commit lines matching regex, default is '%(ignore-regex)s'")
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
@@ -371,24 +376,38 @@ def main(argv):
         else:
             add_section = False
 
-        if add_section:
-            if commits:
-                first_commit = commits[0]
-                commits = commits[1:]
-                commit_msg, (commit_author, commit_email) = parse_commit(repo, first_commit, options)
-            else:
-                commit_msg = "UNRELEASED"
-                commit_author = None
-                commit_email = None
-            add_changelog_section(distribution="UNRELEASED", msg=commit_msg,
-                                  version=options.new_version, author=commit_author,
-                                  email=commit_email)
+        for c in commits:
+            parsed = parse_commit(repo, c, options)
+            if not parsed:
+                # Some commits can be ignored
+                continue
 
-        if commits:
-            shortlog_to_dch(repo, commits, options)
-            fixup_trailer(repo, git_author=options.git_author)
-        elif not first_commit:
+            commit_msg, (commit_author, commit_email) = parsed
+            if add_section:
+                # Add a section containing just this message (we can't
+                # add an empty section with dch).
+                add_changelog_section(distribution="UNRELEASED", msg=commit_msg,
+                                      version=options.new_version, author=commit_author,
+                                      email=commit_email)
+                # Adding a section only needs to happen once.
+                add_section = False
+            else:
+                add_changelog_entry(commit_msg, commit_author, commit_email)
+
+
+        # Show a message if there were no commits (not even ignored
+        # commits).
+        if not commits:
             print "No changes detected from %s to %s." % (since, until)
+
+        if add_section:
+            # If we end up here, then there were no commits to include,
+            # so we put a dummy message in the new section.
+            commit_msg = "UNRELEASED"
+            add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED",
+                                  version=options.new_version)
+
+        fixup_trailer(repo, git_author=options.git_author)
 
         if options.release:
             do_release(changelog, cp)

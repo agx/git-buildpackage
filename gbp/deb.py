@@ -18,6 +18,12 @@ from errors import GbpError
 # the valid characters.
 debian_version_chars = 'a-zA-Z\d.~+-'
 
+# compression types, extra options and extensions
+compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
+                    'bzip2' : [ '', 'bz2' ],
+                    'lzma'  : [ '', 'lzma' ],
+                    'xz'    : [ '', 'xz' ] }
+
 class NoChangelogError(Exception):
     """no changelog found"""
     pass
@@ -32,11 +38,13 @@ class DscFile(object):
     version_re = re.compile("Version:\s((?P<epoch>\d+)\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
     tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
     diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
+    format_re = re.compile('Format:\s+(?P<format>[0-9.]+)\s*')
 
     def __init__(self, dscfile):
         self.pkg = ""
         self.tgz = ""
         self.diff = ""
+        self.pkgformat = "1.0"
         self.debian_version = ""
         self.upstream_version = ""
         self.native = False
@@ -70,6 +78,10 @@ class DscFile(object):
             m = self.diff_re.match(line)
             if m:
                 self.diff = os.path.join(fromdir, m.group('diff'))
+                continue
+            m = self.format_re.match(line)
+            if m:
+                self.pkgformat = m.group('format')
                 continue
         f.close()
 
@@ -134,11 +146,12 @@ def parse_changelog(changelog):
     except TypeError:
         raise ParseChangeLogError, output.split('\n')[0]
     return cp
- 
 
-def orig_file(cp):
+
+def orig_file(cp, compression):
     "The name of the orig.tar.gz belonging to changelog cp"
-    return "%s_%s.orig.tar.gz" % (cp['Source'], cp['Upstream-Version'])
+    ext = compressor_opts[compression][1]
+    return "%s_%s.orig.tar.%s" % (cp['Source'], cp['Upstream-Version'], ext)
 
 
 def is_native(cp):
@@ -154,15 +167,15 @@ def has_epoch(cp):
     except KeyError:
         return False
 
-def has_orig(cp, dir):
+def has_orig(cp, compression, dir):
     "Check if orig.tar.gz exists in dir"
     try:
-        os.stat( os.path.join(dir, orig_file(cp)) )
+        os.stat( os.path.join(dir, orig_file(cp, compression)) )
     except OSError:
         return False
     return True
 
-def symlink_orig(cp, orig_dir, output_dir, force=False):
+def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
     """
     symlink orig.tar.gz from orig_dir to output_dir
     @return: True if link was created or src == dst
@@ -174,8 +187,8 @@ def symlink_orig(cp, orig_dir, output_dir, force=False):
     if orig_dir == output_dir:
         return True
 
-    src = os.path.join(orig_dir, orig_file(cp))
-    dst = os.path.join(output_dir, orig_file(cp))
+    src = os.path.join(orig_dir, orig_file(cp, compression))
+    dst = os.path.join(output_dir, orig_file(cp, compression))
     if not os.access(src, os.F_OK):
         return False
     try:

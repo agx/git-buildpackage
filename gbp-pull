@@ -22,7 +22,8 @@
 
 import sys
 import os, os.path
-from gbp.command_wrappers import (GitFetch, GitMerge, Command, CommandExecFailed)
+from gbp.command_wrappers import (GitFetch, GitMerge, Command,
+                                  CommandExecFailed, PristineTar)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
@@ -46,7 +47,6 @@ def fast_forward_branch(branch, repo, options):
 def main(argv):
     changelog = 'debian/changelog'
     retval = 0
-    pristine_tar = 'pristine-tar'
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] - safely update a repository from remote')
@@ -81,8 +81,8 @@ def main(argv):
             if repo.has_branch(branch):
                 branches += [ branch ]
 
-        if repo.has_branch(pristine_tar) and options.pristine_tar:
-            branches += [ pristine_tar ]
+        if repo.has_branch(PristineTar.branch) and options.pristine_tar:
+            branches += [ PristineTar.branch ]
 
         (ret, out) = repo.is_clean()
         if not ret:

@@ -36,6 +36,8 @@ from glob import glob
 index_name = "INDEX"
 # when we want to reference the working copy in treeish context we call it:
 wc_name = "WC"
+# index file name used to export working copy
+wc_index = ".git/gbp_index"
 
 def git_archive_pipe(prefix, pipe, output, treeish):
     """run the git_archive pipe"""
@@ -54,14 +56,19 @@ def git_archive_pipe(prefix, pipe, output, treeish):
     return True
 
 
-def git_archive(cp, output_dir, treeish):
-    "create an orig.tar.gz in output_dir using git_archive"
-    output = os.path.join(output_dir, du.orig_file(cp))
+def git_archive(cp, output_dir, treeish, comp_type, comp_level):
+    "create a compressed orig tarball in output_dir using git_archive"
+
+    try:
+        comp_opts = du.compressor_opts[comp_type][0]
+    except KeyError:
+        raise GbpError, "Unsupported compression type '%s'" % comp_type
+
+    output = os.path.join(output_dir, du.orig_file(cp, comp_type))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
-    gzip_opts = "-9 -n"
 
     pipe = pipes.Template()
-    pipe.append('gzip -c %s' % gzip_opts,  '--')
+    pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts),  '--')
     return git_archive_pipe(prefix, pipe, output, treeish)
 
 
@@ -105,7 +112,7 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
         pt = PristineTar()
         if not repo.has_branch(pt.branch):
             print >>sys.stderr, 'Pristine-tar branch "%s" not found' % pt.branch
-        pt.checkout(os.path.join(output_dir, du.orig_file(cp)))
+        pt.checkout(os.path.join(output_dir, du.orig_file(cp, options.comp_type)))
         return True
     else:
         return False
@@ -121,22 +128,32 @@ def git_archive_build_orig(repo, cp, output_dir, options):
         # fall back to the upstream-branch tip if the tag doesn't exist
         if not repo.has_treeish(upstream_tree):
             upstream_tree = GbpOptionParser.defaults['upstream-branch']
-    print "%s does not exist, creating from '%s'" % (du.orig_file(cp), upstream_tree)
+    print "%s does not exist, creating from '%s'" % (du.orig_file(cp,
+                                                     options.comp_type),
+                                                     upstream_tree)
     if not repo.has_treeish(upstream_tree):
         raise GbpError # git-ls-tree printed an error message already
-    if not git_archive(cp, output_dir, upstream_tree):
+    if options.verbose:
+        print "Building upstream tarball with compression '%s -%s'" % (options.comp_type,
+                                                                       options.comp_level)
+    if not git_archive(cp, output_dir, upstream_tree,
+                       options.comp_type, options.comp_level):
         raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
 
 
 def write_wc(repo):
     """write out the current working copy as a treeish object"""
     tree = None
-    os.putenv("GIT_INDEX_FILE", ".git/gbp_index")
+    os.putenv("GIT_INDEX_FILE", wc_index)
     GitAdd()(['-f', '.'])
     tree = repo.write_tree()
     os.unsetenv("GIT_INDEX_FILE")
     return tree
 
+def drop_index(repo):
+    """drop our custom index"""
+    if os.path.exists(wc_index):
+        os.unlink(wc_index)
 
 def extract_orig(orig_tarball, dest_dir):
     """extract orig tarball to export dir before exporting from git"""
@@ -165,6 +182,7 @@ def main(argv):
     args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
     dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
 
+    # We handle these although they don't have a --git- prefix
     for arg in [ "--help", "-h", "--version" ]:
         if arg in dpkg_args:
             args.append(arg)
@@ -204,6 +222,10 @@ def main(argv):
                       help="don't create orig.tar.gz", action="store_true")
     orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
                       help="location to look for external tarballs")
+    orig_group.add_config_file_option(option_name="compression", dest="comp_type",
+                      help="Compression type, default is '%(compression)s'")
+    orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
+                      help="Compression level, default is '%(compression-level)s'")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
@@ -272,7 +294,6 @@ def main(argv):
             raise GbpError, "Can't parse version from changelog"
 
         if not options.tag_only:
-
             output_dir = prepare_output_dir(options.export_dir)
             if options.tarball_dir:
                 tarball_dir = options.tarball_dir
@@ -281,15 +302,17 @@ def main(argv):
 
             # Get/build the orig.tar.gz if necessary:
             if not du.is_native(cp):
+                orig_file = du.orig_file(cp, options.comp_type)
+
                 # look in tarball_dir first, if found force a symlink to it
                 if options.tarball_dir:
-                    print "Looking for orig tarball '%s' at '%s'" % (du.orig_file(cp), tarball_dir)
-                    if not du.symlink_orig(cp, tarball_dir, output_dir, force=True):
-                        print "Orig tarball '%s' not found at '%s'" % (du.orig_file(cp), tarball_dir)
+                    print "Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir)
+                    if not du.symlink_orig(cp, options.comp_type, tarball_dir, output_dir, force=True):
+                        print "Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir)
                     else:
-                        print "Orig tarball '%s' found at '%s'" % (du.orig_file(cp), tarball_dir)
+                        print "Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir)
                 # build an orig unless the user forbidds it
-                if not options.no_create_orig and not du.has_orig(cp, output_dir):
+                if not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir):
                     if not pristine_tar_build_orig(repo, cp, output_dir, options):
                         git_archive_build_orig(repo, cp, output_dir, options)
 
@@ -310,7 +333,7 @@ def main(argv):
                 if options.overlay:
                     if du.is_native(cp):
                         raise GbpError, "Cannot overlay Debian native package"
-                    extract_orig(os.path.join(output_dir, du.orig_file(cp)) , tmp_dir)
+                    extract_orig(os.path.join(output_dir, du.orig_file(cp, options.comp_type)), tmp_dir)
 
                 print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
                 dump_tree(tmp_dir, tree)
@@ -354,6 +377,8 @@ def main(argv):
         if len(err.__str__()):
             print >>sys.stderr, err
         retval = 1
+    finally:
+        drop_index(repo)
 
     if not options.tag_only:
         if options.export_dir and options.purge and not retval:
