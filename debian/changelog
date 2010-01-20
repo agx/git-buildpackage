@@ -1,3 +1,10 @@
+git-buildpackage (0.4.63~bpo50+2) lenny-backports; urgency=low
+
+  * [5b91321] Switch back to 1.0 source format since bpo doesn't support it
+    yet.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 20 Jan 2010 20:51:41 +0100
+
 git-buildpackage (0.4.63~bpo50+1) lenny-backports; urgency=low
 
   * Rebuild for lenny-backports.
