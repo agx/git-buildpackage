@@ -34,16 +34,19 @@ class ParseChangeLogError(Exception):
 
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
-    pkg_re = re.compile('Source:\s+(?P<pkg>.+)\s*')
-    version_re = re.compile("Version:\s((?P<epoch>\d+)\:)?(?P<version>[%s]+)\s*$" % debian_version_chars)
-    tar_re = re.compile('^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.(gz|bz2))')
-    diff_re = re.compile('^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
-    format_re = re.compile('Format:\s+(?P<format>[0-9.]+)\s*')
+    compressions = r"(gz|bz2)"
+    pkg_re = re.compile(r'Source:\s+(?P<pkg>.+)\s*')
+    version_re = re.compile(r'Version:\s((?P<epoch>\d+)\:)?(?P<version>[%s]+)\s*$' % debian_version_chars)
+    tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.%s)' % compressions)
+    diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
+    deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+\.debian.tar.%s)' % compressions)
+    format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*')
 
     def __init__(self, dscfile):
         self.pkg = ""
         self.tgz = ""
         self.diff = ""
+        self.deb_tgz = ""
         self.pkgformat = "1.0"
         self.debian_version = ""
         self.upstream_version = ""
@@ -70,6 +73,10 @@ class DscFile(object):
             m = self.pkg_re.match(line)
             if m:
                 self.pkg = m.group('pkg')
+                continue
+            m = self.deb_tgz_re.match(line)
+            if m:
+                self.deb_tgz = os.path.join(fromdir, m.group('deb_tgz'))
                 continue
             m = self.tar_re.match(line)
             if m:
