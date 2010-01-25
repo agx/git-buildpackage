@@ -1,3 +1,13 @@
+git-buildpackage (0.4.64) unstable; urgency=low
+
+  * [ab40623] Add gbp-add-patch to easily commit patches from debian/patches
+  * [34c1c43] Allow to skip imports of same version Based on a patch by
+    Christoph Göhre.
+  * [ea6311e] DscFile: Parse name of debian.tar.gz
+  * [237a547] Import version 3 source format (Closes: #552771)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 25 Jan 2010 22:08:26 +0100
+
 git-buildpackage (0.4.63) unstable; urgency=low
 
   [ Guido Günther ]
