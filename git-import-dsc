@@ -50,15 +50,27 @@ def git_apply_patch(diff):
     return True
 
 
+def apply_deb_tgz(deb_tgz):
+    """Apply .debian.tar.gz (V3 source format)"""
+    unpackArchive = gbpc.UnpackTarArchive(deb_tgz, ".")()
+    gbpc.GitAdd()(["debian/"])
+    return True
+
+
 def apply_debian_patch(repo, src, options):
     """apply the debian patch and tag appropriately"""
     version = "%s-%s" % (src.upstream_version, src.debian_version)
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
     try:
-        if not src.diff:
+        if not src.diff and not src.deb_tgz:
             raise GbpError, "No diff to apply."
-        if not git_apply_patch(src.diff):
+
+        if src.diff and not git_apply_patch(src.diff):
             raise GbpError
+
+        if src.deb_tgz and not apply_deb_tgz(src.deb_tgz):
+            raise GbpError
+
         os.chmod('debian/rules', 0755)
         if not repo.is_clean()[0]:
             dch = parse_changelog('debian/changelog')
@@ -157,7 +169,7 @@ def main(argv):
             raise GbpError
         else:
             src = parse_dsc(args[0])
-            if src.pkgformat != '1.0':
+            if src.pkgformat not in [ '1.0', '3.0' ]:
                 raise GbpError, "Importing %s source format not yet supported." % src.pkgformat
             if options.verbose:
                 print_dsc(src)
@@ -218,7 +230,7 @@ def main(argv):
                     except gbpc.CommandExecFailed:
                         raise GbpError, """Merge of %s failed, please resolve manually""" % options.upstream_branch
                 repo.replace_tree(unpack_dir, options.filters)
-                if src.diff:
+                if src.diff or src.deb_tgz:
                     apply_debian_patch(repo, src, options)
                 else:
                     print >>sys.stderr, "Warning: Didn't find a diff to apply."
