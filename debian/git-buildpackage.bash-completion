@@ -1,0 +1,15 @@
+# -*- shell-script -*-
+#
+# Bash tab auto-completion rules for git-buildpackage.
+# Put this file in /etc/bash_completion.d/ and bash will automatically load it.
+#
+# By Siegfried-Angel Gevatter Pujals <siegfried@gevatter.com>
+
+have git-buildpackage &&
+_git_buildpackage()
+{
+    local options=$(git-buildpackage --help | egrep -o '^ +\-\-[a-z\-]+=?')
+    local cur=${COMP_WORDS[COMP_CWORD]}
+	COMPREPLY=($(compgen -W "$options" -- $cur))
+}
+[ "${have:-}" ] && complete -F _git_buildpackage -o default git-buildpackage

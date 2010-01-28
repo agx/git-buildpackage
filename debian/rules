@@ -51,6 +51,9 @@ $(VERSION_ENT): debian/changelog
 
 build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) checks
 
+binary-post-install/git-buildpackage::
+	dh_bash-completion
+
 clean::
 	-rm git-*.py gbp-*.py
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT)
