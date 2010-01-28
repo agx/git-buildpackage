@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009,2010 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -40,6 +40,8 @@ def main(argv):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    parser.add_option("--all", action="store_true", dest="all", default=False,
+                      help="Track all branches, not only debian and upstream")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
 
@@ -63,7 +65,6 @@ def main(argv):
         pass
 
 
-    branches = [ options.debian_branch, options.upstream_branch ]
     try:
         GitClone()([repo])
 
@@ -72,14 +73,23 @@ def main(argv):
 
         repo = GitRepository(os.path.curdir)
 
-        if options.pristine_tar:
-            branches += [ PristineTar.branch ]
-
-        for branch in branches:
-            remote = 'origin/%s' % branch
-            if repo.has_branch(remote, remote=True) and \
-               not repo.has_branch(branch):
-                GitBranch()(branch, remote)
+        # Track all branches:
+        if options.all:
+            remotes = repo.get_remotes()
+            for remote in remotes:
+                local = remote.replace("origin/", "", 1)
+                if not repo.has_branch(local) and \
+                    local != "HEAD":
+                        GitBranch()(local, remote)
+        else: # only track gbp's default branches
+            branches = [ options.debian_branch, options.upstream_branch ]
+            if options.pristine_tar:
+                branches += [ PristineTar.branch ]
+            for branch in branches:
+                remote = 'origin/%s' % branch
+                if repo.has_branch(remote, remote=True) and \
+                    not repo.has_branch(branch):
+                        GitBranch()(branch, remote)
 
     except CommandExecFailed:
         retval = 1
