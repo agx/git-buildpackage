@@ -54,7 +54,10 @@ class PatchInfo(object):
                                       stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE)
             self.name = patch
-            f = file(patch)
+            try:
+                f = file(patch)
+            except IOError, msg:
+                raise GbpError, msg
             out, dummy = popen.communicate(f.read())
             f.close()
             self.header = email.message_from_string(out)
@@ -100,11 +103,12 @@ def build_commit_msg(repo, patch, options):
         if bts_closes.match(line):
             closes += line + '\n'
 
+    patch_name = os.path.basename(patch.name)
     msg="""New patch %s
 
 %s
 %s
-%s""" % (patch.name, patch.summary(), thanks, closes)
+%s""" % (patch_name, patch.summary(), thanks, closes)
     return msg
 
 
