@@ -24,3 +24,5 @@ Description: Suite to help with Debian packages in Git repositories
   * git-buildpackage: build a package out of a git repository, check for local
     modifications and tag appropriately
   * git-dch: generate Debian changelog entries from Git commit messages
+  * gbp-{pull,clone}: clone and pull from remote repos
+  * gbp-pq: manage debian/patches easily
