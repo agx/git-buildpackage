@@ -39,6 +39,7 @@ class GbpOptionParser(OptionParser):
                  'postimport'      : '',
                  'debian-tag'      : 'debian/%(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
+                 'import-msg'      : 'Imported Upstream version %(version)s',
                  'filter'          : [],
                  'snapshot-number' : 'snapshot + 1',
                  'git-log'         : '--no-merges',
@@ -69,6 +70,8 @@ class GbpOptionParser(OptionParser):
                   "sign tags, default is '%(sign-tags)s'",
              'keyid':
                   "GPG keyid to sign tags with, default is '%(keyid)s'",
+             'import-msg':
+                  "format string for commit message, default is '%(import-msg)s'",
              'pristine-tar':
                   "use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
              'filter-pristine-tar':

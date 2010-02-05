@@ -119,6 +119,15 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--import-msg=</option><replaceable>msg-format</replaceable>
+        </term>
+        <listitem>
+	  <para>use this format string for the commit message when
+	  importing upstream versions, default is <replaceable>Imported
+	  Upstream version %(version)s</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--filter=</option><replaceable>pattern</replaceable>
         </term>
         <listitem>

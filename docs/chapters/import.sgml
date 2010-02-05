@@ -74,6 +74,13 @@ by version number.
     (orig.tar.gz) from &git; you should also specify the
     <option>--pristine-tar</option> option.  This is recommended.
     </para>
+    <para>To customize the commit message used by &git-import-orig; use
+    the <option>--import-msg</option> option. This string is a standard
+    python format string, into which the
+    <replaceable>version</replaceable> variable is interpolated. (i.e.,
+    use <replaceable>%(version)s</replaceable> in your message to get
+    the imported upstream version).
+    </para>
     </sect1>
 
     <sect1 id="gbp.import.convert">

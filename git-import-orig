@@ -72,15 +72,14 @@ def symlink_orig(archive, pkg, version):
         return archive
 
 
-def upstream_import_commit_msg(version):
-    return "Imported Upstream version %s" % version
+def upstream_import_commit_msg(options, version):
+    return options.import_msg % dict(version=version)
 
-
-def import_upstream_tree(repo, src_dir, version, filters, verbose):
+def import_upstream_tree(repo, src_dir, version, options, verbose):
     """import the upstream tree to the current branch"""
     try:
-        if repo.replace_tree(src_dir, filters, verbose=True):
-            gbpc.GitCommitAll(verbose=verbose)(msg=upstream_import_commit_msg(version))
+        if repo.replace_tree(src_dir, options.filters, verbose=True):
+            gbpc.GitCommitAll(verbose=verbose)(msg=upstream_import_commit_msg(options, version))
         else:
             raise GbpNothingImported
     except gbpc.CommandExecFailed:
@@ -104,7 +103,7 @@ def fast_import_upstream_tree(repo, tarball, version, options):
         if options.verbose:
             print "Starting fastimport of %s" % tarball
         fastimport.start_commit(options.upstream_branch, name, email, now,
-                                upstream_import_commit_msg(version))
+                                upstream_import_commit_msg(options, version))
         fastimport.do_deleteall()
 
         for item in tar:
@@ -192,6 +191,8 @@ def main(argv):
                       dest="pristine_tar")
     import_group.add_boolean_config_file_option(option_name="filter-pristine-tar",
                       dest="filter_pristine_tar")
+    import_group.add_config_file_option(option_name="import-msg",
+                      dest="import_msg")
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport",
                       help="hook run after a successful import, default is '%(postimport)s'")
 
@@ -295,7 +296,7 @@ on howto create it otherwise use --upstream-branch to specify it.
             if options.fast_import:
                 fast_import_upstream_tree(repo, pristine_orig, version, options)
             else:
-                import_upstream_tree(repo, orig_dir, version, options.filters, verbose=not is_empty)
+                import_upstream_tree(repo, orig_dir, version, options, verbose=not is_empty)
 
             if options.pristine_tar:
                 upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
