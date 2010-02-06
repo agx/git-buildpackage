@@ -14,7 +14,7 @@ COMMANDS = git-buildpackage  \
            gbp-pull          \
            gbp-clone
 
-EXAMPLE_SCRIPTS=gbp-cowbuilder-sid gbp-pbuilder gbp-posttag-push
+EXAMPLE_SCRIPTS=gbp-add-patch gbp-cowbuilder-sid gbp-pbuilder gbp-posttag-push
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
