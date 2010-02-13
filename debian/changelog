@@ -1,3 +1,26 @@
+git-buildpackage (0.4.65) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [07d54ef] gbp-add-patch: Strip path from patchname and handle missing
+    files gracefully.
+  * [a7fe7c4] Add basic bash completion for git-buildpackage (Closes: #567313)
+    - thanks to Siegfried-Angel Gevatter
+  * [aec185f] Add gbp-{clone,pull,pq} to description
+  * [24ac91c] bash-completion: Add git-dch, git-import-{orig,dsc} and tab
+    completion for branch names.
+  * [cbc0577] Add GitRepository.get_remotes() to easily query remote branches
+  * [4654425] gbp-clone: Add --all to track all remote branches
+
+  [ Matthijs Kooijman ]
+  * [2874c23] Make the commit message for upstream imports configurable.
+    This adds the import-msg commandline and configuration file option
+    to change the commit message. (Closes: #474457)
+
+  [ Jon Bernard ]
+  * [ad9b7f5] Prevent git-add-patch from being gzip'd
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 13 Feb 2010 12:37:41 +0100
+
 git-buildpackage (0.4.64) unstable; urgency=low
 
   * [ab40623] Add gbp-add-patch to easily commit patches from debian/patches
