@@ -92,7 +92,7 @@
         <term><option>--since=</option><replaceable>committish</replaceable>
         </term>
         <listitem>
-          <para>start reading commit messages at <replaceable>committish</replaceable></para>
+          <para>Start reading commit messages at <replaceable>committish</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -108,7 +108,7 @@
         <term><option>--[no-]meta</option></term>
         <listitem>
 	  <para>Parse meta tags like <option>Closes:</option>,
-	  <option>Thanks:</option> and <option>Git-Dch:</option>.  </para>
+	  <option>Thanks:</option> and <option>Git-Dch:</option>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -117,20 +117,20 @@
         <listitem>
 	  <para>What meta tags to look for to generate bug-closing changelog
 	  entries.  The default is 'Closes|LP' to support Debian and
-	  Launchpad</para>
+	  Launchpad.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]full</option></term>
         <listitem>
-	  <para>Include the full commit message in the changelog output</para>
+	  <para>Include the full commit message in the changelog output.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--snapshot</option>,
               <option>-S</option></term>
         <listitem>
-	  <para>create a snapshot release entry. This adds a snapshot release
+	  <para>Create a snapshot release entry. This adds a snapshot release
 	  number and a warning banner to the changelog entry. The release
 	  version number is being autoincremented with every new snapshot
 	  release to avoid packages downgrades during snapshot testing.</para>
@@ -140,7 +140,7 @@
         <term><option>--snapshot-number=</option><replaceable>expression</replaceable>
         </term>
         <listitem>
-          <para>Python expression that gets eval()ed to the new snapshot number</para>
+          <para>Python expression that gets eval()ed to the new snapshot number.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -157,25 +157,25 @@
               <option>-N</option> <replaceable>version</replaceable>
         </term>
         <listitem>
-	  <para>add a new changelog section with version
+	  <para>Add a new changelog section with version
 	  <replaceable>newversion</replaceable>. Together with
 	  <option>--snapshot</option> the snapshot number will be appended to
-	  <replaceable>newversion</replaceable></para>
+	  <replaceable>newversion</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-log=</option><replaceable>git-log-options</replaceable>
         </term>
         <listitem>
-          <para>options passed on verbatim to git-log(1)</para>
+          <para>Options passed on verbatim to git-log(1).</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--id-length=</option><replaceable>N</replaceable>
         </term>
         <listitem>
-	  <para>include <replaceable>N</replaceable> digits of the commit id in
-	  the changelog enty. Default is to not include any commit ids at
+	  <para>Include <replaceable>N</replaceable> digits of the commit id in
+	  the changelog entry. Default is to not include any commit ids at
 	  all.</para>
         </listitem>
       </varlistentry>
@@ -192,7 +192,7 @@
         <term><option>--git-author</option>
         </term>
         <listitem>
-          <para>Use user.name and user.email from <application>git-config</application>(1) for changelog trailer</para>
+          <para>Use user.name and user.email from <application>git-config</application>(1) for changelog trailer.</para>
         </listitem>
       </varlistentry>
     </variablelist>
