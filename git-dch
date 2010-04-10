@@ -238,6 +238,8 @@ def parse_commit(repo, commitid, options):
     if options.meta:
         if git_dch == 'Ignore':
             return None
+        if git_dch == 'Short':
+            msg = msg.split('\n')[0]
         for bts in bugs:
             closes += '(%s: %s) ' % (bts, ', '.join(bugs[bts]))
         if thanks:
