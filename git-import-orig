@@ -30,7 +30,7 @@ import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (parse_changelog, unpack_orig, repack_orig,
                      NoChangelogError, has_epoch, tar_toplevel,
-                     guess_upstream_version)
+                     guess_upstream_version, do_uscan)
 from gbp.git import (FastImport, GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import (GbpError, GbpNothingImported)
@@ -202,6 +202,8 @@ def main(argv):
     # Accepted for compatibility
     parser.add_option("--no-dch", dest='no_dch', action="store_true",
                       default=False, help="deprecated - don't use.")
+    parser.add_option("--uscan", dest='uscan', action="store_true",
+                      default=False, help="use uscan(1) to download the new tarball.")
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -213,6 +215,25 @@ def main(argv):
 
     if options.filters:
         turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
+
+    if options.uscan:
+        # use uscan
+        print >>sys.stderr, "Launching uscan... ",
+        status, tarball = do_uscan()
+
+        if not status:
+            print >>sys.stderr, "package is up to date, nothing to do."
+            sys.exit(0)
+        elif status and not tarball:
+            print >>sys.stderr, "uscan didn't download anything, and no tarball was found in ../"
+            sys.exit(1)
+        elif status and tarball:
+            print >>sys.stderr, "using %s" % tarball
+
+        if args:
+            raise GbpError, "you can't pass both --uscan and a filename."
+        else:
+            args.append(tarball)
 
     try:
         if len(args) != 1:

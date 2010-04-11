@@ -206,6 +206,33 @@ def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
         return False
     return True
 
+def do_uscan():
+    p = subprocess.Popen(['uscan', '--dehs'], stdout=subprocess.PIPE)
+    out = p.communicate()[0].split('\n')
+    if "<status>up to date</status>" in out:
+        # nothing to do.
+        return (False, None)
+    else:
+        for row in out:
+            if row.startswith('<messages>'):
+                tarball = "../%s" % re.match(".*symlinked ([^\s]*) to it.*", row).group(1)
+                break
+        else:
+            d = {}
+            for row in out:
+                for n in ('package', 'upstream-version', 'upstream-url'):
+                    m = re.match("<%s>(.*)</%s>" % (n,n), row)
+                    if m:
+                        d[n] = m.group(1)
+                    else:
+                        continue
+            d["ext"] = os.path.splitext(d['upstream-url'])[1]
+            tarball = "../%(package)s_%(upstream-version)s.orig.tar%(ext)s" % d
+
+            if not os.path.exists(tarball):
+                return (True, None)
+        return (True, tarball)
+
 def unpack_orig(archive, tmpdir, filters):
     """
     unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
