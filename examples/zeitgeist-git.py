@@ -77,7 +77,6 @@ def main(argv):
         repo = unicode(curdir.rsplit('/', 1)[1])
         origin = uri
 
-    print "Repo: '%s', origin: '%s'" % (repo, origin)
     subject = Subject.new_for_values(
                 uri = uri,
                 interpretation = Interpretation.SOURCECODE.uri,
