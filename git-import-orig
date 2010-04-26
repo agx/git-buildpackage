@@ -147,7 +147,7 @@ def main(argv):
 
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                                 usage='%prog [-u version] /path/to/upstream-version.tar.gz')
+                                 usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
     except ConfigParser.ParsingError, err:
         print >>sys.stderr, err
         return 1
@@ -216,26 +216,29 @@ def main(argv):
     if options.filters:
         turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
 
-    if options.uscan:
-        # use uscan
-        print >>sys.stderr, "Launching uscan... ",
-        status, tarball = do_uscan()
 
-        if not status:
-            print >>sys.stderr, "package is up to date, nothing to do."
-            sys.exit(0)
-        elif status and not tarball:
-            print >>sys.stderr, "uscan didn't download anything, and no tarball was found in ../"
-            sys.exit(1)
-        elif status and tarball:
-            print >>sys.stderr, "using %s" % tarball
-
-        if args:
-            raise GbpError, "you can't pass both --uscan and a filename."
-        else:
-            args.append(tarball)
 
     try:
+        if options.uscan: # uscan mode
+            if args:
+                raise GbpError, "you can't pass both --uscan and a filename."
+
+            print "Launching uscan...",
+            try:
+                status, tarball = do_uscan()
+            except KeyError:
+                raise GbpError, "error running uscan - debug by running uscan --verbose"
+
+            if not status and not tarball:
+                print "package is up to date, nothing to do."
+                return 0
+            elif status and not tarball:
+                raise GbpError, "uscan didn't download anything, and no tarball was found in ../"
+            elif status and tarball:
+                print "using %s" % tarball
+                args.append(tarball)
+
+        # tarball specified
         if len(args) != 1:
             parser.print_help()
             raise GbpError
