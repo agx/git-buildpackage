@@ -56,8 +56,9 @@ def get_repo():
     repo = None
     uri = subprocess.Popen(['git', 'config', '--get', 'remote.origin.url'],
                              stdout=subprocess.PIPE).communicate()[0]
+
     if uri:
-        uri = unicode(uri.strip())
+        uri = uri.strip().decode(sys.getfilesystemencoding())
         repo = unicode(uri.rsplit('/', 1)[1])
         repo = repo.rsplit(u'.git', 1)[0]
     return repo, uri
@@ -69,7 +70,7 @@ def main(argv):
     # FIXME: I'd be great if zeitgeist would allow for more detail:
     #           * branch
     #           * log summary (git log -1 --format=%s HEAD)
-    curdir = os.path.abspath(os.curdir)
+    curdir = os.path.abspath(os.curdir).decode(sys.getfilesystemencoding())
     uri = u"file://%s" % curdir
 
     repo, origin = get_repo()
