@@ -52,7 +52,7 @@ else:
 
 
 def get_repo():
-    """Get uri of remote repository and it's name"""
+    """Get uri of remote repository and its name"""
     repo = None
     uri = subprocess.Popen(['git', 'config', '--get', 'remote.origin.url'],
                              stdout=subprocess.PIPE).communicate()[0]
