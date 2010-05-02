@@ -59,7 +59,14 @@ def get_repo():
 
     if uri:
         uri = uri.strip().decode(sys.getfilesystemencoding())
-        repo = unicode(uri.rsplit('/', 1)[1])
+        if '/' in uri:
+            sep = '/'
+        else:
+            sep = ':'
+        try:
+            repo = unicode(uri.rsplit(sep, 1)[1])
+        except IndexError: # no known separator
+            repo = uri
         repo = repo.rsplit(u'.git', 1)[0]
     return repo, uri
 
