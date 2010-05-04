@@ -1,3 +1,28 @@
+git-buildpackage (0.4.66) unstable; urgency=low
+
+  [ Paul Menzel ]
+  * [1072473] docs/manpages/git-dch.sgml: Consistency fixes and typo. 
+     • Start sentences with capital letter and end them with a full stop. 
+     • s/enty/entry/
+
+  [ David Paleino ]
+  * [49e31b1] Add --uscan command-line option Launch uscan and use the
+    tarball, if there's a new upstream version. (Closes: #577394)
+
+  [ Guido Günther ]
+  * [0826409] Bump standards version
+  * [6646d63] Depend on git | git-core (Closes: #577731)
+  * [f7a085a] Make --uscan more robust by not throwing exceptions onto the
+    console and catching download errors.
+  * [9521e6c] Fix typo - thanks to Paul Menzel
+  * [a2dd58d] gbp-pull: Requests for non fast-forward updates should exit with
+    a non-zero result (Closes: #579997)
+  * [b0100b6] Add simple Zeitgist data provider
+  * [5aefe29] Add 'Git-Dch: Short' tag to changelog parser This omits
+    the long description of the commit from the changelog.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 04 May 2010 09:08:40 +0200
+
 git-buildpackage (0.4.65) unstable; urgency=low
 
   [ Guido Günther ]
