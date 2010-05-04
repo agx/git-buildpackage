@@ -234,7 +234,6 @@
       <varlistentry>
         <term><option>--git-compression-level=</option><replaceable>level</replaceable>
         </term>
-        </term>
         <listitem>
           <para>Specifies the upstream tarball compression level if an upstream tarball needs to be built.</para>
         </listitem>
