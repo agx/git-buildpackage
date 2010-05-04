@@ -85,6 +85,33 @@
         </listitem>
       </varlistentry>
     </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXIT CODES</title>
+    <para>
+    When &gbp-pull finishes it indicates success or failure with it's exit code:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term><option>0</option></term>
+        <listitem>
+	  <para>Success.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>1</option></term>
+        <listitem>
+	  <para>An error occured during the pull, see the printed error message for details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>2</option></term>
+        <listitem>
+	  <para>At least one branch couldn't be fast forwarded.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
   <refsect1>
       &man.git.config-files;
   </refsect1>
