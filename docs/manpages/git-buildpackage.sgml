@@ -33,6 +33,8 @@
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-no-create-orig</option></arg>
       <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
+      <arg><option>--git-compression=</option><replaceable>type</replaceable></arg>
+      <arg><option>--git-compression-level=</option><replaceable>level</replaceable></arg>
       <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
@@ -222,10 +224,19 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-[no-]pristine-tar</option>
+        <term><option>--git-compression=</option><replaceable>type</replaceable>
         </term>
         <listitem>
-	  <para>use pristine-tar to create the orig.tar.gz</para>
+	  <para>Specifies the upstream tarball compression type. This will be
+	  used to locate and build the upstream tarball if necessary.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-compression-level=</option><replaceable>level</replaceable>
+        </term>
+        </term>
+        <listitem>
+          <para>Specifies the upstream tarball compression level if an upstream tarball needs to be built.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
