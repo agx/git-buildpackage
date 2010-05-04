@@ -40,9 +40,11 @@ def fast_forward_branch(branch, repo, options):
             fast_forward = True
         else:
             print >>sys.stderr, "Warning: Skipping non-fast forward of '%s' - use --force" % branch
+
     if fast_forward:
         repo.set_branch(branch)
         GitMerge(remote)()
+    return fast_forward
 
 def main(argv):
     changelog = 'debian/changelog'
@@ -92,7 +94,8 @@ def main(argv):
 
         GitFetch()()
         for branch in branches:
-            fast_forward_branch(branch, repo, options)
+            if not fast_forward_branch(branch, repo, options):
+                retval = 2
 
         if options.redo_pq:
             repo.set_branch(options.debian_branch)
