@@ -97,7 +97,28 @@ Thanks: cool upstream
     * New upstream version (Closes: #1000) - thanks to cool upstream
 </screen>
 You can use the <option>Closes:</option> tag multiple times.
+</para>
+<para>
+There are several tags to further customize what (and how) commit messages get
+included into the changelog:
 </para><para>
+To exclude a commit from the generated changelog use:
+</para><para>
+<screen>
+Git-Dch: Ignore
+</screen>
+This is e.g. useful if you're just fixing up a previous commit and couldn't
+ammend it.
+</para>
+
+<para>
+To only include the short description in the commit and skip the body use:
+<screen>
+Git-Dch: Short
+</screen>
+This only takes effect when running &git-dch; with the <option>--full</option> option.
+</para>
+<para>
 Usually changelog entries should correspond to a single &git; commit. In this case it's
 convenient to include the commit id in the changelog entry. 
 This has the advantage that it's easy for people to identify changes without
