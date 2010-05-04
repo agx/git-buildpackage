@@ -33,6 +33,7 @@
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--[no-]filter-pristine-tar</option></arg>
       <arg><option>--postimport=cmd</option></arg>
+      <arg><option>--uscan</option></arg>
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -153,6 +154,12 @@
         <term><option>--postimport=<replaceable>cmd</replaceable></option></term>
         <listitem>
 	  <para>run <replaceable>cmd</replaceable> after the import.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--uscan</option></term> 
+        <listitem>
+          <para>Use uscan to fetch new upstream version.</para>
         </listitem>
       </varlistentry>
     </variablelist>
