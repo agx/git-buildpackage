@@ -34,6 +34,30 @@ from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
 
 
+class SkipImport(Exception):
+    pass
+
+
+def download_source(pkg, dirs):
+    if re.match(r'[a-z]{1,5}://', pkg):
+        mode='dget'
+    else:
+        mode='apt-get'
+
+    dirs['download'] = os.path.abspath(tempfile.mkdtemp())
+    print "Downloading '%s' using '%s'..." % (pkg, mode)
+    if mode == 'apt-get':
+        gbpc.RunAtCommand('apt-get',
+                          ['-qq', '--download-only', 'source', pkg],
+                          shell=False)(dir=dirs['download'])
+    else:
+        gbpc.RunAtCommand('dget',
+                          ['-q', '--download-only', pkg],
+                          shell=False)(dir=dirs['download'])
+    dsc = glob.glob(os.path.join(dirs['download'], '*.dsc'))[0]
+    return dsc
+
+
 def git_apply_patch(diff):
     "Import patch via git apply"
     pipe = pipes.Template()
@@ -105,9 +129,6 @@ def print_dsc(dsc):
     if dsc.epoch:
         print "Epoch: %s" % dsc.epoch
 
-class SkipImport(Exception):
-    pass
-
 def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
     needs_repo = False
@@ -132,6 +153,8 @@ def main(argv):
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_option("--download", action="store_true", dest="download", default=False,
+                      help="download source package")
     branch_group.add_config_file_option(option_name="debian-branch",
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
@@ -168,7 +191,13 @@ def main(argv):
             parser.print_help()
             raise GbpError
         else:
-            src = parse_dsc(args[0])
+            pkg = args[0]
+            if options.download:
+                dsc = download_source(pkg, dirs=dirs)
+            else:
+                dsc = pkg
+
+            src = parse_dsc(dsc)
             if src.pkgformat not in [ '1.0', '3.0' ]:
                 raise GbpError, "Importing %s source format not yet supported." % src.pkgformat
             if options.verbose:
@@ -245,8 +274,9 @@ def main(argv):
     finally:
         os.chdir(dirs['top'])
 
-    if dirs.has_key('tmp'):
-        gbpc.RemoveTree(dirs['tmp'])()
+    for d in [ 'tmp', 'download' ]:
+        if dirs.has_key(d):
+            gbpc.RemoveTree(dirs[d])()
 
     if not ret:
         print "Everything imported under '%s'" % src.pkg
