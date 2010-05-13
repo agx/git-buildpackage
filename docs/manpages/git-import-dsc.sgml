@@ -33,6 +33,16 @@
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
+    <cmdsynopsis>
+      &git-import-dsc;
+
+      <arg><option>options</option></arg>
+      <arg choice="req"><option>--download</option></arg>
+      <group choice="plain">
+      <arg><replaceable>URL</replaceable></arg>
+      <arg><replaceable>source-package</replaceable></arg>
+      </group>
+    </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
@@ -120,6 +130,18 @@
           <para>generate pristine-tar delta file</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--download</option>
+        </term>
+        <listitem>
+	  <para>Download the source package instead of looking for it in the local
+	  file system. The argument can either be a
+	  <replaceable>source-package</replaceable> name or an
+	  <replaceable>URL</replaceable>. The former uses &apt-get; to download
+	  the source while the later uses &dget;.
+	  </para>
+        </listitem>
+      </varlistentry>
      </variablelist>
   </refsect1>
   <refsect1>
@@ -143,6 +165,14 @@
       </citerefentry>,
       <citerefentry>
         <refentrytitle>git-dch</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>apt-get</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>dget</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
       &man.seealso.common;
