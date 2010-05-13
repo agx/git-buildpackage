@@ -15,7 +15,7 @@
   <refnamediv>
     <refname>&gbp-pq;</refname>
 
-    <refpurpose>Manage quilt patches on a patch-queue branch</refpurpose>
+    <refpurpose>Manage quilt patches on patch queue branches in git</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -26,14 +26,78 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-   See <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink> for documentation.
+  &gbp-pq helps to manage quilt patches in Debian packages that are maintained
+  with &git-buildpackage;. This is especially useful with packages using the
+  3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
+  that should be applied to a package on a separate branch called patch-queue
+  branch. So if your Debian package lifes on <replaceable>master</replaceable>
+  the associated patch-queue branch will be called
+  <replaceable>patch-queue/master</replaceable>.
     </para>
+    <para>
+   See <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink> for example workflows.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>import</option>
+        </term>
+        <listitem>
+	  <para>
+	Create a patch queue branch from quilt patches in debian/patches/ that
+	are listed in debian/patches/series.
+	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>export</option>
+        </term>
+        <listitem>
+	  <para>
+	Export the patches on the patch-queue branch associated to the current
+	branch into a quilt patch series in debian/patches/ and update the
+	series file.
+	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>rebase</option>
+        </term>
+        <listitem>
+	  <para>
+	Switch to the patch-queue branch associated to the current branch and
+	rebase it against the current branch.
+	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>drop</option>
+        </term>
+        <listitem>
+	  <para>
+	Drop (delete) the patch queue associated to the current branch. So if
+	you're on branch <replaceable>foo</replaceable> this would drop branch
+	<replaceable>patch-queue/foo</replaceable>.
+	  </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
     <para>
       <citerefentry>
         <refentrytitle>git-buildpackage</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>dpkg-source</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>quilt</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
     </para>

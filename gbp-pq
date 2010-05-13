@@ -42,7 +42,7 @@ pq_export()
         done
         git status -- debian/patches
     else
-        echo "No patches on \"$pq\"."
+        echo "No patches on \"$pq\" - nothing to do."
     fi
 }
 
@@ -77,7 +77,7 @@ pq_import()
     fi
 
     if [ ! -r ${patches}series ]; then
-        echo "Found no series file at \"$patches\". Patch-queue branch will be empty."
+        echo "Found no series file at \"$patches\". No patches to add to patch-queue branch."
         return 0
     fi
 
@@ -104,15 +104,16 @@ usage ()
 $0 [ACTION]
 
 Options:
-	export		Export the associated patch-queue branch into
-                        debian/patches and update the series file.
+	export		Export the patch queue associated to the current branch
+			into a quilt patch series in debian/patches/ and update the
+			series file.
 
-	import		Create a patch-queue branch from debian/patches.
+	import		Create a patch queue branch from quilt patches in debian/patches.
 
-	rebase		Switch to associated patch-queue branch and rebase
-                        against current branch.
+	rebase		Switch to patch queue branch associated to the current
+			branch and rebase against current branch.
 
-	drop		Drop (delete) the corresponding patch-queue branch
+	drop		Drop (delete) the patch queue associated to the current branch.
 EOF
 }
 
