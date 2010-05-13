@@ -20,7 +20,12 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-pq;
-      <arg><option>export</option>|<option>import</option>|<option>rebase</option>|<option>drop</option></arg>
+      <group choice="plain">
+      <arg><option>export</option></arg>
+      <arg><option>import</option></arg>
+      <arg><option>rebase</option></arg>
+      <arg><option>drop</option></arg>
+      </group>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
