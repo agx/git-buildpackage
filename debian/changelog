@@ -1,3 +1,19 @@
+git-buildpackage (0.4.67) unstable; urgency=low
+
+  * [6427e2a] git-import-dsc: Add --download option. This allows to directly
+    import source packages either via git-import-dsc --download <pkg> or
+    git-import-dsc --download <url-to-dsc> The former uses "apt-get soure" the
+    later "dget". (Closes: #510036)
+  * [823f49f] gbp-pull: Document exit codes
+  * [9fb419f] git-import-orig: Document --uscan
+  * [3473689] git-buildpackage: Document --git-compression and
+    --git-compression-level
+  * [f31c82d] git-dch: Document 'Git-Dch: Ignore' and 'Git-Dch: Short'
+  * [65b9e0d] gbp-pq: Improve manpage and help output
+  * [33e56ca] git-import-dsc: Document --download
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 15 May 2010 14:01:03 +0200
+
 git-buildpackage (0.4.66) unstable; urgency=low
 
   [ Paul Menzel ]
