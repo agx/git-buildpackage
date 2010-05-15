@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Convert a patch-queue branch into a patch series in debian/patches and vice
 # versa.
@@ -11,21 +11,33 @@ is_patch_queue()
 {
     local branch=$1
 
-    if expr $branch : patch-queue/ >/dev/null; then
-         return 0
-    else
-         return 1
-    fi
+    case $branch in
+        patch-queue/*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+run_git()
+{
+    set -e
+    git $@
+    set +e
 }
 
 pq_export()
 {
-    local branch=$1
-    local pq="patch-queue/$branch"
+   local branch=$1
+   local pq="patch-queue/$branch"
 
     if is_patch_queue $branch; then
-        echo "On a patch-queue branch, can't redo patches."
-        return 1
+        branch="${branch//patch-queue\/}"
+        pq="patch-queue/$branch"
+        echo "On \"$pq\", switching to \"$branch\"."
+        run_git checkout $branch
     fi
 
     rm -f debian/patches/*
