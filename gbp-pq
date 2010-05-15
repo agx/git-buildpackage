@@ -52,7 +52,7 @@ pq_export()
             sed -i -e 's/^-- \n[0-9\.]+$//' $PATCH
             echo $PATCH | sed -e 's%debian/patches/%%' >> debian/patches/series
         done
-        git status -- debian/patches
+        run_git status -- debian/patches
     else
         echo "No patches on \"$pq\" - nothing to do."
     fi
@@ -65,11 +65,11 @@ pq_rebase()
 
     if ! is_patch_queue $branch; then
 	echo "Switching to \"$pq\""
-        git checkout $pq
+        run_git checkout $pq
     else
         echo "Already on \"$branch\""
     fi
-    git rebase $branch
+    run_git rebase "$branch"
 }
 
 pq_import()
@@ -84,7 +84,7 @@ pq_import()
     fi
 
     if ! git checkout -b $pq; then
-        echo "Cannot create patch-queue branch \"$pq\"."
+        echo "Cannot create patch-queue branch \"$pq\". Try \"rebase\" instead."
 	return 1
     fi
 
@@ -93,7 +93,7 @@ pq_import()
         return 0
     fi
 
-    QUILT_PATCHES=$patches git quiltimport
+    QUILT_PATCHES=$patches run_git quiltimport
 } 
 
 pq_drop()
@@ -105,7 +105,7 @@ pq_drop()
         echo "On a patch-queue branch, can't drop it."
         return 1
     else
-	git branch -D ${pq}
+	run_git branch -D "${pq}"
 	echo "Dropped ${pq}."
     fi
 }
@@ -129,7 +129,7 @@ Options:
 EOF
 }
 
-branch=$(git branch --no-color | awk '/^\*/ { print $2 }')
+branch=$(run_git branch --no-color | awk '/^\*/ { print $2 }')
 
 case "$1" in
     export)
