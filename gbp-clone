@@ -58,12 +58,11 @@ def main(argv):
         Command.verbose = True
 
     try:
-        repo = GitRepository(os.path.curdir)
+        GitRepository(os.path.curdir)
         print >>sys.stderr, "Can't run inside a git repository."
         return 1
     except GitRepositoryError:
         pass
-
 
     try:
         GitClone()([repo])
