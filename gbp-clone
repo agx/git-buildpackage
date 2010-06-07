@@ -52,7 +52,7 @@ def main(argv):
         parser.print_help()
         return 1
     else:
-        repo = args[1]
+        source = args[1]
 
     if options.verbose:
         Command.verbose = True
@@ -65,9 +65,9 @@ def main(argv):
         pass
 
     try:
-        GitClone()([repo])
+        GitClone()([source])
 
-        (clone, dummy) = os.path.splitext(repo.rsplit('/',1)[1])
+        (clone, dummy) = os.path.splitext(source.rstrip('/').rsplit('/',1)[1])
         os.chdir(clone)
 
         repo = GitRepository(os.path.curdir)
