@@ -218,6 +218,8 @@ def main(argv):
     tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    orig_group.add_config_file_option(option_name="force-create", dest="force_create",
+                      help="force creation of orig.tar.gz", action="store_true")
     orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
                       help="don't create orig.tar.gz", action="store_true")
     orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
@@ -313,8 +315,8 @@ def main(argv):
                         print "Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir)
                     else:
                         print "Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir)
-                # build an orig unless the user forbidds it
-                if not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir):
+                # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
+                if options.force_create or (not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir)):
                     if not pristine_tar_build_orig(repo, cp, output_dir, options):
                         git_archive_build_orig(repo, cp, output_dir, options)
 

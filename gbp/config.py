@@ -32,6 +32,7 @@ class GbpOptionParser(OptionParser):
                  'pristine-tar'    : 'False',
                  'filter-pristine-tar' : 'False',
                  'sign-tags'       : 'False',
+                 'force-create'    : 'False',
                  'no-create-orig'  : 'False',
                  'keyid'           : '',
                  'posttag'         : '',

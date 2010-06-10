@@ -32,6 +32,7 @@
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
       <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-compression=</option><replaceable>type</replaceable></arg>
@@ -197,6 +198,13 @@
         <listitem>
           <para>use this tag format when tagging Debian versions,
   	  default is <replaceable>debian/&lt;version&gt;</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-force-create</option>
+        </term>
+        <listitem>
+	  <para>Force creation of an orig.tar.gz (overwriting a pre-existing one if present)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
