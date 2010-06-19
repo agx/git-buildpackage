@@ -1,3 +1,22 @@
+git-buildpackage (0.4.68) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [88c2d6d] gbp-pq export: Instead of failing switch branch if on a
+    patch-queue branch.
+  * [65ea70f] gbp-pq: Use run_git to catch git errors
+  * [488f16c] No need to assign repo
+  * [7f0b81f] Strip traling slashes from repo path (Closes: #584775)
+  * [a831329] Add 'ignore-branch' option This disables the 'current branch' ==
+    'debian-branch' check.
+  * [5988e20] Add 'ignore-branch' option This disables the 'current branch' ==
+    'debian-branch' check.
+
+  [ Christian Kastner ]
+  * [2173157] Add option --git-force-create to force tarball creation
+    (Closes: #519297)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 19 Jun 2010 16:07:05 +0200
+
 git-buildpackage (0.4.67) unstable; urgency=low
 
   * [6427e2a] git-import-dsc: Add --download option. This allows to directly
