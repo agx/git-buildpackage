@@ -48,6 +48,7 @@ class GbpOptionParser(OptionParser):
                  'overlay'         : 'False',
                  'tarball-dir'     : '',
                  'ignore-new'      : 'False',
+                 'ignore-branch'   : 'False',
                  'meta'            : 'False',
                  'meta-closes'     : 'Closes|LP',
                  'full'            : 'False',
@@ -86,6 +87,8 @@ class GbpOptionParser(OptionParser):
                   "parse meta tags in commit messages, default is '%(meta)s'",
              'ignore-new':
                   "build with uncommited changes in the source tree, default is '%(ignore-new)s'",
+             'ignore-branch':
+                  "build although debian-branch != current branch, default is '%(ignore-new)s'",
              'overlay':
                   "extract orig tarball when using export-dir option, default is '%(overlay)s'",
            }

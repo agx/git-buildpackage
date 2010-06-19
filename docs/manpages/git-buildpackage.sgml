@@ -24,6 +24,7 @@
       <arg><option>--git-verbose</option></arg>
       <arg><option>--git-upstream-branch=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--git-ignore-branch</option></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
@@ -93,8 +94,9 @@
         <term><option>--git-[no-]ignore-new</option>
         </term>
         <listitem>
-	  <para>Build the .diff.gz and debian package although there are
-	  uncommitted changes in the source tree.</para>
+          <para>Don't abort if there are uncommitted changes in the source tree
+          or the current branch doesn't match the
+          <replaceable>debian-branch</replaceable>.
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -143,6 +145,14 @@
 	  Not being on this branch will be ignored when using
 	  <option>--git-ignore-new</option>.
 	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-ignore-branch</option>
+        </term>
+        <listitem>
+            <para>Don't check if the current branch matches
+            <replaceable>debian-branch</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

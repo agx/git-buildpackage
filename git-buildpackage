@@ -228,6 +228,7 @@ def main(argv):
                       help="Compression level, default is '%(compression-level)s'")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
+    branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
                       help="command to build the Debian package, default is '%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
@@ -274,9 +275,10 @@ def main(argv):
                 print >>sys.stderr, out
                 raise GbpError, "Use --git-ignore-new to ignore."
 
+        if not options.ignore_new and not options.ignore_branch:
             if branch != options.debian_branch:
                 print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
-                raise GbpError, "Use --git-ignore-new to ignore or --git-debian-branch to set the branch name."
+                raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
 
         try:
             cp = du.parse_changelog(changelog)

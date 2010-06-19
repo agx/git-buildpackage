@@ -24,6 +24,7 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--ignore-branch</option></arg>
       <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
       <arg><option>--snapshot</option></arg>
       <arg><option>--release</option></arg>
@@ -71,6 +72,14 @@
         <listitem>
 	  <para>The branch in the Git repository the Debian package is being
 	  developed on, default is <replaceable>master</replaceable>.
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-branch</option>
+        </term>
+        <listitem>
+            <para>Don't check if the current branch matches
+            <replaceable>debian-branch</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
