@@ -2,7 +2,7 @@ Source: git-buildpackage
 Section: vcs
 Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
-Build-Depends: cdbs, debhelper (>= 5), python-dev, python-support (>= 0.3),
+Build-Depends: cdbs, debhelper (>= 5), python, python-support (>= 0.3),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil, python-nose,
  bash-completion
 Standards-Version: 3.8.4
