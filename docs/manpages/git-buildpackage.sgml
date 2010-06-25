@@ -246,7 +246,13 @@
         </term>
         <listitem>
 	  <para>Specifies the upstream tarball compression type. This will be
-	  used to locate and build the upstream tarball if necessary.</para>
+	  used to locate and build the upstream tarball if necessary. The
+	  default is <replaceable>auto</replaceable> which derives the
+	  compression type from the pristine-tar branch if available and falls
+	  back to gzip otherwise. Other options are
+	  <replaceable>gzip</replaceable>, <replaceable>bzip2</replaceable>, 
+	  <replaceable>lzma</replaceable> and <replaceable>xz</replaceable>.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>

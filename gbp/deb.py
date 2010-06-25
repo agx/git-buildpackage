@@ -166,6 +166,15 @@ def is_native(cp):
     return [ True, False ]['-' in cp['Version']]
 
 
+def get_compression(orig_file):
+    "Given an orig file return the compression used"
+    ext = orig_file.rsplit('.',1)[1]
+    for (c, o) in compressor_opts.iteritems():
+        if o[1] == ext:
+            return c
+    return None
+
+
 def has_epoch(cp):
     """does the topmost version number contain an epoch"""
     try:

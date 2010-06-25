@@ -166,6 +166,14 @@ class GitRepository(object):
         for line in commit:
             yield line
 
+    def get_subject(self, commit):
+        """Gets the subject of a commit"""
+        self.__check_path()
+        out, ret =  self.__git_getoutput('show', ['--format=%s',  commit])
+        if ret:
+            raise GitRepositoryError, "Error getting subject of commit %s" % commit
+        return out[0].strip()
+
     def find_tag(self, branch):
         "find the closest tag to a branch's head"
         tag, ret = self.__git_getoutput('describe', [ "--abbrev=0", branch ])

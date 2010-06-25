@@ -56,7 +56,7 @@ class GbpOptionParser(OptionParser):
                  'id-length'       : '0',
                  'git-author'      : 'False',
                  'ignore-regex'    : '',
-                 'compression'     : 'gzip',
+                 'compression'     : 'auto',
                  'compression-level': '9',
              }
     help = {
