@@ -293,6 +293,14 @@ on howto create it otherwise use --upstream-branch to specify it.
                 if options.verbose:
                     print "Unpacked %s to '%s'" % (archive , tmpdir)
                 orig_dir = tar_toplevel(tmpdir)
+
+                # Don't mess up or repo with git metadata from an upstream tarball
+                try:
+                    if os.path.isdir(os.path.join(orig_dir, '.git/')):
+                        raise GbpError, "The orig tarball contains .git metadata - giving up."
+                except OSError:
+                    pass
+
                 if options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0:
                     if options.verbose:
                         print "Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir)
