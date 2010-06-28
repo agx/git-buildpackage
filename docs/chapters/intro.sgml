@@ -21,6 +21,7 @@
     <listitem><para>Export to a clean build area before building</para></listitem>
     <listitem><para>Automatic debian/changelog generation</para></listitem>
     <listitem><para>Automatic generation of snapshot releases for local testing</para></listitem>
+    <listitem><para>Simple patch management</para></listitem>
     </itemizedlist>
     All of this is (hopefully) being done without restricting the user to certain usage patterns.
     </para>
@@ -42,18 +43,31 @@
 	your current development work.  That's the branch you usually cut your
 	releases from and the default branch new upstream releases are merged
 	onto.</para></listitem>
+
 	<listitem><para> The <option>upstream-branch</option> (the default
 	branch name used in the &git; repository is
 	<emphasis>upstream</emphasis>) holds the upstream releases. This can
 	either be a branch you import to or a branch of an upstream repository
 	you pull from.</para></listitem>
+
 	<listitem><para> The <option>pristine-tar branch</option> (the default
 	branch name used in the &git; repository is
 	<emphasis>pristine-tar</emphasis>) holds the necessary additional
 	information to recreate the original tarball from the
 	<option>upstream-branch</option>. In order to use this feature you need
-	to install the &pristine-tar; package.
+	to install the &pristine-tar; package.</para></listitem>
+
+	<listitem><para> There can be one or more <option>patch-queue
+	branches</option>. Every patch-queue branch is related to a
+	<option>debian-branch</option>. If the <option>debian-branch</option> is called
+	<emphasis>master</emphasis> the corresponding patch-queue branch is
+	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is 
+	the debian branch plus the contents of
+	<emphasis>debian/patches</emphasis> applied. These branches are managed
+	with &gbp-pq;.
+	</para></listitem>
 	</itemizedlist>
+
 	<para>You're completely
 	free to pick any repository layout and the branch names above are only
 	&git-buildpackage;'s defaults. They can be changed at any point in time
@@ -65,6 +79,7 @@
 	<emphasis>snapshots</emphasis> might become your
 	<option>upstream-branch</option> - it doesn't matter if these branches
 	are maintained with &git-import-orig; or not.</para>
+
 	<para>Since Git-Buildpackage only works with local &git;-repositories
 	you have to use <command>git-push</command> in order to publish your
 	changes to remote repositories like <ulink
