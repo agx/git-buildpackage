@@ -108,9 +108,15 @@ To exclude a commit from the generated changelog use:
 Git-Dch: Ignore
 </screen>
 This is e.g. useful if you're just fixing up a previous commit and couldn't
-ammend it.
-</para>
+ammend it or for other janitorial commits that really don't need to end up in
+the changelog. For example, the following git commit message
+<screen>
+Set correct branchnames in debian/gbp.conf
 
+Git-Dch: Ignore
+</screen>
+will not show up in the generated changelog in any way.
+</para>
 <para>
 To only include the short description in the commit and skip the body use:
 <screen>
@@ -136,23 +142,5 @@ via &git-dch;'s <option>--id-length</option> option. Using
 </screen>
 This makes it much easier to see which commit actually fixed bug #1000.
 </para>
-<para>
-Finally, there is the <option>Git-Dch:</option> header that can
-currently only be set to <option>Ignore</option> (or omitted). When this
-header is set to <option>Ignore</option>, the commit message is
-completely ignored and will not be included in the changelog at all.
-This is useful for janitorial commits or other commits that really don't
-need to end up in the changelog.
-
-</para><para>
-For example, the following git commit message
-<screen>
-Set correct branchnames in debian/gbp.conf
-
-Git-Dch: Ignore
-</screen>
-will not show up in the generated changelog in any way.
-</para>
-
 </sect1>
 </chapter>
