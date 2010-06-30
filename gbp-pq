@@ -43,7 +43,7 @@ pq_export()
     rm -f debian/patches/*
     PATCHES=`git format-patch -N -o debian/patches $branch...$pq`
     if [ -n "$PATCHES" ]; then
-        echo "Regenerationg patch queue in \"debian/patches\"."
+        echo "Regenerating patch queue in \"debian/patches\"."
         > debian/patches/series
         for PATCH in $PATCHES; do
 	    # delete the first line (from sha1) and last two lines (git version
