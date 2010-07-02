@@ -29,22 +29,34 @@ class GitRepository(object):
         if os.getcwd() != self.path:
             raise GitRepositoryError
 
-    def __git_getoutput(self, command, args=[]):
+    def __build_env(self, extra_env):
+        """Prepare environment for subprocess calls"""
+        env = None
+        if extra_env is not None:
+            env = os.environ.copy()
+            env.update(extra_env)
+        return env
+
+    def __git_getoutput(self, command, args=[], extra_env=None):
         """exec a git command and return the output"""
         output = []
-        popen = subprocess.Popen(['git', command] + args, stdout=subprocess.PIPE)
+
+        env = self.__build_env(extra_env)
+        popen = subprocess.Popen(['git', command] + args, stdout=subprocess.PIPE, env=env)
         while popen.poll() == None:
             output += popen.stdout.readlines()
         ret = popen.poll()
         output += popen.stdout.readlines()
         return output, ret
 
-    def __git_inout(self, command, args, input):
+    def __git_inout(self, command, args, input, extra_env=None):
         """Send input and return output (stdout)"""
         ret = False
+        env = self.__build_env(extra_env)
         popen = subprocess.Popen(['git', command ] + args,
                                  stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE)
+                                 stdout=subprocess.PIPE,
+                                 env=env)
         (stdin, stderr) = popen.communicate(input)
         if popen.returncode:
             stdin = None
