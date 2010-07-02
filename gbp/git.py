@@ -212,9 +212,14 @@ class GitRepository(object):
             raise GitRepositoryError, "can't find SHA1 for %s" % name
         return sha[0].strip()
 
-    def write_tree(self):
+    def write_tree(self, index=None):
         """write out the current index, return the SHA1"""
-        tree, ret = self.__git_getoutput('write-tree')
+        if index:
+            extra_env = {'GIT_INDEX_FILE': index }
+        else:
+            extra_env = None
+
+        tree, ret = self.__git_getoutput('write-tree', extra_env=extra_env)
         if ret:
             raise GitRepositoryError, "can't write out current index"
         return tree[0].strip()
