@@ -6,6 +6,7 @@
 import subprocess
 import os.path
 from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, GitCommand, copy_from)
+from errors import GbpError
 import dateutil.parser
 import calendar
 
