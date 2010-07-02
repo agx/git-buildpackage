@@ -288,8 +288,8 @@ class GitTag(GitCommand):
 
 class GitAdd(GitCommand):
     """Wrap git add to add new files"""
-    def __init__(self):
-        GitCommand.__init__(self, 'add')
+    def __init__(self, extra_env=None):
+        GitCommand.__init__(self, 'add', extra_env=extra_env)
         self.run_error = "Couldn't add files"
 
 
