@@ -39,6 +39,17 @@ class GitRepository(object):
         output += popen.stdout.readlines()
         return output, ret
 
+    def __git_inout(self, command, args, input):
+        """Send input and return output (stdout)"""
+        ret = False
+        popen = subprocess.Popen(['git', command ] + args,
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE)
+        (stdin, stderr) = popen.communicate(input)
+        if popen.returncode:
+            stdin = None
+        return stdin
+
     def has_branch(self, branch, remote=False):
         """
         check if the repository has branch 'branch'
