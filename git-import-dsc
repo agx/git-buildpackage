@@ -58,11 +58,12 @@ def download_source(pkg, dirs):
     return dsc
 
 
-def git_apply_patch(diff):
-    "Import patch via git apply"
+def apply_patch(diff, unpack_dir):
+    "Apply patch to a source tree"
+    d = os.path.abspath(unpack_dir)
     pipe = pipes.Template()
     pipe.prepend('gunzip -c %s' % diff,  '.-')
-    pipe.append('git apply --index --apply --whitespace=nowarn -', '-.')
+    pipe.append('patch -p1 --quiet', '-.')
     try:
         ret = pipe.copy('', '')
         if ret:
@@ -74,46 +75,50 @@ def git_apply_patch(diff):
     return True
 
 
-def apply_deb_tgz(deb_tgz):
+def apply_deb_tgz(deb_tgz, unpack_dir):
     """Apply .debian.tar.gz (V3 source format)"""
     unpackArchive = gbpc.UnpackTarArchive(deb_tgz, ".")()
-    gbpc.GitAdd()(["debian/"])
     return True
 
 
-def apply_debian_patch(repo, src, options):
+def apply_debian_patch(repo, unpack_dir, src, options):
     """apply the debian patch and tag appropriately"""
     version = "%s-%s" % (src.upstream_version, src.debian_version)
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
     try:
         if not src.diff and not src.deb_tgz:
             raise GbpError, "No diff to apply."
+        os.chdir(unpack_dir)
 
-        if src.diff and not git_apply_patch(src.diff):
+        if src.diff and not apply_patch(src.diff, unpack_dir):
             raise GbpError
 
-        if src.deb_tgz and not apply_deb_tgz(src.deb_tgz):
+        if src.deb_tgz and not apply_deb_tgz(src.deb_tgz, unpack_dir):
             raise GbpError
 
         os.chmod('debian/rules', 0755)
-        if not repo.is_clean()[0]:
-            dch = parse_changelog('debian/changelog')
-            env = { 'GIT_AUTHOR_DATE': rfc822_date_to_git(dch['Date']) }
+        os.chdir(repo.path)
 
-            name, addr = parseaddr(dch['Maintainer'])
-            if name and addr:
-                env['GIT_AUTHOR_NAME'] = name
-                env['GIT_AUTHOR_EMAIL'] = addr
-            else:
-                print >>sys.stderr, "Warning: failed to parse maintainer"
-            gbpc.GitCommitAll(extra_env=env)(msg="Imported Debian patch %s" % version)
-        else:
-            print "Nothing to commit, nothing imported."
+        dch = parse_changelog(os.path.join(unpack_dir, 'debian/changelog'))
+        date= rfc822_date_to_git(dch['Date'])
+        author, email = parseaddr(dch['Maintainer'])
+        if not (author and email):
+            print >>sys.stderr, "Warning: failed to parse maintainer"
+
+        commit = repo.commit_dir(unpack_dir,
+                                 "Imported Debian patch %s" % version,
+                                 branch = options.debian_branch,
+                                 other_parents = [ options.upstream_branch ],
+                                 author = author,
+                                 email = email,
+                                 date = date)
         gitTag(build_tag(options.debian_tag, version),
-               msg="Debian release %s" % version)
+               msg="Debian release %s" % version, commit=commit)
     except gbpc.CommandExecFailed:
         print >>sys.stderr, "Failed to import Debian package"
         raise GbpError
+    finally:
+        os.chdir(repo.path)
 
 
 def print_dsc(dsc):
@@ -235,34 +240,28 @@ def main(argv):
 
             if not repo.has_tag(tag):
                 print "tag %s not found, importing %s tarball" % (tag, format[1])
-                # FIXME: this is what import-orig does - merge
-                if not is_empty:
-                    if src.native:
-                        repo.set_branch(options.debian_branch)
-                    else:
-                        repo.set_branch(options.upstream_branch)
-                repo.replace_tree(unpack_dir, options.filters, verbose=True)
-                gbpc.GitCommitAll()(msg="Imported %s" % msg)
-                gitTag(tag, msg=msg)
+                if is_empty:
+                    branch = None
+                else:
+                    branch = [options.upstream_branch,
+                              options.debian_branch][src.native]
+                commit = repo.commit_dir(unpack_dir,
+                                         "Imported %s" % msg,
+                                         branch)
+                gitTag(version=tag, msg=msg, commit=commit)
+
                 if not src.native and is_empty:
-                    gbpc.GitBranch()(options.upstream_branch)
+                    gbpc.GitBranch()(options.upstream_branch, commit)
                 if options.pristine_tar and not src.native:
                     gbpc.PristineTar().commit(src.tgz, 'refs/heads/%s' % options.upstream_branch)
             if not src.native:
                 if is_empty and not repo.has_branch(options.debian_branch):
-                    gbpc.GitBranch()(options.debian_branch)
-                repo.set_branch(options.debian_branch)
-                if options.merge:
-                    print "Merging to %s" % options.debian_branch
-                    try:
-                        gbpc.GitMerge(options.upstream_branch)()
-                    except gbpc.CommandExecFailed:
-                        raise GbpError, """Merge of %s failed, please resolve manually""" % options.upstream_branch
-                repo.replace_tree(unpack_dir, options.filters)
+                    gbpc.GitBranch()(options.debian_branch, commit)
                 if src.diff or src.deb_tgz:
-                    apply_debian_patch(repo, src, options)
+                    apply_debian_patch(repo, unpack_dir, src, options)
                 else:
                     print >>sys.stderr, "Warning: Didn't find a diff to apply."
+            repo.force_head(options.debian_branch, hard=True)
     except gbpc.CommandExecFailed:
         ret = 1
     except GbpError, err:
