@@ -238,6 +238,76 @@ class GitRepository(object):
             GitRm(verbose=verbose)(files)
         return not self.is_clean()[0]
 
+    def update_ref(self, ref, new, old=None, msg=None):
+        """Update ref 'ref' to commit 'new'"""
+        args = [ ref, new ]
+        if old:
+            args += [ old ]
+        if msg:
+            args = [ '-m', msg ] + args
+        GitCommand("update-ref")(args)
+
+    def commit_tree(self, tree, msg, parents, author=None, email=None,
+                    date=None):
+        """Commit a tree with commit msg 'msg' and parents 'parents'"""
+        extra_env = {}
+        if author:
+            extra_env['GIT_AUTHOR_NAME'] = author
+        if email:
+            extra_env['GIT_AUTHOR_EMAIL'] = email
+        if date:
+            extra_env['GIT_AUTHOR_DATE'] = date
+
+        args = [ tree ]
+        for parent in parents:
+            args += [ '-p' , parent ]
+        sha1 = self.__git_inout('commit-tree', args, msg, extra_env).strip()
+        return sha1
+
+    def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
+                   author = None, email = None, date = None):
+        """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
+           @param unpack_dir: content to add
+           @param msg: commit message to use
+           @param branch: branch to add the contents of unpack_dir to
+           @param parents: additional parents of this commit
+           @param author: commit with author name 'author'
+           @param email: commit with author email 'email'
+           @param date: set commit date to 'date'"""
+        self.__check_path()
+        git_index_file = os.path.join(self.path, '.git', 'gbp_index')
+        try:
+            os.unlink(git_index_file)
+        except OSError:
+            pass
+        extra_env = { 'GIT_INDEX_FILE': git_index_file,
+                      'GIT_WORK_TREE': unpack_dir}
+        GitAdd(extra_env=extra_env)(['-f', '.'])
+        tree = self.write_tree(git_index_file)
+
+        if branch:
+            cur = self.rev_parse(branch)
+        else: # emtpy repo
+            cur = None
+            branch = 'master'
+
+        # Build list of parents:
+        parents = []
+        if cur:
+            parents = [ cur ]
+        if other_parents:
+            for parent in other_parents:
+                sha = self.rev_parse(parent)
+                if sha not in parents:
+                    parents += [ sha ]
+
+        commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
+                                  author=author, email=email, date=date)
+        if not commit:
+            raise GbpError, "Failed to commit tree"
+        self.update_ref("refs/heads/%s" % branch, commit, cur)
+        return commit
+
     def get_config(self, name):
         """Gets the config value associated with name"""
         self.__check_path()
