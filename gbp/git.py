@@ -128,6 +128,14 @@ class GitRepository(object):
         if self.get_branch() != branch:
             GitCheckoutBranch(branch)()
 
+    def force_head(self, commit, hard=False):
+        """force head to a specific commit"""
+        args = []
+        if hard:
+            args += [ '--hard' ]
+        args += [ commit ]
+        GitCommand("reset")(args)
+
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
         self.__check_path()
