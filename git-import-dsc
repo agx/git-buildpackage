@@ -164,9 +164,6 @@ def main(argv):
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                       dest="upstream_branch")
-    branch_group.add_option("--no-merge", dest='merge', action="store_false",
-                      default=True,
-                      help="after import dont do any merging to another branch")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
                       dest="sign_tags")

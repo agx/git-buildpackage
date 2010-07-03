@@ -24,7 +24,6 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--no-merge</option></arg>
       <arg><option>--[no-]sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -78,12 +77,6 @@
 	<term><option>-v</option></term>
         <listitem>
           <para>verbose execution</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--no-merge</option></term>
-        <listitem>
-	  <para>Don't merge the upstream version to the development branch</para>
         </listitem>
       </varlistentry>
       <varlistentry>
