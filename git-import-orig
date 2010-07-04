@@ -75,16 +75,6 @@ def symlink_orig(archive, pkg, version):
 def upstream_import_commit_msg(options, version):
     return options.import_msg % dict(version=version)
 
-def import_upstream_tree(repo, src_dir, version, options, verbose):
-    """import the upstream tree to the current branch"""
-    try:
-        if repo.replace_tree(src_dir, options.filters, verbose=True):
-            gbpc.GitCommitAll(verbose=verbose)(msg=upstream_import_commit_msg(options, version))
-        else:
-            raise GbpNothingImported
-    except gbpc.CommandExecFailed:
-        raise GbpError, "Import of upstream version %s failed." % version
-
 
 def fast_import_upstream_tree(repo, tarball, version, options):
     """import the upstream tree to the current branch using git fast-import"""
@@ -317,32 +307,35 @@ on howto create it otherwise use --upstream-branch to specify it.
                 pristine_orig = archive
 
         try:
-            filter_msg = ["", " (filtering out %s)" % options.filters][len(options.filters) > 0]
-            if is_empty:
-                print "Initial import of '%s' %s..." % (archive, filter_msg)
-            else:
-                print "Importing '%s' to branch '%s'%s..." % (archive, options.upstream_branch, filter_msg)
-                if not options.fast_import:
-                    repo.set_branch(options.upstream_branch)
-
+            upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
+            filter_msg = ["", " (filtering out %s)"
+                              % options.filters][len(options.filters) > 0]
+            print "Importing '%s' to branch '%s'%s..." % (archive,
+                                                          upstream_branch,
+                                                          filter_msg)
             if options.fast_import:
                 fast_import_upstream_tree(repo, pristine_orig, version, options)
+                commit = options.upstream_branch
             else:
-                import_upstream_tree(repo, orig_dir, version, options, verbose=not is_empty)
+                import_branch = [ options.upstream_branch, None ][is_empty]
+                msg = upstream_import_commit_msg(options, version)
+                commit = repo.commit_dir(orig_dir, msg=msg, branch=import_branch)
+                if not commit:
+                    raise GbpError, "Import of upstream version %s failed." % version
 
             if options.pristine_tar:
-                upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
                 if pristine_orig:
                     gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
                 else:
                     print >>sys.stderr, "Warning: '%s' not an archive, skipping pristine-tar" % archive
+
             tag = build_tag(options.upstream_tag, version)
             gbpc.GitTag(options.sign_tags, options.keyid)(tag,
                                                           msg="Upstream version %s" % version,
-                                                          commit=[None, options.upstream_branch][options.fast_import])
-
+                                                          commit=commit)
             if is_empty:
-                gbpc.GitBranch()(options.upstream_branch)
+                gbpc.GitBranch()(options.upstream_branch, remote=commit)
+                repo.force_head(options.upstream_branch, hard=True)
             elif options.merge:
                 print "Merging to '%s'" % options.debian_branch
                 repo.set_branch(options.debian_branch)
