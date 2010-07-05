@@ -1,3 +1,32 @@
+git-buildpackage (0.5.0) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [bd1ad03] Drop dependency on python-dev since it's not needed for arch all
+    packages. Depend on python instead.
+  * [077bdb0] git-buildpackage: Add compression=auto to guess compression type
+    of upstream tarball from pristine-tar branch. This is now the default.
+    (Closes: #566993)
+  * [3bcb1ef] Abort if upstream tarball contains git metadata
+    (Closes: #571717)
+  * [24410e9] docs: Mention patch-queue branches
+  * [877166c] docs: Don't document Git-Dch: twice. Thanks to Matthijs Kooijman
+    (Closes: #587456)
+  * [719f1ae] git-import-dsc: Use commit_dir to write directly commit the
+    content of the unpacked orig tarball and the patched Debian tree instead
+    of using replace_tree. Thanks to Roger Leigh for his nice explantion on
+    howto do this.
+    (Closes: #506211, #588061)
+  * [fc270b5] git-import-dsc: Drop --no-merge We don't invoke 'git merge'
+    anymore.
+  * [d35ee45] git-import-orig: Use commit_dir instead of replace_tree
+    (Closes: #526022, #569031)
+
+  [ Torsten Werner ]
+  * [d3c0901] fix typo in gbp-pq
+    (Closes: #587673)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 05 Jul 2010 21:58:14 +0200
+
 git-buildpackage (0.4.68) unstable; urgency=low
 
   [ Guido Günther ]
