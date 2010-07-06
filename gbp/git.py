@@ -62,6 +62,10 @@ class GitRepository(object):
             stdin = None
         return stdin
 
+    def base_dir(self):
+        """Base of the repository"""
+        return os.path.join(self.path, '.git')
+
     def has_branch(self, branch, remote=False):
         """
         check if the repository has branch 'branch'

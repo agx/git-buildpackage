@@ -258,6 +258,8 @@ def main(argv):
                       help="command to build the Debian package, default is '%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
                       help="command to clean the working copy, default is '%(cleaner)s'")
+    cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
+                      help="command to run before a build, default is '%(prebuild)s'")
     cmd_group.add_config_file_option(option_name="postbuild", dest="postbuild",
                       help="hook run after a successful build, default is '%(postbuild)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
@@ -375,6 +377,11 @@ def main(argv):
                 build_dir = export_dir
             else:
                 build_dir = repo_dir
+
+            if options.prebuild:
+                RunAtCommand(options.prebuild, shell=True,
+                             extra_env={'GBP_GIT_DIR': repo.base_dir(),
+                                        'GBP_BUILD_DIR': build_dir})(dir=build_dir)
 
             # Finally build the package:
             RunAtCommand(options.builder, dpkg_args, shell=True, 
