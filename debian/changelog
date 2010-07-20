@@ -1,3 +1,14 @@
+git-buildpackage (0.5.1) experimental; urgency=low
+
+  [ Jonathan Nieder ]
+  * [a650ce3] Add prebuild hook Can be used to add an upstream changelog
+    generated from the git repository to the build dir. (Closes: #587652)
+
+  [ Guido Günther ]
+  * [9b8bc60] Bump standards version
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 20 Jul 2010 21:31:30 +0200
+
 git-buildpackage (0.5.0) experimental; urgency=low
 
   [ Guido Günther ]
