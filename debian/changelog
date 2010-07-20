@@ -1,3 +1,9 @@
+git-buildpackage (0.5.2) unstable; urgency=low
+
+  * Upload to unstable
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 20 Jul 2010 22:13:57 +0200
+
 git-buildpackage (0.5.1) experimental; urgency=low
 
   [ Jonathan Nieder ]
