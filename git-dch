@@ -46,6 +46,23 @@ def system(cmd):
 def escape_commit(msg):
     return msg.replace('"','\\\"').replace("$","\$").replace("`","\`")
 
+def ispunct(ch):
+    return not ch.isalnum() and not ch.isspace()
+
+def punctuate_commit(msg):
+    """Terminate the first line of a commit message with a '.' if it's a
+       multiline commit"""
+    lines = msg.split('\n', 1)
+    if len(lines) <= 1:
+        return msg
+    first, rest = lines
+    if not rest:
+        return msg
+    if first and ispunct(first[-1]):
+        return msg
+    if rest[0].islower():
+        return msg
+    return "%s.\n%s" % (first, rest)
 
 def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, release=False, distribution=None):
     distopt = ""
@@ -61,6 +78,9 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, r
         versionopt = "--release --no-force-save-on-release"
         msg = None
 
+    if msg:
+        msg = punctuate_commit(msg)
+
     if author and email:
         env = """DEBFULLNAME="%s" DEBEMAIL="%s" """ % (author, email)
 
@@ -74,7 +94,7 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, r
 
 
 def add_changelog_entry(msg, author, email):
-    "add aa single changelog entry"
+    "add a single changelog entry"
     spawn_dch(msg=msg, author=author, email=email)
 
 
