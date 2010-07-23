@@ -103,18 +103,24 @@ def add_changelog_section(msg, distribution, author=None, email=None, version=No
     spawn_dch(msg=msg, newversion= True, version=version, author=author, email=email, distribution=distribution)
 
 
-def fixup_trailer(repo, git_author=False):
-    """fixup the changelog trailer's comitter and email address - it might
-    otherwise point to the last git committer instead of the person creating
-    the changelog"""
+def get_author_email(repo, use_git_config):
+    """Get author and email from git configuration"""
     author = email = None
-    if git_author:
+
+    if use_git_config:
         try: author = repo.get_config('user.name')
         except KeyError: pass
 
         try: email = repo.get_config('user.email')
         except KeyError: pass
+    return author, email
 
+
+def fixup_trailer(repo, git_author):
+    """fixup the changelog trailer's comitter and email address - it might
+    otherwise point to the last git committer instead of the person creating
+    the changelog"""
+    author, email = get_author_email(repo, git_author)
     spawn_dch(msg='', author=author, email=email)
 
 
@@ -176,13 +182,14 @@ def mangle_changelog(changelog, cp, snapshot=''):
         raise GbpError, "Error mangling changelog %s" % e
 
 
-def do_release(changelog, cp):
+def do_release(changelog, repo, cp, git_author):
     "remove the snapshot header and set the distribution"
+    author, email = get_author_email(repo, git_author)
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
         cp['MangledVersion'] = release
         mangle_changelog(changelog, cp)
-    spawn_dch(release=True)
+    spawn_dch(release=True, author=author, email=email)
 
 
 def do_snapshot(changelog, repo, next_snapshot):
@@ -431,7 +438,7 @@ def main(argv):
         fixup_trailer(repo, git_author=options.git_author)
 
         if options.release:
-            do_release(changelog, cp)
+            do_release(changelog, repo, cp, git_author=options.git_author)
         elif options.snapshot:
             (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
             print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
