@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007, 2008, 2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007, 2008, 2009, 2010 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -118,11 +118,9 @@ def fixup_trailer(repo, git_author=False):
     spawn_dch(msg='', author=author, email=email)
 
 
-def head_commit():
+def head_commit(repo):
     """get the full sha1 of the last commit on HEAD"""
-    commit = subprocess.Popen([ 'git', 'log', 'HEAD^..' ], stdout=subprocess.PIPE).stdout
-    sha = commit.readline().split()[-1]
-    return sha
+    return repo.rev_parse('HEAD')
 
 
 def snapshot_version(version):
@@ -187,12 +185,12 @@ def do_release(changelog, cp):
     spawn_dch(release=True)
 
 
-def do_snapshot(changelog, next_snapshot):
+def do_snapshot(changelog, repo, next_snapshot):
     """
     Add new snapshot banner to most recent changelog section. The next snapshot
     number is calculated by eval()'ing next_snapshot
     """
-    commit = head_commit()
+    commit = head_commit(repo)
 
     cp = parse_changelog(changelog)
     (release, snapshot) = snapshot_version(cp['Version'])
@@ -435,7 +433,7 @@ def main(argv):
         if options.release:
             do_release(changelog, cp)
         elif options.snapshot:
-            (snap, version) = do_snapshot(changelog, options.snapshot_number)
+            (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
             print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
 
     except (GbpError, GitRepositoryError, NoChangelogError), err:
