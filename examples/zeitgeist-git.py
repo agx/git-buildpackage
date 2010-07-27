@@ -87,8 +87,8 @@ def main(argv):
 
     subject = Subject.new_for_values(
                 uri = uri,
-                interpretation = Interpretation.SOURCECODE.uri,
-                manifestation = Manifestation.FILE.uri,
+                interpretation = Interpretation.DOCUMENT.TEXT_DOCUMENT.PLAIN_TEXT_DOCUMENT.SOURCE_CODE.uri,
+                manifestation = Manifestation.FILE_DATA_OBJECT.uri,
                 text = repo,
                 origin = origin)
     event = Event.new_for_values(
