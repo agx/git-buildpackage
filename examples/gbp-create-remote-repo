@@ -1,0 +1,168 @@
+#!/usr/bin/python -u
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2010 Guido Guenther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Based on the aa-create-git-repo and dom-new-git-repo shell scripts
+
+"""Create a remote repo based on the current one"""
+# TODO: allow to add hoonks by default
+
+import sys
+import os, os.path
+import urlparse
+import subprocess
+import tty, termios
+from gbp.command_wrappers import ( CommandExecFailed, PristineTar, GitCommand)
+from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.errors import GbpError
+from gbp.git import (GitRepositoryError, GitRepository)
+
+def print_config(remote, branches):
+    print """[remote "origin"]
+        url = %(url)s
+        fetch = +refs/heads/*:refs/remotes/origin/*""" % remote
+
+    for branch in branches:
+        print "        push = %s" % branch
+
+    for branch in branches:
+        print """[branch "%s"]
+        remote = origin
+        merge = refs/heads/%s""" % (branch, branch)
+
+
+def parse_remote(remote_url, pkg):
+    """Sanity check our remote URL"""
+    frags = urlparse.urlparse(remote_url)
+    if frags.scheme != 'ssh':
+        raise GbpError, "Remote URL must use ssh protocol."
+    if not '%(pkg)s' in remote_url:
+        raise GbpError, "Remote URL lacks \%(pkg)s"
+    remote = { 'pkg': pkg,
+               'url' : remote_url % { 'pkg': pkg },
+               'dir': frags.path % { 'pkg': pkg },
+               'host': frags.netloc }
+    return remote
+
+
+def read_yn():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+    if ch in ( 'y', 'Y' ):
+        return True
+    else:
+        return False
+
+
+def main(argv):
+    changelog = 'debian/changelog'
+    retval = 0
+
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                             usage='%prog [options] - create a remote repository')
+    branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
+    branch_group.add_config_file_option(option_name="remote-url-pattern", dest="remote_url")
+    parser.add_option_group(branch_group)
+    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
+    branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
+    branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                      help="verbose command execution")
+
+    (options, args) = parser.parse_args(argv)
+
+    if options.verbose:
+        Command.verbose = True
+
+    try:
+        repo = GitRepository(os.path.curdir)
+    except GitRepositoryError:
+        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
+        return 1
+
+    try:
+        branches = []
+
+        for branch in [ options.debian_branch, options.upstream_branch ]:
+            if repo.has_branch(branch):
+                branches += [ branch ]
+
+        if repo.has_branch(PristineTar.branch) and options.pristine_tar:
+            branches += [ PristineTar.branch ]
+
+        pkg = os.path.basename (os.path.abspath(os.path.curdir))
+        pkg = os.path.splitext(pkg)[0]
+        remote = parse_remote(options.remote_url, pkg)
+
+        print "Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote
+        if not read_yn():
+            raise GbpError, "Aborted."
+
+        # Create and run the remote script
+        ssh = 'ssh %(host)s sh' % remote
+        remote_script =  """
+cat <<EOF
+set -e
+umask 002
+if [ -d "%(dir)s" ]; then
+    echo "Repository at \"%(dir)s\" already exists - giving up."
+    exit 1
+fi
+mkdir -p "%(dir)s"
+cd "%(dir)s"
+git init --bare --shared
+echo "%(pkg)s packaging" > description
+EOF""" % remote
+
+        if options.verbose:
+            print remote_script
+
+        p1 = subprocess.Popen([remote_script], stdout=subprocess.PIPE, shell=True)
+        p2 = subprocess.Popen([ssh], stdin=p1.stdout, shell=True)
+        p2.communicate()
+        if p2.returncode:
+            raise GbpError, "Error creating remote repository" 
+
+        # Push branches
+        gitPush = GitCommand("push")
+        gitPush([remote['url']] + branches)
+        gitPush([remote['url'], '--tags'])
+
+        # FIXME: option to add to .git/config by default
+        print "\nYou can now add:"
+        print_config(remote, branches)
+        print "\nto your .git/config to 'gbp-pull' and 'git push' in the future."
+
+    except CommandExecFailed:
+        retval = 1
+    except GbpError, err:
+        if len(err.__str__()):
+            print >>sys.stderr, err
+        retval = 1
+
+    return retval
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
