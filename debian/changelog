@@ -1,3 +1,20 @@
+git-buildpackage (0.5.3) unstable; urgency=low
+
+  * [2808207] git-dch: Terminate the patch description with a dot in case of
+    multiline commits where the second line starts with a uppercase letter.
+    Heavily based on a patch by Jonathan Nieder.
+  * [47463da] Better document the default config file.
+  * [57b2abf] git-dch: Set author information from git on --release when using
+    --git-author - thanks to Boleslaw Tokarski for his feedback.
+  * [ad2416e] examples/zeitgeist-git: Adjust for zeitgeist 0.4.0.
+  * [8676193] examples/gbp-create-remote-repos: Simple helper to create remote
+    repos based on dom-new-git-repo from the OCaml maintainers as well as
+    aa-create-repo. (Closes: #540185)
+  * [3ed1a5c] git-import-dscs: Fetch all snapshots from snapshots.debian.org
+    using debsnap and import them (Closes: #591218)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 02 Aug 2010 22:10:18 +0200
+
 git-buildpackage (0.5.2) unstable; urgency=low
 
   * Upload to unstable
