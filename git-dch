@@ -56,11 +56,12 @@ def punctuate_commit(msg):
     if len(lines) <= 1:
         return msg
     first, rest = lines
+    # Don't add a dot on one line commit messages
     if not rest:
         return msg
     if first and ispunct(first[-1]):
         return msg
-    if rest[0].islower():
+    if ispunct(rest[0]) or rest[0].islower():
         return msg
     return "%s.\n%s" % (first, rest)
 
