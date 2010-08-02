@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2008, 2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2008, 2009, 2010 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -67,12 +67,30 @@ class GitImportDsc(gbpc.Command):
             raise GbpError, "%s not found - can't import packages" % self.cmd
         gbpc.Command.__init__(self, self.cmd, args)
 
-    def __call__(self, dsc):
+    def importdsc(self, dsc):
         gbpc.Command.__call__(self, [dsc.dscfile])
 
 
-def usage():
-    print """Usage: git-import-dscs [git-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ..."""
+def fetch_snapshots(pkg, downloaddir):
+    "Fetch snapshots using debsnap von snapshots.debian.org"
+    dscs = None
+
+    print "Downloading snapshots of '%s' to '%s'..." % (pkg, downloaddir)
+    gbpc.Command("debsnap", [ '--force', '--destdir=%s' % (downloaddir), pkg])()
+
+    dscs = glob.glob(os.path.join(downloaddir, '*.dsc'))
+    if not dscs:
+        raise GbpError, 'No package downloaded'
+
+    return [os.path.join(downloaddir, dsc) for dsc in dscs]
+
+
+def print_help():
+    print """Usage:
+    git-import-dscs [git-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
+or
+    git-import-dscs --debsnap [git-import-dsc options] package
+"""
 
 
 def main(argv):
@@ -80,18 +98,35 @@ def main(argv):
     dscs = []
     ret = 0
     dsc_cmp = DscCompareVersions()
+    use_debsnap = False
 
     try:
         import_args = argv[1:]
 
-        for arg in argv[::-1]:
-            if arg.endswith('.dsc'):
-                dscs.append(parse_dsc(arg))
-                import_args.remove(arg)
+        if '--verbose' in import_args:
+            gbpc.Command.verbose = True
 
-        if not dscs:
-            usage()
-            sys.exit(1)
+        # Not using Configparser since we want to pass all unknown options
+        # unaltered to git-import-dsc
+        if '--debsnap' in import_args:
+            use_debsnap = True
+            import_args.remove('--debsnap')
+            pkg = import_args[-1]
+            import_args = import_args[:-1]
+        else:
+            for arg in argv[::-1]:
+                if arg.endswith('.dsc'):
+                    dscs.append(parse_dsc(arg))
+                    import_args.remove(arg)
+
+        if not use_debsnap and not dscs:
+            print_help()
+            raise GbpError
+
+        if use_debsnap:
+            dirs['tmp'] = os.path.abspath(tempfile.mkdtemp())
+            print "Downloading snapshots of '%s' to '%s'..." % (pkg, dirs['tmp'])
+            dscs = [ parse_dsc(f) for f in fetch_snapshots(pkg, dirs['tmp']) ]
 
         dscs.sort(cmp=dsc_cmp)
         importer = GitImportDsc(import_args)
@@ -108,17 +143,19 @@ def main(argv):
             # no git repository there yet
             dirs['pkg'] = os.path.join(dirs['top'], dscs[0].pkg)
 
-        importer(dscs[0])
+        importer.importdsc(dscs[0])
         os.chdir(dirs['pkg'])
 
         for dsc in dscs[1:]:
-            importer(dsc)
+            importer.importdsc(dsc)
 
     except (GbpError, gbpc.CommandExecFailed), err:
         if len(err.__str__()):
             print >>sys.stderr, err
         ret = 1
     finally:
+        if dirs.has_key('tmp'):
+            gbpc.RemoveTree(dirs['tmp'])()
         os.chdir(dirs['top'])
 
     if not ret:
