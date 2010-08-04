@@ -24,7 +24,7 @@ is_patch_queue()
 run_git()
 {
     set -e
-    git $@
+    git "$@"
     set +e
 }
 
@@ -78,6 +78,7 @@ pq_import()
     local pq="patch-queue/$branch"
     local patches=debian/patches/
 
+
     if is_patch_queue $branch; then
         echo "Already on a patch-queue branch \"$branch\" - doing nothing."
         return 1
@@ -93,8 +94,9 @@ pq_import()
         return 0
     fi
 
-    QUILT_PATCHES=$patches run_git quiltimport
-} 
+    maintainer="$(sed -n -e 's/Maintainer: \+\(.*\)/\1/p' debian/control)"
+    QUILT_PATCHES=$patches run_git quiltimport --author "$maintainer"
+}
 
 pq_drop()
 {
