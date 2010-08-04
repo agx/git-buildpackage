@@ -29,22 +29,38 @@ from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
 
 def fast_forward_branch(branch, repo, options):
+    """
+    update branch to its remote branch, fail on non fast forward updates
+    unless --force is given
+    @return: branch updated or already up to date
+    @rtype: boolean
+    """
+    update = False
+
     remote = repo.get_merge_branch(branch)
     if not remote:
         print >>sys.stderr, "Warning: no branch tracking '%s' found - skipping." % branch
-        return
-    fast_forward = repo.is_fast_forward(branch, remote)
-    if not fast_forward:
+        return False
+
+    can_fast_forward, up_to_date = repo.is_fast_forward(branch, remote)
+
+    if up_to_date: # Great, we're done
+        print "Branch '%s' is already up to date." % branch
+        return True
+
+    if can_fast_forward:
+        update = True
+    else:
         if options.force:
             print "Non-fast forwarding '%s' due to --force" % branch
-            fast_forward = True
+            update = True
         else:
             print >>sys.stderr, "Warning: Skipping non-fast forward of '%s' - use --force" % branch
 
-    if fast_forward:
+    if update:
         repo.set_branch(branch)
         GitMerge(remote)()
-    return fast_forward
+    return update
 
 def main(argv):
     changelog = 'debian/changelog'
