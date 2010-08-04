@@ -67,7 +67,7 @@
 	<listitem><para>
 	(Optionally) export the source tree to a separate build area
 	</para></listitem>
-        <listitem><para>Build an orig.tar.gz if it doesn't exist.</para>
+        <listitem><para>Build an orig tarball if it doesn't exist.</para>
         </listitem>
         <listitem><para>Call <application>debuild</application>(1)
             (or the application specified via <option>--git-builder</option>)
@@ -131,7 +131,7 @@
         <term><option>--git-upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>Branch to build the orig.tar.gz from if no tag matching the
+	  <para>Branch to build the orig tarball from if no tag matching the
 	  upstream version is found. Default is
 	  <replaceable>upstream</replaceable>. You can give any treeish object
 	  here.</para>
@@ -216,14 +216,14 @@
         <term><option>--git-force-create</option>
         </term>
         <listitem>
-	  <para>Force creation of an orig.tar.gz (overwriting a pre-existing one if present)</para>
+	  <para>Force creation of an orig tarball (overwriting a pre-existing one if present)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-no-create-orig</option>
         </term>
         <listitem>
-	  <para>Don't try to create any orig.tar.gz</para>
+	  <para>Don't try to create any orig tarball</para>
         </listitem>
       </varlistentry>
       <varlistentry>
