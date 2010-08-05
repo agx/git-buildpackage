@@ -83,7 +83,10 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None,
 
     if newversion:
         if version:
-            versionopt = '--newversion=%s' % version
+            try:
+                versionopt = version['increment']
+            except KeyError:
+                versionopt = '--newversion=%s' % version['version']
         else:
             versionopt = '-i'
     elif release:
@@ -112,7 +115,7 @@ def add_changelog_entry(msg, author, email, dch_options):
 
 def add_changelog_section(msg, distribution, author=None, email=None, version=None):
     "add a new changelog section"
-    spawn_dch(msg=msg, newversion= True, version=version, author=author, email=email, distribution=distribution)
+    spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email, distribution=distribution)
 
 
 def get_author_email(repo, use_git_config):
@@ -316,6 +319,7 @@ def main(argv):
     until = 'HEAD'
     found_snapshot_header = False
     first_commit = None
+    version_change = {}
 
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
@@ -351,6 +355,12 @@ def main(argv):
                       help="mark as snapshot build")
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
+    version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
+                      help="Increment the Debian release number for an upload to lenny-backports, and add a backport upload changelog comment.")
+    version_group.add_option("--nmu", dest="nmu", action="store_true", default=False,
+                      help="Increment  the  Debian  release  number  for a non-maintainer upload")
+    version_group.add_option("--qa", dest="qa", action="store_true", default=False,
+                      help="Increment the Debian release number for a Debian QA Team upload, and add a QA upload changelog comment.")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
@@ -411,11 +421,19 @@ def main(argv):
         commits = repo.commits(since=since, until=until, paths=" ".join(args), options=options.git_log.split(" "))
 
         # add a new changelog section if:
-        if cp['Distribution'] != "UNRELEASED" and not found_snapshot_header and commits:
-            # the last version was a release and we have pending commits
-            add_section = True
-        elif options.new_version:
+        if options.new_version or options.bpo or options.nmu or options.qa:
+            if options.bpo:
+                version_change['increment'] = '--bpo'
+            elif  options.nmu:
+                version_change['increment'] = '--nmu'
+            elif  options.qa:
+                version_change['increment'] = '--qa'
+            else:
+                version_change['version'] = options.new_version
             # the user wants to force a new version
+            add_section = True
+        elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_header and commits:
+            # the last version was a release and we have pending commits
             add_section = True
         elif options.snapshot and not found_snapshot_header:
             # the user want to switch to snapshot mode
@@ -432,9 +450,10 @@ def main(argv):
             commit_msg, (commit_author, commit_email) = parsed
             if add_section:
                 # Add a section containing just this message (we can't
-                # add an empty section with dch).
+                # add an empty section with dch)
                 add_changelog_section(distribution="UNRELEASED", msg=commit_msg,
-                                      version=options.new_version, author=commit_author,
+                                      version=version_change,
+                                      author=commit_author,
                                       email=commit_email)
                 # Adding a section only needs to happen once.
                 add_section = False
@@ -452,7 +471,7 @@ def main(argv):
             # so we put a dummy message in the new section.
             commit_msg = "UNRELEASED"
             add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED",
-                                  version=options.new_version)
+                                  version=version_change)
 
         fixup_trailer(repo, git_author=options.git_author)
 
