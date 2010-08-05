@@ -437,7 +437,7 @@ def create_repo(path):
 def build_tag(format, version):
     """Generate a tag from a given format and a version
     >>> build_tag("debian/%(version)s", "0:0~0")
-    'debian/0.0'
+    'debian/0%0_0'
     """
     return format % dict(version=__sanitize_version(version))
 
@@ -447,13 +447,13 @@ def __sanitize_version(version):
     >>> __sanitize_version("0.0.0")
     '0.0.0'
     >>> __sanitize_version("0.0~0")
-    '0.0.0'
+    '0.0_0'
     >>> __sanitize_version("0:0.0")
-    '0.0'
+    '0%0.0'
+    >>> __sanitize_version("0%0~0")
+    '0%0_0'
     """
-    if ':' in version: # strip of any epochs
-        version = version.split(':', 1)[1]
-    return version.replace('~', '.')
+    return version.replace('~', '_').replace(':', '%')
 
 
 def rfc822_date_to_git(rfc822_date):
