@@ -1,3 +1,17 @@
+git-buildpackage (0.5.4) unstable; urgency=low
+
+  * [88afa61] git-dch: Pass --multimaint-merge on to dch (Closes: #586165)
+  * [e8b6b49] gbp-pq: Use the maintainer of the Debian package as fallback
+    patch author
+  * [f63c4ed] git-import-dsc: Don't add superfluous parents to imports on the
+    Debian branch. Only set a parent on the first import per upstream version.
+  * [af2a435] gbp-pull: Don't update already up to date branches
+  * [407b614] docs: Drop git_load_dirs reference we're not using it anymore.
+  * [dbc7fe3] docs: We don't only support .gz tarballs
+  * [34d6d84] Bump standards version
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 06 Aug 2010 17:07:47 -0400
+
 git-buildpackage (0.5.3) unstable; urgency=low
 
   * [2808207] git-dch: Terminate the patch description with a dot in case of
