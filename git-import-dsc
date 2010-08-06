@@ -81,7 +81,7 @@ def apply_deb_tgz(deb_tgz, unpack_dir):
     return True
 
 
-def apply_debian_patch(repo, unpack_dir, src, options):
+def apply_debian_patch(repo, unpack_dir, src, options, parents):
     """apply the debian patch and tag appropriately"""
     version = "%s-%s" % (src.upstream_version, src.debian_version)
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
@@ -108,7 +108,7 @@ def apply_debian_patch(repo, unpack_dir, src, options):
         commit = repo.commit_dir(unpack_dir,
                                  "Imported Debian patch %s" % version,
                                  branch = options.debian_branch,
-                                 other_parents = [ options.upstream_branch ],
+                                 other_parents = parents,
                                  author = author,
                                  email = email,
                                  date = date)
@@ -138,6 +138,7 @@ def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
     needs_repo = False
     ret = 0
+    parents = None
 
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
@@ -247,15 +248,17 @@ def main(argv):
                                          branch)
                 gitTag(version=tag, msg=msg, commit=commit)
 
-                if not src.native and is_empty:
-                    gbpc.GitBranch()(options.upstream_branch, commit)
-                if options.pristine_tar and not src.native:
-                    gbpc.PristineTar().commit(src.tgz, 'refs/heads/%s' % options.upstream_branch)
+                if not src.native:
+                    if is_empty:
+                        gbpc.GitBranch()(options.upstream_branch, commit)
+                    if options.pristine_tar:
+                        gbpc.PristineTar().commit(src.tgz, 'refs/heads/%s' % options.upstream_branch)
+                    parents = [ options.upstream_branch ]
             if not src.native:
                 if is_empty and not repo.has_branch(options.debian_branch):
                     gbpc.GitBranch()(options.debian_branch, commit)
                 if src.diff or src.deb_tgz:
-                    apply_debian_patch(repo, unpack_dir, src, options)
+                    apply_debian_patch(repo, unpack_dir, src, options, parents)
                 else:
                     print >>sys.stderr, "Warning: Didn't find a diff to apply."
             repo.force_head(options.debian_branch, hard=True)
