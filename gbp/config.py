@@ -59,7 +59,8 @@ class GbpOptionParser(OptionParser):
                  'ignore-regex'    : '',
                  'compression'     : 'auto',
                  'compression-level': '9',
-                 'remote-url-pattern' : 'ssh://alioth.debian.org/git/collab-maint/%(pkg)s.git'
+                 'remote-url-pattern' : 'ssh://alioth.debian.org/git/collab-maint/%(pkg)s.git',
+                 'multimaint-merge' : 'False',
              }
     help = {
              'debian-branch':
@@ -96,6 +97,8 @@ class GbpOptionParser(OptionParser):
                   "extract orig tarball when using export-dir option, default is '%(overlay)s'",
              'remote-url-pattern':
                   "Remote url pattern to create the repo at, default is '%(remote-url-pattern)s'",
+             'multimaint-merge':
+                  "Merge commits by maintainer, default is '%(multimaint-merge)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

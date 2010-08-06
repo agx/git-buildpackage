@@ -65,7 +65,18 @@ def punctuate_commit(msg):
         return msg
     return "%s.\n%s" % (first, rest)
 
-def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, release=False, distribution=None):
+def spawn_dch(msg='', author=None, email=None, newversion=False, version=None,
+              release=False, distribution=None, dch_options=""):
+    """
+    Spawn dch
+    param author: committers name
+    param email: committers email
+    param newversion: start a new version
+    version: the verion to use
+    release: finalize changelog for releaze
+    distribution: distribution to use
+    dch_options: options passed verbatim to dch
+    """
     distopt = ""
     versionopt = ""
     env = ""
@@ -88,15 +99,15 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None, r
     if distribution:
         distopt = "--distribution=%s" % distribution
 
-    cmd = '%(env)s dch --no-auto-nmu  %(distopt)s %(versionopt)s ' % locals()
+    cmd = '%(env)s dch --no-auto-nmu  %(distopt)s %(versionopt)s %(dch_options)s ' % locals()
     if type(msg) == type(''):
         cmd += '-- "%s"' % escape_commit(msg)
     system(cmd)
 
 
-def add_changelog_entry(msg, author, email):
+def add_changelog_entry(msg, author, email, dch_options):
     "add a single changelog entry"
-    spawn_dch(msg=msg, author=author, email=email)
+    spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
 
 
 def add_changelog_section(msg, distribution, author=None, email=None, version=None):
@@ -350,6 +361,8 @@ def main(argv):
                       type="int", metavar="N")
     commit_group.add_config_file_option(option_name="ignore-regex", dest="ignore_regex",
                       help="Ignore commit lines matching regex, default is '%(ignore-regex)s'")
+    commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
+
     (options, args) = parser.parse_args(argv[1:])
 
     if options.snapshot and options.release:
@@ -357,6 +370,11 @@ def main(argv):
 
     if options.since and options.auto:
         parser.error("'--since' and '--auto' are incompatible options")
+
+    if options.multimaint_merge:
+        dch_options = "--multimaint-merge"
+    else:
+        dch_options = "--nomultimaint-merge"
 
     try:
         if options.verbose:
@@ -421,7 +439,7 @@ def main(argv):
                 # Adding a section only needs to happen once.
                 add_section = False
             else:
-                add_changelog_entry(commit_msg, commit_author, commit_email)
+                add_changelog_entry(commit_msg, commit_author, commit_email, dch_options)
 
 
         # Show a message if there were no commits (not even ignored

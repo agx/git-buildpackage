@@ -35,6 +35,7 @@
       <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
       <arg><option>--[no-]git-author</option></arg>
+      <arg><option>--[no-]multimaint-merge</option></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -202,6 +203,13 @@
         </term>
         <listitem>
           <para>Use user.name and user.email from <application>git-config</application>(1) for changelog trailer.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no]-multimaintmerge</option>
+        </term>
+        <listitem>
+          <para>Merge commits by maintainer.</para>
         </listitem>
       </varlistentry>
     </variablelist>
