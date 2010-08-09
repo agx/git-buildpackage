@@ -66,7 +66,7 @@ def punctuate_commit(msg):
     return "%s.\n%s" % (first, rest)
 
 def spawn_dch(msg='', author=None, email=None, newversion=False, version=None,
-              release=False, distribution=None, dch_options=""):
+              release=False, distribution=None, dch_options=''):
     """
     Spawn dch
     param author: committers name
@@ -113,9 +113,10 @@ def add_changelog_entry(msg, author, email, dch_options):
     spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
 
 
-def add_changelog_section(msg, distribution, author=None, email=None, version=None):
+def add_changelog_section(msg, distribution, author=None, email=None, version=None, dch_options=''):
     "add a new changelog section"
-    spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email, distribution=distribution)
+    spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email,
+              distribution=distribution, dch_options=dch_options)
 
 
 def get_author_email(repo, use_git_config):
@@ -131,12 +132,12 @@ def get_author_email(repo, use_git_config):
     return author, email
 
 
-def fixup_trailer(repo, git_author):
+def fixup_trailer(repo, git_author, dch_options):
     """fixup the changelog trailer's comitter and email address - it might
     otherwise point to the last git committer instead of the person creating
     the changelog"""
     author, email = get_author_email(repo, git_author)
-    spawn_dch(msg='', author=author, email=email)
+    spawn_dch(msg='', author=author, email=email, dch_options=dch_options)
 
 
 def head_commit(repo):
@@ -197,14 +198,14 @@ def mangle_changelog(changelog, cp, snapshot=''):
         raise GbpError, "Error mangling changelog %s" % e
 
 
-def do_release(changelog, repo, cp, git_author):
+def do_release(changelog, repo, cp, git_author, dch_options):
     "remove the snapshot header and set the distribution"
     author, email = get_author_email(repo, git_author)
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
         cp['MangledVersion'] = release
         mangle_changelog(changelog, cp)
-    spawn_dch(release=True, author=author, email=email)
+    spawn_dch(release=True, author=author, email=email, dch_options=dch_options)
 
 
 def do_snapshot(changelog, repo, next_snapshot):
@@ -454,7 +455,8 @@ def main(argv):
                 add_changelog_section(distribution="UNRELEASED", msg=commit_msg,
                                       version=version_change,
                                       author=commit_author,
-                                      email=commit_email)
+                                      email=commit_email,
+                                      dch_options=dch_options)
                 # Adding a section only needs to happen once.
                 add_section = False
             else:
@@ -471,12 +473,15 @@ def main(argv):
             # so we put a dummy message in the new section.
             commit_msg = "UNRELEASED"
             add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED",
-                                  version=version_change)
+                                  version=version_change,
+                                  dch_options=dch_options)
 
-        fixup_trailer(repo, git_author=options.git_author)
+        fixup_trailer(repo, git_author=options.git_author,
+                      dch_options=dch_options)
 
         if options.release:
-            do_release(changelog, repo, cp, git_author=options.git_author)
+            do_release(changelog, repo, cp, git_author=options.git_author,
+                       dch_options=dch_options)
         elif options.snapshot:
             (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
             print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
