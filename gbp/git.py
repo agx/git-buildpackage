@@ -93,6 +93,43 @@ class GitRepository(object):
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
+
+    def _build_legacy_tag(self, format, version):
+        """legacy version numbering"""
+        if ':' in version: # strip of any epochs
+            version = version.split(':', 1)[1]
+        version = version.replace('~', '.')
+        return format % dict(version=version)
+
+
+    def find_version(self, format, version):
+        """
+        Check if a certain version is stored in this repo. Return it's SHA1 in
+        this case. For legacy tags Don't check only the tag but also the
+        message, since the former wasn't injective until recently.
+        You only need to use this funciton if you also need to check for legacy
+        tags.
+
+        @param pattern: tag pattern
+        @param version: debian version number
+        @return: sha1 of the version tag
+        """
+        tag = build_tag(format, version)
+        legacy_tag = self._build_legacy_tag(format, version)
+        if self.has_tag(tag): # new tags are injective
+            return self.rev_parse(tag)
+        elif self.has_tag(legacy_tag):
+            out, ret = self.__git_getoutput('cat-file', args=['-p', legacy_tag])
+            if ret:
+                return None
+            for line in out:
+                if line.endswith(" %s\n" % version):
+                    return self.rev_parse(legacy_tag)
+                elif line.startswith('---'): # GPG signature start
+                    return None
+        return None
+
+
     def remove_tag(self, tag):
         """remove a tag 'tag'"""
         self.__check_path()

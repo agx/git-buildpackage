@@ -302,8 +302,7 @@ def guess_snapshot_commit(cp, repo, options):
     # If the current topmost changelog entry has already been tagged rely on
     # the version information only. The upper level relies then on the version
     # info anyway:
-    tag = build_tag(options.debian_tag, cp['Version'])
-    if repo.has_tag(tag):
+    if repo.find_version(options.debian_tag, cp['Version']):
         return None
     # If we didn't find a snapshot header we look at the point the changelog
     # was last touched.
@@ -415,7 +414,9 @@ def main(argv):
                 else:
                     print "Couldn't find snapshot header, using version info"
             if not since:
-                since = build_tag(options.debian_tag, cp['Version'])
+                since = repo.find_version(options.debian_tag, cp['Version'])
+                if not since:
+                    raise GbpError, "Version %s not found" % cp['Version']
 
         if args:
             print "Only looking for changes on '%s'" % " ".join(args)

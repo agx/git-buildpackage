@@ -230,11 +230,13 @@ def main(argv):
             format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
             tag = build_tag(format[0], src.upstream_version)
             msg = "%s version %s" % (format[1], src.upstream_version)
-            if repo.has_tag(tag) and options.ignore_same_version:
-                print "Tag %s already there" % tag
-                raise SkipImport
 
-            if not repo.has_tag(tag):
+            if options.ignore_same_version:
+                if repo.find_version(options.debian_tag, src.version):
+                    print "Version %s already imported." % src.version
+                    raise SkipImport
+
+            if not repo.find_version(format[0], src.upstream_version):
                 print "tag %s not found, importing %s tarball" % (tag, format[1])
                 if is_empty:
                     branch = None
