@@ -86,8 +86,6 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
     version = "%s-%s" % (src.upstream_version, src.debian_version)
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
     try:
-        if not src.diff and not src.deb_tgz:
-            raise GbpError, "No diff to apply."
         os.chdir(unpack_dir)
 
         if src.diff and not apply_patch(src.diff, unpack_dir):
