@@ -262,6 +262,9 @@ def main(argv):
             repo.force_head(options.debian_branch, hard=True)
     except gbpc.CommandExecFailed:
         ret = 1
+    except GitRepositoryError, msg:
+        print >>sys.stderr, "Git command failed: %s" % msg
+        ret = 1
     except GbpError, err:
         if len(err.__str__()):
             print >>sys.stderr, err
