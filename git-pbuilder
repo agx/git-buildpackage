@@ -1,0 +1,188 @@
+#!/bin/sh
+# $Id: git-pbuilder,v 1.12 2010-08-10 22:05:36 eagle Exp $
+#
+# git-pbuilder -- Wrapper around pbuilder for git-buildpackage
+#
+# Written by Russ Allbery <rra@stanford.edu>
+# Based on the example in the git-buildpackage documentation
+# Copyright 2008, 2009, 2010 Board of Trustees, Leland Stanford Jr. University
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation, and that the name of Stanford University not be used in
+# advertising or publicity pertaining to distribution of the software without
+# specific, written prior permission.  Stanford University makes no
+# representations about the suitability of this software for any purpose.  It
+# is provided "as is" without express or implied warranty.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+set -e
+
+# The root directory where different cowbuilder --basepath directories are
+# found.  git-pbuilder expects them to be named base-<dist>.cow.
+COWBUILDER_BASE=/var/cache/pbuilder
+
+# Set DIST based on the name we were invoked as.  This allows people to create
+# symlinks like git-pbuilder-lenny pointing to git-pbuilder and auto-detecting
+# the distribution from that.
+if [ -z "$DIST" ] ; then
+    DIST=${0#*git-pbuilder-}
+    case $DIST in
+    *git-pbuilder*) DIST= ;;
+    esac
+fi
+echo "dist is $DIST"
+
+# If DIST is set, use base-$DIST.cow.  If DIST is not set, the sid chroot may
+# be either base.cow or base-sid.cow.  Try both.
+if [ -z "$DIST" ] ; then
+    DIST=sid
+fi
+if [ "$DIST" = 'sid' ] ; then
+    if [ -d "$COWBUILDER_BASE/base-sid.cow" ] ; then
+        BASE="$COWBUILDER_BASE/base-sid.cow"
+    else
+        BASE="$COWBUILDER_BASE/base.cow"
+    fi
+    OPTIONS=
+else
+    BASE="$COWBUILDER_BASE/base-$DIST.cow"
+fi
+
+# Make sure the base directory exists.
+if [ ! -d "$BASE" ] ; then
+    echo "Base directory $BASE does not exist" >&2
+    exit 1
+fi
+
+# Set --debian-etch-workaround if DIST is etch.  Assume that everything else
+# is new enough that it will be fine.
+OPTIONS=
+if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
+    OPTIONS="--debian-etch-workaround"
+fi
+
+# If the first argument to the script is update, create, or login, run
+# cowbuilder with the corresponding option under sudo rather than proceeding.
+case $1 in
+update|create|login)
+    sudo cowbuilder --"$1" --basepath "$BASE" --dist "$DIST" $OPTIONS
+    exit $?
+    ;;
+esac
+
+# Now we can finally run pdebuild.  The quoting here is tricky, but this
+# seems to pass everything through properly.
+pdebuild --buildresult .. --pbuilder cowbuilder \
+    --debbuildopts "-i'(?:^|/)\\.git(attributes)?(?:\$|/.*\$)' -I.git $*" \
+    -- --basepath "$BASE" $OPTIONS
+if [ -n "`ls ../*_source.changes`" ] ; then
+    rm ../*_source.changes
+fi
+exit 0
+
+# Documentation.  Use a hack to hide this from the shell.  Because of the
+# above exit line, this should never be executed.
+DOCS=<<__END_OF_DOCS__
+
+=head1 NAME
+
+git-pbuilder - Wrapper around pbuilder for git-buildpackage
+
+=head1 SYNOPSIS
+
+DIST=I<distribution> B<git-pbuilder> I<debbuild-options>
+
+DIST=I<distribution> B<git-pbuilder> (update | create | login)
+
+=head1 DESCRIPTION
+
+B<git-pbuilder> is a wrapper around B<pdebuild> intended for use by
+B<git-buildpackage>.  It configures B<pdebuild> to use B<cowbuilder>,
+passes appropriate options to B<debbuild>, and sets the base path for
+B<cowbuilder> based on the environment variable DIST.
+
+By default, B<git-pbuilder> assumes the target distribution is C<sid> and
+uses F</var/cache/pbuilder/base-sid.cow> if it exists.  If it doesn't,
+F</var/cache/pbuilder/base.cow> is tried.  If DIST is set, its value is
+the target distribution and F</var/cache/pbuilder/base-I<dist>.cow> is
+used instead.  If DIST is C<etch> or C<ebo>, B<--debian-etch-workaround>
+is also passed to B<cowbuilder>.
+
+If B<git-pbuilder> is invoked via a name that starts with
+C<git-pbuilder->, the part after the last hyphen is taken to be the
+distribution (although the environment variable overrides this).  One can
+therefore create symlinks like C<git-pbuilder-lenny> pointing to
+B<git-pbuilder> and use that name when wanting to use a distribution of
+C<lenny>.
+
+Any arguments are passed as-is to B<dpkg-buildpackage> via the
+B<--debbuildopts> option to B<pdebuild>.
+
+Normally, one does not run this script directly.  Instead, it's used as
+the builder script for B<git-buildpackage>.  To configure
+B<git-buildpackage> to use it, add a stanza like:
+
+    [DEFAULT]
+    builder = /path/to/git-pbuilder
+
+in your F<gbp.conf> file (which can be F<.gbp.conf> in your home directory
+or at the top level of the repository, or F<gbp.conf> in the F<.git>
+directory).  DIST is read as an environment variable so that you can set
+it before running B<git-buildpackage> without having to worry about
+passing parameters through B<git-buildpackage>.
+
+Alternately, B<git-pbuilder> may be called with an argument of C<update>,
+C<create>, or C<login>.  In this case, it calls B<cowbuilder> using
+B<sudo> and passes the corresponding command to B<cowbuilder>, using the
+same logic as above to determine the base directory and distribution.
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item DIST
+
+Sets the target distribution.  This is used primarily to determine the
+base path for B<cowbuilder>, but it's also used to determine whether to
+pass B<--debian-etch-workaround> to B<cowbuilder>.
+
+=back
+
+=head1 FILES
+
+=over 4
+
+=item /var/cache/pbuilder/base-sid.cow
+
+=item /var/cache/pbuilder/base.cow
+
+The default C<cowbuilder --basepath> directories, searched for in that
+order, if DIST is not set.
+
+=item /var/cache/pbuilder/base-$DIST.cow
+
+The C<cowbuilder --basepath> directory used if DIST is set.
+
+=back
+
+=head1 SEE ALSO
+
+cowbuilder(8), dpkg-buildpackage(1), git-buildpackage(1), pdebuild(1),
+sudo(8)
+
+The latest version of this script is available from
+L<http://www.eyrie.org/~eagle/software/scripts/>.
+
+=head1 AUTHOR
+
+Russ Allbery <rra@stanford.edu>
+
+=cut
+
+__END_OF_DOCS__
