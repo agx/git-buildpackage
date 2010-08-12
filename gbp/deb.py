@@ -32,6 +32,31 @@ class ParseChangeLogError(Exception):
     """problem parsing changelog"""
     pass
 
+
+class DpkgCompareVersions(gbpc.Command):
+    cmd='/usr/bin/dpkg'
+
+    def __init__(self):
+        if not os.access(self.cmd, os.X_OK):
+            raise GbpError, "%s not found - cannot use compare versions" % self.cmd
+        gbpc.Command.__init__(self, self.cmd, ['--compare-versions'])
+
+    def __call__(self, version1, version2):
+        self.run_error = "Couldn't compare %s with %s" % (version1, version2)
+        res = gbpc.Command.call(self, [ version1, 'lt', version2 ])
+        if res not in [ 0, 1 ]:
+            raise gbpc.CommandExecFailed, "%s: bad return code %d" % (self.run_error, res)
+        if res == 0:
+            return -1
+        elif res == 1:
+            res = gbpc.Command.call(self, [ version1, 'gt', version2 ])
+            if res not in [ 0, 1 ]:
+                raise gbpc.CommandExecFailed, "%s: bad return code %d" % (self.run_error, res)
+            if res == 0:
+                return 1
+        return 0
+
+
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
     compressions = r"(gz|bz2)"
@@ -215,7 +240,9 @@ def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
         return False
     return True
 
+
 def do_uscan():
+    """invoke uscan to fetch a new upstream version"""
     p = subprocess.Popen(['uscan', '--dehs'], stdout=subprocess.PIPE)
     out = p.communicate()[0].split('\n')
     if "<status>up to date</status>" in out:
@@ -242,6 +269,7 @@ def do_uscan():
                 return (True, None)
         return (True, tarball)
 
+
 def unpack_orig(archive, tmpdir, filters):
     """
     unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
@@ -255,6 +283,7 @@ def unpack_orig(archive, tmpdir, filters):
         raise GbpError
     return unpackArchive.dir
 
+
 def repack_orig(archive, tmpdir, dest):
     """
     recreate a new .orig.tar.gz from tmpdir (useful when using filter option)
@@ -266,6 +295,7 @@ def repack_orig(archive, tmpdir, dest):
         print >>sys.stderr, "Failed to create %s" % archive
         raise GbpError
     return repackArchive.dir
+
 
 def tar_toplevel(dir):
     """tar archives can contain a leading directory not"""
@@ -322,5 +352,11 @@ def guess_upstream_version(archive, version_regex=r''):
         m = re.match(filter, os.path.basename(archive))
         if m:
             return m.group('version')
+
+
+def compare_versions(version1, version2):
+    """compares to Debian versionnumbers suitable for sort()"""
+    return DpkgCompareVersions()(version1, version2)
+
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
