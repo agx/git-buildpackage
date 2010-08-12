@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends: cdbs, debhelper (>= 5), python, python-support (>= 0.3),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil, python-nose,
- bash-completion
+ bash-completion, perl
 Standards-Version: 3.9.1
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
 Vcs-Browser: http://git.debian.org/?p=users/agx/git-buildpackage.git

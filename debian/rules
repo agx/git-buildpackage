@@ -23,7 +23,9 @@ EXAMPLE_SCRIPTS=\
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
-MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS) gbp-pq)
+SGML_MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS) gbp-pq)
+POD_MANPAGES=docs/git-pbuilder.1
+MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
 MANUAL=docs/manual-html
 PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
 PYCHECK_LEVEL=Error
@@ -38,6 +40,9 @@ docs/manual.sgml: docs/version.ent
 $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	docbook-2-html -s local $<
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
+
+docs/git-pbuilder.1: git-pbuilder
+	pod2man $< $@
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 checks: $(PYCHECKS)
