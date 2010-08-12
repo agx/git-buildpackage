@@ -1,3 +1,22 @@
+git-buildpackage (0.5.5) experimental; urgency=low
+
+  * [36edd3c] git-dch: Support --nmu, --bpo and --qa. (Closes: #534494)
+  * [7200035] git-dch: Pass dch_options to all calls of spawn_dch. This fixes
+    the problem of an empty [maintainer] at the end of the changelog section.
+    - thanks to Michael Prokop
+  * [8d33c92] git-dch: Guess changelog version number from upstream version
+  * [595d6d8] git-buildpackage: Add --git-pbuilder and --git-dist=<dist>
+    options
+  * [b193936] docs: Use git-pbuilder in the pbuilder chapter
+  * [61e0c3c] docs: Simplify example using --download
+  * [76b16df] docs: Build and install git-pbuilder manpage
+  * [67287d0] Add git-pbuilder (Closes: #583078) - thanks to Russ Allbery
+  * [bc52725] Deprecate our own pbuilder helpers
+  * [3c6bbd0] Better version number replacement (Closes: #534494)
+  * [55fdbc6] Check for legacy tags where necessary.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 12 Aug 2010 23:35:30 +0200
+
 git-buildpackage (0.5.4) unstable; urgency=low
 
   * [88afa61] git-dch: Pass --multimaint-merge on to dch (Closes: #586165)
