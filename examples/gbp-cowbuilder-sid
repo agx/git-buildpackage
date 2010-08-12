@@ -1,13 +1,14 @@
 #!/bin/bash -e
 #
 # cowbuilder helper for git-buildpackage
-# use this as builder:
-# git-buildpackage --git-builder=gbp-cowbuilder-sid
 #
-# you can use this for other dists like sarge, etch, lenny with a symlink: 
-# ln -s gbp-cowbuilder-sid gbp-cowbuilder-lenny
-#
-# and a /etc/pbuilder/pbuilderrc.$DIST
+# This is only left here for compatibility. Better use git-pbuilder instead.
+
+echo "***"
+echo "  This script is deprecated."
+echo "  Please switch to /usr/bin/git-pbuilder"
+echo "  See file:///usr/share/doc/git-buildpackage/manual-html/gbp.special.html#GBP.SPECIAL.PBUILDER"
+echo "***"
 
 DIST=${0/*gbp-cowbuilder-}
 ACTION=$1
