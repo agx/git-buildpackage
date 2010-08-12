@@ -187,7 +187,6 @@ def guess_comp_type(repo, comp_type):
     else:
         if not repo.has_branch(PristineTar.branch):
             comp_type = 'gzip'
-            print >>sys.stderr, "No pristine tar branch found - assuming %s." % comp_type
         else:
             tarball = repo.get_subject(PristineTar.branch)
             comp_type = du.get_compression(tarball)
