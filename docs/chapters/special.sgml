@@ -115,23 +115,33 @@ builder = /usr/bin/git-pbuilder
     Whenever you need to work on an arbitrary Debian package you can check it
     right into &git; with one command:
 <programlisting>
-apt-get source --download-only <filename>package</filename>
-git-import-dsc <filename>package</filename>*.dsc
+git-import-dsc --download <filename>package</filename>
 cd <filename>package</filename>
 git-branch debian
 </programlisting>
     <para>
-    This puts the orig.tar.gz onto the <option>upstream-branch</option> and
-    the Debian patch onto a branch called <emphasis>debian</emphasis>. Now you
-    can easily modify the package, revert changes you made, create other
-    branches for testing, see what changes you made, etc..  When finished just
-    do</para>
+    This uses <command>apt-get</command> to download the source package,
+    puts the orig.tar.gz on the <option>upstream-branch</option> and the
+    Debian changes on the <option>debian-branch</option> (by default
+    <emphasis>master</emphasis>). The second command
+    creates a branch called <emphasis>debian</emphasis>. Now you can easily
+    modify the package, revert changes you made, create other branches for
+    testing, see what changes you made, etc..  When finished just do</para>
 <programlisting>
 git-commit -a
 git-diff debian --
 </programlisting>
     <para>
-    to get a nice patch that can be submitted to the Debian BTS.
+
+    to get a nice patch that can be submitted to the Debian BTS. You can also
+    fetch the source package from an URL:
+
+<programlisting>
+git-import-dsc --download <filename>http://mentors.debian.net/debian/pool/main/i/ipsec-tools/ipsec-tools_0.7.3-9.dsc</filename>
+</programlisting>
+
+   The import works incrementally, you can import new versions on top of
+   already imported ones for e.g. easy review of changes.
     </para>
     </sect1>
 </chapter>
