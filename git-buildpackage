@@ -197,6 +197,14 @@ def guess_comp_type(repo, comp_type):
     return comp_type
 
 
+def setup_pbuilder(options):
+    """setup everything to use git-pbuilder"""
+    if options.use_pbuilder:
+        options.builder = 'git-pbuilder'
+        options.cleaner = '/bin/true'
+        os.environ['DIST'] = options.pbuilder_dist
+
+
 def main(argv):
     changelog = 'debian/changelog'
     retval = 0
@@ -264,6 +272,8 @@ def main(argv):
                       help="hook run after a successful build, default is '%(postbuild)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
                       help="hook run after a successful tag operation, default is '%(posttag)s'")
+    cmd_group.add_boolean_config_file_option(option_name="pbuilder", dest="use_pbuilder")
+    cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir",
                       help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_config_file_option("export", dest="export",
@@ -383,6 +393,7 @@ def main(argv):
                              extra_env={'GBP_GIT_DIR': repo.base_dir(),
                                         'GBP_BUILD_DIR': build_dir})(dir=build_dir)
 
+            setup_pbuilder(options)
             # Finally build the package:
             RunAtCommand(options.builder, dpkg_args, shell=True, 
                          extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)

@@ -61,6 +61,8 @@ class GbpOptionParser(OptionParser):
                  'compression-level': '9',
                  'remote-url-pattern' : 'ssh://alioth.debian.org/git/collab-maint/%(pkg)s.git',
                  'multimaint-merge' : 'False',
+                 'pbuilder'        : 'False',
+                 'dist'            : 'sid',
              }
     help = {
              'debian-branch':
@@ -99,6 +101,10 @@ class GbpOptionParser(OptionParser):
                   "Remote url pattern to create the repo at, default is '%(remote-url-pattern)s'",
              'multimaint-merge':
                   "Merge commits by maintainer, default is '%(multimaint-merge)s'",
+             'pbuilder':
+                  "Invoke git-pbuilder for building, default is '%(pbuilder)s'",
+             'dist':
+                  "Build for this distribution when using git-pbuilder, default is '%(dist)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
