@@ -3,6 +3,7 @@
 # (C) 2006,2007,2008 Guido Guenther <agx@sigxcpu.org>
 """provides git repository related helpers"""
 
+import re
 import subprocess
 import os.path
 from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, GitCommand, copy_from)
@@ -253,11 +254,16 @@ class GitRepository(object):
             raise GitRepositoryError, "Error getting subject of commit %s" % commit
         return out[0].strip()
 
-    def find_tag(self, branch):
+    def find_tag(self, commit, pattern=None):
         "find the closest tag to a branch's head"
-        tag, ret = self.__git_getoutput('describe', [ "--abbrev=0", branch ])
+        args =  [ '--abbrev=0' ]
+        if pattern:
+            args += [ '--match' , pattern ]
+        args += [ commit ]
+
+        tag, ret = self.__git_getoutput('describe', args)
         if ret:
-            raise GitRepositoryError, "can't find tag for %s" % branch
+            raise GitRepositoryError, "can't find tag for %s" % commit
         return tag[0].strip()
 
     def rev_parse(self, name):
@@ -491,6 +497,23 @@ def __sanitize_version(version):
     '0%0_0'
     """
     return version.replace('~', '_').replace(':', '%')
+
+
+def tag_to_version(tag, format):
+    """Extract the version from a tag
+    >>> tag_to_version("upstream/1%2_3-4", "upstream/%(version)s")
+    '1:2~3-4'
+    >>> tag_to_version("foo/2.3.4", "foo/%(version)s")
+    '2.3.4'
+    >>> tag_to_version("foo/2.3.4", "upstream/%(version)s")
+    """
+    version_re = format.replace('%(version)s',
+                                '(?P<version>[\w_%+-.]+)')
+    r = re.match(version_re, tag)
+    if r:
+        version = r.group('version').replace('_', '~').replace('%', ':')
+        return version
+    return None
 
 
 def rfc822_date_to_git(rfc822_date):

@@ -25,10 +25,10 @@ import sys
 import shutil
 import subprocess
 import gbp.command_wrappers as gbpc
-from gbp.git import (GitRepositoryError, GitRepository, build_tag)
+from gbp.git import (GitRepositoryError, GitRepository, build_tag, tag_to_version)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
-from gbp.deb import parse_changelog, NoChangelogError
+from gbp.deb import parse_changelog, NoChangelogError, is_native, compare_versions
 from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -113,8 +113,25 @@ def add_changelog_entry(msg, author, email, dch_options):
     spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
 
 
-def add_changelog_section(msg, distribution, author=None, email=None, version=None, dch_options=''):
+def add_changelog_section(msg, distribution, repo, options, cp,
+                          author=None, email=None, version=None, dch_options=''):
     "add a new changelog section"
+    # If no version(change) was specified guess the new version based on the
+    # latest upstream version on the upstream branch
+    if not version and not is_native(cp):
+        pattern = options.upstream_tag.replace('%(version)s', '*')
+        try:
+            tag = repo.find_tag('HEAD', pattern=pattern)
+            upstream = tag_to_version(tag, options.upstream_tag)
+            if upstream:
+                if options.verbose:
+                    print "Found %s." % upstream
+                new_version = "%s-1" % upstream
+                if compare_versions(upstream, cp['Version']):
+                    version['version'] = new_version
+        except GitRepository:
+            if options.verbose:
+                print "No tag found matching pattern %s." % pattern
     spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email,
               distribution=distribution, dch_options=dch_options)
 
@@ -457,7 +474,10 @@ def main(argv):
                                       version=version_change,
                                       author=commit_author,
                                       email=commit_email,
-                                      dch_options=dch_options)
+                                      dch_options=dch_options,
+                                      repo=repo,
+                                      options=options,
+                                      cp=cp)
                 # Adding a section only needs to happen once.
                 add_section = False
             else:
@@ -475,7 +495,10 @@ def main(argv):
             commit_msg = "UNRELEASED"
             add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED",
                                   version=version_change,
-                                  dch_options=dch_options)
+                                  dch_options=dch_options,
+                                  repo=repo,
+                                  options=options,
+                                  cp=cp)
 
         fixup_trailer(repo, git_author=options.git_author,
                       dch_options=dch_options)
