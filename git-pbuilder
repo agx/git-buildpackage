@@ -55,7 +55,7 @@ else
 fi
 
 # Make sure the base directory exists.
-if [ ! -d "$BASE" ] ; then
+if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
     echo "Base directory $BASE does not exist" >&2
     exit 1
 fi
