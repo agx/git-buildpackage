@@ -60,6 +60,13 @@ if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
     exit 1
 fi
 
+# Make sure we have the necessary tools
+if [ ! -x /usr/sbin/cowbuilder ]; then
+    echo "Cowbuilder not found, you need to install the cowbuilder package."
+    exit 1
+fi
+
+
 # Set --debian-etch-workaround if DIST is etch.  Assume that everything else
 # is new enough that it will be fine.
 OPTIONS=
