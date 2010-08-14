@@ -36,7 +36,7 @@ if [ -z "$DIST" ] ; then
     *git-pbuilder*) DIST= ;;
     esac
 fi
-echo "dist is $DIST"
+[ -n "$DIST" ] && echo "dist is $DIST"
 
 # If DIST is set, use base-$DIST.cow.  If DIST is not set, the sid chroot may
 # be either base.cow or base-sid.cow.  Try both.
