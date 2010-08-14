@@ -7,7 +7,7 @@ git-buildpackage (0.5.6) experimental; urgency=low
 
 git-buildpackage (0.5.5) experimental; urgency=low
 
-  * [36edd3c] git-dch: Support --nmu, --bpo and --qa. (Closes: #534494)
+  * [36edd3c] git-dch: Support --nmu, --bpo and --qa. (Closes: #561535)
   * [7200035] git-dch: Pass dch_options to all calls of spawn_dch. This fixes
     the problem of an empty [maintainer] at the end of the changelog section.
     - thanks to Michael Prokop
