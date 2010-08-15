@@ -1,12 +1,15 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010 Guido Guenther <agx@sigxcpu.org>
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser, OptionGroup
 from ConfigParser import SafeConfigParser
 import os.path
-from gbp.gbp_version import gbp_version
+try:
+    from gbp.gbp_version import gbp_version
+except ImportError:
+    gbp_version = "[Unknown version]"
 
 class GbpOptionParser(OptionParser):
     """
