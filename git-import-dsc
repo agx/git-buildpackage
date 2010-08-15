@@ -262,6 +262,9 @@ def main(argv):
                 else:
                     print >>sys.stderr, "Warning: Didn't find a diff to apply."
             repo.force_head(options.debian_branch, hard=True)
+    except KeyboardInterrupt:
+        ret = 1
+        print >>sys.stderr, "Interrupted. Aborting."
     except gbpc.CommandExecFailed:
         ret = 1
     except GitRepositoryError, msg:
