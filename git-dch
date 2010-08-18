@@ -127,7 +127,7 @@ def add_changelog_section(msg, distribution, repo, options, cp,
                 if options.verbose:
                     print "Found %s." % upstream
                 new_version = "%s-1" % upstream
-                if compare_versions(upstream, cp['Version']):
+                if compare_versions(upstream, cp['Version']) > 0:
                     version['version'] = new_version
         except GitRepository:
             if options.verbose:
