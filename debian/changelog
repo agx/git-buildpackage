@@ -1,3 +1,20 @@
+git-buildpackage (0.5.7) experimental; urgency=low
+
+  * [07c11d5] git-pbuilder: Only output dist if set.
+  * [3d97dfe] git-pbuilder: Check for cowbuilder. The cowbuilder package
+    depends on pbuilder so this is enough.
+  * [7f07ed6] Recommend cowbuilder
+  * [0a081d4] Update copyright file
+  * [af3dc21] Don't fail on gbp_version import errors. This makes it easier to
+    test from the source tree without starting a build first.
+  * [c0dad1a] git-import-dsc: Catch KeyboardInterrupt
+  * [cc557e7] git-dch: Check for greater not unequal when looking for a new
+    upstream version
+  * [74aa351] git-buildpackage: Use --pretty=format: instead of --format= to
+    support the git version in Lenny.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 18 Aug 2010 18:18:35 +0200
+
 git-buildpackage (0.5.6) experimental; urgency=low
 
   * [1d06128] git-pbuilder: When creating a new base image don't fail if it's
