@@ -58,10 +58,10 @@ class GitRepository(object):
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  env=env)
-        (stdin, stderr) = popen.communicate(input)
+        (stdout, stderr) = popen.communicate(input)
         if popen.returncode:
-            stdin = None
-        return stdin
+            stdout = None
+        return stdout
 
     def base_dir(self):
         """Base of the repository"""
