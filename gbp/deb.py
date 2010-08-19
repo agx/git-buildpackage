@@ -13,6 +13,7 @@ import sys
 import glob
 import command_wrappers as gbpc
 from errors import GbpError
+from gbp.git import GitRepositoryError
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
@@ -171,10 +172,30 @@ def parse_dsc(dscfile):
 
     return dsc
 
-
-def parse_changelog(changelog):
+def parse_changelog_repo(repo, branch, filename):
     """
-    parse changelog file changelog
+    Parse the changelog file from given branch in the git
+    repository.
+    """
+    try:
+        # Note that we could just pass in the branch:filename notation
+        # to show as well, but we want to check if the branch / filename
+        # exists first, so we can give a separate error from other
+        # repository errors.
+        sha = repo.rev_parse("%s:%s" % (branch, filename), quiet=True)
+    except GitRepositoryError:
+        raise NoChangelogError, "Changelog %s not found in branch %s" % (filename, branch)
+
+    lines = repo.show(sha)
+    return parse_changelog('\n'.join(lines))
+
+def parse_changelog(contents=None, filename=None):
+    """
+    Parse the content of a changelog file. Either contents, containing
+    the contents of a changelog file, or filename, pointing to a
+    changelog file must be passed.
+
+    Returns:
 
     cp['Version']: full version string including epoch
     cp['Upstream-Version']: upstream version, if not debian native
@@ -182,11 +203,26 @@ def parse_changelog(changelog):
     cp['Epoch']: epoch, if any
     cp['NoEpoch-Version']: full version string excluding epoch
     """
-    if not os.access(changelog, os.F_OK):
-        raise NoChangelogError, "Changelog %s not found" % (changelog, )
-    status, output = commands.getstatusoutput('dpkg-parsechangelog -l%s' % (changelog, ))
-    if status:
-        raise ParseChangeLogError, output
+    # Check that either contents or filename is passed (but not both)
+    if (not filename and not contents) or (filename and contents):
+        raise Exception("Either filename or contents must be passed to parse_changelog")
+
+    # If a filename was passed, check if it exists
+    if filename and not os.access(filename, os.F_OK):
+        raise NoChangelogError, "Changelog %s not found" % (filename, )
+
+    # If no filename was passed, let parse_changelog read from stdin
+    if not filename:
+        filename = '-'
+
+    # Note that if contents is None, stdin will just be closed right
+    # away by communicate.
+    cmd = subprocess.Popen(['dpkg-parsechangelog', '-l%s' % filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (output, errors) = cmd.communicate(contents)
+    if cmd.returncode:
+        raise ParseChangeLogError, "Failed to parse changelog.  dpkg-parsechangelog said:\n%s" % (errors, )
+    # Parse the result of dpkg-parsechangelog (which looks like
+    # email headers)
     cp = email.message_from_string(output)
     try:
         if ':' in cp['Version']:

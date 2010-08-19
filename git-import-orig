@@ -309,10 +309,17 @@ on howto create it otherwise use --upstream-branch to specify it.
 
         # Try to find the source package name
         try:
-            cp = parse_changelog('debian/changelog')
+            cp = parse_changelog(filename='debian/changelog')
             sourcepackage = cp['Source']
         except NoChangelogError:
-            sourcepackage = ask_package_name(guessed_package)
+            try:
+                # Check the changelog file from the repository, in case
+                # we're not on the debian-branch (but upstream, for
+                # example).
+                cp = parse_changelog_repo(repo, options.debian_branch, 'debian/changelog')
+                sourcepackage = cp['Source']
+            except NoChangelogError:
+                sourcepackage = ask_package_name(guessed_package)
 
         # Try to find the version.
         if options.version:
@@ -396,7 +403,10 @@ on howto create it otherwise use --upstream-branch to specify it.
                 if options.postimport:
                     epoch = ''
                     if os.access('debian/changelog', os.R_OK):
-                        cp = parse_changelog('debian/changelog')
+                        # No need to check the changelog file from the
+                        # repository, since we're certain that we're on
+                        # the debian-branch
+                        cp = parse_changelog(filename='debian/changelog')
                         if has_epoch(cp):
                             epoch = '%s:' % cp['Epoch']
                     info = { 'version': "%s%s-1" % (epoch, version) }

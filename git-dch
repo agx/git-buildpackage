@@ -232,7 +232,7 @@ def do_snapshot(changelog, repo, next_snapshot):
     """
     commit = head_commit(repo)
 
-    cp = parse_changelog(changelog)
+    cp = parse_changelog(filename=changelog)
     (release, snapshot) = snapshot_version(cp['Version'])
     snapshot = int(eval(next_snapshot))
 
@@ -417,7 +417,7 @@ def main(argv):
             print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
             raise GbpError, "Use --ignore-branch to ignore or --debian-branch to set the branch name."
 
-        cp = parse_changelog(changelog)
+        cp = parse_changelog(filename=changelog)
 
         if options.since:
             since = options.since

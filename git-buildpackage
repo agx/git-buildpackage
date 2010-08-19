@@ -326,7 +326,7 @@ def main(argv):
                 raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
 
         try:
-            cp = du.parse_changelog(changelog)
+            cp = du.parse_changelog(filename=changelog)
             version = cp['Version']
             version_no_epoch = cp['NoEpoch-Version']
             if du.is_native(cp):
@@ -385,7 +385,7 @@ def main(argv):
 
                 print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
                 dump_tree(tmp_dir, tree)
-                cp = du.parse_changelog(os.path.join(tmp_dir, 'debian', 'changelog'))
+                cp = du.parse_changelog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
                 move_old_export(export_dir)
