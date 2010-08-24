@@ -127,7 +127,7 @@
         <listitem>
 	  <para>Build package using <command>git-pbuilder</command>. Note that
 	  this overwrites any <option>--git-builder</option> and
-	  <option>--git-cleander</option> options.</para>
+	  <option>--git-cleaner</option> options.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
