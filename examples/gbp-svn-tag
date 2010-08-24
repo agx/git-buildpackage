@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Helper script to tag a version in SVN if using git-svn(1)
+
+DIST=$(dpkg-parsechangelog | awk "/^Distribution:/{ print \$2; }")
+VERSION=$(dpkg-parsechangelog | awk "/^Version:/{ print \$2; }")
+
+
+if [ "$DIST" = "UNRELEASED" ]; then
+    echo "Distribution is unreleased"
+    exit 1
+elif [ -z "$VERSION" ]; then
+    echo "Cant read package version"
+    exit 1
+fi
+
+git svn tag -m"Tagging system-config-printer ($VERSION)" $VERSION
+
