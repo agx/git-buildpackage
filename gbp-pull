@@ -58,6 +58,7 @@ def fast_forward_branch(branch, repo, options):
             print >>sys.stderr, "Warning: Skipping non-fast forward of '%s' - use --force" % branch
 
     if update:
+        print "Updating '%s'" % branch
         repo.set_branch(branch)
         GitMerge(remote)()
     return update

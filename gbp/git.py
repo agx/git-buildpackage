@@ -156,19 +156,32 @@ class GitRepository(object):
         return remote
 
     def is_fast_forward(self, from_branch, to_branch):
-        """check if an update from from_branch to to_branch would be a fast
-           forward or if the branch is uptodate already"""
+        """
+        check if an update from from_branch to to_branch would be a fast
+        forward or if the branch is uptodate already
+        @return: can_fast_forward, up_to_date
+        @rtype:  tuple
+        """
+        has_local = False       # local repo has new commits
+        has_remote = False      # remote repo has new commits
         out = self.__git_getoutput('rev-list', ["--left-right",
                                    "%s...%s" % (from_branch, to_branch)])[0]
 
-        if not out: # already up to date
+        if not out: # both branches have the same commits
             return True, True
 
         for line in out:
             if line.startswith("<"):
-                return False, False
+                has_local = True
+            elif line.startswith(">"):
+                has_remote = True
 
-        return True, False
+        if has_local and has_remote:
+            return False, False
+        elif has_local:
+            return False, True
+        elif has_remote:
+            return True, False
 
     def set_branch(self, branch):
         """switch to branch 'branch'"""
