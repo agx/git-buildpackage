@@ -129,7 +129,7 @@ def add_changelog_section(msg, distribution, repo, options, cp,
                 new_version = "%s-1" % upstream
                 if compare_versions(upstream, cp['Version']) > 0:
                     version['version'] = new_version
-        except GitRepository:
+        except GitRepositoryError:
             if options.verbose:
                 print "No tag found matching pattern %s." % pattern
     spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email,
