@@ -4,6 +4,7 @@
 
 DIST=$(dpkg-parsechangelog | awk "/^Distribution:/{ print \$2; }")
 VERSION=$(dpkg-parsechangelog | awk "/^Version:/{ print \$2; }")
+PKG=$(dpkg-parsechangelog | awk "/^Source:/{ print \$2; }")
 
 
 if [ "$DIST" = "UNRELEASED" ]; then
@@ -14,5 +15,5 @@ elif [ -z "$VERSION" ]; then
     exit 1
 fi
 
-git svn tag -m"Tagging system-config-printer ($VERSION)" $VERSION
+git svn tag -m"Tagging $PKG ($VERSION)" $VERSION
 
