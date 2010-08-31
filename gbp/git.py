@@ -194,7 +194,7 @@ class GitRepository(object):
         args = []
         if hard:
             args += [ '--hard' ]
-        args += [ commit ]
+        args += [ commit, '--' ]
         GitCommand("reset")(args)
 
     def is_clean(self):
