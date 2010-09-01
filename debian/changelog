@@ -1,3 +1,18 @@
+git-buildpackage (0.5.8) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [a09cce7] gbp-svn-tag: Simple helper to tag a version if using git-svn
+  * [3262621] gbp-pull: Properly handle local only changes as no update needed
+  * [b1bd417] git-import-dsc: Remove file and commit ambiguity
+  * [65bf135] git-dch: Fix exception name so we don't fail on repos without
+    tags.
+
+  [ Svend Sorensen ]
+  * [39b1a07] Fix --git-cleaner option name in git-buildpackage man page
+    (Closes: #594612)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 01 Sep 2010 10:56:34 +0200
+
 git-buildpackage (0.5.7) experimental; urgency=low
 
   * [07c11d5] git-pbuilder: Only output dist if set.
