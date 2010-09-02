@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: git-pbuilder,v 1.12 2010-08-10 22:05:36 eagle Exp $
+# $Id: git-pbuilder,v 1.16 2010-09-01 21:30:33 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
@@ -27,6 +27,12 @@ set -e
 # found.  git-pbuilder expects them to be named base-<dist>.cow.
 COWBUILDER_BASE=/var/cache/pbuilder
 
+# Make sure we have the necessary tools
+if [ ! -x /usr/sbin/cowbuilder ]; then
+    echo "Cowbuilder not found; you need to install the cowbuilder package" >&2
+    exit 1
+fi
+
 # Set DIST based on the name we were invoked as.  This allows people to create
 # symlinks like git-pbuilder-lenny pointing to git-pbuilder and auto-detecting
 # the distribution from that.
@@ -36,20 +42,30 @@ if [ -z "$DIST" ] ; then
     *git-pbuilder*) DIST= ;;
     esac
 fi
-[ -n "$DIST" ] && echo "dist is $DIST"
+if [ -n "$DIST" ] ; then
+    if [ -n "$ARCH" ] ; then
+        echo "Building for distribution $DIST, architecture $ARCH"
+    else
+        echo "Building for distribution $DIST"
+    fi
+fi
 
 # If DIST is set, use base-$DIST.cow.  If DIST is not set, the sid chroot may
-# be either base.cow or base-sid.cow.  Try both.
+# be either base.cow or base-sid.cow.  Try both.  If ARCH is set, use
+# base-$DIST-$ARCH.cow.
+OPTIONS=
 if [ -z "$DIST" ] ; then
     DIST=sid
 fi
-if [ "$DIST" = 'sid' ] ; then
+if [ -n "$ARCH" ] ; then
+    BASE="$COWBUILDER_BASE/base-$DIST-$ARCH.cow"
+    OPTIONS="--architecture $ARCH"
+elif [ "$DIST" = 'sid' ] ; then
     if [ -d "$COWBUILDER_BASE/base-sid.cow" ] ; then
         BASE="$COWBUILDER_BASE/base-sid.cow"
     else
         BASE="$COWBUILDER_BASE/base.cow"
     fi
-    OPTIONS=
 else
     BASE="$COWBUILDER_BASE/base-$DIST.cow"
 fi
@@ -60,25 +76,19 @@ if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
     exit 1
 fi
 
-# Make sure we have the necessary tools
-if [ ! -x /usr/sbin/cowbuilder ]; then
-    echo "Cowbuilder not found, you need to install the cowbuilder package."
-    exit 1
-fi
-
-
 # Set --debian-etch-workaround if DIST is etch.  Assume that everything else
 # is new enough that it will be fine.
-OPTIONS=
 if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
-    OPTIONS="--debian-etch-workaround"
+    OPTIONS="$OPTIONS --debian-etch-workaround"
 fi
 
 # If the first argument to the script is update, create, or login, run
 # cowbuilder with the corresponding option under sudo rather than proceeding.
 case $1 in
 update|create|login)
-    sudo cowbuilder --"$1" --basepath "$BASE" --dist "$DIST" $OPTIONS
+    action="$1"
+    shift
+    sudo cowbuilder --"$action" --basepath "$BASE" --dist "$DIST" $OPTIONS "$@"
     exit $?
     ;;
 esac
@@ -103,23 +113,28 @@ git-pbuilder - Wrapper around pbuilder for git-buildpackage
 
 =head1 SYNOPSIS
 
-DIST=I<distribution> B<git-pbuilder> I<debbuild-options>
+DIST=I<distribution> ARCH=I<architecture> B<git-pbuilder> I<debbuild-options>
 
-DIST=I<distribution> B<git-pbuilder> (update | create | login)
+DIST=I<distribution> ARCH=I<architecture> \
+    B<git-pbuilder> (update | create | login) I<cowbuilder-options>
 
 =head1 DESCRIPTION
 
 B<git-pbuilder> is a wrapper around B<pdebuild> intended for use by
 B<git-buildpackage>.  It configures B<pdebuild> to use B<cowbuilder>,
 passes appropriate options to B<debbuild>, and sets the base path for
-B<cowbuilder> based on the environment variable DIST.
+B<cowbuilder> based on the environment variable DIST and, if set, the
+environment variable ARCH.
 
-By default, B<git-pbuilder> assumes the target distribution is C<sid> and
-uses F</var/cache/pbuilder/base-sid.cow> if it exists.  If it doesn't,
+By default, B<git-pbuilder> assumes the target distribution is C<sid>, the
+same architecture as the B<cowbuilder> default, and uses
+F</var/cache/pbuilder/base-sid.cow> if it exists.  If it doesn't,
 F</var/cache/pbuilder/base.cow> is tried.  If DIST is set, its value is
 the target distribution and F</var/cache/pbuilder/base-I<dist>.cow> is
 used instead.  If DIST is C<etch> or C<ebo>, B<--debian-etch-workaround>
-is also passed to B<cowbuilder>.
+is also passed to B<cowbuilder>.  If ARCH is set, its value is the target
+architecture and F</var/cache/pbuilder/base-I<dist>-I<arch>.cow> is used,
+with I<dist> being set to C<sid> if DIST was not set.
 
 If B<git-pbuilder> is invoked via a name that starts with
 C<git-pbuilder->, the part after the last hyphen is taken to be the
@@ -147,7 +162,8 @@ passing parameters through B<git-buildpackage>.
 Alternately, B<git-pbuilder> may be called with an argument of C<update>,
 C<create>, or C<login>.  In this case, it calls B<cowbuilder> using
 B<sudo> and passes the corresponding command to B<cowbuilder>, using the
-same logic as above to determine the base directory and distribution.
+same logic as above to determine the base directory and distribution.  Any
+additional arguments to B<git-pbuilder> are passed along to B<cowbuilder>.
 
 =head1 ENVIRONMENT
 
