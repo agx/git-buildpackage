@@ -202,6 +202,8 @@ def setup_pbuilder(options):
         options.builder = 'git-pbuilder'
         options.cleaner = '/bin/true'
         os.environ['DIST'] = options.pbuilder_dist
+        if options.pbuilder_arch:
+            os.environ['ARCH'] = options.pbuilder_arch
 
 
 def main(argv):
@@ -273,6 +275,7 @@ def main(argv):
                       help="hook run after a successful tag operation, default is '%(posttag)s'")
     cmd_group.add_boolean_config_file_option(option_name="pbuilder", dest="use_pbuilder")
     cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
+    cmd_group.add_config_file_option(option_name="arch", dest="pbuilder_arch")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir",
                       help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_config_file_option("export", dest="export",

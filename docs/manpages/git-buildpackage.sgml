@@ -29,6 +29,7 @@
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
       <arg><option>--git-pbuilder=</option></arg>
       <arg><option>--git-dist=</option><replaceable>DIST</replaceable></arg>
+      <arg><option>--git-arch=</option><replaceable>ARCH</replaceable></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
@@ -133,7 +134,17 @@
       <varlistentry>
         <term><option>--git-dist=<replaceable>DIST</replaceable></option></term>
         <listitem>
-          <para>Build for distribution <replaceable>DIST</replaceable> when using <command>--git-pbuilder</command></para>
+	  <para>Build for distribution <replaceable>DIST</replaceable> when
+	  using <command>--git-pbuilder</command>. If unset build for the
+	  unstable distribution.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-arch=<replaceable>ARCH</replaceable></option></term>
+        <listitem>
+	  <para>Build for architecture <replaceable>ARCH</replaceable> when
+	  using <command>--git-pbuilder</command>. If unset no architecture is
+	  passed to <command>git-pbuilder</command>.
         </listitem>
       </varlistentry>
       <varlistentry>

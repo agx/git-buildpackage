@@ -66,6 +66,7 @@ class GbpOptionParser(OptionParser):
                  'multimaint-merge' : 'False',
                  'pbuilder'        : 'False',
                  'dist'            : 'sid',
+                 'arch'            : '',
              }
     help = {
              'debian-branch':
@@ -108,6 +109,8 @@ class GbpOptionParser(OptionParser):
                   "Invoke git-pbuilder for building, default is '%(pbuilder)s'",
              'dist':
                   "Build for this distribution when using git-pbuilder, default is '%(dist)s'",
+             'arch':
+                  "Build for this architecture when using git-pbuilder, default is '%(arch)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
