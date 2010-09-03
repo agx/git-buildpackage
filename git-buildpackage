@@ -31,6 +31,7 @@ from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFail
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from glob import glob
+import gbp.log
 
 # when we want to reference the index in a treeish context we call it:
 index_name = "INDEX"
@@ -45,13 +46,13 @@ def git_archive_pipe(prefix, pipe, output, treeish):
     try:
         ret = pipe.copy('', output)
         if ret:
-            print >>sys.stderr, "Error creating %s: %d" % (output, ret)
+            gbp.log.err("Error creating %s: %d" % (output, ret))
             return False
     except OSError, err:
-        print >>sys.stderr, "Error creating %s: %s" % (output, err[0])
+        gbp.log.err("Error creating %s: %s" % (output, err[0]))
         return False
     except:
-        print >>sys.stderr, "Error creating %s" % (output,)
+        gbp.log.err("Error creating %s" % (output,))
         return False
     return True
 
@@ -111,7 +112,7 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
     if options.pristine_tar:
         pt = PristineTar()
         if not repo.has_branch(pt.branch):
-            print >>sys.stderr, 'Pristine-tar branch "%s" not found' % pt.branch
+            gbp.log.warn('Pristine-tar branch "%s" not found' % pt.branch)
         pt.checkout(os.path.join(output_dir, du.orig_file(cp, options.comp_type)))
         return True
     else:
@@ -128,14 +129,13 @@ def git_archive_build_orig(repo, cp, output_dir, options):
         # fall back to the upstream-branch tip if the tag doesn't exist
         if not repo.has_treeish(upstream_tree):
             upstream_tree = GbpOptionParser.defaults['upstream-branch']
-    print "%s does not exist, creating from '%s'" % (du.orig_file(cp,
-                                                     options.comp_type),
-                                                     upstream_tree)
+    gbp.log.info("%s does not exist, creating from '%s'" % (du.orig_file(cp,
+                                                            options.comp_type),
+                                                            upstream_tree))
     if not repo.has_treeish(upstream_tree):
         raise GbpError # git-ls-tree printed an error message already
-    if options.verbose:
-        print "Building upstream tarball with compression '%s -%s'" % (options.comp_type,
-                                                                       options.comp_level)
+    gbp.log.debug("Building upstream tarball with compression '%s -%s'" % (options.comp_type,
+                                                                           options.comp_level))
     if not git_archive(cp, output_dir, upstream_tree,
                        options.comp_type, options.comp_level):
         raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
@@ -157,7 +157,7 @@ def drop_index(repo):
 
 def extract_orig(orig_tarball, dest_dir):
     """extract orig tarball to export dir before exporting from git"""
-    print "Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir)
+    gbp.log.info("Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir))
 
     move_old_export(dest_dir)
     du.unpack_orig(orig_tarball, dest_dir, '')
@@ -182,7 +182,7 @@ def guess_comp_type(repo, comp_type, srcpkg, upstream_version):
         try:
             dummy = du.compressor_opts[comp_type]
         except KeyError:
-            print >>sys.stderr, "Unknown compression type - guessing."
+            gbp.log.warn("Unknown compression type - guessing.")
             comp_type = 'auto'
     else:
         if not repo.has_branch(PristineTar.branch):
@@ -192,13 +192,15 @@ def guess_comp_type(repo, comp_type, srcpkg, upstream_version):
             commits = repo.grep_log(regex, PristineTar.branch)
             if commits:
                 commit = commits[0]
+                gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
             else:
                 commit = PristineTar.branch
             tarball = repo.get_subject(commit)
             comp_type = du.get_compression(tarball)
+            gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:
                 comp_type = 'gzip'
-                print >>sys.stderr, "Unknown compression type of %s, assuming %s" % (tarball, comp_type)
+                gbp.log.warn("Unknown compression type of %s, assuming %s" % (tarball, comp_type))
     return comp_type
 
 
@@ -228,7 +230,7 @@ def main(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
     except ConfigParser.ParsingError, err:
-        print >>sys.stderr, err
+        gbp.log.err(err)
         return 1
 
     tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
@@ -245,6 +247,7 @@ def main(argv):
     parser.add_boolean_config_file_option(option_name = "ignore-new", dest="ignore_new")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color")
     tag_group.add_option("--git-tag", action="store_true", dest="tag", default=False,
                       help="create a tag after a successful build")
     tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
@@ -290,13 +293,11 @@ def main(argv):
                       help="retain exported package build directory")
     export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
     (options, args) = parser.parse_args(args)
-
-    if options.verbose:
-        Command.verbose = True
+    gbp.log.setup(options.color, options.verbose)
 
     if options.retag:
         if not options.tag and not options.tag_only:
-            print >>sys.stderr, "'--%sretag' needs either '--%stag' or '--%stag-only'" % (prefix, prefix, prefix)
+            gbp.log.err("'--%sretag' needs either '--%stag' or '--%stag-only'" % (prefix, prefix, prefix))
             return 1
 
     if options.overlay and not options.export_dir:
@@ -305,7 +306,7 @@ def main(argv):
     try:
         repo = GitRepository(os.path.curdir)
     except GitRepositoryError:
-        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
+        gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
     else:
         repo_dir = os.path.abspath(os.path.curdir)
@@ -316,13 +317,13 @@ def main(argv):
         if not options.ignore_new:
             (ret, out) = repo.is_clean()
             if not ret:
-                print >>sys.stderr, "You have uncommitted changes in your source tree:"
-                print >>sys.stderr, out
+                gbp.log.err("You have uncommitted changes in your source tree:")
+                gbp.log.err(out)
                 raise GbpError, "Use --git-ignore-new to ignore."
 
         if not options.ignore_new and not options.ignore_branch:
             if branch != options.debian_branch:
-                print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
+                gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
                 raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
 
         try:
@@ -354,11 +355,11 @@ def main(argv):
 
                 # look in tarball_dir first, if found force a symlink to it
                 if options.tarball_dir:
-                    print "Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir)
+                    gbp.log.info("Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir))
                     if not du.symlink_orig(cp, options.comp_type, tarball_dir, output_dir, force=True):
-                        print "Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir)
+                        gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
                     else:
-                        print "Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir)
+                        gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
                 # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
                 if options.force_create or (not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir)):
                     if not pristine_tar_build_orig(repo, cp, output_dir, options):
@@ -383,11 +384,11 @@ def main(argv):
                         raise GbpError, "Cannot overlay Debian native package"
                     extract_orig(os.path.join(output_dir, du.orig_file(cp, options.comp_type)), tmp_dir)
 
-                print "Exporting '%s' to '%s'" % (options.export, tmp_dir)
+                gbp.log.info("Exporting '%s' to '%s'" % (options.export, tmp_dir))
                 dump_tree(tmp_dir, tree)
                 cp = du.parse_changelog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
-                print "Moving '%s' to '%s'" % (tmp_dir, export_dir)
+                gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
                 os.rename(tmp_dir, export_dir)
 
@@ -416,7 +417,7 @@ def main(argv):
                         extra_env={'GBP_CHANGES_FILE': changes,
                                    'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
-            print "Tagging %s" % version
+            gbp.log.info("Tagging %s" % version)
             tag = build_tag(options.debian_tag, version)
             if options.retag and repo.has_tag(tag):
                 repo.remove_tag(tag)
@@ -432,7 +433,7 @@ def main(argv):
         retval = 1
     except GbpError, err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         retval = 1
     finally:
         drop_index(repo)

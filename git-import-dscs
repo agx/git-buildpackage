@@ -27,7 +27,7 @@ import gbp.command_wrappers as gbpc
 from gbp.deb import parse_dsc, DscFile, DpkgCompareVersions
 from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
-
+import gbp.log
 
 class DscCompareVersions(DpkgCompareVersions):
     def __init__(self):
@@ -52,7 +52,7 @@ def fetch_snapshots(pkg, downloaddir):
     "Fetch snapshots using debsnap von snapshots.debian.org"
     dscs = None
 
-    print "Downloading snapshots of '%s' to '%s'..." % (pkg, downloaddir)
+    gbp.log.info("Downloading snapshots of '%s' to '%s'..." % (pkg, downloaddir))
     gbpc.Command("debsnap", [ '--force', '--destdir=%s' % (downloaddir), pkg])()
 
     dscs = glob.glob(os.path.join(downloaddir, '*.dsc'))
@@ -74,6 +74,7 @@ def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
     dscs = []
     ret = 0
+    verbose = False
     dsc_cmp = DscCompareVersions()
     use_debsnap = False
 
@@ -81,7 +82,8 @@ def main(argv):
         import_args = argv[1:]
 
         if '--verbose' in import_args:
-            gbpc.Command.verbose = True
+            verbose = True 
+        gbp.log.setup(False, verbose)
 
         # Not using Configparser since we want to pass all unknown options
         # unaltered to git-import-dsc
@@ -102,7 +104,7 @@ def main(argv):
 
         if use_debsnap:
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp())
-            print "Downloading snapshots of '%s' to '%s'..." % (pkg, dirs['tmp'])
+            gbp.log.info("Downloading snapshots of '%s' to '%s'..." % (pkg, dirs['tmp']))
             dscs = [ parse_dsc(f) for f in fetch_snapshots(pkg, dirs['tmp']) ]
 
         dscs.sort(cmp=dsc_cmp)
@@ -112,7 +114,7 @@ def main(argv):
             repo = GitRepository('.')
             (clean, out) = repo.is_clean()
             if not clean:
-                print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
+                gbp.log.err("Repository has uncommitted changes, commit these first: ")
                 raise GbpError, out
             else:
                 dirs['pkg'] = dirs['top']
@@ -128,7 +130,7 @@ def main(argv):
 
     except (GbpError, gbpc.CommandExecFailed), err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         ret = 1
     finally:
         if dirs.has_key('tmp'):
@@ -136,7 +138,7 @@ def main(argv):
         os.chdir(dirs['top'])
 
     if not ret:
-        print 'Everything imported under %s' % dirs['pkg']
+        gbp.log.info('Everything imported under %s' % dirs['pkg'])
     return ret
 
 if __name__ == '__main__':

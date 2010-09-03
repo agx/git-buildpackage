@@ -32,7 +32,7 @@ from gbp.git import (build_tag, create_repo, GitRepository,
                      GitRepositoryError, rfc822_date_to_git)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
-
+import gbp.log
 
 class SkipImport(Exception):
     pass
@@ -45,7 +45,7 @@ def download_source(pkg, dirs):
         mode='apt-get'
 
     dirs['download'] = os.path.abspath(tempfile.mkdtemp())
-    print "Downloading '%s' using '%s'..." % (pkg, mode)
+    gbp.log.info("Downloading '%s' using '%s'..." % (pkg, mode))
     if mode == 'apt-get':
         gbpc.RunAtCommand('apt-get',
                           ['-qq', '--download-only', 'source', pkg],
@@ -67,10 +67,10 @@ def apply_patch(diff, unpack_dir):
     try:
         ret = pipe.copy('', '')
         if ret:
-            print >>sys.stderr, "Error import %s: %d" % (diff, ret)
+            gbp.log.err("Error import %s: %d" % (diff, ret))
             return False
     except OSError, err:
-        print >>sys.stderr, "Error importing %s: %s" % (diff, err[0])
+        gbp.log.err("Error importing %s: %s" % (diff, err[0]))
         return False
     return True
 
@@ -102,7 +102,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         date= rfc822_date_to_git(dch['Date'])
         author, email = parseaddr(dch['Maintainer'])
         if not (author and email):
-            print >>sys.stderr, "Warning: failed to parse maintainer"
+            gbp.log.warn("Failed to parse maintainer")
 
         commit = repo.commit_dir(unpack_dir,
                                  "Imported Debian patch %s" % version,
@@ -114,7 +114,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         gitTag(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version, commit=commit)
     except gbpc.CommandExecFailed:
-        print >>sys.stderr, "Failed to import Debian package"
+        gbp.log.err("Failed to import Debian package")
         raise GbpError
     finally:
         os.chdir(repo.path)
@@ -122,16 +122,16 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
 
 def print_dsc(dsc):
     if dsc.native:
-        print "Debian Native Package"
-        print "Version:", dsc.upstream_version
-        print "Debian tarball:", dsc.tgz
+        gbp.log.debug("Debian Native Package")
+        gbp.log.debug("Version:", dsc.upstream_version)
+        gbp.log.debug("Debian tarball:", dsc.tgz)
     else:
-        print "Upstream version:", dsc.upstream_version
-        print "Debian version:", dsc.debian_version
-        print "Upstream tarball:", dsc.tgz
-        print "Debian diff:", dsc.diff
+        gbp.log.debug("Upstream version:", dsc.upstream_version)
+        gbp.log.debug("Debian version:", dsc.debian_version)
+        gbp.log.debug("Upstream tarball:", dsc.tgz)
+        gbp.log.debug("Debian diff:", dsc.diff)
     if dsc.epoch:
-        print "Epoch: %s" % dsc.epoch
+        gbp.log.debug("Epoch: %s" % dsc.epoch)
 
 def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
@@ -143,7 +143,7 @@ def main(argv):
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] /path/to/package.dsc')
     except ConfigParser.ParsingError, err:
-        print >>sys.stderr, err
+        gbp.log.err(err)
         return 1
 
     import_group = GbpOptionGroup(parser, "import options",
@@ -158,6 +158,7 @@ def main(argv):
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color")
     parser.add_option("--download", action="store_true", dest="download", default=False,
                       help="download source package")
     branch_group.add_config_file_option(option_name="debian-branch",
@@ -182,9 +183,7 @@ def main(argv):
                       dest="ignore_same_version", default=False,
                       help="don't import already imported version")
     (options, args) = parser.parse_args(argv[1:])
-
-    if options.verbose:
-        gbpc.Command.verbose = True
+    gbp.log.setup(options.color, options.verbose)
 
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
 
@@ -211,7 +210,7 @@ def main(argv):
 
                 (clean, out) = repo.is_clean()
                 if not clean and not is_empty:
-                    print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
+                    gbp.log.err("Repository has uncommitted changes, commit these first: ")
                     raise GbpError, out
 
             except GitRepositoryError:
@@ -220,7 +219,7 @@ def main(argv):
                 is_empty = True
 
             if needs_repo:
-                print "No git repository found, creating one."
+                gbp.log.info("No git repository found, creating one.")
                 repo = create_repo(src.pkg)
                 os.chdir(repo.path)
 
@@ -234,11 +233,11 @@ def main(argv):
 
             if options.ignore_same_version:
                 if repo.find_version(options.debian_tag, src.version):
-                    print "Version %s already imported." % src.version
+                    gbp.log.info("Version %s already imported." % src.version)
                     raise SkipImport
 
             if not repo.find_version(format[0], src.upstream_version):
-                print "tag %s not found, importing %s tarball" % (tag, format[1])
+                gbp.log.info("Tag %s not found, importing %s tarball" % (tag, format[1]))
                 if is_empty:
                     branch = None
                 else:
@@ -261,21 +260,21 @@ def main(argv):
                 if src.diff or src.deb_tgz:
                     apply_debian_patch(repo, unpack_dir, src, options, parents)
                 else:
-                    print >>sys.stderr, "Warning: Didn't find a diff to apply."
+                    gbp.log.warn("Didn't find a diff to apply.")
             if repo.get_branch() == options.debian_branch:
                 # Update HEAD if we modified the checkout out branch
                 repo.force_head(options.debian_branch, hard=True)
     except KeyboardInterrupt:
         ret = 1
-        print >>sys.stderr, "Interrupted. Aborting."
+        gbp.log.err("Interrupted. Aborting.")
     except gbpc.CommandExecFailed:
         ret = 1
     except GitRepositoryError, msg:
-        print >>sys.stderr, "Git command failed: %s" % msg
+        gbp.log.err("Git command failed: %s" % msg)
         ret = 1
     except GbpError, err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         ret = 1
     except SkipImport:
         pass
@@ -287,7 +286,7 @@ def main(argv):
             gbpc.RemoveTree(dirs[d])()
 
     if not ret:
-        print "Everything imported under '%s'" % src.pkg
+        gbp.log.info("Everything imported under '%s'" % src.pkg)
     return ret
 
 if __name__ == '__main__':

@@ -37,6 +37,7 @@ from gbp.deb import (parse_changelog, unpack_orig, repack_orig,
 from gbp.git import (FastImport, GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import (GbpError, GbpNothingImported)
+import gbp.log
 
 # Try to import readline, since that will cause raw_input to get fancy
 # line editing and history capabilities. However, if readline is not
@@ -51,7 +52,7 @@ def cleanup_tmp_tree(tree):
     try:
         gbpc.RemoveTree(tree)()
     except gbpc.CommandExecFailed:
-        print >>sys.stderr, "Removal of tmptree %s failed." % tree
+        gbp.log.err("Removal of tmptree %s failed." % tree)
 
 
 def is_link_target(target, link):
@@ -101,8 +102,7 @@ def fast_import_upstream_tree(repo, tarball, version, options):
         now = "%d %s" % (time.time(), time.strftime("%z"))
         fastimport = FastImport()
         name, email = repo.get_author_info()
-        if options.verbose:
-            print "Starting fastimport of %s" % tarball
+        gbp.log.debug("Starting fastimport of %s" % tarball)
         fastimport.start_commit(options.upstream_branch, name, email, now,
                                 upstream_import_commit_msg(options, version))
         fastimport.do_deleteall()
@@ -119,8 +119,7 @@ def fast_import_upstream_tree(repo, tarball, version, options):
                 fastimport.add_symlink(item.name, item.linkname)
             # if tarinfo.isextended() not implemented:
             elif item.type in ( "x", "g", "X" ):
-                if options.verbose:
-                    print "Skipping %s of type '%s'" % (item.name, item.type)
+                gbp.log.debug("Skipping %s of type '%s'" % (item.name, item.type))
                 continue
             else:
                 raise GbpError, "'%s' is not a regular file (%s) - don't use fastimport." % (item.name, item.type)
@@ -130,14 +129,13 @@ def fast_import_upstream_tree(repo, tarball, version, options):
         tar.close()
         fastimport.close()
 
-    if options.verbose:
-        print "FastImport done."
+    gbp.log.debug("FastImport done.")
 
 
 def turn_off_fastimport(options, msg):
     if options.fast_import:
-        print >>sys.stderr, msg
-        print >>sys.stderr, "Turning off fastimport."
+        gbp.log.warn(msg)
+        gbp.log.warn("Turning off fastimport.")
         options.fast_import = False
 
 
@@ -157,7 +155,7 @@ def ask_package_name(default):
         # Not a valid package name. Print an extra
         # newline before the error to make the output a
         # bit clearer.
-        print "\nNot a valid package name: '%s'.\n%s" % (sourcepackage, packagename_msg)
+        gbp.log.warn("\nNot a valid package name: '%s'.\n%s" % (sourcepackage, packagename_msg))
 
 def ask_package_version(default):
     """
@@ -175,7 +173,7 @@ def ask_package_version(default):
         # Not a valid upstream version. Print an extra
         # newline before the error to make the output a
         # bit clearer.
-        print "\nNot a valid upstream version: '%s'.\n%s" % (version, upstreamversion_msg)
+        gbp.log.warn("\nNot a valid upstream version: '%s'.\n%s" % (version, upstreamversion_msg))
 
 def main(argv):
     ret = 0
@@ -186,7 +184,7 @@ def main(argv):
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
     except ConfigParser.ParsingError, err:
-        print >>sys.stderr, err
+        gbp.log.err(err)
         return 1
 
     cl_group = GbpOptionGroup(parser, "changelog mangling",
@@ -237,6 +235,7 @@ def main(argv):
                                           dest='interactive')
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color")
 
     # Accepted for compatibility
     parser.add_option("--no-dch", dest='no_dch', action="store_true",
@@ -245,12 +244,10 @@ def main(argv):
                       default=False, help="use uscan(1) to download the new tarball.")
 
     (options, args) = parser.parse_args(argv[1:])
-
-    if options.verbose:
-        gbpc.Command.verbose = True
+    gbp.log.setup(options.color, options.verbose)
 
     if options.no_dch:
-        print >>sys.stderr, "'--no-dch' passed. This is now the default, please remove this option."
+        gbp.log.warn("'--no-dch' passed. This is now the default, please remove this option.")
 
     if options.filters:
         turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
@@ -262,19 +259,19 @@ def main(argv):
             if args:
                 raise GbpError, "you can't pass both --uscan and a filename."
 
-            print "Launching uscan...",
+            gbp.log.info("Launching uscan...")
             try:
                 status, tarball = do_uscan()
             except KeyError:
                 raise GbpError, "error running uscan - debug by running uscan --verbose"
 
             if not status and not tarball:
-                print "package is up to date, nothing to do."
+                gbp.log.info("package is up to date, nothing to do.")
                 return 0
             elif status and not tarball:
                 raise GbpError, "uscan didn't download anything, and no tarball was found in ../"
             elif status and tarball:
-                print "using %s" % tarball
+                gbp.log.info("using %s" % tarball)
                 args.append(tarball)
 
         # tarball specified
@@ -298,11 +295,11 @@ def main(argv):
             turn_off_fastimport(options, "Fast importing into empty archives not yet supported.")
 
         if not repo.has_branch(options.upstream_branch) and not is_empty:
-            print >>sys.stderr, """
+            gbp.log.err("""
 Repository does not have branch '%s' for upstream sources. If there is none see
 file:///usr/share/doc/git-buildpackage/manual-html/gbp.import.html#GBP.IMPORT.CONVERT
 on howto create it otherwise use --upstream-branch to specify it.
-"""  % options.upstream_branch
+"""  % options.upstream_branch)
             raise GbpError
 
         # Guess defaults for the package name and version from the
@@ -337,7 +334,7 @@ on howto create it otherwise use --upstream-branch to specify it.
 
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
-            print >>sys.stderr, "Repository has uncommitted changes, commit these first: "
+            gbp.log.err("Repository has uncommitted changes, commit these first: ")
             raise GbpError, out
 
         if os.path.isdir(archive):
@@ -347,8 +344,7 @@ on howto create it otherwise use --upstream-branch to specify it.
             if not options.fast_import:
                 tmpdir = tempfile.mkdtemp(dir='../')
                 unpack_orig(archive, tmpdir, options.filters)
-                if options.verbose:
-                    print "Unpacked %s to '%s'" % (archive , tmpdir)
+                gbp.log.debug("Unpacked %s to '%s'" % (archive , tmpdir))
                 orig_dir = tar_toplevel(tmpdir)
 
                 # Don't mess up or repo with git metadata from an upstream tarball
@@ -359,8 +355,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                     pass
 
                 if options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0:
-                    if options.verbose:
-                        print "Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir)
+                    gbp.log.debug("Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir))
                     archive = os.path.join(
                         os.path.dirname(archive),
                         os.path.basename(archive).replace(".tar", ".gbp.tar")
@@ -372,11 +367,11 @@ on howto create it otherwise use --upstream-branch to specify it.
             upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
             filter_msg = ["", " (filtering out %s)"
                               % options.filters][len(options.filters) > 0]
-            print "Importing '%s' to branch '%s'%s..." % (archive,
-                                                          upstream_branch,
-                                                          filter_msg)
-            print "Source package is %s" % sourcepackage
-            print "Upstream version is %s" % version
+            gbp.log.info("Importing '%s' to branch '%s'%s..." % (archive,
+                                                                 upstream_branch,
+                                                                 filter_msg))
+            gbp.log.info("Source package is %s" % sourcepackage)
+            gbp.log.info("Upstream version is %s" % version)
 
             if options.fast_import:
                 fast_import_upstream_tree(repo, pristine_orig, version, options)
@@ -392,7 +387,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 if pristine_orig:
                     gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
                 else:
-                    print >>sys.stderr, "Warning: '%s' not an archive, skipping pristine-tar" % archive
+                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % archive)
 
             tag = build_tag(options.upstream_tag, version)
             gbpc.GitTag(options.sign_tags, options.keyid)(tag,
@@ -402,7 +397,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                 gbpc.GitBranch()(options.upstream_branch, remote=commit)
                 repo.force_head(options.upstream_branch, hard=True)
             elif options.merge:
-                print "Merging to '%s'" % options.debian_branch
+                gbp.log.info("Merging to '%s'" % options.debian_branch)
                 repo.set_branch(options.debian_branch)
                 try:
                     gbpc.GitMerge(tag)()
@@ -423,19 +418,19 @@ on howto create it otherwise use --upstream-branch to specify it.
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpNothingImported, err:
-        print >>sys.stderr, err
+        gbp.log.err(err)
         repo.set_branch(initial_branch)
         ret = 1
     except GbpError, err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         ret = 1
 
     if tmpdir:
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        print "Succesfully imported version %s of %s" % (version, archive)
+        gbp.log.info("Succesfully imported version %s of %s" % (version, archive))
     return ret
 
 if __name__ == "__main__":

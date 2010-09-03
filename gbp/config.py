@@ -78,6 +78,7 @@ class GbpOptionParser(OptionParser):
                  'dist'            : 'sid',
                  'arch'            : '',
                  'interactive'     : 'True',
+                 'color'           : 'auto',
              }
     help = {
              'debian-branch':
@@ -124,6 +125,8 @@ class GbpOptionParser(OptionParser):
                   "Build for this architecture when using git-pbuilder, default is '%(arch)s'",
              'interactive':
                   "Run command interactive, default is '%(interactive)s'",
+             'color':
+                  "color output, default is '%(color)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

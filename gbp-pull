@@ -27,6 +27,7 @@ from gbp.command_wrappers import (GitFetch, GitMerge, Command,
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
+import gbp.log
 
 def fast_forward_branch(branch, repo, options):
     """
@@ -39,26 +40,26 @@ def fast_forward_branch(branch, repo, options):
 
     remote = repo.get_merge_branch(branch)
     if not remote:
-        print >>sys.stderr, "Warning: no branch tracking '%s' found - skipping." % branch
+        gbp.log.err("Warning: no branch tracking '%s' found - skipping." % branch)
         return False
 
     can_fast_forward, up_to_date = repo.is_fast_forward(branch, remote)
 
     if up_to_date: # Great, we're done
-        print "Branch '%s' is already up to date." % branch
+        gbp.log.info("Branch '%s' is already up to date." % branch)
         return True
 
     if can_fast_forward:
         update = True
     else:
         if options.force:
-            print "Non-fast forwarding '%s' due to --force" % branch
+            gbp.log.info("Non-fast forwarding '%s' due to --force" % branch)
             update = True
         else:
-            print >>sys.stderr, "Warning: Skipping non-fast forward of '%s' - use --force" % branch
+            gbp.log.warn("Skipping non-fast forward of '%s' - use --force" % branch)
 
     if update:
-        print "Updating '%s'" % branch
+        gbp.log.info("Updating '%s'" % branch)
         repo.set_branch(branch)
         GitMerge(remote)()
     return update
@@ -80,16 +81,16 @@ def main(argv):
                       help="Redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color")
+
 
     (options, args) = parser.parse_args(argv)
-
-    if options.verbose:
-        Command.verbose = True
+    gbp.log.setup(options.color, options.verbose)
 
     try:
         repo = GitRepository(os.path.curdir)
     except GitRepositoryError:
-        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
+        gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
 
     try:
@@ -105,8 +106,8 @@ def main(argv):
 
         (ret, out) = repo.is_clean()
         if not ret:
-            print >>sys.stderr, "You have uncommitted changes in your source tree:"
-            print >>sys.stderr, out
+            gbp.log.err("You have uncommitted changes in your source tree:")
+            gbp.log.err(out)
             raise GbpError
 
         GitFetch()()
@@ -124,7 +125,7 @@ def main(argv):
         retval = 1
     except GbpError, err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         retval = 1
 
     return retval

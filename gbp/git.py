@@ -8,6 +8,7 @@ import subprocess
 import os.path
 from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, GitCommand, copy_from)
 from errors import GbpError
+import log
 import dateutil.parser
 import calendar
 
@@ -43,7 +44,9 @@ class GitRepository(object):
         output = []
 
         env = self.__build_env(extra_env)
-        popen = subprocess.Popen(['git', command] + args, stdout=subprocess.PIPE, env=env)
+        cmd = ['git', command] + args
+        log.debug(cmd)
+        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
         while popen.poll() == None:
             output += popen.stdout.readlines()
         ret = popen.poll()

@@ -11,6 +11,7 @@ import sys
 import os
 import os.path
 import signal
+import log
 from errors import GbpError
 
 class CommandExecFailed(Exception):
@@ -23,8 +24,6 @@ class Command(object):
     Wraps a shell command, so we don't have to store any kind of command line options in 
     one of the git-buildpackage commands
     """
-    verbose = False
-
     def __init__(self, cmd, args=[], shell=False, extra_env=None):
         self.cmd = cmd
         self.args = args
@@ -42,8 +41,7 @@ class Command(object):
             "restore default signal handler (http://bugs.python.org/issue1652)"
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-        if self.verbose:
-            print self.cmd, self.args, args
+        log.debug("%s %s %s" % (self.cmd, self.args, args))
         cmd = [ self.cmd ] + self.args + args
         if self.shell: # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)

@@ -27,7 +27,7 @@ from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (GitClone, Command, CommandExecFailed,
                                   GitBranch, PristineTar)
 from gbp.errors import GbpError
-
+import gbp.log
 
 def main(argv):
     retval = 0
@@ -44,22 +44,20 @@ def main(argv):
                       help="Track all branches, not only debian and upstream")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color")
 
     (options, args) = parser.parse_args(argv)
+    gbp.log.setup(options.color, options.verbose)
 
     if len(args) != 2:
-        print >>sys.stderr, "Need a repository to clone.\n"
-        parser.print_help()
+        gbp.log.err("Need a repository to clone.")
         return 1
     else:
         source = args[1]
 
-    if options.verbose:
-        Command.verbose = True
-
     try:
         GitRepository(os.path.curdir)
-        print >>sys.stderr, "Can't run inside a git repository."
+        gbp.log.err("Can't run inside a git repository.")
         return 1
     except GitRepositoryError:
         pass
@@ -94,7 +92,7 @@ def main(argv):
         retval = 1
     except GbpError, err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         retval = 1
 
     return retval

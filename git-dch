@@ -25,6 +25,7 @@ import sys
 import shutil
 import subprocess
 import gbp.command_wrappers as gbpc
+import gbp.log
 from gbp.git import (GitRepositoryError, GitRepository, build_tag, tag_to_version)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
@@ -124,14 +125,12 @@ def add_changelog_section(msg, distribution, repo, options, cp,
             tag = repo.find_tag('HEAD', pattern=pattern)
             upstream = tag_to_version(tag, options.upstream_tag)
             if upstream:
-                if options.verbose:
-                    print "Found %s." % upstream
+                gbp.log.debug("Found %s." % upstream)
                 new_version = "%s-1" % upstream
                 if compare_versions(upstream, cp['Version']) > 0:
                     version['version'] = new_version
         except GitRepositoryError:
-            if options.verbose:
-                print "No tag found matching pattern %s." % pattern
+            gbp.log.debug("No tag found matching pattern %s." % pattern)
     spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email,
               distribution=distribution, dch_options=dch_options)
 
@@ -325,7 +324,7 @@ def guess_snapshot_commit(cp, repo, options):
     # was last touched.
     last = repo.commits(paths="debian/changelog", options=["-1"])
     if last:
-        print "Changelog last touched at '%s'" % last[0]
+        gbp.log.info("Changelog last touched at '%s'" % last[0])
         return last[0]
     return None
 
@@ -342,7 +341,7 @@ def main(argv):
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] paths')
     except ConfigParser.ParsingError, err:
-        print >>sys.stderr, err
+        gbp.log.errror(err)
         return 1
     range_group = GbpOptionGroup(parser, "commit range options", "which commits to add to the changelog")
     version_group = GbpOptionGroup(parser, "release & version number options", "what version number and release to use")
@@ -363,6 +362,7 @@ def main(argv):
                       help="options to pass to git-log, default is '%(git-log)s'")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color")
     range_group.add_option("-s", "--since", dest="since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
     range_group.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")
@@ -391,6 +391,7 @@ def main(argv):
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
 
     (options, args) = parser.parse_args(argv[1:])
+    gbp.log.setup(options.color, options.verbose)
 
     if options.snapshot and options.release:
         parser.error("'--snapshot' and '--release' are incompatible options")
@@ -404,9 +405,6 @@ def main(argv):
         dch_options = "--nomultimaint-merge"
 
     try:
-        if options.verbose:
-            gbpc.Command.verbose = True
-
         try:
             repo = GitRepository('.')
         except GitRepositoryError:
@@ -414,7 +412,7 @@ def main(argv):
 
         branch = repo.get_branch()
         if options.debian_branch != branch and not options.ignore_branch:
-            print >>sys.stderr, "You are not on branch '%s' but on '%s'" % (options.debian_branch, branch)
+            gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
             raise GbpError, "Use --ignore-branch to ignore or --debian-branch to set the branch name."
 
         cp = parse_changelog(filename=changelog)
@@ -426,17 +424,17 @@ def main(argv):
             if options.auto:
                 since = guess_snapshot_commit(cp, repo, options)
                 if since:
-                    print "Continuing from commit '%s'" % since
+                    gbp.log.info("Continuing from commit '%s'" % since)
                     found_snapshot_header = True
                 else:
-                    print "Couldn't find snapshot header, using version info"
+                    gbp.log.info("Couldn't find snapshot header, using version info")
             if not since:
                 since = repo.find_version(options.debian_tag, cp['Version'])
                 if not since:
                     raise GbpError, "Version %s not found" % cp['Version']
 
         if args:
-            print "Only looking for changes on '%s'" % " ".join(args)
+            gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
         commits = repo.commits(since=since, until=until, paths=" ".join(args), options=options.git_log.split(" "))
 
         # add a new changelog section if:
@@ -487,7 +485,7 @@ def main(argv):
         # Show a message if there were no commits (not even ignored
         # commits).
         if not commits:
-            print "No changes detected from %s to %s." % (since, until)
+            gbp.log.info("No changes detected from %s to %s." % (since, until))
 
         if add_section:
             # If we end up here, then there were no commits to include,
@@ -508,11 +506,11 @@ def main(argv):
                        dch_options=dch_options)
         elif options.snapshot:
             (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
-            print "Changelog has been prepared for snapshot #%d at %s" % (snap, version)
+            gbp.log.info("Changelog has been prepared for snapshot #%d at %s" % (snap, version))
 
     except (GbpError, GitRepositoryError, NoChangelogError), err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         ret = 1
     return ret
 
