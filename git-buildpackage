@@ -175,7 +175,7 @@ def extract_orig(orig_tarball, dest_dir):
         os.rmdir(tar_topdir)
 
 
-def guess_comp_type(repo, comp_type):
+def guess_comp_type(repo, comp_type, srcpkg, upstream_version):
     """Guess compression type"""
 
     if comp_type != 'auto':
@@ -188,7 +188,13 @@ def guess_comp_type(repo, comp_type):
         if not repo.has_branch(PristineTar.branch):
             comp_type = 'gzip'
         else:
-            tarball = repo.get_subject(PristineTar.branch)
+            regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (srcpkg, upstream_version)
+            commits = repo.grep_log(regex, PristineTar.branch)
+            if commits:
+                commit = commits[0]
+            else:
+                commit = PristineTar.branch
+            tarball = repo.get_subject(commit)
             comp_type = du.get_compression(tarball)
             if not comp_type:
                 comp_type = 'gzip'
@@ -341,9 +347,9 @@ def main(argv):
             else:
                 tarball_dir = output_dir
 
-            options.comp_type = guess_comp_type (repo, options.comp_type)
             # Get/build the orig.tar.gz if necessary:
             if not du.is_native(cp):
+                options.comp_type = guess_comp_type(repo, options.comp_type, cp['Source'], major)
                 orig_file = du.orig_file(cp, options.comp_type)
 
                 # look in tarball_dir first, if found force a symlink to it

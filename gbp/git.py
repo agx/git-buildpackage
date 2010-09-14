@@ -259,6 +259,18 @@ class GitRepository(object):
         for line in commit:
             yield line
 
+    def grep_log(self, regex, where=None):
+        args = ['--pretty=format:%H']
+        args.append("--grep=%s" % regex)
+        if where:
+            args.append(where)
+        args.append('--')
+
+        commits, ret = self.__git_getoutput('log', args)
+        if ret:
+            raise GitRepositoryError, "Error grepping log for %s" % regex
+        return [ commit.strip() for commit in commits[::-1] ]
+
     def get_subject(self, commit):
         """Gets the subject of a commit"""
         self.__check_path()
