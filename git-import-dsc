@@ -261,8 +261,9 @@ def main(argv):
                     apply_debian_patch(repo, unpack_dir, src, options, parents)
                 else:
                     print >>sys.stderr, "Warning: Didn't find a diff to apply."
-            repo.set_branch(options.debian_branch)
-            repo.force_head(options.debian_branch, hard=True)
+            if repo.get_branch() == options.debian_branch:
+                # Update HEAD if we modified the checkout out branch
+                repo.force_head(options.debian_branch, hard=True)
     except KeyboardInterrupt:
         ret = 1
         print >>sys.stderr, "Interrupted. Aborting."
