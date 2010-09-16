@@ -94,7 +94,8 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         if src.deb_tgz and not apply_deb_tgz(src.deb_tgz, unpack_dir):
             raise GbpError
 
-        os.chmod('debian/rules', 0755)
+        if os.path.exists('debian/rules'):
+            os.chmod('debian/rules', 0755)
         os.chdir(repo.path)
 
         dch = parse_changelog(os.path.join(unpack_dir, 'debian/changelog'))
