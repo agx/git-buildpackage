@@ -1,3 +1,19 @@
+git-buildpackage (0.5.9) experimental; urgency=low
+
+  * [6a200ad] Resync with git-pbuilder 0.16 (Closes: #595055)
+  * [ed97b84] Add --git-arch option
+  * [257a3e1] Switch to debian branch before forcing the HEAD update
+    otherwise we might forward the current branch to another branch's
+    ref - thanks to Rolf Leggewie for the testcase
+  * [af97781] Avoid unnecessary branch switch when fixing the previous
+    issues. (LP: #637286)
+  * [70c5b22] Improve compression format detection by checking if a
+    version is already on the pristine-tar branch and use it's
+    compression type if found. (LP: #615212)
+  * [02b1a03] Don't fail on missing debian/rules. (LP: #638371)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 17 Sep 2010 10:42:32 +0200
+
 git-buildpackage (0.5.8) experimental; urgency=low
 
   [ Guido Günther ]
