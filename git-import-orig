@@ -233,6 +233,8 @@ def main(argv):
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport",
                       help="hook run after a successful import, default is '%(postimport)s'")
 
+    parser.add_boolean_config_file_option(option_name="interactive",
+                                          dest='interactive')
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
 
@@ -319,13 +321,19 @@ on howto create it otherwise use --upstream-branch to specify it.
                 cp = parse_changelog_repo(repo, options.debian_branch, 'debian/changelog')
                 sourcepackage = cp['Source']
             except NoChangelogError:
-                sourcepackage = ask_package_name(guessed_package)
+                if options.interactive:
+                    sourcepackage = ask_package_name(guessed_package)
+                else:
+                    sourcepackage = guessed_package
 
         # Try to find the version.
         if options.version:
             version = options.version
         else:
-            version = ask_package_version(guessed_version)
+            if options.interactive:
+                version = ask_package_version(guessed_version)
+            else:
+                version = guessed_version
 
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
