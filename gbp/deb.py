@@ -308,7 +308,7 @@ def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
 
 def do_uscan():
     """invoke uscan to fetch a new upstream version"""
-    p = subprocess.Popen(['uscan', '--dehs'], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['uscan', '--symlink', '--destdir=..', '--dehs'], stdout=subprocess.PIPE)
     out = p.communicate()[0].split('\n')
     if "<status>up to date</status>" in out:
         # nothing to do.
