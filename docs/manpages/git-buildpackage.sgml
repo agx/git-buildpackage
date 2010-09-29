@@ -254,6 +254,13 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--git-overlay</option>
+        </term>
+        <listitem>
+	  <para>Extract orig tarball when using export-dir option (analog to mergeWithUpstream in svn-bp)</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git-export-dir=</option><replaceable>directory</replaceable>
         </term>
         <listitem>
