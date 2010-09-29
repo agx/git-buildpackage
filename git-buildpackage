@@ -409,6 +409,9 @@ def main(argv):
                 arch = du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir, cp['Source'], version_no_epoch, arch))
+                if not os.path.exists(changes):
+                    changes = os.path.abspath("%s/../%s_%s_source.changes" %
+                                  (build_dir, cp['Source'], version_no_epoch))
                 Command(options.postbuild, shell=True,
                         extra_env={'GBP_CHANGES_FILE': changes,
                                    'GBP_BUILD_DIR': build_dir})()
