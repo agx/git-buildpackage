@@ -1,3 +1,11 @@
+git-buildpackage (0.5.10) unstable; urgency=low
+
+  * [4b23f2d] Warn if not invoked by git-buildpackage git-pbuilder is
+    supposed to be invoked by git-buildpackage. Otherwise things like
+    export-dir aren't respected. (Closes: #596625)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 27 Sep 2010 09:46:52 +0200
+
 git-buildpackage (0.5.9) experimental; urgency=low
 
   * [6a200ad] Resync with git-pbuilder 0.16 (Closes: #595055)

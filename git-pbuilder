@@ -91,6 +91,11 @@ update|create|login)
     sudo cowbuilder --"$action" --basepath "$BASE" --dist "$DIST" $OPTIONS "$@"
     exit $?
     ;;
+*)
+    if [ -z "$GBP_BUILD_DIR" ]; then
+        echo "WARNING: not invoked by git-buildpackage." >&2
+    fi
+    ;;
 esac
 
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
