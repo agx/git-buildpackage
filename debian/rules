@@ -65,7 +65,7 @@ binary-post-install/git-buildpackage::
 	dh_bash-completion
 
 clean::
-	-rm git-*.py gbp-*.py
+	-rm git-*.py gbp-*.py gbp/gbp_version.py
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT) git-pbuilder.1
 	-rm -r docs/manual-html/
 
