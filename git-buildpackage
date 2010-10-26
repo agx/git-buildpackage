@@ -260,7 +260,7 @@ def main(argv):
                       help="force creation of orig.tar.gz", action="store_true")
     orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
                       help="don't create orig.tar.gz", action="store_true")
-    orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir",
+    orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",
                       help="location to look for external tarballs")
     orig_group.add_config_file_option(option_name="compression", dest="comp_type",
                       help="Compression type, default is '%(compression)s'")
@@ -282,7 +282,7 @@ def main(argv):
     cmd_group.add_boolean_config_file_option(option_name="pbuilder", dest="use_pbuilder")
     cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
     cmd_group.add_config_file_option(option_name="arch", dest="pbuilder_arch")
-    export_group.add_config_file_option(option_name="export-dir", dest="export_dir",
+    export_group.add_config_file_option(option_name="export-dir", dest="export_dir", type="path",
                       help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_config_file_option("export", dest="export",
                       help="export treeish object TREEISH, default is '%(export)s'", metavar="TREEISH")

@@ -3,13 +3,23 @@
 # (C) 2006,2007,2010 Guido Guenther <agx@sigxcpu.org>
 """handles command line and config file option parsing for the gbp commands"""
 
-from optparse import OptionParser, OptionGroup
+from optparse import OptionParser, OptionGroup, Option
 from ConfigParser import SafeConfigParser
+from copy import copy
 import os.path
 try:
     from gbp.gbp_version import gbp_version
 except ImportError:
     gbp_version = "[Unknown version]"
+
+def expand_path(option, opt, value):
+    value = os.path.expandvars(value)
+    return os.path.expanduser(value)
+
+class GbpOption(Option):
+    TYPES = Option.TYPES + ('path',)
+    TYPE_CHECKER = copy(Option.TYPE_CHECKER)
+    TYPE_CHECKER['path'] = expand_path
 
 class GbpOptionParser(OptionParser):
     """
@@ -142,7 +152,7 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.__parse_config_files()
-        OptionParser.__init__(self, usage=usage, version='%s %s' % (self.command, gbp_version))
+        OptionParser.__init__(self, option_class=GbpOption, usage=usage, version='%s %s' % (self.command, gbp_version))
 
     def _is_boolean(self, option_name, *args, **kwargs):
         """is option_name a boolean option"""
