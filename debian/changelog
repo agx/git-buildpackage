@@ -1,3 +1,40 @@
+git-buildpackage (0.5.11) unstable; urgency=low
+
+  [ Matthijs Kooijman ]
+  * [083834b] git-import-orig: Ask the user for the package name and version
+    if needed.  If there is no debian/changelog to find the source package
+    name, and/or the upstream version was not given on the commandline, ask
+    the user for them. The values guessed from the original tarball name are
+    offered as defaults to the user. Previously, this guessed version was used
+    without confirmation. (Closes: #479172)
+  * [ee0e9ff] Let git-import-orig find the changelog when not on the
+    debian-branch. When no changelog file is available in the checkout, look
+    for the changelog in the repository.
+
+  [ Guido Günther ]
+  * [beaee6e] git-import-orig: Add --[no]-interactive to avoid prompts on
+    import.
+  * [223b97a] Fall back to source only changes file if the architecture one
+    doesn't exist. (Closes: #593598)
+  * [a6f2974] Makes uscan options explicit - thanks to Chris Butler.
+    (Closes: #596003)
+  * [ea9a656] Don't put generated gbp/gbp_version.py into the source package.
+  * [c385e76] Fix download location - thanks to Rob Browning.
+  * [7e79bcd] Add logging functions. This allows us to color and prefix the
+    output. Coloring can be disanbled via the --color option.
+    (Closes: #544332)
+
+  [ Yaroslav Halchenko ]
+  * [d62fadd] Document --git-overlay. (Closes: #598530)
+
+  [ Benoît Knecht ]
+  * [dfe9104] Expand environment variables and '~' in gbp.conf paths.
+    Options that expect a path in gbp.conf can now be given as
+    '~/path/to/dir' or '$HOME/path/to/dir' (or any other environment
+    variable for that matter). (Closes: #545692)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 16 Nov 2010 13:27:41 +0100
+
 git-buildpackage (0.5.10) unstable; urgency=low
 
   * [4b23f2d] Warn if not invoked by git-buildpackage git-pbuilder is
