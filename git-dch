@@ -34,7 +34,7 @@ from gbp.command_wrappers import (Command, CommandExecFailed)
 
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
-bug_r = r'(?:bug)?\#?\s?\d+'
+bug_r = r'(?:bug|issue)?\#?\s?\d+'
 bug_re = re.compile(bug_r, re.I)
 
 def system(cmd):
