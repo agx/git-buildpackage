@@ -1,6 +1,6 @@
 <chapter id="gbp.cfgfile">
     <title>Configuration files</title>
-    <para>Four configuration files are parsed in this order:
+    <para>The configuration files are parsed in this order:
     <variablelist>
       <varlistentry>
       <term>/etc/git-buildpackage/gbp.conf</term>
@@ -23,7 +23,7 @@
       <listitem><para>per (local) repository configuration</para></listitem> 
       </varlistentry> 
     </variablelist>
-    All four have the same format. They consist of (at most) five sections, all of them are optional:
+    All have the same format. They consist of (at most) five sections, all of them are optional:
     <variablelist>
       <varlistentry>
       <term>[DEFAULT]</term>
