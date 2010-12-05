@@ -490,7 +490,6 @@ def main(argv):
         if add_section:
             # If we end up here, then there were no commits to include,
             # so we put a dummy message in the new section.
-            commit_msg = "UNRELEASED"
             add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED",
                                   version=version_change,
                                   dch_options=dch_options,
