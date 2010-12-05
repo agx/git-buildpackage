@@ -277,7 +277,7 @@ class GitRepository(object):
     def get_subject(self, commit):
         """Gets the subject of a commit"""
         self.__check_path()
-        out, ret =  self.__git_getoutput('show', ['--pretty=format:%s',  commit])
+        out, ret =  self.__git_getoutput('log', ['-n1', '--pretty=format:%s',  commit])
         if ret:
             raise GitRepositoryError, "Error getting subject of commit %s" % commit
         return out[0].strip()
