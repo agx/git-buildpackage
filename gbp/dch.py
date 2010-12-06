@@ -93,6 +93,7 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     then this entry is the last one in the series."""
     entry = [commit_info['subject']]
     body = commit_info['body']
+    commitid = commit_info['id']
     (git_dch_cmds, body) = extract_git_dch_cmds(body, options)
     if 'ignore' in git_dch_cmds:
         return None
