@@ -79,6 +79,7 @@ class GbpOptionParser(OptionParser):
                  'arch'            : '',
                  'interactive'     : 'True',
                  'color'           : 'auto',
+                 'customizations'  : ''
              }
     help = {
              'debian-branch':

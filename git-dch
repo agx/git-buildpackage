@@ -25,6 +25,7 @@ import sys
 import shutil
 import subprocess
 import gbp.command_wrappers as gbpc
+import gbp.dch as dch
 import gbp.log
 from gbp.git import (GitRepositoryError, GitRepository, build_tag, tag_to_version)
 from gbp.config import GbpOptionParser, GbpOptionGroup
@@ -32,10 +33,9 @@ from gbp.errors import GbpError
 from gbp.deb import parse_changelog, NoChangelogError, is_native, compare_versions
 from gbp.command_wrappers import (Command, CommandExecFailed)
 
+user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
-author_re = re.compile('Author: (?P<author>.*) <(?P<email>.*)>')
-bug_r = r'(?:bug|issue)?\#?\s?\d+'
-bug_re = re.compile(bug_r, re.I)
+
 
 def system(cmd):
     try:
@@ -44,29 +44,7 @@ def system(cmd):
         raise GbpError
 
 
-def escape_commit(msg):
-    return msg.replace('"','\\\"').replace("$","\$").replace("`","\`")
-
-def ispunct(ch):
-    return not ch.isalnum() and not ch.isspace()
-
-def punctuate_commit(msg):
-    """Terminate the first line of a commit message with a '.' if it's a
-       multiline commit"""
-    lines = msg.split('\n', 1)
-    if len(lines) <= 1:
-        return msg
-    first, rest = lines
-    # Don't add a dot on one line commit messages
-    if not rest:
-        return msg
-    if first and ispunct(first[-1]):
-        return msg
-    if ispunct(rest[0]) or rest[0].islower():
-        return msg
-    return "%s.\n%s" % (first, rest)
-
-def spawn_dch(msg='', author=None, email=None, newversion=False, version=None,
+def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
               release=False, distribution=None, dch_options=''):
     """
     Spawn dch
@@ -94,9 +72,6 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None,
         versionopt = "--release --no-force-save-on-release"
         msg = None
 
-    if msg:
-        msg = punctuate_commit(msg)
-
     if author and email:
         env = """DEBFULLNAME="%s" DEBEMAIL="%s" """ % (author, email)
 
@@ -104,9 +79,22 @@ def spawn_dch(msg='', author=None, email=None, newversion=False, version=None,
         distopt = "--distribution=%s" % distribution
 
     cmd = '%(env)s dch --no-auto-nmu  %(distopt)s %(versionopt)s %(dch_options)s ' % locals()
-    if type(msg) == type(''):
-        cmd += '-- "%s"' % escape_commit(msg)
+    if msg:
+        cmd += '-- "[[[insert-git-dch-commit-message-here]]]"'
+    else:
+        cmd += '-- ""'
     system(cmd)
+    if msg:
+        old_cl = open("debian/changelog", "r")
+        new_cl = open("debian/changelog.bak", "w")
+        for line in old_cl:
+            if line == "  * [[[insert-git-dch-commit-message-here]]]\n":
+                print >> new_cl, "  * " + msg[0]
+                for line in msg[1:]:
+                    print >> new_cl, "    " + line
+            else:
+                print >> new_cl, line,
+        os.rename("debian/changelog.bak", "debian/changelog")
 
 
 def add_changelog_entry(msg, author, email, dch_options):
@@ -242,69 +230,16 @@ def do_snapshot(changelog, repo, next_snapshot):
     return snapshot, commit
 
 
-def get_author(commit):
-    """get the author from a commit message"""
-    for line in commit:
-        m = author_re.match(line)
-        if m:
-            return m.group('author'), m.group('email')
-
-
-def parse_commit(repo, commitid, options):
-    """parse a commit and return message and author"""
-    msg = ''
-    thanks = ''
-    closes = ''
-    git_dch = ''
-    bugs = {}
-    bts_closes = re.compile(r'(?P<bts>%s):\s+%s' % (options.meta_closes, bug_r), re.I)
-
-    if options.ignore_regex: # Ignore r'' since it matches everything
-        ignore_re = re.compile(options.ignore_regex)
-    else:
-        ignore_re = None
-
-    commit = repo.show(commitid)
-    author, email = get_author(commit)
-    if not author:
-        raise GbpError, "can't parse author of commit %s" % commit
-    for line in commit:
-        if line.startswith('    '): # commit body
-            line = line[4:]
-            m = bts_closes.match(line)
-            if m:
-                bug_nums = [ bug.strip() for bug in bug_re.findall(line, re.I) ]
-                try:
-                    bugs[m.group('bts')] += bug_nums
-                except KeyError:
-                    bugs[m.group('bts')] = bug_nums
-            elif line.startswith('Thanks: '):
-                thanks = line.split(' ', 1)[1].strip()
-            elif line.startswith('Git-Dch: '):
-                git_dch = line.split(' ', 1)[1].strip()
-            else: # normal commit message
-                if msg and not options.full:
-                    continue
-                if ignore_re and ignore_re.match(line):
-                    continue
-                if line.strip(): # don't add all whitespace lines
-                    msg += line
-        # start of diff output:
-        elif line.startswith('diff '):
-            break
-    if options.meta:
-        if git_dch == 'Ignore':
-            return None
-        if git_dch == 'Short':
-            msg = msg.split('\n')[0]
-        for bts in bugs:
-            closes += '(%s: %s) ' % (bts, ', '.join(bugs[bts]))
-        if thanks:
-            thanks = '- thanks to %s' % thanks
-        msg += closes + thanks
-    if options.idlen:
-        msg = "[%s] " % commitid[0:options.idlen] + msg
-    return msg, (author, email)
+def parse_commit(repo, commitid, opts, last_commit=False):
+    """parse a commit and return message, author, and author email"""
+    commit_info = repo.get_commit_info(commitid)
+    author = commit_info['author']
+    email = commit_info['email']
+    format_entry = user_customizations.get('format_changelog_entry')
+    if not format_entry:
+        format_entry = dch.format_changelog_entry
+    entry = format_entry(commit_info, opts, last_commit=last_commit)
+    return entry, (author, email)
 
 
 def guess_snapshot_commit(cp, repo, options):
@@ -347,10 +282,12 @@ def main(argv):
     version_group = GbpOptionGroup(parser, "release & version number options", "what version number and release to use")
     commit_group = GbpOptionGroup(parser, "commit message formatting", "howto format the changelog entries")
     naming_group = GbpOptionGroup(parser, "branch and tag naming", "branch names and tag formats")
+    custom_group = GbpOptionGroup(parser, "customization", "options for customization")
     parser.add_option_group(range_group)
     parser.add_option_group(version_group)
     parser.add_option_group(commit_group)
     parser.add_option_group(naming_group)
+    parser.add_option_group(custom_group)
 
     parser.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
     naming_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
@@ -390,6 +327,13 @@ def main(argv):
                       help="Ignore commit lines matching regex, default is '%(ignore-regex)s'")
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
 
+    help_msg = 'Load Python code from CUSTOMIZATION_FILE.  At the moment,' \
+        + ' the only useful thing the code can do is define a custom' \
+        + ' format_changelog_entry() function.'
+    custom_group.add_config_file_option(option_name="customizations",
+                                        dest="customization_file",
+                                        help=help_msg)
+
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
 
@@ -404,6 +348,10 @@ def main(argv):
     else:
         dch_options = "--nomultimaint-merge"
 
+    if options.customization_file:
+        execfile(options.customization_file,
+                 user_customizations,
+                 user_customizations)
     try:
         try:
             repo = GitRepository('.')
@@ -458,8 +406,11 @@ def main(argv):
         else:
             add_section = False
 
+        i = 0
         for c in commits:
-            parsed = parse_commit(repo, c, options)
+            i += 1
+            parsed = parse_commit(repo, c, options,
+                                  last_commit = i == len(commits))
             if not parsed:
                 # Some commits can be ignored
                 continue
@@ -490,7 +441,7 @@ def main(argv):
         if add_section:
             # If we end up here, then there were no commits to include,
             # so we put a dummy message in the new section.
-            add_changelog_section(distribution="UNRELEASED", msg="UNRELEASED",
+            add_changelog_section(distribution="UNRELEASED", msg=["UNRELEASED"],
                                   version=version_change,
                                   dch_options=dch_options,
                                   repo=repo,

@@ -282,6 +282,22 @@ class GitRepository(object):
             raise GitRepositoryError, "Error getting subject of commit %s" % commit
         return out[0].strip()
 
+    def get_commit_info(self, commit):
+        """Given a commit name, return a dictionary of its components,
+        including id, author, email, subject, and body."""
+        self.__check_path()
+        out, ret =  self.__git_getoutput('log',
+                                         ['--pretty=format:%an%n%ae%n%s%n%b%n',
+                                          '-n1', commit])
+        if ret:
+            raise GitRepositoryError, "Unable to retrieve log entry for %s" \
+                % commit
+        return {'id' : commit,
+                'author' : out[0].strip(),
+                'email' : out[1].strip(),
+                'subject' : out[2].rstrip(),
+                'body' : [line.rstrip() for line in  out[3:]]}
+
     def find_tag(self, commit, pattern=None):
         "find the closest tag to a branch's head"
         args =  [ '--abbrev=0' ]
