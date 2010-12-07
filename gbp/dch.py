@@ -104,7 +104,6 @@ def format_changelog_entry(commit_info, options, last_commit=False):
         # Add all non-blank body lines.
         entry.extend([line for line in body if line.strip()])
     for bts in bts_cmds:
-        print bts_cmds
         entry[-1] += '(%s: %s) ' % (bts, ', '.join(bts_cmds[bts]))
     if thanks:
         # Last wins for now (match old behavior).
