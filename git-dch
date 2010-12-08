@@ -264,6 +264,34 @@ def guess_snapshot_commit(cp, repo, options):
     return None
 
 
+def get_customizations(customization_file):
+    if customization_file:
+        execfile(customization_file,
+                 user_customizations,
+                 user_customizations)
+
+
+def process_options(options):
+    if options.snapshot and options.release:
+        parser.error("'--snapshot' and '--release' are incompatible options")
+
+    if options.since and options.auto:
+        parser.error("'--since' and '--auto' are incompatible options")
+
+    if options.multimaint_merge:
+        dch_options = "--multimaint-merge"
+    else:
+        dch_options = "--nomultimaint-merge"
+
+    if options.multimaint:
+        dch_options += " --multimaint"
+    else:
+        dch_options += " --nomultimaint"
+
+    get_customizations(options.customization_file)
+    return dch_options
+
+
 def main(argv):
     ret = 0
     changelog = 'debian/changelog'
@@ -337,27 +365,8 @@ def main(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
+    dch_options = process_options(options)
 
-    if options.snapshot and options.release:
-        parser.error("'--snapshot' and '--release' are incompatible options")
-
-    if options.since and options.auto:
-        parser.error("'--since' and '--auto' are incompatible options")
-
-    if options.multimaint_merge:
-        dch_options = "--multimaint-merge"
-    else:
-        dch_options = "--nomultimaint-merge"
-
-    if options.multimaint:
-        dch_options += " --multimaint"
-    else:
-        dch_options += " --nomultimaint"
-
-    if options.customization_file:
-        execfile(options.customization_file,
-                 user_customizations,
-                 user_customizations)
     try:
         try:
             repo = GitRepository('.')
