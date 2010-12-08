@@ -325,6 +325,7 @@ def main(argv):
                       type="int", metavar="N")
     commit_group.add_config_file_option(option_name="ignore-regex", dest="ignore_regex",
                       help="Ignore commit lines matching regex, default is '%(ignore-regex)s'")
+    commit_group.add_boolean_config_file_option(option_name="multimaint", dest="multimaint")
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
 
     help_msg = 'Load Python code from CUSTOMIZATION_FILE.  At the moment,' \
@@ -347,6 +348,11 @@ def main(argv):
         dch_options = "--multimaint-merge"
     else:
         dch_options = "--nomultimaint-merge"
+
+    if options.multimaint:
+        dch_options += " --multimaint"
+    else:
+        dch_options += " --nomultimaint"
 
     if options.customization_file:
         execfile(options.customization_file,
