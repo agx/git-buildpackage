@@ -140,6 +140,11 @@ class GitRepository(object):
         if self.has_tag(tag):
             GitCommand("tag", [ "-d", tag ])()
 
+    def move_tag(self, old, new):
+        self.__check_path()
+        GitCommand("tag", [ new, old ])()
+        self.remove_tag(old)
+
     def get_branch(self):
         """on what branch is the current working copy"""
         self.__check_path()
