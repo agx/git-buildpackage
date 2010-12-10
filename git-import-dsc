@@ -24,6 +24,7 @@ import os
 import tempfile
 import glob
 import pipes
+import time
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
 from gbp.deb import (debian_version_chars, parse_changelog, unpack_orig,
@@ -133,6 +134,15 @@ def print_dsc(dsc):
     if dsc.epoch:
         gbp.log.debug("Epoch: %s" % dsc.epoch)
 
+
+def move_tag_stamp(repo, format, version):
+    "Move tag out of the way appending the current timestamp"
+    old = build_tag(format, version)
+    timestamped = "%s~%s" % (version, int(time.time()))
+    new = build_tag(format, timestamped)
+    repo.move_tag(old, new)
+
+
 def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
     needs_repo = False
@@ -232,9 +242,12 @@ def main(argv):
             tag = build_tag(format[0], src.upstream_version)
             msg = "%s version %s" % (format[1], src.upstream_version)
 
-            if not options.ignore_same_version:
-                if repo.find_version(options.debian_tag, src.version):
-                    gbp.log.info("Version %s already imported." % src.version)
+            if repo.find_version(options.debian_tag, src.version):
+                 gbp.log.warn("Version %s already imported." % src.version)
+                 if options.ignore_same_version:
+                    gbp.log.info("Moving tag of version %s since import forced, src.ver")
+                    move_tag_stamp(repo, options.debian_tag, src.version)
+                 else:
                     raise SkipImport
 
             if not repo.find_version(format[0], src.upstream_version):
