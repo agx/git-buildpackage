@@ -271,7 +271,7 @@ def get_customizations(customization_file):
                  user_customizations)
 
 
-def process_options(options):
+def process_options(options, parser):
     if options.snapshot and options.release:
         parser.error("'--snapshot' and '--release' are incompatible options")
 
@@ -365,7 +365,7 @@ def main(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
-    dch_options = process_options(options)
+    dch_options = process_options(options, parser)
 
     try:
         try:
