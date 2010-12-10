@@ -137,6 +137,7 @@ def main(argv):
     dirs = {'top': os.path.abspath(os.curdir)}
     needs_repo = False
     ret = 0
+    skipped = False
     parents = None
 
     try:
@@ -231,7 +232,7 @@ def main(argv):
             tag = build_tag(format[0], src.upstream_version)
             msg = "%s version %s" % (format[1], src.upstream_version)
 
-            if options.ignore_same_version:
+            if not options.ignore_same_version:
                 if repo.find_version(options.debian_tag, src.version):
                     gbp.log.info("Version %s already imported." % src.version)
                     raise SkipImport
@@ -277,7 +278,7 @@ def main(argv):
             gbp.log.err(err)
         ret = 1
     except SkipImport:
-        pass
+        skipped = True
     finally:
         os.chdir(dirs['top'])
 
@@ -285,7 +286,7 @@ def main(argv):
         if dirs.has_key(d):
             gbpc.RemoveTree(dirs[d])()
 
-    if not ret:
+    if not ret and not skipped:
         gbp.log.info("Everything imported under '%s'" % src.pkg)
     return ret
 
