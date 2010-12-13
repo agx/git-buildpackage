@@ -119,6 +119,4 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     if options.idlen:
         entry[0] = '[%s] ' % commitid[0:options.idlen] + entry[0]
     entry = terminate_first_line_if_needed(entry)
-    if not last_commit:
-        entry += ''
     return entry
