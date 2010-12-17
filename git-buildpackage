@@ -407,9 +407,10 @@ def main(argv):
             RunAtCommand(options.builder, dpkg_args, shell=True, 
                          extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)
             if options.postbuild:
-                arch = du.get_arch()
+                arch = os.getenv('ARCH', None) or du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir, cp['Source'], version_no_epoch, arch))
+                gbp.log.debug("Looking for changes file %s" % changes)
                 if not os.path.exists(changes):
                     changes = os.path.abspath("%s/../%s_%s_source.changes" %
                                   (build_dir, cp['Source'], version_no_epoch))
