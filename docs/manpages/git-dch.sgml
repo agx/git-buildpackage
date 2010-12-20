@@ -36,6 +36,7 @@
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]multimaint-merge</option></arg>
+      <arg><option>--spawn-editor=[always|snapshot|release]</option></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -210,6 +211,14 @@
         </term>
         <listitem>
           <para>Merge commits by maintainer.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--spawn-editor=<replaceable>[always|snapshot|release]</replaceable></option>
+        </term>
+        <listitem>
+	  <para>Whether to spawn an editor: always, when doing snapshots or
+	  when doing a release.</para>
         </listitem>
       </varlistentry>
     </variablelist>

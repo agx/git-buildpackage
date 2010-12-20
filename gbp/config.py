@@ -80,7 +80,8 @@ class GbpOptionParser(OptionParser):
                  'arch'            : '',
                  'interactive'     : 'True',
                  'color'           : 'auto',
-                 'customizations'  : ''
+                 'customizations'  : '',
+                 'spawn-editor'    : 'release',
              }
     help = {
              'debian-branch':
@@ -131,6 +132,8 @@ class GbpOptionParser(OptionParser):
                   "Run command interactive, default is '%(interactive)s'",
              'color':
                   "color output, default is '%(color)s'",
+             'spawn-editor':
+                  "Wether to spawn an editor after adding the changelog entry, default is '%(spawn-editor)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

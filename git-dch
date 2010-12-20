@@ -292,6 +292,21 @@ def process_options(options, parser):
     return dch_options
 
 
+def process_editor_option(options, parser):
+    # Determine Editor and check if we need it
+    states = ['always']
+
+    if options.snapshot:
+        states.append("snapshot")
+    elif options.release:
+        states.append("release")
+
+    if options.spawn_editor in states:
+        return "sensible-editor"
+    else:
+        return None
+
+
 def main(argv):
     ret = 0
     changelog = 'debian/changelog'
@@ -355,6 +370,7 @@ def main(argv):
                       help="Ignore commit lines matching regex, default is '%(ignore-regex)s'")
     commit_group.add_boolean_config_file_option(option_name="multimaint", dest="multimaint")
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
+    commit_group.add_config_file_option(option_name="spawn-editor", dest="spawn_editor")
 
     help_msg = 'Load Python code from CUSTOMIZATION_FILE.  At the moment,' \
         + ' the only useful thing the code can do is define a custom' \
@@ -366,6 +382,7 @@ def main(argv):
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
     dch_options = process_options(options, parser)
+    editor_cmd = process_editor_option(options, parser)
 
     try:
         try:
@@ -472,6 +489,9 @@ def main(argv):
         elif options.snapshot:
             (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
             gbp.log.info("Changelog has been prepared for snapshot #%d at %s" % (snap, version))
+
+        if editor_cmd:
+            gbpc.Command(editor_cmd, ["debian/changelog"])()
 
     except (GbpError, GitRepositoryError, NoChangelogError), err:
         if len(err.__str__()):
