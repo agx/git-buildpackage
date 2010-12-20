@@ -30,6 +30,8 @@
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--download</option></arg>
+      <arg><option>--allow-same-versions</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
