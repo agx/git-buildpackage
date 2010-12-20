@@ -135,6 +135,13 @@
 	  </para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--allow-same-version</option>
+        </term>
+        <listitem>
+	  <para>Allow to import a package with the same debian version.</para>
+        </listitem>
+      </varlistentry>
      </variablelist>
   </refsect1>
   <refsect1>

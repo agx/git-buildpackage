@@ -193,9 +193,9 @@ def main(argv):
                       dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
                       dest="pristine_tar")
-    import_group.add_option("--ignore-same-version", action="store_true",
-                      dest="ignore_same_version", default=False,
-                      help="don't import already imported version")
+    import_group.add_option("--allow-same-version", action="store_true",
+                      dest="allow_same_version", default=False,
+                      help="allow to import already imported version")
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
 
@@ -247,8 +247,8 @@ def main(argv):
 
             if repo.find_version(options.debian_tag, src.version):
                  gbp.log.warn("Version %s already imported." % src.version)
-                 if options.ignore_same_version:
-                    gbp.log.info("Moving tag of version %s since import forced, src.ver")
+                 if options.allow_same_version:
+                    gbp.log.info("Moving tag of version '%s' since import forced" % src.version)
                     move_tag_stamp(repo, options.debian_tag, src.version)
                  else:
                     raise SkipImport
