@@ -1,3 +1,42 @@
+git-buildpackage (0.5.12) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [3e0d663] Also allow for 'issue' as bugnumber prefix as used in Grml.
+  * [4323487] Fix off by one error by not counting. Thanks to Olivier Aubert
+    for pointing this out
+  * [5ace5eb] Better wrap thanks and closes (Closes: #529332)
+  * [cf98258] Move Debian tag with --ignore-same-version
+    so the import doesn't fail. (Closes: #606204)
+  * [29feba8] Change --ignore-same-version to --allow-same-version
+    and properly document it. This matches the defaults we had since ages.
+  * [3b858a9] Fix debug string formatting (Closes: #606771)
+  * [8a46f74] Favor ARCH environment variable over dpkg's architecture
+    based on a patch by Jacob Helwig. (Closes: #607318)
+  * [2c94f9d] Add option to open editor (Closes: #565553)
+
+  [ Rob Browning ]
+  * [98b034c] Remove unused commit_msg variable from git-dch.
+  * [5b7b0f1] Use "log -n1" instead of "show" to retrieve commit log
+    information.
+  * [e875704] Add "*.pyc" to .gitignore.
+  * [3640569] Add git-dch --customizations FILE to allow changelog entry
+    customization:
+    Add support for git-dch --customizations FILE. FILE must be Python code,
+    and for now, the only useful thing it can do is define a
+    format_changelog_entry() function which will override
+    kgbp.dch.format_changelog_entry().
+    Add a new customization option group for --customizations.  Create a
+    gbp.dch module and move the changelog entry formatting functions there.
+    Create separate procedures to handle extracting metadata from the git log,
+    and use them in the default format_changelog_entry(). These functions are
+    also available for use by custom formatters: extract_git_dch_cmds(),
+    filter_ignore_rx_matches(), extract_bts_cmds(), extract_thanks_info(), etc.
+    Add a GitRepository.get_commit_info() method, and use it in git-dch
+    parse_commit(). (Closes: #536719)
+  * [d12a32f] Add --multimaint support to git-dch
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 20 Dec 2010 16:31:12 +0100
+
 git-buildpackage (0.5.11) unstable; urgency=low
 
   [ Matthijs Kooijman ]
