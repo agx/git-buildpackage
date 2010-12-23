@@ -278,7 +278,7 @@ def main(argv):
                     apply_debian_patch(repo, unpack_dir, src, options, parents)
                 else:
                     gbp.log.warn("Didn't find a diff to apply.")
-            if repo.get_branch() == options.debian_branch:
+            if repo.get_branch() == options.debian_branch or is_empty:
                 # Update HEAD if we modified the checkout out branch
                 repo.force_head(options.debian_branch, hard=True)
     except KeyboardInterrupt:
