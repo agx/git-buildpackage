@@ -44,6 +44,7 @@ class Logger(object):
                         self.ERROR:   [ 'error', self.COLOR_RED   ], }
         self.color = False
         self.level = self.INFO
+        self.get_color = self.get_coloroff = self._color_dummy
 
     def set_level(self, level):
         self.level = level
