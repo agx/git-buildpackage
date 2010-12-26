@@ -20,6 +20,9 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-pq;
+      <arg><option>--verbose</option></arg>
+      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--[no-]patch-numbers</option></arg>
       <group choice="plain">
       <arg><option>export</option></arg>
       <arg><option>import</option></arg>
@@ -44,7 +47,7 @@
     </para>
   </refsect1>
   <refsect1>
-    <title>OPTIONS</title>
+    <title>ACTIONS</title>
     <variablelist>
       <varlistentry>
         <term><option>import</option>
@@ -86,6 +89,32 @@
 	you're on branch <replaceable>foo</replaceable> this would drop branch
 	<replaceable>patch-queue/foo</replaceable>.
 	  </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>--verbose</option></term>
+	<term><option>-v</option></term>
+        <listitem>
+          <para>verbose execution</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
+        </term>
+        <listitem>
+          <para>Wheter to use colored output.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]patch-numbers</option>
+        </term>
+        <listitem>
+          <para>Whether the patch files should start with a number or not.</para>
         </listitem>
       </varlistentry>
     </variablelist>

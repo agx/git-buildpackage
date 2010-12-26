@@ -18,6 +18,8 @@
 #
 """manage patches in a patch queue"""
 
+import errno
+import re
 import os
 import shutil
 import subprocess
@@ -46,7 +48,9 @@ def pq_branch_base(pq_branch):
     if is_pq_branch(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
-def export_patches(repo, branch):
+def export_patches(repo, branch, options):
+    patch_re = re.compile("[0-9]+-(?P<name>.+)")
+
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
         gbp.log.info("On '%s', switching to '%s'" % (branch, base))
@@ -54,7 +58,13 @@ def export_patches(repo, branch):
         repo.set_branch(branch)
 
     pq_branch = pq_branch_name(branch)
-    shutil.rmtree(PATCH_DIR)
+    try:
+        shutil.rmtree(PATCH_DIR)
+    except OSError, (e, msg):
+        if e != errno.ENOENT:
+            raise GbpError, "Failed to remove patch dir: %s" % msg
+        else:
+            gbp.log.debug("%s does not exist." % PATCH_DIR)
 
     patches = repo.format_patches(branch, pq_branch, PATCH_DIR)
     if patches:
@@ -65,7 +75,15 @@ def export_patches(repo, branch):
 	    # info) of the patch file
             Command("sed -i -e '1d' -e 'N;$!P;$!D;$d' %s" % patch, shell=True)()
             Command("sed -i -e 's/^-- \\n[0-9\.]+$//' %s" % patch, shell=True)()
-            f.write(patch[len(PATCH_DIR):])
+
+            name = patch[len(PATCH_DIR):]
+            if not options.patch_numbers:
+                m = patch_re.match(name)
+                if m:
+                    name = m.group('name')
+                    shutil.move(patch, os.path.join(PATCH_DIR, name))
+
+            f.write(name + '\n')
         f.close()
         GitCommand('status')(['--', PATCH_DIR])
     else:
@@ -141,6 +159,7 @@ def main(argv):
         "  rebase         switch to patch queue branch associated to the current\n"
         "                 branch and rebase against current branch.\n"
         "  drop           drop (delete) the patch queue associated to the current branch.")
+    parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color")
@@ -166,7 +185,7 @@ def main(argv):
     try:
         current = repo.get_branch()
         if action == "export":
-            export_patches(repo, current)
+            export_patches(repo, current, options)
         elif action == "import":
             import_patches(repo, current)
         elif action == "drop":

@@ -82,6 +82,7 @@ class GbpOptionParser(OptionParser):
                  'color'           : 'auto',
                  'customizations'  : '',
                  'spawn-editor'    : 'release',
+                 'patch-numbers'   : 'True',
              }
     help = {
              'debian-branch':
@@ -134,6 +135,8 @@ class GbpOptionParser(OptionParser):
                   "color output, default is '%(color)s'",
              'spawn-editor':
                   "Wether to spawn an editor after adding the changelog entry, default is '%(spawn-editor)s'",
+             'patch-numbers':
+                  "Wether to number patch files, default is %(patch-numbers)s",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
