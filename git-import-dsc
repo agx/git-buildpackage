@@ -59,9 +59,8 @@ def download_source(pkg, dirs):
     return dsc
 
 
-def apply_patch(diff, unpack_dir):
+def apply_patch(diff):
     "Apply patch to a source tree"
-    d = os.path.abspath(unpack_dir)
     pipe = pipes.Template()
     pipe.prepend('gunzip -c %s' % diff,  '.-')
     pipe.append('patch -p1 --quiet', '-.')
@@ -76,9 +75,9 @@ def apply_patch(diff, unpack_dir):
     return True
 
 
-def apply_deb_tgz(deb_tgz, unpack_dir):
+def apply_deb_tgz(deb_tgz):
     """Apply .debian.tar.gz (V3 source format)"""
-    unpackArchive = gbpc.UnpackTarArchive(deb_tgz, ".")()
+    gbpc.UnpackTarArchive(deb_tgz, ".")()
     return True
 
 
@@ -89,10 +88,10 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
     try:
         os.chdir(unpack_dir)
 
-        if src.diff and not apply_patch(src.diff, unpack_dir):
+        if src.diff and not apply_patch(src.diff):
             raise GbpError
 
-        if src.deb_tgz and not apply_deb_tgz(src.deb_tgz, unpack_dir):
+        if src.deb_tgz and not apply_deb_tgz(src.deb_tgz):
             raise GbpError
 
         if os.path.exists('debian/rules'):
@@ -104,7 +103,6 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         author, email = parseaddr(dch['Maintainer'])
         if not (author and email):
             gbp.log.warn("Failed to parse maintainer")
-
         commit = repo.commit_dir(unpack_dir,
                                  "Imported Debian patch %s" % version,
                                  branch = options.debian_branch,

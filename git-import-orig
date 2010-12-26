@@ -414,7 +414,7 @@ on howto create it otherwise use --upstream-branch to specify it.
                             epoch = '%s:' % cp['Epoch']
                     info = { 'version': "%s%s-1" % (epoch, version) }
                     env = { 'GBP_BRANCH': options.debian_branch }
-                    cmd = gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
+                    gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
         except gbpc.CommandExecFailed:
             raise GbpError, "Import of %s failed" % archive
     except GbpNothingImported, err:

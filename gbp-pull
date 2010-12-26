@@ -65,7 +65,6 @@ def fast_forward_branch(branch, repo, options):
     return update
 
 def main(argv):
-    changelog = 'debian/changelog'
     retval = 0
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',

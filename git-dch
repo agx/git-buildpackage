@@ -31,7 +31,6 @@ from gbp.git import (GitRepositoryError, GitRepository, build_tag, tag_to_versio
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
 from gbp.deb import parse_changelog, NoChangelogError, is_native, compare_versions
-from gbp.command_wrappers import (Command, CommandExecFailed)
 
 user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -39,8 +38,8 @@ snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 
 def system(cmd):
     try:
-        Command(cmd, shell=True)()
-    except CommandExecFailed:
+        gbpc.Command(cmd, shell=True)()
+    except gbpc.CommandExecFailed:
         raise GbpError
 
 
@@ -292,7 +291,7 @@ def process_options(options, parser):
     return dch_options
 
 
-def process_editor_option(options, parser):
+def process_editor_option(options):
     # Determine Editor and check if we need it
     states = ['always']
 
@@ -312,7 +311,6 @@ def main(argv):
     changelog = 'debian/changelog'
     until = 'HEAD'
     found_snapshot_header = False
-    first_commit = None
     version_change = {}
 
     try:
@@ -382,7 +380,7 @@ def main(argv):
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
     dch_options = process_options(options, parser)
-    editor_cmd = process_editor_option(options, parser)
+    editor_cmd = process_editor_option(options)
 
     try:
         try:

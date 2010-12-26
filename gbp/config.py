@@ -167,7 +167,7 @@ class GbpOptionParser(OptionParser):
         self.__parse_config_files()
         OptionParser.__init__(self, option_class=GbpOption, usage=usage, version='%s %s' % (self.command, gbp_version))
 
-    def _is_boolean(self, option_name, *args, **kwargs):
+    def _is_boolean(self, dummy, *unused, **kwargs):
         """is option_name a boolean option"""
         ret = False
         try:

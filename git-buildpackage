@@ -27,7 +27,7 @@ import time
 import gbp.deb as du
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed,
-                                  PristineTar, RemoveTree, GitAdd, PristineTar)
+                                  PristineTar, RemoveTree, GitAdd)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from glob import glob
@@ -150,7 +150,7 @@ def write_wc(repo):
     os.unsetenv("GIT_INDEX_FILE")
     return tree
 
-def drop_index(repo):
+def drop_index():
     """drop our custom index"""
     if os.path.exists(wc_index):
         os.unlink(wc_index)
@@ -437,7 +437,7 @@ def main(argv):
             gbp.log.err(err)
         retval = 1
     finally:
-        drop_index(repo)
+        drop_index()
 
     if not options.tag_only:
         if options.export_dir and options.purge and not retval:
