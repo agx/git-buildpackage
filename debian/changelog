@@ -1,3 +1,17 @@
+git-buildpackage (0.5.13) experimental; urgency=low
+
+  * [7e697a9] Update the repo after the first import so master matches the
+    debian branch. Thanks to Rob Browning for the testcase
+  * [83b9235] Initialize Logger.get_color{,off} so we can print errors before
+    the option parsing finished. (Closes: #608004)
+  * [b1f081a] Rewrite gbp-pq in python so we get consistent logging and
+    debugging options.
+  * [5a312db] Allow to drop numbers from patch names via --no-patch-numbers
+    so patch names remain constant when interim patches are dropped.
+    (Closes: #592129)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 27 Dec 2010 00:05:30 +0100
+
 git-buildpackage (0.5.12) experimental; urgency=low
 
   [ Guido Günther ]
