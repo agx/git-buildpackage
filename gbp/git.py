@@ -55,7 +55,6 @@ class GitRepository(object):
 
     def __git_inout(self, command, args, input, extra_env=None):
         """Send input and return output (stdout)"""
-        ret = False
         env = self.__build_env(extra_env)
         popen = subprocess.Popen(['git', command ] + args,
                                  stdin=subprocess.PIPE,
@@ -197,6 +196,13 @@ class GitRepository(object):
         if self.get_branch() != branch:
             GitCheckoutBranch(branch)()
 
+    def delete_branch(self, branch):
+        self.__check_path()
+        if self.get_branch() != branch:
+            GitCommand("branch")(["-D", branch])
+        else:
+            raise GitRepositoryError, "Can't delete the branch you're on"
+
     def force_head(self, commit, hard=False):
         """force head to a specific commit"""
         args = []
@@ -256,7 +262,8 @@ class GitRepository(object):
                                             range +
                                             paths)
         if ret:
-            raise GitRepositoryError, "Error getting commits %s..%s%s" % (since, until,["", " on %s" % paths][len(paths) > 0] )
+            raise GitRepositoryError, ("Error getting commits %s..%s%s" %
+                        (since, until,["", " on %s" % paths][len(paths) > 0] ))
         return [ commit.strip() for commit in commits[::-1] ]
 
     def show(self, id):
@@ -446,6 +453,11 @@ class GitRepository(object):
         args = [ '--format=%(refname:short)', 'refs/remotes/' ]
         out = self.__git_getoutput('for-each-ref', args)[0]
         return [ ref.strip() for ref in out ]
+
+    def format_patches(self, start, end, output_dir):
+        options = [ '-N', '-k', '-o', output_dir, '%s...%s' % (start, end) ]
+        output, ret = self.__git_getoutput('format-patch', options)
+        return [ line.strip() for line in output ]
 
 
 class FastImport(object):

@@ -12,7 +12,8 @@ COMMANDS = git-buildpackage  \
            git-import-orig   \
            git-dch           \
            gbp-pull          \
-           gbp-clone
+           gbp-clone         \
+           gbp-pq
 
 EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
