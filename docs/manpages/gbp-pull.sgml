@@ -22,8 +22,8 @@
       &gbp-pull;
 
       <arg><option>--verbose</option></arg>
-      <arg><option>--redo-pq</option></arg>
       <arg><option>--force</option></arg>
+      <arg><option>--redo-pq</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -45,13 +45,16 @@
       <varlistentry>
         <term><option>--force</option></term>
         <listitem>
-	  <para>force update even if this results in a non fast forward update</para>
+	  <para>force a branch update even if this results in a non fast
+	  forward update. <warning><para>Forcing a branch updates
+	  makes you lose your modifications.</para></warning></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--redo-pq</option></term>
         <listitem>
-	  <para>also rebuild the corresponding patch-queue using &gbp-pq;</para>
+	  <para>also rebuild the corresponding patch-queue using &gbp-pq;.
+	  <warning><para>This drops the patch-queue branch if it exists.</para></warning></para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -81,7 +84,7 @@
         <term><option>--pristine-tar</option>
         </term>
         <listitem>
-          <para>generate pristine-tar delta file</para>
+          <para>Wheter to update the pristine-tar branch too.</para>
         </listitem>
       </varlistentry>
     </variablelist>
