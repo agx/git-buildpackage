@@ -69,7 +69,7 @@ or
 
 
 def main(argv):
-    dirs = {'top': os.path.abspath(os.curdir)}
+    dirs = dict(top=os.path.abspath(os.curdir))
     dscs = []
     ret = 0
     verbose = False

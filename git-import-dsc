@@ -145,7 +145,7 @@ def move_tag_stamp(repo, format, version):
 
 
 def main(argv):
-    dirs = {'top': os.path.abspath(os.curdir)}
+    dirs = dict(top=os.path.abspath(os.curdir))
     needs_repo = False
     ret = 0
     skipped = False
