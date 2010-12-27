@@ -25,6 +25,14 @@
       <arg choice="plain"><replaceable>pkg_2.dsc</replaceable></arg>
       <arg choice="plain"><replaceable>...</replaceable></arg>
     </cmdsynopsis>
+
+    <para>or</para>
+
+    <cmdsynopsis>
+      &git-import-dscs;
+      <arg choice="req">--debsnap</arg>
+      <arg><option>git-import-dsc options</option></arg>
+    </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
@@ -43,8 +51,17 @@
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>--debsnap</option>
+        </term>
+        <listitem>
+	  <para>Fetch snapshots from snapshots.debian.org using debsnap.</para>
+        </listitem>
+      </varlistentry>
+     </variablelist>
     <para>
-    All options are passed on verbatim to &git-import-dsc;.
+    All other options are passed on verbatim to &git-import-dsc;.
     </para>
   </refsect1>
   <refsect1>
