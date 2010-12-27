@@ -22,6 +22,7 @@
       &gbp-clone;
 
       <arg><option>--verbose</option></arg>
+      <arg><option>--all</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -41,6 +42,14 @@
     <title>OPTIONS</title>
 
     <variablelist>
+      <varlistentry>
+        <term><option>--all</option>
+        </term>
+        <listitem>
+	  <para>Track all branches, not only <replaceable>debian</replaceable>
+	  and <replaceable>upstream</replaceable>.
+        </listitem>
+      </varlistentry>
       <varlistentry>
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
@@ -68,7 +77,7 @@
         <term><option>--pristine-tar</option>
         </term>
         <listitem>
-          <para>generate pristine-tar delta file</para>
+          <para>Track pristine tar branch.</para>
         </listitem>
       </varlistentry>
     </variablelist>

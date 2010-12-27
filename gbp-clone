@@ -34,14 +34,15 @@ def main(argv):
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] repository - clone a remote repository')
-    branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
+    branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
     parser.add_option_group(branch_group)
 
+    branch_group.add_option("--all", action="store_true", dest="all", default=False,
+                            help="track all branches, not only debian and upstream")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
-    parser.add_option("--all", action="store_true", dest="all", default=False,
-                      help="Track all branches, not only debian and upstream")
+
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color")
