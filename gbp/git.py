@@ -56,7 +56,9 @@ class GitRepository(object):
     def __git_inout(self, command, args, input, extra_env=None):
         """Send input and return output (stdout)"""
         env = self.__build_env(extra_env)
-        popen = subprocess.Popen(['git', command ] + args,
+        cmd = ['git', command] + args
+        log.debug(cmd)
+        popen = subprocess.Popen(cmd,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  env=env)
