@@ -102,7 +102,6 @@ def main(argv):
 
         if use_debsnap:
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp())
-            gbp.log.info("Downloading snapshots of '%s' to '%s'..." % (pkg, dirs['tmp']))
             dscs = [ parse_dsc(f) for f in fetch_snapshots(pkg, dirs['tmp']) ]
 
         dscs.sort(cmp=dsc_cmp)
