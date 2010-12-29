@@ -7,7 +7,6 @@ git-buildpackage and friends
 """
 
 import subprocess
-import sys
 import os
 import os.path
 import signal
@@ -51,25 +50,25 @@ class Command(object):
         """
         run self.cmd adding args as additional arguments
 
-        be verbose about errors and encode them in the return value, don't pass
-        on exceptions
+        Be verbose about errors and encode them in the return value, don't pass
+        on exceptions.
         """
         try:
             retcode = self.__call(args)
             if retcode < 0:
-                print >>sys.stderr, "%s was terminated by signal %d" % (self.cmd,  -retcode)
+                log.err("%s was terminated by signal %d" % (self.cmd,  -retcode))
             elif retcode > 0:
-                print >>sys.stderr, "%s returned %d" % (self.cmd,  retcode)
+                log.err("%s returned %d" % (self.cmd,  retcode))
         except OSError, e:
-            print >>sys.stderr, "Execution failed:", e
+            log.err("Execution failed: " + e.__str__())
             retcode = 1
         if retcode:
-            print >>sys.stderr, self.run_error
+            log.err(self.run_error)
         return retcode
 
     def __call__(self, args=[]):
-        """run the command, convert all errors into CommandExecFailed, assumes
-        that the lower levels printed an error message - only usefull if you
+        """Run the command, convert all errors into CommandExecFailed, assumes
+        that the lower levels printed an error message - only useful if you
         only expect 0 as result
         >>> Command("/bin/true")(["foo", "bar"])
         >>> Command("/foo/bar")()
