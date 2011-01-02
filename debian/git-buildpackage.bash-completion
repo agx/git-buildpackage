@@ -107,3 +107,34 @@ _git_import_dsc ()
 }
 [ "${have:-}" ] && complete -F _git_import_dsc -o default git-import-dsc
 
+have gbp-pq &&
+_gbp_pq ()
+{
+    local options=$(_gbp_options gbp-pq)
+    options="$options export import rebase drop"
+
+    _gbp_comp "$options"
+}
+[ "${have:-}" ] && complete -F _gbp_pq -o default gbp-pq
+
+have gbp-pull &&
+_gbp_pull ()
+{
+    local options=$(_gbp_options gbp-pull)
+    local branch_opts="--debian-branch\= --upstream-branch\="
+    local tag_opts="--debian-tag\= --upstream-tag\="
+
+    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+}
+[ "${have:-}" ] && complete -F _gbp_pull -o default gbp-pull
+
+have gbp-clone &&
+_gbp_clone ()
+{
+    local options=$(_gbp_options gbp-clone)
+    local branch_opts="--debian-branch\= --upstream-branch\="
+    local tag_opts="--debian-tag\= --upstream-tag\="
+
+    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+}
+[ "${have:-}" ] && complete -F _gbp_clone -o default gbp-clone
