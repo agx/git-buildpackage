@@ -16,7 +16,7 @@ _gbp_branches ()
 
 _gbp_options ()
 {
-    $1 --help | egrep -o '^ +\-\-[a-z\-]+=?'
+    $1 --help | sed -ne  's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
 }
 
 
