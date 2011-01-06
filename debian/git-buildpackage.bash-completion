@@ -34,13 +34,12 @@ _gbp_comp ()
     local options=$1
     local branch_opts=$2
     local tag_opts=$3
+    local tristate_opts=$4
 
 # COMPREPLY considers '=' as a word. For $prev we prefer the word before the actual "="
-    if [[ "$prev" == "=" ]]
-    then
+    if [[ "$prev" == "=" ]]; then
         prev="${COMP_WORDS[COMP_CWORD - 2]}"
-    elif [[ "$cur" == "=" ]]
-    then
+    elif [[ "$cur" == "=" ]]; then
         cur=""
     fi
 
@@ -56,6 +55,11 @@ _gbp_comp ()
         return 0
     fi
 
+    if [[ "${tristate_opts}" == *$prev* ]]; then
+        COMPREPLY=( $(compgen -W 'on off auto' -- $cur ) )
+        return 0
+    fi
+
     COMPREPLY=($(compgen -W "$options" -- $cur))
 }
 
@@ -66,8 +70,9 @@ _git_buildpackage()
     local options=$(_gbp_options git-buildpackage)
     local branch_opts="--git-debian-branch\= --git-upstream-branch\="
     local tag_opts="--git-debian-tag\= --git-upstream-tag\="
+    local tristate_opts="--git-color\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _git_buildpackage -o default git-buildpackage
 
@@ -78,8 +83,9 @@ _git_dch ()
     local options=$(_gbp_options git-dch)
     local branch_opts="--debian-branch\="
     local tag_opts="--debian-tag\= --upstream-tag\="
+    local tristate_opts="--color\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _git_dch -o default git-dch
 
@@ -90,8 +96,9 @@ _git_import_orig ()
     local options=$(_gbp_options git-import-orig)
     local branch_opts="--debian-branch\= --upstream-branch\="
     local tag_opts="--debian-tag\= --upstream-tag\="
+    local tristate_opts="--color\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _git_import_orig -o default git-import-orig
 
@@ -102,8 +109,9 @@ _git_import_dsc ()
     local options=$(_gbp_options git-import-dsc)
     local branch_opts="--debian-branch\= --upstream-branch\="
     local tag_opts="--debian-tag\= --upstream-tag\="
+    local tristate_opts="--color\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _git_import_dsc -o default git-import-dsc
 
@@ -112,8 +120,10 @@ _gbp_pq ()
 {
     local options=$(_gbp_options gbp-pq)
     options="$options export import rebase drop"
+    local tristate_opts="--color\="
 
     _gbp_comp "$options"
+    _gbp_comp "$options" "" "" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _gbp_pq -o default gbp-pq
 
@@ -123,8 +133,9 @@ _gbp_pull ()
     local options=$(_gbp_options gbp-pull)
     local branch_opts="--debian-branch\= --upstream-branch\="
     local tag_opts="--debian-tag\= --upstream-tag\="
+    local tristate_opts="--color\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _gbp_pull -o default gbp-pull
 
@@ -134,7 +145,8 @@ _gbp_clone ()
     local options=$(_gbp_options gbp-clone)
     local branch_opts="--debian-branch\= --upstream-branch\="
     local tag_opts="--debian-tag\= --upstream-tag\="
+    local tristate_opts="--color\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _gbp_clone -o default gbp-clone
