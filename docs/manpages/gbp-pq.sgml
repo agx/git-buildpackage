@@ -38,7 +38,7 @@
   with &git-buildpackage;. This is especially useful with packages using the
   3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
   that should be applied to a package on a separate branch called patch-queue
-  branch. So if your Debian package lifes on <replaceable>master</replaceable>
+  branch. So if your Debian package lives on <replaceable>master</replaceable>
   the associated patch-queue branch will be called
   <replaceable>patch-queue/master</replaceable>.
     </para>
