@@ -60,7 +60,12 @@ _gbp_comp ()
         return 0
     fi
 
-    COMPREPLY=($(compgen -W "$options" -- $cur))
+    # separate opts by tab so we can append a space to all options not ending
+    # with an equal sign
+    tab_opts=$(echo "$options" | sed -e 's/ \+/\t/g' -e 's/[^=]$/& /g')
+    type compopt &>/dev/null && compopt -o nospace
+    local IFS=$'\t\n'
+    COMPREPLY=($(compgen -W "$tab_opts" -- $cur))
 }
 
 
