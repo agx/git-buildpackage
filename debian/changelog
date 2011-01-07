@@ -1,3 +1,35 @@
+git-buildpackage (0.5.14) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [2a5df0a] docs/gbp-clone: better document --all
+  * [c3c76ac] docs/gbp-pull: Better document --force and --redo-pq
+  * [b23f05b] docs/git-import-dscs: document --debsnap to fetch from
+    snapshots.debian.org
+  * [8040433] docs/gbp-pq: fix typo in manpage.
+    Thanks to Emilio Pozuelo (Closes: #609166)
+  * [8cabb0e] Add gbp-{pull,clone,pq} examples to gbp.conf
+  * [eac621a] Add generated files to .gitignore
+  * [91b0aa8] pychecker warning cleanups (mostly unused variables and imports)
+  * [63d9624] Change dirs declaration to avoid false positives from pychecker.
+    See #608153
+  * [bd2ac3a] Enable pychecker warnings
+  * [67bdb1f] git-import-dscs: Remove duplicate log message
+  * [d523065] command_wrappers: Use logging functions
+  * [9411f76] bash completion: parse short options too
+  * [7374d00] bash completion: also complete on tags
+  * [25677d0] bash completion: add completion for gbp-{pq,pull,clone}
+  * [3f05eba] bash completion: add support for tristate options like --color
+  * [d9ed286] bash completion: avoid space after options taking an argument.
+    This makes branch and tag completion more useful.
+
+  [ Yaroslav Halchenko ]
+  * [2558ea7] git-import-dscs: Use git-import-dsc from the same location as
+    git-import-dscs.  With hardcoded path it is impossible to use
+    git-import-dscs directly from the repository while developing both tools
+  * [31b4854] Spit out debug message in __git_inout
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 07 Jan 2011 09:58:39 +0100
+
 git-buildpackage (0.5.13) experimental; urgency=low
 
   * [7e697a9] Update the repo after the first import so master matches the
