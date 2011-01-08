@@ -441,11 +441,11 @@ def main(argv):
             i += 1
             parsed = parse_commit(repo, c, options,
                                   last_commit = i == len(commits))
-            if not parsed:
+            commit_msg, (commit_author, commit_email) = parsed
+            if not commit_msg:
                 # Some commits can be ignored
                 continue
 
-            commit_msg, (commit_author, commit_email) = parsed
             if add_section:
                 # Add a section containing just this message (we can't
                 # add an empty section with dch)
