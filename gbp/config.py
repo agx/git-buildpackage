@@ -94,6 +94,7 @@ class GbpOptionParser(OptionParser):
                  'customizations'  : '',
                  'spawn-editor'    : 'release',
                  'patch-numbers'   : 'True',
+                 'notify'          : 'auto',
              }
     help = {
              'debian-branch':
@@ -145,9 +146,11 @@ class GbpOptionParser(OptionParser):
              'color':
                   "color output, default is '%(color)s'",
              'spawn-editor':
-                  "Wether to spawn an editor after adding the changelog entry, default is '%(spawn-editor)s'",
+                  "Whether to spawn an editor after adding the changelog entry, default is '%(spawn-editor)s'",
              'patch-numbers':
-                  "Wether to number patch files, default is %(patch-numbers)s",
+                  "Whether to number patch files, default is %(patch-numbers)s",
+             'notify':
+                  "Whether to send a desktop notification after the build, default is '%(notify)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

@@ -75,7 +75,7 @@ _git_buildpackage()
     local options=$(_gbp_options git-buildpackage)
     local branch_opts="--git-debian-branch\= --git-upstream-branch\="
     local tag_opts="--git-debian-tag\= --git-upstream-tag\="
-    local tristate_opts="--git-color\="
+    local tristate_opts="--git-color\= --git-notify\="
 
     _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
