@@ -18,6 +18,7 @@
 """Simple colored logging classes"""
 
 import sys
+import gbp.tristate
 
 logger = None
 
@@ -53,9 +54,9 @@ class Logger(object):
         if type(color) == type(True):
             self.color = color
         else:
-            if color.lower() == "on":
+            if color.is_on():
                 self.color = True
-            elif color.lower() == "auto":
+            elif color.is_auto():
                 if (sys.stderr.isatty() and
                     sys.stdout.isatty()):
                     self.color = True

@@ -170,7 +170,7 @@ def main(argv):
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_option("--download", action="store_true", dest="download", default=False,
                       help="download source package")
     branch_group.add_config_file_option(option_name="debian-branch",

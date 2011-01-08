@@ -235,7 +235,7 @@ def main(argv):
                                           dest='interactive')
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
 
     # Accepted for compatibility
     parser.add_option("--no-dch", dest='no_dch', action="store_true",

@@ -16,10 +16,11 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class Tristate(object):
-    """Tri-state value: on, off or auto"""
-    AUTO = -1
-    ON  = True
-    OFF = False
+    """Tri-state value: on, off or auto """
+    ON  = True      # state is on == do it
+    OFF = False     # state is off == don't do it
+    AUTO = -1       # autodetect == do if possible
+
     # We accept true as alias for on and false as alias for off
     _VALID_NAMES = [ 'on', 'off', 'true', 'false', 'auto' ]
 
@@ -63,3 +64,16 @@ class Tristate(object):
     def is_off(self):
         return [False, True][self._state == self.OFF]
 
+    def do(self, function, *args, **kwargs):
+        """
+        Run function if tristate is on or auto, only report a failure if
+        tristate is on since failing is o.k. for autodetect.
+        """
+        if self.is_off():
+            return True
+
+        success = function(*args, **kwargs)
+        if not success:
+            return [True, False][self.is_on()]
+
+        return True

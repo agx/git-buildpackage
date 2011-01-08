@@ -340,7 +340,7 @@ def main(argv):
                       help="options to pass to git-log, default is '%(git-log)s'")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     range_group.add_option("-s", "--since", dest="since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
     range_group.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
                       help="autocomplete changelog from last snapshot or tag")

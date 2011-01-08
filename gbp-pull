@@ -80,7 +80,7 @@ def main(argv):
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
 
 
     (options, args) = parser.parse_args(argv)

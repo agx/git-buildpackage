@@ -3,7 +3,7 @@
 # (C) 2006,2007,2010 Guido Guenther <agx@sigxcpu.org>
 """handles command line and config file option parsing for the gbp commands"""
 
-from optparse import OptionParser, OptionGroup, Option
+from optparse import OptionParser, OptionGroup, Option, OptionValueError
 from ConfigParser import SafeConfigParser
 from copy import copy
 import os.path
@@ -11,15 +11,26 @@ try:
     from gbp.gbp_version import gbp_version
 except ImportError:
     gbp_version = "[Unknown version]"
+import gbp.tristate
 
 def expand_path(option, opt, value):
     value = os.path.expandvars(value)
     return os.path.expanduser(value)
 
+def check_tristate(option, opt, value):
+    try:
+        val = gbp.tristate.Tristate(value)
+    except TypeError:
+        raise OptionValueError(
+            "option %s: invalid value: %r" % (opt, value))
+    else:
+        return val
+
 class GbpOption(Option):
-    TYPES = Option.TYPES + ('path',)
+    TYPES = Option.TYPES + ('path', 'tristate')
     TYPE_CHECKER = copy(Option.TYPE_CHECKER)
     TYPE_CHECKER['path'] = expand_path
+    TYPE_CHECKER['tristate'] = check_tristate
 
 class GbpOptionParser(OptionParser):
     """

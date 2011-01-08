@@ -162,7 +162,8 @@ def main(argv):
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+
 
     (options, args) = parser.parse_args(argv)
     gbp.log.setup(options.color, options.verbose)
