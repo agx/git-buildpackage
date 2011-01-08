@@ -1,3 +1,14 @@
+git-buildpackage (0.5.15) experimental; urgency=low
+
+  * [b770493] git-buildpackage: Add support for sending notifications via
+    libnotify after the build finished.
+  * [bfb233a] git-dch: don't add empty changelog entries with "Git-Dch: Ignore"
+  * [ab06072] Require python 2.6 since we use a context manager
+  * [79ed2e0] Use tristate option for --color=value this allows true and false
+    as alias for on and off.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 08 Jan 2011 19:09:41 +0100
+
 git-buildpackage (0.5.14) experimental; urgency=low
 
   [ Guido Günther ]
