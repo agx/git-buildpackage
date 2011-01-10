@@ -95,6 +95,7 @@ class GbpOptionParser(OptionParser):
                  'spawn-editor'    : 'release',
                  'patch-numbers'   : 'True',
                  'notify'          : 'auto',
+                 'merge'           : 'True',
              }
     help = {
              'debian-branch':
@@ -151,6 +152,8 @@ class GbpOptionParser(OptionParser):
                   "Whether to number patch files, default is %(patch-numbers)s",
              'notify':
                   "Whether to send a desktop notification after the build, default is '%(notify)s'",
+             'merge':
+                  "after the import merge the result to the debian branch, default is '%(merge)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

@@ -187,8 +187,6 @@ def main(argv):
         gbp.log.err(err)
         return 1
 
-    cl_group = GbpOptionGroup(parser, "changelog mangling",
-                      "options for mangling the changelog after the import")
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
     tag_group = GbpOptionGroup(parser, "tag options",
@@ -197,7 +195,7 @@ def main(argv):
                       "version number and branch layout options")
     cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke external commands and hooks")
 
-    for group in [import_group, branch_group, cl_group, tag_group, cmd_group ]:
+    for group in [import_group, branch_group, tag_group, cmd_group ]:
         parser.add_option_group(group)
 
     branch_group.add_option("-u", "--upstream-version", dest="version",
@@ -206,9 +204,7 @@ def main(argv):
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                       dest="upstream_branch")
-    branch_group.add_option("--no-merge", dest='merge', action="store_false",
-                      default=True,
-                      help="after import dont do any merging to another branch")
+    branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
                       dest="sign_tags")
