@@ -155,3 +155,14 @@ _gbp_clone ()
     _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _gbp_clone -o default gbp-clone
+
+have gbp-create-remote-repo &&
+_gbp_create_remote_repo ()
+{
+    local options=$(_gbp_options gbp-create-remote-repo)
+    local branch_opts="--debian-branch\= --upstream-branch\="
+    local tristate_opts="--color\="
+
+    _gbp_comp "$options" "$branch_opts" "" "$tristate_opts"
+}
+[ "${have:-}" ] && complete -F _gbp_create_remote_repo -o default gbp-create-remote-repo

@@ -96,6 +96,7 @@ class GbpOptionParser(OptionParser):
                  'patch-numbers'   : 'True',
                  'notify'          : 'auto',
                  'merge'           : 'True',
+                 'track'           : 'True',
              }
     help = {
              'debian-branch':
@@ -154,6 +155,8 @@ class GbpOptionParser(OptionParser):
                   "Whether to send a desktop notification after the build, default is '%(notify)s'",
              'merge':
                   "after the import merge the result to the debian branch, default is '%(merge)s'",
+             'track':
+                  "set up tracking for remote branches, default is '%(track)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

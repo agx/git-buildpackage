@@ -3,6 +3,7 @@ gbp/gbp_version.py
 gbp-clone.py
 gbp-pq.py
 gbp-pull.py
+gbp-create-remote-repo.py
 git-buildpackage.py
 git-dch.py
 git-import-dsc.py

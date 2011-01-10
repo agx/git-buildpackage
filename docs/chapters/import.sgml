@@ -168,6 +168,6 @@ EOF
 &git-import-orig; <option>-u</option> <replaceable>0.1</replaceable> <filename>../package-0.1.tar.gz</filename>
 <command>dh_make</command>
     </screen>
-    That's it, you're done.
+    That's it, you're done. If you want to publish you're new repository you can use &gbp-create-remote-repo;.
     </sect1>
 </chapter>

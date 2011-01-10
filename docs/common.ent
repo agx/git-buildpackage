@@ -11,6 +11,7 @@
   <!ENTITY gbp-pull		"<command>gbp-pull</command>">
   <!ENTITY gbp-clone		"<command>gbp-clone</command>">
   <!ENTITY gbp-pq		"<command>gbp-pq</command>">
+  <!ENTITY gbp-create-remote-repo "<command>gbp-create-remote-repo</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">

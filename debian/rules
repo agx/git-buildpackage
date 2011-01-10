@@ -13,18 +13,18 @@ COMMANDS = git-buildpackage  \
            git-dch           \
            gbp-pull          \
            gbp-clone         \
-           gbp-pq
+           gbp-pq            \
+           gbp-create-remote-repo
 
 EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
     gbp-pbuilder           \
-    gbp-posttag-push       \
-    gbp-create-remote-repo
+    gbp-posttag-push
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
-SGML_MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS) gbp-pq)
+SGML_MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 POD_MANPAGES=docs/git-pbuilder.1
 MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
 MANUAL=docs/manual-html

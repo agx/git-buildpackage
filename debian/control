@@ -26,3 +26,4 @@ Description: Suite to help with Debian packages in Git repositories
   * git-dch: generate Debian changelog entries from Git commit messages
   * gbp-{pull,clone}: clone and pull from remote repos
   * gbp-pq: manage debian/patches easily
+  * gbp-create-remote-repo: create remote repositories

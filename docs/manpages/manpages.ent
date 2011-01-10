@@ -6,5 +6,6 @@
 <!ENTITY man.gbp.pull SYSTEM "gbp-pull.sgml">
 <!ENTITY man.gbp.clone SYSTEM "gbp-clone.sgml">
 <!ENTITY man.gbp.pq SYSTEM "gbp-pq.sgml">
+<!ENTITY man.gbp.create.remote.repo SYSTEM "gbp-create-remote-repo.sgml">
 <!ENTITY man.git.config-files SYSTEM "man.conffiles.sgml">
 <!ENTITY man.seealso.common SYSTEM "man.seealso.sgml">

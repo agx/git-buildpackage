@@ -35,6 +35,7 @@
     &man.gbp.clone;
     &man.gbp.pull;
     &man.gbp.pq;
+    &man.gbp.create.remote.repo;
   </appendix>
   <appendix id="gbp.copyleft">
     <title>Copyright</title>
