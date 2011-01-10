@@ -19,17 +19,19 @@
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
 
 """Create a remote repo based on the current one"""
-# TODO: allow to add hoonks by default
+# TODO: allow to add hooks by default
 
 import sys
 import os, os.path
 import urlparse
 import subprocess
 import tty, termios
-from gbp.command_wrappers import ( CommandExecFailed, PristineTar, GitCommand)
+from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand,
+                                  GitFetch)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
+import gbp.log
 
 def print_config(remote, branches):
     print """[remote "origin"]
@@ -74,8 +76,22 @@ def read_yn():
         return False
 
 
+def setup_branch_tracking(remote, branches):
+    gitRemoteAdd = GitCommand("remote", ["add"])
+    gitRemoteAdd(["origin", remote['url']])
+    GitFetch()()
+    gitTrackRemote = GitCommand("branch", ["--set-upstream"])
+    for branch in branches:
+        gitTrackRemote(["%s" % branch, "origin/%s" % branch])
+
+
+def push_branches(remote, branches):
+    gitPush = GitCommand("push")
+    gitPush([remote['url']] + branches)
+    gitPush([remote['url'], '--tags'])
+
+
 def main(argv):
-    changelog = 'debian/changelog'
     retval = 0
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
@@ -86,18 +102,19 @@ def main(argv):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    branch_group.add_option("--track", dest='track', action="store_true", default=False,
+                            help="Set up tracking for remote branches")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
 
     (options, args) = parser.parse_args(argv)
-
-    if options.verbose:
-        Command.verbose = True
+    gbp.log.setup(options.color, options.verbose)
 
     try:
         repo = GitRepository(os.path.curdir)
     except GitRepositoryError:
-        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
+        gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
 
     try:
@@ -114,7 +131,7 @@ def main(argv):
         pkg = os.path.splitext(pkg)[0]
         remote = parse_remote(options.remote_url, pkg)
 
-        print "Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote
+        gbp.log.info("Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote)
         if not read_yn():
             raise GbpError, "Aborted."
 
@@ -143,21 +160,19 @@ EOF""" % remote
         if p2.returncode:
             raise GbpError, "Error creating remote repository" 
 
-        # Push branches
-        gitPush = GitCommand("push")
-        gitPush([remote['url']] + branches)
-        gitPush([remote['url'], '--tags'])
-
-        # FIXME: option to add to .git/config by default
-        print "\nYou can now add:"
-        print_config(remote, branches)
-        print "\nto your .git/config to 'gbp-pull' and 'git push' in the future."
+        push_branches(remote, branches)
+        if options.track:
+            setup_branch_tracking(remote, branches)
+        else:
+            gbp.log.info("You can now add:")
+            print_config(remote, branches)
+            gbp.log.info("to your .git/config to 'gbp-pull' and 'git push' in the future.")
 
     except CommandExecFailed:
         retval = 1
     except GbpError, err:
         if len(err.__str__()):
-            print >>sys.stderr, err
+            gbp.log.err(err)
         retval = 1
 
     return retval
