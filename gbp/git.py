@@ -370,7 +370,7 @@ class GitRepository(object):
         GitCommand("update-ref")(args)
 
     def commit_tree(self, tree, msg, parents, author=None, email=None,
-                    date=None):
+                    date=None, commit_date=None):
         """Commit a tree with commit msg 'msg' and parents 'parents'"""
         extra_env = {}
         if author:
@@ -379,6 +379,8 @@ class GitRepository(object):
             extra_env['GIT_AUTHOR_EMAIL'] = email
         if date:
             extra_env['GIT_AUTHOR_DATE'] = date
+        if commit_date:
+            extra_env['GIT_COMMITTER_DATE'] = commit_date
 
         args = [ tree ]
         for parent in parents:
@@ -387,7 +389,7 @@ class GitRepository(object):
         return sha1
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
-                   author = None, email = None, date = None):
+                   author = None, email = None, date = None, commit_date = None):
         """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
            @param unpack_dir: content to add
            @param msg: commit message to use
@@ -424,7 +426,8 @@ class GitRepository(object):
                     parents += [ sha ]
 
         commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
-                                  author=author, email=email, date=date)
+                                  author=author, email=email, date=date,
+                                  commit_date=commit_date)
         if not commit:
             raise GbpError, "Failed to commit tree"
         self.update_ref("refs/heads/%s" % branch, commit, cur)

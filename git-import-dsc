@@ -109,7 +109,8 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  other_parents = parents,
                                  author = author,
                                  email = email,
-                                 date = date)
+                                 date = date,
+                                 commit_date = date)
         gitTag(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version, commit=commit)
     except gbpc.CommandExecFailed:
