@@ -1,3 +1,17 @@
+git-buildpackage (0.5.16) experimental; urgency=low
+
+  * [b9aae05] git-import-orig: Make --[no-]merge a proper option so it can be
+    configured via gbp.conf.
+  * [05d9ecb] gbp-create-remote-repo: allow to set up remote branch tracking
+  * [03f3d75] Make gbp-create-remote-repo a first class citizen. Add manpage,
+    move into path, add bash completion
+  * [5ca57cd] git-import-dsc: also set the commit date to the changelog date
+    when importing old history. This makes sure we get proper sorting with
+    e.g. gitk.
+    Thanks to Rob Browning for the hint and explanation
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 11 Jan 2011 07:48:02 +0100
+
 git-buildpackage (0.5.15) experimental; urgency=low
 
   * [b770493] git-buildpackage: Add support for sending notifications via
