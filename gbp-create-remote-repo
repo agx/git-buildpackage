@@ -26,6 +26,7 @@ import os, os.path
 import urlparse
 import subprocess
 import tty, termios
+import gbp.deb as du
 from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand,
                                   GitFetch)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
@@ -93,6 +94,7 @@ def push_branches(remote, branches):
 
 def main(argv):
     retval = 0
+    changelog = 'debian/changelog'
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] - create a remote repository')
@@ -126,10 +128,18 @@ def main(argv):
         if repo.has_branch(PristineTar.branch) and options.pristine_tar:
             branches += [ PristineTar.branch ]
 
-        pkg = os.path.basename (os.path.abspath(os.path.curdir))
-        pkg = os.path.splitext(pkg)[0]
-        remote = parse_remote(options.remote_url, pkg)
+        try:
+            cp = du.parse_changelog(filename=changelog)
+            pkg = cp['Source']
+        except gbp.deb.NoChangelogError:
+            pkg = None
 
+        if not pkg:
+            gbp.log.warn("Couldn't parse changelog, will use directory name.")
+            pkg = os.path.basename(os.path.abspath(os.path.curdir))
+            pkg = os.path.splitext(pkg)[0]
+
+        remote = parse_remote(options.remote_url, pkg)
         gbp.log.info("Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote)
         if not read_yn():
             raise GbpError, "Aborted."
