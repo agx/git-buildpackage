@@ -52,8 +52,8 @@ def parse_remote(remote_url, pkg):
     frags = urlparse.urlparse(remote_url)
     if frags.scheme != 'ssh':
         raise GbpError, "Remote URL must use ssh protocol."
-    if not '%(pkg)s' in remote_url:
-        raise GbpError, "Remote URL lacks \%(pkg)s"
+    if not '%(pkg)s' in remote_url and not remote_url.endswith(".git"):
+        raise GbpError, "Remote URL needs to contain either a repository name or '%(pkg)s'"
     remote = { 'pkg': pkg,
                'url' : remote_url % { 'pkg': pkg },
                'dir': frags.path % { 'pkg': pkg },
