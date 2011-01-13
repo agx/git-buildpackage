@@ -453,7 +453,7 @@ class GitRepository(object):
         name = os.getenv("GIT_AUTHOR_NAME", name)
         return (name, email)
 
-    def get_remotes(self):
+    def get_remote_branches(self):
         """Get all remote branches"""
         args = [ '--format=%(refname:short)', 'refs/remotes/' ]
         out = self.__git_getoutput('for-each-ref', args)[0]

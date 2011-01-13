@@ -73,7 +73,7 @@ def main(argv):
 
         # Track all branches:
         if options.all:
-            remotes = repo.get_remotes()
+            remotes = repo.get_remote_branches()
             for remote in remotes:
                 local = remote.replace("origin/", "", 1)
                 if not repo.has_branch(local) and \
