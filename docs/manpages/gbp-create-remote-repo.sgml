@@ -23,6 +23,7 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--remote-url-pattern=</option><replaceable>url-pattern</replaceable></arg>
+      <arg><option>--remote-name=</option><replaceable>name</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -52,6 +53,14 @@
 	  <para>Where to create the remote repository. The part
 	  <replaceable>%(pkg)s</replaceable> will be replaced by the package name.
 	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--remote-name</option>=<replaceable>name</replaceable>
+        </term>
+        <listitem>
+	  <para>What name git will use when refering to that repository, e.g.
+	  'origin'.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
