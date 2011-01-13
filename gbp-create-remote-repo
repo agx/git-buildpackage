@@ -35,30 +35,31 @@ from gbp.git import (GitRepositoryError, GitRepository)
 import gbp.log
 
 def print_config(remote, branches):
-    print """[remote "origin"]
+    print """[remote "%(name)s"]
         url = %(url)s
-        fetch = +refs/heads/*:refs/remotes/origin/*""" % remote
+        fetch = +refs/heads/*:refs/remotes/%(name)s/*""" % remote
 
     for branch in branches:
         print "        push = %s" % branch
 
     for branch in branches:
         print """[branch "%s"]
-        remote = origin
-        merge = refs/heads/%s""" % (branch, branch)
+        remote = %s
+        merge = refs/heads/%s""" % (branch, remote['name'], branch)
 
 
-def parse_remote(remote_url, pkg):
+def parse_remote(remote_url, name, pkg):
     """Sanity check our remote URL"""
     frags = urlparse.urlparse(remote_url)
-    if frags.scheme != 'ssh':
+    if frags.scheme not in ['ssh', 'git+ssh']:
         raise GbpError, "Remote URL must use ssh protocol."
     if not '%(pkg)s' in remote_url and not remote_url.endswith(".git"):
         raise GbpError, "Remote URL needs to contain either a repository name or '%(pkg)s'"
-    remote = { 'pkg': pkg,
+    remote = { 'pkg' : pkg,
                'url' : remote_url % { 'pkg': pkg },
-               'dir': frags.path % { 'pkg': pkg },
-               'host': frags.netloc }
+               'dir' : frags.path % { 'pkg': pkg },
+               'host': frags.netloc,
+               'name': name}
     return remote
 
 
@@ -78,16 +79,16 @@ def read_yn():
 
 
 def setup_branch_tracking(remote, branches):
-    gitRemoteAdd = GitCommand("remote", ["add"])
-    gitRemoteAdd(["origin", remote['url']])
-    GitFetch()()
-    gitTrackRemote = GitCommand("branch", ["--set-upstream"])
+    gitRemoteAdd = GitCommand('remote', ['add'])
+    gitRemoteAdd([remote['name'], remote['url']])
+    GitFetch()([remote['name']])
+    gitTrackRemote = GitCommand('branch', ['--set-upstream'])
     for branch in branches:
-        gitTrackRemote(["%s" % branch, "origin/%s" % branch])
+        gitTrackRemote(['%s' % branch, '%s/%s' % (remote['name'], branch)])
 
 
 def push_branches(remote, branches):
-    gitPush = GitCommand("push")
+    gitPush = GitCommand('push')
     gitPush([remote['url']] + branches)
     gitPush([remote['url'], '--tags'])
 
@@ -108,6 +109,8 @@ def main(argv):
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+    parser.add_option("--remote-name", dest="name", default="origin",
+                      help="The name of the remote, default is 'origin'")
 
     (options, args) = parser.parse_args(argv)
     gbp.log.setup(options.color, options.verbose)
@@ -139,7 +142,9 @@ def main(argv):
             pkg = os.path.basename(os.path.abspath(os.path.curdir))
             pkg = os.path.splitext(pkg)[0]
 
-        remote = parse_remote(options.remote_url, pkg)
+        remote = parse_remote(options.remote_url, options.name, pkg)
+        if repo.has_remote_repo(options.name):
+            raise GbpError, "You already have a remote name '%s' defined for this repository." % options.name
         gbp.log.info("Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote)
         if not read_yn():
             raise GbpError, "Aborted."

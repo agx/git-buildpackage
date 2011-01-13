@@ -459,6 +459,18 @@ class GitRepository(object):
         out = self.__git_getoutput('for-each-ref', args)[0]
         return [ ref.strip() for ref in out ]
 
+    def get_remote_repos(self):
+        """Get all remote repositories"""
+        out = self.__git_getoutput('remote')[0]
+        return [ remote.strip() for remote in out ]
+
+    def has_remote_repo(self, name):
+        """Do we know about a remote named 'name'"""
+        if name in self.get_remote_repos():
+            return True
+        else:
+            return False
+
     def format_patches(self, start, end, output_dir):
         options = [ '-N', '-k', '-o', output_dir, '%s...%s' % (start, end) ]
         output, ret = self.__git_getoutput('format-patch', options)
