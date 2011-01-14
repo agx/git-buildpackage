@@ -192,7 +192,7 @@ def guess_comp_type(repo, comp_type, srcpkg, upstream_version):
             regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (srcpkg, upstream_version)
             commits = repo.grep_log(regex, PristineTar.branch)
             if commits:
-                commit = commits[0]
+                commit = commits[-1]
                 gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
             else:
                 commit = PristineTar.branch
