@@ -1,3 +1,19 @@
+git-buildpackage (0.5.17) experimental; urgency=low
+
+  * [244c1d2] gbp-create-remote-repo: allow for repository names without
+    substitutions
+  * [ebc67f3] gbp-create-remote-repo: get repository name from
+    debian/changelog if possible
+  * [eb9c0e6] git-create-remote-repo: don't hardcode 'origin' as remote.  This
+    makes it possible to create different remote repos from within the same
+    repository.
+  * [b383c96] Document --remote-name
+  * [8d5f78a] Use the latest commit instead of the earliest one
+    when guessing the compression type for pristine-tar.
+    Thanks to Andreas Rottmann for the detailed report (Closes: #609980)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 15 Jan 2011 13:46:36 +0100
+
 git-buildpackage (0.5.16) experimental; urgency=low
 
   * [b9aae05] git-import-orig: Make --[no-]merge a proper option so it can be
