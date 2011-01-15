@@ -185,7 +185,8 @@ def guess_comp_type(repo, comp_type, srcpkg, upstream_version):
         except KeyError:
             gbp.log.warn("Unknown compression type - guessing.")
             comp_type = 'auto'
-    else:
+
+    if comp_type == 'auto':
         if not repo.has_branch(PristineTar.branch):
             comp_type = 'gzip'
         else:
