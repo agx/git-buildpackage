@@ -40,7 +40,7 @@ def fast_forward_branch(branch, repo, options):
 
     remote = repo.get_merge_branch(branch)
     if not remote:
-        gbp.log.err("Warning: no branch tracking '%s' found - skipping." % branch)
+        gbp.log.warn("No branch tracking '%s' found - skipping." % branch)
         return False
 
     can_fast_forward, up_to_date = repo.is_fast_forward(branch, remote)
