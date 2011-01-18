@@ -53,7 +53,15 @@ def fetch_snapshots(pkg, downloaddir):
     dscs = None
 
     gbp.log.info("Downloading snapshots of '%s' to '%s'..." % (pkg, downloaddir))
-    gbpc.Command("debsnap", [ '--force', '--destdir=%s' % (downloaddir), pkg])()
+    debsnap = gbpc.Command("debsnap", [ '--force', '--destdir=%s' % (downloaddir), pkg])
+    try:
+        debsnap()
+    except gbpc.CommandExecFailed:
+        if debsnap.retcode == 2:
+            gbp.log.warn("Some packages failed to download. Continuing.")
+            pass
+        else:
+            raise
 
     dscs = glob.glob(os.path.join(downloaddir, '*.dsc'))
     if not dscs:

@@ -28,6 +28,7 @@ class Command(object):
         self.args = args
         self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] + self.args))
         self.shell = shell
+        self.retcode = 1
         if extra_env is not None:
             self.env = os.environ.copy()
             self.env.update(extra_env)
@@ -64,6 +65,7 @@ class Command(object):
             retcode = 1
         if retcode:
             log.err(self.run_error)
+        self.retcode = retcode
         return retcode
 
     def __call__(self, args=[]):
