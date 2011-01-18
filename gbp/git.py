@@ -331,7 +331,7 @@ class GitRepository(object):
             args.insert(0, "--quiet")
         sha, ret = self.__git_getoutput('rev-parse', args)
         if ret:
-            raise GitRepositoryError, "can't find SHA1 for %s" % name
+            raise GitRepositoryError, "revision '%s' not found" % name
         return sha[0].strip()
 
     def write_tree(self, index=None):
