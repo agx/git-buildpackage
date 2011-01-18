@@ -32,6 +32,7 @@
       &git-import-dscs;
       <arg choice="req">--debsnap</arg>
       <arg><option>git-import-dsc options</option></arg>
+      <arg choice="req"><replaceable>package</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>

@@ -90,6 +90,9 @@ def main(argv):
         if '--debsnap' in import_args:
             use_debsnap = True
             import_args.remove('--debsnap')
+            if import_args == []:
+                print_help()
+                raise GbpError
             pkg = import_args[-1]
             import_args = import_args[:-1]
         else:
