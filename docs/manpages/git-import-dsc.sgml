@@ -32,6 +32,8 @@
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--download</option></arg>
       <arg><option>--allow-same-versions</option></arg>
+      <arg><option>--author-is-committer</option></arg>
+      <arg><option>--author-date-is-committer-date</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
@@ -142,6 +144,20 @@
         </term>
         <listitem>
 	  <para>Allow to import a package with the same debian version.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--author-is-committer</option>
+        </term>
+        <listitem>
+	  <para>When importing the Debian patch make use the author as comitter.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--author-date-is-committer-date</option>
+        </term>
+        <listitem>
+	  <para>When importing the Debian patch make use the author date as comitter date.</para>
         </listitem>
       </varlistentry>
      </variablelist>

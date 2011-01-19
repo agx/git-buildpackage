@@ -110,7 +110,10 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  author = author,
                                  email = email,
                                  date = date,
-                                 commit_date = date)
+                                 committer_date = [None, date][options.author_committer_date],
+                                 committer_name = [None, author][options.author_committer],
+                                 committer_email = [None, email][options.author_committer],)
+
         gitTag(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version, commit=commit)
     except gbpc.CommandExecFailed:
@@ -195,6 +198,11 @@ def main(argv):
     import_group.add_option("--allow-same-version", action="store_true",
                       dest="allow_same_version", default=False,
                       help="allow to import already imported version")
+    import_group.add_boolean_config_file_option(option_name="author-is-committer",
+                      dest="author_committer")
+    import_group.add_boolean_config_file_option(option_name="author-date-is-committer-date",
+                      dest="author_committer_date")
+
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
 

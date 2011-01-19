@@ -370,7 +370,8 @@ class GitRepository(object):
         GitCommand("update-ref")(args)
 
     def commit_tree(self, tree, msg, parents, author=None, email=None,
-                    date=None, commit_date=None):
+                    date=None, committer_name=None, committer_email=None,
+                    committer_date=None):
         """Commit a tree with commit msg 'msg' and parents 'parents'"""
         extra_env = {}
         if author:
@@ -379,8 +380,12 @@ class GitRepository(object):
             extra_env['GIT_AUTHOR_EMAIL'] = email
         if date:
             extra_env['GIT_AUTHOR_DATE'] = date
-        if commit_date:
-            extra_env['GIT_COMMITTER_DATE'] = commit_date
+        if committer_name:
+            extra_env['GIT_COMMITTER_NAME'] = committer_name
+        if committer_email:
+            extra_env['GIT_COMMITTER_EMAIL'] = committer_email
+        if committer_date:
+            extra_env['GIT_COMMITTER_DATE'] = committer_date
 
         args = [ tree ]
         for parent in parents:
@@ -389,7 +394,9 @@ class GitRepository(object):
         return sha1
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
-                   author = None, email = None, date = None, commit_date = None):
+                   author = None, email = None, date = None,
+                   committer_name = None, committer_email = None,
+                   committer_date = None):
         """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
            @param unpack_dir: content to add
            @param msg: commit message to use
@@ -397,7 +404,10 @@ class GitRepository(object):
            @param parents: additional parents of this commit
            @param author: commit with author name 'author'
            @param email: commit with author email 'email'
-           @param date: set commit date to 'date'"""
+           @param date: set author date to 'date'
+           @param committer_author: commit with committer name 'commiter_name'
+           @param committer_email: commit with committer email 'commiter_email'
+           @param committer_date: set commit date to 'date'"""
         self.__check_path()
         git_index_file = os.path.join(self.path, '.git', 'gbp_index')
         try:
@@ -427,7 +437,9 @@ class GitRepository(object):
 
         commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
                                   author=author, email=email, date=date,
-                                  commit_date=commit_date)
+                                  committer_name=committer_name,
+                                  committer_email=committer_email,
+                                  committer_date=committer_date)
         if not commit:
             raise GbpError, "Failed to commit tree"
         self.update_ref("refs/heads/%s" % branch, commit, cur)

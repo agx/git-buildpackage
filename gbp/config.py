@@ -97,6 +97,8 @@ class GbpOptionParser(OptionParser):
                  'notify'          : 'auto',
                  'merge'           : 'True',
                  'track'           : 'True',
+                 'author-is-committer': 'False',
+                 'author-date-is-committer-date': 'False',
              }
     help = {
              'debian-branch':
@@ -157,6 +159,10 @@ class GbpOptionParser(OptionParser):
                   "after the import merge the result to the debian branch, default is '%(merge)s'",
              'track':
                   "set up tracking for remote branches, default is '%(track)s'",
+             'author-is-committer':
+                  "Use the authors's name also as the comitter's name, default is '%(author-is-committer)s'",
+             'author-date-is-committer-date':
+                  "Use the authors's date as the comitter's date, default is '%(author-date-is-committer-date)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
