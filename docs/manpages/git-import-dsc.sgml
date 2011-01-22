@@ -150,14 +150,18 @@
         <term><option>--author-is-committer</option>
         </term>
         <listitem>
-	  <para>When importing the Debian patch make use the author as comitter.</para>
+          <para>When importing the Debian patch, use the author identity as
+          comitter identity.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--author-date-is-committer-date</option>
         </term>
         <listitem>
-	  <para>When importing the Debian patch make use the author date as comitter date.</para>
+          <para>When importing the Debian patch, use the author date as
+          comitter date. <warning><para>Git will subtly misbehave if the
+          committer date of a commit is not later than or equal to all
+          its parents.</para></warning></para>
         </listitem>
       </varlistentry>
      </variablelist>
