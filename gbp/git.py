@@ -207,7 +207,7 @@ class GitRepository(object):
 
     def force_head(self, commit, hard=False):
         """force head to a specific commit"""
-        args = []
+        args = ['--quiet']
         if hard:
             args += [ '--hard' ]
         args += [ commit, '--' ]
