@@ -1,3 +1,27 @@
+git-buildpackage (0.5.18) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [0b2b869] git-buildpackage: fix fallback to auto detection for unknown
+    compression types
+  * [b7136f3] gbp-pull: Adjust incorrect logging level
+  * [d8d2347] git-import-dscs: Ignore debsnap download errors to cope with
+    binNMUs. Based on a patch from Jonathan Nieder. (Closes: #610376)
+  * [e1661bd] git-buildpackage: print the "Looking for tarball..." message at
+    debug level.  There's no need to print two messages in the default logging
+    level.
+  * [9054ae1] git.force_head: quiet git reset so we don't see pointless 'HEAD
+    is now at ...' messages during imports.
+  * [d36077c] Add --author-is-comitter and --author-date-is-comitter-date
+    commandline options (Closes: #610381)
+
+  [ Jonathan Nieder ]
+  * [f2f03b7] git-import-dscs: Fix --debsnap doc and option error handling
+    (Closes: #610368)
+  * [2984d27] git-import-dsc doc updates for new options --author-is-committer
+    and --author-date-is-committer-date
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 23 Jan 2011 14:52:25 +0100
+
 git-buildpackage (0.5.17) experimental; urgency=low
 
   * [244c1d2] gbp-create-remote-repo: allow for repository names without
