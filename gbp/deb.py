@@ -181,7 +181,7 @@ def parse_changelog_repo(repo, branch, filename):
         # to show as well, but we want to check if the branch / filename
         # exists first, so we can give a separate error from other
         # repository errors.
-        sha = repo.rev_parse("%s:%s" % (branch, filename), quiet=True)
+        sha = repo.rev_parse("%s:%s" % (branch, filename))
     except GitRepositoryError:
         raise NoChangelogError, "Changelog %s not found in branch %s" % (filename, branch)
 

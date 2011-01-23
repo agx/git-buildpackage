@@ -324,11 +324,9 @@ class GitRepository(object):
             raise GitRepositoryError, "can't find tag for %s" % commit
         return tag[0].strip()
 
-    def rev_parse(self, name, quiet=False):
+    def rev_parse(self, name):
         "find the SHA1"
-        args = [ "--verify", name]
-        if quiet:
-            args.insert(0, "--quiet")
+        args = [ "--quiet", "--verify", name ]
         sha, ret = self.__git_getoutput('rev-parse', args)
         if ret:
             raise GitRepositoryError, "revision '%s' not found" % name
