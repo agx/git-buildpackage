@@ -216,12 +216,7 @@ def setup_pbuilder(options):
             os.environ['ARCH'] = options.pbuilder_arch
 
 
-def main(argv):
-    changelog = 'debian/changelog'
-    retval = 0
-    prefix = "git-"
-    cp = None
-
+def parse_args(argv, prefix):
     args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
     dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
 
@@ -234,7 +229,7 @@ def main(argv):
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
-        return 1
+        return None, None, None
 
     tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
@@ -296,16 +291,30 @@ def main(argv):
     export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
                       help="retain exported package build directory")
     export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
-    (options, args) = parser.parse_args(args)
-    gbp.log.setup(options.color, options.verbose)
+    options, args = parser.parse_args(args)
 
+    gbp.log.setup(options.color, options.verbose)
     if options.retag:
         if not options.tag and not options.tag_only:
             gbp.log.err("'--%sretag' needs either '--%stag' or '--%stag-only'" % (prefix, prefix, prefix))
-            return 1
+            return None, None, None
 
     if options.overlay and not options.export_dir:
-        parser.error("Overlay must be used with --git-export-dir")
+        gbp.log.err("Overlay must be used with --git-export-dir")
+        return None, None, None
+
+    return options, args, dpkg_args
+
+
+def main(argv):
+    retval = 0
+    changelog = 'debian/changelog'
+    prefix = "git-"
+    cp = None
+
+    options, gbp_args, dpkg_args = parse_args(argv, prefix)
+    if not options:
+        return 1
 
     try:
         repo = GitRepository(os.path.curdir)

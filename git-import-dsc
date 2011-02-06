@@ -148,19 +148,13 @@ def move_tag_stamp(repo, format, version):
     repo.move_tag(old, new)
 
 
-def main(argv):
-    dirs = dict(top=os.path.abspath(os.curdir))
-    needs_repo = False
-    ret = 0
-    skipped = False
-    parents = None
-
+def parse_args(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] /path/to/package.dsc')
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
-        return 1
+        return None, None
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
@@ -205,12 +199,23 @@ def main(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
+    return options, args
+
+
+def main(argv):
+    dirs = dict(top=os.path.abspath(os.curdir))
+    needs_repo = False
+    ret = 0
+    skipped = False
+    parents = None
+
+    options, args = parse_args(argv)
 
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
 
     try:
         if len(args) != 1:
-            parser.print_help()
+            gbp.log.err("Need to give exactly one package to import. Try --help.")
             raise GbpError
         else:
             pkg = args[0]

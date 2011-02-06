@@ -175,17 +175,14 @@ def ask_package_version(default):
         # bit clearer.
         gbp.log.warn("\nNot a valid upstream version: '%s'.\n%s" % (version, upstreamversion_msg))
 
-def main(argv):
-    ret = 0
-    tmpdir = ''
-    pristine_orig = None
 
+def parse_args(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
-        return 1
+        return None, None
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
@@ -248,7 +245,15 @@ def main(argv):
     if options.filters:
         turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
 
+    return options, args
 
+
+def main(argv):
+    ret = 0
+    tmpdir = ''
+    pristine_orig = None
+
+    (options, args) = parse_args(argv)
 
     try:
         if options.uscan: # uscan mode
@@ -272,7 +277,7 @@ def main(argv):
 
         # tarball specified
         if len(args) != 1:
-            parser.print_help()
+            gbp.log.err("More than one tarball specified. Try --help.")
             raise GbpError
         else:
             archive = args[0]
