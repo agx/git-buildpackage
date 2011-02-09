@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010,2011 Guido Guenther <agx@sigxcpu.org>
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
@@ -99,6 +99,7 @@ class GbpOptionParser(OptionParser):
                  'track'           : 'True',
                  'author-is-committer': 'False',
                  'author-date-is-committer-date': 'False',
+                 'create-missing-branches': 'False',
              }
     help = {
              'debian-branch':
@@ -163,6 +164,8 @@ class GbpOptionParser(OptionParser):
                   "Use the authors's name also as the comitter's name, default is '%(author-is-committer)s'",
              'author-date-is-committer-date':
                   "Use the authors's date as the comitter's date, default is '%(author-date-is-committer-date)s'",
+             'create-missing-branches':
+                  "Create missing branches automatically, default is '%(create-missing-branches)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

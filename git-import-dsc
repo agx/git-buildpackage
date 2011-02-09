@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2011 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -173,6 +173,8 @@ def parse_args(argv):
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                       dest="upstream_branch")
+    branch_group.add_boolean_config_file_option(option_name="create-missing-branches",
+                      dest="create_missing_branches")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
                       dest="sign_tags")
@@ -270,6 +272,9 @@ def main(argv):
                 else:
                     branch = [options.upstream_branch,
                               options.debian_branch][src.native]
+                    if not repo.has_branch(branch) and options.create_missing_branches:
+                        gbp.log.info("Creating missing branch '%s'" % branch)
+                        repo.create_branch(branch)
                 commit = repo.commit_dir(unpack_dir,
                                          "Imported %s" % msg,
                                          branch)

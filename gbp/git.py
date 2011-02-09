@@ -1,12 +1,13 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2008 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2008,2011 Guido Guenther <agx@sigxcpu.org>
 """provides git repository related helpers"""
 
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, GitCommand, copy_from)
+from command_wrappers import (GitAdd, GitBranch, GitRm, GitCheckoutBranch,
+                              GitInit, GitCommand, copy_from)
 from errors import GbpError
 import log
 import dateutil.parser
@@ -197,6 +198,15 @@ class GitRepository(object):
         self.__check_path()
         if self.get_branch() != branch:
             GitCheckoutBranch(branch)()
+
+    def create_branch(self, branch, rev=None):
+        """create a new branch
+           @param rev: where to start the branch from
+
+           if param is None the branch starts form the current HEAD
+        """
+        self.__check_path()
+        GitBranch()(branch, rev)
 
     def delete_branch(self, branch):
         self.__check_path()
