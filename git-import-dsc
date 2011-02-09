@@ -318,7 +318,7 @@ def main(argv):
             gbpc.RemoveTree(dirs[d])()
 
     if not ret and not skipped:
-        gbp.log.info("Everything imported under '%s'" % src.pkg)
+        gbp.log.info("Version '%s' imported under '%s'" % (src.version, src.pkg))
     return ret
 
 if __name__ == '__main__':
