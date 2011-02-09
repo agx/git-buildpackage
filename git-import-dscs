@@ -38,7 +38,7 @@ class DscCompareVersions(DpkgCompareVersions):
 class GitImportDsc(gbpc.Command):
     # git-import-dsc should reside in the same directory as git-import-dscs
     # so we can reuse the full path from the later
-    cmd = __file__[:-1]
+    cmd = os.path.abspath(__file__[:-1])
     def __init__(self, args):
         if not os.access(self.cmd, os.X_OK):
             raise GbpError, "%s not found - can't import packages" % self.cmd
