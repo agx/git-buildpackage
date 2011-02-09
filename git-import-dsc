@@ -31,7 +31,7 @@ from gbp.deb import (debian_version_chars, parse_changelog, unpack_orig,
                      parse_dsc, DscFile, tar_toplevel)
 from gbp.git import (build_tag, create_repo, GitRepository,
                      GitRepositoryError, rfc822_date_to_git)
-from gbp.config import GbpOptionParser, GbpOptionGroup
+from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
 import gbp.log
 
@@ -272,9 +272,15 @@ def main(argv):
                 else:
                     branch = [options.upstream_branch,
                               options.debian_branch][src.native]
-                    if not repo.has_branch(branch) and options.create_missing_branches:
-                        gbp.log.info("Creating missing branch '%s'" % branch)
-                        repo.create_branch(branch)
+                    if not repo.has_branch(branch):
+                        if options.create_missing_branches:
+                            gbp.log.info("Creating missing branch '%s'" % branch)
+                            repo.create_branch(branch)
+                        else:
+                            gbp.log.err(no_upstream_branch_msg % branch +
+                                        "\nAlso check the --create-missing-branches option.")
+                            raise GbpError
+
                 commit = repo.commit_dir(unpack_dir,
                                          "Imported %s" % msg,
                                          branch)
