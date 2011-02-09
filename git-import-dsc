@@ -107,12 +107,10 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  "Imported Debian patch %s" % version,
                                  branch = options.debian_branch,
                                  other_parents = parents,
-                                 author = author,
-                                 email = email,
-                                 date = date,
-                                 committer_date = [None, date][options.author_committer_date],
-                                 committer_name = [None, author][options.author_committer],
-                                 committer_email = [None, email][options.author_committer],)
+                                 author=dict(name=author, email = email, date = date),
+                                 committer=dict(name=[None, author][options.author_committer],
+                                                email=[None, email][options.author_committer],
+                                                date=[None, date][options.author_committer_date]))
 
         gitTag(build_tag(options.debian_tag, version),
                msg="Debian release %s" % version, commit=commit)
