@@ -1,3 +1,24 @@
+git-buildpackage (0.5.19) unstable; urgency=low
+
+  [ Jonathan Nieder ]
+  * [7f00d39] git-import-dsc: improve error message when upstream branch is
+    missing
+
+  [ Guido Günther ]
+  * [b9acbf9] logging: don't use color inside Emacs's comint shell
+    (Closes: #612384)
+  * [14fdbce] gbp-clone: reparse the configuration after cloning the
+    repository (Closes: #607936)
+  * [d21506e] git-import-dscs: really use git-import-dsc from the same
+    location as git-import-dscs
+  * [b92b88f] git-import-dsc: auto create upstream branch if it's missing.
+    This allows to mass import old history of packages that were native and
+    switched to non-native later.
+  * [0363f47] git-import-dsc: better explain missing upstream branch.
+    Thanks to Jonathan Nieder for the suggestion. (Closes: #610379)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 11 Feb 2011 18:20:36 +0100
+
 git-buildpackage (0.5.18) experimental; urgency=low
 
   [ Guido Günther ]
