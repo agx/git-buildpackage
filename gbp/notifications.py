@@ -45,6 +45,7 @@ def build_msg(cp, success):
 
 def send_notification(summary, msg):
     n = notify_module.Notification(summary, msg)
+    n.set_hint('transient', True)
     try:
         if not n.show():
             return False
