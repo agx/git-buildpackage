@@ -27,6 +27,7 @@
   <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
   <!ENTITY gpg 	       "<productname>GPG</productname>">
   <!ENTITY dpkg-buildpackage "<productname>Dpkg-buildpackage</productname>">
+  <!ENTITY dpkg-source "<productname>Dpkg-source</productname>">
   <!ENTITY pristine-tar "<productname>pristine-tar</productname>">
   <!ENTITY apt-get     "<productname>apt-get</productname>">
   <!ENTITY dget        "<productname>dget</productname>">

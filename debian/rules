@@ -20,7 +20,8 @@ EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
     gbp-pbuilder           \
-    gbp-posttag-push
+    gbp-posttag-push       \
+    gbp-configure-unpatched-source
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 

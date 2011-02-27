@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+# 
+# Setup dpkg-source and git to unpatch the source after the build and ignore
+# the .pc directory.
+
+GIT_EXCLUDE=.git/info/exclude
+LOCAL_OPTIONS=debian/source/local-options
+
+help ()
+{
+	cat << EOF >/dev/stdout
+Modifies "$LOCAL_OPTIONS" and "$GIT_EXCLUDE"
+to ignore .pc and unpatch the source after the build.
+EOF
+
+  exit $1
+}
+
+
+case $1 in
+	-h|--help)
+		help 0
+	;;
+esac
+
+
+if [ ! -d .git ]; then
+	echo "Not the top of a git repository - aborting."
+	help 1
+fi
+
+if ! grep -qs '^3.*\(quilt\)' debian/source/format; then
+	echo "Not a source format 3 (quilt) package - aborting."
+	help 1
+fi
+
+if ! grep -qs '^unapply-patches' $LOCAL_OPTIONS; then
+	echo "Setting unapply-patches in $LOCAL_OPTIONS"
+	echo "unapply-patches" >> $LOCAL_OPTIONS
+	git add $LOCAL_OPTIONS
+	git commit -m "Unapply patches from source" $LOCAL_OPTIONS
+else
+	echo "unapply-patches already configured"
+fi
+
+if ! grep -qs "^\.pc/" $GIT_EXCLUDE; then
+	echo "Adding .pc/ to $GIT_EXCLUDE"
+	echo ".pc/" >> $GIT_EXCLUDE
+else
+	echo "$GIT_EXCLUDE already configured"
+fi
