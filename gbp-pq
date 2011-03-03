@@ -48,6 +48,24 @@ def pq_branch_base(pq_branch):
     if is_pq_branch(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
+
+def write_patch(patch, options)
+    # delete the first line (from sha1) and last two lines (git version
+    # info) of the patch file
+    Command("sed -i -e '1d' -e 'N;$!P;$!D;$d' %s" % patch, shell=True)()
+    Command("sed -i -e 's/^-- \\n[0-9\.]+$//' %s" % patch, shell=True)()
+
+    name = patch[len(PATCH_DIR):]
+    if not options.patch_numbers:
+        m = patch_re.match(name)
+        if m:
+            filename = m.group('name')
+            shutil.move(patch, os.path.join(PATCH_DIR, filename))
+        else:
+            filename = name
+    return filename
+
+
 def export_patches(repo, branch, options):
     patch_re = re.compile("[0-9]+-(?P<name>.+)")
 
@@ -71,19 +89,8 @@ def export_patches(repo, branch, options):
         f = file(SERIES_FILE, 'w')
         gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
         for patch in patches:
-	    # delete the first line (from sha1) and last two lines (git version
-	    # info) of the patch file
-            Command("sed -i -e '1d' -e 'N;$!P;$!D;$d' %s" % patch, shell=True)()
-            Command("sed -i -e 's/^-- \\n[0-9\.]+$//' %s" % patch, shell=True)()
-
-            name = patch[len(PATCH_DIR):]
-            if not options.patch_numbers:
-                m = patch_re.match(name)
-                if m:
-                    name = m.group('name')
-                    shutil.move(patch, os.path.join(PATCH_DIR, name))
-
-            f.write(name + '\n')
+            filename = write_patch(patch, options)
+            f.write(filename + '\n')
         f.close()
         GitCommand('status')(['--', PATCH_DIR])
     else:
