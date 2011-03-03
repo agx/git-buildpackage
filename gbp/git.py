@@ -175,7 +175,8 @@ class GitRepository(object):
         has_local = False       # local repo has new commits
         has_remote = False      # remote repo has new commits
         out = self.__git_getoutput('rev-list', ["--left-right",
-                                   "%s...%s" % (from_branch, to_branch)])[0]
+                                   "%s...%s" % (from_branch, to_branch),
+                                   "--"])[0]
 
         if not out: # both branches have the same commits
             return True, True
