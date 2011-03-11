@@ -64,9 +64,7 @@ class GitRepository(object):
                                  stdout=subprocess.PIPE,
                                  env=env)
         (stdout, stderr) = popen.communicate(input)
-        if popen.returncode:
-            stdout = None
-        return stdout
+        return stdout, stderr, popen.returncode
 
     def base_dir(self):
         """Base of the repository"""
@@ -393,8 +391,11 @@ class GitRepository(object):
         args = [ tree ]
         for parent in parents:
             args += [ '-p' , parent ]
-        sha1 = self.__git_inout('commit-tree', args, msg, extra_env).strip()
-        return sha1
+        sha1, stderr, ret = self.__git_inout('commit-tree', args, msg, extra_env)
+        if not ret:
+            return sha1.strip()
+        else:
+            raise GbpError, "Failed to commit tree: %s" % stderr
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
                    author={}, committer={}):
