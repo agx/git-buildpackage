@@ -23,11 +23,13 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--[no-]patch-numbers</option></arg>
+      <arg><option>--topic=</option><replaceable>topic</replaceable></arg>
       <group choice="plain">
       <arg><option>export</option></arg>
       <arg><option>import</option></arg>
       <arg><option>rebase</option></arg>
       <arg><option>drop</option></arg>
+      <arg><option>apply</option></arg>
       </group>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -91,6 +93,18 @@
 	  </para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>apply</option>
+        </term>
+        <listitem>
+	  <para>
+	Add a single patch to the patch-queue similar to using
+	<command>git-am</command>. Use <option>--topic</option> if you want
+	the patch to appear in a separate subdir when exporting the patch queue
+	using <option>export</option>. This can be used to separate upstream
+	pathes from debian specific patches.</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
@@ -115,6 +129,13 @@
         </term>
         <listitem>
           <para>Whether the patch files should start with a number or not.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--topic=</option><replaceable>topic</replaceable>
+        </term>
+        <listitem>
+          <para>Topic to use when importing a single patch</para>
         </listitem>
       </varlistentry>
     </variablelist>

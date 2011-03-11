@@ -486,6 +486,17 @@ class GitRepository(object):
         output, ret = self.__git_getoutput('format-patch', options)
         return [ line.strip() for line in output ]
 
+    def apply_patch(self, patch, index=True, context=None):
+        """Apply a patch using git apply"""
+
+        args = []
+        if context:
+            args += [ '-C', context ]
+        if index:
+            args.append("--index")
+        args.append(patch)
+        GitCommand("apply", args)()
+
 
 class FastImport(object):
     """Invoke git-fast-import"""
