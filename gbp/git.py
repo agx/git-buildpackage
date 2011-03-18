@@ -482,6 +482,67 @@ class GitRepository(object):
         args.append(patch)
         GitCommand("apply", args)()
 
+    def archive(self, format, prefix, output, treeish, **kwargs):
+        args = [ '--format=%s' % format, '--prefix=%s' % prefix,
+                 '--output=%s' % output, treeish ]
+        out, ret = self.__git_getoutput('archive', args, **kwargs)
+        if ret:
+            raise GitRepositoryError, "unable to archive %s"%(treeish)
+
+
+    def has_submodules(self):
+        """Does the repo have submodules"""
+        if os.path.exists('.gitmodules'):
+            return True
+        else:
+            return False
+
+
+    def add_submodule(self, repo_path):
+        """Add a submodule"""
+        GitCommand("submodule", [ "add", repo_path ])()
+
+
+    def update_submodules(self, init=True, recursive=True):
+        """Update all submodules"""
+        if not self.has_submodules():
+            return
+        args = [ "update" ]
+        if recursive:
+            args.append("--recursive")
+        if init:
+            args.append("--init")
+        GitCommand("submodule", args)()
+
+
+    def get_submodules(self, treeish, path=None, recursive=True):
+        """ list the submodules of treeish
+
+            returns a list of submodule/commit-id tuples
+        """
+        #    Note that we is lstree instead of submodule commands because
+        #    there's no way to list the submodules of another branch with
+        #    the latter.
+        submodules = []
+        if path is None:
+            path = "."
+
+        args = [ treeish ]
+        if recursive:
+            args += ['-r']
+
+        out, ret =  self.__git_getoutput('ls-tree', args, cwd=path)
+        for line in out:
+            mode, objtype, commit, name = line.split()
+            # A submodules is shown as "commit" object in ls-tree:
+            if objtype == "commit":
+                nextpath = os.path.sep.join([path, name])
+                submodules.append( (nextpath, commit) )
+                if recursive:
+                    submodules += self.get_submodules(commit, path=nextpath,
+                                                      recursive=recursive)
+        return submodules
+
 
 class FastImport(object):
     """Invoke git-fast-import"""
