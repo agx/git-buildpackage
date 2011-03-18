@@ -6,8 +6,7 @@
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitAdd, GitBranch, GitRm, GitCheckoutBranch,
-                              GitInit, GitCommand, copy_from)
+from command_wrappers import (GitCommand, GitInit, GitAdd, GitBranch, copy_from)
 from errors import GbpError
 import log
 import dateutil.parser
@@ -196,7 +195,7 @@ class GitRepository(object):
         """switch to branch 'branch'"""
         self.__check_path()
         if self.get_branch() != branch:
-            GitCheckoutBranch(branch)()
+            GitCommand("checkout", [ branch ])()
 
     def create_branch(self, branch, rev=None):
         """create a new branch
@@ -354,20 +353,6 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError, "can't write out current index"
         return tree[0].strip()
-
-    def replace_tree(self, src_dir, filters, verbose=False):
-        """
-        make the current wc match what's in src_dir
-        @return: True if wc was modified
-        @rtype: boolean
-        """
-        old = set(self.index_files())
-        new = set(copy_from(src_dir, filters))
-        GitAdd()(['-f', '.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            GitRm(verbose=verbose)(files)
-        return not self.is_clean()[0]
 
     def update_ref(self, ref, new, old=None, msg=None):
         """Update ref 'ref' to commit 'new'"""

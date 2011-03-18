@@ -197,6 +197,7 @@ class GitCommand(Command):
         self.run_error = "Couldn't run git %s" % cmd
 
 
+# FIXME: move to gbp.git.__init__
 class GitInit(GitCommand):
     """Wrap git init"""
     def __init__(self):
@@ -204,20 +205,14 @@ class GitInit(GitCommand):
         self.run_error = "Couldn't init git repository"
 
 
+# FIXME: move to gbp.git.__init__
 class GitClone(GitCommand):
     """Wrap git clone"""
     def __init__(self):
         GitCommand.__init__(self, 'clone')
         self.run_error = "Couldn't clone git repository"
 
-
-class GitShowBranch(GitCommand):
-    """Wrap git show-branch"""
-    def __init__(self):
-        GitCommand.__init__(self, 'branch')
-        self.run_error = "Couldn't list branches"
-
-
+# FIXME: move to  gbp.git.create_branch
 class GitBranch(GitCommand):
     """Wrap git branch"""
     def __init__(self):
@@ -231,21 +226,7 @@ class GitBranch(GitCommand):
         GitCommand.__call__(self, options)
 
 
-class GitCheckoutBranch(GitCommand):
-    """Wrap git checkout in order tos switch to a certain branch"""
-    def __init__(self, branch):
-        GitCommand.__init__(self, 'checkout', [branch])
-        self.branch = branch
-        self.run_error = 'Couldn\'t switch to branch "%s"' % self.branch
-
-
-class GitPull(GitCommand):
-    """Wrap git pull"""
-    def __init__(self, repo, branch):
-        GitCommand.__init__(self, 'pull', [repo, branch]) 
-        self.run_error = 'Couldn\'t pull "%s" to "%s"' % (branch, repo)
-
-
+# FIXME: move to gbp.git.fetch
 class GitFetch(GitCommand):
     """Wrap git fetch"""
     def __init__(self, remote = None):
@@ -255,6 +236,7 @@ class GitFetch(GitCommand):
         GitCommand.__init__(self, 'fetch', opts)
 
 
+# FIXME: move to gbp.git.merge
 class GitMerge(GitCommand):
     """Wrap git merge"""
     def __init__(self, branch, verbose=False):
@@ -263,6 +245,7 @@ class GitMerge(GitCommand):
         self.run_error = 'Couldn\'t merge from "%s"' % (branch,)
 
 
+# FIXME: move to gbp.git.create_tag
 class GitTag(GitCommand):
     """Wrap git tag"""
     def __init__(self, sign_tag=False, keyid=None):
@@ -285,31 +268,12 @@ class GitTag(GitCommand):
         GitCommand.__call__(self, cmd)
 
 
+# FIXME: move to gbp.git.add
 class GitAdd(GitCommand):
     """Wrap git add to add new files"""
     def __init__(self, extra_env=None):
         GitCommand.__init__(self, 'add', extra_env=extra_env)
         self.run_error = "Couldn't add files"
-
-
-class GitRm(GitCommand):
-    """Wrap git rm to remove files"""
-    def __init__(self, verbose=False):
-        args = [ ['--quiet'], [] ][verbose]
-        GitCommand.__init__(self, cmd='rm', args=args)
-        self.run_error = "Couldn't remove files"
-
-
-class GitCommitAll(GitCommand):
-    """Wrap git commit to commit all changes"""
-    def __init__(self, verbose=False, **kwargs):
-        args = ['-a'] + [ ['-q'], [] ][verbose]
-        GitCommand.__init__(self, cmd='commit', args=args, **kwargs)
-
-    def __call__(self, msg=''):
-        args = [ [], ['-m', msg] ][len(msg) > 0]
-        self.run_error = "Couldn't %s %s" % (self.cmd, " ".join(self.args + args))
-        GitCommand.__call__(self, args)
 
 
 def copy_from(orig_dir, filters=[]):
