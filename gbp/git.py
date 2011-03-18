@@ -39,14 +39,14 @@ class GitRepository(object):
             env.update(extra_env)
         return env
 
-    def __git_getoutput(self, command, args=[], extra_env=None):
+    def __git_getoutput(self, command, args=[], extra_env=None, cwd=None):
         """exec a git command and return the output"""
         output = []
 
         env = self.__build_env(extra_env)
         cmd = ['git', command] + args
         log.debug(cmd)
-        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
+        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env, cwd=cwd)
         while popen.poll() == None:
             output += popen.stdout.readlines()
         ret = popen.poll()
