@@ -159,6 +159,16 @@ class RepackTarArchive(Command):
         self.run_error = 'Couldn\'t repack "%s"' % self.archive
 
 
+class CatenateTarArchive(Command):
+    """Wrap tar to catenate a tar file with the next"""
+    def __init__(self, archive, **kwargs):
+        self.archive = archive
+        Command.__init__(self, 'tar', ['-A', '-f', archive], **kwargs)
+
+    def __call__(self, target):
+        Command.__call__(self, [target])
+
+
 class RemoveTree(Command):
     "Wrap rm to remove a whole directory tree"
     def __init__(self, tree):
