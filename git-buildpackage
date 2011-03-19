@@ -68,7 +68,7 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level):
 
         # generate and integrate each submodule's tarfile into main_tarfile
         if repo.has_submodules():
-            repo.update_submodule()
+            repo.update_submodules()
         for (subdir, commit) in repo.get_submodules(treeish):
             tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
             gbp.log.info("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
