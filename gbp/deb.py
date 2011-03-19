@@ -256,8 +256,19 @@ def is_valid_upstreamversion(version):
     return upstreamversion_re.match(version)
 
 def get_compression(orig_file):
-    "Given an orig file return the compression used"
-    ext = orig_file.rsplit('.',1)[1]
+    """
+    Given an orig file return the compression used
+    >>> get_compression("abc.tar.gz")
+    'gzip'
+    >>> get_compression("abc.tar.bz2")
+    'bzip2'
+    >>> get_compression("abc.tar.foo")
+    >>> get_compression("abc")
+    """
+    try:
+        ext = orig_file.rsplit('.',1)[1]
+    except IndexError:
+        return None
     for (c, o) in compressor_opts.iteritems():
         if o[1] == ext:
             return c
