@@ -244,8 +244,14 @@ def orig_file(cp, compression):
 
 
 def is_native(cp):
-    "Is this a debian native package"
-    return [ True, False ]['-' in cp['Version']]
+    """
+    Is this a debian native package
+    >>> is_native(dict(Version="1"))
+    True
+    >>> is_native(dict(Version="1-1"))
+    False
+    """
+    return not '-' in cp['Version']
 
 def is_valid_packagename(name):
     "Is this a valid Debian package name?"
