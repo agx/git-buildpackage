@@ -37,6 +37,7 @@ def setup():
 
     os.chdir(repodir)
 
+
 def teardown():
     os.chdir(top)
     if not os.getenv("GBP_TESTS_NOCLEAN") and tmpdir:
@@ -86,6 +87,7 @@ def test_get_submodules():
     assert submodule[0] == './test_submodule'
     assert len(submodule[1]) == 40
 
+
 def test_dump_tree():
     """Dump the repository and check if files exist"""
     dumpdir = os.path.join(tmpdir, "dump")
@@ -94,5 +96,15 @@ def test_dump_tree():
     assert os.path.exists(os.path.join(dumpdir, testfile_name))
     assert os.path.exists(os.path.join(dumpdir, submodule_name, testfile_name))
 
+
+def test_create_tarball():
+    """Create an upstream tarball"""
+    cp = { "Source": "test", "Upstream-Version": "0.1" }
+    assert git_buildpackage.git_archive(repo,
+                                        cp,
+                                        tmpdir,
+                                        "HEAD",
+                                        "bzip2",
+                                        "9")
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
