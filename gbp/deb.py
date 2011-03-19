@@ -282,12 +282,15 @@ def get_compression(orig_file):
 
 
 def has_epoch(cp):
-    """does the topmost version number contain an epoch"""
-    try:
-        if cp['Epoch']:
-            return True
-    except KeyError:
-        return False
+    """
+    Does the topmost version number in the changelog contain an epoch
+    >>> has_epoch(dict(Epoch="1"))
+    True
+    >>> has_epoch(dict())
+    False
+    """
+    return cp.has_key("Epoch")
+
 
 def has_orig(cp, compression, dir):
     "Check if orig.tar.gz exists in dir"
