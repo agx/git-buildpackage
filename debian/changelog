@@ -1,19 +1,41 @@
-git-buildpackage (0.5.20~1.gbp194f43) UNRELEASED; urgency=low
+git-buildpackage (0.5.20) experimental; urgency=low
 
-  ** SNAPSHOT build @194f43948c2d5789d28dd5ba9167014199220182 **
-
-  * [a618bdc] Make the desktop notification transient
-    so they timeout and don't clutter the notification area.
-  * [3b0f296] Add script to ignore .pc and tell dpkg-source unpatch the
-    source. See #591858.
-  * [258743a] is_fast_forward: make sure git interprets arguments as revisions
-    so git prints a clearer error message on configuration errors in
-    .git/config
-  * [194f439] gbp-pq: Allow to specify subdirs for patches via the
+  [ Guido Günther ]
+  * [a618bdc] git-buildpackage: Make the desktop notification transient so
+    they timeout and don't clutter the notification area.
+  * [3b0f296] Add gbp-configure-unpatched-source example to ignore .pc and
+    tell dpkg-source to unpatch the source. See #591858.
+  * [258743a] gbp-pull: make sure git interprets arguments as revisions in
+    is_fast_forward  so it prints a clearer error message on configuration
+    errors in .git/config.
+  * [40f4709] gbp-pq: Allow to specify subdirs for patches via the
     "Gbp-Pq-Tag: <subdir>" directive in the patch header. This also gets rid
-    sed callouts.  Add "apply" action to apply single patches
+    sed callouts. Add "apply" action to apply single patches.
+  * [fadcfcb] gbp: Add git.archive() and git.{has,get,update,add}_submodules()
+    and testcases.
+    Heavily based on work by Sean Finney and Chow Loong Jin
+  * [2353ab7] git-buildpackage: submodule support for dump_tree.
+    Heavily based on work by Sean Finney and Chow Loong Jin
+  * [97c32c7] git-buildpackage: submodule support for git_archive.
+    Heavily based on work by Sean Finney and Chow Loong Jin (Closes: #588752)
+  * [3b0ebe9] gbp: Don't fail on paths without extensions in get_compression()
+    and add doctests for that. (Closes: #618893)
+  * [1021f84] git-buildpackage: special case non-submodule tarfile generation.
+    Tarfile generation with submodules is slower since we need to
+    concatenate several tarfiles and compress afterwards. So special case
+    the common non submodule case and add a testcase to check the tarfiles
+    content.
+  * [80048e9,dcc2562,0827a33,93b4ab7,adc50a3,431075b] improve our testsuite
 
- -- Guido Günther <agx@sigxcpu.org>  Sat, 12 Mar 2011 21:40:58 +0100
+  [ Sean Finney ]
+  * [ddf5ea3] gbp: Allow to pass cwd to git.__get_output()
+
+  [ Charles Plessy ]
+  * [c9f1e1e] docs: Added markup to the example for creating upstream branch.
+  * [0095808] docs: Easier to remember commands to create orphan upstream branch.
+    Closes: #619084
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 21 Mar 2011 21:09:32 +0100
 
 git-buildpackage (0.5.19) unstable; urgency=low
 
