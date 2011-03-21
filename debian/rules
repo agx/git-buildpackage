@@ -55,6 +55,10 @@ links_stamp:
 	
 
 checks: links_stamp
+	export GIT_AUTHOR_NAME="Gbp Tests";		\
+	export GIT_AUTHOR_EMAIL=tests@example.com;	\
+	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
+	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
 	nosetests --with-doctest
 endif
 
