@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import tarfile
 import tempfile
 
 import gbp.git
@@ -106,5 +107,12 @@ def test_create_tarball():
                                         "HEAD",
                                         "bzip2",
                                         "9")
+
+def test_chacke_tarfile():
+    """Check the contents of the created tarfile"""
+    t = tarfile.open(os.path.join(tmpdir,"test_0.1.orig.tar.bz2"), 'r:*')
+    files = t.getmembers()
+    assert "test-0.1/.gitmodules" in [ f.name for f in files ]
+    assert len(files) == 6
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

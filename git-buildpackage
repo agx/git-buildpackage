@@ -45,9 +45,57 @@ wc_name = "WC"
 wc_index = ".git/gbp_index"
 
 
+def git_archive_submodules(repo, treeish, output, prefix, comp_type, comp_level, comp_opts):
+    """
+    Create tar.gz of an archive with submodules
+
+    since git-archive always writes an end of tarfile trailer we concatenate
+    the generated archives using tar and compress the result.
+
+    Exception handling is left to the caller.
+    """
+
+    tarfile = output.rsplit('.', 1)[0]
+    tempdir = tempfile.mkdtemp()
+    submodule_tarfile = os.path.join(tempdir, "submodule.tar")
+    try:
+        # generate main tarfile
+        repo.archive(format='tar', prefix='%s/' % (prefix),
+                     output=tarfile, treeish=treeish)
+
+        # generate each submodule's tarfile and append it to the main archive
+        for (subdir, commit) in repo.get_submodules(treeish):
+            tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
+
+            gbp.log.debug("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
+            repo.archive(format='tar', prefix='%s/%s/' % (prefix, tarpath),
+                         output=submodule_tarfile, treeish=commit, cwd=subdir)
+            CatenateTarArchive(tarfile)(submodule_tarfile)
+
+        # compress the output
+        ret = os.system("%s -%s %s %s" % (comp_type, comp_level, comp_opts, tarfile))
+        if ret:
+            raise GbpError("Error creating %s: %d" % (output, ret))
+    finally:
+        shutil.rmtree(tempdir)
+
+
+def git_archive_single(repo, treeish, output, prefix, comp_type, comp_level, comp_opts):
+    """
+    Create tar.gz of an archive without submodules
+
+    Exception handling is left to the caller.
+    """
+    pipe = pipes.Template()
+    pipe.prepend("git archive --format=tar --prefix=%s/ %s" % (prefix, treeish), '.-')
+    pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts),  '--')
+    ret = pipe.copy('', output)
+    if ret:
+        raise GbpError("Error creating %s: %d" % (output, ret))
+
+
 def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level):
     "create a compressed orig tarball in output_dir using git_archive"
-
     try:
         comp_opts = du.compressor_opts[comp_type][0]
     except KeyError:
@@ -56,47 +104,26 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level):
     output = os.path.join(output_dir, du.orig_file(cp, comp_type))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
 
-    # make space for main and submodule tarfiles
-    tempdir = tempfile.mkdtemp()
-    main_tarfile = os.path.join(tempdir, "main.tar")
-    submodule_tarfile = os.path.join(tempdir, "submodule.tar")
-
     try:
-        # generate main tarfile
-        repo.archive(format='tar', prefix='%s/' % (prefix),
-                     output=main_tarfile, treeish=treeish)
-
-        # generate and integrate each submodule's tarfile into main_tarfile
         if repo.has_submodules():
             repo.update_submodules()
-        for (subdir, commit) in repo.get_submodules(treeish):
-            tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
-            gbp.log.info("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
+            git_archive_submodules(repo, treeish, output, prefix,
+                                   comp_type, comp_level, comp_opts)
 
-            repo.archive(format='tar', prefix='%s/%s/' % (prefix, tarpath),
-                         output=submodule_tarfile, treeish=commit, cwd=subdir)
-            CatenateTarArchive(main_tarfile)(submodule_tarfile)
-
-        # compress the output
-        pipe = pipes.Template()
-        pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts),  '--')
-        ret = pipe.copy(main_tarfile, output)
-        if ret:
-            raise GbpError("Error creating %s: %d" % (output, ret))
+        else:
+            git_archive_single(repo, treeish, output, prefix,
+                               comp_type, comp_level, comp_opts)
     except CommandExecFailed:
         gbp.log.err("Error generating submodules' archives")
-        return False
-    except GbpError, err:
-        gbp.log.err(err)
         return False
     except OSError, err:
         gbp.log.err("Error creating %s: %s" % (output, err[0]))
         return False
+    except GbpError:
+        raise
     except Exception as e:
         gbp.log.err("Error creating %s: %s" % (output, e))
         return False
-    finally:
-        shutil.rmtree(tempdir)
     return True
 
 
