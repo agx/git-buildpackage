@@ -106,7 +106,6 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level):
 
     try:
         if repo.has_submodules():
-            repo.update_submodules()
             git_archive_submodules(repo, treeish, output, prefix,
                                    comp_type, comp_level, comp_opts)
 
@@ -141,8 +140,6 @@ def dump_tree(repo, export_dir, treeish):
         if ret:
             raise GbpError, "Error in dump_tree archive pipe"
 
-        if repo.has_submodules():
-            repo.update_submodules()
         for (subdir, commit) in repo.get_submodules(treeish):
             gbp.log.info("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
             tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
