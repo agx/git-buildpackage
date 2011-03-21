@@ -484,7 +484,8 @@ def main(argv):
                     extract_orig(os.path.join(output_dir, du.orig_file(cp, options.comp_type)), tmp_dir)
 
                 gbp.log.info("Exporting '%s' to '%s'" % (options.export, tmp_dir))
-                dump_tree(repo, tmp_dir, tree)
+                if not dump_tree(repo, tmp_dir, tree):
+                    raise GbpError
                 cp = du.parse_changelog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
