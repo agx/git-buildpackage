@@ -242,7 +242,14 @@ def parse_changelog(contents=None, filename=None):
 
 
 def orig_file(cp, compression):
-    "The name of the orig.tar.gz belonging to changelog cp"
+    """
+    The name of the orig file belonging to changelog cp
+
+    >>> orig_file({'Source': 'foo', 'Upstream-Version': '1.0'}, "bzip2")
+    'foo_1.0.orig.tar.bz2'
+    >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz")
+    'bar_0.0~git1234.orig.tar.xz'
+    """
     ext = compressor_opts[compression][1]
     return "%s_%s.orig.tar.%s" % (cp['Source'], cp['Upstream-Version'], ext)
 
