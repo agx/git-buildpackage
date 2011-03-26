@@ -503,7 +503,7 @@ class GitRepository(object):
         GitCommand("submodule", [ "add", repo_path ])()
 
 
-    def update_submodules(self, init=True, recursive=True):
+    def update_submodules(self, init=True, recursive=True, fetch=False):
         """Update all submodules"""
         if not self.has_submodules():
             return
@@ -512,6 +512,9 @@ class GitRepository(object):
             args.append("--recursive")
         if init:
             args.append("--init")
+        if not fetch:
+            args.append("--no-fetch")
+
         GitCommand("submodule", args)()
 
 
