@@ -83,8 +83,8 @@ def apply_deb_tgz(deb_tgz):
 
 def apply_debian_patch(repo, unpack_dir, src, options, parents):
     """apply the debian patch and tag appropriately"""
-    version = "%s-%s" % (src.upstream_version, src.debian_version)
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
+
     try:
         os.chdir(unpack_dir)
 
@@ -104,7 +104,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         if not (author and email):
             gbp.log.warn("Failed to parse maintainer")
         commit = repo.commit_dir(unpack_dir,
-                                 "Imported Debian patch %s" % version,
+                                 "Imported Debian patch %s" % src.version,
                                  branch = options.debian_branch,
                                  other_parents = parents,
                                  author=dict(name=author, email = email, date = date),
@@ -112,8 +112,8 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                                 email=[None, email][options.author_committer],
                                                 date=[None, date][options.author_committer_date]))
 
-        gitTag(build_tag(options.debian_tag, version),
-               msg="Debian release %s" % version, commit=commit)
+        gitTag(build_tag(options.debian_tag, src.version),
+               msg="Debian release %s" % src.version, commit=commit)
     except gbpc.CommandExecFailed:
         gbp.log.err("Failed to import Debian package")
         raise GbpError
