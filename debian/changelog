@@ -1,4 +1,4 @@
-git-buildpackage (0.5.21) experimental; urgency=low
+git-buildpackage (0.5.21) unstable; urgency=low
 
   [ Guido Günther ]
   * [d8142c7] git-import-dsc: don't silently drop the epoch in tags
