@@ -1,3 +1,16 @@
+git-buildpackage (0.5.21) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [d8142c7] git-import-dsc: don't silently drop the epoch in tags
+    (Closes: #620950)
+  * [ebc19c7] docs: Document Gbp-Pq-Topic: tag
+  * [82e5f4d] git-buildpackage: Call gbp.update_submodules before exporting a
+    tarball or creating a separate build tree. We invoke git-submodule with
+    --no-fetch to not break offline operation.
+  * [dff62f2] Make submodule support conditional
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Apr 2011 20:35:37 +0200
+
 git-buildpackage (0.5.20) experimental; urgency=low
 
   [ Guido Günther ]
