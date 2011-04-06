@@ -106,6 +106,7 @@ class GbpOptionParser(OptionParser):
                  'author-is-committer': 'False',
                  'author-date-is-committer-date': 'False',
                  'create-missing-branches': 'False',
+                 'submodules'      : 'True',
              }
     help = {
              'debian-branch':
@@ -172,6 +173,8 @@ class GbpOptionParser(OptionParser):
                   "Use the authors's date as the comitter's date, default is '%(author-date-is-committer-date)s'",
              'create-missing-branches':
                   "Create missing branches automatically, default is '%(create-missing-branches)s'",
+             'submodules':
+                  "Transparently handle submodules in the upstream tree"
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

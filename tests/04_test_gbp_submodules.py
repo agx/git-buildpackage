@@ -93,7 +93,7 @@ def test_dump_tree():
     """Dump the repository and check if files exist"""
     dumpdir = os.path.join(tmpdir, "dump")
     os.mkdir(dumpdir)
-    assert git_buildpackage.dump_tree(repo, dumpdir, "master")
+    assert git_buildpackage.dump_tree(repo, dumpdir, "master", True)
     assert os.path.exists(os.path.join(dumpdir, testfile_name))
     assert os.path.exists(os.path.join(dumpdir, submodule_name, testfile_name))
 
@@ -106,7 +106,8 @@ def test_create_tarball():
                                         tmpdir,
                                         "HEAD",
                                         "bzip2",
-                                        "9")
+                                        "9",
+                                        True)
 
 def test_chacke_tarfile():
     """Check the contents of the created tarfile"""
