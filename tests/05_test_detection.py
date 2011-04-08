@@ -23,28 +23,26 @@ class MockGitRepository:
 class TestDetection(unittest.TestCase):
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp()
+        self.cp = {'Source': 'source', 'Upstream-Version': '1.2'}
 
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
 
     def test_guess_comp_type_no_pristine_tar(self):
         repo = MockGitRepository(with_branch=False)
-        guessed = git_buildpackage.guess_comp_type(repo, 'auto', None, None)
+        guessed = git_buildpackage.guess_comp_type(repo, 'auto', self.cp)
         self.assertEqual('gzip', guessed)
 
     def test_guess_comp_type_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
         repo = MockGitRepository(with_branch=True, subject=subject)
-        guessed = git_buildpackage.guess_comp_type(
-            repo, 'auto', 'source', '1.2')
+        guessed = git_buildpackage.guess_comp_type(repo, 'auto', self.cp)
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_false(self):
-        cp = {'Source': 'source', 'Upstream-Version': '1.2'}
-        self.assertFalse(has_orig(cp, 'gzip', self.tmpdir))
+        self.assertFalse(has_orig(self.cp, 'gzip', self.tmpdir))
 
     def test_has_orig_true(self):
-        cp = {'Source': 'source', 'Upstream-Version': '1.2'}
         open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.gz'), "w").close()
-        self.assertTrue(has_orig(cp, 'gzip', self.tmpdir))
+        self.assertTrue(has_orig(self.cp, 'gzip', self.tmpdir))
 
