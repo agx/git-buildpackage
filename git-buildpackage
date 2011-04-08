@@ -278,7 +278,18 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
 
     if comp_type == 'auto':
         if not repo.has_branch(PristineTar.branch):
-            comp_type = 'gzip'
+            if not tarball_dir:
+                tarball_dir = '..'
+            detected = None
+            for comp in du.compressor_opts.keys():
+                if du.has_orig(cp, comp, tarball_dir):
+                    if detected is not None:
+                        raise GbpError, "Multiple orig tarballs found."
+                    detected = comp
+            if detected is not None:
+                comp_type = detected
+            else:
+                comp_type = 'gzip'
         else:
             regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (srcpkg, upstream_version)
             commits = repo.grep_log(regex, PristineTar.branch)

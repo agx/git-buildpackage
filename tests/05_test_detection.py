@@ -5,6 +5,7 @@ import unittest
 
 import git_buildpackage
 from gbp.deb import has_orig
+from gbp.errors import GbpError
 
 class MockGitRepository:
     def __init__(self, with_branch=False, subject=None):
@@ -28,11 +29,30 @@ class TestDetection(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
 
-    def test_guess_comp_type_no_pristine_tar(self):
+    def test_guess_comp_type_no_pristine_tar_no_orig(self):
         repo = MockGitRepository(with_branch=False)
         guessed = git_buildpackage.guess_comp_type(
             repo, 'auto', self.cp, self.tmpdir)
         self.assertEqual('gzip', guessed)
+
+    def test_guess_comp_type_no_pristine_tar_with_orig(self):
+        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.bz2'), "w").close()
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'auto', self.cp, self.tmpdir)
+        self.assertEqual('bzip2', guessed)
+
+    def test_guess_comp_type_no_pristine_tar_with_multiple_origs(self):
+        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.gz'), "w").close()
+        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.xz'), "w").close()
+        repo = MockGitRepository(with_branch=False)
+        self.assertRaises(
+            GbpError,
+            git_buildpackage.guess_comp_type,
+            repo,
+            'auto',
+            self.cp,
+            self.tmpdir)
 
     def test_guess_comp_type_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
