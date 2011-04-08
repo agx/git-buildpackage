@@ -263,7 +263,7 @@ def extract_orig(orig_tarball, dest_dir):
         os.rmdir(tar_topdir)
 
 
-def guess_comp_type(repo, comp_type, cp):
+def guess_comp_type(repo, comp_type, cp, tarball_dir):
     """Guess compression type"""
 
     srcpkg = cp['Source']
@@ -454,7 +454,8 @@ def main(argv):
 
             # Get/build the orig.tar.gz if necessary:
             if not du.is_native(cp):
-                options.comp_type = guess_comp_type(repo, options.comp_type, cp)
+                options.comp_type = guess_comp_type(
+                    repo, options.comp_type, cp, options.tarball_dir)
                 orig_file = du.orig_file(cp, options.comp_type)
 
                 # look in tarball_dir first, if found force a symlink to it

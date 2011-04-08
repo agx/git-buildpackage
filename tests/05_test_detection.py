@@ -30,13 +30,15 @@ class TestDetection(unittest.TestCase):
 
     def test_guess_comp_type_no_pristine_tar(self):
         repo = MockGitRepository(with_branch=False)
-        guessed = git_buildpackage.guess_comp_type(repo, 'auto', self.cp)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'auto', self.cp, self.tmpdir)
         self.assertEqual('gzip', guessed)
 
     def test_guess_comp_type_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
         repo = MockGitRepository(with_branch=True, subject=subject)
-        guessed = git_buildpackage.guess_comp_type(repo, 'auto', self.cp)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'auto', self.cp, self.tmpdir)
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_false(self):
