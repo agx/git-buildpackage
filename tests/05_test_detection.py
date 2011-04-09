@@ -54,7 +54,7 @@ class TestDetection(unittest.TestCase):
             self.cp,
             self.tmpdir)
 
-    def test_guess_comp_type_bzip2(self):
+    def test_guess_comp_type_auto_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
         repo = MockGitRepository(with_branch=True, subject=subject)
         guessed = git_buildpackage.guess_comp_type(
@@ -68,3 +68,26 @@ class TestDetection(unittest.TestCase):
         open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.gz'), "w").close()
         self.assertTrue(has_orig(self.cp, 'gzip', self.tmpdir))
 
+    def test_guess_comp_type_bzip2(self):
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'bzip2', self.cp, None)
+        self.assertEqual("bzip2", guessed)
+
+    def test_guess_comp_type_gzip(self):
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'gzip', self.cp, None)
+        self.assertEqual("gzip", guessed)
+
+    def test_guess_comp_type_bz(self):
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'xz', self.cp, None)
+        self.assertEqual("xz", guessed)
+
+    def test_guess_comp_type_lzma(self):
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'lzma', self.cp, None)
+        self.assertEqual("lzma", guessed)
