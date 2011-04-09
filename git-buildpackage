@@ -270,6 +270,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
     upstream_version = cp['Upstream-Version']
 
     if comp_type != 'auto':
+        comp_type = du.compressor_aliases.get(comp_type, comp_type)
         try:
             dummy = du.compressor_opts[comp_type]
         except KeyError:

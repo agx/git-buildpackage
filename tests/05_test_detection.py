@@ -91,3 +91,15 @@ class TestDetection(unittest.TestCase):
         guessed = git_buildpackage.guess_comp_type(
             repo, 'lzma', self.cp, None)
         self.assertEqual("lzma", guessed)
+
+    def test_guess_comp_type_bz2(self):
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'bz2', self.cp, None)
+        self.assertEqual("bzip2", guessed)
+
+    def test_guess_comp_type_gz(self):
+        repo = MockGitRepository(with_branch=False)
+        guessed = git_buildpackage.guess_comp_type(
+            repo, 'gz', self.cp, None)
+        self.assertEqual("gzip", guessed)

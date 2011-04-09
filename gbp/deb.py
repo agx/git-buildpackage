@@ -46,6 +46,10 @@ compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
                     'lzma'  : [ '', 'lzma' ],
                     'xz'    : [ '', 'xz' ] }
 
+# Map frequently used names of compression types to the internal ones:
+compressor_aliases = { 'bz2' : 'bzip2',
+                       'gz'  : 'gzip', }
+
 class NoChangelogError(Exception):
     """no changelog found"""
     pass
