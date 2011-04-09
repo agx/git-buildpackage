@@ -29,9 +29,8 @@ from gbp.command_wrappers import (GitClone, Command, CommandExecFailed,
 from gbp.errors import GbpError
 import gbp.log
 
-def main(argv):
-    retval = 0
 
+def parse_args (argv):
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] repository - clone a remote repository')
     branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
@@ -49,6 +48,14 @@ def main(argv):
 
     (options, args) = parser.parse_args(argv)
     gbp.log.setup(options.color, options.verbose)
+
+    return (options, args)
+
+
+def main(argv):
+    retval = 0
+
+    (options, args) = parse_args(argv)
 
     if len(args) != 2:
         gbp.log.err("Need a repository to clone.")
@@ -69,6 +76,10 @@ def main(argv):
         (clone, dummy) = os.path.splitext(source.rstrip('/').rsplit('/',1)[1])
         os.chdir(clone)
 
+        # Reparse the config files of the cloned repository so we pick up the
+        # branch information from there:
+        (options, args) = parse_args(argv)
+
         repo = GitRepository(os.path.curdir)
 
         # Track all branches:
@@ -83,6 +94,7 @@ def main(argv):
             branches = [ options.debian_branch, options.upstream_branch ]
             if options.pristine_tar:
                 branches += [ PristineTar.branch ]
+            gbp.log.debug('Will track branches: %s' % branches)
             for branch in branches:
                 remote = 'origin/%s' % branch
                 if repo.has_branch(remote, remote=True) and \
@@ -101,3 +113,4 @@ def main(argv):
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
 
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

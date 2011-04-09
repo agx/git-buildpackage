@@ -244,8 +244,14 @@ def orig_file(cp, compression):
 
 
 def is_native(cp):
-    "Is this a debian native package"
-    return [ True, False ]['-' in cp['Version']]
+    """
+    Is this a debian native package
+    >>> is_native(dict(Version="1"))
+    True
+    >>> is_native(dict(Version="1-1"))
+    False
+    """
+    return not '-' in cp['Version']
 
 def is_valid_packagename(name):
     "Is this a valid Debian package name?"
@@ -256,8 +262,19 @@ def is_valid_upstreamversion(version):
     return upstreamversion_re.match(version)
 
 def get_compression(orig_file):
-    "Given an orig file return the compression used"
-    ext = orig_file.rsplit('.',1)[1]
+    """
+    Given an orig file return the compression used
+    >>> get_compression("abc.tar.gz")
+    'gzip'
+    >>> get_compression("abc.tar.bz2")
+    'bzip2'
+    >>> get_compression("abc.tar.foo")
+    >>> get_compression("abc")
+    """
+    try:
+        ext = orig_file.rsplit('.',1)[1]
+    except IndexError:
+        return None
     for (c, o) in compressor_opts.iteritems():
         if o[1] == ext:
             return c
@@ -265,12 +282,15 @@ def get_compression(orig_file):
 
 
 def has_epoch(cp):
-    """does the topmost version number contain an epoch"""
-    try:
-        if cp['Epoch']:
-            return True
-    except KeyError:
-        return False
+    """
+    Does the topmost version number in the changelog contain an epoch
+    >>> has_epoch(dict(Epoch="1"))
+    True
+    >>> has_epoch(dict())
+    False
+    """
+    return cp.has_key("Epoch")
+
 
 def has_orig(cp, compression, dir):
     "Check if orig.tar.gz exists in dir"

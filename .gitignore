@@ -1,14 +1,15 @@
 *.pyc
 gbp/gbp_version.py
-gbp-clone.py
-gbp-pq.py
-gbp-pull.py
-gbp-create-remote-repo.py
-git-buildpackage.py
-git-dch.py
-git-import-dsc.py
-git-import-dscs.py
-git-import-orig.py
+gbp_clone.py
+gbp_pq.py
+gbp_pull.py
+gbp_create_remote_repo.py
+git_buildpackage.py
+git_dch.py
+git_import_dsc.py
+git_import_dscs.py
+git_import_orig.py
+links_stamp
 build/
 
 docs/*.1

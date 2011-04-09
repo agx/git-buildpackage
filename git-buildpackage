@@ -24,10 +24,13 @@ import os, os.path
 import pipes
 import sys
 import time
+import tempfile
+import shutil
 import gbp.deb as du
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
-from gbp.command_wrappers import (GitTag, Command, RunAtCommand, CommandExecFailed,
-                                  PristineTar, RemoveTree, GitAdd)
+from gbp.command_wrappers import (GitTag, Command,
+                                  RunAtCommand, CommandExecFailed, PristineTar,
+                                  RemoveTree, GitAdd, CatenateTarArchive)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from glob import glob
@@ -41,26 +44,58 @@ wc_name = "WC"
 # index file name used to export working copy
 wc_index = ".git/gbp_index"
 
-def git_archive_pipe(prefix, pipe, output, treeish):
-    """run the git_archive pipe"""
-    pipe.prepend('git archive --format=tar --prefix=%s/ %s' % (prefix, treeish), '.-')
+
+def git_archive_submodules(repo, treeish, output, prefix, comp_type, comp_level, comp_opts):
+    """
+    Create tar.gz of an archive with submodules
+
+    since git-archive always writes an end of tarfile trailer we concatenate
+    the generated archives using tar and compress the result.
+
+    Exception handling is left to the caller.
+    """
+
+    tarfile = output.rsplit('.', 1)[0]
+    tempdir = tempfile.mkdtemp()
+    submodule_tarfile = os.path.join(tempdir, "submodule.tar")
     try:
-        ret = pipe.copy('', output)
+        # generate main tarfile
+        repo.archive(format='tar', prefix='%s/' % (prefix),
+                     output=tarfile, treeish=treeish)
+
+        # generate each submodule's tarfile and append it to the main archive
+        for (subdir, commit) in repo.get_submodules(treeish):
+            tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
+
+            gbp.log.debug("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
+            repo.archive(format='tar', prefix='%s/%s/' % (prefix, tarpath),
+                         output=submodule_tarfile, treeish=commit, cwd=subdir)
+            CatenateTarArchive(tarfile)(submodule_tarfile)
+
+        # compress the output
+        ret = os.system("%s -%s %s %s" % (comp_type, comp_level, comp_opts, tarfile))
         if ret:
-            gbp.log.err("Error creating %s: %d" % (output, ret))
-            return False
-    except OSError, err:
-        gbp.log.err("Error creating %s: %s" % (output, err[0]))
-        return False
-    except:
-        gbp.log.err("Error creating %s" % (output,))
-        return False
-    return True
+            raise GbpError("Error creating %s: %d" % (output, ret))
+    finally:
+        shutil.rmtree(tempdir)
 
 
-def git_archive(cp, output_dir, treeish, comp_type, comp_level):
+def git_archive_single(repo, treeish, output, prefix, comp_type, comp_level, comp_opts):
+    """
+    Create tar.gz of an archive without submodules
+
+    Exception handling is left to the caller.
+    """
+    pipe = pipes.Template()
+    pipe.prepend("git archive --format=tar --prefix=%s/ %s" % (prefix, treeish), '.-')
+    pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts),  '--')
+    ret = pipe.copy('', output)
+    if ret:
+        raise GbpError("Error creating %s: %d" % (output, ret))
+
+
+def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules):
     "create a compressed orig tarball in output_dir using git_archive"
-
     try:
         comp_opts = du.compressor_opts[comp_type][0]
     except KeyError:
@@ -69,18 +104,70 @@ def git_archive(cp, output_dir, treeish, comp_type, comp_level):
     output = os.path.join(output_dir, du.orig_file(cp, comp_type))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
 
-    pipe = pipes.Template()
-    pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts),  '--')
-    return git_archive_pipe(prefix, pipe, output, treeish)
+    try:
+        if repo.has_submodules() and with_submodules:
+            repo.update_submodules()
+            git_archive_submodules(repo, treeish, output, prefix,
+                                   comp_type, comp_level, comp_opts)
+
+        else:
+            git_archive_single(repo, treeish, output, prefix,
+                               comp_type, comp_level, comp_opts)
+    except CommandExecFailed:
+        gbp.log.err("Error generating submodules' archives")
+        return False
+    except OSError, err:
+        gbp.log.err("Error creating %s: %s" % (output, err[0]))
+        return False
+    except GbpError:
+        raise
+    except Exception as e:
+        gbp.log.err("Error creating %s: %s" % (output, e))
+        return False
+    return True
 
 
-def dump_tree(export_dir, treeish):
+def dump_tree(repo, export_dir, treeish, with_submodules):
     "dump a tree to output_dir"
     output_dir = os.path.dirname(export_dir)
     prefix = os.path.basename(export_dir)
+
     pipe = pipes.Template()
+    pipe.prepend('git archive --format=tar --prefix=%s/ %s' % (prefix, treeish), '.-')
     pipe.append('tar -C %s -xf -' % output_dir,  '-.')
-    return git_archive_pipe(prefix, pipe, '', treeish)
+    top = os.path.abspath(os.path.curdir)
+    try:
+        ret = pipe.copy('', '')
+        if ret:
+            raise GbpError, "Error in dump_tree archive pipe"
+
+        if with_submodules:
+            if repo.has_submodules():
+                repo.update_submodules()
+            for (subdir, commit) in repo.get_submodules(treeish):
+                gbp.log.info("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
+                tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
+                os.chdir(subdir)
+                pipe = pipes.Template()
+                pipe.prepend('git archive --format=tar --prefix=%s/%s/ %s' %
+                             (prefix, tarpath, commit), '.-')
+                pipe.append('tar -C %s -xf -' % output_dir,  '-.')
+                ret = pipe.copy('', '')
+                os.chdir(top)
+                if ret:
+                     raise GbpError, "Error in dump_tree archive pipe in submodule %s" % subdir
+    except OSError, err:
+        gbp.log.err("Error dumping tree to %s: %s" % (output_dir, err[0]))
+        return False
+    except GbpError, err:
+        gbp.log.err(err)
+        return False
+    except Exception as e:
+        gbp.log.err("Error dumping tree to %s: %s" % (output_dir, e))
+        return False
+    finally:
+        os.chdir(top)
+    return True
 
 
 def move_old_export(target):
@@ -137,8 +224,8 @@ def git_archive_build_orig(repo, cp, output_dir, options):
         raise GbpError # git-ls-tree printed an error message already
     gbp.log.debug("Building upstream tarball with compression '%s -%s'" % (options.comp_type,
                                                                            options.comp_level))
-    if not git_archive(cp, output_dir, upstream_tree,
-                       options.comp_type, options.comp_level):
+    if not git_archive(repo, cp, output_dir, upstream_tree,
+                       options.comp_type, options.comp_level, options.with_submodules):
         raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
 
 
@@ -216,12 +303,7 @@ def setup_pbuilder(options):
             os.environ['ARCH'] = options.pbuilder_arch
 
 
-def main(argv):
-    changelog = 'debian/changelog'
-    retval = 0
-    prefix = "git-"
-    cp = None
-
+def parse_args(argv, prefix):
     args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
     dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
 
@@ -234,7 +316,7 @@ def main(argv):
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
-        return 1
+        return None, None, None
 
     tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
@@ -276,6 +358,7 @@ def main(argv):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
+    branch_group.add_boolean_config_file_option(option_name = "submodules", dest="with_submodules")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
                       help="command to build the Debian package, default is '%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
@@ -296,16 +379,30 @@ def main(argv):
     export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
                       help="retain exported package build directory")
     export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
-    (options, args) = parser.parse_args(args)
-    gbp.log.setup(options.color, options.verbose)
+    options, args = parser.parse_args(args)
 
+    gbp.log.setup(options.color, options.verbose)
     if options.retag:
         if not options.tag and not options.tag_only:
             gbp.log.err("'--%sretag' needs either '--%stag' or '--%stag-only'" % (prefix, prefix, prefix))
-            return 1
+            return None, None, None
 
     if options.overlay and not options.export_dir:
-        parser.error("Overlay must be used with --git-export-dir")
+        gbp.log.err("Overlay must be used with --git-export-dir")
+        return None, None, None
+
+    return options, args, dpkg_args
+
+
+def main(argv):
+    retval = 0
+    changelog = 'debian/changelog'
+    prefix = "git-"
+    cp = None
+
+    options, gbp_args, dpkg_args = parse_args(argv, prefix)
+    if not options:
+        return 1
 
     try:
         repo = GitRepository(os.path.curdir)
@@ -389,7 +486,8 @@ def main(argv):
                     extract_orig(os.path.join(output_dir, du.orig_file(cp, options.comp_type)), tmp_dir)
 
                 gbp.log.info("Exporting '%s' to '%s'" % (options.export, tmp_dir))
-                dump_tree(tmp_dir, tree)
+                if not dump_tree(repo, tmp_dir, tree, options.with_submodules):
+                    raise GbpError
                 cp = du.parse_changelog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))

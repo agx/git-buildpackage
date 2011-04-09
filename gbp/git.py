@@ -1,12 +1,12 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2008 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2008,2011 Guido Guenther <agx@sigxcpu.org>
 """provides git repository related helpers"""
 
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitAdd, GitRm, GitCheckoutBranch, GitInit, GitCommand, copy_from)
+from command_wrappers import (GitCommand, GitInit, GitAdd, GitBranch, copy_from)
 from errors import GbpError
 import log
 import dateutil.parser
@@ -39,14 +39,14 @@ class GitRepository(object):
             env.update(extra_env)
         return env
 
-    def __git_getoutput(self, command, args=[], extra_env=None):
+    def __git_getoutput(self, command, args=[], extra_env=None, cwd=None):
         """exec a git command and return the output"""
         output = []
 
         env = self.__build_env(extra_env)
         cmd = ['git', command] + args
         log.debug(cmd)
-        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env)
+        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env, cwd=cwd)
         while popen.poll() == None:
             output += popen.stdout.readlines()
         ret = popen.poll()
@@ -63,9 +63,7 @@ class GitRepository(object):
                                  stdout=subprocess.PIPE,
                                  env=env)
         (stdout, stderr) = popen.communicate(input)
-        if popen.returncode:
-            stdout = None
-        return stdout
+        return stdout, stderr, popen.returncode
 
     def base_dir(self):
         """Base of the repository"""
@@ -174,7 +172,8 @@ class GitRepository(object):
         has_local = False       # local repo has new commits
         has_remote = False      # remote repo has new commits
         out = self.__git_getoutput('rev-list', ["--left-right",
-                                   "%s...%s" % (from_branch, to_branch)])[0]
+                                   "%s...%s" % (from_branch, to_branch),
+                                   "--"])[0]
 
         if not out: # both branches have the same commits
             return True, True
@@ -196,7 +195,16 @@ class GitRepository(object):
         """switch to branch 'branch'"""
         self.__check_path()
         if self.get_branch() != branch:
-            GitCheckoutBranch(branch)()
+            GitCommand("checkout", [ branch ])()
+
+    def create_branch(self, branch, rev=None):
+        """create a new branch
+           @param rev: where to start the branch from
+
+           if param is None the branch starts form the current HEAD
+        """
+        self.__check_path()
+        GitBranch()(branch, rev)
 
     def delete_branch(self, branch):
         self.__check_path()
@@ -344,20 +352,6 @@ class GitRepository(object):
             raise GitRepositoryError, "can't write out current index"
         return tree[0].strip()
 
-    def replace_tree(self, src_dir, filters, verbose=False):
-        """
-        make the current wc match what's in src_dir
-        @return: True if wc was modified
-        @rtype: boolean
-        """
-        old = set(self.index_files())
-        new = set(copy_from(src_dir, filters))
-        GitAdd()(['-f', '.'])
-        files = [ obj for obj in old - new if not os.path.isdir(obj)]
-        if files:
-            GitRm(verbose=verbose)(files)
-        return not self.is_clean()[0]
-
     def update_ref(self, ref, new, old=None, msg=None):
         """Update ref 'ref' to commit 'new'"""
         args = [ ref, new ]
@@ -367,45 +361,37 @@ class GitRepository(object):
             args = [ '-m', msg ] + args
         GitCommand("update-ref")(args)
 
-    def commit_tree(self, tree, msg, parents, author=None, email=None,
-                    date=None, committer_name=None, committer_email=None,
-                    committer_date=None):
+    def commit_tree(self, tree, msg, parents, author={}, committer={}):
         """Commit a tree with commit msg 'msg' and parents 'parents'"""
         extra_env = {}
-        if author:
-            extra_env['GIT_AUTHOR_NAME'] = author
-        if email:
-            extra_env['GIT_AUTHOR_EMAIL'] = email
-        if date:
-            extra_env['GIT_AUTHOR_DATE'] = date
-        if committer_name:
-            extra_env['GIT_COMMITTER_NAME'] = committer_name
-        if committer_email:
-            extra_env['GIT_COMMITTER_EMAIL'] = committer_email
-        if committer_date:
-            extra_env['GIT_COMMITTER_DATE'] = committer_date
+        for key, val in author.items():
+            if val:
+                extra_env['GIT_AUTHOR_%s' % key.upper()] = val
+        for key, val in committer.items():
+            if val:
+                extra_env['GIT_COMMITTER_%s' % key.upper()] = val
 
         args = [ tree ]
         for parent in parents:
             args += [ '-p' , parent ]
-        sha1 = self.__git_inout('commit-tree', args, msg, extra_env).strip()
-        return sha1
+        sha1, stderr, ret = self.__git_inout('commit-tree', args, msg, extra_env)
+        if not ret:
+            return sha1.strip()
+        else:
+            raise GbpError, "Failed to commit tree: %s" % stderr
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
-                   author = None, email = None, date = None,
-                   committer_name = None, committer_email = None,
-                   committer_date = None):
+                   author={}, committer={}):
         """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
            @param unpack_dir: content to add
            @param msg: commit message to use
            @param branch: branch to add the contents of unpack_dir to
            @param parents: additional parents of this commit
-           @param author: commit with author name 'author'
-           @param email: commit with author email 'email'
-           @param date: set author date to 'date'
-           @param committer_author: commit with committer name 'commiter_name'
-           @param committer_email: commit with committer email 'commiter_email'
-           @param committer_date: set commit date to 'date'"""
+           @param author: commit with author information from author
+           @type author: dict with keys 'name', 'email', 'date'
+           @param committer_author: commit with committer information from committer
+           @type comitter: dict with keys 'name', 'email', 'date'"""
+
         self.__check_path()
         git_index_file = os.path.join(self.path, '.git', 'gbp_index')
         try:
@@ -434,10 +420,7 @@ class GitRepository(object):
                     parents += [ sha ]
 
         commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
-                                  author=author, email=email, date=date,
-                                  committer_name=committer_name,
-                                  committer_email=committer_email,
-                                  committer_date=committer_date)
+                                  author=author, committer=committer)
         if not commit:
             raise GbpError, "Failed to commit tree"
         self.update_ref("refs/heads/%s" % branch, commit, cur)
@@ -485,6 +468,81 @@ class GitRepository(object):
         options = [ '-N', '-k', '-o', output_dir, '%s...%s' % (start, end) ]
         output, ret = self.__git_getoutput('format-patch', options)
         return [ line.strip() for line in output ]
+
+    def apply_patch(self, patch, index=True, context=None):
+        """Apply a patch using git apply"""
+
+        args = []
+        if context:
+            args += [ '-C', context ]
+        if index:
+            args.append("--index")
+        args.append(patch)
+        GitCommand("apply", args)()
+
+    def archive(self, format, prefix, output, treeish, **kwargs):
+        args = [ '--format=%s' % format, '--prefix=%s' % prefix,
+                 '--output=%s' % output, treeish ]
+        out, ret = self.__git_getoutput('archive', args, **kwargs)
+        if ret:
+            raise GitRepositoryError, "unable to archive %s"%(treeish)
+
+
+    def has_submodules(self):
+        """Does the repo have submodules"""
+        if os.path.exists('.gitmodules'):
+            return True
+        else:
+            return False
+
+
+    def add_submodule(self, repo_path):
+        """Add a submodule"""
+        GitCommand("submodule", [ "add", repo_path ])()
+
+
+    def update_submodules(self, init=True, recursive=True, fetch=False):
+        """Update all submodules"""
+        if not self.has_submodules():
+            return
+        args = [ "update" ]
+        if recursive:
+            args.append("--recursive")
+        if init:
+            args.append("--init")
+        if not fetch:
+            args.append("--no-fetch")
+
+        GitCommand("submodule", args)()
+
+
+    def get_submodules(self, treeish, path=None, recursive=True):
+        """ list the submodules of treeish
+
+            returns a list of submodule/commit-id tuples
+        """
+        #    Note that we is lstree instead of submodule commands because
+        #    there's no way to list the submodules of another branch with
+        #    the latter.
+        submodules = []
+        if path is None:
+            path = "."
+
+        args = [ treeish ]
+        if recursive:
+            args += ['-r']
+
+        out, ret =  self.__git_getoutput('ls-tree', args, cwd=path)
+        for line in out:
+            mode, objtype, commit, name = line.split()
+            # A submodules is shown as "commit" object in ls-tree:
+            if objtype == "commit":
+                nextpath = os.path.sep.join([path, name])
+                submodules.append( (nextpath, commit) )
+                if recursive:
+                    submodules += self.get_submodules(commit, path=nextpath,
+                                                      recursive=recursive)
+        return submodules
 
 
 class FastImport(object):

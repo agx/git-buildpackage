@@ -17,6 +17,7 @@
 #
 """Simple colored logging classes"""
 
+import os
 import sys
 import gbp.tristate
 
@@ -50,6 +51,17 @@ class Logger(object):
     def set_level(self, level):
         self.level = level
 
+    def _is_tty(self):
+        if (os.getenv("EMACS") and
+            os.getenv("INSIDE_EMACS", "").endswith(",comint")):
+            return False
+
+        if (sys.stderr.isatty() and
+            sys.stdout.isatty()):
+            return True
+
+        return False
+
     def set_color(self, color):
         if type(color) == type(True):
             self.color = color
@@ -57,9 +69,7 @@ class Logger(object):
             if color.is_on():
                 self.color = True
             elif color.is_auto():
-                if (sys.stderr.isatty() and
-                    sys.stdout.isatty()):
-                    self.color = True
+                self.color = self._is_tty()
             else:
                 self.color = False
 

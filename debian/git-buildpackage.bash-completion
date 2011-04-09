@@ -124,10 +124,9 @@ have gbp-pq &&
 _gbp_pq ()
 {
     local options=$(_gbp_options gbp-pq)
-    options="$options export import rebase drop"
+    options="$options export import rebase drop apply"
     local tristate_opts="--color\="
 
-    _gbp_comp "$options"
     _gbp_comp "$options" "" "" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _gbp_pq -o default gbp-pq

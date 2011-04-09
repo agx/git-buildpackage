@@ -142,10 +142,17 @@ EOF
     mergeWithUpstream was set for svn-buildpackage), you can create an empty
     upstream branch with the following commands:
 <screen>
-    git symbolic-ref HEAD refs/heads/upstream
-    git rm --cached -r .
-    git commit --allow-empty -m 'Initial upstream branch.'
-    git checkout -f master
+    <command>git checkout</command> <option>--orphan</option> <replaceable>upstream</replaceable>
+    <command>git rm</command> <option>-rf</option> <replaceable>.</replaceable>
+    <command>git commit</command> <option>--allow-empty</option> <option>-m</option> <replaceable>'Initial upstream branch.'</replaceable>
+    <command>git checkout</command> <option>-f</option> <replaceable>master</replaceable>
+</screen>
+    With Git versions lower than 1.7.2.3, the commands are slightly more complicated:
+<screen>
+    <command>git symbolic-ref</command> <replaceable>HEAD</replaceable> <replaceable>refs/heads/upstream</replaceable>
+    <command>git rm</command> <option>--cached</option> <option>-r</option> <replaceable>.</replaceable>
+    <command>git commit</command> <option>--allow-empty</option> <option>-m</option> <replaceable>'Initial upstream branch.'</replaceable>
+    <command>git checkout</command> <option>-f</option> <replaceable>master</replaceable>
 </screen>
     </para>
     </sect2>

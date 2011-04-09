@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010,2011 Guido Guenther <agx@sigxcpu.org>
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
@@ -12,6 +12,12 @@ try:
 except ImportError:
     gbp_version = "[Unknown version]"
 import gbp.tristate
+
+no_upstream_branch_msg = """
+Repository does not have branch '%s' for upstream sources. If there is none see
+file:///usr/share/doc/git-buildpackage/manual-html/gbp.import.html#GBP.IMPORT.CONVERT
+on howto create it otherwise use --upstream-branch to specify it.
+"""
 
 def expand_path(option, opt, value):
     value = os.path.expandvars(value)
@@ -99,6 +105,8 @@ class GbpOptionParser(OptionParser):
                  'track'           : 'True',
                  'author-is-committer': 'False',
                  'author-date-is-committer-date': 'False',
+                 'create-missing-branches': 'False',
+                 'submodules'      : 'True',
              }
     help = {
              'debian-branch':
@@ -163,6 +171,10 @@ class GbpOptionParser(OptionParser):
                   "Use the authors's name also as the comitter's name, default is '%(author-is-committer)s'",
              'author-date-is-committer-date':
                   "Use the authors's date as the comitter's date, default is '%(author-date-is-committer-date)s'",
+             'create-missing-branches':
+                  "Create missing branches automatically, default is '%(create-missing-branches)s'",
+             'submodules':
+                  "Transparently handle submodules in the upstream tree"
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

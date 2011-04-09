@@ -1,3 +1,76 @@
+git-buildpackage (0.5.21) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [d8142c7] git-import-dsc: don't silently drop the epoch in tags
+    (Closes: #620950)
+  * [ebc19c7] docs: Document Gbp-Pq-Topic: tag
+  * [82e5f4d] git-buildpackage: Call gbp.update_submodules before exporting a
+    tarball or creating a separate build tree. We invoke git-submodule with
+    --no-fetch to not break offline operation.
+  * [dff62f2] Make submodule support conditional
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Apr 2011 20:35:37 +0200
+
+git-buildpackage (0.5.20) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [a618bdc] git-buildpackage: Make the desktop notification transient so
+    they timeout and don't clutter the notification area.
+  * [3b0f296] Add gbp-configure-unpatched-source example to ignore .pc and
+    tell dpkg-source to unpatch the source. See #591858.
+  * [258743a] gbp-pull: make sure git interprets arguments as revisions in
+    is_fast_forward  so it prints a clearer error message on configuration
+    errors in .git/config.
+  * [40f4709] gbp-pq: Allow to specify subdirs for patches via the
+    "Gbp-Pq-Tag: <subdir>" directive in the patch header. This also gets rid
+    sed callouts. Add "apply" action to apply single patches.
+  * [fadcfcb] gbp: Add git.archive() and git.{has,get,update,add}_submodules()
+    and testcases.
+    Heavily based on work by Sean Finney and Chow Loong Jin
+  * [2353ab7] git-buildpackage: submodule support for dump_tree.
+    Heavily based on work by Sean Finney and Chow Loong Jin
+  * [97c32c7] git-buildpackage: submodule support for git_archive.
+    Heavily based on work by Sean Finney and Chow Loong Jin (Closes: #588752)
+  * [3b0ebe9] gbp: Don't fail on paths without extensions in get_compression()
+    and add doctests for that. (Closes: #618893)
+  * [1021f84] git-buildpackage: special case non-submodule tarfile generation.
+    Tarfile generation with submodules is slower since we need to
+    concatenate several tarfiles and compress afterwards. So special case
+    the common non submodule case and add a testcase to check the tarfiles
+    content.
+  * [80048e9,dcc2562,0827a33,93b4ab7,adc50a3,431075b] improve our testsuite
+
+  [ Sean Finney ]
+  * [ddf5ea3] gbp: Allow to pass cwd to git.__get_output()
+
+  [ Charles Plessy ]
+  * [c9f1e1e] docs: Added markup to the example for creating upstream branch.
+  * [0095808] docs: Easier to remember commands to create orphan upstream branch.
+    Closes: #619084
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 21 Mar 2011 21:09:32 +0100
+
+git-buildpackage (0.5.19) unstable; urgency=low
+
+  [ Jonathan Nieder ]
+  * [7f00d39] git-import-dsc: improve error message when upstream branch is
+    missing
+
+  [ Guido Günther ]
+  * [b9acbf9] logging: don't use color inside Emacs's comint shell
+    (Closes: #612384)
+  * [14fdbce] gbp-clone: reparse the configuration after cloning the
+    repository (Closes: #607936)
+  * [d21506e] git-import-dscs: really use git-import-dsc from the same
+    location as git-import-dscs
+  * [b92b88f] git-import-dsc: auto create upstream branch if it's missing.
+    This allows to mass import old history of packages that were native and
+    switched to non-native later.
+  * [0363f47] git-import-dsc: better explain missing upstream branch.
+    Thanks to Jonathan Nieder for the suggestion. (Closes: #610379)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 11 Feb 2011 18:20:36 +0100
+
 git-buildpackage (0.5.18) experimental; urgency=low
 
   [ Guido Günther ]

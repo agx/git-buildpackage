@@ -20,7 +20,8 @@ EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
     gbp-pbuilder           \
-    gbp-posttag-push
+    gbp-posttag-push       \
+    gbp-configure-unpatched-source
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
@@ -28,8 +29,7 @@ SGML_MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 POD_MANPAGES=docs/git-pbuilder.1
 MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
 MANUAL=docs/manual-html
-PYCHECKS=$(patsubst %,%.py,$(COMMANDS))
-PYCHECKER_ARGS=--maxlines=300 --maxargs=12 -boptparse --no-override --no-shadowbuiltin
+PYCHECKER_ARGS=--maxlines=200 -boptparse --no-override --no-shadowbuiltin
 GBP_VERSION=gbp/gbp_version.py
 VERSION_ENT=docs/version.ent
 
@@ -46,7 +46,19 @@ docs/git-pbuilder.1: git-pbuilder
 	pod2man $< $@
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-checks: $(PYCHECKS)
+
+links_stamp:
+	for c in $(COMMANDS); do \
+		ln -s $$c $$(echo $$c | sed -e 's,-,_,g').py; \
+	done
+	touch links_stamp
+	
+
+checks: links_stamp
+	export GIT_AUTHOR_NAME="Gbp Tests";		\
+	export GIT_AUTHOR_EMAIL=tests@example.com;	\
+	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
+	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
 	nosetests --with-doctest
 endif
 
@@ -66,7 +78,7 @@ binary-post-install/git-buildpackage::
 	dh_bash-completion
 
 clean::
-	-rm git-*.py gbp-*.py gbp/gbp_version.py
+	-rm git_*.py gbp_*.py gbp/gbp_version.py links_stamp
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT) git-pbuilder.1
 	-rm -r docs/manual-html/
 

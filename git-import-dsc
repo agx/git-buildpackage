@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2011 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -31,7 +31,7 @@ from gbp.deb import (debian_version_chars, parse_changelog, unpack_orig,
                      parse_dsc, DscFile, tar_toplevel)
 from gbp.git import (build_tag, create_repo, GitRepository,
                      GitRepositoryError, rfc822_date_to_git)
-from gbp.config import GbpOptionParser, GbpOptionGroup
+from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
 import gbp.log
 
@@ -83,8 +83,8 @@ def apply_deb_tgz(deb_tgz):
 
 def apply_debian_patch(repo, unpack_dir, src, options, parents):
     """apply the debian patch and tag appropriately"""
-    version = "%s-%s" % (src.upstream_version, src.debian_version)
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
+
     try:
         os.chdir(unpack_dir)
 
@@ -104,18 +104,16 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         if not (author and email):
             gbp.log.warn("Failed to parse maintainer")
         commit = repo.commit_dir(unpack_dir,
-                                 "Imported Debian patch %s" % version,
+                                 "Imported Debian patch %s" % src.version,
                                  branch = options.debian_branch,
                                  other_parents = parents,
-                                 author = author,
-                                 email = email,
-                                 date = date,
-                                 committer_date = [None, date][options.author_committer_date],
-                                 committer_name = [None, author][options.author_committer],
-                                 committer_email = [None, email][options.author_committer],)
+                                 author=dict(name=author, email = email, date = date),
+                                 committer=dict(name=[None, author][options.author_committer],
+                                                email=[None, email][options.author_committer],
+                                                date=[None, date][options.author_committer_date]))
 
-        gitTag(build_tag(options.debian_tag, version),
-               msg="Debian release %s" % version, commit=commit)
+        gitTag(build_tag(options.debian_tag, src.version),
+               msg="Debian release %s" % src.version, commit=commit)
     except gbpc.CommandExecFailed:
         gbp.log.err("Failed to import Debian package")
         raise GbpError
@@ -148,19 +146,13 @@ def move_tag_stamp(repo, format, version):
     repo.move_tag(old, new)
 
 
-def main(argv):
-    dirs = dict(top=os.path.abspath(os.curdir))
-    needs_repo = False
-    ret = 0
-    skipped = False
-    parents = None
-
+def parse_args(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] /path/to/package.dsc')
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
-        return 1
+        return None, None
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
@@ -181,6 +173,8 @@ def main(argv):
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                       dest="upstream_branch")
+    branch_group.add_boolean_config_file_option(option_name="create-missing-branches",
+                      dest="create_missing_branches")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
                       dest="sign_tags")
@@ -205,12 +199,23 @@ def main(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
+    return options, args
+
+
+def main(argv):
+    dirs = dict(top=os.path.abspath(os.curdir))
+    needs_repo = False
+    ret = 0
+    skipped = False
+    parents = None
+
+    options, args = parse_args(argv)
 
     gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
 
     try:
         if len(args) != 1:
-            parser.print_help()
+            gbp.log.err("Need to give exactly one package to import. Try --help.")
             raise GbpError
         else:
             pkg = args[0]
@@ -267,6 +272,15 @@ def main(argv):
                 else:
                     branch = [options.upstream_branch,
                               options.debian_branch][src.native]
+                    if not repo.has_branch(branch):
+                        if options.create_missing_branches:
+                            gbp.log.info("Creating missing branch '%s'" % branch)
+                            repo.create_branch(branch)
+                        else:
+                            gbp.log.err(no_upstream_branch_msg % branch +
+                                        "\nAlso check the --create-missing-branches option.")
+                            raise GbpError
+
                 commit = repo.commit_dir(unpack_dir,
                                          "Imported %s" % msg,
                                          branch)
@@ -310,7 +324,7 @@ def main(argv):
             gbpc.RemoveTree(dirs[d])()
 
     if not ret and not skipped:
-        gbp.log.info("Everything imported under '%s'" % src.pkg)
+        gbp.log.info("Version '%s' imported under '%s'" % (src.version, src.pkg))
     return ret
 
 if __name__ == '__main__':
