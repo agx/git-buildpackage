@@ -15,6 +15,7 @@ repo = None
 repodir = None
 
 submodules = []
+submodule_names = ["test_submodule", "sub module"]
 tmpdir = None
 testfile_name = "testfile"
 
@@ -35,7 +36,7 @@ def setup():
     repodir = os.path.join(tmpdir, 'test_repo')
     repo = gbp.git.create_repo(repodir)
 
-    for name in ["test_submodule"]:
+    for name in submodule_names:
         submodules.append(Submodule(name, tmpdir))
 
     os.chdir(repodir)
@@ -66,9 +67,10 @@ def test_add_files():
 
 def test_add_submodule_files():
     """Add some dummy data"""
-    os.chdir(submodules[0].dir)
-    _add_dummy_data("initial commit in submodule")
-    os.chdir(repodir)
+    for submodule in submodules:
+        os.chdir(submodule.dir)
+        _add_dummy_data("initial commit in submodule")
+        os.chdir(repodir)
     assert True
 
 
@@ -117,5 +119,21 @@ def test_check_tarfile():
     files = t.getmembers()
     assert "test-0.1/.gitmodules" in [ f.name for f in files ]
     assert len(files) == 6
+
+def test_add_whitespace_submodule():
+    """Add a second submodule with name containing whitespace"""
+    repo.add_submodule(submodules[1].dir)
+    gbp.command_wrappers.GitCommand("commit",
+                                    ["-m 'Added submodule %s'" % submodules[0].dir,
+                                     "-a"])()
+
+def test_get_more_submodules():
+    """Check for submodules list of  (name, hash)"""
+    module = repo.get_submodules("master")
+    assert(len(module) == len(submodule_names))
+    for module in repo.get_submodules("master"):
+        assert len(module[1]) == 40
+        assert os.path.basename(module[0]) in submodule_names
+
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

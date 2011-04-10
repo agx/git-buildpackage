@@ -534,7 +534,7 @@ class GitRepository(object):
 
         out, ret =  self.__git_getoutput('ls-tree', args, cwd=path)
         for line in out:
-            mode, objtype, commit, name = line.split()
+            mode, objtype, commit, name = line[:-1].split(None, 3)
             # A submodules is shown as "commit" object in ls-tree:
             if objtype == "commit":
                 nextpath = os.path.sep.join([path, name])
