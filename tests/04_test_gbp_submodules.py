@@ -11,20 +11,22 @@ import gbp.command_wrappers
 import git_buildpackage
 
 top = None
-
 repo = None
 repodir = None
 
-submodule = None
-submoduledir = None
-submodule_name = "test_submodule"
-
+submodules = []
 tmpdir = None
 testfile_name = "testfile"
 
+class Submodule(object):
+    def __init__(self, name, tmpdir):
+        self.name = name
+        self.dir = os.path.join(tmpdir, name)
+        self.repo = gbp.git.create_repo(self.dir)
+
 
 def setup():
-    global repo, repodir, submodule, submoduledir,  top, tmpdir
+    global repo, repodir, submodules, top, tmpdir
 
     top = os.path.abspath(os.curdir)
     tmpdir =os.path.join(top,'gbp_%s_repo' % __name__)
@@ -33,8 +35,8 @@ def setup():
     repodir = os.path.join(tmpdir, 'test_repo')
     repo = gbp.git.create_repo(repodir)
 
-    submoduledir = os.path.join(tmpdir, submodule_name)
-    submodule = gbp.git.create_repo(submoduledir)
+    for name in ["test_submodule"]:
+        submodules.append(Submodule(name, tmpdir))
 
     os.chdir(repodir)
 
@@ -64,7 +66,7 @@ def test_add_files():
 
 def test_add_submodule_files():
     """Add some dummy data"""
-    os.chdir(submoduledir)
+    os.chdir(submodules[0].dir)
     _add_dummy_data("initial commit in submodule")
     os.chdir(repodir)
     assert True
@@ -72,9 +74,9 @@ def test_add_submodule_files():
 
 def test_add_submodule():
     """Add a submodule"""
-    repo.add_submodule(submoduledir)
+    repo.add_submodule(submodules[0].dir)
     gbp.command_wrappers.GitCommand("commit",
-                                    ["-m 'Added submodule %s'" % submoduledir,
+                                    ["-m 'Added submodule %s'" % submodules[0].dir,
                                      "-a"])()
 
 def test_has_submodules():
@@ -84,9 +86,9 @@ def test_has_submodules():
 
 def test_get_submodules():
     """Check for submodules list of  (name, hash)"""
-    submodule = repo.get_submodules("master")[0]
-    assert submodule[0] == './test_submodule'
-    assert len(submodule[1]) == 40
+    modules = repo.get_submodules("master")[0]
+    assert modules[0] == './test_submodule'
+    assert len(modules[1]) == 40
 
 
 def test_dump_tree():
@@ -95,7 +97,7 @@ def test_dump_tree():
     os.mkdir(dumpdir)
     assert git_buildpackage.dump_tree(repo, dumpdir, "master", True)
     assert os.path.exists(os.path.join(dumpdir, testfile_name))
-    assert os.path.exists(os.path.join(dumpdir, submodule_name, testfile_name))
+    assert os.path.exists(os.path.join(dumpdir, submodules[0].name, testfile_name))
 
 
 def test_create_tarball():
@@ -109,7 +111,7 @@ def test_create_tarball():
                                         "9",
                                         True)
 
-def test_chacke_tarfile():
+def test_check_tarfile():
     """Check the contents of the created tarfile"""
     t = tarfile.open(os.path.join(tmpdir,"test_0.1.orig.tar.bz2"), 'r:*')
     files = t.getmembers()
