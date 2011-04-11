@@ -1,3 +1,19 @@
+git-buildpackage (0.5.22) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [61513e6] git.rev_parse: unconditionally use --quiet to avoid the
+    confusing "fatal: Needed a single revision" error message
+  * [c7bb3f1] Add aliases for gz and bz2 compression types
+  * [dc39596] gbp: Handle whitespace in submodule names (Closes: #622103)
+  * [f5db59d] Disable submodule processing by default.
+
+  [ Loïc Minier ]
+  * [2d620e4] Ignore .noseids from nosetests
+  * [8189cc9] Add tests for orig autodetection
+  * [85c5d8e] Detect compression from orig tarball (Closes: #621701)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 11 Apr 2011 09:42:50 +0200
+
 git-buildpackage (0.5.21) unstable; urgency=low
 
   [ Guido Günther ]
