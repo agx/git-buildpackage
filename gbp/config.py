@@ -106,7 +106,7 @@ class GbpOptionParser(OptionParser):
                  'author-is-committer': 'False',
                  'author-date-is-committer-date': 'False',
                  'create-missing-branches': 'False',
-                 'submodules'      : 'True',
+                 'submodules'      : 'False',
              }
     help = {
              'debian-branch':
