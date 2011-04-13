@@ -59,6 +59,7 @@ class GbpOptionParser(OptionParser):
                  'cleaner'         : 'debuild -d clean',
                  'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
+                 'upstream-tree'   : 'tag',
                  'pristine-tar'    : 'False',
                  'filter-pristine-tar' : 'False',
                  'sign-tags'       : 'False',
@@ -114,6 +115,8 @@ class GbpOptionParser(OptionParser):
                   "branch the Debian package is being developed on, default is '%(debian-branch)s'",
              'upstream-branch':
                   "upstream branch, default is '%(upstream-branch)s'",
+             'upstream-tree':
+                  "where to generate the upstream tarball from (tag or branch), default is '%(upstream-tree)s'",
              'debian-tag':
                   "format string for debian tags, default is '%(debian-tag)s'",
              'upstream-tag':

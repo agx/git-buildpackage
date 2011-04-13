@@ -41,6 +41,7 @@
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
+      <arg><option>--git-upstream-tree=</option><replaceable>[tag|branch]</replaceable></arg>
       <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-compression=</option><replaceable>type</replaceable></arg>
       <arg><option>--git-compression-level=</option><replaceable>level</replaceable></arg>
@@ -304,6 +305,19 @@
 	  <replaceable>INDEX</replaceable> exports the current index whereas
           the special name <replaceable>WC</replaceable> exports the current working
           copy as is.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-upstream-tree=</option><replaceable>[tag|branch]</replaceable>
+        </term>
+        <listitem>
+	  <para>How to find the upstream sources used to generate the tarball.
+	  <replaceable>tag</replaceable> looks at a tag corresponding to the
+	  version in the changelog. <replaceable>branch</replaceable> looks at
+	  the upstream branch given via the <option>--git-upstream-branch</option>
+	  option. This doesn't have any effect if <option>--git-pristine-tar</option>
+	  is being used.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>

@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006-2011 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -209,14 +209,12 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
 
 def git_archive_build_orig(repo, cp, output_dir, options):
     """build orig using git-archive"""
-    # --upstream-branch was given on the command line, so use this:
-    if options.upstream_branch != GbpOptionParser.defaults['upstream-branch']:
+    if options.upstream_tree == 'tag':
+        upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
+    elif options.upstream_tree == 'branch':
         upstream_tree = options.upstream_branch
     else:
-        upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
-        # fall back to the upstream-branch tip if the tag doesn't exist
-        if not repo.has_treeish(upstream_tree):
-            upstream_tree = GbpOptionParser.defaults['upstream-branch']
+        raise GbpError, "Unknown value %s" % options.upstream_tree
     gbp.log.info("%s does not exist, creating from '%s'" % (du.orig_file(cp,
                                                             options.comp_type),
                                                             upstream_tree))
@@ -361,6 +359,7 @@ def parse_args(argv, prefix):
     tag_group.add_config_file_option(option_name="keyid", dest="keyid")
     tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     orig_group.add_config_file_option(option_name="force-create", dest="force_create",
                       help="force creation of orig.tar.gz", action="store_true")
