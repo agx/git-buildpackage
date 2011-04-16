@@ -101,7 +101,7 @@ esac
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
 pdebuild --buildresult .. --pbuilder cowbuilder \
-    --debbuildopts "-i'(?:^|/)\\.git(attributes)?(?:\$|/.*\$)' -I.git $*" \
+    --debbuildopts "$*" \
     -- --basepath "$BASE" $OPTIONS
 if [ -n "`ls ../*_source.changes`" ] ; then
     rm ../*_source.changes
