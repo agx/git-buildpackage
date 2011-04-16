@@ -174,7 +174,9 @@ class GbpOptionParser(OptionParser):
              'create-missing-branches':
                   "Create missing branches automatically, default is '%(create-missing-branches)s'",
              'submodules':
-                  "Transparently handle submodules in the upstream tree"
+                  "Transparently handle submodules in the upstream tree, default is '%(submodules)s'",
+             'postimport':
+                  "hook run after a successful import, default is '%(postimport)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

@@ -221,8 +221,7 @@ def parse_args(argv):
                       dest="filter_pristine_tar")
     import_group.add_config_file_option(option_name="import-msg",
                       dest="import_msg")
-    cmd_group.add_config_file_option(option_name="postimport", dest="postimport",
-                      help="hook run after a successful import, default is '%(postimport)s'")
+    cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
 
     parser.add_boolean_config_file_option(option_name="interactive",
                                           dest='interactive')
