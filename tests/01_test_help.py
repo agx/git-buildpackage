@@ -13,7 +13,7 @@ class TestHelp(unittest.TestCase):
             self.assertEqual(ret, 0)
 
     def testHelpGbp(self):
-        for prog in [ "pull", "clone" ]:
+        for prog in [ "pull", "clone", "pq", "create-remote-repo" ]:
             ret = os.system("./gbp-%s --help >/dev/null" % prog)
             self.assertEqual(ret, 0)
 
