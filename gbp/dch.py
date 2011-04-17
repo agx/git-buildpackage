@@ -5,7 +5,7 @@
 
 import re
 
-MAX_CHANGELOG_LINE_LENGTH = 80
+MAX_CHANGELOG_LINE_LENGTH = 76
 
 def extract_git_dch_cmds(lines, options):
     """Return a dictionary of all Git-Dch: commands found in lines.
@@ -96,11 +96,16 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     body = commit_info['body']
     commitid = commit_info['id']
     (git_dch_cmds, body) = extract_git_dch_cmds(body, options)
+
     if 'ignore' in git_dch_cmds:
         return None
+    if options.idlen:
+        entry[0] = '[%s] ' % commitid[0:options.idlen] + entry[0]
+
     (bts_cmds, body) = extract_bts_cmds(body, options)
     (thanks, body) = extract_thanks_info(body, options)
     body = filter_ignore_rx_matches(body, options)
+
     if options.full and not 'short' in git_dch_cmds:
         # Add all non-blank body lines.
         entry.extend([line for line in body if line.strip()])
@@ -116,7 +121,5 @@ def format_changelog_entry(commit_info, options, last_commit=False):
             entry[-1] += " "
         entry[-1] += bts_msg
 
-    if options.idlen:
-        entry[0] = '[%s] ' % commitid[0:options.idlen] + entry[0]
     entry = terminate_first_line_if_needed(entry)
     return entry
