@@ -101,6 +101,8 @@ def main(argv):
                     not repo.has_branch(branch):
                         GitBranch()(branch, remote)
 
+        repo.set_branch(options.debian_branch)
+
     except CommandExecFailed:
         retval = 1
     except GbpError, err:
