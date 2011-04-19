@@ -164,7 +164,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
+        <term><option>--notify=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
           <para>Wheter to send a desktop notification after the build.</para>
