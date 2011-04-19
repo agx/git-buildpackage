@@ -36,7 +36,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-  &gbp-pq helps to manage quilt patches in Debian packages that are maintained
+  &gbp-pq helps one to manage quilt patches in Debian packages that are maintained
   with &git-buildpackage;. This is especially useful with packages using the
   3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
   that should be applied to a package on a separate branch called patch-queue
@@ -121,7 +121,7 @@
         <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
-          <para>Wheter to use colored output.</para>
+          <para>Whether to use colored output.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

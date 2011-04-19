@@ -160,14 +160,14 @@
         <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
-          <para>Wheter to use colored output.</para>
+          <para>Whether to use colored output.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--notify=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
-          <para>Wheter to send a desktop notification after the build.</para>
+          <para>Whether to send a desktop notification after the build.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -230,7 +230,7 @@
         <term><option>--git-postbuild=</option><replaceable>command</replaceable>
         </term>
         <listitem>
-	  <para>excecute <replaceable>command</replaceable> after succesful
+	  <para>excecute <replaceable>command</replaceable> after successful
 	  build.</para><para> Exported environment variables are:
 	  <envar>GBP_CHANGES_FILE</envar> (the name of the generated changes
 	  file), <envar>GBP_BUILD_DIR</envar> (the build dir).

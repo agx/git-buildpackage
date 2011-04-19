@@ -97,14 +97,14 @@
         <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
-          <para>Wheter to use colored output.</para>
+          <para>Whether to use colored output.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]track</option>
         </term>
         <listitem>
-	  <para>Wheter to set up branch tracking for the debian, upstream and
+	  <para>Whether to set up branch tracking for the debian, upstream and
 	  pristine-tar branches.</para>
         </listitem>
       </varlistentry>
