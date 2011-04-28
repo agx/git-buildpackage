@@ -10,8 +10,10 @@ LOCAL_OPTIONS=debian/source/local-options
 help ()
 {
 	cat << EOF >/dev/stdout
+
 Modifies "$LOCAL_OPTIONS" and "$GIT_EXCLUDE"
 to ignore .pc and unpatch the source after the build.
+
 EOF
 
   exit $1
