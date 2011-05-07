@@ -1,3 +1,20 @@
+git-buildpackage (0.5.23) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [6710462] git-pbuilder: Drop diffignore and tarignore patterns
+    (Closes: #606412, #610662)
+  * [5b63e3f] tests: add doctests for gbp.deb.orig_file()
+  * [9f3030b] git-dch: improve formatting of commit subject by taking into
+    account idlength and the prefix added by git-dch itself.
+
+  [ Peter Eisentraut ]
+  * [0958897] Correct option name in git-buildpackage man page
+  * [3e1fd70] Fix various typos in man pages
+  * [e5dd444] gbp-clone: check out the debian branch after the clone is
+    complete.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 07 May 2011 14:38:58 +0200
+
 git-buildpackage (0.5.22) unstable; urgency=low
 
   [ Guido Günther ]
