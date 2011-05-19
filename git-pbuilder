@@ -98,10 +98,17 @@ update|create|login)
     ;;
 esac
 
+if [ ! -f debian/source/format ] || grep -qs "^1.0" debian/source/format; then
+    echo "Source format 1.0 detected, adding excludes"
+    DEBBUILDOPTS="-i'(?:^|/)\\.git(attributes)?(?:\$|/.*\$)' -I.git $*"
+else
+    DEBBUILDOPTS="$*"
+fi
+
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
 pdebuild --buildresult .. --pbuilder cowbuilder \
-    --debbuildopts "$*" \
+    --debbuildopts  "$DEBBUILDOPTS" \
     -- --basepath "$BASE" $OPTIONS
 if [ -n "`ls ../*_source.changes`" ] ; then
     rm ../*_source.changes
