@@ -79,7 +79,7 @@ export-dir=../build-area
     (<option>cleaner</option> and building the package
     (<option>builder</option>) you can also invoke hooks during the package
     build: immediately before a build (<option>prebuild</option>,
-    after a succesful build (<option>postbuild</option>) and after
+    after a successful build (<option>postbuild</option>) and after
     creating a tag (<option>posttag</option>). Typical applications are running
     <productname>lintian</productname> or pushing changes into a remote
     repository.
@@ -101,7 +101,7 @@ export-dir=../build-area
     </sect2>
     <sect2 id="gbp.building.push">
     <title>Pushing into a remote repository</title>
-	<para>If you want to push your changes automatically after a succesful build and tag
+	<para>If you want to push your changes automatically after a successful build and tag
 	you can use &git-buildpackage;'s posttag hook. A very simple invocation would look like this:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>

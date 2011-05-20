@@ -426,7 +426,7 @@ def main(argv):
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        gbp.log.info("Succesfully imported version %s of %s" % (version, archive))
+        gbp.log.info("Successfully imported version %s of %s" % (version, archive))
     return ret
 
 if __name__ == "__main__":

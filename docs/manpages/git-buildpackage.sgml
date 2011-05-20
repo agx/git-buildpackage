@@ -110,7 +110,7 @@
         <term><option>--git-tag</option>
         </term>
         <listitem>
-          <para>Add a git tag after a successfull build.</para>
+          <para>Add a git tag after a successful build.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
