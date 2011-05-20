@@ -87,7 +87,7 @@ case $BUILDER in
         else
             BASE="$COWBUILDER_BASE/base-$DIST.cow"
         fi
-        OPTIONS="$OPTIONS --basepath '$BASE'"
+        OPTIONS="$OPTIONS --basepath $BASE"
 
         # Make sure the base directory exists.
         if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
