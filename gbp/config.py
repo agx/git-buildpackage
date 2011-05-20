@@ -93,6 +93,7 @@ class GbpOptionParser(OptionParser):
                  'multimaint'      : 'True',
                  'multimaint-merge': 'False',
                  'pbuilder'        : 'False',
+                 'qemubuilder'     : 'False',
                  'dist'            : 'sid',
                  'arch'            : '',
                  'interactive'     : 'True',
@@ -153,6 +154,8 @@ class GbpOptionParser(OptionParser):
                   "Build for this distribution when using git-pbuilder, default is '%(dist)s'",
              'arch':
                   "Build for this architecture when using git-pbuilder, default is '%(arch)s'",
+             'qemubuilder':
+                  "Invoke git-pbuilder with qemubuilder for building, default is '%(qemubuilder)s'",
              'interactive':
                   "Run command interactive, default is '%(interactive)s'",
              'color':

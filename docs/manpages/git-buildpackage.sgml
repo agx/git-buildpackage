@@ -29,7 +29,8 @@
       <arg><option>--git-ignore-branch</option></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
-      <arg><option>--git-pbuilder=</option></arg>
+      <arg><option>--git-[no-]pbuilder</option></arg>
+      <arg><option>--git-[no-]qemubuilder</option></arg>
       <arg><option>--git-dist=</option><replaceable>DIST</replaceable></arg>
       <arg><option>--git-arch=</option><replaceable>ARCH</replaceable></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
@@ -131,6 +132,15 @@
 	  <para>Build package using <command>git-pbuilder</command>. Note that
 	  this overwrites any <option>--git-builder</option> and
 	  <option>--git-cleaner</option> options.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-qemubuilder</option></term>
+        <listitem>
+	  <para>Build package using <command>git-pbuilder</command> with
+	  <command>qemubuilder</command>. Note that this overwrites any
+	  <option>--git-builder</option> and <option>--git-cleaner</option>
+	  options.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
