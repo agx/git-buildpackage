@@ -1,3 +1,11 @@
+git-buildpackage (0.5.25) unstable; urgency=low
+
+  * [f07c1fc] Make qemubuilder really a boolean option.
+    Thanks to Gregor Herrmann <gregoa@debian.org> for tracking this down
+    (Closes: #627541)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 21 May 2011 22:14:30 +0200
+
 git-buildpackage (0.5.24) unstable; urgency=low
 
   [ Guido Günther ]
