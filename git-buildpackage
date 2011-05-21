@@ -387,7 +387,7 @@ def parse_args(argv, prefix):
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
                       help="hook run after a successful tag operation, default is '%(posttag)s'")
     cmd_group.add_boolean_config_file_option(option_name="pbuilder", dest="use_pbuilder")
-    cmd_group.add_config_file_option(option_name="qemubuilder", dest="use_qemubuilder")
+    cmd_group.add_boolean_config_file_option(option_name="qemubuilder", dest="use_qemubuilder")
     cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
     cmd_group.add_config_file_option(option_name="arch", dest="pbuilder_arch")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir", type="path",
