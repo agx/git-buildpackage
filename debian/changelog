@@ -1,3 +1,21 @@
+git-buildpackage (0.5.24) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [033f359] git-pbuilder: Distinguish 1.0 and 3.0 source format and set
+    exclude patterns for the 1.0 format. Otherwise the build fails since
+    dpkg-source tries to include .git.
+  * [09bf9f1] Add git-pbuilder 0.21. Thanks to Russ Albery.
+    (Closes: #601045, #601298)
+  * [7e022fb] Add support for qemubuilder (Closes: #601298)
+  * [e66c9e8] git-pbuilder: remove single quotes from '$BASE' to fix "cannot
+    canonicalize filename '/var/cache/pbuilder/base-sid.cow', does not exist"
+    failure
+
+  [ Jon Dowland ]
+  * [a645073] Spelling corrections (Closes: #627378)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 21 May 2011 13:51:29 +0200
+
 git-buildpackage (0.5.23) unstable; urgency=low
 
   [ Guido Günther ]
