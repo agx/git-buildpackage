@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: git-pbuilder,v 1.21 2011-05-20 06:17:09 eagle Exp $
+# $Id: git-pbuilder,v 1.22 2011-05-23 06:03:13 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
@@ -67,7 +67,7 @@ case $BUILDER in
     cowbuilder)
         # The root directory where different cowbuilder --basepath directories
         # are found.  git-pbuilder expects them to be named base-<dist>.cow.
-        COWBUILDER_BASE=/var/cache/pbuilder
+        : ${COWBUILDER_BASE:=/var/cache/pbuilder}
 
         # If DIST is set, use base-$DIST.cow.  If DIST is not set, the sid
         # chroot may be either base.cow or base-sid.cow.  Try both.  If ARCH
@@ -263,6 +263,11 @@ B<qemubuilder>, this controls the path to the configuration file.
 
 Sets the builder to use.  The only supported settings are C<cowbuilder>
 (the default) and C<qemubuilder>.
+
+=item COWBUILDER_BASE
+
+Set this environment variable to change the default location for the
+cowbuilder base directories (F</var/cache/pbuilder>).
 
 =item DIST
 
