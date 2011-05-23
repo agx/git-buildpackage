@@ -7,7 +7,7 @@ Build-Depends: cdbs, debhelper (>= 5), python, python-support (>= 0.3),
  bash-completion, perl,
 # For the testsuite
  git-core, bzip2
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
 Vcs-Browser: http://git.debian.org/?p=users/agx/git-buildpackage.git
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
