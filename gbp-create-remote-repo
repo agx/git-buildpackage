@@ -26,6 +26,7 @@ import os, os.path
 import urlparse
 import subprocess
 import tty, termios
+import re
 import gbp.deb as du
 from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand,
                                   GitFetch)
@@ -49,16 +50,64 @@ def print_config(remote, branches):
 
 
 def parse_remote(remote_url, name, pkg):
-    """Sanity check our remote URL"""
+    """
+    Sanity check our remote URL
+
+    >>> parse_remote("ssh://host/path/%(pkg)s", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host/path/package', 'dir': '/path/package', 'base': '', 'host': 'host', 'port': None, 'name': 'origin'}
+    True
+    >>> parse_remote("ssh://host:22/path/repo.git", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host:22/path/repo.git', 'dir': '/path/repo.git', 'base': '', 'host': 'host', 'port': '22', 'name': 'origin'}
+    True
+    >>> parse_remote("ssh://host:22/~/path/%(pkg)s.git", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host:22/~/path/package.git', 'dir': 'path/package.git', 'base': '~/', 'host': 'host', 'port': '22', 'name': 'origin'}
+    True
+    >>> parse_remote("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host:22/~user/path/package.git', 'dir': 'path/package.git', 'base': '~user/', 'host': 'host', 'port': '22', 'name': 'origin'}
+    True
+    >>> parse_remote("git://host/repo.git", "origin", "package")
+    Traceback (most recent call last):
+        ...
+    GbpError: Remote URL must use ssh protocol.
+    >>> parse_remote("ssh://host/path/repo", "origin", "package")
+    Traceback (most recent call last):
+        ...
+    GbpError: Remote URL needs to contain either a repository name or '%(pkg)s'
+    >>> parse_remote("ssh://host:asdf/path/%(pkg)s.git", "origin", "package")
+    Traceback (most recent call last):
+        ...
+    GbpError: Remote URL contains invalid port.
+    >>> parse_remote("ssh://host/~us er/path/%(pkg)s.git", "origin", "package")
+    Traceback (most recent call last):
+        ...
+    GbpError: Remote URL contains invalid ~username expansion.
+    """
     frags = urlparse.urlparse(remote_url)
     if frags.scheme not in ['ssh', 'git+ssh']:
         raise GbpError, "Remote URL must use ssh protocol."
     if not '%(pkg)s' in remote_url and not remote_url.endswith(".git"):
         raise GbpError, "Remote URL needs to contain either a repository name or '%(pkg)s'"
+
+    if ":" in frags.netloc:
+        (host, port) = frags.netloc.split(":", 1)
+        if not re.match(r"^[0-9]+$", port):
+            raise GbpError, "Remote URL contains invalid port."
+    else:
+        host = frags.netloc
+        port = None
+
+    if frags.path.startswith("/~"):
+        m = re.match(r"/(~[a-zA-Z0-9_-]*/)(.*)", frags.path)
+        if not m:
+            raise GbpError, "Remote URL contains invalid ~username expansion."
+        base = m.group(1)
+        path = m.group(2)
+    else:
+        base = ""
+        path = frags.path
+
     remote = { 'pkg' : pkg,
                'url' : remote_url % { 'pkg': pkg },
-               'dir' : frags.path % { 'pkg': pkg },
-               'host': frags.netloc,
+               'dir' : path % { 'pkg': pkg },
+               'base': base,
+               'host': host,
+               'port': port,
                'name': name}
     return remote
 
@@ -150,29 +199,31 @@ def main(argv):
             raise GbpError, "Aborted."
 
         # Create and run the remote script
-        ssh = 'ssh %(host)s sh' % remote
         remote_script =  """
-cat <<EOF
 set -e
 umask 002
-if [ -d "%(dir)s" ]; then
-    echo "Repository at \"%(dir)s\" already exists - giving up."
+if [ -d %(base)s"%(dir)s" ]; then
+    echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."
     exit 1
 fi
-mkdir -p "%(dir)s"
-cd "%(dir)s"
+mkdir -p %(base)s"%(dir)s"
+cd %(base)s"%(dir)s"
 git init --bare --shared
 echo "%(pkg)s packaging" > description
-EOF""" % remote
+""" % remote
 
         if options.verbose:
             print remote_script
 
-        p1 = subprocess.Popen([remote_script], stdout=subprocess.PIPE, shell=True)
-        p2 = subprocess.Popen([ssh], stdin=p1.stdout, shell=True)
-        p2.communicate()
-        if p2.returncode:
-            raise GbpError, "Error creating remote repository" 
+        ssh = ["ssh"]
+        if remote["port"]:
+            ssh.extend(["-p", remote["port"]])
+        ssh.extend([remote["host"], "sh"])
+
+        proc = subprocess.Popen(ssh, stdin=subprocess.PIPE)
+        proc.communicate(remote_script)
+        if proc.returncode:
+            raise GbpError, "Error creating remote repository"
 
         push_branches(remote, branches)
         if options.track:
