@@ -53,14 +53,18 @@ def parse_remote(remote_url, name, pkg):
     """
     Sanity check our remote URL
 
-    >>> parse_remote("ssh://host/path/%(pkg)s", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host/path/package', 'dir': '/path/package', 'base': '', 'host': 'host', 'port': None, 'name': 'origin'}
-    True
-    >>> parse_remote("ssh://host:22/path/repo.git", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host:22/path/repo.git', 'dir': '/path/repo.git', 'base': '', 'host': 'host', 'port': '22', 'name': 'origin'}
-    True
-    >>> parse_remote("ssh://host:22/~/path/%(pkg)s.git", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host:22/~/path/package.git', 'dir': 'path/package.git', 'base': '~/', 'host': 'host', 'port': '22', 'name': 'origin'}
-    True
-    >>> parse_remote("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package") == {'pkg': 'package', 'url': 'ssh://host:22/~user/path/package.git', 'dir': 'path/package.git', 'base': '~user/', 'host': 'host', 'port': '22', 'name': 'origin'}
-    True
+    >>> parse_remote("ssh://host/path/%(pkg)s", "origin", "package")
+    {'name': 'origin', 'url': 'ssh://host/path/package', 'host': 'host', 'base': '', 'pkg': 'package', 'port': None, 'dir': '/path/package'}
+
+    >>> parse_remote("ssh://host:22/path/repo.git", "origin", "package")
+    {'name': 'origin', 'url': 'ssh://host:22/path/repo.git', 'host': 'host', 'base': '', 'pkg': 'package', 'port': '22', 'dir': '/path/repo.git'}
+
+    >>> parse_remote("ssh://host:22/~/path/%(pkg)s.git", "origin", "package")
+    {'name': 'origin', 'url': 'ssh://host:22/~/path/package.git', 'host': 'host', 'base': '~/', 'pkg': 'package', 'port': '22', 'dir': 'path/package.git'}
+
+    >>> parse_remote("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package")
+    {'name': 'origin', 'url': 'ssh://host:22/~user/path/package.git', 'host': 'host', 'base': '~user/', 'pkg': 'package', 'port': '22', 'dir': 'path/package.git'}
+
     >>> parse_remote("git://host/repo.git", "origin", "package")
     Traceback (most recent call last):
         ...
