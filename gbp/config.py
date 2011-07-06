@@ -89,7 +89,7 @@ class GbpOptionParser(OptionParser):
                  'ignore-regex'    : '',
                  'compression'     : 'auto',
                  'compression-level': '9',
-                 'remote-url-pattern' : 'ssh://alioth.debian.org/git/collab-maint/%(pkg)s.git',
+                 'remote-url-pattern' : 'ssh://git.debian.org/git/collab-maint/%(pkg)s.git',
                  'multimaint'      : 'True',
                  'multimaint-merge': 'False',
                  'pbuilder'        : 'False',

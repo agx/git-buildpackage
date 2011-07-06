@@ -40,7 +40,7 @@
     <para>
     Note: By default the remote repositories are created in the <systemitem
     class="groupname">collab-maint</systemitem> repository on <systemitem
-    class="systemname">alioth.debian.org</systemitem>.
+    class="systemname">git.debian.org</systemitem>.
     </para>
   </refsect1>
   <refsect1>
