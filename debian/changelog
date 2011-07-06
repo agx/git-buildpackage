@@ -1,3 +1,19 @@
+git-buildpackage (0.5.26) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [d841899] git-pbuilder: Add git-pbuilder 1.22. 
+    Thanks to a lot Russ Allbery (Closes: #623117)
+  * [43e11c7] Bump standards version. No changes necessary.
+  * [f5344c6] gbp-create-remote-repo: switch to git.debian.org.
+    Thanks to Ritesh Raj Sarraf (Closes: #632897)
+
+  [ Courtney Bane ]
+  * [3a68566] gbp-create-remote-repo: Improve url handling.
+    Support user name expansion and different ssh ports.
+    Closes: #630832
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Jul 2011 23:09:21 +0200
+
 git-buildpackage (0.5.25) unstable; urgency=low
 
   * [f07c1fc] Make qemubuilder really a boolean option.
