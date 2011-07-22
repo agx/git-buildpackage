@@ -60,6 +60,13 @@ _gbp_comp ()
         return 0
     fi
 
+    if [[ "${cbdist_opts}" == *$prev* ]]; then
+        local BASE="/var/cache/pbuilder/base-"
+        COMPREPLY=( $( compgen -o dirnames -G "${BASE}${cur}*.cow" \
+                       | sed -e "s,${BASE}\(.*\)\.cow,\1,g" ) )
+        return 0
+    fi
+
     # separate opts by tab so we can append a space to all options not ending
     # with an equal sign
     tab_opts=$(echo "$options" | sed -e 's/ \+/\t/g' -e 's/[^=]$/& /g')
@@ -76,8 +83,10 @@ _git_buildpackage()
     local branch_opts="--git-debian-branch\= --git-upstream-branch\="
     local tag_opts="--git-debian-tag\= --git-upstream-tag\="
     local tristate_opts="--git-color\= --git-notify\="
+    local cbdist_opts="--git-dist\="
 
-    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts" \
+              "$cbdist_opts"
 }
 [ "${have:-}" ] && complete -F _git_buildpackage -o default git-buildpackage
 
