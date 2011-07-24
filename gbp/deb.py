@@ -351,34 +351,44 @@ def parse_uscan(out):
     >>> parse_uscan("<target>virt-viewer_0.4.0.orig.tar.gz</target>")
     (True, '../virt-viewer_0.4.0.orig.tar.gz')
     """
+    source = None
     if "<status>up to date</status>" in out:
-        # nothing to do.
         return (False, None)
     else:
+        # Check if uscan downloaded something
         for row in out.split("\n"):
             # uscan >= 2.10.70 has a target element:
-            m = re.match("<target>(.*)</target>", row)
+            m = re.match(r"<target>(.*)</target>", row)
             if m:
-                tarball = '../%s' % m.group(1)
+                source = '../%s' % m.group(1)
                 break
             elif row.startswith('<messages>'):
-                tarball = "../%s" % re.match(".*symlinked ([^\s]*) to it.*", row).group(1)
-                break
+                m = re.match(r".*symlinked ([^\s]+) to it", row)
+                if m:
+                    source = "../%s" % m.group(1)
+                    break
+                m = re.match(r"Successfully downloaded updated package ([^<]+)", row)
+                if m:
+                    source = "../%s" % m.group(1)
+                    break
+        # try to determine the already downloaded sources name
         else:
             d = {}
-            for row in out:
+            for row in out.split("\n"):
                 for n in ('package', 'upstream-version', 'upstream-url'):
                     m = re.match("<%s>(.*)</%s>" % (n,n), row)
                     if m:
                         d[n] = m.group(1)
-                    else:
-                        continue
             d["ext"] = os.path.splitext(d['upstream-url'])[1]
-            tarball = "../%(package)s_%(upstream-version)s.orig.tar%(ext)s" % d
-
-            if not os.path.exists(tarball):
-                return (True, None)
-        return (True, tarball)
+            # We want the name of the orig tarball if possible
+            source = "../%(package)s_%(upstream-version)s.orig.tar%(ext)s" % d
+            if not os.path.exists(source):
+                # Fall back to the sources name otherwise
+                source = "../%s" % d['upstream-url'].rsplit('/',1)[1]
+                print source
+                if not os.path.exists(source):
+                    source = None
+        return (True, source)
 
 
 def do_uscan():
