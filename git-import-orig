@@ -265,14 +265,15 @@ def main(argv):
             except KeyError:
                 raise GbpError, "error running uscan - debug by running uscan --verbose"
 
-            if not status and not tarball:
+            if status:
+                if tarball:
+                    gbp.log.info("using %s" % tarball)
+                    args.append(tarball)
+                else:
+                    raise GbpError, "uscan didn't download anything, and no tarball was found in ../"
+            else:
                 gbp.log.info("package is up to date, nothing to do.")
                 return 0
-            elif status and not tarball:
-                raise GbpError, "uscan didn't download anything, and no tarball was found in ../"
-            elif status and tarball:
-                gbp.log.info("using %s" % tarball)
-                args.append(tarball)
 
         # tarball specified
         if len(args) != 1:
