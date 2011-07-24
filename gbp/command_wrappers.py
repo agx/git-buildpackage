@@ -200,6 +200,16 @@ class DpkgSourceExtract(Command):
         Command.__call__(self, [dsc, output_dir])
 
 
+class UnpackZipArchive(Command):
+    """Wrap zip to Unpack a zip file"""
+    def __init__(self, archive, dir):
+        self.archive = archive
+        self.dir = dir
+
+        Command.__init__(self, 'unzip', [ "-q", archive, '-d', dir ])
+        self.run_error = 'Couldn\'t unpack "%s"' % self.archive
+
+
 class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[], **kwargs):

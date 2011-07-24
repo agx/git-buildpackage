@@ -28,7 +28,7 @@ import tarfile
 import time
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import (parse_changelog, unpack_orig, repack_orig,
+from gbp.deb import (parse_changelog, unpack_upstream_source, repack_orig,
                      NoChangelogError, has_epoch, tar_toplevel,
                      guess_upstream_version, do_uscan,
                      parse_changelog_repo, is_valid_packagename,
@@ -327,7 +327,10 @@ def main(argv):
             if options.interactive:
                 version = ask_package_version(guessed_version)
             else:
-                version = guessed_version
+                if guessed_version:
+                    version = guessed_version
+                else:
+                    raise GbpError, "Couldn't determine upstream version. Use '-u<version>' or --interactive"
 
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
@@ -340,11 +343,16 @@ def main(argv):
         else:
             if not options.fast_import:
                 tmpdir = tempfile.mkdtemp(dir='../')
-                unpack_orig(archive, tmpdir, options.filters)
+                is_orig = unpack_upstream_source(archive, tmpdir, options.filters)
                 gbp.log.debug("Unpacked %s to '%s'" % (archive , tmpdir))
                 orig_dir = tar_toplevel(tmpdir)
 
-                # Don't mess up or repo with git metadata from an upstream tarball
+                # If the upstream archive is not suitable as an upstream
+                # tarball we turn of pristine-tar for now
+                if not is_orig:
+                    options.pristine_tar = False
+
+                # Don't mess up our repo with git metadata from an upstream tarball
                 try:
                     if os.path.isdir(os.path.join(orig_dir, '.git/')):
                         raise GbpError, "The orig tarball contains .git metadata - giving up."
@@ -358,8 +366,8 @@ def main(argv):
                         os.path.basename(archive).replace(".tar", ".gbp.tar")
                         )
                     repack_orig(archive, tmpdir, os.path.basename(orig_dir))
-            pristine_orig = symlink_orig(archive, sourcepackage, version)
-
+            if is_orig:
+                pristine_orig = symlink_orig(archive, sourcepackage, version)
         try:
             upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
             filter_msg = ["", " (filtering out %s)"

@@ -407,9 +407,29 @@ def unpack_orig(archive, tmpdir, filters):
         unpackArchive = gbpc.UnpackTarArchive(archive, tmpdir, filters)
         unpackArchive()
     except gbpc.CommandExecFailed:
-        print >>sys.stderr, "Unpacking of %s failed" % archive
+        # unpackArchive already printed an error message
         raise GbpError
     return unpackArchive.dir
+
+
+def unpack_upstream_source(archive, tmpdir, filters):
+    """
+    Unpack upstream sources into tmpdir
+
+    @return: Return true if the importet archive is suitable as an upstream
+             tarball
+    @rtype:  boolean
+    """
+    ext = os.path.splitext(archive)[1]
+    if ext in [ ".zip", ".xpi" ]:
+        try:
+            gbpc.UnpackZipArchive(archive, tmpdir)()
+        except gbpc.CommandExecFailed:
+            raise GbpError, "Unpacking of %s failed" % archive
+        return False
+    else:
+        unpack_orig(archive, tmpdir, filters)
+        return True
 
 
 def repack_orig(archive, tmpdir, dest):
@@ -420,7 +440,7 @@ def repack_orig(archive, tmpdir, dest):
         repackArchive = gbpc.RepackTarArchive(archive, tmpdir, dest)
         repackArchive()
     except gbpc.CommandExecFailed:
-        print >>sys.stderr, "Failed to create %s" % archive
+        # repackArchive already printed an error
         raise GbpError
     return repackArchive.dir
 
