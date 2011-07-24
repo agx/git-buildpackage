@@ -336,16 +336,32 @@ def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
     return True
 
 
-def do_uscan():
-    """invoke uscan to fetch a new upstream version"""
-    p = subprocess.Popen(['uscan', '--symlink', '--destdir=..', '--dehs'], stdout=subprocess.PIPE)
-    out = p.communicate()[0].split('\n')
+def parse_uscan(out):
+    """
+    Parse the uscan output return (True, tarball) if a new version was
+    downloaded and could be located. If the tarball can't be located it returns
+    (True, None). Returns (False, None) if the current version is up to date.
+
+    @param out: uscan output
+    @param type: string
+    @return: status and tarball name
+    @rtype: tuple
+    >>> parse_uscan("<status>up to date</status>")
+    (False, None)
+    >>> parse_uscan("<target>virt-viewer_0.4.0.orig.tar.gz</target>")
+    (True, '../virt-viewer_0.4.0.orig.tar.gz')
+    """
     if "<status>up to date</status>" in out:
         # nothing to do.
         return (False, None)
     else:
-        for row in out:
-            if row.startswith('<messages>'):
+        for row in out.split("\n"):
+            # uscan >= 2.10.70 has a target element:
+            m = re.match("<target>(.*)</target>", row)
+            if m:
+                tarball = '../%s' % m.group(1)
+                break
+            elif row.startswith('<messages>'):
                 tarball = "../%s" % re.match(".*symlinked ([^\s]*) to it.*", row).group(1)
                 break
         else:
@@ -363,6 +379,13 @@ def do_uscan():
             if not os.path.exists(tarball):
                 return (True, None)
         return (True, tarball)
+
+
+def do_uscan():
+    """invoke uscan to fetch a new upstream version"""
+    p = subprocess.Popen(['uscan', '--symlink', '--destdir=..', '--dehs'], stdout=subprocess.PIPE)
+    out = p.communicate()[0]
+    return parse_uscan(out)
 
 
 def unpack_orig(archive, tmpdir, filters):
