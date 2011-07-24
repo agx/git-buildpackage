@@ -34,7 +34,7 @@ from gbp.deb import (parse_changelog, unpack_upstream_source, repack_orig,
                      parse_changelog_repo, is_valid_packagename,
                      packagename_msg, is_valid_upstreamversion,
                      upstreamversion_msg)
-from gbp.git import (FastImport, GitRepositoryError, GitRepository, build_tag)
+from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import (GbpError, GbpNothingImported)
 import gbp.log
@@ -86,57 +86,6 @@ def symlink_orig(archive, pkg, version):
 
 def upstream_import_commit_msg(options, version):
     return options.import_msg % dict(version=version)
-
-
-def fast_import_upstream_tree(repo, tarball, version, options):
-    """import the upstream tree to the current branch using git fast-import"""
-
-    try:
-        compr = tarball.split('.')[-1]
-
-        if not tarfile.is_tarfile(tarball):
-            raise GbpError, "'%s' not a tarball" % tarball 
-
-        tar = tarfile.open(tarball, "r:%s" % compr)
-
-        now = "%d %s" % (time.time(), time.strftime("%z"))
-        fastimport = FastImport()
-        name, email = repo.get_author_info()
-        gbp.log.debug("Starting fastimport of %s" % tarball)
-        fastimport.start_commit(options.upstream_branch, name, email, now,
-                                upstream_import_commit_msg(options, version))
-        fastimport.do_deleteall()
-
-        for item in tar:
-            if item.isfile():
-                if item.mode & 0100:
-                    fastimport.add_executable(item.name, tar.extractfile(item.name), item.size)
-                else:
-                    fastimport.add_file(item.name, tar.extractfile(item.name), item.size)
-            elif item.isdir():
-                continue # handled by git transparently
-            elif item.issym():
-                fastimport.add_symlink(item.name, item.linkname)
-            # if tarinfo.isextended() not implemented:
-            elif item.type in ( "x", "g", "X" ):
-                gbp.log.debug("Skipping %s of type '%s'" % (item.name, item.type))
-                continue
-            else:
-                raise GbpError, "'%s' is not a regular file (%s) - don't use fastimport." % (item.name, item.type)
-    except gbpc.CommandExecFailed:
-        raise GbpError, "Fastimport of upstream version %s failed." % version
-    finally:
-        tar.close()
-        fastimport.close()
-
-    gbp.log.debug("FastImport done.")
-
-
-def turn_off_fastimport(options, msg):
-    if options.fast_import:
-        gbp.log.warn(msg)
-        gbp.log.warn("Turning off fastimport.")
-        options.fast_import = False
 
 
 def ask_package_name(default):
@@ -209,10 +158,6 @@ def parse_args(argv):
                       dest="keyid")
     tag_group.add_config_file_option(option_name="upstream-tag",
                       dest="upstream_tag")
-
-    import_group.add_option("--fast-import", action="store_true",
-                      dest="fast_import", default=False,
-                      help="use 'git fastimport' (experimental)")
     import_group.add_config_file_option(option_name="filter",
                       dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
@@ -240,9 +185,6 @@ def parse_args(argv):
 
     if options.no_dch:
         gbp.log.warn("'--no-dch' passed. This is now the default, please remove this option.")
-
-    if options.filters:
-        turn_off_fastimport(options, "Import filters currently not supported with fastimport.")
 
     return options, args
 
@@ -293,7 +235,6 @@ def main(argv):
             is_empty = False
         else:
             is_empty = True
-            turn_off_fastimport(options, "Fast importing into empty archives not yet supported.")
 
         if not repo.has_branch(options.upstream_branch) and not is_empty:
             gbp.log.err(no_upstream_branch_msg % options.upstream_branch)
@@ -339,33 +280,31 @@ def main(argv):
 
         if os.path.isdir(archive):
             orig_dir = archive
-            turn_off_fastimport(options, "Fastimport only supported for tar achives.")
         else:
-            if not options.fast_import:
-                tmpdir = tempfile.mkdtemp(dir='../')
-                is_orig = unpack_upstream_source(archive, tmpdir, options.filters)
-                gbp.log.debug("Unpacked %s to '%s'" % (archive , tmpdir))
-                orig_dir = tar_toplevel(tmpdir)
+            tmpdir = tempfile.mkdtemp(dir='../')
+            is_orig = unpack_upstream_source(archive, tmpdir, options.filters)
+            gbp.log.debug("Unpacked %s to '%s'" % (archive , tmpdir))
+            orig_dir = tar_toplevel(tmpdir)
 
-                # If the upstream archive is not suitable as an upstream
-                # tarball we turn of pristine-tar for now
-                if not is_orig:
-                    options.pristine_tar = False
+            # If the upstream archive is not suitable as an upstream
+            # tarball we turn of pristine-tar for now
+            if not is_orig:
+                options.pristine_tar = False
 
-                # Don't mess up our repo with git metadata from an upstream tarball
-                try:
-                    if os.path.isdir(os.path.join(orig_dir, '.git/')):
-                        raise GbpError, "The orig tarball contains .git metadata - giving up."
-                except OSError:
-                    pass
+            # Don't mess up our repo with git metadata from an upstream tarball
+            try:
+                if os.path.isdir(os.path.join(orig_dir, '.git/')):
+                    raise GbpError, "The orig tarball contains .git metadata - giving up."
+            except OSError:
+                pass
 
-                if options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0:
-                    gbp.log.debug("Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir))
-                    archive = os.path.join(
-                        os.path.dirname(archive),
-                        os.path.basename(archive).replace(".tar", ".gbp.tar")
-                        )
-                    repack_orig(archive, tmpdir, os.path.basename(orig_dir))
+            if options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0:
+                gbp.log.debug("Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir))
+                archive = os.path.join(
+                    os.path.dirname(archive),
+                    os.path.basename(archive).replace(".tar", ".gbp.tar")
+                    )
+                repack_orig(archive, tmpdir, os.path.basename(orig_dir))
             if is_orig:
                 pristine_orig = symlink_orig(archive, sourcepackage, version)
         try:
@@ -378,15 +317,11 @@ def main(argv):
             gbp.log.info("Source package is %s" % sourcepackage)
             gbp.log.info("Upstream version is %s" % version)
 
-            if options.fast_import:
-                fast_import_upstream_tree(repo, pristine_orig, version, options)
-                commit = options.upstream_branch
-            else:
-                import_branch = [ options.upstream_branch, None ][is_empty]
-                msg = upstream_import_commit_msg(options, version)
-                commit = repo.commit_dir(orig_dir, msg=msg, branch=import_branch)
-                if not commit:
-                    raise GbpError, "Import of upstream version %s failed." % version
+            import_branch = [ options.upstream_branch, None ][is_empty]
+            msg = upstream_import_commit_msg(options, version)
+            commit = repo.commit_dir(orig_dir, msg=msg, branch=import_branch)
+            if not commit:
+                raise GbpError, "Import of upstream version %s failed." % version
 
             if options.pristine_tar:
                 if pristine_orig:
