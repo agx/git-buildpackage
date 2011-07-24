@@ -129,7 +129,7 @@ class PristineTar(Command):
 
 
 class UnpackTarArchive(Command):
-    """Wrap tar to Unpack a gzipped tar archive"""
+    """Wrap tar to unpack a compressed tar archive"""
     def __init__(self, archive, dir, filters=[]):
         self.archive = archive
         self.dir = dir
@@ -144,18 +144,19 @@ class UnpackTarArchive(Command):
         self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
 
-class RepackTarArchive(Command):
-    """Wrap tar to Repack a gzipped tar archive"""
-    def __init__(self, archive, dir, dest):
+class PackTarArchive(Command):
+    """Wrap tar to pack a compressed tar archive"""
+    def __init__(self, archive, dir, dest, filters=[]):
         self.archive = archive
         self.dir = dir
+        exclude = [("--exclude=%s" % filter) for filter in filters]
 
         if archive.lower().endswith(".bz2"):
             compress = "--bzip2"
         else:
             compress = "--gzip"
 
-        Command.__init__(self, 'tar', ['-C', dir, compress, '-cf', archive, dest])
+        Command.__init__(self, 'tar', exclude + ['-C', dir, compress, '-cf', archive, dest])
         self.run_error = 'Couldn\'t repack "%s"' % self.archive
 
 

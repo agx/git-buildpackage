@@ -166,6 +166,111 @@ class DscFile(object):
         return "<%s object %s>" % (self.__class__.__name__, self.dscfile)
 
 
+class UpstreamSource(object):
+    """
+    Upstream source. Can be either an unpacked dir, a tarball or another type
+    or archive
+
+    @cvar is_dir: are the upstream sources an unpacked dir
+    @type is_dir: boolean
+    @cvar _orig: are the upstream sources already suitable as an upstream
+                 tarball
+    @type _irog: boolen
+    @cvar _path: path to the upstream sources
+    @type _path: string
+    @cvar _unpacked: path to the unpacked source tree
+    @type _unpacked: string
+    """
+    def __init__(self, name, unpacked=None):
+        self.is_dir = False
+        self._orig = False
+        self._path = name
+        self.unpacked = unpacked
+
+        self.is_dir = [False, True][os.path.isdir(name)]
+        self._check_orig()
+        if self.is_dir:
+            self.unpacked = self._path
+
+    def _check_orig(self):
+        """Check if archive can be used as orig tarball"""
+        if self.is_dir:
+            self._orig = False
+            return
+
+        parts = self._path.split('.')
+        try:
+            if parts[-2] == 'tar':
+                if (parts[-1] in compressor_opts or
+                    parts[-1] in compressor_aliases):
+                        self._orig = True
+        except IndexError:
+            self._orig = False
+
+    @property
+    def is_orig(self):
+        return self._orig
+
+    @property
+    def path(self):
+        return self._path
+
+    def unpack(self, dir, filters=[]):
+        """
+        Unpack packed upstream sources into a given directory
+        and determine the toplevel of the source tree.
+        """
+        if self.is_dir:
+            raise GbpError, "Cannot unpack directory %s" % self.path
+
+        if type(filters) != type([]):
+            raise GbpError, "Filters must be a list"
+
+        self._unpack_archive(dir, filters)
+        self.unpacked = tar_toplevel(dir)
+
+    def _unpack_archive(self, dir, filters):
+        """
+        Unpack packed upstream sources into a given directory.
+        """
+        ext = os.path.splitext(self.path)[1]
+        if ext in [ ".zip", ".xpi" ]:
+            try:
+                gbpc.UnpackZipArchive(self.path, dir)()
+            except gbpc.CommandExecFailed:
+                raise GbpError, "Unpacking of %s failed" % self.path
+        else:
+            unpack_orig(self.path, dir, filters)
+
+    def pack(self, newarchive, filters=[]):
+        """
+        recreate a new archive from the current one
+
+        @param newarchive: the name of the new archive
+        @type newarchive: string
+        @param filters: tar filters to apply
+        @type filters: array of strings
+        @return: the new upstream source
+        @rtype: UpstreamSource
+        """
+        if not self.unpacked:
+            raise GbpError, "Need an unpacked source tree to repack"
+
+        if type(filters) != type([]):
+            raise GbpError, "Filters must be a list"
+
+        try:
+            repackArchive = gbpc.PackTarArchive(newarchive,
+                                os.path.dirname(self.unpacked),
+                                os.path.basename(self.unpacked),
+                                filters)
+            repackArchive()
+        except gbpc.CommandExecFailed:
+            # repackArchive already printed an error
+            raise GbpError
+        return UpstreamSource(newarchive)
+
+
 def parse_dsc(dscfile):
     """parse dsc by creating a DscFile object"""
     try:
@@ -410,39 +515,6 @@ def unpack_orig(archive, tmpdir, filters):
         # unpackArchive already printed an error message
         raise GbpError
     return unpackArchive.dir
-
-
-def unpack_upstream_source(archive, tmpdir, filters):
-    """
-    Unpack upstream sources into tmpdir
-
-    @return: Return true if the importet archive is suitable as an upstream
-             tarball
-    @rtype:  boolean
-    """
-    ext = os.path.splitext(archive)[1]
-    if ext in [ ".zip", ".xpi" ]:
-        try:
-            gbpc.UnpackZipArchive(archive, tmpdir)()
-        except gbpc.CommandExecFailed:
-            raise GbpError, "Unpacking of %s failed" % archive
-        return False
-    else:
-        unpack_orig(archive, tmpdir, filters)
-        return True
-
-
-def repack_orig(archive, tmpdir, dest):
-    """
-    recreate a new .orig.tar.gz from tmpdir (useful when using filter option)
-    """
-    try:
-        repackArchive = gbpc.RepackTarArchive(archive, tmpdir, dest)
-        repackArchive()
-    except gbpc.CommandExecFailed:
-        # repackArchive already printed an error
-        raise GbpError
-    return repackArchive.dir
 
 
 def tar_toplevel(dir):

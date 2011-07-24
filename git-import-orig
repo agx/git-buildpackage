@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006, 2007, 2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006, 2007, 2009, 2011 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -24,11 +24,9 @@ import os
 import sys
 import re
 import subprocess
-import tarfile
-import time
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import (parse_changelog, unpack_upstream_source, repack_orig,
+from gbp.deb import (parse_changelog, UpstreamSource,
                      NoChangelogError, has_epoch, tar_toplevel,
                      guess_upstream_version, do_uscan,
                      parse_changelog_repo, is_valid_packagename,
@@ -46,6 +44,32 @@ try:
     import readline
 except ImportError:
     pass
+
+
+class OrigUpstreamSource(UpstreamSource):
+    """Upstream source that will be imported"""
+
+    def needs_repack(self, options):
+        """
+        Determine if the upstream sources needs to be repacked
+
+        We repack if
+        * we want to filter out files and use pristine tar since we want
+          to make a filtered tarball available to pristine-tar
+        * when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+          and want to use filters
+        * when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+          and want to use pristine-tar
+        """
+        if ((options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0)):
+            return True
+        elif not self.is_orig:
+            if len(options.filters):
+                return True
+            elif options.pristine_tar:
+                return True
+        return False
+
 
 def cleanup_tmp_tree(tree):
     """remove a tree of temporary files"""
@@ -106,6 +130,7 @@ def ask_package_name(default):
         # bit clearer.
         gbp.log.warn("\nNot a valid package name: '%s'.\n%s" % (sourcepackage, packagename_msg))
 
+
 def ask_package_version(default):
     """
     Ask the user for the upstream package version.
@@ -123,6 +148,68 @@ def ask_package_version(default):
         # newline before the error to make the output a
         # bit clearer.
         gbp.log.warn("\nNot a valid upstream version: '%s'.\n%s" % (version, upstreamversion_msg))
+
+
+def find_source(options, args):
+    """Find the tarball to import - either via uscan or via command line argument
+    @return: upstream source filename or None if nothing to import
+    @rvalue: string
+    @raise GbpError: raised on all detected errors
+    """
+    if options.uscan: # uscan mode
+        if args:
+            raise GbpError, "you can't pass both --uscan and a filename."
+
+        gbp.log.info("Launching uscan...")
+        try:
+            status, source = do_uscan()
+        except KeyError:
+            raise GbpError, "error running uscan - debug by running uscan --verbose"
+
+        if status:
+            if source:
+                gbp.log.info("using %s" % source)
+                args.append(source)
+            else:
+                raise GbpError, "uscan didn't download anything, and no source was found in ../"
+        else:
+            gbp.log.info("package is up to date, nothing to do.")
+            return None
+    if len(args) != 1: # source specified
+        gbp.log.err("More than one archive specified. Try --help.")
+        raise GbpError
+    else:
+        archive = OrigUpstreamSource(args[0])
+        return archive
+
+
+def repacked_tarball_name(source, name, version):
+    if source.is_orig:
+        # Repacked orig tarballs get need a different name since there's already
+        # one with that name
+        name = os.path.join(
+                    os.path.dirname(source.path),
+                    os.path.basename(source.path).replace(".tar", ".gbp.tar"))
+    else:
+        # Repacked sources or other arcives get canonical name
+        name = os.path.join(
+                    os.path.dirname(source.path),
+                    "%s_%s.orig.tar.bz2" % (name, version))
+    return name
+
+
+def repack_source(source, name, version, tmpdir, filters):
+    """Repack the source tree"""
+    name = repacked_tarball_name(source, name, version)
+    repacked = source.pack(name, filters)
+    if source.is_orig: # the tarball was filtered on unpack
+        repacked.unpacked = source.unpacked
+    else: # otherwise unpack the generated tarball get a filtered tree
+        if tmpdir:
+            cleanup_tmp_tree(tmpdir)
+        tmpdir = tempfile.mkdtemp(dir='../')
+        repacked.unpack(tmpdir, filters)
+    return (repacked, tmpdir)
 
 
 def parse_args(argv):
@@ -195,34 +282,10 @@ def main(argv):
     pristine_orig = None
 
     (options, args) = parse_args(argv)
-
     try:
-        if options.uscan: # uscan mode
-            if args:
-                raise GbpError, "you can't pass both --uscan and a filename."
-
-            gbp.log.info("Launching uscan...")
-            try:
-                status, tarball = do_uscan()
-            except KeyError:
-                raise GbpError, "error running uscan - debug by running uscan --verbose"
-
-            if status:
-                if tarball:
-                    gbp.log.info("using %s" % tarball)
-                    args.append(tarball)
-                else:
-                    raise GbpError, "uscan didn't download anything, and no tarball was found in ../"
-            else:
-                gbp.log.info("package is up to date, nothing to do.")
-                return 0
-
-        # tarball specified
-        if len(args) != 1:
-            gbp.log.err("More than one tarball specified. Try --help.")
-            raise GbpError
-        else:
-            archive = args[0]
+        source = find_source(options, args)
+        if not source:
+            return ret
 
         try:
             repo = GitRepository('.')
@@ -231,10 +294,7 @@ def main(argv):
 
         # an empty repo has now branches:
         initial_branch = repo.get_branch()
-        if initial_branch:
-            is_empty = False
-        else:
-            is_empty = True
+        is_empty = False if initial_branch else True
 
         if not repo.has_branch(options.upstream_branch) and not is_empty:
             gbp.log.err(no_upstream_branch_msg % options.upstream_branch)
@@ -242,7 +302,7 @@ def main(argv):
 
         # Guess defaults for the package name and version from the
         # original tarball.
-        (guessed_package, guessed_version) = guess_upstream_version(archive) or ('', '')
+        (guessed_package, guessed_version) = guess_upstream_version(source.path) or ('', '')
 
         # Try to find the source package name
         try:
@@ -278,40 +338,29 @@ def main(argv):
             gbp.log.err("Repository has uncommitted changes, commit these first: ")
             raise GbpError, out
 
-        if os.path.isdir(archive):
-            orig_dir = archive
-        else:
+        if not source.is_dir:
             tmpdir = tempfile.mkdtemp(dir='../')
-            is_orig = unpack_upstream_source(archive, tmpdir, options.filters)
-            gbp.log.debug("Unpacked %s to '%s'" % (archive , tmpdir))
-            orig_dir = tar_toplevel(tmpdir)
+            source.unpack(tmpdir, options.filters)
+            gbp.log.debug("Unpacked '%s' to '%s'" % (source.path, source.unpacked))
 
-            # If the upstream archive is not suitable as an upstream
-            # tarball we turn of pristine-tar for now
-            if not is_orig:
-                options.pristine_tar = False
+        if source.needs_repack(options):
+            gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
+            (source, tmpdir)  = repack_source(source, sourcepackage, version, tmpdir, options.filters)
 
-            # Don't mess up our repo with git metadata from an upstream tarball
-            try:
-                if os.path.isdir(os.path.join(orig_dir, '.git/')):
-                    raise GbpError, "The orig tarball contains .git metadata - giving up."
-            except OSError:
-                pass
+        pristine_orig = symlink_orig(source.path, sourcepackage, version)
 
-            if options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0:
-                gbp.log.debug("Filter pristine-tar: repacking %s from '%s'" % (archive, tmpdir))
-                archive = os.path.join(
-                    os.path.dirname(archive),
-                    os.path.basename(archive).replace(".tar", ".gbp.tar")
-                    )
-                repack_orig(archive, tmpdir, os.path.basename(orig_dir))
-            if is_orig:
-                pristine_orig = symlink_orig(archive, sourcepackage, version)
+        # Don't mess up our repo with git metadata from an upstream tarball
+        try:
+            if os.path.isdir(os.path.join(source.unpacked, '.git/')):
+                raise GbpError, "The orig tarball contains .git metadata - giving up."
+        except OSError:
+            pass
+
         try:
             upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
             filter_msg = ["", " (filtering out %s)"
                               % options.filters][len(options.filters) > 0]
-            gbp.log.info("Importing '%s' to branch '%s'%s..." % (archive,
+            gbp.log.info("Importing '%s' to branch '%s'%s..." % (source.path,
                                                                  upstream_branch,
                                                                  filter_msg))
             gbp.log.info("Source package is %s" % sourcepackage)
@@ -319,7 +368,7 @@ def main(argv):
 
             import_branch = [ options.upstream_branch, None ][is_empty]
             msg = upstream_import_commit_msg(options, version)
-            commit = repo.commit_dir(orig_dir, msg=msg, branch=import_branch)
+            commit = repo.commit_dir(source.unpacked, msg=msg, branch=import_branch)
             if not commit:
                 raise GbpError, "Import of upstream version %s failed." % version
 
@@ -327,7 +376,7 @@ def main(argv):
                 if pristine_orig:
                     gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
                 else:
-                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % archive)
+                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 
             tag = build_tag(options.upstream_tag, version)
             gbpc.GitTag(options.sign_tags, options.keyid)(tag,
@@ -356,7 +405,7 @@ def main(argv):
                     env = { 'GBP_BRANCH': options.debian_branch }
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
         except gbpc.CommandExecFailed:
-            raise GbpError, "Import of %s failed" % archive
+            raise GbpError, "Import of %s failed" % source.path
     except GbpNothingImported, err:
         gbp.log.err(err)
         repo.set_branch(initial_branch)
@@ -370,7 +419,7 @@ def main(argv):
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        gbp.log.info("Successfully imported version %s of %s" % (version, archive))
+        gbp.log.info("Successfully imported version %s of %s" % (version, source.path))
     return ret
 
 if __name__ == "__main__":
