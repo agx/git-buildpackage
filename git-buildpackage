@@ -80,7 +80,7 @@ def git_archive_submodules(repo, treeish, output, prefix, comp_type, comp_level,
         shutil.rmtree(tempdir)
 
 
-def git_archive_single(repo, treeish, output, prefix, comp_type, comp_level, comp_opts):
+def git_archive_single(treeish, output, prefix, comp_type, comp_level, comp_opts):
     """
     Create tar.gz of an archive without submodules
 
@@ -111,7 +111,7 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submo
                                    comp_type, comp_level, comp_opts)
 
         else:
-            git_archive_single(repo, treeish, output, prefix,
+            git_archive_single(treeish, output, prefix,
                                comp_type, comp_level, comp_opts)
     except CommandExecFailed:
         gbp.log.err("Error generating submodules' archives")
