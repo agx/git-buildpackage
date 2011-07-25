@@ -28,7 +28,7 @@ SGML_MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
 POD_MANPAGES=docs/git-pbuilder.1
 MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
 MANUAL=docs/manual-html
-PYCHECKER_ARGS=--maxlines=200 -boptparse --no-override --no-shadowbuiltin
+PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 GBP_VERSION=gbp/gbp_version.py
 VERSION_ENT=docs/version.ent
 
