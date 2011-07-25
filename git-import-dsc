@@ -27,8 +27,8 @@ import pipes
 import time
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
-from gbp.deb import (debian_version_chars, parse_changelog, unpack_orig,
-                     parse_dsc, DscFile, tar_toplevel)
+from gbp.deb import (debian_version_chars, parse_changelog,
+                     parse_dsc, DscFile, UpstreamSource)
 from gbp.git import (build_tag, create_repo, GitRepository,
                      GitRepositoryError, rfc822_date_to_git)
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
@@ -250,8 +250,8 @@ def main(argv):
                 os.chdir(repo.path)
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
-            unpack_dir = unpack_orig(src.tgz, dirs['tmp'], options.filters)
-            unpack_dir = tar_toplevel(unpack_dir)
+            upstream = UpstreamSource(src.tgz)
+            upstream.unpack(dirs['tmp'], options.filters)
 
             format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
             tag = build_tag(format[0], src.upstream_version)
@@ -281,7 +281,7 @@ def main(argv):
                                         "\nAlso check the --create-missing-branches option.")
                             raise GbpError
 
-                commit = repo.commit_dir(unpack_dir,
+                commit = repo.commit_dir(upstream.unpacked,
                                          "Imported %s" % msg,
                                          branch)
                 gitTag(version=tag, msg=msg, commit=commit)
@@ -296,7 +296,7 @@ def main(argv):
                 if is_empty and not repo.has_branch(options.debian_branch):
                     gbpc.GitBranch()(options.debian_branch, commit)
                 if src.diff or src.deb_tgz:
-                    apply_debian_patch(repo, unpack_dir, src, options, parents)
+                    apply_debian_patch(repo, upstream.unpacked, src, options, parents)
                 else:
                     gbp.log.warn("Didn't find a diff to apply.")
             if repo.get_branch() == options.debian_branch or is_empty:

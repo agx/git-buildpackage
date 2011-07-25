@@ -46,10 +46,6 @@ class TestUnpack:
         if not os.getenv("GBP_TESTS_NOCLEAN"):
             shutil.rmtree(self.dir)
 
-    def test_unpack(self):
-        for (comp, archive) in self.archives.iteritems():
-            gbp.deb.unpack_orig(archive[0], ".", [])
-
     def test_upstream_source_type(self):
         for (comp, archive) in self.archives.iteritems():
             source = gbp.deb.UpstreamSource(archive[0])

@@ -27,7 +27,7 @@ import subprocess
 import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (parse_changelog, UpstreamSource,
-                     NoChangelogError, has_epoch, tar_toplevel,
+                     NoChangelogError, has_epoch,
                      guess_upstream_version, do_uscan,
                      parse_changelog_repo, is_valid_packagename,
                      packagename_msg, is_valid_upstreamversion,

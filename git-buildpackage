@@ -246,19 +246,19 @@ def extract_orig(orig_tarball, dest_dir):
     gbp.log.info("Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir))
 
     move_old_export(dest_dir)
-    du.unpack_orig(orig_tarball, dest_dir, '')
+    upstream = gbp.deb.UpstreamSource(orig_tarball)
+    upstream.unpack(dest_dir)
 
     # Check if tarball extracts into a single folder or not:
-    tar_topdir = du.tar_toplevel(dest_dir)
-    if tar_topdir != dest_dir:
+    if upstream.unpacked != dest_dir:
         # If it extracts a single folder, move all of its contents to dest_dir:
-        r = glob("%s/*" % tar_topdir)
-        r.extend(glob("%s/.*" % tar_topdir)) # include hidden files and folders
+        r = glob("%s/*" % upstream.unpacked)
+        r.extend(glob("%s/.*" % upstream.unpacked)) # include hidden files and folders
         for f in r:
             os.rename(f, os.path.join(dest_dir, os.path.basename(f)))
 
         # Remove that single folder:
-        os.rmdir(tar_topdir)
+        os.rmdir(upstream.unpacked)
 
 
 def guess_comp_type(repo, comp_type, cp, tarball_dir):

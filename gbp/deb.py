@@ -227,7 +227,7 @@ class UpstreamSource(object):
             raise GbpError, "Filters must be a list"
 
         self._unpack_archive(dir, filters)
-        self.unpacked = tar_toplevel(dir)
+        self.unpacked = self._unpacked_toplevel(dir)
 
     def _unpack_archive(self, dir, filters):
         """
@@ -235,12 +235,37 @@ class UpstreamSource(object):
         """
         ext = os.path.splitext(self.path)[1]
         if ext in [ ".zip", ".xpi" ]:
-            try:
-                gbpc.UnpackZipArchive(self.path, dir)()
-            except gbpc.CommandExecFailed:
-                raise GbpError, "Unpacking of %s failed" % self.path
+            self._unpack_zip(dir)
         else:
-            unpack_orig(self.path, dir, filters)
+            self._unpack_tar(dir, filters)
+
+    def _unpack_zip(self, dir):
+        try:
+            gbpc.UnpackZipArchive(self.path, dir)()
+        except gbpc.CommandExecFailed:
+            raise GbpError, "Unpacking of %s failed" % self.path
+
+    def _unpacked_toplevel(self, dir):
+        """unpacked archives can contain a leading directory not"""
+        unpacked = glob.glob('%s/*' % dir)
+        unpacked.extend(glob.glob("%s/.*" % dir)) # include hidden files and folders
+        # Check that dir contains nothing but a single folder:
+        if len(unpacked) == 1 and os.path.isdir(unpacked[0]):
+            return unpacked[0]
+        else:
+            return dir
+
+    def _unpack_tar(self, dir, filters):
+        """
+        unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
+        an error
+        """
+        try:
+            unpackArchive = gbpc.UnpackTarArchive(self.path, dir, filters)
+            unpackArchive()
+        except gbpc.CommandExecFailed:
+            # unpackArchive already printed an error message
+            raise GbpError
 
     def pack(self, newarchive, filters=[]):
         """
@@ -502,31 +527,6 @@ def do_uscan():
     p = subprocess.Popen(['uscan', '--symlink', '--destdir=..', '--dehs'], stdout=subprocess.PIPE)
     out = p.communicate()[0]
     return parse_uscan(out)
-
-
-def unpack_orig(archive, tmpdir, filters):
-    """
-    unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
-    an error
-    """
-    try:
-        unpackArchive = gbpc.UnpackTarArchive(archive, tmpdir, filters)
-        unpackArchive()
-    except gbpc.CommandExecFailed:
-        # unpackArchive already printed an error message
-        raise GbpError
-    return unpackArchive.dir
-
-
-def tar_toplevel(dir):
-    """tar archives can contain a leading directory not"""
-    unpacked = glob.glob('%s/*' % dir)
-    unpacked.extend(glob.glob("%s/.*" % dir)) # include hidden files and folders
-    # Check that dir contains nothing but a single folder:
-    if len(unpacked) == 1 and os.path.isdir(unpacked[0]):
-        return unpacked[0]
-    else:
-        return dir
 
 
 def get_arch():
