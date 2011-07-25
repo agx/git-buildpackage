@@ -52,18 +52,17 @@ links_stamp:
 	done
 	touch links_stamp
 	
+pychecker:
+	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q git*.py gbp*.py
 
-checks: links_stamp
+
+checks: links_stamp pychecker
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
 	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
 	nosetests --exe --with-doctest
 endif
-
-%.py: %
-	ln -s $< $@
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q $<
 
 $(GBP_VERSION): debian/changelog
 	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)
