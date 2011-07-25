@@ -19,7 +19,6 @@ COMMANDS = git-buildpackage  \
 EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
-    gbp-pbuilder           \
     gbp-posttag-push       \
     gbp-configure-unpatched-source
 
