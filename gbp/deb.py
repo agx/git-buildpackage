@@ -190,7 +190,7 @@ class UpstreamSource(object):
         self.is_dir = [False, True][os.path.isdir(name)]
         self._check_orig()
         if self.is_dir:
-            self.unpacked = self._path
+            self.unpacked = self.path
 
     def _check_orig(self):
         """Check if archive can be used as orig tarball"""
@@ -213,7 +213,7 @@ class UpstreamSource(object):
 
     @property
     def path(self):
-        return self._path
+        return self._path.rstrip('/')
 
     def unpack(self, dir, filters=[]):
         """
@@ -254,15 +254,16 @@ class UpstreamSource(object):
         @rtype: UpstreamSource
         """
         if not self.unpacked:
-            raise GbpError, "Need an unpacked source tree to repack"
+            raise GbpError, "Need an unpacked source tree to pack"
 
         if type(filters) != type([]):
             raise GbpError, "Filters must be a list"
 
         try:
+            unpacked = self.unpacked.rstrip('/')
             repackArchive = gbpc.PackTarArchive(newarchive,
-                                os.path.dirname(self.unpacked),
-                                os.path.basename(self.unpacked),
+                                os.path.dirname(unpacked),
+                                os.path.basename(unpacked),
                                 filters)
             repackArchive()
         except gbpc.CommandExecFailed:

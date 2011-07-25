@@ -191,7 +191,7 @@ def repacked_tarball_name(source, name, version):
                     os.path.dirname(source.path),
                     os.path.basename(source.path).replace(".tar", ".gbp.tar"))
     else:
-        # Repacked sources or other arcives get canonical name
+        # Repacked sources or other archives get canonical name
         name = os.path.join(
                     os.path.dirname(source.path),
                     "%s_%s.orig.tar.bz2" % (name, version))
