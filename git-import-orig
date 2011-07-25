@@ -112,6 +112,46 @@ def upstream_import_commit_msg(options, version):
     return options.import_msg % dict(version=version)
 
 
+def detect_name_and_version(repo, source, options):
+    # Guess defaults for the package name and version from the
+    # original tarball.
+    (guessed_package, guessed_version) = guess_upstream_version(source.path) or ('', '')
+
+    # Try to find the source package name
+    try:
+        cp = parse_changelog(filename='debian/changelog')
+        sourcepackage = cp['Source']
+    except NoChangelogError:
+        try:
+            # Check the changelog file from the repository, in case
+            # we're not on the debian-branch (but upstream, for
+            # example).
+            cp = parse_changelog_repo(repo, options.debian_branch, 'debian/changelog')
+            sourcepackage = cp['Source']
+        except NoChangelogError:
+            if options.interactive:
+                sourcepackage = ask_package_name(guessed_package)
+            else:
+                if guessed_package:
+                    sourcepackage = guessed_package
+                else:
+                    raise GbpError, "Couldn't determine upstream package name. Use --interactive."
+
+    # Try to find the version.
+    if options.version:
+        version = options.version
+    else:
+        if options.interactive:
+            version = ask_package_version(guessed_version)
+        else:
+            if guessed_version:
+                version = guessed_version
+            else:
+                raise GbpError, "Couldn't determine upstream version. Use '-u<version>' or --interactive."
+
+    return (sourcepackage, version)
+
+
 def ask_package_name(default):
     """
     Ask the user for the source package name.
@@ -300,40 +340,7 @@ def main(argv):
             gbp.log.err(no_upstream_branch_msg % options.upstream_branch)
             raise GbpError
 
-        # Guess defaults for the package name and version from the
-        # original tarball.
-        (guessed_package, guessed_version) = guess_upstream_version(source.path) or ('', '')
-
-        # Try to find the source package name
-        try:
-            cp = parse_changelog(filename='debian/changelog')
-            sourcepackage = cp['Source']
-        except NoChangelogError:
-            try:
-                # Check the changelog file from the repository, in case
-                # we're not on the debian-branch (but upstream, for
-                # example).
-                cp = parse_changelog_repo(repo, options.debian_branch, 'debian/changelog')
-                sourcepackage = cp['Source']
-            except NoChangelogError:
-                if options.interactive:
-                    sourcepackage = ask_package_name(guessed_package)
-                else:
-                    if guessed_package:
-                        sourcepackage = guessed_package
-                    raise GbpError, "Couldn't determine upstream package name. Use --interactive."
-
-        # Try to find the version.
-        if options.version:
-            version = options.version
-        else:
-            if options.interactive:
-                version = ask_package_version(guessed_version)
-            else:
-                if guessed_version:
-                    version = guessed_version
-                else:
-                    raise GbpError, "Couldn't determine upstream version. Use '-u<version>' or --interactive."
+        (sourcepackage, version) = detect_name_and_version(repo, source, options)
 
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
