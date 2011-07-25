@@ -319,7 +319,9 @@ def main(argv):
                 if options.interactive:
                     sourcepackage = ask_package_name(guessed_package)
                 else:
-                    sourcepackage = guessed_package
+                    if guessed_package:
+                        sourcepackage = guessed_package
+                    raise GbpError, "Couldn't determine upstream package name. Use --interactive."
 
         # Try to find the version.
         if options.version:
@@ -331,7 +333,7 @@ def main(argv):
                 if guessed_version:
                     version = guessed_version
                 else:
-                    raise GbpError, "Couldn't determine upstream version. Use '-u<version>' or --interactive"
+                    raise GbpError, "Couldn't determine upstream version. Use '-u<version>' or --interactive."
 
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
