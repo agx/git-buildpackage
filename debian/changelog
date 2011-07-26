@@ -1,3 +1,29 @@
+git-buildpackage (0.5.27) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [8ce3500] Add autocompletion for --git-dist= based on the available
+    cowbuilder images
+  * [7fc837a] git-import-orig: Better support uscan for non tar.gz tarballs
+    (Closes: #629538)
+  * [2d4034d] Drop suggests of git-load-dirs. It's not in the archive anymore
+  * [41a5d0d] Switch to dh_python2
+  * [305e871] Re-enable pychecker checks
+  * [7360496] Support importing zip archives. This can be extended to support
+    other formats.
+  * [00e1d97] Remove fastimport code since it didn't support filters, etc.
+  * [8d0143a] git-import-orig: support filters for all input formats
+    (Closes: #628645)
+  * [e05e985] Add tests for UpstreamSource
+  * [f0ba62c] Drop unpack_orig and tar_toplevel
+  * [5bd3ff2] git-dch: add formatter that wraps the changelog entry
+    (Closes: #626439)
+  * [0ecd9f7] git-buildpackage: Add upstream-tree option to specify where the
+    upstream tarball should be created from. The default is to create the it
+    from the exact tag and fail otherwise.
+    Based on a patch by Ricardo Salveti de Araujo
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 26 Jul 2011 22:18:29 +0200
+
 git-buildpackage (0.5.26) unstable; urgency=low
 
   [ Guido Günther ]
