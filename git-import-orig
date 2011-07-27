@@ -215,9 +215,10 @@ def find_source(options, args):
         else:
             gbp.log.info("package is up to date, nothing to do.")
             return None
-    if len(args) != 1: # source specified
-        gbp.log.err("More than one archive specified. Try --help.")
-        raise GbpError
+    if len(args) > 1: # source specified
+        raise GbpError, "More than one archive specified. Try --help."
+    elif len(args) == 0:
+        raise GbpError, "No archive to import specified. Try --help."
     else:
         archive = OrigUpstreamSource(args[0])
         return archive
