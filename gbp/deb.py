@@ -223,6 +223,9 @@ class UpstreamSource(object):
         if self.is_dir:
             raise GbpError, "Cannot unpack directory %s" % self.path
 
+        if not filters:
+            filters = []
+
         if type(filters) != type([]):
             raise GbpError, "Filters must be a list"
 
@@ -280,6 +283,9 @@ class UpstreamSource(object):
         """
         if not self.unpacked:
             raise GbpError, "Need an unpacked source tree to pack"
+
+        if not filters:
+            filters = []
 
         if type(filters) != type([]):
             raise GbpError, "Filters must be a list"
