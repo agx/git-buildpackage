@@ -480,7 +480,7 @@ def parse_uscan(out):
     (True, None). Returns (False, None) if the current version is up to date.
 
     @param out: uscan output
-    @param type: string
+    @type out: string
     @return: status and tarball name
     @rtype: tuple
     >>> parse_uscan("<status>up to date</status>")
@@ -545,9 +545,9 @@ def guess_upstream_version(archive, extra_regex=r''):
     """
     guess the package name and version from the filename of an upstgream
     archive. Returns a tuple with package name and version, or None.
-    @archive: filename to guess to version for
-    @extra_regex: additional regex to apply, needs a 'package' and a
-    'version' group
+    @param archive: filename to guess to version for
+    @param extra_regex: additional regex to apply, needs a 'package' and a
+                        'version' group
 
     >>> guess_upstream_version('foo-bar_0.2.orig.tar.gz')
     ('foo-bar', '0.2')
@@ -566,7 +566,6 @@ def guess_upstream_version(archive, extra_regex=r''):
     ('kvm', '87+dfsg')
     >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
     >>> guess_upstream_version('foo-Bar-a.b.tar.gz')
-
     """
     version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
     extensions = r'\.tar\.(gz|bz2)'

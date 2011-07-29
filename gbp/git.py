@@ -113,7 +113,7 @@ class GitRepository(object):
         You only need to use this funciton if you also need to check for legacy
         tags.
 
-        @param pattern: tag pattern
+        @param format: tag pattern
         @param version: debian version number
         @return: sha1 of the version tag
         """
@@ -384,13 +384,17 @@ class GitRepository(object):
                    author={}, committer={}):
         """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
            @param unpack_dir: content to add
+           @type unpack_dir: striing
            @param msg: commit message to use
+           @type msg: string
            @param branch: branch to add the contents of unpack_dir to
-           @param parents: additional parents of this commit
-           @param author: commit with author information from author
+           @type branch: string
+           @param other_parents: additional parents of this commit
+           @type other_parents: list string
+           @param author: author information to use for commit
            @type author: dict with keys 'name', 'email', 'date'
-           @param committer_author: commit with committer information from committer
-           @type comitter: dict with keys 'name', 'email', 'date'"""
+           @param committer: committer information to use for commit
+           @type committer: dict with keys 'name', 'email', 'date'"""
 
         self.__check_path()
         git_index_file = os.path.join(self.path, '.git', 'gbp_index')

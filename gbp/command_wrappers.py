@@ -301,7 +301,9 @@ def copy_from(orig_dir, filters=[]):
     """
     copy a source tree over via tar
     @param orig_dir: where to copy from
-    @param exclude: tar exclude pattern
+    @type orig_dir: string
+    @param filters: tar exclude pattern
+    @type filters: list of strings
     @return: list of copied files
     @rtype: list
     """

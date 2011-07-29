@@ -54,12 +54,12 @@ class OrigUpstreamSource(UpstreamSource):
         Determine if the upstream sources needs to be repacked
 
         We repack if
-        * we want to filter out files and use pristine tar since we want
-          to make a filtered tarball available to pristine-tar
-        * when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
-          and want to use filters
-        * when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
-          and want to use pristine-tar
+         1. we want to filter out files and use pristine tar since we want
+            to make a filtered tarball available to pristine-tar
+         2. when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+            and want to use filters
+         3. when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+            and want to use pristine-tar
         """
         if ((options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0)):
             return True
@@ -155,7 +155,7 @@ def detect_name_and_version(repo, source, options):
 def ask_package_name(default):
     """
     Ask the user for the source package name.
-    @default The default package name to suggest to the user.
+    @param default: The default package name to suggest to the user.
     """
     while True:
         sourcepackage = raw_input("What will be the source package name? [%s] " % default)
@@ -174,7 +174,7 @@ def ask_package_name(default):
 def ask_package_version(default):
     """
     Ask the user for the upstream package version.
-    @default The default package version to suggest to the user.
+    @param default: The default package version to suggest to the user.
     """
     while True:
         version = raw_input("What is the upstream version? [%s] " % default)
@@ -193,7 +193,7 @@ def ask_package_version(default):
 def find_source(options, args):
     """Find the tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
-    @rvalue: string
+    @rtype: string
     @raise GbpError: raised on all detected errors
     """
     if options.uscan: # uscan mode

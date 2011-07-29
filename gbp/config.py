@@ -259,11 +259,11 @@ class GbpOptionParser(OptionParser):
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
-        @var option_name: name of the option
+        @param option_name: name of the option
         @type option_name: string
-        @var dest: where to store this option
+        @param dest: where to store this option
         @type dest: string
-        @var help: help text
+        @param help: help text
         @type help: string
         """
         if not help:
@@ -281,11 +281,11 @@ class GbpOptionGroup(OptionGroup):
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
-        @var option_name: name of the option
+        @param option_name: name of the option
         @type option_name: string
-        @var dest: where to store this option
+        @param dest: where to store this option
         @type dest: string
-        @var help: help text
+        @param help: help text
         @type help: string
         """
         if not help:
