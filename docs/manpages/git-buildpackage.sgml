@@ -185,8 +185,8 @@
         <term><option>--git-upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>Branch to build the orig tarball from if no tag matching the
-	  upstream version is found. Default is
+	  <para>Branch to build the orig tarball from if <option>--git-upstream-tree</option>
+	  is set to <replaceable>branch</replaceable>. Default is
 	  <replaceable>upstream</replaceable>. You can give any treeish object
 	  here.</para>
         </listitem>

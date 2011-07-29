@@ -12,11 +12,9 @@
 <screen>
 &git-buildpackage; <option>--git-ignore-new</option>
 </screen>
-    <para>If &git-buildpackage; doesn't find a valid upstream tarball it will create
-    one by looking at the tag matching the upstream version, if no tag can be
-    found it uses the tip of the current <option>upstream-branch</option>. Any
-    other treeish object to create the upstream tarball from can be given with
-    the <option>--upstream-branch</option> option.
+    <para>If &git-buildpackage; doesn't find a valid upstream tarball it will
+    create one by looking at the tag matching the upstream version. To change
+    this behaviour see the <option>--git-upstream-tree</option> option.
     </para><para>
     If you want to recreate the original tarball using the additional
     information from the <option>pristine-tar branch</option> you have to
