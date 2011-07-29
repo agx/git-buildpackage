@@ -207,7 +207,7 @@ def get_mailinfo(patch):
 
     info = {}
     body = os.path.join('.git', 'gbp_patchinfo')
-    pipe = subprocess.Popen("git mailinfo % s /dev/null < %s" % (body, patch),
+    pipe = subprocess.Popen("git mailinfo %s /dev/null < %s" % (body, patch),
                             shell=True, stdout=subprocess.PIPE).stdout
     for line in pipe:
         if ':' in line:
@@ -215,10 +215,13 @@ def get_mailinfo(patch):
             header = rfc_header[:-1].lower()
             info[header] = value.strip()
 
-    f = file(body)
-    commit_msg = "".join([ line for line in f ])
-    f.close()
-    os.unlink(body)
+    try:
+        f = file(body)
+        commit_msg = "".join([ line for line in f ])
+        f.close()
+        os.unlink(body)
+    except IOError, msg:
+        raise GbpError, "Failed to read patch header of '%s': %s" % (patch, msg)
 
     return info, commit_msg
 
