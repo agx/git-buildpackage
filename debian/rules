@@ -42,10 +42,9 @@ $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	docbook-2-html -s local $<
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
+
 docs/git-pbuilder.1: git-pbuilder
 	pod2man $< $@
-
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 
 links_stamp:
 	for c in $(COMMANDS); do \
@@ -53,9 +52,12 @@ links_stamp:
 	done
 	touch links_stamp
 	
+apidocs: links_stamp
+	epydoc -o docs/apidocs/ gbp*.py git*.py gbp/
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
 	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q git*.py gbp*.py
-
 
 checks: links_stamp pychecker
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
@@ -71,7 +73,7 @@ $(GBP_VERSION): debian/changelog
 $(VERSION_ENT): debian/changelog
 	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' >  $(VERSION_ENT)
 
-build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) checks
+build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) checks apidocs
 
 binary-post-install/git-buildpackage::
 	dh_bash-completion
@@ -79,6 +81,6 @@ binary-post-install/git-buildpackage::
 clean::
 	-rm git_*.py gbp_*.py gbp/gbp_version.py links_stamp
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT) git-pbuilder.1
-	-rm -r docs/manual-html/
+	-rm -r docs/manual-html/ docs/apidocs/
 
 .PHONY: checks
