@@ -1,3 +1,16 @@
+git-buildpackage (0.5.28) unstable; urgency=low
+
+  * [3c72dfa] git-import-orig: Clarify missing argument error message
+  * [d34e82e] Be less picky about empty filters. (Closes: #635641)
+  * [a692745] Report errors reading the patch file instead of throwing an
+    exception. (Closes: #635872)
+  * [9bbbc77] Better document --git-upstream-tree. (Closes: #635883)
+  * [3fb7fd6] Add strip option to GitRepository.apply
+  * [dbe68fb] Split out GbpPatchQueue and GbpPatch to handle "-p<num>" without
+    munging the code further (Closes: #635873)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 29 Jul 2011 19:00:25 +0200
+
 git-buildpackage (0.5.27) unstable; urgency=low
 
   [ Guido Günther ]
