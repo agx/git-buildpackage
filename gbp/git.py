@@ -469,7 +469,7 @@ class GitRepository(object):
         output, ret = self.__git_getoutput('format-patch', options)
         return [ line.strip() for line in output ]
 
-    def apply_patch(self, patch, index=True, context=None):
+    def apply_patch(self, patch, index=True, context=None, strip=None):
         """Apply a patch using git apply"""
 
         args = []
@@ -477,6 +477,8 @@ class GitRepository(object):
             args += [ '-C', context ]
         if index:
             args.append("--index")
+        if strip:
+            args += [ '-p', strip ]
         args.append(patch)
         GitCommand("apply", args)()
 
