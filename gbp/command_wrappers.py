@@ -143,33 +143,29 @@ class PristineTar(Command):
 
 class UnpackTarArchive(Command):
     """Wrap tar to unpack a compressed tar archive"""
-    def __init__(self, archive, dir, filters=[]):
+    def __init__(self, archive, dir, filters=[], compression=None):
         self.archive = archive
         self.dir = dir
         exclude = [("--exclude=%s" % filter) for filter in filters]
 
-        if archive.lower().endswith(".bz2"):
-            decompress = "--bzip2"
-        else:
-            decompress = "--gzip"
+        if not compression:
+            compression = '-a'
 
-        Command.__init__(self, 'tar', exclude + ['-C', dir, decompress, '-xf', archive ])
+        Command.__init__(self, 'tar', exclude + ['-C', dir, compression, '-xf', archive ])
         self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
 
 class PackTarArchive(Command):
     """Wrap tar to pack a compressed tar archive"""
-    def __init__(self, archive, dir, dest, filters=[]):
+    def __init__(self, archive, dir, dest, filters=[], compression=None):
         self.archive = archive
         self.dir = dir
         exclude = [("--exclude=%s" % filter) for filter in filters]
 
-        if archive.lower().endswith(".bz2"):
-            compress = "--bzip2"
-        else:
-            compress = "--gzip"
+        if not compression:
+            compression = '-a'
 
-        Command.__init__(self, 'tar', exclude + ['-C', dir, compress, '-cf', archive, dest])
+        Command.__init__(self, 'tar', exclude + ['-C', dir, compression, '-cf', archive, dest])
         self.run_error = 'Couldn\'t repack "%s"' % self.archive
 
 
