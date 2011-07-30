@@ -27,7 +27,7 @@ import sys
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
-                                  GitBranch, CommandExecFailed)
+                                  CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
 from gbp.pq import PatchQueue
@@ -176,11 +176,13 @@ def import_quilt_patches(repo, branch, series):
     else:
         pq_branch = pq_branch_name(branch)
 
+    if repo.has_branch(pq_branch):
+        raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead."
+
     try:
-        GitBranch()(pq_branch)
+        repo.create_branch(pq_branch)
     except CommandExecFailed:
-        raise GbpError, ("Cannot create patch-queue branch '%s'. Try 'rebase' instead."
-                         % pq_branch)
+        raise GbpError, ("Cannot create patch-queue branch '%s'." % pq_branch)
     repo.set_branch(pq_branch)
 
     queue = PatchQueue.read_series_file(series)
@@ -222,7 +224,7 @@ def switch_to_pq_branch(repo, branch):
     pq_branch = pq_branch_name(branch)
     if not repo.has_branch(pq_branch):
         try:
-            GitBranch()(pq_branch)
+            repo.create_branch(pq_branch)
         except CommandExecFailed:
             raise GbpError, ("Cannot create patch-queue branch '%s'. Try 'rebase' instead."
                 % pq_branch)
