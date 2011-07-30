@@ -21,7 +21,7 @@ from errors import GbpError
 
 class Patch(object):
     """
-    A patch in a patchqueue
+    A patch in a L{PatchQueue}
 
     @ivar path: path to the patch
     @type path: string
@@ -46,9 +46,13 @@ class Patch(object):
 
 
 class PatchQueue(list):
+    """
+    A series of L{Patch}es (e.g. as read from a quilt series file)
+    """
+
     @classmethod
     def read_series_file(klass, seriesfile):
-        """Read a series file into gbp.pq.Patch objects"""
+        """Read a series file into L{Patch} objects"""
         patch_dir = os.path.dirname(seriesfile)
         try:
             s = file(seriesfile)

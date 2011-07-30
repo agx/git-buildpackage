@@ -26,7 +26,7 @@ import dateutil.parser
 import calendar
 
 class GitRepositoryError(Exception):
-    """Exception thrown by GitRepository"""
+    """Exception thrown by L{GitRepository}"""
     pass
 
 
@@ -404,7 +404,7 @@ class GitRepository(object):
                    author={}, committer={}):
         """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
            @param unpack_dir: content to add
-           @type unpack_dir: striing
+           @type unpack_dir: string
            @param msg: commit message to use
            @type msg: string
            @param branch: branch to add the contents of unpack_dir to
@@ -489,13 +489,15 @@ class GitRepository(object):
             return False
 
     def format_patches(self, start, end, output_dir):
+        """
+        Output the commits between start and end as patches in output_dir
+        """
         options = [ '-N', '-k', '-o', output_dir, '%s...%s' % (start, end) ]
         output, ret = self.__git_getoutput('format-patch', options)
         return [ line.strip() for line in output ]
 
     def apply_patch(self, patch, index=True, context=None, strip=None):
         """Apply a patch using git apply"""
-
         args = []
         if context:
             args += [ '-C', context ]
@@ -515,7 +517,7 @@ class GitRepository(object):
 
 
     def has_submodules(self):
-        """Does the repo have submodules"""
+        """Does the repo have submodules?"""
         if os.path.exists('.gitmodules'):
             return True
         else:
