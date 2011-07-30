@@ -1,3 +1,13 @@
+git-buildpackage (0.5.29) unstable; urgency=low
+
+  * [00c2b8e] Move GbpPatchQueue and GbpPatch into gbp.pq
+  * [2fbac77] Build epydoc API documents by default
+  * [42a13a1] gbp-pq: add --time-mache=N option to find the last commit the
+    patch-queue applies to.
+  * [d052ba2] Document --time-machine option
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 30 Jul 2011 15:07:41 +0200
+
 git-buildpackage (0.5.28) unstable; urgency=low
 
   * [3c72dfa] git-import-orig: Clarify missing argument error message
