@@ -266,13 +266,22 @@ class GitRepository(object):
         else:
             return []
 
-    def commits(self, since=None, until=None, paths=None, options=None):
-        """get commits from start to end touching paths"""
+    def commits(self, since=None, until=None, paths=None, options=None,
+                first_parent=False):
+        """
+        get commits from since to until touching paths
+
+        @param options: list of options past to git log
+        @type  options: list of strings
+        """
 
         args = ['--pretty=format:%H']
 
         if options:
             args += options
+
+        if first_parent:
+            args += [ "--first-parent" ]
 
         if since and until:
             args += ['%s..%s' % (since, until)]
