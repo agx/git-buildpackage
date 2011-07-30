@@ -407,6 +407,7 @@ def orig_file(cp, compression):
 def is_native(cp):
     """
     Is this a debian native package
+
     >>> is_native(dict(Version="1"))
     True
     >>> is_native(dict(Version="1-1"))
@@ -425,6 +426,7 @@ def is_valid_upstreamversion(version):
 def get_compression(orig_file):
     """
     Given an orig file return the compression used
+
     >>> get_compression("abc.tar.gz")
     'gzip'
     >>> get_compression("abc.tar.bz2")
@@ -492,14 +494,15 @@ def parse_uscan(out):
     downloaded and could be located. If the tarball can't be located it returns
     (True, None). Returns (False, None) if the current version is up to date.
 
-    @param out: uscan output
-    @type out: string
-    @return: status and tarball name
-    @rtype: tuple
     >>> parse_uscan("<status>up to date</status>")
     (False, None)
     >>> parse_uscan("<target>virt-viewer_0.4.0.orig.tar.gz</target>")
     (True, '../virt-viewer_0.4.0.orig.tar.gz')
+
+    @param out: uscan output
+    @type out: string
+    @return: status and tarball name
+    @rtype: tuple
     """
     source = None
     if "<status>up to date</status>" in out:

@@ -63,10 +63,6 @@ class PatchQueue(list):
     def _read_series(klass, series, patch_dir):
         """
         Read patch series
-        @param series: series of patches in quilt format
-        @type series: iterable of strings
-        @param patch_dir: path prefix to prepend to each patch path
-        @type patch_dir: string
 
         >>> PatchQueue._read_series(['a/b', \
                             'a -p1', \
@@ -74,6 +70,11 @@ class PatchQueue(list):
         [<gbp.pq.Patch path='./a/b' topic='a' >,
          <gbp.pq.Patch path='./a' strip=1 >,
          <gbp.pq.Patch path='./a/b' topic='a' strip=2 >]
+
+        @param series: series of patches in quilt format
+        @type series: iterable of strings
+        @param patch_dir: path prefix to prepend to each patch path
+        @type patch_dir: string
         """
 
         queue = PatchQueue()
@@ -85,6 +86,7 @@ class PatchQueue(list):
     def _get_topic(line):
         """
         Get the topic from the path's path
+
         >>> PatchQueue._get_topic("a/b c")
         'a'
         >>> PatchQueue._get_topic("asdf")

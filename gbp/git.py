@@ -645,6 +645,7 @@ def create_repo(path):
 
 def build_tag(format, version):
     """Generate a tag from a given format and a version
+
     >>> build_tag("debian/%(version)s", "0:0~0")
     'debian/0%0_0'
     """
@@ -653,6 +654,7 @@ def build_tag(format, version):
 
 def __sanitize_version(version):
     """sanitize a version so git accepts it as a tag
+
     >>> __sanitize_version("0.0.0")
     '0.0.0'
     >>> __sanitize_version("0.0~0")
@@ -667,6 +669,7 @@ def __sanitize_version(version):
 
 def tag_to_version(tag, format):
     """Extract the version from a tag
+
     >>> tag_to_version("upstream/1%2_3-4", "upstream/%(version)s")
     '1:2~3-4'
     >>> tag_to_version("foo/2.3.4", "foo/%(version)s")
@@ -684,6 +687,7 @@ def tag_to_version(tag, format):
 
 def rfc822_date_to_git(rfc822_date):
     """Parse a date in RFC822 format, and convert to a 'seconds tz' string.
+
     >>> rfc822_date_to_git('Thu, 1 Jan 1970 00:00:01 +0000')
     '1 +0000'
     >>> rfc822_date_to_git('Thu, 20 Mar 2008 01:12:57 -0700')
