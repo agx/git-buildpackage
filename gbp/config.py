@@ -122,6 +122,7 @@ class GbpOptionParser(OptionParser):
                  'author-date-is-committer-date': 'False',
                  'create-missing-branches': 'False',
                  'submodules'      : 'False',
+                 'time-machine'    : 1,
              }
     help = {
              'debian-branch':
@@ -196,6 +197,8 @@ class GbpOptionParser(OptionParser):
                   "Transparently handle submodules in the upstream tree, default is '%(submodules)s'",
              'postimport':
                   "hook run after a successful import, default is '%(postimport)s'",
+             'time-machine':
+                  "don't try head commit only to apply the patch queue but look TIME_MACHINE commits back",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

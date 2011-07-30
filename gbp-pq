@@ -167,9 +167,17 @@ def get_maintainer_from_control():
         return None, None
 
 
-def import_quilt_patches(repo, branch, series):
-    """apply a series of quilt patches in the series file 'series' to branch
-       the patch-queue branch for 'branch'"""
+def import_quilt_patches(repo, branch, series, tries):
+    """
+    apply a series of quilt patches in the series file 'series' to branch
+    the patch-queue branch for 'branch'
+
+    @param repo: git repository to work on
+    @param branch: branch to base pqtch queue on
+    @param series; series file to read patches from
+    @param tries: try that many times to apply the patches going back one
+                  commit in the branches history after each failure.
+    """
     if is_pq_branch(branch):
         gbp.log.err("Already on a patch-queue branch '%s' - doing nothing." % branch)
         raise GbpError
@@ -177,18 +185,31 @@ def import_quilt_patches(repo, branch, series):
         pq_branch = pq_branch_name(branch)
 
     if repo.has_branch(pq_branch):
-        raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead."
+        raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead.")
 
-    try:
-        repo.create_branch(pq_branch)
-    except CommandExecFailed:
-        raise GbpError, ("Cannot create patch-queue branch '%s'." % pq_branch)
-    repo.set_branch(pq_branch)
+    commits = repo.commits(options=['-%d' % tries], first_parent=True)
+    for commit in commits:
+        try:
+            gbp.log.info("Trying to apply patches at '%s'" % commit)
+            repo.create_branch(pq_branch, commit)
+        except CommandExecFailed:
+            raise GbpError, ("Cannot create patch-queue branch '%s'." % pq_branch)
 
-    queue = PatchQueue.read_series_file(series)
-    for patch in queue:
-        gbp.log.debug("Applying %s" % patch.path)
-        apply_and_commit_patch(repo, patch.path, patch.topic)
+        repo.set_branch(pq_branch)
+        queue = PatchQueue.read_series_file(series)
+        for patch in queue:
+            gbp.log.debug("Applying %s" % patch.path)
+            try:
+                apply_and_commit_patch(repo, patch.path, patch.topic)
+            except (GbpError, GitRepositoryError, CommandExecFailed):
+                repo.set_branch(branch)
+                repo.delete_branch(pq_branch)
+                break
+        else:
+            # All patches applied successfully
+            break
+    else:
+        raise GbpError, "Couldn't apply patches"
 
 
 def get_mailinfo(patch):
@@ -304,6 +325,7 @@ def main(argv):
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
+    parser.add_config_file_option(option_name="time-machine", dest="time_machine", type="int")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
 
     (options, args) = parser.parse_args(argv)
@@ -339,7 +361,8 @@ def main(argv):
             export_patches(repo, current, options)
         elif action == "import":
             series = SERIES_FILE
-            import_quilt_patches(repo, current, series)
+            tries = options.time_machine if (options.time_machine > 0) else 1
+            import_quilt_patches(repo, current, series, tries)
             current = repo.get_branch()
             gbp.log.info("Patches listed in '%s' imported on '%s'" %
                           (series, current))
