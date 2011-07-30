@@ -267,26 +267,24 @@ class GitRepository(object):
             return []
 
     def commits(self, since=None, until=None, paths=None, options=None):
-        """get commits from start to end touching pathds"""
+        """get commits from start to end touching paths"""
 
-        if since or until:
-            range = ['%s..%s' % (since, until)]
-        else:
-            range = []
+        args = ['--pretty=format:%H']
+
+        if options:
+            args += options
+
+        if since and until:
+            args += ['%s..%s' % (since, until)]
 
         if paths:
-           paths = [ "--", paths ]
-        else:
-            paths = []
+            args += [ "--", paths ]
 
-        commits, ret = self.__git_getoutput('log',
-                                            ['--pretty=format:%H'] +
-                                            options +
-                                            range +
-                                            paths)
+        commits, ret = self.__git_getoutput('log', args)
         if ret:
+            where = " on %s" % paths if paths else ""
             raise GitRepositoryError, ("Error getting commits %s..%s%s" %
-                        (since, until,["", " on %s" % paths][len(paths) > 0] ))
+                        (since, until, where))
         return [ commit.strip() for commit in commits[::-1] ]
 
     def show(self, id):
