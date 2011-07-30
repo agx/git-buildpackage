@@ -294,7 +294,7 @@ class GitRepository(object):
             where = " on %s" % paths if paths else ""
             raise GitRepositoryError, ("Error getting commits %s..%s%s" %
                         (since, until, where))
-        return [ commit.strip() for commit in commits[::-1] ]
+        return [ commit.strip() for commit in commits ]
 
     def show(self, id):
         """git-show id"""

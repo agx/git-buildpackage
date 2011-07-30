@@ -413,7 +413,10 @@ def main(argv):
 
         if args:
             gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
-        commits = repo.commits(since=since, until=until, paths=" ".join(args), options=options.git_log.split(" "))
+        commits = repo.commits(since=since, until=until,
+                               paths=" ".join(args),
+                               options=options.git_log.split(" "))
+        commits.reverse()
 
         # add a new changelog section if:
         if options.new_version or options.bpo or options.nmu or options.qa:
