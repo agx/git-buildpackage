@@ -73,7 +73,7 @@
         </term>
         <listitem>
 	  <para>The branch in the Git repository the Debian package is being
-	  developed on, default is <replaceable>master</replaceable>.
+	  developed on, default is <replaceable>master</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -119,7 +119,7 @@
         <term><option>--[no-]meta</option></term>
         <listitem>
 	  <para>Parse meta tags like <option>Closes:</option>,
-	  <option>Thanks:</option> and <option>Git-Dch:</option>.</para>
+	  <option>Thanks:</option> and <option>Git-Dch:</option>. See META TAGS below.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -241,6 +241,67 @@
       heaader and unmangles the version number so the released version has a
       higher version number than the snapshots.
       </para>
+  </refsect1>
+  <refsect1>
+    <title>META TAGS</title>
+    <para>Additional to the above options the formatting of the commit message
+    in <filename>debian/changelog</filename> can be modified by special tags
+    (called Meta Tags)
+    given in the git commit message. Meta Tag processing can be activated via
+    the <option>--meta</option> option. The tags must start at the first column of
+    a commit message but can appear on any line.
+    They are of the form <option>Tagname</option>:
+    <replaceable>value</replaceable>. Valid Meta Tags are:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term><option>Git-Dch</option>: <replaceable>action</replaceable>
+        </term>
+        <listitem><para>
+	Supported actions are: <replaceable>Ignore</replaceable> which will ignore
+	this commit when generating <filename>debian/changelog</filename> and
+	<replaceable>Short</replaceable> which will only use the description 
+	(the first line) of the commit message when generating the changelog entry.
+        </para></listitem>
+      </varlistentry>
+      <varlistentry>
+      	<term><option>Thanks</option>: <replaceable>msg</replaceable>
+      	</term>
+          <listitem>
+	    <para>
+	      Add a thanks message after the commit message.
+	    </para>
+	  </listitem>
+      </varlistentry>
+      <varlistentry>
+      	<term><option>Closes</option>: <replaceable>bugnumber</replaceable>
+      	</term>
+          <listitem>
+	    <para>
+	      Indicate in the <filename>debian/changelog</filename> that the bug was 
+	      closed by this commit. See the <option>--meta-closes</option>
+	      on howto extend this for other bugtrackers.
+	    </para>
+	  </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>The following git commit message:</para>
+    <screen>
+      Document meta tags
+
+      so one doesn't have to consult the manual
+
+      Git-Dch: Short
+      Closes: #636088
+      Thanks: Raphaël Hertzog for the suggestion
+    </screen>
+    <para>
+      Results in this <filename>debian/changelog</filename> entry:
+    </para>
+    <screen>
+      * Document meta tags.
+        Thanks to Raphaël Hertzog for the suggestion (Closes: #636088)
+    </screen>
   </refsect1>
   <refsect1>
       &man.git.config-files;
