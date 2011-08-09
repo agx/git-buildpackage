@@ -75,6 +75,9 @@ class PatchQueue(list):
          <gbp.pq.Patch path='./a' strip=1 >,
          <gbp.pq.Patch path='./a/b' topic='a' strip=2 >]
 
+        >>> PatchQueue._read_series(['# foo', 'a/b', '', '# bar'], '.')
+        [<gbp.pq.Patch path='./a/b' topic='a' >]
+
         @param series: series of patches in quilt format
         @type series: iterable of strings
         @param patch_dir: path prefix to prepend to each patch path
@@ -83,6 +86,11 @@ class PatchQueue(list):
 
         queue = PatchQueue()
         for line in series:
+            try:
+                if line[0] in [ '\n', '#' ]:
+                    continue
+            except IndexError:
+                continue # ignore empty lines
             queue.append(klass._parse_line(line, patch_dir))
         return queue
 
