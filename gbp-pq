@@ -24,6 +24,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
@@ -167,6 +168,29 @@ def get_maintainer_from_control():
         return None, None
 
 
+def safe_patches(series):
+    """
+    Safe the current patches in a temporary directory
+    below .git/
+
+    @param series: path to series file
+    @return: tmpdir and path to safed series file
+    @rtype: tuple
+    """
+
+    src = os.path.dirname(series)
+    name = os.path.basename(series)
+
+    tmpdir = tempfile.mkdtemp(dir='.git/', prefix='gbp-pq')
+    patches = os.path.join(tmpdir, 'patches')
+    series = os.path.join(patches, name)
+
+    gbp.log.debug("Safeing patches '%s' in '%s'" % (src, tmpdir))
+    shutil.copytree(src, patches)
+
+    return (tmpdir, series)
+
+
 def import_quilt_patches(repo, branch, series, tries):
     """
     apply a series of quilt patches in the series file 'series' to branch
@@ -178,6 +202,8 @@ def import_quilt_patches(repo, branch, series, tries):
     @param tries: try that many times to apply the patches going back one
                   commit in the branches history after each failure.
     """
+    tmpdir = None
+
     if is_pq_branch(branch):
         gbp.log.err("Already on a patch-queue branch '%s' - doing nothing." % branch)
         raise GbpError
@@ -189,6 +215,12 @@ def import_quilt_patches(repo, branch, series, tries):
                          % pq_branch)
 
     commits = repo.commits(options=['-%d' % tries], first_parent=True)
+    # If we go back in history we have to safe our pq so we always try to apply
+    # the latest one
+    if len(commits) > 1:
+        tmpdir, series = safe_patches(series)
+
+    queue = PatchQueue.read_series_file(series)
     for commit in commits:
         try:
             gbp.log.info("Trying to apply patches at '%s'" % commit)
@@ -197,7 +229,6 @@ def import_quilt_patches(repo, branch, series, tries):
             raise GbpError, ("Cannot create patch-queue branch '%s'." % pq_branch)
 
         repo.set_branch(pq_branch)
-        queue = PatchQueue.read_series_file(series)
         for patch in queue:
             gbp.log.debug("Applying %s" % patch.path)
             try:
@@ -211,6 +242,10 @@ def import_quilt_patches(repo, branch, series, tries):
             break
     else:
         raise GbpError, "Couldn't apply patches"
+
+    if tmpdir:
+        gbp.log.debug("Remove temporary patch safe '%s'" % tmpdir)
+        shutil.rmtree(tmpdir)
 
 
 def get_mailinfo(patch):
