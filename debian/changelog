@@ -1,3 +1,20 @@
+git-buildpackage (0.5.30) unstable; urgency=low
+
+  * [37f16cc] Document meta tags. Thanks to Raphaël Hertzog for the
+    suggestion (Closes: #636088)
+  * [f2efdaf] Add known_compressions() to UpstreamSource so we can use it for
+    the DscFile parsing. This fixes the import of xz compressed upstream
+    tarballs.
+  * [2da9e9e] Leave compression type detection to tar by default
+  * [a878947] Ignore comments and empty lines in series files. 
+    (Closes: #637224)
+  * [b3931e0] Fix missing branch name in error message
+  * [4e2f7de] gbp-pq: Use latest patches with --time-machine. When going back
+    in history to find the point where the patches in debian/patches still
+    apply make sure we use the latest ones not the one currently in the tree.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 10 Aug 2011 22:25:11 +0200
+
 git-buildpackage (0.5.29) unstable; urgency=low
 
   * [00c2b8e] Move GbpPatchQueue and GbpPatch into gbp.pq
