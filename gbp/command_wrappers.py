@@ -133,11 +133,11 @@ class PristineTar(Command):
         Command.__init__(self, self.cmd)
 
     def commit(self, archive, branch):
-        self.run_errror = 'Couldn\'t commit to "%s"' % branch
+        self.run_error = 'Couldn\'t commit to "%s"' % branch
         self.__call__(['commit', archive, branch])
 
     def checkout(self, archive):
-        self.run_errror = 'Couldn\'t checkout "%s"' % archive
+        self.run_error = 'Couldn\'t checkout "%s"' % os.path.basename(archive)
         self.__call__(['checkout', archive])
 
 
