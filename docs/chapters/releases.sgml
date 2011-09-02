@@ -130,7 +130,7 @@ convenient to include the commit id in the changelog entry.
 This has the advantage that it's easy for people to identify changes without
 having to write very extensive changelog messages - the link back to Git can be
 automated via the <option>Vcs-Browser</option> and <option>Vcs-Git</option>
-fields in <filename>debian/control</filename>. See <ulink url="https:///honk.sigxcpu.org/cl2vcs">
+fields in <filename>debian/control</filename>. See <ulink url="https://honk.sigxcpu.org/cl2vcs">
 Cl2vcs</ulink> for how this looks.
 </para>
 <para>

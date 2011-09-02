@@ -327,7 +327,7 @@
         <manvolnum>1</manvolnum>
       </citerefentry>,
       &man.seealso.common;
-      <ulink url="https:///honk.sigxcpu.org/cl2vcs">
+      <ulink url="https://honk.sigxcpu.org/cl2vcs">
       <citetitle>Cl2vcs</citetitle></ulink>
     </para>
 
