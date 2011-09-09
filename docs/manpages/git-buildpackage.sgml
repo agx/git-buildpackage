@@ -37,6 +37,7 @@
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
+      <arg><option>--git-postexport=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
@@ -241,10 +242,22 @@
         <term><option>--git-postbuild=</option><replaceable>command</replaceable>
         </term>
         <listitem>
-	  <para>excecute <replaceable>command</replaceable> after successful
+	  <para>execute <replaceable>command</replaceable> after successful
 	  build.</para><para> Exported environment variables are:
 	  <envar>GBP_CHANGES_FILE</envar> (the name of the generated changes
-	  file), <envar>GBP_BUILD_DIR</envar> (the build dir).
+	  file), <envar>GBP_BUILD_DIR</envar> (the build dir).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-postexport=</option><replaceable>command</replaceable>
+        </term>
+        <listitem>
+	  <para>execute <replaceable>command</replaceable> after exporting the source
+	  tree - valid only if --git-export-dir has been specified.</para>
+	  <para> Exported environment variables are:
+	  <envar>GBP_GIT_DIR</envar> (the repository the package is being built
+	  from), <envar>GBP_TMP_DIR</envar> (the temporary directory where the
+	  sources have been initially exported).</para>
         </listitem>
       </varlistentry>
       <varlistentry>
