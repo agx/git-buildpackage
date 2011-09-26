@@ -74,7 +74,7 @@ export-dir=../build-area
     <title>Invoking external programs</title>
     <para>
     Besides the commands for cleaning the package build dir
-    (<option>cleaner</option> and building the package
+    (<option>cleaner</option>) and building the package
     (<option>builder</option>) you can also invoke hooks during the package
     build: immediately before a build (<option>prebuild</option>,
     after a successful build (<option>postbuild</option>) and after
