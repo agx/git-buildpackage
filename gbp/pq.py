@@ -55,6 +55,10 @@ class PatchQueue(list):
     def read_series_file(klass, seriesfile):
         """Read a series file into L{Patch} objects"""
         patch_dir = os.path.dirname(seriesfile)
+
+        if not os.path.exists(seriesfile):
+            return []
+
         try:
             s = file(seriesfile)
         except Exception, err:
