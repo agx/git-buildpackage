@@ -1,3 +1,17 @@
+git-buildpackage (0.5.31) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [3588d88] Fix pristine-tar error message
+  * [8da98da] gbp-pq: don't fail on missing series file but create an empty
+    branch instead
+
+  [ Salvatore Bonaccorso ]
+  * [b33cf74] Fix URL to cl2vcs service.
+    Refer to https://honk.sigxcpu.org/cl2vcs instead of
+    https://honk.sigxcpu.org/cl2vcs for the cl2vcs service. (Closes: #640141)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 28 Sep 2011 20:21:34 +0200
+
 git-buildpackage (0.5.30) unstable; urgency=low
 
   * [37f16cc] Document meta tags. Thanks to Raphaël Hertzog for the
