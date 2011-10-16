@@ -586,9 +586,13 @@ def guess_upstream_version(archive, extra_regex=r''):
     ('kvm', '87+dfsg')
     >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
     >>> guess_upstream_version('foo-Bar-a.b.tar.gz')
+    >>> guess_upstream_version('foo-bar_0.2.orig.tar.xz')
+    ('foo-bar', '0.2')
+    >>> guess_upstream_version('foo-bar_0.2.orig.tar.lzma')
+    ('foo-bar', '0.2')
     """
     version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
-    extensions = r'\.tar\.(gz|bz2)'
+    extensions = r'\.tar\.(%s)' % "|".join(UpstreamSource.known_compressions())
 
     version_filters = map ( lambda x: x % (version_chars, extensions),
                        ( # Debian package_<version>.orig.tar.gz:
