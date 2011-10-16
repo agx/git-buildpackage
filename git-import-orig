@@ -28,7 +28,7 @@ import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (parse_changelog, UpstreamSource,
                      NoChangelogError, has_epoch,
-                     guess_upstream_version, do_uscan,
+                     do_uscan,
                      parse_changelog_repo, is_valid_packagename,
                      packagename_msg, is_valid_upstreamversion,
                      upstreamversion_msg)
@@ -115,7 +115,7 @@ def upstream_import_commit_msg(options, version):
 def detect_name_and_version(repo, source, options):
     # Guess defaults for the package name and version from the
     # original tarball.
-    (guessed_package, guessed_version) = guess_upstream_version(source.path) or ('', '')
+    (guessed_package, guessed_version) = source.guess_version() or ('', '')
 
     # Try to find the source package name
     try:

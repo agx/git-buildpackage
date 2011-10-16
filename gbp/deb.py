@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2011 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -235,6 +235,53 @@ class UpstreamSource(object):
     @staticmethod
     def known_compressions():
         return [ args[1][-1] for args in compressor_opts.items() ]
+
+    def guess_version(self, extra_regex=r''):
+        """
+        Guess the package name and version from the filename of an upstream
+        archive.
+
+        @param extra_regex: additional regex to apply, needs a 'package' and a
+                            'version' group
+        @return tuple: (package name, version) or None.
+
+        >>> UpstreamSource('foo-bar_0.2.orig.tar.gz').guess_version()
+        ('foo-bar', '0.2')
+        >>> UpstreamSource('foo-Bar_0.2.orig.tar.gz').guess_version()
+        >>> UpstreamSource('git-bar-0.2.tar.gz').guess_version()
+        ('git-bar', '0.2')
+        >>> UpstreamSource('git-bar-0.2-rc1.tar.gz').guess_version()
+        ('git-bar', '0.2-rc1')
+        >>> UpstreamSource('git-bar-0.2:~-rc1.tar.gz').guess_version()
+        ('git-bar', '0.2:~-rc1')
+        >>> UpstreamSource('git-Bar-0A2d:rc1.tar.bz2').guess_version()
+        ('git-Bar', '0A2d:rc1')
+        >>> UpstreamSource('git-1.tar.bz2').guess_version()
+        ('git', '1')
+        >>> UpstreamSource('kvm_87+dfsg.orig.tar.gz').guess_version()
+        ('kvm', '87+dfsg')
+        >>> UpstreamSource('foo-Bar_0.2.orig.tar.gz').guess_version()
+        >>> UpstreamSource('foo-Bar-a.b.tar.gz').guess_version()
+        >>> UpstreamSource('foo-bar_0.2.orig.tar.xz').guess_version()
+        ('foo-bar', '0.2')
+        >>> UpstreamSource('foo-bar_0.2.orig.tar.lzma').guess_version()
+        ('foo-bar', '0.2')
+        """
+        version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
+        extensions = r'\.tar\.(%s)' % "|".join(self.known_compressions())
+
+        version_filters = map ( lambda x: x % (version_chars, extensions),
+                           ( # Debian package_<version>.orig.tar.gz:
+                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig%s',
+                             # Upstream package-<version>.tar.gz:
+                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)%s'))
+        if extra_regex:
+            version_filters = extra_regex + version_filters
+
+        for filter in version_filters:
+            m = re.match(filter, os.path.basename(self.path))
+            if m:
+                return (m.group('package'), m.group('version'))
 
 
 class DscFile(object):
@@ -559,53 +606,6 @@ def get_arch():
     pipe = subprocess.Popen(["dpkg", "--print-architecture"], shell=False, stdout=subprocess.PIPE)
     arch = pipe.stdout.readline().strip()
     return arch
-
-
-def guess_upstream_version(archive, extra_regex=r''):
-    """
-    guess the package name and version from the filename of an upstgream
-    archive. Returns a tuple with package name and version, or None.
-    @param archive: filename to guess to version for
-    @param extra_regex: additional regex to apply, needs a 'package' and a
-                        'version' group
-
-    >>> guess_upstream_version('foo-bar_0.2.orig.tar.gz')
-    ('foo-bar', '0.2')
-    >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
-    >>> guess_upstream_version('git-bar-0.2.tar.gz')
-    ('git-bar', '0.2')
-    >>> guess_upstream_version('git-bar-0.2-rc1.tar.gz')
-    ('git-bar', '0.2-rc1')
-    >>> guess_upstream_version('git-bar-0.2:~-rc1.tar.gz')
-    ('git-bar', '0.2:~-rc1')
-    >>> guess_upstream_version('git-Bar-0A2d:rc1.tar.bz2')
-    ('git-Bar', '0A2d:rc1')
-    >>> guess_upstream_version('git-1.tar.bz2')
-    ('git', '1')
-    >>> guess_upstream_version('kvm_87+dfsg.orig.tar.gz')
-    ('kvm', '87+dfsg')
-    >>> guess_upstream_version('foo-Bar_0.2.orig.tar.gz')
-    >>> guess_upstream_version('foo-Bar-a.b.tar.gz')
-    >>> guess_upstream_version('foo-bar_0.2.orig.tar.xz')
-    ('foo-bar', '0.2')
-    >>> guess_upstream_version('foo-bar_0.2.orig.tar.lzma')
-    ('foo-bar', '0.2')
-    """
-    version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
-    extensions = r'\.tar\.(%s)' % "|".join(UpstreamSource.known_compressions())
-
-    version_filters = map ( lambda x: x % (version_chars, extensions),
-                       ( # Debian package_<version>.orig.tar.gz:
-                         r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig%s',
-                         # Upstream package-<version>.tar.gz:
-                         r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)%s'))
-    if extra_regex:
-        version_filters = extra_regex + version_filters
-
-    for filter in version_filters:
-        m = re.match(filter, os.path.basename(archive))
-        if m:
-            return (m.group('package'), m.group('version'))
 
 
 def compare_versions(version1, version2):
