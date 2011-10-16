@@ -146,7 +146,7 @@ class GbpOptionParser(OptionParser):
              'filter-pristine-tar':
                   "Filter pristine-tar when filter option is used",
              'filter':
-                  "files to filter out during import (can be given multiple times)",
+                  "files to filter out during import (can be given multiple times), default is %(filter)s",
              'git-author':
                   "use name and email from git-config for changelog trailer, default is '%(git-author)s'",
              'full':
@@ -220,6 +220,8 @@ class GbpOptionParser(OptionParser):
                 self.config['filter'] = eval(self.config['filter'])
             else:
                 self.config['filter'] = [ self.config['filter'] ]
+        else:
+            self.config['filter'] = []
 
 
     def __init__(self, command, prefix='', usage=None):
