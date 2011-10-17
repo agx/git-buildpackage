@@ -1,3 +1,11 @@
+git-buildpackage (0.5.32) unstable; urgency=low
+
+  * [efe9220] Use known_compressions in guess_upstream_version too
+    (Closes: #645477)
+  * [e984baf] git-import-orig: fix --filter
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 17 Oct 2011 10:15:22 +0200
+
 git-buildpackage (0.5.31) unstable; urgency=low
 
   [ Guido Günther ]
