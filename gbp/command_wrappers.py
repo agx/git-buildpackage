@@ -36,12 +36,14 @@ class Command(object):
     Wraps a shell command, so we don't have to store any kind of command line options in 
     one of the git-buildpackage commands
     """
-    def __init__(self, cmd, args=[], shell=False, extra_env=None):
+
+    def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None):
         self.cmd = cmd
         self.args = args
         self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] + self.args))
         self.shell = shell
         self.retcode = 1
+        self.cwd = cwd
         if extra_env is not None:
             self.env = os.environ.copy()
             self.env.update(extra_env)
@@ -58,7 +60,8 @@ class Command(object):
         cmd = [ self.cmd ] + self.args + args
         if self.shell: # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-        return subprocess.call(cmd, shell=self.shell, env=self.env, preexec_fn=default_sigpipe)
+        return subprocess.call(cmd, cwd=self.cwd, shell=self.shell,
+                               env=self.env, preexec_fn=default_sigpipe)
 
     def __run(self, args):
         """
