@@ -78,6 +78,17 @@ class GitRepository(object):
         (stdout, stderr) = popen.communicate(input)
         return stdout, stderr, popen.returncode
 
+    def _git_command(self, command, args=[], extra_env=None):
+        """
+        Execute git command with arguments args and environment env
+        at path.
+
+        @param command: git command
+        @param args: command line arguments
+        @extra_env: extra environment variables to set when running command
+        """
+        GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
+
     def base_dir(self):
         """Base of the repository"""
         return os.path.join(self.path, '.git')
