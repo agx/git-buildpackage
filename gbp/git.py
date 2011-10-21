@@ -74,7 +74,8 @@ class GitRepository(object):
         popen = subprocess.Popen(cmd,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
-                                 env=env)
+                                 env=env,
+                                 cwd=self.path)
         (stdout, stderr) = popen.communicate(input)
         return stdout, stderr, popen.returncode
 
