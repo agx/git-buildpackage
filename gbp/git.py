@@ -165,11 +165,11 @@ class GitRepository(object):
         """remove a tag 'tag'"""
         self.__check_path()
         if self.has_tag(tag):
-            GitCommand("tag", [ "-d", tag ])()
+            self._git_command("tag", [ "-d", tag ])
 
     def move_tag(self, old, new):
         self.__check_path()
-        GitCommand("tag", [ new, old ])()
+        self._git_command("tag", [ new, old ])
         self.remove_tag(old)
 
     def get_branch(self):
@@ -223,7 +223,7 @@ class GitRepository(object):
         """switch to branch 'branch'"""
         self.__check_path()
         if self.get_branch() != branch:
-            GitCommand("checkout", [ branch ])()
+            self._git_command("checkout", [ branch ])
 
     def create_branch(self, branch, rev=None):
         """create a new branch
@@ -237,7 +237,7 @@ class GitRepository(object):
     def delete_branch(self, branch):
         self.__check_path()
         if self.get_branch() != branch:
-            GitCommand("branch")(["-D", branch])
+            self._git_command("branch", ["-D", branch])
         else:
             raise GitRepositoryError, "Can't delete the branch you're on"
 
@@ -247,7 +247,7 @@ class GitRepository(object):
         if hard:
             args += [ '--hard' ]
         args += [ commit, '--' ]
-        GitCommand("reset")(args)
+        self._git_command("reset", args)
 
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
@@ -398,7 +398,7 @@ class GitRepository(object):
             args += [ old ]
         if msg:
             args = [ '-m', msg ] + args
-        GitCommand("update-ref")(args)
+        self._git_command("update-ref", args)
 
     def commit_tree(self, tree, msg, parents, author={}, committer={}):
         """Commit a tree with commit msg 'msg' and parents 'parents'"""
@@ -568,7 +568,7 @@ class GitRepository(object):
         if strip:
             args += [ '-p', strip ]
         args.append(patch)
-        GitCommand("apply", args)()
+        self._git_command("apply", args)
 
     def archive(self, format, prefix, output, treeish, **kwargs):
         args = [ '--format=%s' % format, '--prefix=%s' % prefix,
@@ -588,7 +588,7 @@ class GitRepository(object):
 
     def add_submodule(self, repo_path):
         """Add a submodule"""
-        GitCommand("submodule", [ "add", repo_path ])()
+        self._git_command("submodule", [ "add", repo_path ])
 
 
     def update_submodules(self, init=True, recursive=True, fetch=False):
@@ -603,7 +603,7 @@ class GitRepository(object):
         if not fetch:
             args.append("--no-fetch")
 
-        GitCommand("submodule", args)()
+        self._git_command("submodule", args)
 
 
     def get_submodules(self, treeish, path=None, recursive=True):
