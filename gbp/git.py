@@ -530,6 +530,23 @@ class GitRepository(object):
 
         self._git_command("add", args + paths, extra_env)
 
+
+    def remove_files(self, paths, verbose=False):
+        """
+        Remove files from the repository
+
+        @paths; list of files to remove
+        @param paths: list or string
+        @verbose: be verbose
+        @verbose: bool
+        """
+        if type(paths) in [type(''), type(u'')]:
+            paths = [ paths ]
+
+        args =  [] if verbose else ['--quiet']
+        self._git_command("rm", args + paths)
+
+
     def format_patches(self, start, end, output_dir):
         """
         Output the commits between start and end as patches in output_dir
