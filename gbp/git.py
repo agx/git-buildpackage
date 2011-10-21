@@ -56,6 +56,9 @@ class GitRepository(object):
         """exec a git command and return the output"""
         output = []
 
+        if not cwd:
+            cwd = self.path
+
         env = self.__build_env(extra_env)
         cmd = ['git', command] + args
         log.debug(cmd)
