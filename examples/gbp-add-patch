@@ -40,7 +40,6 @@ import subprocess
 import tempfile
 from gbp.command_wrappers import (Command,
                                   CommandExecFailed,
-                                  GitAdd,
                                   GitCommand)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
@@ -144,7 +143,7 @@ def main(argv):
 
         patch = PatchInfo(patchfile)
 
-        GitAdd()([patchfile])
+        repo.add_files(patchfile)
         msg = build_commit_msg(repo, patch, options)
         GitCommit()(edit=options.edit, msg=msg)
         # FIXME: handle the series file

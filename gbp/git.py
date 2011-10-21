@@ -19,7 +19,7 @@
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitCommand, GitAdd, GitBranch, copy_from)
+from command_wrappers import (GitCommand, GitBranch, copy_from)
 from errors import GbpError
 import log
 import dateutil.parser
@@ -372,10 +372,14 @@ class GitRepository(object):
             raise GitRepositoryError, "revision '%s' not found" % name
         return sha[0].strip()
 
-    def write_tree(self, index=None):
-        """write out the current index, return the SHA1"""
-        if index:
-            extra_env = {'GIT_INDEX_FILE': index }
+    def write_tree(self, index_file=None):
+        """
+        Write out the current index, return the SHA1
+
+        @param index: alternate index file to write the current index to
+        """
+        if index_file:
+            extra_env = {'GIT_INDEX_FILE': index_file }
         else:
             extra_env = None
 
@@ -434,9 +438,8 @@ class GitRepository(object):
             os.unlink(git_index_file)
         except OSError:
             pass
-        extra_env = { 'GIT_INDEX_FILE': git_index_file,
-                      'GIT_WORK_TREE': unpack_dir}
-        GitAdd(extra_env=extra_env)(['-f', '.'])
+        self.add_files('.', force=True, index_file=git_index_file,
+                       work_tree=unpack_dir)
         tree = self.write_tree(git_index_file)
 
         if branch:
@@ -499,6 +502,33 @@ class GitRepository(object):
             return True
         else:
             return False
+
+
+    def add_files(self, paths, force=False, index_file=None, work_tree=None):
+        """
+        Add files to a git repository
+
+        @param paths: list of files to add
+        @param paths: list or string
+        @param force: add files even if they would be ignores by .gitignore
+        @param force: bool
+        @param index_file: alternative index file to use
+        @param work_tree: alternative working tree to use
+        """
+        extra_env = {}
+
+        if type(paths) in [type(''), type(u'')]:
+            paths = [ paths ]
+
+        args = [ '-f' ] if force else []
+
+        if index_file:
+            extra_env['GIT_INDEX_FILE'] =  index_file
+
+        if work_tree:
+            extra_env['GIT_WORK_TREE'] = work_tree
+
+        self._git_command("add", args + paths, extra_env)
 
     def format_patches(self, start, end, output_dir):
         """

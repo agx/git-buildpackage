@@ -55,7 +55,7 @@ def test_empty_has_submodules():
 
 def _add_dummy_data(msg):
     shutil.copy(".git/HEAD", testfile_name)
-    gbp.command_wrappers.GitAdd()(['-f', '.'])
+    repo.add_files('.', force=True)
     gbp.command_wrappers.GitCommand("commit", ["-m%s" % msg, "-a"])()
 
 

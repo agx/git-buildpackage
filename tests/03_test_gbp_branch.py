@@ -39,7 +39,7 @@ def test_is_empty():
 def test_add_files():
     """Add some dummy data"""
     shutil.copy(".git/HEAD", "testfile")
-    gbp.command_wrappers.GitAdd()(['-f', '.'])
+    repo.add_files('.', force=True)
     gbp.command_wrappers.GitCommand("commit", ["-mfoo", "-a"])()
     assert True
 

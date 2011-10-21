@@ -293,14 +293,6 @@ class GitTag(GitCommand):
         GitCommand.__call__(self, cmd)
 
 
-# FIXME: move to gbp.git.add
-class GitAdd(GitCommand):
-    """Wrap git add to add new files"""
-    def __init__(self, extra_env=None):
-        GitCommand.__init__(self, 'add', extra_env=extra_env)
-        self.run_error = "Couldn't add files"
-
-
 def copy_from(orig_dir, filters=[]):
     """
     copy a source tree over via tar

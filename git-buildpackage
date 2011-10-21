@@ -30,7 +30,7 @@ import gbp.deb as du
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.command_wrappers import (GitTag, Command,
                                   RunAtCommand, CommandExecFailed, PristineTar,
-                                  RemoveTree, GitAdd, CatenateTarArchive)
+                                  RemoveTree, CatenateTarArchive)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from glob import glob
@@ -229,11 +229,8 @@ def git_archive_build_orig(repo, cp, output_dir, options):
 
 def write_wc(repo):
     """write out the current working copy as a treeish object"""
-    tree = None
-    os.putenv("GIT_INDEX_FILE", wc_index)
-    GitAdd()(['-f', '.'])
-    tree = repo.write_tree()
-    os.unsetenv("GIT_INDEX_FILE")
+    repo.add_files(repo.path, force=True, index_file=wc_index)
+    tree = repo.write_tree(index_file=wc_index)
     return tree
 
 def drop_index():
