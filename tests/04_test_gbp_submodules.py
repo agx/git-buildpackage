@@ -23,7 +23,7 @@ class Submodule(object):
     def __init__(self, name, tmpdir):
         self.name = name
         self.dir = os.path.join(tmpdir, name)
-        self.repo = gbp.git.create_repo(self.dir)
+        self.repo = gbp.git.GitRepository.create(self.dir)
 
 
 def setup():
@@ -34,7 +34,7 @@ def setup():
     os.mkdir(tmpdir)
 
     repodir = os.path.join(tmpdir, 'test_repo')
-    repo = gbp.git.create_repo(repodir)
+    repo = gbp.git.GitRepository.create(repodir)
 
     for name in submodule_names:
         submodules.append(Submodule(name, tmpdir))

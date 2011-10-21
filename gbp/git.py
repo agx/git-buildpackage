@@ -19,7 +19,7 @@
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitCommand, GitInit, GitAdd, GitBranch, copy_from)
+from command_wrappers import (GitCommand, GitAdd, GitBranch, copy_from)
 from errors import GbpError
 import log
 import dateutil.parser
@@ -583,6 +583,23 @@ class GitRepository(object):
                                                       recursive=recursive)
         return submodules
 
+    @classmethod
+    def create(klass, path, description=None):
+        """create a repository at path"""
+        abspath = os.path.abspath(path)
+        try:
+            if not os.path.exists(abspath):
+                os.makedirs(abspath)
+            GitCommand("init", cwd=abspath)()
+            if description:
+                with file(os.path.join(abspath, ".git", "description"), 'w') as f:
+                    description += '\n' if description[-1] != '\n' else ''
+                    f.write(description)
+            return klass(abspath)
+        except OSError, err:
+            raise GitRepositoryError, "Cannot create Git repository at %s: %s " % (abspath, err[1])
+        return None
+
 
 class FastImport(object):
     """Invoke git-fast-import"""
@@ -647,22 +664,6 @@ from refs/heads/%(branch)s^0
 
     def __del__(self):
         self.close()
-
-
-def create_repo(path):
-    """create a repository at path"""
-    abspath = os.path.abspath(path)
-    pwd = os.path.abspath(os.curdir)
-    try:
-        os.makedirs(abspath)
-        os.chdir(abspath)
-        GitInit()()
-        return GitRepository(abspath)
-    except OSError, err:
-        raise GitRepositoryError, "Cannot create Git repository at %s: %s " % (path, err[1])
-    finally:
-        os.chdir(pwd)
-    return None
 
 
 def build_tag(format, version):

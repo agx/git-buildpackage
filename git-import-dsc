@@ -29,7 +29,7 @@ from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
 from gbp.deb import (debian_version_chars, parse_changelog,
                      parse_dsc, DscFile, UpstreamSource)
-from gbp.git import (build_tag, create_repo, GitRepository,
+from gbp.git import (build_tag, GitRepository,
                      GitRepositoryError, rfc822_date_to_git)
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
@@ -246,7 +246,7 @@ def main(argv):
 
             if needs_repo:
                 gbp.log.info("No git repository found, creating one.")
-                repo = create_repo(src.pkg)
+                repo = GitRepository.create(src.pkg)
                 os.chdir(repo.path)
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))

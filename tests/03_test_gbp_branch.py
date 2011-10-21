@@ -16,7 +16,7 @@ def setup():
 
     top = os.path.abspath(os.curdir)
     repo_dir = os.path.join(top, 'gbp_%s_test_repo' % __name__)
-    repo = gbp.git.create_repo(repo_dir)
+    repo = gbp.git.GitRepository.create(repo_dir)
     os.chdir(repo_dir)
 
 

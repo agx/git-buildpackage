@@ -231,14 +231,6 @@ class GitCommand(Command):
 
 
 # FIXME: move to gbp.git.__init__
-class GitInit(GitCommand):
-    """Wrap git init"""
-    def __init__(self):
-        GitCommand.__init__(self, 'init')
-        self.run_error = "Couldn't init git repository"
-
-
-# FIXME: move to gbp.git.__init__
 class GitClone(GitCommand):
     """Wrap git clone"""
     def __init__(self):
