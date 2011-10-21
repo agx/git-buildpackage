@@ -40,9 +40,6 @@ class GitRepository(object):
             raise GitRepositoryError
         self.path = os.path.abspath(path)
 
-    def __check_path(self):
-        if os.getcwd() != self.path:
-            raise GitRepositoryError
 
     def __build_env(self, extra_env):
         """Prepare environment for subprocess calls"""
@@ -102,7 +99,6 @@ class GitRepository(object):
         check if the repository has branch 'branch'
         @param remote: only liste remote branches
         """
-        self.__check_path()
         options = [ '--no-color' ]
         if remote:
             options += [ '-r' ]
@@ -114,13 +110,11 @@ class GitRepository(object):
 
     def has_treeish(self, treeish):
         """check if the repository has the treeish object treeish"""
-        self.__check_path()
         out, ret =  self.__git_getoutput('ls-tree', [ treeish ])
         return [ True, False ][ret != 0]
 
     def has_tag(self, tag):
         """check if the repository has the given tag"""
-        self.__check_path()
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
@@ -163,25 +157,21 @@ class GitRepository(object):
 
     def remove_tag(self, tag):
         """remove a tag 'tag'"""
-        self.__check_path()
         if self.has_tag(tag):
             self._git_command("tag", [ "-d", tag ])
 
     def move_tag(self, old, new):
-        self.__check_path()
         self._git_command("tag", [ new, old ])
         self.remove_tag(old)
 
     def get_branch(self):
         """on what branch is the current working copy"""
-        self.__check_path()
         for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
 
     def get_merge_branch(self, branch):
         """get the branch we'd merge from"""
-        self.__check_path()
         try:
             remote = self.get_config("branch.%s.remote" % branch)
             merge = self.get_config("branch.%s.merge" % branch)
@@ -221,7 +211,6 @@ class GitRepository(object):
 
     def set_branch(self, branch):
         """switch to branch 'branch'"""
-        self.__check_path()
         if self.get_branch() != branch:
             self._git_command("checkout", [ branch ])
 
@@ -231,11 +220,9 @@ class GitRepository(object):
 
            if param is None the branch starts form the current HEAD
         """
-        self.__check_path()
         GitBranch()(branch, rev)
 
     def delete_branch(self, branch):
-        self.__check_path()
         if self.get_branch() != branch:
             self._git_command("branch", ["-D", branch])
         else:
@@ -251,7 +238,6 @@ class GitRepository(object):
 
     def is_clean(self):
         """does the repository contain any uncommitted modifications"""
-        self.__check_path()
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')[0]
         ret = False
@@ -333,7 +319,6 @@ class GitRepository(object):
 
     def get_subject(self, commit):
         """Gets the subject of a commit"""
-        self.__check_path()
         out, ret =  self.__git_getoutput('log', ['-n1', '--pretty=format:%s',  commit])
         if ret:
             raise GitRepositoryError, "Error getting subject of commit %s" % commit
@@ -342,7 +327,6 @@ class GitRepository(object):
     def get_commit_info(self, commit):
         """Given a commit name, return a dictionary of its components,
         including id, author, email, subject, and body."""
-        self.__check_path()
         out, ret =  self.__git_getoutput('log',
                                          ['--pretty=format:%an%n%ae%n%s%n%b%n',
                                           '-n1', commit])
@@ -435,7 +419,6 @@ class GitRepository(object):
            @param committer: committer information to use for commit
            @type committer: dict with keys 'name', 'email', 'date'"""
 
-        self.__check_path()
         git_index_file = os.path.join(self.path, '.git', 'gbp_index')
         try:
             os.unlink(git_index_file)
@@ -470,7 +453,6 @@ class GitRepository(object):
 
     def get_config(self, name):
         """Gets the config value associated with name"""
-        self.__check_path()
         value, ret = self.__git_getoutput('config', [ name ])
         if ret: raise KeyError
         return value[0][:-1] # first line with \n ending removed
