@@ -869,6 +869,30 @@ class GitRepository(object):
             raise GitRepositoryError, "Cannot create Git repository at %s: %s " % (abspath, err[1])
         return None
 
+    @classmethod
+    def clone(klass, path, remote):
+        """
+        Clone a git repository at I{path}
+
+        @param path: where to clone the repository to
+        @type path: string
+        @param remote: URL to clone
+        @type remote: string
+        @return: git repository object
+        @rtype:GitRepository
+        """
+        abspath = os.path.abspath(path)
+        try:
+            if not os.path.exists(abspath):
+                os.makedirs(abspath)
+
+            GitCommand("clone", [remote], cwd=abspath)()
+            (clone, dummy) = os.path.splitext(remote.rstrip('/').rsplit('/',1)[1])
+            return klass(os.path.join(abspath, clone))
+        except OSError, err:
+            raise GitRepositoryError, "Cannot clone Git repository %s to %s: %s " % (remote, abspath, err[1])
+        return None
+
 
 class FastImport(object):
     """Invoke git-fast-import"""

@@ -230,14 +230,6 @@ class GitCommand(Command):
         self.run_error = "Couldn't run git %s" % cmd
 
 
-# FIXME: move to gbp.git.__init__
-class GitClone(GitCommand):
-    """Wrap git clone"""
-    def __init__(self):
-        GitCommand.__init__(self, 'clone')
-        self.run_error = "Couldn't clone git repository"
-
-
 # FIXME: move to gbp.git.fetch
 class GitFetch(GitCommand):
     """Wrap git fetch"""

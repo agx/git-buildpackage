@@ -24,7 +24,7 @@ import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (GitClone, Command, CommandExecFailed,
+from gbp.command_wrappers import (Command, CommandExecFailed,
                                   PristineTar)
 from gbp.errors import GbpError
 import gbp.log
@@ -71,16 +71,12 @@ def main(argv):
         pass
 
     try:
-        GitClone()([source])
-
-        (clone, dummy) = os.path.splitext(source.rstrip('/').rsplit('/',1)[1])
-        os.chdir(clone)
+        repo = GitRepository.clone(os.path.curdir, source)
+        os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the
         # branch information from there:
         (options, args) = parse_args(argv)
-
-        repo = GitRepository(os.path.curdir)
 
         # Track all branches:
         if options.all:
