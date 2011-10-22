@@ -393,7 +393,7 @@ def main(argv):
                                                           msg="Upstream version %s" % version,
                                                           commit=commit)
             if is_empty:
-                gbpc.GitBranch()(options.upstream_branch, remote=commit)
+                repo.create_branch(options.upstream_branch, rev=commit)
                 repo.force_head(options.upstream_branch, hard=True)
             elif options.merge:
                 gbp.log.info("Merging to '%s'" % options.debian_branch)

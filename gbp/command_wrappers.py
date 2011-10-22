@@ -237,19 +237,6 @@ class GitClone(GitCommand):
         GitCommand.__init__(self, 'clone')
         self.run_error = "Couldn't clone git repository"
 
-# FIXME: move to  gbp.git.create_branch
-class GitBranch(GitCommand):
-    """Wrap git branch"""
-    def __init__(self):
-        GitCommand.__init__(self, 'branch')
-
-    def __call__(self, branch, remote=None):
-        self.run_error = 'Couldn\'t create branch "%s"' % (branch,)
-        options = [branch]
-        if remote:
-            options += [ remote ]
-        GitCommand.__call__(self, options)
-
 
 # FIXME: move to gbp.git.fetch
 class GitFetch(GitCommand):

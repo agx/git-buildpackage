@@ -25,7 +25,7 @@ import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (GitClone, Command, CommandExecFailed,
-                                  GitBranch, PristineTar)
+                                  PristineTar)
 from gbp.errors import GbpError
 import gbp.log
 
@@ -89,7 +89,7 @@ def main(argv):
                 local = remote.replace("origin/", "", 1)
                 if not repo.has_branch(local) and \
                     local != "HEAD":
-                        GitBranch()(local, remote)
+                        repo.create_branch(local, remote)
         else: # only track gbp's default branches
             branches = [ options.debian_branch, options.upstream_branch ]
             if options.pristine_tar:
@@ -99,7 +99,7 @@ def main(argv):
                 remote = 'origin/%s' % branch
                 if repo.has_branch(remote, remote=True) and \
                     not repo.has_branch(branch):
-                        GitBranch()(branch, remote)
+                        repo.create_branch(branch, remote)
 
         repo.set_branch(options.debian_branch)
 

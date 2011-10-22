@@ -19,7 +19,7 @@
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitCommand, GitBranch, copy_from)
+from command_wrappers import (GitCommand, copy_from)
 from errors import GbpError
 import log
 import dateutil.parser
@@ -336,7 +336,10 @@ class GitRepository(object):
 
         If rev is None the branch starts form the current HEAD.
         """
-        GitBranch()(branch, rev)
+        args = [ branch ]
+        args += [ rev ] if rev else []
+
+        self._git_command("branch", args)
 
     def delete_branch(self, branch):
         """
