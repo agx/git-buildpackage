@@ -37,7 +37,7 @@ class GitRepository(object):
         try:
             os.stat(os.path.join(path,'.git'))
         except:
-            raise GitRepositoryError
+            raise GitRepositoryError("No git repo at '%s'" % path)
         self.path = os.path.abspath(path)
 
 
