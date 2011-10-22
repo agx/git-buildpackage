@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-"""provides git repository related helpers"""
+"""Git repository class and helpers"""
 
 import re
 import subprocess
@@ -31,7 +31,15 @@ class GitRepositoryError(Exception):
 
 
 class GitRepository(object):
-    """Represents a git repository at path"""
+    """
+    Represents a git repository at I{path}. It's currently assumed that the git
+    repository is stored in a directory named I{.git/} below I{path}.
+
+    Bare repository aren't currently supported.
+
+    @ivar path: The path to the working tree.
+    @type path: string
+    """
 
     def __init__(self, path):
         try:
@@ -50,7 +58,20 @@ class GitRepository(object):
         return env
 
     def __git_getoutput(self, command, args=[], extra_env=None, cwd=None):
-        """exec a git command and return the output"""
+        """
+        Run a git command and return the output
+
+        @param command: git command to run
+        @type command: string
+        @param args: list of arguments
+        @type args: list
+        @param extra_env: extra environment variables to pass
+        @type extra_env: dict
+        @param cwd: directory to swith to when running the command, defaults to I{self.path}
+        @type cwd: string
+        @return: stdout, return code
+        @rtype: tuple
+        """
         output = []
 
         if not cwd:
@@ -67,7 +88,20 @@ class GitRepository(object):
         return output, ret
 
     def __git_inout(self, command, args, input, extra_env=None):
-        """Send input and return output (stdout)"""
+        """
+        Run a git command with input and return output
+
+        @param command: git command to run
+        @type command: string
+        @param input: input to pipe to command
+        @type input: string
+        @param args: list of arguments
+        @type args: list
+        @param extra_env: extra environment variables to pass
+        @type extra_env: dict
+        @return: stdout, stderr, return code
+        @rtype: tuple
+        """
         env = self.__build_env(extra_env)
         cmd = ['git', command] + args
         log.debug(cmd)
@@ -85,19 +119,32 @@ class GitRepository(object):
         at path.
 
         @param command: git command
+        @type command: string
         @param args: command line arguments
-        @extra_env: extra environment variables to set when running command
+        @type args: list
+        @param extra_env: extra environment variables to set when running command
+        @type extra_env: dict
         """
         GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
 
     def base_dir(self):
-        """Base of the repository"""
+        """
+        Get the base of the repository.
+
+        @return: The base of the git repository
+        @rtype: string.
+        """
         return os.path.join(self.path, '.git')
 
     def has_branch(self, branch, remote=False):
         """
-        check if the repository has branch 'branch'
-        @param remote: only liste remote branches
+        Check if the repository has branch named I{branch}.
+
+        @param branch: branch to look for
+        @param remote: only look for remote branches
+        @type remote: bool
+        @return: C{True} if the repository has this branch, C{False} otherwise
+        @rtype: bool
         """
         options = [ '--no-color' ]
         if remote:
@@ -109,12 +156,27 @@ class GitRepository(object):
         return False
 
     def has_treeish(self, treeish):
-        """check if the repository has the treeish object treeish"""
+        """
+        Check if the repository has the treeish object I{treeish}.
+
+        @param treeish: treeish object to look for
+        @type treeish: string
+        @return: C{True} if the repository has that tree, C{False} otherwise
+        @rtype: bool
+        """
+
         out, ret =  self.__git_getoutput('ls-tree', [ treeish ])
         return [ True, False ][ret != 0]
 
     def has_tag(self, tag):
-        """check if the repository has the given tag"""
+        """
+        Check if the repository has a tag named I{tag}.
+
+        @param tag: tag to look for
+        @type tag: string
+        @return: C{True} if the repository has that tag, C{False} otherwise
+        @rtype: bool
+        """
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
@@ -210,26 +272,44 @@ class GitRepository(object):
             return True, False
 
     def set_branch(self, branch):
-        """switch to branch 'branch'"""
+        """
+        Switch to branch 'branch'
+
+        @param branch: name of the branch to switch to
+        """
         if self.get_branch() != branch:
             self._git_command("checkout", [ branch ])
 
     def create_branch(self, branch, rev=None):
-        """create a new branch
-           @param rev: where to start the branch from
+        """
+        Create a new branch
 
-           if param is None the branch starts form the current HEAD
+        @param branch: the branch's name
+        @param rev: where to start the branch from
+
+        If rev is None the branch starts form the current HEAD.
         """
         GitBranch()(branch, rev)
 
     def delete_branch(self, branch):
+        """
+        Delete branch 'branch'
+
+        @param branch: name of the branch to delete
+        """
         if self.get_branch() != branch:
             self._git_command("branch", ["-D", branch])
         else:
             raise GitRepositoryError, "Can't delete the branch you're on"
 
     def force_head(self, commit, hard=False):
-        """force head to a specific commit"""
+        """
+        Force head to a specific commit
+
+        @param commit: commit to move HEAD to
+        @param hard: also update the working copy
+        @type hard: bool
+        """
         args = ['--quiet']
         if hard:
             args += [ '--hard' ]
@@ -237,7 +317,12 @@ class GitRepository(object):
         self._git_command("reset", args)
 
     def is_clean(self):
-        """does the repository contain any uncommitted modifications"""
+        """
+        Does the repository contain any uncommitted modifications?
+
+        @return: True if the repository is clean, False otherwise
+        @rtype: bool
+        """
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')[0]
         ret = False
@@ -250,7 +335,13 @@ class GitRepository(object):
         return (ret, "".join(out))
 
     def is_empty(self):
-        """returns True if repo is empty (doesn't have any commits)"""
+        """
+        Is the repository empty?
+
+        @return: True if the repositorydoesn't have any commits,
+                 False otherwise
+        @rtype: bool
+        """
         # an empty repo has no branches:
         if self.get_branch():
             return False
@@ -270,9 +361,12 @@ class GitRepository(object):
     def commits(self, since=None, until=None, paths=None, options=None,
                 first_parent=False):
         """
-        get commits from since to until touching paths
+        Get commits from since to until touching paths
 
-        @param options: list of options past to git log
+        @param since: commit to start from
+        @param until: last commit to get
+        @param paths: only list commits touching paths
+        @param options: list of options passed to git log
         @type  options: list of strings
         """
 
@@ -318,15 +412,25 @@ class GitRepository(object):
         return [ commit.strip() for commit in commits[::-1] ]
 
     def get_subject(self, commit):
-        """Gets the subject of a commit"""
+        """
+        Gets the subject of a commit.
+
+        @param commit: the commit to get the subject from
+        @return: the commit's subject
+        """
         out, ret =  self.__git_getoutput('log', ['-n1', '--pretty=format:%s',  commit])
         if ret:
             raise GitRepositoryError, "Error getting subject of commit %s" % commit
         return out[0].strip()
 
     def get_commit_info(self, commit):
-        """Given a commit name, return a dictionary of its components,
-        including id, author, email, subject, and body."""
+        """
+        Look up data of a specific  commit
+
+        @param commit: the commit to inspect
+        @return: the commit's including id, author, email, subject and body
+        @rtype: dict
+        """
         out, ret =  self.__git_getoutput('log',
                                          ['--pretty=format:%an%n%ae%n%s%n%b%n',
                                           '-n1', commit])
@@ -340,7 +444,7 @@ class GitRepository(object):
                 'body' : [line.rstrip() for line in  out[3:]]}
 
     def find_tag(self, commit, pattern=None):
-        "find the closest tag to a branch's head"
+        "Find the closest tag to a branch's head"
         args =  [ '--abbrev=0' ]
         if pattern:
             args += [ '--match' , pattern ]
@@ -352,7 +456,7 @@ class GitRepository(object):
         return tag[0].strip()
 
     def rev_parse(self, name):
-        "find the SHA1"
+        "Find the SHA1 of a given name"
         args = [ "--quiet", "--verify", name ]
         sha, ret = self.__git_getoutput('rev-parse', args)
         if ret:
@@ -363,7 +467,7 @@ class GitRepository(object):
         """
         Write out the current index, return the SHA1
 
-        @param index: alternate index file to write the current index to
+        @param index_file: alternate index file to write the current index to
         """
         if index_file:
             extra_env = {'GIT_INDEX_FILE': index_file }
@@ -376,7 +480,14 @@ class GitRepository(object):
         return tree[0].strip()
 
     def update_ref(self, ref, new, old=None, msg=None):
-        """Update ref 'ref' to commit 'new'"""
+        """
+        Update ref 'ref' to commit 'new' if 'ref' currently points to 'old'.
+
+        @param ref: the ref to update
+        @param new: the new value for ref
+        @param old: the old value of ref
+        @param msg: the reason for the update
+        """
         args = [ ref, new ]
         if old:
             args += [ old ]
@@ -385,7 +496,17 @@ class GitRepository(object):
         self._git_command("update-ref", args)
 
     def commit_tree(self, tree, msg, parents, author={}, committer={}):
-        """Commit a tree with commit msg 'msg' and parents 'parents'"""
+        """
+        Commit a tree with commit msg 'msg' and parents 'parents'
+
+        @param tree: tree to commit
+        @param msg: commit message
+        @param parents: parents of this commit
+        @param author: authorship information
+        @type author: dict with keys 'name' and 'email'
+        @param committer: comitter information
+        @type committer: dict with keys 'name' and 'email'
+        """
         extra_env = {}
         for key, val in author.items():
             if val:
@@ -452,12 +573,25 @@ class GitRepository(object):
         return commit
 
     def get_config(self, name):
-        """Gets the config value associated with name"""
+        """
+        Gets the config value associated with name
+
+        @param name: config value to get
+        @return: fetched config value
+        @rtype: string
+        """
         value, ret = self.__git_getoutput('config', [ name ])
         if ret: raise KeyError
         return value[0][:-1] # first line with \n ending removed
 
     def get_author_info(self):
+        """
+        Determina a sane values for author name and author email from git's
+        config and environment variables.
+
+        @return: name and email
+        @rtype: typle
+        """
         try:
            name =  self.get_config("user.email")
         except KeyError:
@@ -482,7 +616,7 @@ class GitRepository(object):
         return [ remote.strip() for remote in out ]
 
     def has_remote_repo(self, name):
-        """Do we know about a remote named 'name'"""
+        """Do we know about a remote named 'name'?"""
         if name in self.get_remote_repos():
             return True
         else:
@@ -494,9 +628,9 @@ class GitRepository(object):
         Add files to a git repository
 
         @param paths: list of files to add
-        @param paths: list or string
-        @param force: add files even if they would be ignores by .gitignore
-        @param force: bool
+        @type paths: list or string
+        @param force: add files even if they would be ignored by .gitignore
+        @type force: bool
         @param index_file: alternative index file to use
         @param work_tree: alternative working tree to use
         """
@@ -520,10 +654,10 @@ class GitRepository(object):
         """
         Remove files from the repository
 
-        @paths; list of files to remove
+        @param paths: list of files to remove
         @param paths: list or string
-        @verbose: be verbose
-        @verbose: bool
+        @param verbose: be verbose
+        @type verbose: bool
         """
         if type(paths) in [type(''), type(u'')]:
             paths = [ paths ]
@@ -561,7 +695,7 @@ class GitRepository(object):
 
 
     def has_submodules(self):
-        """Does the repo have submodules?"""
+        """Does the repo have any submodules?"""
         if os.path.exists('.gitmodules'):
             return True
         else:
@@ -569,12 +703,23 @@ class GitRepository(object):
 
 
     def add_submodule(self, repo_path):
-        """Add a submodule"""
+        """
+        Add a submodule
+
+        @param repo_path: path to submodule
+        """
         self._git_command("submodule", [ "add", repo_path ])
 
 
     def update_submodules(self, init=True, recursive=True, fetch=False):
-        """Update all submodules"""
+        """
+        Update all submodules
+
+        @param init: whether to initialize the submodule if necessary
+        @param recursive: whether to update submodules recursively
+        @param fetch: whether to fetch new objects
+        """
+
         if not self.has_submodules():
             return
         args = [ "update" ]
@@ -589,13 +734,15 @@ class GitRepository(object):
 
 
     def get_submodules(self, treeish, path=None, recursive=True):
-        """ list the submodules of treeish
-
-            returns a list of submodule/commit-id tuples
         """
-        #    Note that we is lstree instead of submodule commands because
-        #    there's no way to list the submodules of another branch with
-        #    the latter.
+        List the submodules of treeish
+
+        @return: a list of submodule/commit-id tuples
+        @rtype: list of tuples
+        """
+        # Note that we is lstree instead of submodule commands because
+        # there's no way to list the submodules of another branch with
+        # the latter.
         submodules = []
         if path is None:
             path = "."
@@ -618,7 +765,14 @@ class GitRepository(object):
 
     @classmethod
     def create(klass, path, description=None):
-        """create a repository at path"""
+        """
+        Create a repository at path
+
+        @param path: where to create the repository
+        @type path: string
+        @return: git repository object
+        @rtype:GitRepository
+        """
         abspath = os.path.abspath(path)
         try:
             if not os.path.exists(abspath):

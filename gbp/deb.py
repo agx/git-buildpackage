@@ -243,7 +243,8 @@ class UpstreamSource(object):
 
         @param extra_regex: additional regex to apply, needs a 'package' and a
                             'version' group
-        @return tuple: (package name, version) or None.
+        @return: (package name, version) or None.
+        @rtype: tuple
 
         >>> UpstreamSource('foo-bar_0.2.orig.tar.gz').guess_version()
         ('foo-bar', '0.2')

@@ -53,7 +53,7 @@ links_stamp:
 	touch links_stamp
 	
 apidocs: links_stamp
-	epydoc -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
+	epydoc -v -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
 		gbp*.py git*.py gbp/
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))

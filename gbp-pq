@@ -41,6 +41,7 @@ SERIES_FILE = os.path.join(PATCH_DIR,"series")
 def is_pq_branch(branch):
     """
     is branch a patch-queue branch?
+
     >>> is_pq_branch("foo")
     False
     >>> is_pq_branch("patch-queue/foo")
@@ -64,6 +65,7 @@ def pq_branch_name(branch):
 def pq_branch_base(pq_branch):
     """
     get the branch corresponding to the given patch queue branch
+
     >>> pq_branch_base("patch-queue/master")
     'master'
     >>> pq_branch_base("foo")
