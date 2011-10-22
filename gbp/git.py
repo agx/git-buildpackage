@@ -89,12 +89,13 @@ class GitRepository(object):
     """
 
     def __init__(self, path):
+        self.path = os.path.abspath(path)
         try:
-            os.stat(os.path.join(path,'.git'))
+            out, ret = self.__git_getoutput('rev-parse', ['--show-cdup'])
+            if ret or out != ['\n']:
+                raise GitRepositoryError("No git repo at '%s'" % path)
         except:
             raise GitRepositoryError("No git repo at '%s'" % path)
-        self.path = os.path.abspath(path)
-
 
     def __build_env(self, extra_env):
         """Prepare environment for subprocess calls"""
