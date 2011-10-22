@@ -256,7 +256,7 @@ def guess_snapshot_commit(cp, repo, options):
         return None
     # If we didn't find a snapshot header we look at the point the changelog
     # was last touched.
-    last = repo.commits(paths="debian/changelog", options=["-1"])
+    last = repo.get_commits(paths="debian/changelog", options=["-1"])
     if last:
         gbp.log.info("Changelog last touched at '%s'" % last[0])
         return last[0]
@@ -413,9 +413,9 @@ def main(argv):
 
         if args:
             gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
-        commits = repo.commits(since=since, until=until,
-                               paths=" ".join(args),
-                               options=options.git_log.split(" "))
+        commits = repo.get_commits(since=since, until=until,
+                                   paths=" ".join(args),
+                                   options=options.git_log.split(" "))
         commits.reverse()
 
         # add a new changelog section if:

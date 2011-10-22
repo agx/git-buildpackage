@@ -358,8 +358,8 @@ class GitRepository(object):
         else:
             return []
 
-    def commits(self, since=None, until=None, paths=None, options=None,
-                first_parent=False):
+    def get_commits(self, since=None, until=None, paths=None, options=None,
+                   first_parent=False):
         """
         Get commits from since to until touching paths
 
@@ -368,6 +368,9 @@ class GitRepository(object):
         @param paths: only list commits touching paths
         @param options: list of options passed to git log
         @type  options: list of strings
+        @param first_parent: only follow first parent when seeing a
+                             merge commit
+        @type first_parent: bool
         """
 
         args = ['--pretty=format:%H']
