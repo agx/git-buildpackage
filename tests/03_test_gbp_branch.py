@@ -40,7 +40,7 @@ def test_add_files():
     """Add some dummy data"""
     shutil.copy(".git/HEAD", "testfile")
     repo.add_files('.', force=True)
-    gbp.command_wrappers.GitCommand("commit", ["-mfoo", "-a"])()
+    repo.commit_all(msg="foo")
     assert True
 
 def test_branch_master():

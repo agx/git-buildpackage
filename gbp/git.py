@@ -716,6 +716,34 @@ class GitRepository(object):
         self._git_command("rm", args + paths)
 
 
+    def _commit(self, msg, args=[], author_info=None):
+        extra_env = author_info.get_author_env() if author_info else None
+        self._git_command("commit", args + ['-q', '-m', msg], extra_env=extra_env)
+
+
+    def commit(self, msg, author_info=None):
+        """
+        Commit currently staged files to the repository
+
+        @param msg: commit message
+        @type msg: string
+        @param author_info: authorship information
+        @type author_info: L{GitModifier}
+        """
+        self._commit(msg=msg, author_info=author_info)
+
+
+    def commit_all(self, msg, author_info=None):
+        """
+        Commit all changes to the repository
+        @param msg: commit message
+        @type msg: string
+        @param author_info: authorship information
+        @type author_info: L{GitModifier}
+        """
+        self._commit(msg=msg, args=['-a'], author_info=author_info)
+
+
     def format_patches(self, start, end, output_dir):
         """
         Output the commits between start and end as patches in output_dir

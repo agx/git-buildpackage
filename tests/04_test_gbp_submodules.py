@@ -5,6 +5,7 @@ import shutil
 import tarfile
 import tempfile
 
+import gbp.log
 import gbp.git
 import gbp.command_wrappers
 
@@ -29,6 +30,7 @@ class Submodule(object):
 def setup():
     global repo, repodir, submodules, top, tmpdir
 
+    gbp.log.setup(False, True)
     top = os.path.abspath(os.curdir)
     tmpdir =os.path.join(top,'gbp_%s_repo' % __name__)
     os.mkdir(tmpdir)
@@ -53,15 +55,15 @@ def test_empty_has_submodules():
     assert not repo.has_submodules()
 
 
-def _add_dummy_data(msg):
+def _add_dummy_data(repo, msg):
     shutil.copy(".git/HEAD", testfile_name)
     repo.add_files('.', force=True)
-    gbp.command_wrappers.GitCommand("commit", ["-m%s" % msg, "-a"])()
+    repo.commit_all(msg)
 
 
 def test_add_files():
     """Add some dummy data"""
-    _add_dummy_data("initial commit")
+    _add_dummy_data(repo, "initial commit")
     assert True
 
 
@@ -69,7 +71,7 @@ def test_add_submodule_files():
     """Add some dummy data"""
     for submodule in submodules:
         os.chdir(submodule.dir)
-        _add_dummy_data("initial commit in submodule")
+        _add_dummy_data(submodule.repo, "initial commit in submodule")
         os.chdir(repodir)
     assert True
 
@@ -77,9 +79,7 @@ def test_add_submodule_files():
 def test_add_submodule():
     """Add a submodule"""
     repo.add_submodule(submodules[0].dir)
-    gbp.command_wrappers.GitCommand("commit",
-                                    ["-m 'Added submodule %s'" % submodules[0].dir,
-                                     "-a"])()
+    repo.commit_all(msg='Added submodule %s' % submodules[0].dir)
 
 def test_has_submodules():
     """Check for submodules"""
@@ -123,9 +123,7 @@ def test_check_tarfile():
 def test_add_whitespace_submodule():
     """Add a second submodule with name containing whitespace"""
     repo.add_submodule(submodules[1].dir)
-    gbp.command_wrappers.GitCommand("commit",
-                                    ["-m 'Added submodule %s'" % submodules[0].dir,
-                                     "-a"])()
+    repo.commit_all(msg='Added submodule %s' % submodules[0].dir)
 
 def test_get_more_submodules():
     """Check for submodules list of  (name, hash)"""
