@@ -399,7 +399,7 @@ def main(argv):
                 gbp.log.info("Merging to '%s'" % options.debian_branch)
                 repo.set_branch(options.debian_branch)
                 try:
-                    gbpc.GitMerge(tag)()
+                    repo.merge(tag)
                 except gbpc.CommandExecFailed:
                     raise GbpError, """Merge failed, please resolve."""
                 if options.postimport:

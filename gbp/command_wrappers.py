@@ -240,15 +240,6 @@ class GitFetch(GitCommand):
         GitCommand.__init__(self, 'fetch', opts)
 
 
-# FIXME: move to gbp.git.merge
-class GitMerge(GitCommand):
-    """Wrap git merge"""
-    def __init__(self, branch, verbose=False):
-        verbose = [ ['--no-summary'], [] ][verbose]
-        GitCommand.__init__(self, 'merge', [branch] + verbose)
-        self.run_error = 'Couldn\'t merge from "%s"' % (branch,)
-
-
 # FIXME: move to gbp.git.create_tag
 class GitTag(GitCommand):
     """Wrap git tag"""

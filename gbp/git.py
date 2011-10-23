@@ -290,6 +290,16 @@ class GitRepository(object):
         remote += merge.replace("refs/heads","", 1)
         return remote
 
+    def merge(self, commit, verbose=False):
+        """
+        Merge changes from the named commit into the current branch
+
+        @param commit: the commit to merge from (usually a branch name)
+        @type commit: string
+        """
+        args = [ "--summary"  ] if verbose else [ "--no-summary" ]
+        self._git_command("merge", args + [ commit ])
+
     def is_fast_forward(self, from_branch, to_branch):
         """
         check if an update from from_branch to to_branch would be a fast

@@ -22,7 +22,7 @@
 
 import sys
 import os, os.path
-from gbp.command_wrappers import (GitFetch, GitMerge, Command,
+from gbp.command_wrappers import (GitFetch, Command,
                                   CommandExecFailed, PristineTar)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
@@ -61,7 +61,7 @@ def fast_forward_branch(branch, repo, options):
     if update:
         gbp.log.info("Updating '%s'" % branch)
         repo.set_branch(branch)
-        GitMerge(remote)()
+        repo.merge(remote)
     return update
 
 def main(argv):
