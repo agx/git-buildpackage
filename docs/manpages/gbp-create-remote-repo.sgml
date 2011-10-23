@@ -35,7 +35,11 @@
     <para>
     &gbp-create-remote-repo; creates a repository at a remote location via ssh
     and pushes the local repository into it. It then sets up remote branch
-    tracking so you can use &gbp-pull; to update your repo from there.
+    tracking so you can use &gbp-pull; to update your repository from there.
+    </para>
+    <para>
+      Before performing any action on the remote location it will print the 
+      remote URL and ask for confirmation.
     </para>
     <para>
     Note: By default the remote repositories are created in the <systemitem
@@ -132,3 +136,6 @@
 
   </refsect1>
 </refentry>
+
+<!--  LocalWords:  ssh
+ -->
