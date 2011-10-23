@@ -22,7 +22,7 @@
 
 import sys
 import os, os.path
-from gbp.command_wrappers import (GitFetch, Command,
+from gbp.command_wrappers import (Command,
                                   CommandExecFailed, PristineTar)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
@@ -109,7 +109,7 @@ def main(argv):
             gbp.log.err(out)
             raise GbpError
 
-        GitFetch()()
+        repo.fetch()
         for branch in branches:
             if not fast_forward_branch(branch, repo, options):
                 retval = 2

@@ -28,8 +28,7 @@ import subprocess
 import tty, termios
 import re
 import gbp.deb as du
-from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand,
-                                  GitFetch)
+from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
@@ -131,10 +130,10 @@ def read_yn():
         return False
 
 
-def setup_branch_tracking(remote, branches):
+def setup_branch_tracking(repo, remote, branches):
     gitRemoteAdd = GitCommand('remote', ['add'])
     gitRemoteAdd([remote['name'], remote['url']])
-    GitFetch()([remote['name']])
+    repo.fetch(remote['name'])
     gitTrackRemote = GitCommand('branch', ['--set-upstream'])
     for branch in branches:
         gitTrackRemote(['%s' % branch, '%s/%s' % (remote['name'], branch)])
@@ -231,7 +230,7 @@ echo "%(pkg)s packaging" > description
 
         push_branches(remote, branches)
         if options.track:
-            setup_branch_tracking(remote, branches)
+            setup_branch_tracking(repo, remote, branches)
         else:
             gbp.log.info("You can now add:")
             print_config(remote, branches)

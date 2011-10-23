@@ -230,16 +230,6 @@ class GitCommand(Command):
         self.run_error = "Couldn't run git %s" % cmd
 
 
-# FIXME: move to gbp.git.fetch
-class GitFetch(GitCommand):
-    """Wrap git fetch"""
-    def __init__(self, remote = None):
-        opts = []
-        if remote:
-            opts += [remote]
-        GitCommand.__init__(self, 'fetch', opts)
-
-
 # FIXME: move to gbp.git.create_tag
 class GitTag(GitCommand):
     """Wrap git tag"""

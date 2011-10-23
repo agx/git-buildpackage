@@ -785,6 +785,17 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError, "unable to archive %s"%(treeish)
 
+    def fetch(self, repo=None):
+        """
+        Download objects and refs from another repository.
+
+        param repo: repository to fetch from
+        type repo: string
+        """
+        if repo:
+            args = [repo]
+
+        self._git_command("fetch", [ args ])
 
     def has_submodules(self):
         """Does the repo have any submodules?"""
