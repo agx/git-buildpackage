@@ -301,8 +301,13 @@ def apply_and_commit_patch(repo, patch, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
     header, body = get_mailinfo(patch)
 
+    # If we don't find a subject use the patch's name
     if not header.has_key('subject'):
         header['subject'] = os.path.basename(patch)
+        # Strip of .diff or .patch from patch name
+        base, ext = header['subject'].rsplit('.', 1)
+        if ext in [ 'diff', 'patch' ]:
+            header['subject'] = base
 
     if header.has_key('author') and header.has_key('email'):
         header['name'] = header['author']
