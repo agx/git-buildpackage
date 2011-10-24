@@ -131,9 +131,7 @@ def read_yn():
 
 
 def setup_branch_tracking(repo, remote, branches):
-    gitRemoteAdd = GitCommand('remote', ['add'])
-    gitRemoteAdd([remote['name'], remote['url']])
-    repo.fetch(remote['name'])
+    repo.add_remote_repo(name=remote['name'], url=remote['url'], fetch=True)
     gitTrackRemote = GitCommand('branch', ['--set-upstream'])
     for branch in branches:
         gitTrackRemote(['%s' % branch, '%s/%s' % (remote['name'], branch)])

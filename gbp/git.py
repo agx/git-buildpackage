@@ -710,6 +710,24 @@ class GitRepository(object):
         else:
             return False
 
+    def add_remote_repo(self, name, url, tags=True, fetch=False):
+        """
+        Add a tracked remote repository
+
+        @param name: the name to use for the remote
+        @type name: string
+        @param url: the url to add
+        @type url: string
+        @param tags: whether to fetch tags
+        @type tags: bool
+        @param fetch: whether to fetch immediately from the remote side
+        @type fetch: bool
+        """
+        args = [ "add" ]
+        args += [ '--tags' ] if tags else [ '--no-tags']
+        args += [ '--fetch' ] if fetch else []
+        args += [ name, url ]
+        self._git_command("remote", args)
 
     def add_files(self, paths, force=False, index_file=None, work_tree=None):
         """
