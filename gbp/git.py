@@ -837,7 +837,7 @@ class GitRepository(object):
         if repo:
             args = [repo]
 
-        self._git_command("fetch", [ args ])
+        self._git_command("fetch", args)
 
     def pull(self, repo=None, ff_only=False):
         """
