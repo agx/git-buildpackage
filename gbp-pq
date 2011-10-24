@@ -84,11 +84,11 @@ def write_patch(patch, options):
     in_patch = False
     topic = None
 
-    # Skip first line (from <sha1>)
+    # Skip first line (From <sha1>)
     old.readline()
     for line in old:
         if in_patch:
-            if line.startswith('-- '):
+            if line == '-- \n':
                 # Found final signature, we're done:
                 tmp.write(line)
                 break
