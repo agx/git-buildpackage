@@ -30,7 +30,7 @@ class Submodule(object):
 def setup():
     global repo, repodir, submodules, top, tmpdir
 
-    gbp.log.setup(False, True)
+    gbp.log.setup(False, False)
     top = os.path.abspath(os.curdir)
     tmpdir =os.path.join(top,'gbp_%s_repo' % __name__)
     os.mkdir(tmpdir)
