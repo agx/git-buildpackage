@@ -89,7 +89,7 @@ class GitRepository(object):
     """
 
     def __init__(self, path):
-        self.path = os.path.abspath(path)
+        self._path = os.path.abspath(path)
         try:
             out, ret = self.__git_getoutput('rev-parse', ['--show-cdup'])
             if ret or out != ['\n']:
@@ -175,12 +175,14 @@ class GitRepository(object):
         """
         GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
 
+    @property
+    def path(self):
+        return self._path
+
+    @property
     def base_dir(self):
         """
         Get the base of the repository.
-
-        @return: The base of the git repository
-        @rtype: string.
         """
         return os.path.join(self.path, '.git')
 
@@ -297,6 +299,11 @@ class GitRepository(object):
         args += [ name ]
         args += [ commit ] if commit else []
         self._git_command("tag", args)
+
+    @property
+    def branch(self):
+        """The currently checked out branch"""
+        return self.get_branch()
 
     def get_branch(self):
         """on what branch is the current working copy"""
