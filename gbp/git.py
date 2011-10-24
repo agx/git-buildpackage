@@ -821,6 +821,20 @@ class GitRepository(object):
 
         self._git_command("fetch", [ args ])
 
+    def pull(self, repo=None, ff_only=False):
+        """
+        Fetch and merge from another repository
+
+        @param repo: repository to fetch from
+        @type repo: string
+        @param ff_only: only merge if this results in a fast forward merge
+        @type ff_only: bool
+        """
+        args = []
+        args += [ '--ff-only' ] if ff_only else []
+        args += [ repo ] if repo else []
+        self._git_command("pull", args)
+
     def has_submodules(self):
         """Does the repo have any submodules?"""
         if os.path.exists('.gitmodules'):
