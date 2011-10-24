@@ -389,9 +389,11 @@ def main(argv):
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 
             tag = build_tag(options.upstream_tag, version)
-            gbpc.GitTag(options.sign_tags, options.keyid)(tag,
-                                                          msg="Upstream version %s" % version,
-                                                          commit=commit)
+            repo.create_tag(name=tag,
+                            msg="Upstream version %s" % version,
+                            commit=commit,
+                            sign=options.sign_tags,
+                            keyid=options.keyid)
             if is_empty:
                 repo.create_branch(options.upstream_branch, rev=commit)
                 repo.force_head(options.upstream_branch, hard=True)

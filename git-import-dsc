@@ -83,8 +83,6 @@ def apply_deb_tgz(deb_tgz):
 
 def apply_debian_patch(repo, unpack_dir, src, options, parents):
     """apply the debian patch and tag appropriately"""
-    gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
-
     try:
         os.chdir(unpack_dir)
 
@@ -111,9 +109,11 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  committer=dict(name=[None, author][options.author_committer],
                                                 email=[None, email][options.author_committer],
                                                 date=[None, date][options.author_committer_date]))
-
-        gitTag(build_tag(options.debian_tag, src.version),
-               msg="Debian release %s" % src.version, commit=commit)
+        repo.create_tag(build_tag(options.debian_tag, src.version),
+                        msg="Debian release %s" % src.version,
+                        commit=commit,
+                        sign=options.sign_tags,
+                        keyid=options.keyid)
     except gbpc.CommandExecFailed:
         gbp.log.err("Failed to import Debian package")
         raise GbpError
@@ -211,8 +211,6 @@ def main(argv):
 
     options, args = parse_args(argv)
 
-    gitTag = gbpc.GitTag(options.sign_tags, options.keyid)
-
     try:
         if len(args) != 1:
             gbp.log.err("Need to give exactly one package to import. Try --help.")
@@ -284,8 +282,11 @@ def main(argv):
                 commit = repo.commit_dir(upstream.unpacked,
                                          "Imported %s" % msg,
                                          branch)
-                gitTag(version=tag, msg=msg, commit=commit)
-
+                repo.create_tag(name=tag,
+                                msg=msg,
+                                commit=commit,
+                                sign=options.sign_tags,
+                                keyid=options.keyid)
                 if not src.native:
                     if is_empty:
                         repo.create_branch(options.upstream_branch, commit)

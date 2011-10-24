@@ -274,6 +274,30 @@ class GitRepository(object):
         self._git_command("tag", [ new, old ])
         self.remove_tag(old)
 
+    def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):
+        """
+        Create a new tag.
+
+        @param name: the tag's name
+        @type name: string
+        @param msg: The tag message.
+        @type msg: string
+        @param commit: the commit or object to create the tag at, default
+            is I{HEAD}
+        @type commit: string
+        @param sign: Whether to sing the tag
+        @type sign: bool
+        @param keyid: the GPG keyid used to sign the tag
+        @type keyid: string
+        """
+        args = []
+        args += [ '-m', msg ] if msg else []
+        if sign:
+            args += [ '-u', keyid ] if keyid else [ '-s' ]
+        args += [ name ]
+        args += [ commit ] if commit else []
+        self._git_command("tag", args)
+
     def get_branch(self):
         """on what branch is the current working copy"""
         for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:

@@ -230,29 +230,6 @@ class GitCommand(Command):
         self.run_error = "Couldn't run git %s" % cmd
 
 
-# FIXME: move to gbp.git.create_tag
-class GitTag(GitCommand):
-    """Wrap git tag"""
-    def __init__(self, sign_tag=False, keyid=None):
-        GitCommand.__init__(self,'tag')
-        self.sign_tag = sign_tag
-        self.keyid = keyid
-
-    def __call__(self, version, msg="Tagging %(version)s", commit=None):
-        self.run_error = 'Couldn\'t tag "%s"' % (version,)
-        if self.sign_tag:
-            if self.keyid:
-                sign_opts = [ '-u', self.keyid ]
-            else:
-                sign_opts = [ '-s' ]
-        else:
-            sign_opts = []
-        cmd = sign_opts + [ '-m', msg % locals(), version]
-        if commit:
-            cmd += [ commit ]
-        GitCommand.__call__(self, cmd)
-
-
 def copy_from(orig_dir, filters=[]):
     """
     copy a source tree over via tar

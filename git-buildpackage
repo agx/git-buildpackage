@@ -28,7 +28,7 @@ import tempfile
 import shutil
 import gbp.deb as du
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
-from gbp.command_wrappers import (GitTag, Command,
+from gbp.command_wrappers import (Command,
                                   RunAtCommand, CommandExecFailed, PristineTar,
                                   RemoveTree, CatenateTarArchive)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
@@ -539,8 +539,8 @@ def main(argv):
             tag = build_tag(options.debian_tag, version)
             if options.retag and repo.has_tag(tag):
                 repo.remove_tag(tag)
-            GitTag(options.sign_tags, options.keyid)(tag,
-                   msg="Debian release %s" % version)
+            repo.create_tag(name=tag, msg="Debian release %s" % version,
+                            sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
                 Command(options.posttag, shell=True,
