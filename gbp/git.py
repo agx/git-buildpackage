@@ -412,8 +412,9 @@ class GitRepository(object):
         """
         Does the repository contain any uncommitted modifications?
 
-        @return: True if the repository is clean, False otherwise
-        @rtype: bool
+        @return: C{True} if the repository is clean, C{False} otherwise
+            and Git's status message
+        @rtype: tuple
         """
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')[0]
