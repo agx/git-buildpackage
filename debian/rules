@@ -54,7 +54,7 @@ links_stamp:
 	
 apidocs: links_stamp
 	epydoc -v -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
-		gbp*.py git*.py gbp/
+		gbp*.py git*.py gbp/ tests/test_GitRepository.py
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
