@@ -929,7 +929,7 @@ class GitRepository(object):
         return None
 
     @classmethod
-    def clone(klass, path, remote):
+    def clone(klass, path, remote, depth=0, recursive=False):
         """
         Clone a git repository at I{path}
 
@@ -937,15 +937,21 @@ class GitRepository(object):
         @type path: string
         @param remote: URL to clone
         @type remote: string
+        @param depth: create a shallow clone of depth I{depth}
+        @type depth: int
+        @param recursive: whether to clone submodules
+        @type recursive: bool
         @return: git repository object
         @rtype:GitRepository
         """
         abspath = os.path.abspath(path)
+        args = [ '--depth', depth ] if depth else []
+        args += [ '--recursive' ] if recursive else []
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
 
-            GitCommand("clone", [remote], cwd=abspath)()
+            GitCommand("clone", args + [remote], cwd=abspath)()
             (clone, dummy) = os.path.splitext(remote.rstrip('/').rsplit('/',1)[1])
             return klass(os.path.join(abspath, clone))
         except OSError, err:
