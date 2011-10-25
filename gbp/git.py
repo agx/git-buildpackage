@@ -840,6 +840,16 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError, "unable to archive %s"%(treeish)
 
+    def collect_garbage(self, auto=False):
+        """
+        Cleanup unnecessary files and optimize the local repository
+
+        param auto: only cleanup if required
+        param auto: bool
+        """
+        args = [ '--auto' ] if auto else []
+        self._git_command("gc", args)
+
     def fetch(self, repo=None):
         """
         Download objects and refs from another repository.
