@@ -538,7 +538,7 @@ def main(argv):
             gbp.log.info("Tagging %s" % version)
             tag = build_tag(options.debian_tag, version)
             if options.retag and repo.has_tag(tag):
-                repo.remove_tag(tag)
+                repo.delete_tag(tag)
             repo.create_tag(name=tag, msg="Debian release %s" % version,
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:

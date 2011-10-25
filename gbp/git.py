@@ -267,14 +267,19 @@ class GitRepository(object):
         return None
 
 
-    def remove_tag(self, tag):
-        """remove a tag 'tag'"""
+    def delete_tag(self, tag):
+        """
+        Delete a tag named I{tag}
+
+        @param tag: the tag to delete
+        @type tag: string
+        """
         if self.has_tag(tag):
             self._git_command("tag", [ "-d", tag ])
 
     def move_tag(self, old, new):
         self._git_command("tag", [ new, old ])
-        self.remove_tag(old)
+        self.delete_tag(old)
 
     def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):
         """
