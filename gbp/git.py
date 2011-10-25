@@ -88,14 +88,26 @@ class GitRepository(object):
     @type path: string
     """
 
+    def _check_bare(self):
+        """Check whether this is a bare repository"""
+        out, ret = self.__git_getoutput('rev-parse', ['--is-bare-repository'])
+        if ret:
+            raise GitRepositoryError(
+                "Failed to get repository state at '%s'" % self.path)
+        self._bare = False if  out[0].strip() != 'true' else True
+
     def __init__(self, path):
         self._path = os.path.abspath(path)
+        self._bare = False
         try:
             out, ret = self.__git_getoutput('rev-parse', ['--show-cdup'])
-            if ret or out != ['\n']:
-                raise GitRepositoryError("No git repo at '%s'" % path)
+            if ret or out not in [ ['\n'], [] ]:
+                raise GitRepositoryError("No git repo at '%s'" % self.path)
+        except GitRepositoryError:
+            raise # We already have a useful error message
         except:
-            raise GitRepositoryError("No git repo at '%s'" % path)
+            raise GitRepositoryError("No git repo at '%s'" % self.path)
+        self._check_bare()
 
     def __build_env(self, extra_env):
         """Prepare environment for subprocess calls"""
@@ -185,6 +197,11 @@ class GitRepository(object):
         Get the base of the repository.
         """
         return os.path.join(self.path, '.git')
+
+    @property
+    def bare(self):
+        """Wheter this is a bare repository"""
+        return self._bare
 
     def has_branch(self, branch, remote=False):
         """
@@ -371,7 +388,13 @@ class GitRepository(object):
 
         @param branch: name of the branch to switch to
         """
-        if self.get_branch() != branch:
+        if self.get_branch() == branch:
+            return
+
+        if self.bare:
+            self._git_command("symbolic-ref",
+                              [ 'HEAD', 'refs/heads/%s' % branch ])
+        else:
             self._git_command("checkout", [ branch ])
 
     def create_branch(self, branch, rev=None):
@@ -978,7 +1001,7 @@ class GitRepository(object):
         return submodules
 
     @classmethod
-    def create(klass, path, description=None):
+    def create(klass, path, description=None, bare=False):
         """
         Create a repository at path
 
@@ -988,10 +1011,12 @@ class GitRepository(object):
         @rtype:GitRepository
         """
         abspath = os.path.abspath(path)
+
+        args = [ '--bare' ] if bare else []
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
-            GitCommand("init", cwd=abspath)()
+            GitCommand("init", args, cwd=abspath)()
             if description:
                 with file(os.path.join(abspath, ".git", "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
@@ -1002,9 +1027,9 @@ class GitRepository(object):
         return None
 
     @classmethod
-    def clone(klass, path, remote, depth=0, recursive=False):
+    def clone(klass, path, remote, depth=0, recursive=False, mirror=False, bare=False):
         """
-        Clone a git repository at I{path}
+        Clone a git repository at I{remote} to I{path}
 
         @param path: where to clone the repository to
         @type path: string
@@ -1020,12 +1045,16 @@ class GitRepository(object):
         abspath = os.path.abspath(path)
         args = [ '--depth', depth ] if depth else []
         args += [ '--recursive' ] if recursive else []
+        args += [ '--mirror' ] if mirror else []
+        args += [ '--bare' ] if bare else []
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
 
             GitCommand("clone", args + [remote], cwd=abspath)()
             (clone, dummy) = os.path.splitext(remote.rstrip('/').rsplit('/',1)[1])
+            if mirror or bare:
+                clone = "%s.git" % clone
             return klass(os.path.join(abspath, clone))
         except OSError, err:
             raise GitRepositoryError, "Cannot clone Git repository %s to %s: %s " % (remote, abspath, err[1])
