@@ -388,14 +388,20 @@ class GitRepository(object):
 
         self._git_command("branch", args)
 
-    def delete_branch(self, branch):
+    def delete_branch(self, branch, remote=False):
         """
         Delete branch 'branch'
 
         @param branch: name of the branch to delete
+        @type branch: string
+        @param remote: delete a remote branch
+        @param remote: bool
         """
+        args = [ "-D" ]
+        args += [ "-r" ] if remote else []
+
         if self.get_branch() != branch:
-            self._git_command("branch", ["-D", branch])
+            self._git_command("branch", args + [branch])
         else:
             raise GitRepositoryError, "Can't delete the branch you're on"
 
