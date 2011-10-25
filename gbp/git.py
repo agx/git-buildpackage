@@ -475,11 +475,25 @@ class GitRepository(object):
         else:
             return True
 
-    def index_files(self):
-        """List files in the index"""
-        out, ret = self.__git_getoutput('ls-files', ['-z'])
+    def list_files(self, types=['cached']):
+        """
+        List files in index and working tree
+
+        @param types: list of types to show
+        @type types: list
+        """
+        all_types = [ 'cached', 'deleted', 'others', 'ignored',  'stage'
+                      'unmerged', 'killed', 'modified' ]
+        args = [ '-z' ]
+
+        for t in types:
+            if t in all_types:
+                args += [ '--%s' % t ]
+            else:
+                raise GitRepositoryError("Unknown type '%s'" % t)
+        out, ret = self.__git_getoutput('ls-files', args)
         if ret:
-            raise GitRepositoryError, "Error listing files %d" % ret
+            raise GitRepositoryError("Error listing files: '%d'" % ret)
         if out:
             return [ file for file in out[0].split('\0') if file ]
         else:
