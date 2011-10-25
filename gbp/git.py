@@ -711,11 +711,37 @@ class GitRepository(object):
         name = os.getenv("GIT_AUTHOR_NAME", name)
         return (name, email)
 
-    def get_remote_branches(self):
-        """Get all remote branches"""
-        args = [ '--format=%(refname:short)', 'refs/remotes/' ]
+    def get_branches(self, remote=False):
+        """
+        Get list of branches
+
+        @param remote: whether to list local or remote branches
+        @type remote: bool
+        @return: local or remote branches
+        @rtype: list
+        """
+        args = [ '--format=%(refname:short)' ]
+        args += [ 'refs/remotes/' ] if remote else [ 'refs/heads/' ]
         out = self.__git_getoutput('for-each-ref', args)[0]
         return [ ref.strip() for ref in out ]
+
+    def get_remote_branches(self):
+        """
+        Get list of remote branches
+
+        @return: remote branches
+        @rtype: list
+        """
+        return self.get_branches(remote=True)
+
+    def get_local_branches(self):
+        """
+        Get list of local branches
+
+        @return: local branches
+        @rtype: list
+        """
+        return self.get_branches(remote=False)
 
     def get_remote_repos(self):
         """Get all remote repositories"""
