@@ -856,10 +856,10 @@ class GitRepository(object):
 
     def _commit(self, msg, args=[], author_info=None):
         extra_env = author_info.get_author_env() if author_info else None
-        self._git_command("commit", args + ['-q', '-m', msg], extra_env=extra_env)
+        self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
 
 
-    def commit(self, msg, author_info=None):
+    def commit_staged(self, msg, author_info=None):
         """
         Commit currently staged files to the repository
 
@@ -869,7 +869,6 @@ class GitRepository(object):
         @type author_info: L{GitModifier}
         """
         self._commit(msg=msg, author_info=author_info)
-
 
     def commit_all(self, msg, author_info=None):
         """
@@ -881,6 +880,20 @@ class GitRepository(object):
         """
         self._commit(msg=msg, args=['-a'], author_info=author_info)
 
+    def commit_files(self, files, msg, author_info=None):
+        """
+        Commit the given files to the repository
+
+        @param files: file or files to commit
+        @type files: string or list
+        @param msg: commit message
+        @type msg: string
+        @param author_info: authorship information
+        @type author_info: L{GitModifier}
+        """
+        if type(files) in [type(''), type(u'')]:
+            files = [ files ]
+        self._commit(msg=msg, args=files, author_info=author_info)
 
     def format_patches(self, start, end, output_dir):
         """
