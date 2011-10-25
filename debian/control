@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends: cdbs (>= 0.4.90~), debhelper (>= 5), python (>> 2.6.6-3~),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil, python-nose,
- bash-completion, perl, python-epydoc,
+ bash-completion, perl, python-epydoc, python-coverage,
 # For the testsuite
  git-core, bzip2, unzip
 Standards-Version: 3.9.2

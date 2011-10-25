@@ -65,7 +65,7 @@ checks: links_stamp pychecker
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
 	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
-	nosetests --exe --with-doctest
+	nosetests --exe --with-doctest --with-coverage --cover-package=gbp
 endif
 
 $(GBP_VERSION): debian/changelog

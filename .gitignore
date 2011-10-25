@@ -1,5 +1,6 @@
 *.pyc
 .noseids
+.coverage
 gbp/gbp_version.py
 gbp_clone.py
 gbp_pq.py
