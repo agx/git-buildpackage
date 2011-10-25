@@ -73,14 +73,14 @@ class Command(object):
         try:
             retcode = self.__call(args)
             if retcode < 0:
-                log.err("%s was terminated by signal %d" % (self.cmd,  -retcode))
+                err_detail = "%s was terminated by signal %d" % (self.cmd, -retcode)
             elif retcode > 0:
-                log.err("%s returned %d" % (self.cmd,  retcode))
-        except OSError, e:
-            log.err("Execution failed: " + e.__str__())
+                err_detail = "%s returned %d" % (self.cmd, retcode)
+        except OSError as e:
+            err_detail = "Execution failed: " + e.__str__()
             retcode = 1
         if retcode:
-            log.err(self.run_error)
+            log.err("%s: %s" % (self.run_error, err_detail))
         self.retcode = retcode
         return retcode
 
