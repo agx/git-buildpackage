@@ -225,14 +225,14 @@ class GitRepository(object):
         @return: C{True} if the repository has this branch, C{False} otherwise
         @rtype: bool
         """
-        options = [ '--no-color' ]
         if remote:
-            options += [ '-r' ]
-
-        for line in self.__git_getoutput('branch', options)[0]:
-            if line.split(' ', 1)[1].strip() == branch:
-                return True
-        return False
+            ref = 'refs/remotes/%s' % branch
+        else:
+            ref = 'refs/heads/%s' % branch
+        failed = self.__git_getoutput('show-ref', [ ref ])[1]
+        if failed:
+            return False
+        return True
 
     def has_treeish(self, treeish):
         """
