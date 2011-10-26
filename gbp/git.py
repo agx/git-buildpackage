@@ -91,8 +91,8 @@ class GitRepository(object):
     @group Branches and Merging: create_branch delete_branch get_branch
         get_branches get_local_branches get_merge_branch get_remote_branches
         has_branch is_fast_forward merge set_branch
-    @group Tags: _build_legacy_tag create_tag delete_tag find_tag has_tag
-        move_tag find_version
+    @group Tags: _build_legacy_tag create_tag delete_tag find_tag get_tags
+        has_tag move_tag find_version
     @group Submodules: add_submodule get_submodules has_submodules
         update_submodules
     @group Patches: apply_patch format_patches
@@ -333,6 +333,21 @@ class GitRepository(object):
         args += [ name ]
         args += [ commit ] if commit else []
         self._git_command("tag", args)
+
+    def get_tags(self, pattern=None):
+        """
+        List tags
+
+        @param pattern: only list tags matching I{pattern}
+        @type pattern: string
+        """
+        args = [ '-l', pattern ] if pattern else []
+        return [ line.strip() for line in self.__git_getoutput('tag', args)[0] ]
+
+    @property
+    def tags(self):
+        """List of all tags in the repository"""
+        return self.get_tags()
 
     @property
     def branch(self):

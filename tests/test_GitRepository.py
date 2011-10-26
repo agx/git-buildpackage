@@ -126,6 +126,7 @@ def test_tag():
     Methods tested:
          - L{gbp.git.GitRepository.create_tag}
          - L{gbp.git.GitRepository.has_tag}
+         - L{gbp.git.GitRepository.get_tags}
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
@@ -137,6 +138,10 @@ def test_tag():
     >>> repo.create_tag("tag2", msg="foo")
     >>> repo.has_tag("tag2")
     True
+    >>> repo.get_tags()
+    ['tag', 'tag2']
+    >>> repo.tags
+    ['tag', 'tag2']
     """
 
 
