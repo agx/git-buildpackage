@@ -86,6 +86,18 @@ class GitRepository(object):
 
     @ivar path: The path to the working tree.
     @type path: string
+
+    @group Repository Creation: create clone
+    @group Branches and Merging: create_branch delete_branch get_branch
+        get_branches get_local_branches get_merge_branch get_remote_branches
+        has_branch is_fast_forward merge set_branch
+    @group Tags: _build_legacy_tag create_tag delete_tag find_tag has_tag
+        move_tag find_version
+    @group Submodules: add_submodule get_submodules has_submodules
+        update_submodules
+    @group Patches: apply_patch format_patches
+    @group Remote Repositories: add_remote_repo get_remote_repos
+        has_remote_repo
     """
 
     def _check_bare(self):
@@ -328,13 +340,23 @@ class GitRepository(object):
         return self.get_branch()
 
     def get_branch(self):
-        """on what branch is the current working copy"""
+        """
+        On what branch is the current working copy
+
+        @return: current branch
+        @rtype: string
+        """
         for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
             if line.startswith('*'):
                 return line.split(' ', 1)[1].strip()
 
     def get_merge_branch(self, branch):
-        """get the branch we'd merge from"""
+        """
+        Get the branch we'd merge from
+
+        @return: repo and branch we would merge from
+        @rtype: string
+        """
         try:
             remote = self.get_config("branch.%s.remote" % branch)
             merge = self.get_config("branch.%s.merge" % branch)
@@ -355,8 +377,9 @@ class GitRepository(object):
 
     def is_fast_forward(self, from_branch, to_branch):
         """
-        check if an update from from_branch to to_branch would be a fast
-        forward or if the branch is uptodate already
+        Check if an update I{from from_branch} to I{to_branch} would be a fast
+        forward or if the branch is up to date already.
+
         @return: can_fast_forward, up_to_date
         @rtype:  tuple
         """
@@ -413,7 +436,7 @@ class GitRepository(object):
 
     def delete_branch(self, branch, remote=False):
         """
-        Delete branch 'branch'
+        Delete branch I{branch}
 
         @param branch: name of the branch to delete
         @type branch: string
@@ -430,7 +453,7 @@ class GitRepository(object):
 
     def force_head(self, commit, hard=False):
         """
-        Force head to a specific commit
+        Force HEAD to a specific commit
 
         @param commit: commit to move HEAD to
         @param hard: also update the working copy
@@ -600,7 +623,14 @@ class GitRepository(object):
         return tag[0].strip()
 
     def rev_parse(self, name):
-        "Find the SHA1 of a given name"
+        """
+        Find the SHA1 of a given name
+
+        @param name: the name to look for
+        @type name: string
+        @return: the name's sha1
+        @rtype: string
+        """
         args = [ "--quiet", "--verify", name ]
         sha, ret = self.__git_getoutput('rev-parse', args)
         if ret:
@@ -609,9 +639,12 @@ class GitRepository(object):
 
     def write_tree(self, index_file=None):
         """
-        Write out the current index, return the SHA1
+        Create a tree object from the current index
 
         @param index_file: alternate index file to write the current index to
+        @type index_file: string
+        @return: the new tree object's sha1
+        @rtype: string
         """
         if index_file:
             extra_env = {'GIT_INDEX_FILE': index_file }
@@ -625,12 +658,17 @@ class GitRepository(object):
 
     def update_ref(self, ref, new, old=None, msg=None):
         """
-        Update ref 'ref' to commit 'new' if 'ref' currently points to 'old'.
+        Update ref I{ref} to commit I{new} if I{ref} currently points to
+        I{old}
 
         @param ref: the ref to update
+        @type ref: string
         @param new: the new value for ref
+        @type new: string
         @param old: the old value of ref
+        @type old: string
         @param msg: the reason for the update
+        @type msg: string
         """
         args = [ ref, new ]
         if old:
@@ -730,7 +768,7 @@ class GitRepository(object):
 
     def get_author_info(self):
         """
-        Determina a sane values for author name and author email from git's
+        Determine a sane values for author name and author email from git's
         config and environment variables.
 
         @return: name and email
@@ -750,7 +788,7 @@ class GitRepository(object):
 
     def get_branches(self, remote=False):
         """
-        Get list of branches
+        Get a list of branches
 
         @param remote: whether to list local or remote branches
         @type remote: bool
@@ -764,7 +802,7 @@ class GitRepository(object):
 
     def get_remote_branches(self):
         """
-        Get list of remote branches
+        Get a list of remote branches
 
         @return: remote branches
         @rtype: list
@@ -773,7 +811,7 @@ class GitRepository(object):
 
     def get_local_branches(self):
         """
-        Get list of local branches
+        Get a list of local branches
 
         @return: local branches
         @rtype: list
@@ -781,12 +819,24 @@ class GitRepository(object):
         return self.get_branches(remote=False)
 
     def get_remote_repos(self):
-        """Get all remote repositories"""
+        """
+        Get all remote repositories
+
+        @return: remote repositories
+        @rtype: list of strings
+        """
         out = self.__git_getoutput('remote')[0]
         return [ remote.strip() for remote in out ]
 
     def has_remote_repo(self, name):
-        """Do we know about a remote named 'name'?"""
+        """
+        Do we know about a remote named I{name}?
+
+        @param name: name of the remote repository
+        @type name: string
+        @return: C{True} if the remote repositore is known, C{False} otherwise
+        @rtype: bool
+        """
         if name in self.get_remote_repos():
             return True
         else:
