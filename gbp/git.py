@@ -429,7 +429,7 @@ class GitRepository(object):
 
         @param branch: name of the branch to switch to
         """
-        if self.get_branch() == branch:
+        if self.branch == branch:
             return
 
         if self.bare:
@@ -464,7 +464,7 @@ class GitRepository(object):
         args = [ "-D" ]
         args += [ "-r" ] if remote else []
 
-        if self.get_branch() != branch:
+        if self.branch != branch:
             self._git_command("branch", args + [branch])
         else:
             raise GitRepositoryError, "Can't delete the branch you're on"
@@ -511,7 +511,7 @@ class GitRepository(object):
         @rtype: bool
         """
         # an empty repo has no branches:
-        if self.get_branch():
+        if self.branch:
             return False
         else:
             return True
