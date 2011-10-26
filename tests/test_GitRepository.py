@@ -245,6 +245,19 @@ def test_clone():
     'foo'
     """
 
+def test_merge():
+    """
+    Merge a branch
+
+    Methods tested:
+         - L{gbp.git.GitRepository.merge}
+         - L{gbp.git.GitRepository.set_branch}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.set_branch('master')
+    >>> repo.merge('foo')
+    """
 
 def test_teardown():
     """
@@ -256,7 +269,5 @@ def test_teardown():
     >>> if not os.getenv("GBP_TESTS_NOCLEAN") and clone_dir: \
             shutil.rmtree(clone_dir)
     """
-
-
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
