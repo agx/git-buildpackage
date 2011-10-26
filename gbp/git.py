@@ -361,9 +361,12 @@ class GitRepository(object):
         @return: current branch
         @rtype: string
         """
-        for line in self.__git_getoutput('branch', [ '--no-color' ])[0]:
-            if line.startswith('*'):
-                return line.split(' ', 1)[1].strip()
+        out, dummy = self.__git_getoutput('symbolic-ref', [ 'HEAD' ])
+        ref = out[0][:-1]
+        # Check if ref really exists
+        failed = self.__git_getoutput('show-ref', [ ref ])[1]
+        if not failed:
+            return ref[11:] # strip /refs/heads
 
     def get_merge_branch(self, branch):
         """
