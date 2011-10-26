@@ -89,7 +89,7 @@ class GitRepository(object):
 
     @group Repository Creation: create clone
     @group Branches and Merging: create_branch delete_branch get_branch
-        get_branches get_local_branches get_merge_branch get_remote_branches
+        _get_branches get_local_branches get_merge_branch get_remote_branches
         has_branch is_fast_forward merge set_branch
     @group Tags: _build_legacy_tag create_tag delete_tag find_tag get_tags
         has_tag move_tag find_version
@@ -801,7 +801,7 @@ class GitRepository(object):
         name = os.getenv("GIT_AUTHOR_NAME", name)
         return (name, email)
 
-    def get_branches(self, remote=False):
+    def _get_branches(self, remote=False):
         """
         Get a list of branches
 
@@ -822,7 +822,7 @@ class GitRepository(object):
         @return: remote branches
         @rtype: list
         """
-        return self.get_branches(remote=True)
+        return self._get_branches(remote=True)
 
     def get_local_branches(self):
         """
@@ -831,7 +831,7 @@ class GitRepository(object):
         @return: local branches
         @rtype: list
         """
-        return self.get_branches(remote=False)
+        return self._get_branches(remote=False)
 
     def get_remote_repos(self):
         """
