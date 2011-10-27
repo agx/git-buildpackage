@@ -7,6 +7,8 @@ Test L{gbp.git.GitRepository}
 import os
 repo_dir = os.path.abspath(
              os.path.join(os.path.curdir, 'gbp_%s_test_repo' % __name__))
+bare_dir = os.path.abspath(
+             os.path.join(os.path.curdir, 'gbp_%s_test_bare' % __name__))
 clone_dir = os.path.abspath(
              os.path.join(os.path.curdir, 'gbp_%s_test_clone' % __name__))
 mirror_clone_dir = os.path.abspath(
@@ -317,12 +319,33 @@ def test_pull():
     >>> clone.pull()
     """
 
+def test_create_bare():
+    """
+    Create a bare repository
+
+    Methods tested:
+         - L{gbp.git.GitRepository.create}
+         - L{gbp.git.GitRepository.is_empty}
+
+    >>> import gbp.git
+    >>> bare = gbp.git.GitRepository.create(bare_dir, bare=True, description="msg")
+    >>> bare.path == bare_dir
+    True
+    >>> bare.base_dir[:-1] == bare_dir
+    True
+    >>> type(bare) == gbp.git.GitRepository
+    True
+    >>> bare.is_empty()
+    True
+    """
+
 def test_teardown():
     """
     Perform the teardown
 
     >>> import shutil, os
     >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(repo_dir)
+    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(bare_dir)
     >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(mirror_clone_dir)
     >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(clone_dir)
     """

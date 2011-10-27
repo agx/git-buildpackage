@@ -95,6 +95,7 @@ class GitRepository(object):
             raise GitRepositoryError(
                 "Failed to get repository state at '%s'" % self.path)
         self._bare = False if  out[0].strip() != 'true' else True
+        self._git_dir = '' if self._bare else '.git'
 
     def __init__(self, path):
         self._path = os.path.abspath(path)
@@ -195,7 +196,7 @@ class GitRepository(object):
     @property
     def base_dir(self):
         """Get the base of the repository"""
-        return os.path.join(self.path, '.git')
+        return os.path.join(self.path, self._git_dir)
 
     @property
     def bare(self):
@@ -851,7 +852,7 @@ class GitRepository(object):
         @type committer: C{dict} with keys I{name}, I{email}, I{date}
         """
 
-        git_index_file = os.path.join(self.path, '.git', 'gbp_index')
+        git_index_file = os.path.join(self.path, self._git_dir, 'gbp_index')
         try:
             os.unlink(git_index_file)
         except OSError:
@@ -1138,13 +1139,19 @@ class GitRepository(object):
         """
         abspath = os.path.abspath(path)
 
-        args = [ '--bare' ] if bare else []
+        if bare:
+            args = [ '--bare' ]
+            git_dir = ''
+        else:
+            args = []
+            git_dir = '.git'
+
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
             GitCommand("init", args, cwd=abspath)()
             if description:
-                with file(os.path.join(abspath, ".git", "description"), 'w') as f:
+                with file(os.path.join(abspath, git_dir, "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
                     f.write(description)
             return klass(abspath)
