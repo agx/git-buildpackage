@@ -9,6 +9,8 @@ repo_dir = os.path.abspath(
              os.path.join(os.path.curdir, 'gbp_%s_test_repo' % __name__))
 clone_dir = os.path.abspath(
              os.path.join(os.path.curdir, 'gbp_%s_test_clone' % __name__))
+mirror_clone_dir = os.path.abspath(
+             os.path.join(os.path.curdir, 'gbp_%s_test_mirror_clone' % __name__))
 
 
 def test_create():
@@ -225,12 +227,13 @@ def test_list_files():
     """
 
 
-def test_clone():
+def test_mirror_clone():
     """
-    Clone a repository
+    Mirror a repository
 
     Methods tested:
          - L{gbp.git.GitRepository.clone}
+         - L{gbp.git.GitRepository.is_empty}
          - L{gbp.git.GitRepository.set_branch}
          - L{gbp.git.GitRepository.has_branch}
          - L{gbp.git.GitRepository.branch}
@@ -238,16 +241,51 @@ def test_clone():
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> repo.set_branch('master')
-    >>> clone = gbp.git.GitRepository.clone(clone_dir, repo.path, mirror=True)
+    >>> mirror = gbp.git.GitRepository.clone(mirror_clone_dir, repo.path, mirror=True)
+    >>> mirror.is_empty()
+    False
+    >>> mirror.branch
+    'master'
+    >>> mirror.has_branch('foo')
+    True
+    >>> mirror.has_branch('bar')
+    False
+    >>> mirror.set_branch('foo')
+    >>> mirror.branch
+    'foo'
+    """
+
+def test_clone():
+    """
+    Clone a repository
+
+    Methods tested:
+         - L{gbp.git.GitRepository.clone}
+         - L{gbp.git.GitRepository.is_empty}
+         - L{gbp.git.GitRepository.set_branch}
+         - L{gbp.git.GitRepository.branch}
+         - L{gbp.git.GitRepository.get_remote_branches}
+         - L{gbp.git.GitRepository.get_local_branches}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.set_branch('master')
+    >>> clone = gbp.git.GitRepository.clone(clone_dir, repo.path)
+    >>> clone.is_empty()
+    False
     >>> clone.branch
     'master'
-    >>> clone.has_branch('foo')
-    True
-    >>> clone.has_branch('bar')
-    False
-    >>> clone.set_branch('foo')
-    >>> clone.branch
-    'foo'
+    >>> clone.get_remote_branches()
+    ['origin/HEAD', 'origin/foo', 'origin/master']
+    >>> clone.get_local_branches()
+    ['master']
+    >>> clone.get_merge_branch('master')
+    'origin/master'
+    >>> clone.create_branch('foo', 'origin/foo')
+    >>> clone.get_merge_branch('foo')
+    'origin/foo'
+    >>> clone.get_local_branches()
+    ['foo', 'master']
     """
 
 def test_merge():
@@ -264,15 +302,29 @@ def test_merge():
     >>> repo.merge('foo')
     """
 
+def test_pull():
+    """
+    Pull from a remote repository
+
+    Methods tested:
+         - L{gbp.git.GitRepository.set_branch}
+         - L{gbp.git.GitRepository.pull}
+
+    >>> import gbp.git, os
+    >>> d = os.path.join(clone_dir, 'gbp_%s_test_repo' % __name__)
+    >>> clone = gbp.git.GitRepository(d)
+    >>> clone.set_branch('master')
+    >>> clone.pull()
+    """
+
 def test_teardown():
     """
     Perform the teardown
 
     >>> import shutil, os
-    >>> if not os.getenv("GBP_TESTS_NOCLEAN") and repo_dir: \
-            shutil.rmtree(repo_dir)
-    >>> if not os.getenv("GBP_TESTS_NOCLEAN") and clone_dir: \
-            shutil.rmtree(clone_dir)
+    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(repo_dir)
+    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(mirror_clone_dir)
+    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(clone_dir)
     """
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
