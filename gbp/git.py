@@ -59,7 +59,7 @@ class GitModifier(object):
         {'GIT_AUTHOR_EMAIL': 'bar', 'GIT_AUTHOR_NAME': 'foo'}
 
         @return: Author information suitable to use as environment variables
-        @rtype: dict
+        @rtype: C{dict}
         """
         return self._get_env('author')
 
@@ -72,7 +72,7 @@ class GitModifier(object):
         {'GIT_COMMITTER_NAME': 'foo', 'GIT_COMMITTER_EMAIL': 'bar'}
 
         @return: Commiter information suitable to use as environment variables
-        @rtype: dict
+        @rtype: C{dict}
         """
         return self._get_env('committer')
 
@@ -82,22 +82,10 @@ class GitRepository(object):
     Represents a git repository at I{path}. It's currently assumed that the git
     repository is stored in a directory named I{.git/} below I{path}.
 
-    Bare repository aren't currently supported.
-
-    @ivar path: The path to the working tree.
-    @type path: string
-
-    @group Repository Creation: create clone
-    @group Branches and Merging: create_branch delete_branch get_branch
-        _get_branches get_local_branches get_merge_branch get_remote_branches
-        has_branch is_fast_forward merge set_branch
-    @group Tags: _build_legacy_tag create_tag delete_tag find_tag get_tags
-        has_tag move_tag find_version
-    @group Submodules: add_submodule get_submodules has_submodules
-        update_submodules
-    @group Patches: apply_patch format_patches
-    @group Remote Repositories: add_remote_repo get_remote_repos
-        has_remote_repo
+    @ivar _path: The path to the working tree
+    @type _path: C{str}
+    @ivar _bare: Whether this is a bare repository
+    @type _bare: C{bool}
     """
 
     def _check_bare(self):
@@ -134,15 +122,15 @@ class GitRepository(object):
         Run a git command and return the output
 
         @param command: git command to run
-        @type command: string
+        @type command: C{str}
         @param args: list of arguments
-        @type args: list
+        @type args: C{list}
         @param extra_env: extra environment variables to pass
-        @type extra_env: dict
+        @type extra_env: C{dict}
         @param cwd: directory to swith to when running the command, defaults to I{self.path}
-        @type cwd: string
+        @type cwd: C{str}
         @return: stdout, return code
-        @rtype: tuple
+        @rtype: C{tuple}
         """
         output = []
 
@@ -164,15 +152,15 @@ class GitRepository(object):
         Run a git command with input and return output
 
         @param command: git command to run
-        @type command: string
+        @type command: C{str}
         @param input: input to pipe to command
-        @type input: string
+        @type input: C{str}
         @param args: list of arguments
-        @type args: list
+        @type args: C{list}
         @param extra_env: extra environment variables to pass
-        @type extra_env: dict
+        @type extra_env: C{dict}
         @return: stdout, stderr, return code
-        @rtype: tuple
+        @rtype: C{tuple}
         """
         env = self.__build_env(extra_env)
         cmd = ['git', command] + args
@@ -191,23 +179,22 @@ class GitRepository(object):
         at path.
 
         @param command: git command
-        @type command: string
+        @type command: C{str}
         @param args: command line arguments
-        @type args: list
+        @type args: C{list}
         @param extra_env: extra environment variables to set when running command
-        @type extra_env: dict
+        @type extra_env: C{dict}
         """
         GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
 
     @property
     def path(self):
+        """The path to the repository"""
         return self._path
 
     @property
     def base_dir(self):
-        """
-        Get the base of the repository.
-        """
+        """Get the base of the repository"""
         return os.path.join(self.path, '.git')
 
     @property
@@ -215,15 +202,71 @@ class GitRepository(object):
         """Wheter this is a bare repository"""
         return self._bare
 
+    @property
+    def tags(self):
+        """List of all tags in the repository"""
+        return self.get_tags()
+
+    @property
+    def branch(self):
+        """The currently checked out branch"""
+        return self.get_branch()
+
+#{ Branches and Merging
+    def create_branch(self, branch, rev=None):
+        """
+        Create a new branch
+
+        @param branch: the branch's name
+        @param rev: where to start the branch from
+
+        If rev is None the branch starts form the current HEAD.
+        """
+        args = [ branch ]
+        args += [ rev ] if rev else []
+
+        self._git_command("branch", args)
+
+    def delete_branch(self, branch, remote=False):
+        """
+        Delete branch I{branch}
+
+        @param branch: name of the branch to delete
+        @type branch: C{str}
+        @param remote: delete a remote branch
+        @param remote: C{bool}
+        """
+        args = [ "-D" ]
+        args += [ "-r" ] if remote else []
+
+        if self.branch != branch:
+            self._git_command("branch", args + [branch])
+        else:
+            raise GitRepositoryError, "Can't delete the branch you're on"
+
+    def get_branch(self):
+        """
+        On what branch is the current working copy
+
+        @return: current branch
+        @rtype: C{str}
+        """
+        out, dummy = self.__git_getoutput('symbolic-ref', [ 'HEAD' ])
+        ref = out[0][:-1]
+        # Check if ref really exists
+        failed = self.__git_getoutput('show-ref', [ ref ])[1]
+        if not failed:
+            return ref[11:] # strip /refs/heads
+
     def has_branch(self, branch, remote=False):
         """
         Check if the repository has branch named I{branch}.
 
         @param branch: branch to look for
         @param remote: only look for remote branches
-        @type remote: bool
+        @type remote: C{bool}
         @return: C{True} if the repository has this branch, C{False} otherwise
-        @rtype: bool
+        @rtype: C{bool}
         """
         if remote:
             ref = 'refs/remotes/%s' % branch
@@ -234,31 +277,182 @@ class GitRepository(object):
             return False
         return True
 
-    def has_treeish(self, treeish):
+    def set_branch(self, branch):
         """
-        Check if the repository has the treeish object I{treeish}.
+        Switch to branch I{branch}
 
-        @param treeish: treeish object to look for
-        @type treeish: string
-        @return: C{True} if the repository has that tree, C{False} otherwise
-        @rtype: bool
+        @param branch: name of the branch to switch to
+        @type branch: C{str}
         """
+        if self.branch == branch:
+            return
 
-        out, ret =  self.__git_getoutput('ls-tree', [ treeish ])
-        return [ True, False ][ret != 0]
+        if self.bare:
+            self._git_command("symbolic-ref",
+                              [ 'HEAD', 'refs/heads/%s' % branch ])
+        else:
+            self._git_command("checkout", [ branch ])
+
+    def get_merge_branch(self, branch):
+        """
+        Get the branch we'd merge from
+
+        @return: repo and branch we would merge from
+        @rtype: C{str}
+        """
+        try:
+            remote = self.get_config("branch.%s.remote" % branch)
+            merge = self.get_config("branch.%s.merge" % branch)
+        except KeyError:
+            return None
+        remote += merge.replace("refs/heads","", 1)
+        return remote
+
+    def merge(self, commit, verbose=False):
+        """
+        Merge changes from the named commit into the current branch
+
+        @param commit: the commit to merge from (usually a branch name)
+        @type commit: C{str}
+        """
+        args = [ "--summary"  ] if verbose else [ "--no-summary" ]
+        self._git_command("merge", args + [ commit ])
+
+    def is_fast_forward(self, from_branch, to_branch):
+        """
+        Check if an update I{from from_branch} to I{to_branch} would be a fast
+        forward or if the branch is up to date already.
+
+        @return: can_fast_forward, up_to_date
+        @rtype: C{tuple}
+        """
+        has_local = False       # local repo has new commits
+        has_remote = False      # remote repo has new commits
+        out = self.__git_getoutput('rev-list', ["--left-right",
+                                   "%s...%s" % (from_branch, to_branch),
+                                   "--"])[0]
+
+        if not out: # both branches have the same commits
+            return True, True
+
+        for line in out:
+            if line.startswith("<"):
+                has_local = True
+            elif line.startswith(">"):
+                has_remote = True
+
+        if has_local and has_remote:
+            return False, False
+        elif has_local:
+            return False, True
+        elif has_remote:
+            return True, False
+
+    def _get_branches(self, remote=False):
+        """
+        Get a list of branches
+
+        @param remote: whether to list local or remote branches
+        @type remote: C{bool}
+        @return: local or remote branches
+        @rtype: C{list}
+        """
+        args = [ '--format=%(refname:short)' ]
+        args += [ 'refs/remotes/' ] if remote else [ 'refs/heads/' ]
+        out = self.__git_getoutput('for-each-ref', args)[0]
+        return [ ref.strip() for ref in out ]
+
+    def get_local_branches(self):
+        """
+        Get a list of local branches
+
+        @return: local branches
+        @rtype: C{list}
+        """
+        return self._get_branches(remote=False)
+
+
+    def get_remote_branches(self):
+        """
+        Get a list of remote branches
+
+        @return: remote branches
+        @rtype: C{list}
+        """
+        return self._get_branches(remote=True)
+
+    def update_ref(self, ref, new, old=None, msg=None):
+        """
+        Update ref I{ref} to commit I{new} if I{ref} currently points to
+        I{old}
+
+        @param ref: the ref to update
+        @type ref: C{str}
+        @param new: the new value for ref
+        @type new: C{str}
+        @param old: the old value of ref
+        @type old: C{str}
+        @param msg: the reason for the update
+        @type msg: C{str}
+        """
+        args = [ ref, new ]
+        if old:
+            args += [ old ]
+        if msg:
+            args = [ '-m', msg ] + args
+        self._git_command("update-ref", args)
+
+#{ Tags
+
+    def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):
+        """
+        Create a new tag.
+
+        @param name: the tag's name
+        @type name: C{str}
+        @param msg: The tag message.
+        @type msg: C{str}
+        @param commit: the commit or object to create the tag at, default
+            is I{HEAD}
+        @type commit: C{str}
+        @param sign: Whether to sing the tag
+        @type sign: C{bool}
+        @param keyid: the GPG keyid used to sign the tag
+        @type keyid: C{str}
+        """
+        args = []
+        args += [ '-m', msg ] if msg else []
+        if sign:
+            args += [ '-u', keyid ] if keyid else [ '-s' ]
+        args += [ name ]
+        args += [ commit ] if commit else []
+        self._git_command("tag", args)
+
+    def delete_tag(self, tag):
+        """
+        Delete a tag named I{tag}
+
+        @param tag: the tag to delete
+        @type tag: C{str}
+        """
+        if self.has_tag(tag):
+            self._git_command("tag", [ "-d", tag ])
+
+    def move_tag(self, old, new):
+        self._git_command("tag", [ new, old ])
+        self.delete_tag(old)
 
     def has_tag(self, tag):
         """
         Check if the repository has a tag named I{tag}.
 
         @param tag: tag to look for
-        @type tag: string
+        @type tag: C{str}
         @return: C{True} if the repository has that tag, C{False} otherwise
-        @rtype: bool
+        @rtype: C{bool}
         """
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
-
 
     def _build_legacy_tag(self, format, version):
         """legacy version numbering"""
@@ -266,7 +460,6 @@ class GitRepository(object):
             version = version.split(':', 1)[1]
         version = version.replace('~', '.')
         return format % dict(version=version)
-
 
     def find_version(self, format, version):
         """
@@ -295,179 +488,39 @@ class GitRepository(object):
                     return None
         return None
 
-
-    def delete_tag(self, tag):
+    def find_tag(self, commit, pattern=None):
         """
-        Delete a tag named I{tag}
+        Find the closest tag to a given commit
 
-        @param tag: the tag to delete
-        @type tag: string
+        @param commit: the commit to describe
+        @type commit: C{str}
+        @param pattern: only look for tags matching I{pattern}
+        @type pattern: C{str}
+        @return: the found tag
+        @rtype: C{str}
         """
-        if self.has_tag(tag):
-            self._git_command("tag", [ "-d", tag ])
+        args =  [ '--abbrev=0' ]
+        if pattern:
+            args += [ '--match' , pattern ]
+        args += [ commit ]
 
-    def move_tag(self, old, new):
-        self._git_command("tag", [ new, old ])
-        self.delete_tag(old)
-
-    def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):
-        """
-        Create a new tag.
-
-        @param name: the tag's name
-        @type name: string
-        @param msg: The tag message.
-        @type msg: string
-        @param commit: the commit or object to create the tag at, default
-            is I{HEAD}
-        @type commit: string
-        @param sign: Whether to sing the tag
-        @type sign: bool
-        @param keyid: the GPG keyid used to sign the tag
-        @type keyid: string
-        """
-        args = []
-        args += [ '-m', msg ] if msg else []
-        if sign:
-            args += [ '-u', keyid ] if keyid else [ '-s' ]
-        args += [ name ]
-        args += [ commit ] if commit else []
-        self._git_command("tag", args)
+        tag, ret = self.__git_getoutput('describe', args)
+        if ret:
+            raise GitRepositoryError, "can't find tag for %s" % commit
+        return tag[0].strip()
 
     def get_tags(self, pattern=None):
         """
         List tags
 
         @param pattern: only list tags matching I{pattern}
-        @type pattern: string
+        @type pattern: C{str}
+        @return: tags
+        @rtype: C{list} of C{str}
         """
         args = [ '-l', pattern ] if pattern else []
         return [ line.strip() for line in self.__git_getoutput('tag', args)[0] ]
-
-    @property
-    def tags(self):
-        """List of all tags in the repository"""
-        return self.get_tags()
-
-    @property
-    def branch(self):
-        """The currently checked out branch"""
-        return self.get_branch()
-
-    def get_branch(self):
-        """
-        On what branch is the current working copy
-
-        @return: current branch
-        @rtype: string
-        """
-        out, dummy = self.__git_getoutput('symbolic-ref', [ 'HEAD' ])
-        ref = out[0][:-1]
-        # Check if ref really exists
-        failed = self.__git_getoutput('show-ref', [ ref ])[1]
-        if not failed:
-            return ref[11:] # strip /refs/heads
-
-    def get_merge_branch(self, branch):
-        """
-        Get the branch we'd merge from
-
-        @return: repo and branch we would merge from
-        @rtype: string
-        """
-        try:
-            remote = self.get_config("branch.%s.remote" % branch)
-            merge = self.get_config("branch.%s.merge" % branch)
-        except KeyError:
-            return None
-        remote += merge.replace("refs/heads","", 1)
-        return remote
-
-    def merge(self, commit, verbose=False):
-        """
-        Merge changes from the named commit into the current branch
-
-        @param commit: the commit to merge from (usually a branch name)
-        @type commit: string
-        """
-        args = [ "--summary"  ] if verbose else [ "--no-summary" ]
-        self._git_command("merge", args + [ commit ])
-
-    def is_fast_forward(self, from_branch, to_branch):
-        """
-        Check if an update I{from from_branch} to I{to_branch} would be a fast
-        forward or if the branch is up to date already.
-
-        @return: can_fast_forward, up_to_date
-        @rtype:  tuple
-        """
-        has_local = False       # local repo has new commits
-        has_remote = False      # remote repo has new commits
-        out = self.__git_getoutput('rev-list', ["--left-right",
-                                   "%s...%s" % (from_branch, to_branch),
-                                   "--"])[0]
-
-        if not out: # both branches have the same commits
-            return True, True
-
-        for line in out:
-            if line.startswith("<"):
-                has_local = True
-            elif line.startswith(">"):
-                has_remote = True
-
-        if has_local and has_remote:
-            return False, False
-        elif has_local:
-            return False, True
-        elif has_remote:
-            return True, False
-
-    def set_branch(self, branch):
-        """
-        Switch to branch 'branch'
-
-        @param branch: name of the branch to switch to
-        """
-        if self.branch == branch:
-            return
-
-        if self.bare:
-            self._git_command("symbolic-ref",
-                              [ 'HEAD', 'refs/heads/%s' % branch ])
-        else:
-            self._git_command("checkout", [ branch ])
-
-    def create_branch(self, branch, rev=None):
-        """
-        Create a new branch
-
-        @param branch: the branch's name
-        @param rev: where to start the branch from
-
-        If rev is None the branch starts form the current HEAD.
-        """
-        args = [ branch ]
-        args += [ rev ] if rev else []
-
-        self._git_command("branch", args)
-
-    def delete_branch(self, branch, remote=False):
-        """
-        Delete branch I{branch}
-
-        @param branch: name of the branch to delete
-        @type branch: string
-        @param remote: delete a remote branch
-        @param remote: bool
-        """
-        args = [ "-D" ]
-        args += [ "-r" ] if remote else []
-
-        if self.branch != branch:
-            self._git_command("branch", args + [branch])
-        else:
-            raise GitRepositoryError, "Can't delete the branch you're on"
+#}
 
     def force_head(self, commit, hard=False):
         """
@@ -475,7 +528,7 @@ class GitRepository(object):
 
         @param commit: commit to move HEAD to
         @param hard: also update the working copy
-        @type hard: bool
+        @type hard: C{bool}
         """
         args = ['--quiet']
         if hard:
@@ -489,7 +542,7 @@ class GitRepository(object):
 
         @return: C{True} if the repository is clean, C{False} otherwise
             and Git's status message
-        @rtype: tuple
+        @rtype: C{tuple}
         """
         clean_msg = 'nothing to commit'
         out = self.__git_getoutput('status')[0]
@@ -508,7 +561,7 @@ class GitRepository(object):
 
         @return: True if the repositorydoesn't have any commits,
                  False otherwise
-        @rtype: bool
+        @rtype: C{bool}
         """
         # an empty repo has no branches:
         if self.branch:
@@ -516,12 +569,209 @@ class GitRepository(object):
         else:
             return True
 
+    def rev_parse(self, name):
+        """
+        Find the SHA1 of a given name
+
+        @param name: the name to look for
+        @type name: C{str}
+        @return: the name's sha1
+        @rtype: C{str}
+        """
+        args = [ "--quiet", "--verify", name ]
+        sha, ret = self.__git_getoutput('rev-parse', args)
+        if ret:
+            raise GitRepositoryError, "revision '%s' not found" % name
+        return sha[0].strip()
+
+#{ Trees
+    def has_treeish(self, treeish):
+        """
+        Check if the repository has the treeish object I{treeish}.
+
+        @param treeish: treeish object to look for
+        @type treeish: C{str}
+        @return: C{True} if the repository has that tree, C{False} otherwise
+        @rtype: C{bool}
+        """
+
+        out, ret =  self.__git_getoutput('ls-tree', [ treeish ])
+        return [ True, False ][ret != 0]
+
+    def write_tree(self, index_file=None):
+        """
+        Create a tree object from the current index
+
+        @param index_file: alternate index file to write the current index to
+        @type index_file: C{str}
+        @return: the new tree object's sha1
+        @rtype: C{str}
+        """
+        if index_file:
+            extra_env = {'GIT_INDEX_FILE': index_file }
+        else:
+            extra_env = None
+
+        tree, ret = self.__git_getoutput('write-tree', extra_env=extra_env)
+        if ret:
+            raise GitRepositoryError, "can't write out current index"
+        return tree[0].strip()
+#}
+
+    def get_config(self, name):
+        """
+        Gets the config value associated with I{name}
+
+        @param name: config value to get
+        @return: fetched config value
+        @rtype: C{str}
+        """
+        value, ret = self.__git_getoutput('config', [ name ])
+        if ret: raise KeyError
+        return value[0][:-1] # first line with \n ending removed
+
+    def get_author_info(self):
+        """
+        Determine a sane values for author name and author email from git's
+        config and environment variables.
+
+        @return: name and email
+        @rtype: C{tuple}
+        """
+        try:
+           name =  self.get_config("user.email")
+        except KeyError:
+           name = os.getenv("USER")
+        try:
+           email =  self.get_config("user.email")
+        except KeyError:
+            email = os.getenv("EMAIL")
+        email = os.getenv("GIT_AUTHOR_EMAIL", email)
+        name = os.getenv("GIT_AUTHOR_NAME", name)
+        return (name, email)
+
+#{ Remote Repositories
+
+    def get_remote_repos(self):
+        """
+        Get all remote repositories
+
+        @return: remote repositories
+        @rtype: C{list} of C{str}
+        """
+        out = self.__git_getoutput('remote')[0]
+        return [ remote.strip() for remote in out ]
+
+    def has_remote_repo(self, name):
+        """
+        Do we know about a remote named I{name}?
+
+        @param name: name of the remote repository
+        @type name: C{str}
+        @return: C{True} if the remote repositore is known, C{False} otherwise
+        @rtype: C{bool}
+        """
+        if name in self.get_remote_repos():
+            return True
+        else:
+            return False
+
+    def add_remote_repo(self, name, url, tags=True, fetch=False):
+        """
+        Add a tracked remote repository
+
+        @param name: the name to use for the remote
+        @type name: C{str}
+        @param url: the url to add
+        @type url: C{str}
+        @param tags: whether to fetch tags
+        @type tags: C{bool}
+        @param fetch: whether to fetch immediately from the remote side
+        @type fetch: C{bool}
+        """
+        args = [ "add" ]
+        args += [ '--tags' ] if tags else [ '--no-tags']
+        args += [ '--fetch' ] if fetch else []
+        args += [ name, url ]
+        self._git_command("remote", args)
+
+    def fetch(self, repo=None):
+        """
+        Download objects and refs from another repository.
+
+        @param repo: repository to fetch from
+        @type repo: C{str}
+        """
+        if repo:
+            args = [repo]
+
+        self._git_command("fetch", args)
+
+    def pull(self, repo=None, ff_only=False):
+        """
+        Fetch and merge from another repository
+
+        @param repo: repository to fetch from
+        @type repo: C{str}
+        @param ff_only: only merge if this results in a fast forward merge
+        @type ff_only: C{bool}
+        """
+        args = []
+        args += [ '--ff-only' ] if ff_only else []
+        args += [ repo ] if repo else []
+        self._git_command("pull", args)
+
+#{ Files
+
+    def add_files(self, paths, force=False, index_file=None, work_tree=None):
+        """
+        Add files to a the repository
+
+        @param paths: list of files to add
+        @type paths: list or C{str}
+        @param force: add files even if they would be ignored by .gitignore
+        @type force: C{bool}
+        @param index_file: alternative index file to use
+        @param work_tree: alternative working tree to use
+        """
+        extra_env = {}
+
+        if type(paths) in [type(''), type(u'')]:
+            paths = [ paths ]
+
+        args = [ '-f' ] if force else []
+
+        if index_file:
+            extra_env['GIT_INDEX_FILE'] =  index_file
+
+        if work_tree:
+            extra_env['GIT_WORK_TREE'] = work_tree
+
+        self._git_command("add", args + paths, extra_env)
+
+    def remove_files(self, paths, verbose=False):
+        """
+        Remove files from the repository
+
+        @param paths: list of files to remove
+        @param paths: C{list} or C{str}
+        @param verbose: be verbose
+        @type verbose: C{bool}
+        """
+        if type(paths) in [type(''), type(u'')]:
+            paths = [ paths ]
+
+        args =  [] if verbose else ['--quiet']
+        self._git_command("rm", args + paths)
+
     def list_files(self, types=['cached']):
         """
         List files in index and working tree
 
         @param types: list of types to show
-        @type types: list
+        @type types: C{list}
+        @return: list of files
+        @rtype: C{list} of C{str}
         """
         all_types = [ 'cached', 'deleted', 'others', 'ignored',  'stage'
                       'unmerged', 'killed', 'modified' ]
@@ -540,6 +790,130 @@ class GitRepository(object):
         else:
             return []
 
+#{ Comitting
+
+    def _commit(self, msg, args=[], author_info=None):
+        extra_env = author_info.get_author_env() if author_info else None
+        self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
+
+    def commit_staged(self, msg, author_info=None):
+        """
+        Commit currently staged files to the repository
+
+        @param msg: commit message
+        @type msg: C{str}
+        @param author_info: authorship information
+        @type author_info: L{GitModifier}
+        """
+        self._commit(msg=msg, author_info=author_info)
+
+    def commit_all(self, msg, author_info=None):
+        """
+        Commit all changes to the repository
+        @param msg: commit message
+        @type msg: C{str}
+        @param author_info: authorship information
+        @type author_info: L{GitModifier}
+        """
+        self._commit(msg=msg, args=['-a'], author_info=author_info)
+
+    def commit_files(self, files, msg, author_info=None):
+        """
+        Commit the given files to the repository
+
+        @param files: file or files to commit
+        @type files: C{str} or C{list}
+        @param msg: commit message
+        @type msg: C{str}
+        @param author_info: authorship information
+        @type author_info: L{GitModifier}
+        """
+        if type(files) in [type(''), type(u'')]:
+            files = [ files ]
+        self._commit(msg=msg, args=files, author_info=author_info)
+
+    def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
+                   author={}, committer={}):
+        """
+        Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
+
+        @param unpack_dir: content to add
+        @type unpack_dir: C{str}
+        @param msg: commit message to use
+        @type msg: C{str}
+        @param branch: branch to add the contents of unpack_dir to
+        @type branch: C{str}
+        @param other_parents: additional parents of this commit
+        @type other_parents: C{list} of C{str}
+        @param author: author information to use for commit
+        @type author: C{dict} with keys I{name}, I{email}, ${date}
+        @param committer: committer information to use for commit
+        @type committer: C{dict} with keys I{name}, I{email}, I{date}
+        """
+
+        git_index_file = os.path.join(self.path, '.git', 'gbp_index')
+        try:
+            os.unlink(git_index_file)
+        except OSError:
+            pass
+        self.add_files('.', force=True, index_file=git_index_file,
+                       work_tree=unpack_dir)
+        tree = self.write_tree(git_index_file)
+
+        if branch:
+            cur = self.rev_parse(branch)
+        else: # emtpy repo
+            cur = None
+            branch = 'master'
+
+        # Build list of parents:
+        parents = []
+        if cur:
+            parents = [ cur ]
+        if other_parents:
+            for parent in other_parents:
+                sha = self.rev_parse(parent)
+                if sha not in parents:
+                    parents += [ sha ]
+
+        commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
+                                  author=author, committer=committer)
+        if not commit:
+            raise GbpError, "Failed to commit tree"
+        self.update_ref("refs/heads/%s" % branch, commit, cur)
+        return commit
+
+    def commit_tree(self, tree, msg, parents, author={}, committer={}):
+        """
+        Commit a tree with commit msg I{msg} and parents I{parents}
+
+        @param tree: tree to commit
+        @param msg: commit message
+        @param parents: parents of this commit
+        @param author: authorship information
+        @type author: C{dict} with keys 'name' and 'email'
+        @param committer: comitter information
+        @type committer: C{dict} with keys 'name' and 'email'
+        """
+        extra_env = {}
+        for key, val in author.items():
+            if val:
+                extra_env['GIT_AUTHOR_%s' % key.upper()] = val
+        for key, val in committer.items():
+            if val:
+                extra_env['GIT_COMMITTER_%s' % key.upper()] = val
+
+        args = [ tree ]
+        for parent in parents:
+            args += [ '-p' , parent ]
+        sha1, stderr, ret = self.__git_inout('commit-tree', args, msg, extra_env)
+        if not ret:
+            return sha1.strip()
+        else:
+            raise GbpError, "Failed to commit tree: %s" % stderr
+
+#{ Commit Information
+
     def get_commits(self, since=None, until=None, paths=None, options=None,
                    first_parent=False):
         """
@@ -549,10 +923,10 @@ class GitRepository(object):
         @param until: last commit to get
         @param paths: only list commits touching paths
         @param options: list of options passed to git log
-        @type  options: list of strings
+        @type  options: C{list} of C{str}ings
         @param first_parent: only follow first parent when seeing a
                              merge commit
-        @type first_parent: bool
+        @type first_parent: C{bool}
         """
 
         args = ['--pretty=format:%H']
@@ -602,6 +976,7 @@ class GitRepository(object):
 
         @param commit: the commit to get the subject from
         @return: the commit's subject
+        @rtype: C{str}
         """
         out, ret =  self.__git_getoutput('log', ['-n1', '--pretty=format:%s',  commit])
         if ret:
@@ -628,341 +1003,8 @@ class GitRepository(object):
                 'subject' : out[2].rstrip(),
                 'body' : [line.rstrip() for line in  out[3:]]}
 
-    def find_tag(self, commit, pattern=None):
-        "Find the closest tag to a branch's head"
-        args =  [ '--abbrev=0' ]
-        if pattern:
-            args += [ '--match' , pattern ]
-        args += [ commit ]
 
-        tag, ret = self.__git_getoutput('describe', args)
-        if ret:
-            raise GitRepositoryError, "can't find tag for %s" % commit
-        return tag[0].strip()
-
-    def rev_parse(self, name):
-        """
-        Find the SHA1 of a given name
-
-        @param name: the name to look for
-        @type name: string
-        @return: the name's sha1
-        @rtype: string
-        """
-        args = [ "--quiet", "--verify", name ]
-        sha, ret = self.__git_getoutput('rev-parse', args)
-        if ret:
-            raise GitRepositoryError, "revision '%s' not found" % name
-        return sha[0].strip()
-
-    def write_tree(self, index_file=None):
-        """
-        Create a tree object from the current index
-
-        @param index_file: alternate index file to write the current index to
-        @type index_file: string
-        @return: the new tree object's sha1
-        @rtype: string
-        """
-        if index_file:
-            extra_env = {'GIT_INDEX_FILE': index_file }
-        else:
-            extra_env = None
-
-        tree, ret = self.__git_getoutput('write-tree', extra_env=extra_env)
-        if ret:
-            raise GitRepositoryError, "can't write out current index"
-        return tree[0].strip()
-
-    def update_ref(self, ref, new, old=None, msg=None):
-        """
-        Update ref I{ref} to commit I{new} if I{ref} currently points to
-        I{old}
-
-        @param ref: the ref to update
-        @type ref: string
-        @param new: the new value for ref
-        @type new: string
-        @param old: the old value of ref
-        @type old: string
-        @param msg: the reason for the update
-        @type msg: string
-        """
-        args = [ ref, new ]
-        if old:
-            args += [ old ]
-        if msg:
-            args = [ '-m', msg ] + args
-        self._git_command("update-ref", args)
-
-    def commit_tree(self, tree, msg, parents, author={}, committer={}):
-        """
-        Commit a tree with commit msg 'msg' and parents 'parents'
-
-        @param tree: tree to commit
-        @param msg: commit message
-        @param parents: parents of this commit
-        @param author: authorship information
-        @type author: dict with keys 'name' and 'email'
-        @param committer: comitter information
-        @type committer: dict with keys 'name' and 'email'
-        """
-        extra_env = {}
-        for key, val in author.items():
-            if val:
-                extra_env['GIT_AUTHOR_%s' % key.upper()] = val
-        for key, val in committer.items():
-            if val:
-                extra_env['GIT_COMMITTER_%s' % key.upper()] = val
-
-        args = [ tree ]
-        for parent in parents:
-            args += [ '-p' , parent ]
-        sha1, stderr, ret = self.__git_inout('commit-tree', args, msg, extra_env)
-        if not ret:
-            return sha1.strip()
-        else:
-            raise GbpError, "Failed to commit tree: %s" % stderr
-
-    def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
-                   author={}, committer={}):
-        """Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
-           @param unpack_dir: content to add
-           @type unpack_dir: string
-           @param msg: commit message to use
-           @type msg: string
-           @param branch: branch to add the contents of unpack_dir to
-           @type branch: string
-           @param other_parents: additional parents of this commit
-           @type other_parents: list string
-           @param author: author information to use for commit
-           @type author: dict with keys 'name', 'email', 'date'
-           @param committer: committer information to use for commit
-           @type committer: dict with keys 'name', 'email', 'date'"""
-
-        git_index_file = os.path.join(self.path, '.git', 'gbp_index')
-        try:
-            os.unlink(git_index_file)
-        except OSError:
-            pass
-        self.add_files('.', force=True, index_file=git_index_file,
-                       work_tree=unpack_dir)
-        tree = self.write_tree(git_index_file)
-
-        if branch:
-            cur = self.rev_parse(branch)
-        else: # emtpy repo
-            cur = None
-            branch = 'master'
-
-        # Build list of parents:
-        parents = []
-        if cur:
-            parents = [ cur ]
-        if other_parents:
-            for parent in other_parents:
-                sha = self.rev_parse(parent)
-                if sha not in parents:
-                    parents += [ sha ]
-
-        commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
-                                  author=author, committer=committer)
-        if not commit:
-            raise GbpError, "Failed to commit tree"
-        self.update_ref("refs/heads/%s" % branch, commit, cur)
-        return commit
-
-    def get_config(self, name):
-        """
-        Gets the config value associated with name
-
-        @param name: config value to get
-        @return: fetched config value
-        @rtype: string
-        """
-        value, ret = self.__git_getoutput('config', [ name ])
-        if ret: raise KeyError
-        return value[0][:-1] # first line with \n ending removed
-
-    def get_author_info(self):
-        """
-        Determine a sane values for author name and author email from git's
-        config and environment variables.
-
-        @return: name and email
-        @rtype: typle
-        """
-        try:
-           name =  self.get_config("user.email")
-        except KeyError:
-           name = os.getenv("USER")
-        try:
-           email =  self.get_config("user.email")
-        except KeyError:
-            email = os.getenv("EMAIL")
-        email = os.getenv("GIT_AUTHOR_EMAIL", email)
-        name = os.getenv("GIT_AUTHOR_NAME", name)
-        return (name, email)
-
-    def _get_branches(self, remote=False):
-        """
-        Get a list of branches
-
-        @param remote: whether to list local or remote branches
-        @type remote: bool
-        @return: local or remote branches
-        @rtype: list
-        """
-        args = [ '--format=%(refname:short)' ]
-        args += [ 'refs/remotes/' ] if remote else [ 'refs/heads/' ]
-        out = self.__git_getoutput('for-each-ref', args)[0]
-        return [ ref.strip() for ref in out ]
-
-    def get_remote_branches(self):
-        """
-        Get a list of remote branches
-
-        @return: remote branches
-        @rtype: list
-        """
-        return self._get_branches(remote=True)
-
-    def get_local_branches(self):
-        """
-        Get a list of local branches
-
-        @return: local branches
-        @rtype: list
-        """
-        return self._get_branches(remote=False)
-
-    def get_remote_repos(self):
-        """
-        Get all remote repositories
-
-        @return: remote repositories
-        @rtype: list of strings
-        """
-        out = self.__git_getoutput('remote')[0]
-        return [ remote.strip() for remote in out ]
-
-    def has_remote_repo(self, name):
-        """
-        Do we know about a remote named I{name}?
-
-        @param name: name of the remote repository
-        @type name: string
-        @return: C{True} if the remote repositore is known, C{False} otherwise
-        @rtype: bool
-        """
-        if name in self.get_remote_repos():
-            return True
-        else:
-            return False
-
-    def add_remote_repo(self, name, url, tags=True, fetch=False):
-        """
-        Add a tracked remote repository
-
-        @param name: the name to use for the remote
-        @type name: string
-        @param url: the url to add
-        @type url: string
-        @param tags: whether to fetch tags
-        @type tags: bool
-        @param fetch: whether to fetch immediately from the remote side
-        @type fetch: bool
-        """
-        args = [ "add" ]
-        args += [ '--tags' ] if tags else [ '--no-tags']
-        args += [ '--fetch' ] if fetch else []
-        args += [ name, url ]
-        self._git_command("remote", args)
-
-    def add_files(self, paths, force=False, index_file=None, work_tree=None):
-        """
-        Add files to a git repository
-
-        @param paths: list of files to add
-        @type paths: list or string
-        @param force: add files even if they would be ignored by .gitignore
-        @type force: bool
-        @param index_file: alternative index file to use
-        @param work_tree: alternative working tree to use
-        """
-        extra_env = {}
-
-        if type(paths) in [type(''), type(u'')]:
-            paths = [ paths ]
-
-        args = [ '-f' ] if force else []
-
-        if index_file:
-            extra_env['GIT_INDEX_FILE'] =  index_file
-
-        if work_tree:
-            extra_env['GIT_WORK_TREE'] = work_tree
-
-        self._git_command("add", args + paths, extra_env)
-
-
-    def remove_files(self, paths, verbose=False):
-        """
-        Remove files from the repository
-
-        @param paths: list of files to remove
-        @param paths: list or string
-        @param verbose: be verbose
-        @type verbose: bool
-        """
-        if type(paths) in [type(''), type(u'')]:
-            paths = [ paths ]
-
-        args =  [] if verbose else ['--quiet']
-        self._git_command("rm", args + paths)
-
-
-    def _commit(self, msg, args=[], author_info=None):
-        extra_env = author_info.get_author_env() if author_info else None
-        self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
-
-
-    def commit_staged(self, msg, author_info=None):
-        """
-        Commit currently staged files to the repository
-
-        @param msg: commit message
-        @type msg: string
-        @param author_info: authorship information
-        @type author_info: L{GitModifier}
-        """
-        self._commit(msg=msg, author_info=author_info)
-
-    def commit_all(self, msg, author_info=None):
-        """
-        Commit all changes to the repository
-        @param msg: commit message
-        @type msg: string
-        @param author_info: authorship information
-        @type author_info: L{GitModifier}
-        """
-        self._commit(msg=msg, args=['-a'], author_info=author_info)
-
-    def commit_files(self, files, msg, author_info=None):
-        """
-        Commit the given files to the repository
-
-        @param files: file or files to commit
-        @type files: string or list
-        @param msg: commit message
-        @type msg: string
-        @param author_info: authorship information
-        @type author_info: L{GitModifier}
-        """
-        if type(files) in [type(''), type(u'')]:
-            files = [ files ]
-        self._commit(msg=msg, args=files, author_info=author_info)
-
+#{ Patches
     def format_patches(self, start, end, output_dir):
         """
         Output the commits between start and end as patches in output_dir
@@ -982,6 +1024,7 @@ class GitRepository(object):
             args += [ '-p', strip ]
         args.append(patch)
         self._git_command("apply", args)
+#}
 
     def archive(self, format, prefix, output, treeish, **kwargs):
         args = [ '--format=%s' % format, '--prefix=%s' % prefix,
@@ -995,39 +1038,21 @@ class GitRepository(object):
         Cleanup unnecessary files and optimize the local repository
 
         param auto: only cleanup if required
-        param auto: bool
+        param auto: C{bool}
         """
         args = [ '--auto' ] if auto else []
         self._git_command("gc", args)
 
-    def fetch(self, repo=None):
-        """
-        Download objects and refs from another repository.
-
-        param repo: repository to fetch from
-        type repo: string
-        """
-        if repo:
-            args = [repo]
-
-        self._git_command("fetch", args)
-
-    def pull(self, repo=None, ff_only=False):
-        """
-        Fetch and merge from another repository
-
-        @param repo: repository to fetch from
-        @type repo: string
-        @param ff_only: only merge if this results in a fast forward merge
-        @type ff_only: bool
-        """
-        args = []
-        args += [ '--ff-only' ] if ff_only else []
-        args += [ repo ] if repo else []
-        self._git_command("pull", args)
+#{ Submodules
 
     def has_submodules(self):
-        """Does the repo have any submodules?"""
+        """
+        Does the repo have any submodules?
+
+        @return: C{True} if the repository has any submodules, C{False}
+            otherwise
+        @rtype: C{bool}
+        """
         if os.path.exists('.gitmodules'):
             return True
         else:
@@ -1039,6 +1064,7 @@ class GitRepository(object):
         Add a submodule
 
         @param repo_path: path to submodule
+        @type repo_path: C{str}
         """
         self._git_command("submodule", [ "add", repo_path ])
 
@@ -1048,8 +1074,11 @@ class GitRepository(object):
         Update all submodules
 
         @param init: whether to initialize the submodule if necessary
+        @type init: C{bool}
         @param recursive: whether to update submodules recursively
+        @type recursive: C{bool}
         @param fetch: whether to fetch new objects
+        @type fetch: C{bool}
         """
 
         if not self.has_submodules():
@@ -1095,15 +1124,17 @@ class GitRepository(object):
                                                       recursive=recursive)
         return submodules
 
+#{ Repository Creation
+
     @classmethod
     def create(klass, path, description=None, bare=False):
         """
         Create a repository at path
 
         @param path: where to create the repository
-        @type path: string
+        @type path: C{str}
         @return: git repository object
-        @rtype:GitRepository
+        @rtype: L{GitRepository}
         """
         abspath = os.path.abspath(path)
 
@@ -1127,15 +1158,15 @@ class GitRepository(object):
         Clone a git repository at I{remote} to I{path}
 
         @param path: where to clone the repository to
-        @type path: string
+        @type path: C{str}
         @param remote: URL to clone
-        @type remote: string
+        @type remote: C{str}
         @param depth: create a shallow clone of depth I{depth}
-        @type depth: int
+        @type depth: C{int}
         @param recursive: whether to clone submodules
-        @type recursive: bool
+        @type recursive: C{bool}
         @return: git repository object
-        @rtype:GitRepository
+        @rtype: L{GitRepository}
         """
         abspath = os.path.abspath(path)
         args = [ '--depth', depth ] if depth else []
@@ -1154,6 +1185,7 @@ class GitRepository(object):
         except OSError, err:
             raise GitRepositoryError, "Cannot clone Git repository %s to %s: %s " % (remote, abspath, err[1])
         return None
+#}
 
 
 class FastImport(object):
@@ -1264,7 +1296,7 @@ def tag_to_version(tag, format):
 
 
 def rfc822_date_to_git(rfc822_date):
-    """Parse a date in RFC822 format, and convert to a 'seconds tz' string.
+    """Parse a date in RFC822 format, and convert to a 'seconds tz' C{str}ing.
 
     >>> rfc822_date_to_git('Thu, 1 Jan 1970 00:00:01 +0000')
     '1 +0000'
