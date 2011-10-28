@@ -836,7 +836,7 @@ class GitRepository(object):
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
                    author={}, committer={}):
         """
-        Replace the current tip of branch 'branch' with the contents from 'unpack_dir'
+        Replace the current tip of branch I{branch} with the contents from I{unpack_dir}
 
         @param unpack_dir: content to add
         @type unpack_dir: C{str}
@@ -847,7 +847,7 @@ class GitRepository(object):
         @param other_parents: additional parents of this commit
         @type other_parents: C{list} of C{str}
         @param author: author information to use for commit
-        @type author: C{dict} with keys I{name}, I{email}, ${date}
+        @type author: C{dict} with keys I{name}, I{email}, I{date}
         @param committer: committer information to use for commit
         @type committer: C{dict} with keys I{name}, I{email}, I{date}
         """
