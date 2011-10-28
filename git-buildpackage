@@ -516,7 +516,7 @@ def main(argv):
 
             if options.prebuild:
                 RunAtCommand(options.prebuild, shell=True,
-                             extra_env={'GBP_GIT_DIR': repo.base_dir,
+                             extra_env={'GBP_GIT_DIR': repo.git_dir,
                                         'GBP_BUILD_DIR': build_dir})(dir=build_dir)
 
             setup_pbuilder(options)

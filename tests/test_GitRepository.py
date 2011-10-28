@@ -24,13 +24,13 @@ def test_create():
 
     Propeties tested:
          - L{gbp.git.GitRepository.path}
-         - L{gbp.git.GitRepository.base_dir}
+         - L{gbp.git.GitRepository.git_dir}
 
     >>> import os, gbp.git
     >>> repo = gbp.git.GitRepository.create(repo_dir)
     >>> repo.path == repo_dir
     True
-    >>> repo.base_dir == os.path.join(repo_dir, '.git')
+    >>> repo.git_dir == os.path.join(repo_dir, '.git')
     True
     >>> type(repo) == gbp.git.GitRepository
     True
@@ -331,7 +331,7 @@ def test_create_bare():
     >>> bare = gbp.git.GitRepository.create(bare_dir, bare=True, description="msg")
     >>> bare.path == bare_dir
     True
-    >>> bare.base_dir[:-1] == bare_dir
+    >>> bare.git_dir[:-1] == bare_dir
     True
     >>> type(bare) == gbp.git.GitRepository
     True

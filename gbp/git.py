@@ -190,12 +190,12 @@ class GitRepository(object):
 
     @property
     def path(self):
-        """The path to the repository"""
+        """The absolute path to the repository"""
         return self._path
 
     @property
-    def base_dir(self):
-        """Get the base of the repository"""
+    def git_dir(self):
+        """The absolute path to git's metadata"""
         return os.path.join(self.path, self._git_dir)
 
     @property
