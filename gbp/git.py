@@ -33,7 +33,9 @@ class GitRepositoryError(Exception):
 class GitModifier(object):
     """Stores authorship/comitter information"""
     def __init__(self, name=None, email=None, date=None):
-        self.__dict__.update(locals())
+        self.name = name
+        self.email = email
+        self.date = date
 
     def _get_env(self, who):
         """Get author or comitter information as env var dictionary"""
