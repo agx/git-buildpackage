@@ -22,7 +22,7 @@ def test_create():
     Methods tested:
          - L{gbp.git.GitRepository.create}
 
-    Propeties tested:
+    Properties tested:
          - L{gbp.git.GitRepository.path}
          - L{gbp.git.GitRepository.git_dir}
 
@@ -63,6 +63,9 @@ def test_add_files():
          - L{gbp.git.GitRepository.commit_all}
          - L{gbp.git.GitRepository.is_clean}
 
+    Properties tested:
+         - L{gbp.git.GitRepository.head}
+
     >>> import gbp.git, shutil
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), \
@@ -73,6 +76,9 @@ def test_add_files():
     >>> repo.commit_all(msg="foo")
     >>> repo.is_clean()[0]
     True
+    >>> h = repo.head
+    >>> len(h)
+    40
     """
 
 

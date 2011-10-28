@@ -215,6 +215,11 @@ class GitRepository(object):
         """The currently checked out branch"""
         return self.get_branch()
 
+    @property
+    def head(self):
+        """return the SHA1 of the current HEAD"""
+        return self.rev_parse('HEAD')
+
 #{ Branches and Merging
     def create_branch(self, branch, rev=None):
         """

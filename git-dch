@@ -143,11 +143,6 @@ def fixup_trailer(repo, git_author, dch_options):
     spawn_dch(msg='', author=author, email=email, dch_options=dch_options)
 
 
-def head_commit(repo):
-    """get the full sha1 of the last commit on HEAD"""
-    return repo.rev_parse('HEAD')
-
-
 def snapshot_version(version):
     """
     get the current release and snapshot version
@@ -216,7 +211,7 @@ def do_snapshot(changelog, repo, next_snapshot):
     Add new snapshot banner to most recent changelog section. The next snapshot
     number is calculated by eval()'ing next_snapshot
     """
-    commit = head_commit(repo)
+    commit = repo.head
 
     cp = parse_changelog(filename=changelog)
     (release, snapshot) = snapshot_version(cp['Version'])

@@ -321,13 +321,12 @@ def apply_and_commit_patch(repo, patch, topic=None):
         else:
             gbp.log.warn("Patch %s has no authorship information")
 
-    head = repo.rev_parse('HEAD')
     repo.apply_patch(patch)
     tree = repo.write_tree()
     msg = "%s\n\n%s" % (header['subject'], body)
     if topic:
         msg += "\nGbp-Pq-Topic: %s" % topic
-    commit = repo.commit_tree(tree, msg, [head], author=header)
+    commit = repo.commit_tree(tree, msg, [repo.head], author=header)
     repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch)
 
 
