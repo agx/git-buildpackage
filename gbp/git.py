@@ -563,14 +563,11 @@ class GitRepository(object):
         Is the repository empty?
 
         @return: True if the repositorydoesn't have any commits,
-                 False otherwise
+            False otherwise
         @rtype: C{bool}
         """
         # an empty repo has no branches:
-        if self.branch:
-            return False
-        else:
-            return True
+        return False if self.branch else True
 
     def rev_parse(self, name):
         """
