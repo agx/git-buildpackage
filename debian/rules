@@ -54,7 +54,9 @@ links_stamp:
 	
 apidocs: links_stamp
 	epydoc -v -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
-		gbp*.py git*.py gbp/ tests/test_Git*.py
+	    --url=https://honk.sigxcpu.org/piki/projects/git-buildpackage/ \
+	    --fail-on-docstring-warning \
+	    gbp*.py git*.py gbp/ tests/test_Git*.py
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
