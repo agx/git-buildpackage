@@ -551,14 +551,19 @@ class GitRepository(object):
             and Git's status message
         @rtype: C{tuple}
         """
+        if self.bare:
+            return (True, '')
+
         clean_msg = 'nothing to commit'
-        out = self.__git_getoutput('status')[0]
+        out, ret = self.__git_getoutput('status')
+        if ret:
+            raise GbpError("Can't get repository status")
         ret = False
         for line in out:
             if line.startswith('#'):
                 continue
             if line.startswith(clean_msg):
-                    ret = True
+                ret = True
             break
         return (ret, "".join(out))
 

@@ -343,6 +343,8 @@ def test_create_bare():
     True
     >>> bare.is_empty()
     True
+    >>> bare.is_clean()
+    (True, '')
     """
 
 def test_teardown():
