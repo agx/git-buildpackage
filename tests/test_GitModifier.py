@@ -7,8 +7,8 @@ Test L{gbp.git.GitModifier}
 def test_author():
     """
     Methods tested:
-         - L{gbp.git.GitModifer.get_author_env}
-         - L{gbp.git.GitModifer.get_comitter_env}
+         - L{gbp.git.GitModifier.get_author_env}
+         - L{gbp.git.GitModifier.get_committer_env}
 
     >>> import gbp.git
     >>> modifier = gbp.git.GitModifier("foo", "bar")
