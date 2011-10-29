@@ -146,9 +146,8 @@ class GitRepository(object):
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env, cwd=cwd)
         while popen.poll() == None:
             output += popen.stdout.readlines()
-        ret = popen.poll()
         output += popen.stdout.readlines()
-        return output, ret
+        return output, popen.returncode
 
     def __git_inout(self, command, args, input, extra_env=None):
         """
