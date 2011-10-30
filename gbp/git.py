@@ -79,6 +79,32 @@ class GitModifier(object):
         return self._get_env('committer')
 
 
+class GitCommit(object):
+    """A git commit"""
+    sha1_re = re.compile(r'[0-9a-f]{40}$')
+
+    @staticmethod
+    def is_sha1(value):
+        """
+        Is I{value} a valid 40 digit SHA1?
+
+        >>> GitCommit.is_sha1('asdf')
+        False
+        >>> GitCommit.is_sha1('deadbeef')
+        False
+        >>> GitCommit.is_sha1('17975594b2d42f2a3d144a9678fdf2c2c1dd96a0')
+        True
+        >>> GitCommit.is_sha1('17975594b2d42f2a3d144a9678fdf2c2c1dd96a0toolong')
+        False
+
+        @param value: the value to check
+        @type value: C{str}
+        @return: C{True} if I{value} is a 40 digit SHA1, C{False} otherwise.
+        @rtype: C{bool}
+        """
+        return True if GitCommit.sha1_re.match(value) else False
+
+
 class GitRepository(object):
     """
     Represents a git repository at I{path}. It's currently assumed that the git
@@ -528,7 +554,6 @@ class GitRepository(object):
         args = [ '-l', pattern ] if pattern else []
         return [ line.strip() for line in self.__git_getoutput('tag', args)[0] ]
 #}
-
     def force_head(self, commit, hard=False):
         """
         Force HEAD to a specific commit
@@ -537,11 +562,18 @@ class GitRepository(object):
         @param hard: also update the working copy
         @type hard: C{bool}
         """
-        args = ['--quiet']
-        if hard:
-            args += [ '--hard' ]
-        args += [ commit, '--' ]
-        self._git_command("reset", args)
+        if not GitCommit.is_sha1(commit):
+            commit = self.rev_parse(commit)
+
+        if self.bare:
+            ref = "refs/heads/%s" % self.get_branch()
+            self._git_command("update-ref", [ ref, commit ])
+        else:
+            args = ['--quiet']
+            if hard:
+                args += [ '--hard' ]
+            args += [ commit, '--' ]
+            self._git_command("reset", args)
 
     def is_clean(self):
         """
