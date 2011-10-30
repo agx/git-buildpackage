@@ -146,6 +146,14 @@ def move_tag_stamp(repo, format, version):
     repo.move_tag(old, new)
 
 
+def set_bare_repo_options(options):
+    """Modify options for import into a bare repository"""
+    if options.pristine_tar:
+        gbp.log.info("Bare repository: setting %s option"
+                      % (["", " '--no-pristine-tar'"][options.pristine_tar], ))
+        options.pristine_tar = False
+
+
 def parse_args(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
@@ -246,6 +254,9 @@ def main(argv):
                 gbp.log.info("No git repository found, creating one.")
                 repo = GitRepository.create(src.pkg)
                 os.chdir(repo.path)
+
+            if repo.bare:
+                set_bare_repo_options(options)
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
             upstream = UpstreamSource(src.tgz)
