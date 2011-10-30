@@ -253,6 +253,16 @@ def repack_source(source, name, version, tmpdir, filters):
     return (repacked, tmpdir)
 
 
+def set_bare_repo_options(options):
+    """Modify options for import into a bare repository"""
+    if options.pristine_tar or options.merge:
+        gbp.log.info("Bare repository: setting %s%s options"
+                      % (["", " '--no-pristine-tar'"][options.pristine_tar],
+                         ["", " '--no-merge'"][options.merge]))
+        options.pristine_tar = False
+        options.merge = False
+
+
 def parse_args(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
@@ -347,6 +357,9 @@ def main(argv):
         if not clean and not is_empty:
             gbp.log.err("Repository has uncommitted changes, commit these first: ")
             raise GbpError, out
+
+        if repo.bare:
+            set_bare_repo_options(options)
 
         if not source.is_dir:
             tmpdir = tempfile.mkdtemp(dir='../')
