@@ -9,7 +9,7 @@ import gbp.log
 import gbp.git
 import gbp.command_wrappers
 
-import git_buildpackage
+from gbp.scripts import buildpackage
 
 top = None
 repo = None
@@ -97,7 +97,7 @@ def test_dump_tree():
     """Dump the repository and check if files exist"""
     dumpdir = os.path.join(tmpdir, "dump")
     os.mkdir(dumpdir)
-    assert git_buildpackage.dump_tree(repo, dumpdir, "master", True)
+    assert buildpackage.dump_tree(repo, dumpdir, "master", True)
     assert os.path.exists(os.path.join(dumpdir, testfile_name))
     assert os.path.exists(os.path.join(dumpdir, submodules[0].name, testfile_name))
 
@@ -105,7 +105,7 @@ def test_dump_tree():
 def test_create_tarball():
     """Create an upstream tarball"""
     cp = { "Source": "test", "Upstream-Version": "0.1" }
-    assert git_buildpackage.git_archive(repo,
+    assert buildpackage.git_archive(repo,
                                         cp,
                                         tmpdir,
                                         "HEAD",

@@ -1,4 +1,3 @@
-#!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
 # (C) 2011 Guido Günther <agx@sigxcpu.org>

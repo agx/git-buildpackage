@@ -22,8 +22,7 @@ class TestUnpack:
             assert os.path.exists(target), "%s does not exist" % target
 
     def _create_archive(self, comp):
-        filelist = [ os.path.basename(f) for f in
-                     glob.glob(os.path.join(self.top, "g*-*")) ]
+        filelist = [ 'README', 'setup.py' ]
 
         name = "%s_0.1.tar.%s" % (self.archive_prefix, comp)
         t = tarfile.open(name= name, mode='w:%s' % comp)
@@ -70,7 +69,7 @@ class TestUnpack:
             self._check_files(archive[1], comp)
 
     def test_upstream_source_unpack_filtered(self):
-        exclude = "git-buildpackage"
+        exclude = "README"
 
         for (comp, archive) in self.archives.iteritems():
             source = gbp.deb.UpstreamSource(archive[0])

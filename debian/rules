@@ -43,30 +43,24 @@ $(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
 
-docs/git-pbuilder.1: git-pbuilder
+docs/git-pbuilder.1: bin/git-pbuilder
 	pod2man $< $@
 
-links_stamp:
-	for c in $(COMMANDS); do \
-		ln -s $$c $$(echo $$c | sed -e 's,-,_,g').py; \
-	done
-	touch links_stamp
-	
-apidocs: links_stamp
+apidocs:
 	epydoc -v -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
 	    --url=https://honk.sigxcpu.org/piki/projects/git-buildpackage/ \
-	    --fail-on-docstring-warning \
-	    gbp*.py git*.py gbp/ tests/test_Git*.py
+	    --fail-on-docstring-warning gbp/ tests/test_Git*.py
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q git*.py gbp*.py
+	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp
 
-checks: links_stamp pychecker
+checks: pychecker
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
 	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
+	export PYTHONPATH=$$(pwd);                      \
 	nosetests --exe --with-doctest --with-coverage --cover-package=gbp
 endif
 

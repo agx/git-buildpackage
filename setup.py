@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (C) 2006,2007 Guido Guenther <agx@sigxcpu.org>
+# Copyright (C) 2006-2011 Guido Guenther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,9 +21,16 @@ from distutils.core import setup
 setup(name = "git_build_package",
       author = 'Guido Guenther',
       author_email = 'agx@sigxcpu.org',
-      scripts = [ 'git-buildpackage', 'git-import-dsc', 'git-import-orig', 'git-dch', 'git-import-dscs',
-                  'gbp-pq', 'gbp-pull', 'gbp-clone', 'git-pbuilder', 'gbp-create-remote-repo'],
-      packages = [ 'gbp' ],
-      data_files = [("/etc/git-buildpackage/", ["gbp.conf" ]),],
+      scripts = [ 'bin/git-buildpackage',
+                  'bin/git-import-dsc',
+                  'bin/git-import-orig',
+                  'bin/git-dch',
+                  'bin/git-import-dscs',
+                  'bin/gbp-pq',
+                  'bin/gbp-pull',
+                  'bin/gbp-clone',
+                  'bin/gbp-create-remote-repo',
+                  'bin/git-pbuilder'],
+      packages = [ 'gbp', 'gbp.scripts' ],
+      data_files = [("/etc/git-buildpackage/", ["gbp.conf"]),],
 )
-
