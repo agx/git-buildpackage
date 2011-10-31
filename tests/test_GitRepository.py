@@ -333,6 +333,19 @@ def test_pull():
     >>> clone.pull()
     """
 
+def test_fetch():
+    """
+    Fetch from a remote repository
+
+    Methods tested:
+         - L{gbp.git.GitRepository.fetch}
+
+    >>> import gbp.git, os
+    >>> d = os.path.join(clone_dir, 'gbp_%s_test_repo' % __name__)
+    >>> clone = gbp.git.GitRepository(d)
+    >>> clone.fetch()
+    """
+
 def test_create_bare():
     """
     Create a bare repository

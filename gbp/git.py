@@ -743,8 +743,7 @@ class GitRepository(object):
         @param repo: repository to fetch from
         @type repo: C{str}
         """
-        if repo:
-            args = [repo]
+        args = [repo] if repo else []
 
         self._git_command("fetch", args)
 
