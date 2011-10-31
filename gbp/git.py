@@ -1216,9 +1216,10 @@ class GitRepository(object):
         return None
 
     @classmethod
-    def clone(klass, path, remote, depth=0, recursive=False, mirror=False, bare=False):
+    def clone(klass, path, remote, depth=0, recursive=False, mirror=False,
+              bare=False, auto_name=True):
         """
-        Clone a git repository at I{remote} to I{path}
+        Clone a git repository at I{remote} to I{path}.
 
         @param path: where to clone the repository to
         @type path: C{str}
@@ -1228,24 +1229,37 @@ class GitRepository(object):
         @type depth: C{int}
         @param recursive: whether to clone submodules
         @type recursive: C{bool}
+        @param auto_name: If I{True} create a directory below I{path} based on
+            the I{remote}s name. Otherwise create the repo directly at I{path}.
+        @type auto_name: C{bool}
         @return: git repository object
         @rtype: L{GitRepository}
         """
         abspath = os.path.abspath(path)
+        if auto_name:
+            name = None
+        else:
+            abspath, name = abspath.rsplit('/', 1)
+
         args =  [ '--quiet' ]
         args += [ '--depth', depth ] if depth else []
         args += [ '--recursive' ] if recursive else []
         args += [ '--mirror' ] if mirror else []
         args += [ '--bare' ] if bare else []
+        args += [ remote ]
+        args += [ name ] if name else []
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
 
-            GitCommand("clone", args + [remote], cwd=abspath)()
-            (clone, dummy) = os.path.splitext(remote.rstrip('/').rsplit('/',1)[1])
-            if mirror or bare:
-                clone = "%s.git" % clone
-            return klass(os.path.join(abspath, clone))
+            GitCommand("clone", args, cwd=abspath)()
+            if not name:
+                name = remote.rstrip('/').rsplit('/',1)[1]
+                if (mirror or bare):
+                    name = "%s.git" % name
+                elif name.endswith('.git'):
+                    name = name[:-4]
+            return klass(os.path.join(abspath, name))
         except OSError, err:
             raise GitRepositoryError, "Cannot clone Git repository %s to %s: %s " % (remote, abspath, err[1])
         return None
