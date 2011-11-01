@@ -24,6 +24,7 @@ import gbp.command_wrappers as gbpc
 from gbp.deb import parse_dsc, DscFile, DpkgCompareVersions
 from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
+from gbp.scripts import import_dsc
 import gbp.log
 
 class DscCompareVersions(DpkgCompareVersions):
@@ -34,17 +35,12 @@ class DscCompareVersions(DpkgCompareVersions):
         return DpkgCompareVersions.__call__(self, dsc1.version, dsc2.version)
 
 
-class GitImportDsc(gbpc.Command):
-    # git-import-dsc should reside in the same directory as git-import-dscs
-    # so we can reuse the full path from the later
-    cmd = os.path.abspath(__file__[:-1])
+class GitImportDsc(object):
     def __init__(self, args):
-        if not os.access(self.cmd, os.X_OK):
-            raise GbpError, "%s not found - can't import packages" % self.cmd
-        gbpc.Command.__init__(self, self.cmd, args)
+        self.args = args
 
     def importdsc(self, dsc):
-        gbpc.Command.__call__(self, [dsc.dscfile])
+        import_dsc.main(['git-import-dsc'] + self.args + [dsc.dscfile])
 
 
 def fetch_snapshots(pkg, downloaddir):
