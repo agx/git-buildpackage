@@ -456,7 +456,8 @@ class GitRepository(object):
         args = []
         args += [ '-m', msg ] if msg else []
         if sign:
-            args += [ '-u', keyid ] if keyid else [ '-s' ]
+            args += [ '-s' ]
+            args += [ '-u', keyid ] if keyid else []
         args += [ name ]
         args += [ commit ] if commit else []
         self._git_command("tag", args)
