@@ -1,5 +1,6 @@
 #!/usr/bin/python
-# Copyright (C) 2006-2011 Guido Guenther <agx@sigxcpu.org>
+# vim: set fileencoding=utf-8 :
+# Copyright (C) 2006-2011 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,10 +17,10 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # END OF COPYRIGHT #
 
-from distutils.core import setup
+from setuptools import setup
 
-setup(name = "git_build_package",
-      author = 'Guido Guenther',
+setup(name = "gbp",
+      author = u'Guido Günther',
       author_email = 'agx@sigxcpu.org',
       scripts = [ 'bin/git-buildpackage',
                   'bin/git-import-dsc',
@@ -33,4 +34,5 @@ setup(name = "git_build_package",
                   'bin/git-pbuilder'],
       packages = [ 'gbp', 'gbp.scripts' ],
       data_files = [("/etc/git-buildpackage/", ["gbp.conf"]),],
+      setup_requires=['nose>=1.0', 'coverage>=3.4'],
 )
