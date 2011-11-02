@@ -9,7 +9,6 @@ docs/manual-html/
 docs/manpage.links
 docs/manpage.refs
 docs/version.ent
-docs/apidocs/
 
 debian/git-buildpackage.*.debhelper
 debian/git-buildpackage.debhelper.*

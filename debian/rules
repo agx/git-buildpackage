@@ -47,9 +47,7 @@ docs/git-pbuilder.1: bin/git-pbuilder
 	pod2man $< $@
 
 apidocs:
-	epydoc -v -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
-	    --url=https://honk.sigxcpu.org/piki/projects/git-buildpackage/ \
-	    --fail-on-docstring-warning gbp/ tests/test_Git*.py
+	epydoc --config=setup.cfg
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
@@ -77,6 +75,6 @@ binary-post-install/git-buildpackage::
 clean::
 	-rm git_*.py gbp_*.py gbp/gbp_version.py links_stamp
 	-rm docs/*.1 docs/manpage.* $(VERSION_ENT) git-pbuilder.1
-	-rm -r docs/manual-html/ docs/apidocs/
+	-rm -r docs/manual-html/
 
 .PHONY: checks
