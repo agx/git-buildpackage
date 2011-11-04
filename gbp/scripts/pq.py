@@ -344,8 +344,12 @@ def drop_pq(repo, branch):
 
 
 def rebase_pq(repo, branch):
-    switch_to_pq_branch(repo, branch)
-    GitCommand("rebase")([branch])
+    if is_pq_branch(branch):
+        base = pq_branch_base(branch)
+    else:
+        switch_to_pq_branch(repo, branch)
+        base = branch
+    GitCommand("rebase")([base])
 
 
 def main(argv):
