@@ -59,8 +59,12 @@ def fast_forward_branch(branch, repo, options):
 
     if update:
         gbp.log.info("Updating '%s'" % branch)
-        repo.set_branch(branch)
-        repo.merge(remote)
+        if repo.branch == branch:
+            repo.merge(remote)
+        else:
+            sha1 = repo.rev_parse(remote)
+            repo.update_ref("refs/heads/%s" % branch, sha1,
+                            msg="gbp: forward %s to %s" % (branch, remote))
     return update
 
 def main(argv):
