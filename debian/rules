@@ -1,11 +1,5 @@
 #!/usr/bin/make -f
   
-DEB_PYTHON2_MODULE_PACKAGES = git-buildpackage
-DEB_PYTHON_CLEAN_ARGS = --all
-
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/python-distutils.mk
-
 EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
@@ -18,31 +12,36 @@ DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 GBP_VERSION=gbp/gbp_version.py
 
+%:
+	dh $@ --with python2
 
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-pychecker:
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp gbp.scripts gbp.git
-
-checks: pychecker
+override_dh_auto_test:
+	dh_auto_test
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
 	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
+	PYTHONPATH=.					\
 	python setup.py nosetests
-endif
+	
+	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp gbp.scripts gbp.git
 
-$(GBP_VERSION): debian/changelog
-	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)
-
-build/git-buildpackage:: $(GBP_VERSION) checks
+override_dh_auto_build: $(GBP_VERSION)
+	dh_auto_build
 	epydoc --config=setup.cfg
 	make -C docs/
 
-binary-post-install/git-buildpackage::
+override_dh_auto_install:
+	dh_auto_install
 	dh_bash-completion
 
-clean::
+voerride_dh_auto_clean:
+	dh_auto_clean
 	make -C docs/ clean
 	-rm gbp/gbp_version.py
 
-.PHONY: checks
+override_dh_compress:
+	dh_compress --exclude=usr/share/doc/git-buildpackage/examples/
+
+$(GBP_VERSION): debian/changelog
+	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)

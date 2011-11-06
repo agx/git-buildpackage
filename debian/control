@@ -2,9 +2,9 @@ Source: git-buildpackage
 Section: vcs
 Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
-Build-Depends: cdbs (>= 0.4.90~), debhelper (>= 5), python (>> 2.6.6-3~),
+Build-Depends: debhelper (>= 7.0.50~), python (>> 2.6.6-3~),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil, python-nose,
- bash-completion, perl, python-epydoc, python-coverage,
+ bash-completion, perl, python-epydoc, python-coverage, python-setuptools,
 # For the testsuite
  git-core, bzip2, unzip
 Standards-Version: 3.9.2
