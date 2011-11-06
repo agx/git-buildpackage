@@ -6,16 +6,6 @@ DEB_PYTHON_CLEAN_ARGS = --all
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
-COMMANDS = git-buildpackage  \
-           git-import-dsc    \
-           git-import-dscs   \
-           git-import-orig   \
-           git-dch           \
-           gbp-pull          \
-           gbp-clone         \
-           gbp-pq            \
-           gbp-create-remote-repo
-
 EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
@@ -25,29 +15,9 @@ EXAMPLE_SCRIPTS=\
 
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
-SGML_MANPAGES=$(patsubst %,docs/%.1,$(COMMANDS))
-POD_MANPAGES=docs/git-pbuilder.1
-MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
-MANUAL=docs/manual-html
 PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 GBP_VERSION=gbp/gbp_version.py
-VERSION_ENT=docs/version.ent
 
-docs/%.1: docs/man.%.sgml
-	docbook2man -o docs/ $<
-
-docs/manual.sgml: docs/version.ent
-
-$(MANUAL): docs/manual.sgml docs/chapters/*.sgml docs/manpages/*.sgml
-	docbook-2-html -s local $<
-	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
-
-
-docs/git-pbuilder.1: bin/git-pbuilder
-	pod2man $< $@
-
-apidocs:
-	epydoc --config=setup.cfg
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
@@ -64,17 +34,15 @@ endif
 $(GBP_VERSION): debian/changelog
 	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)
 
-$(VERSION_ENT): debian/changelog
-	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' >  $(VERSION_ENT)
-
-build/git-buildpackage:: $(MANPAGES) $(MANUAL) $(GBP_VERSION) checks apidocs
+build/git-buildpackage:: $(GBP_VERSION) checks
+	epydoc --config=setup.cfg
+	make -C docs/
 
 binary-post-install/git-buildpackage::
 	dh_bash-completion
 
 clean::
-	-rm git_*.py gbp_*.py gbp/gbp_version.py links_stamp
-	-rm docs/*.1 docs/manpage.* $(VERSION_ENT) git-pbuilder.1
-	-rm -r docs/manual-html/
+	make -C docs/ clean
+	-rm gbp/gbp_version.py
 
 .PHONY: checks
