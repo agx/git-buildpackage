@@ -3,6 +3,7 @@
 .coverage
 gbp/gbp_version.py
 build/
+gbp.egg-info/
 
 docs/*.1
 docs/manual-html/
