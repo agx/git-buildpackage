@@ -1247,10 +1247,10 @@ class FastImport(object):
         try:
             self._fi = subprocess.Popen([ 'git', 'fast-import', '--quiet'], stdin=subprocess.PIPE)
             self._out = self._fi.stdin
-        except OSError, err:
-            raise GbpError, "Error spawning git fast-import: %s", err
-        except ValueError, err:
-            raise GbpError, "Invalid argument when spawning git fast-import: %s", err
+        except OSError as err:
+            raise GbpError("Error spawning git fast-import: %s" % err)
+        except ValueError as err:
+            raise GbpError("Invalid argument when spawning git fast-import: %s" % err)
 
     def _do_data(self, fd, size):
         self._out.write("data %s\n" % size)
