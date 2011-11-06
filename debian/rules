@@ -51,7 +51,7 @@ apidocs:
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 pychecker:
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp
+	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp gbp.scripts gbp.git
 
 checks: pychecker
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
