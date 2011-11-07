@@ -750,7 +750,8 @@ class GitRepository(object):
         @param repo: repository to fetch from
         @type repo: C{str}
         """
-        args = [repo] if repo else []
+        args =  [ '--quiet' ]
+        args += [repo] if repo else []
 
         self._git_command("fetch", args)
 
@@ -1222,7 +1223,8 @@ class GitRepository(object):
         @rtype: L{GitRepository}
         """
         abspath = os.path.abspath(path)
-        args = [ '--depth', depth ] if depth else []
+        args =  [ '--quiet' ]
+        args += [ '--depth', depth ] if depth else []
         args += [ '--recursive' ] if recursive else []
         args += [ '--mirror' ] if mirror else []
         args += [ '--bare' ] if bare else []
