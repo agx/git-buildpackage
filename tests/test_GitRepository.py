@@ -368,6 +368,37 @@ def test_create_bare():
     (True, '')
     """
 
+def test_checkout():
+    """
+    Checkout treeishs
+
+    Methods tested:
+         - L{gbp.git.GitRepository.checkout}
+         - L{gbp.git.GitRepository.get_branch}
+         - L{gbp.git.GitRepository.set_branch}
+         - L{gbp.git.GitRepository.rev_parse}
+
+    Properties tested:
+         - L{gbp.git.GitRepository.branch}
+         - L{gbp.git.GitRepository.tags}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.checkout('master')
+    >>> repo.branch
+    'master'
+    >>> sha1 = repo.rev_parse('master')
+    >>> repo.checkout(sha1)
+    >>> repo.branch
+    >>> repo.get_branch()
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Currently not on a branch
+    >>> tag = repo.tags[0]
+    >>> repo.checkout(tag)
+    >>> repo.branch
+    """
+
 def test_teardown():
     """
     Perform the teardown

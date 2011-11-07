@@ -633,6 +633,15 @@ class GitRepository(object):
         return sha[0].strip()
 
 #{ Trees
+    def checkout(self, treeish):
+        """
+        Checkout treeish
+
+        @param treeish: the treeish to check out
+        @type treeish: C{str}
+        """
+        self._git_command("checkout", ["--quiet", treeish])
+
     def has_treeish(self, treeish):
         """
         Check if the repository has the treeish object I{treeish}.
