@@ -10,7 +10,6 @@ EXAMPLE_SCRIPTS=\
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
 PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
-GBP_VERSION=gbp/gbp_version.py
 
 %:
 	dh $@ --with python2
@@ -26,7 +25,7 @@ override_dh_auto_test:
 	
 	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp gbp.scripts gbp.git
 
-override_dh_auto_build: $(GBP_VERSION)
+override_dh_auto_build:
 	dh_auto_build
 	epydoc --config=setup.cfg
 	make -C docs/
@@ -38,10 +37,8 @@ override_dh_auto_install:
 voerride_dh_auto_clean:
 	dh_auto_clean
 	make -C docs/ clean
-	-rm gbp/gbp_version.py
+	-rm gbp/version.py
 
 override_dh_compress:
 	dh_compress --exclude=usr/share/doc/git-buildpackage/examples/
 
-$(GBP_VERSION): debian/changelog
-	echo 'gbp_version="$(DEB_VERSION)"' > $(GBP_VERSION)

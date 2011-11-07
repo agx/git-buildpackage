@@ -1,7 +1,7 @@
 *.pyc
 .noseids
 .coverage
-gbp/gbp_version.py
+gbp/version.py
 build/
 gbp.egg-info/
 

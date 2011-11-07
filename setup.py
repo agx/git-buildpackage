@@ -17,9 +17,32 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # END OF COPYRIGHT #
 
+import subprocess
 from setuptools import setup
 
+
+def fetch_version():
+    """Get version from debian changelog and write it to gbp/version.py"""
+    version = "0.0"
+
+    try:
+        popen = subprocess.Popen('dpkg-parsechangelog', stdout=subprocess.PIPE)
+        out, ret = popen.communicate()
+        for line in out.split('\n'):
+            if line.startswith('Version:'):
+                version = line.split(' ')[1].strip()
+                break
+    except OSError:
+        pass # Failing is fine, we just can't print the version then
+
+    with file('gbp/version.py', 'w') as f:
+        f.write('gbp_version="%s"\n' % version)
+
+    return version
+
+
 setup(name = "gbp",
+      version = fetch_version(),
       author = u'Guido Günther',
       author_email = 'agx@sigxcpu.org',
       scripts = [ 'bin/git-buildpackage',

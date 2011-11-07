@@ -21,7 +21,7 @@ from ConfigParser import SafeConfigParser
 from copy import copy
 import os.path
 try:
-    from gbp.gbp_version import gbp_version
+    from gbp.version import gbp_version
 except ImportError:
     gbp_version = "[Unknown version]"
 import gbp.tristate
