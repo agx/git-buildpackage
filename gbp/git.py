@@ -238,7 +238,10 @@ class GitRepository(object):
     @property
     def branch(self):
         """The currently checked out branch"""
-        return self.get_branch()
+        try:
+            return self.get_branch()
+        except GitRepositoryError:
+            return None
 
     @property
     def head(self):
@@ -284,7 +287,10 @@ class GitRepository(object):
         @return: current branch
         @rtype: C{str}
         """
-        out, dummy = self.__git_getoutput('symbolic-ref', [ 'HEAD' ])
+        out, ret = self.__git_getoutput('symbolic-ref', [ 'HEAD' ])
+        if ret:
+            raise GitRepositoryError("Currently not on a branch")
+
         ref = out[0][:-1]
         # Check if ref really exists
         failed = self.__git_getoutput('show-ref', [ ref ])[1]
