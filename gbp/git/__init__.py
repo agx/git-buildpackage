@@ -19,9 +19,9 @@
 import re
 import subprocess
 import os.path
-from command_wrappers import (GitCommand, copy_from)
-from errors import GbpError
-import log
+from gbp.command_wrappers import (GitCommand, copy_from)
+from gbp.errors import GbpError
+import gbp.log as log
 import dateutil.parser
 import calendar
 

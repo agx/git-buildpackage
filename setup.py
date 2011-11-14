@@ -55,7 +55,7 @@ setup(name = "gbp",
                   'bin/gbp-clone',
                   'bin/gbp-create-remote-repo',
                   'bin/git-pbuilder'],
-      packages = [ 'gbp', 'gbp.scripts' ],
+      packages = [ 'gbp', 'gbp.scripts', 'gbp.git' ],
       data_files = [("/etc/git-buildpackage/", ["gbp.conf"]),],
       setup_requires=['nose>=1.0', 'coverage>=3.4'],
 )
