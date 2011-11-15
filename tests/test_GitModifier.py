@@ -20,4 +20,8 @@ def test_author():
     {'GIT_AUTHOR_EMAIL': 'bar', 'GIT_AUTHOR_NAME': 'foo'}
     >>> modifier.get_committer_env()
     {'GIT_COMMITTER_NAME': 'foo', 'GIT_COMMITTER_EMAIL': 'bar'}
+    >>> modifier._get_env('foo')
+    Traceback (most recent call last):
+    ...
+    GitModifierError: Neither comitter nor author
     """

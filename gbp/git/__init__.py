@@ -25,59 +25,12 @@ import gbp.log as log
 import dateutil.parser
 import calendar
 
-class GitRepositoryError(Exception):
+from gbp.git.modifier import GitModifier
+from gbp.git.errors import GitError
+
+class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
     pass
-
-
-class GitModifier(object):
-    """Stores authorship/comitter information"""
-    def __init__(self, name=None, email=None, date=None):
-        self.name = name
-        self.email = email
-        self.date = date
-
-    def _get_env(self, who):
-        """Get author or comitter information as env var dictionary"""
-        who = who.upper()
-        if who not in ['AUTHOR', 'COMMITTER']:
-            raise GitRepository("Neither comitter nor author")
-
-        extra_env = {}
-        if self.name:
-            extra_env['GIT_%s_NAME' % who] = self.name
-        if self.email:
-            extra_env['GIT_%s_EMAIL' % who] = self.email
-        if self.date:
-            extra_env['GIT_%s_DATE' % who] = self.date
-        return extra_env
-
-    def get_author_env(self):
-        """
-        Get env vars for authorship information
-
-        >>> g = GitModifier("foo", "bar")
-        >>> g.get_author_env()
-        {'GIT_AUTHOR_EMAIL': 'bar', 'GIT_AUTHOR_NAME': 'foo'}
-
-        @return: Author information suitable to use as environment variables
-        @rtype: C{dict}
-        """
-        return self._get_env('author')
-
-    def get_committer_env(self):
-        """
-        Get env vars for comitter information
-
-        >>> g = GitModifier("foo", "bar")
-        >>> g.get_committer_env()
-        {'GIT_COMMITTER_NAME': 'foo', 'GIT_COMMITTER_EMAIL': 'bar'}
-
-        @return: Commiter information suitable to use as environment variables
-        @rtype: C{dict}
-        """
-        return self._get_env('committer')
-
 
 class GitCommit(object):
     """A git commit"""
