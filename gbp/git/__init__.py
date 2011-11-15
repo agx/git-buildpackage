@@ -26,36 +26,12 @@ import dateutil.parser
 import calendar
 
 from gbp.git.modifier import GitModifier
+from gbp.git.commit import GitCommit
 from gbp.git.errors import GitError
 
 class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
     pass
-
-class GitCommit(object):
-    """A git commit"""
-    sha1_re = re.compile(r'[0-9a-f]{40}$')
-
-    @staticmethod
-    def is_sha1(value):
-        """
-        Is I{value} a valid 40 digit SHA1?
-
-        >>> GitCommit.is_sha1('asdf')
-        False
-        >>> GitCommit.is_sha1('deadbeef')
-        False
-        >>> GitCommit.is_sha1('17975594b2d42f2a3d144a9678fdf2c2c1dd96a0')
-        True
-        >>> GitCommit.is_sha1('17975594b2d42f2a3d144a9678fdf2c2c1dd96a0toolong')
-        False
-
-        @param value: the value to check
-        @type value: C{str}
-        @return: C{True} if I{value} is a 40 digit SHA1, C{False} otherwise.
-        @rtype: C{bool}
-        """
-        return True if GitCommit.sha1_re.match(value) else False
 
 
 class GitRepository(object):
