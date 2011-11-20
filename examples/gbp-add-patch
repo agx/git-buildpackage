@@ -94,8 +94,8 @@ def build_commit_msg(repo, patch, options):
     thanks = ''
     closes = ''
 
-    author, dummy = repo.get_author_info()
-    if author != patch.author_name():
+    author = repo.get_author_info()
+    if author.name != patch.author_name():
         thanks = "Thanks: %s" % patch.author_name()
 
     for line in patch.body.split('\n'):

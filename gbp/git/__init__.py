@@ -623,7 +623,7 @@ class GitRepository(object):
         config and environment variables.
 
         @return: name and email
-        @rtype: C{tuple}
+        @rtype: L{GitModifier}
         """
         try:
            name =  self.get_config("user.email")
@@ -635,7 +635,7 @@ class GitRepository(object):
             email = os.getenv("EMAIL")
         email = os.getenv("GIT_AUTHOR_EMAIL", email)
         name = os.getenv("GIT_AUTHOR_NAME", name)
-        return (name, email)
+        return GitModifier(name, email)
 
 #{ Remote Repositories
 
