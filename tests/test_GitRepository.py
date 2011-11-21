@@ -116,6 +116,20 @@ def test_create_branch():
     >>> repo.create_branch("foo")
     """
 
+def test_delete_branch():
+    """
+    Create a branch named I{foo2} and delete it
+
+    Methods tested:
+         - L{gbp.git.GitRepository.create_branch}
+         - L{gbp.git.GitRepository.delete_branch}
+
+    >>> import gbp.git, shutil
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.create_branch("bar")
+    >>> repo.delete_branch("bar")
+    """
+
 
 def test_set_branch():
     """

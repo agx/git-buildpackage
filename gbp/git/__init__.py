@@ -190,10 +190,9 @@ class GitRepository(object):
 
         If rev is None the branch starts form the current HEAD.
         """
-        args = [ branch ]
-        args += [ rev ] if rev else []
-
-        self._git_command("branch", args)
+        args = GitArgs(branch)
+        args.add_true(rev, rev)
+        self._git_command("branch", args.args)
 
     def delete_branch(self, branch, remote=False):
         """
@@ -204,11 +203,12 @@ class GitRepository(object):
         @param remote: delete a remote branch
         @param remote: C{bool}
         """
-        args = [ "-D" ]
-        args += [ "-r" ] if remote else []
+        args = GitArgs('-D')
+        args.add_true(remote, '-r')
+        args.add(branch)
 
         if self.branch != branch:
-            self._git_command("branch", args + [branch])
+            self._git_command("branch", args.args)
         else:
             raise GitRepositoryError, "Can't delete the branch you're on"
 
