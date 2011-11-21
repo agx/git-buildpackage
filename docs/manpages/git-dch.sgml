@@ -41,6 +41,8 @@
 	<arg><option>--qa</option></arg>
 	<arg><option>--team</option></arg>
       </group>
+      <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
+      <arg><option>--force-distribution</option></arg>
       <arg><option>--[no-]full</option></arg>
       <arg><option>--[no-]meta</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
@@ -219,6 +221,23 @@
 	  <para>Increment the Debian release number for a Debian QA Team
           upload, and add a QA upload changelog comment.</para>
         </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--distribution=</option><replaceable>name</replaceable>
+	</term>
+	<listitem>
+	  <para>Set the distribution field
+	  to <replaceable>name</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--force-distribution</option>
+	</term>
+	<listitem>
+	  <para>Force the distribution specified
+	  with <option>--distribution</option> to be used, even if it
+	  doesn't match the list of known distributions.</para>
+	</listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-log=</option><replaceable>git-log-options</replaceable>

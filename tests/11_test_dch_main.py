@@ -20,6 +20,9 @@ snap_header_1_2 = r'^test-package\s\(1.0-1~2\.gbp([0-9a-f]{6})\)\sUNRELEASED;\su
 
 snap_mark = r'\s{2}\*{2}\sSNAPSHOT\sbuild\s@'
 
+deb_tag = "debian/0.9-1"
+deb_tag_msg = "Pre stable release version 0.9-1"
+
 cl_debian = """test-package (0.9-1) unstable; urgency=low
 
   [ Debian Maintainer ]
@@ -28,9 +31,11 @@ cl_debian = """test-package (0.9-1) unstable; urgency=low
  -- Debian Maintainer <maint@debian.org>  Mon, 17 Oct 2011 10:15:22 +0200
 """
 
+
 @unittest.skipIf(not os.path.exists('/usr/bin/dch'), "Dch not found")
 class TestScriptDch(DebianGitTestRepo):
     """Test git-dch"""
+
 
     def setUp(self):
         DebianGitTestRepo.setUp(self)
@@ -48,76 +53,71 @@ class TestScriptDch(DebianGitTestRepo):
         self.add_file("debian/control", """Source: test-package\nSection: test\n""")
         self.options = ["--upstream-tag=%s" % self.upstream_tag, "--debian-branch=debian",
                         "--id-length=0", "--spawn-editor=/bin/true"]
+        self.repo.create_tag(deb_tag, msg=deb_tag_msg, commit="HEAD~1")
+
 
     def tearDown(self):
         os.chdir(self.top)
         DebianGitTestRepo.tearDown(self)
 
-    def test_dch_main_new_upstream_version(self):
-        """Test dch.py like git-dch script does: new upstream version"""
+
+    def run_dch(self, dch_options=None):
+        # Take care to copy the list
         options = self.options[:]
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
+        if dch_options is not None:
+            options.extend(dch_options)
         ret = dch.main(options)
         self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        return file("debian/changelog").readlines()
+
+
+    def test_dch_main_new_upstream_version(self):
+        """Test dch.py like git-dch script does: new upstream version"""
+        lines = self.run_dch()
         self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
+
 
     def test_dch_main_new_upstream_version_with_release(self):
         """Test dch.py like git-dch script does: new upstream version - release"""
-        options = self.options[:]
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        options.append("--release")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--release"]
+        lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) unstable; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_auto(self):
         """Test dch.py like git-dch script does: new upstream version - guess last commit"""
-        options = self.options[:]
-        options.append("--auto")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--auto"]
+        lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_snapshot(self):
-        """Test dch.py like git-dch script does: new upstream version - snashot mode"""
-        options = self.options[:]
-        options.append("--snapshot")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        """Test dch.py like git-dch script does: new upstream version - snapshot mode"""
+        options = ["--snapshot"]
+        lines = self.run_dch(options)
         header = re.search(snap_header_1, lines[0])
         self.assertIsNotNone(header)
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_2_snapshots_auto(self):
         """Test dch.py like git-dch script does: new upstream version - two snapshots - auto"""
-        options = self.options[:]
-        options.append("--snapshot")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--snapshot"]
+        lines = self.run_dch(options)
         header1 = re.search(snap_header_1, lines[0])
         self.assertIsNotNone(header1)
         self.assertEqual(header1.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header1.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
         # New snapshot, use auto to guess last one
-        options.append("--auto")
         self.add_file("debian/compat", "9")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options.append("--auto")
+        lines = self.run_dch(options)
         header2 = re.search(snap_header_1_2, lines[0])
         self.assertIsNotNone(header2)
         self.assertEqual(header2.lastindex, 1)
@@ -127,27 +127,22 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIn("""  * added debian/control\n""", lines)
         self.assertIn("""  * added debian/compat\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_2_snapshots_commit_auto(self):
         """Test dch.py like git-dch script does: new upstream version - two committed snapshots - auto"""
-        options = self.options[:]
-        options.append("--commit")
+        options = ["--commit"]
         options.append("--commit-msg=TEST-COMMITTED-SNAPSHOT")
         options.append("--snapshot")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        lines = self.run_dch(options)
         header1 = re.search(snap_header_1, lines[0])
         self.assertIsNotNone(header1)
         self.assertEqual(header1.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header1.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
         # New snapshot, use auto to guess last one
-        options.append("--auto")
         self.add_file("debian/compat", "9")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options.append("--auto")
+        lines = self.run_dch(options)
         header2 = re.search(snap_header_1_2, lines[0])
         self.assertIsNotNone(header2)
         self.assertEqual(header2.lastindex, 1)
@@ -159,114 +154,175 @@ class TestScriptDch(DebianGitTestRepo):
         # But its changelog must be included in the new one
         self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_auto_release(self):
         """Test dch.py like git-dch script does: new upstream version - auto - release"""
-        options = self.options[:]
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        options.append("--auto")
+        options = ["--auto"]
         options.append("--release")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) unstable; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_auto_snapshot(self):
-        """Test dch.py like git-dch script does: new upstream version - auto - snashot mode"""
-        options = self.options[:]
-        options.append("--auto")
+        """Test dch.py like git-dch script does: new upstream version - auto - snapshot mode"""
+        options = ["--auto"]
         options.append("--snapshot")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        lines = self.run_dch(options)
         header = re.search(snap_header_1, lines[0])
         self.assertIsNotNone(header)
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_new_upstream_version_with_snapshot_release(self):
-        """Test dch.py like git-dch script does: new upstream version - snashot - release"""
-        options = self.options[:]
-        options.append("--snapshot")
+        """Test dch.py like git-dch script does: new upstream version - snapshot - release"""
+        options = ["--snapshot"]
         options.append("--release")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
-        self.assertRaises(SystemExit, dch.main, options)
+        self.assertRaises(SystemExit, self.run_dch, options)
+
+
+    def test_dch_main_new_upstream_version_with_distribution(self):
+        """Test dch.py like git-dch script does: new upstream version - set distribution"""
+        options = ["--distribution=testing"]
+        lines = self.run_dch(options)
+        self.assertEqual("test-package (1.0-1) testing; urgency=low\n", lines[0])
+        self.assertIn("""  * added debian/control\n""", lines)
+
+
+    def test_dch_main_new_upstream_version_with_release_distribution(self):
+        """Test dch.py like git-dch script does: new upstream version - release - set distribution"""
+        options = ["--release"]
+        options.append("--distribution=testing")
+        lines = self.run_dch(options)
+        self.assertEqual("test-package (1.0-1) testing; urgency=low\n", lines[0])
+        self.assertIn("""  * added debian/control\n""", lines)
+
+
+    def test_dch_main_new_upstream_version_with_snapshot_distribution(self):
+        """Test dch.py like git-dch script does: new upstream version - snapshot mode - do not set distribution"""
+        options = ["--snapshot"]
+        options.append("--distribution=testing")
+        lines = self.run_dch(options)
+        header = re.search(snap_header_1, lines[0])
+        self.assertIsNotNone(header)
+        self.assertEqual(header.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
+        self.assertIn("""  * added debian/control\n""", lines)
+
+
+    def test_dch_main_new_upstream_version_with_2_snapshots_auto_distribution(self):
+        """Test dch.py like git-dch script does: new upstream version - two snapshots - do not set distribution"""
+        options = ["--snapshot"]
+        options.append("--distribution=testing")
+        lines = self.run_dch(options)
+        header1 = re.search(snap_header_1, lines[0])
+        self.assertIsNotNone(header1)
+        self.assertEqual(header1.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header1.group(1), lines[2]))
+        self.assertIn("""  * added debian/control\n""", lines)
+        # New snapshot, use auto to guess last one
+        self.add_file("debian/compat", "9")
+        options.append("--auto")
+        lines = self.run_dch(options)
+        header2 = re.search(snap_header_1_2, lines[0])
+        self.assertIsNotNone(header2)
+        self.assertEqual(header2.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header2.group(1), lines[2]))
+        # First snapshot entry must be concatenated with the last one
+        self.assertNotIn(header1.group(0) + "\n", lines)
+        self.assertIn("""  * added debian/control\n""", lines)
+        self.assertIn("""  * added debian/compat\n""", lines)
+        # But its changelog must not be included in the new one since
+        # we do not commit
+        self.assertNotIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
+
+
+    def test_dch_main_new_upstream_version_with_2_snapshots_commit_auto_distribution(self):
+        """Test dch.py like git-dch script does: new upstream version - two committed snapshots - do not set distribution"""
+        options = ["--commit"]
+        options.append("--commit-msg=TEST-COMMITTED-SNAPSHOT")
+        options.append("--snapshot")
+        options.append("--distribution=testing")
+        lines = self.run_dch(options)
+        header1 = re.search(snap_header_1, lines[0])
+        self.assertIsNotNone(header1)
+        self.assertEqual(header1.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header1.group(1), lines[2]))
+        self.assertIn("""  * added debian/control\n""", lines)
+        # New snapshot, use auto to guess last one
+        self.add_file("debian/compat", "9")
+        options.append("--auto")
+        lines = self.run_dch(options)
+        header2 = re.search(snap_header_1_2, lines[0])
+        self.assertIsNotNone(header2)
+        self.assertEqual(header2.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header2.group(1), lines[2]))
+        self.assertIn("""  * added debian/control\n""", lines)
+        self.assertIn("""  * added debian/compat\n""", lines)
+        # First snapshot entry must have disapear
+        self.assertNotIn(header1.group(0) + "\n", lines)
+        # But its changelog must be included in the new one
+        self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
+
 
     def test_dch_main_increment_debian_version(self):
         """Test dch.py like git-dch script does: increment debian version"""
-        options = self.options[:]
+        self.repo.delete_tag("debian/0.9-1")
         self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~2")
         self.repo.delete_tag("upstream/1.0")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        lines = self.run_dch()
         self.assertEqual("test-package (0.9-2) UNRELEASED; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
+
 
     def test_dch_main_increment_debian_version_with_release(self):
         """Test dch.py like git-dch script does: increment debian version - release"""
-        options = self.options[:]
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
         self.repo.delete_tag("upstream/1.0")
-        options.append("--release")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--release"]
+        lines = self.run_dch(options)
         self.assertEqual("test-package (0.9-2) unstable; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_increment_debian_version_with_auto(self):
         """Test dch.py like git-dch script does: increment debian version - guess last commit"""
-        options = self.options[:]
-        options.append("--auto")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
         self.repo.delete_tag("upstream/1.0")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--auto"]
+        lines = self.run_dch(options)
         self.assertEqual("test-package (0.9-2) UNRELEASED; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_increment_debian_version_with_snapshot(self):
-        """Test dch.py like git-dch script does: increment debian version - snashot mode"""
-        options = self.options[:]
-        options.append("--snapshot")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
+        """Test dch.py like git-dch script does: increment debian version - snapshot mode"""
         self.repo.delete_tag("upstream/1.0")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--snapshot"]
+        lines = self.run_dch(options)
         header = re.search(snap_header_0_9, lines[0])
         self.assertIsNotNone(header)
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_increment_debian_version_with_auto_release(self):
         """Test dch.py like git-dch script does: increment debian version - auto - release"""
-        options = self.options[:]
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
         self.repo.delete_tag("upstream/1.0")
-        options.append("--auto")
+        options = ["--auto"]
         options.append("--release")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        lines = self.run_dch(options)
         self.assertEqual("test-package (0.9-2) unstable; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+
     def test_dch_main_increment_debian_version_with_auto_snapshot(self):
-        """Test dch.py like git-dch script does: increment debian version - auto - snashot mode"""
-        options = self.options[:]
-        options.append("--auto")
-        options.append("--snapshot")
-        self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~1")
+        """Test dch.py like git-dch script does: increment debian version - auto - snapshot mode"""
         self.repo.delete_tag("upstream/1.0")
-        ret = dch.main(options)
-        self.assertEqual(ret, 0)
-        lines = file("debian/changelog").readlines()
+        options = ["--auto"]
+        options.append("--snapshot")
+        lines = self.run_dch(options)
         header = re.search(snap_header_0_9, lines[0])
         self.assertIsNotNone(header)
         self.assertEqual(header.lastindex, 1)

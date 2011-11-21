@@ -63,15 +63,30 @@ def get_author_email(repo, use_git_config):
     return author, email
 
 
-def fixup_trailer(repo, git_author, dch_options):
+def fixup_section(repo, git_author, options, dch_options):
     """
-    Fixup the changelog trailer's comitter and email address.
+    Fixup the changelog header and trailer's comitter and email address
 
     It might otherwise point to the last git committer instead of the person
     creating the changelog
+    This apply --distribution and --urgency options passed to git-dch
     """
     author, email = get_author_email(repo, git_author)
-    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options)
+    used_options = ['distribution']
+    header_opts = []
+
+    # This must not be done for snapshots or snapshots changelog entries
+    # will not be concatenated
+    if not options.snapshot:
+        for opt in used_options:
+            val = getattr(options, opt)
+            if val:
+                gbp.log.debug("Set header option '%s' to '%s'" % (opt, val))
+                header_opts.append("--%s=%s" % (opt, val))
+    else:
+        gbp.log.debug("Snapshot enabled: do not fixup options in header")
+
+    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+header_opts)
 
 
 def snapshot_version(version):
@@ -223,6 +238,9 @@ def process_options(options, parser):
     else:
         dch_options.append("--nomultimaint")
 
+    if options.force_distribution:
+        dch_options.append("--force-distribution")
+
     get_customizations(options.customization_file)
     return dch_options
 
@@ -295,6 +313,9 @@ def main(argv):
                       help="mark as release")
     version_group.add_option("-S", "--snapshot", action="store_true", dest="snapshot", default=False,
                       help="mark as snapshot build")
+    version_group.add_option("-D", "--distribution", dest="distribution", help="Set distribution")
+    version_group.add_option("--force-distribution", action="store_true", dest="force_distribution", default=False,
+                      help="Force the provided distribution to be used, even if it doesn't match the list of known distributions")
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
@@ -446,7 +467,7 @@ def main(argv):
                            version=version_change,
                            dch_options=dch_options)
 
-        fixup_trailer(repo, git_author=options.git_author,
+        fixup_section(repo, git_author=options.git_author, options=options,
                       dch_options=dch_options)
 
         if options.release:
