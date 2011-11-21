@@ -72,7 +72,7 @@ def fixup_section(repo, git_author, options, dch_options):
     This apply --distribution and --urgency options passed to git-dch
     """
     author, email = get_author_email(repo, git_author)
-    used_options = ['distribution']
+    used_options = ['distribution', 'urgency']
     header_opts = []
 
     # This must not be done for snapshots or snapshots changelog entries
@@ -318,6 +318,7 @@ def main(argv):
                       help="Force the provided distribution to be used, even if it doesn't match the list of known distributions")
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
+    version_group.add_option("-U", "--urgency", dest="urgency", help="Set urgency level")
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
                       help="Increment the Debian release number for an upload to backports, and add a backport upload changelog comment.")
     version_group.add_option("--nmu", dest="nmu", action="store_true", default=False,

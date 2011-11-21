@@ -267,6 +267,35 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
 
 
+    def test_dch_main_new_upstream_version_with_urgency(self):
+        """Test dch.py like git-dch script does: new upstream version - set urgency"""
+        options = ["--urgency=emergency"]
+        lines = self.run_dch(options)
+        self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=emergency\n", lines[0])
+        self.assertIn("""  * added debian/control\n""", lines)
+
+
+    def test_dch_main_new_upstream_version_with_release_urgency(self):
+        """Test dch.py like git-dch script does: new upstream version - release - set urgency"""
+        options = ["--release"]
+        options.append("--urgency=emergency")
+        lines = self.run_dch(options)
+        self.assertEqual("test-package (1.0-1) unstable; urgency=emergency\n", lines[0])
+        self.assertIn("""  * added debian/control\n""", lines)
+
+
+    def test_dch_main_new_upstream_version_with_snapshot_urgency(self):
+        """Test dch.py like git-dch script does: new upstream version - snapshot mode - set urgency"""
+        options = ["--snapshot"]
+        options.append("--urgency=emergency")
+        lines = self.run_dch(options)
+        header = re.search(snap_header_1, lines[0])
+        self.assertIsNotNone(header)
+        self.assertEqual(header.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
+        self.assertIn("""  * added debian/control\n""", lines)
+
+
     def test_dch_main_increment_debian_version(self):
         """Test dch.py like git-dch script does: increment debian version"""
         self.repo.delete_tag("debian/0.9-1")

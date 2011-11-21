@@ -43,6 +43,7 @@
       </group>
       <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
       <arg><option>--force-distribution</option></arg>
+      <arg><option>--urgency=</option><replaceable>level</replaceable></arg>
       <arg><option>--[no-]full</option></arg>
       <arg><option>--[no-]meta</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
@@ -237,6 +238,14 @@
 	  <para>Force the distribution specified
 	  with <option>--distribution</option> to be used, even if it
 	  doesn't match the list of known distributions.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--urgency=</option><replaceable>level</replaceable>
+	</term>
+	<listitem>
+	  <para>Set the urgency field
+	  to <replaceable>level</replaceable>.</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
