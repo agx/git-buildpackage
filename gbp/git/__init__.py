@@ -1177,18 +1177,18 @@ class GitRepository(object):
         else:
             abspath, name = abspath.rsplit('/', 1)
 
-        args =  [ '--quiet' ]
-        args += [ '--depth', depth ] if depth else []
-        args += [ '--recursive' ] if recursive else []
-        args += [ '--mirror' ] if mirror else []
-        args += [ '--bare' ] if bare else []
-        args += [ remote ]
-        args += [ name ] if name else []
+        args = GitArgs('--quiet')
+        args.add_true(depth,  '--depth', depth)
+        args.add_true(recursive, '--recursive')
+        args.add_true(mirror, '--mirror')
+        args.add_true(bare, '--bare')
+        args.add(remote)
+        args.add_true(name, name)
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
 
-            GitCommand("clone", args, cwd=abspath)()
+            GitCommand("clone", args.args, cwd=abspath)()
             if not name:
                 name = remote.rstrip('/').rsplit('/',1)[1]
                 if (mirror or bare):
