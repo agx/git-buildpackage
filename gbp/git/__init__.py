@@ -29,6 +29,8 @@ from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit
 from gbp.git.errors import GitError
 from gbp.git.fastimport import FastImport
+from gbp.git.args import GitArgs
+
 
 class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
@@ -992,12 +994,16 @@ class GitRepository(object):
 
 
 #{ Patches
-    def format_patches(self, start, end, output_dir):
+    def format_patches(self, start, end, output_dir, signature=True):
         """
         Output the commits between start and end as patches in output_dir
         """
-        options = [ '-N', '-k', '-o', output_dir, '%s...%s' % (start, end) ]
-        output, ret = self.__git_getoutput('format-patch', options)
+        options = GitArgs('-N', '-k',
+                          '-o', output_dir)
+        options.add_cond(not signature, '--no-signature')
+        options.add('%s...%s' % (start, end))
+
+        output, ret = self.__git_getoutput('format-patch', options.args)
         return [ line.strip() for line in output ]
 
     def apply_patch(self, patch, index=True, context=None, strip=None):
