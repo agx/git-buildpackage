@@ -86,21 +86,11 @@ def write_patch(patch, options):
     # Skip first line (From <sha1>)
     old.readline()
     for line in old:
-        if in_patch:
-            if line == '-- \n':
-                # Found final signature, we're done:
-                tmp.write(line)
-                break
-        else:
-            if line.lower().startswith("gbp-pq-topic: "):
-                topic = line.split(" ",1)[1].strip()
-                gbp.log.debug("Topic %s found for %s" % (topic, patch))
-                continue
-            elif (line.startswith("diff --git a/") or
-                  line.startswith("---")):
-                in_patch = True
+        if line.lower().startswith("gbp-pq-topic: "):
+            topic = line.split(" ",1)[1].strip()
+            gbp.log.debug("Topic %s found for %s" % (topic, patch))
+            continue
         tmp.write(line)
-
     tmp.close()
     old.close()
 
@@ -143,7 +133,8 @@ def export_patches(repo, branch, options):
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
-    patches = repo.format_patches(branch, pq_branch, PATCH_DIR)
+    patches = repo.format_patches(branch, pq_branch, PATCH_DIR,
+                                  signature=False)
     if patches:
         f = file(SERIES_FILE, 'w')
         gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
