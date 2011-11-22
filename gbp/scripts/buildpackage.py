@@ -401,6 +401,8 @@ def parse_args(argv, prefix):
                       help="command to clean the working copy, default is '%(cleaner)s'")
     cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
                       help="command to run before a build, default is '%(prebuild)s'")
+    cmd_group.add_config_file_option(option_name="postexport", dest="postexport",
+                      help="command to run after exporting the source tree, default is '%(postexport)s'")
     cmd_group.add_config_file_option(option_name="postbuild", dest="postbuild",
                       help="hook run after a successful build, default is '%(postbuild)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
@@ -486,10 +488,17 @@ def main(argv):
             else:
                 tarball_dir = output_dir
 
-            # Get/build the upstream tarball if necessary:
+            # Get/build the upstream tarball if necessary. We delay this in
+            # case of a postexport so the hook gets chance to modify the
+            # sources and create different tarballs (#640382)
+            # We don't delay it in general since we want to fail early if the
+            # tarball is missing.
             if not du.is_native(cp):
-                prepare_upstream_tarball(repo, cp, options, tarball_dir,
-                                         output_dir)
+                if options.postexport:
+                    gbp.log.info("Postexport hook set, delaying tarball creation")
+                else:
+                    prepare_upstream_tarball(repo, cp, options, tarball_dir,
+                                             output_dir)
 
             # Export to another build dir if requested:
             if options.export_dir:
@@ -513,11 +522,23 @@ def main(argv):
                 gbp.log.info("Exporting '%s' to '%s'" % (options.export, tmp_dir))
                 if not dump_tree(repo, tmp_dir, tree, options.with_submodules):
                     raise GbpError
+
+                # Run postexport hook
+                if options.postexport:
+                    RunAtCommand(options.postexport, shell=True,
+                                 extra_env={'GBP_GIT_DIR': repo.git_dir,
+                                            'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
+
                 cp = du.parse_changelog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
                 os.rename(tmp_dir, export_dir)
+
+                # Delayed tarball creation in case a postexport hook is used:
+                if not du.is_native(cp) and options.postexport:
+                    prepare_upstream_tarball(repo, cp, options, tarball_dir,
+                                             output_dir)
 
             if options.export_dir:
                 build_dir = export_dir
