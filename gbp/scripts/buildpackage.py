@@ -150,6 +150,39 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
             git_archive_build_orig(repo, cp, output_dir, options)
 
 
+def export_source(repo, cp, options, dest_dir, tarball_dir):
+    """
+    Export a verion of the source tree when building in a separate directory
+
+    @param repo: the git repository to export from
+    @type repo: L{gbp.git.GitRepository}
+    @param cp: the package's changelog
+    @param options: options to apply
+    @param dest_dir: where to export the source to
+    @param tarball_dir: where to fetch the tarball form in overlay mode
+    @returns: the temporary directory
+    """
+    # write a tree of the index if necessary:
+    if options.export == index_name:
+        tree = repo.write_tree()
+    elif options.export == wc_name:
+        tree = write_wc(repo)
+    else:
+        tree = options.export
+    if not repo.has_treeish(tree):
+        raise GbpError # git-ls-tree printed an error message already
+
+    # Extract orig tarball if git-overlay option is selected:
+    if options.overlay:
+        if du.is_native(cp):
+            raise GbpError, "Cannot overlay Debian native package"
+        extract_orig(os.path.join(tarball_dir, du.orig_file(cp, options.comp_type)), dest_dir)
+
+    gbp.log.info("Exporting '%s' to '%s'" % (options.export, dest_dir))
+    if not dump_tree(repo, dest_dir, tree, options.with_submodules):
+        raise GbpError
+
+
 def dump_tree(repo, export_dir, treeish, with_submodules):
     "dump a tree to output_dir"
     output_dir = os.path.dirname(export_dir)
@@ -201,8 +234,8 @@ def move_old_export(target):
         if e == errno.EEXIST:
             os.rename(target, "%s.obsolete.%s" % (target, time.time()))
 
-
 def prepare_output_dir(dir):
+    """Prepare the directory where the build result will be put"""
     output_dir = dir
     if not dir:
         output_dir = '..'
@@ -483,10 +516,7 @@ def main(argv):
 
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
-            if options.tarball_dir:
-                tarball_dir = options.tarball_dir
-            else:
-                tarball_dir = output_dir
+            tarball_dir = options.tarball_dir or output_dir
 
             # Get/build the upstream tarball if necessary. We delay this in
             # case of a postexport so the hook gets chance to modify the
@@ -502,26 +532,8 @@ def main(argv):
 
             # Export to another build dir if requested:
             if options.export_dir:
-                # write a tree of the index if necessary:
-                if options.export == index_name:
-                    tree = repo.write_tree()
-                elif options.export == wc_name:
-                    tree = write_wc(repo)
-                else:
-                    tree = options.export
-                if not repo.has_treeish(tree):
-                    raise GbpError # git-ls-tree printed an error message already
                 tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
-
-                # Extract orig tarball if git-overlay option is selected:
-                if options.overlay:
-                    if du.is_native(cp):
-                        raise GbpError, "Cannot overlay Debian native package"
-                    extract_orig(os.path.join(output_dir, du.orig_file(cp, options.comp_type)), tmp_dir)
-
-                gbp.log.info("Exporting '%s' to '%s'" % (options.export, tmp_dir))
-                if not dump_tree(repo, tmp_dir, tree, options.with_submodules):
-                    raise GbpError
+                export_source(repo, cp, options, tmp_dir, output_dir)
 
                 # Run postexport hook
                 if options.postexport:
