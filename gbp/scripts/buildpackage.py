@@ -126,6 +126,30 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submo
     return True
 
 
+def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
+    """
+    Make sure we have an upstream tarball. This involves loooking in
+    tarball_dir, symlinking or building it.
+    """
+    options.comp_type = guess_comp_type(repo,
+                                        options.comp_type,
+                                        cp,
+                                        options.tarball_dir)
+    orig_file = du.orig_file(cp, options.comp_type)
+
+    # look in tarball_dir first, if found force a symlink to it
+    if options.tarball_dir:
+        gbp.log.debug("Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir))
+        if not du.symlink_orig(cp, options.comp_type, tarball_dir, output_dir, force=True):
+            gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
+        else:
+            gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
+    # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
+    if options.force_create or (not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir)):
+        if not pristine_tar_build_orig(repo, cp, output_dir, options):
+            git_archive_build_orig(repo, cp, output_dir, options)
+
+
 def dump_tree(repo, export_dir, treeish, with_submodules):
     "dump a tree to output_dir"
     output_dir = os.path.dirname(export_dir)
@@ -462,23 +486,10 @@ def main(argv):
             else:
                 tarball_dir = output_dir
 
-            # Get/build the orig.tar.gz if necessary:
+            # Get/build the upstream tarball if necessary:
             if not du.is_native(cp):
-                options.comp_type = guess_comp_type(
-                    repo, options.comp_type, cp, options.tarball_dir)
-                orig_file = du.orig_file(cp, options.comp_type)
-
-                # look in tarball_dir first, if found force a symlink to it
-                if options.tarball_dir:
-                    gbp.log.debug("Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir))
-                    if not du.symlink_orig(cp, options.comp_type, tarball_dir, output_dir, force=True):
-                        gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
-                    else:
-                        gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
-                # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
-                if options.force_create or (not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir)):
-                    if not pristine_tar_build_orig(repo, cp, output_dir, options):
-                        git_archive_build_orig(repo, cp, output_dir, options)
+                prepare_upstream_tarball(repo, cp, options, tarball_dir,
+                                         output_dir)
 
             # Export to another build dir if requested:
             if options.export_dir:
