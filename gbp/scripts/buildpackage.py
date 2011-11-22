@@ -150,6 +150,7 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
             git_archive_build_orig(repo, cp, output_dir, options)
 
 
+#{ Functions to handle export-dir
 def export_source(repo, cp, options, dest_dir, tarball_dir):
     """
     Export a verion of the source tree when building in a separate directory
@@ -234,6 +235,40 @@ def move_old_export(target):
         if e == errno.EEXIST:
             os.rename(target, "%s.obsolete.%s" % (target, time.time()))
 
+
+def write_wc(repo):
+    """write out the current working copy as a treeish object"""
+    repo.add_files(repo.path, force=True, index_file=wc_index)
+    tree = repo.write_tree(index_file=wc_index)
+    return tree
+
+
+def drop_index():
+    """drop our custom index"""
+    if os.path.exists(wc_index):
+        os.unlink(wc_index)
+
+
+def extract_orig(orig_tarball, dest_dir):
+    """extract orig tarball to export dir before exporting from git"""
+    gbp.log.info("Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir))
+
+    move_old_export(dest_dir)
+    upstream = gbp.deb.UpstreamSource(orig_tarball)
+    upstream.unpack(dest_dir)
+
+    # Check if tarball extracts into a single folder or not:
+    if upstream.unpacked != dest_dir:
+        # If it extracts a single folder, move all of its contents to dest_dir:
+        r = glob("%s/*" % upstream.unpacked)
+        r.extend(glob("%s/.*" % upstream.unpacked)) # include hidden files and folders
+        for f in r:
+            os.rename(f, os.path.join(dest_dir, os.path.basename(f)))
+
+        # Remove that single folder:
+        os.rmdir(upstream.unpacked)
+#}
+
 def prepare_output_dir(dir):
     """Prepare the directory where the build result will be put"""
     output_dir = dir
@@ -281,37 +316,6 @@ def git_archive_build_orig(repo, cp, output_dir, options):
     if not git_archive(repo, cp, output_dir, upstream_tree,
                        options.comp_type, options.comp_level, options.with_submodules):
         raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
-
-
-def write_wc(repo):
-    """write out the current working copy as a treeish object"""
-    repo.add_files(repo.path, force=True, index_file=wc_index)
-    tree = repo.write_tree(index_file=wc_index)
-    return tree
-
-def drop_index():
-    """drop our custom index"""
-    if os.path.exists(wc_index):
-        os.unlink(wc_index)
-
-def extract_orig(orig_tarball, dest_dir):
-    """extract orig tarball to export dir before exporting from git"""
-    gbp.log.info("Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir))
-
-    move_old_export(dest_dir)
-    upstream = gbp.deb.UpstreamSource(orig_tarball)
-    upstream.unpack(dest_dir)
-
-    # Check if tarball extracts into a single folder or not:
-    if upstream.unpacked != dest_dir:
-        # If it extracts a single folder, move all of its contents to dest_dir:
-        r = glob("%s/*" % upstream.unpacked)
-        r.extend(glob("%s/.*" % upstream.unpacked)) # include hidden files and folders
-        for f in r:
-            os.rename(f, os.path.join(dest_dir, os.path.basename(f)))
-
-        # Remove that single folder:
-        os.rmdir(upstream.unpacked)
 
 
 def guess_comp_type(repo, comp_type, cp, tarball_dir):
