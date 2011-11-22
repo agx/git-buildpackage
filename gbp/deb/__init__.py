@@ -23,8 +23,9 @@ import re
 import subprocess
 import sys
 import glob
-import command_wrappers as gbpc
-from errors import GbpError
+
+import gbp.command_wrappers as gbpc
+from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 
 # When trying to parse a version-number from a dsc or changes file, these are
@@ -99,13 +100,13 @@ class DpkgCompareVersions(gbpc.Command):
 class UpstreamSource(object):
     """
     Upstream source. Can be either an unpacked dir, a tarball or another type
-    or archive
+    of archive
 
     @cvar is_dir: are the upstream sources an unpacked dir
     @type is_dir: boolean
     @cvar _orig: are the upstream sources already suitable as an upstream
                  tarball
-    @type _irog: boolen
+    @type _orig: boolean
     @cvar _path: path to the upstream sources
     @type _path: string
     @cvar _unpacked: path to the unpacked source tree
@@ -179,7 +180,7 @@ class UpstreamSource(object):
             raise GbpError, "Unpacking of %s failed" % self.path
 
     def _unpacked_toplevel(self, dir):
-        """unpacked archives can contain a leading directory not"""
+        """unpacked archives can contain a leading directory or not"""
         unpacked = glob.glob('%s/*' % dir)
         unpacked.extend(glob.glob("%s/.*" % dir)) # include hidden files and folders
         # Check that dir contains nothing but a single folder:
@@ -241,11 +242,6 @@ class UpstreamSource(object):
         Guess the package name and version from the filename of an upstream
         archive.
 
-        @param extra_regex: additional regex to apply, needs a 'package' and a
-                            'version' group
-        @return: (package name, version) or None.
-        @rtype: tuple
-
         >>> UpstreamSource('foo-bar_0.2.orig.tar.gz').guess_version()
         ('foo-bar', '0.2')
         >>> UpstreamSource('foo-Bar_0.2.orig.tar.gz').guess_version()
@@ -267,6 +263,11 @@ class UpstreamSource(object):
         ('foo-bar', '0.2')
         >>> UpstreamSource('foo-bar_0.2.orig.tar.lzma').guess_version()
         ('foo-bar', '0.2')
+
+        @param extra_regex: additional regex to apply, needs a 'package' and a
+                            'version' group
+        @return: (package name, version) or None.
+        @rtype: tuple
         """
         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
         extensions = r'\.tar\.(%s)' % "|".join(self.known_compressions())

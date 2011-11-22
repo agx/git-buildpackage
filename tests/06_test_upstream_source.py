@@ -49,7 +49,7 @@ class TestTar(unittest.TestCase):
         repacked = source.pack(target)
         self.assertEqual(repacked.is_orig, True)
         self.assertEqual(repacked.is_dir, False)
-        self._check_tar(repacked, ["gbp/deb.py", "gbp/__init__.py"])
+        self._check_tar(repacked, ["gbp/errors.py", "gbp/__init__.py"])
 
     def test_pack_filtered(self):
         """Check if filtering out files works"""
@@ -59,7 +59,7 @@ class TestTar(unittest.TestCase):
         repacked = source.pack(target, ["__init__.py"])
         self.assertEqual(repacked.is_orig, True)
         self.assertEqual(repacked.is_dir, False)
-        self._check_tar(repacked, ["gbp/deb.py"],
+        self._check_tar(repacked, ["gbp/errors.py"],
                                   ["gbp/__init__.py"])
 
 

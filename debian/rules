@@ -23,7 +23,8 @@ override_dh_auto_test:
 	PYTHONPATH=.					\
 	python setup.py nosetests
 	
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q gbp gbp.scripts gbp.git
+	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q \
+		gbp gbp.scripts gbp.git gbp.deb
 
 override_dh_auto_build:
 	dh_auto_build
