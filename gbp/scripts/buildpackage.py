@@ -523,7 +523,7 @@ def main(argv):
             tarball_dir = options.tarball_dir or output_dir
 
             # Get/build the upstream tarball if necessary. We delay this in
-            # case of a postexport so the hook gets chance to modify the
+            # case of a postexport hook so the hook gets a chance to modify the
             # sources and create different tarballs (#640382)
             # We don't delay it in general since we want to fail early if the
             # tarball is missing.
