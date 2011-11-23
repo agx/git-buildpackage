@@ -149,6 +149,122 @@ echo "done."
 	<filename>/usr/share/doc/examples/git-buildpackage/examples/gbp-posttag-push</filename>.
     </para>
     </sect2>
+    <sect2 id="gbp.building.postexport">
+    <title>Running postexport hook</title>
+    <para>&git-buildpackage; exports several variables into the
+	<option>postexport</option>'s environment (for details see
+	the <xref linkend="gbp.man.git.buildpackage">). The motivation
+	for the postexport action is to allow further adjustment of
+	the sources prior to building the package. A typical use case
+	scenario is to allow creating multiple source and binary
+	packages from one Debian branch - e.g. the bootstrap gcc and
+	in the next stage the full gcc.
+    </para>
+    <para> The postexport action, postpones the creation of the
+      upstream tarball, so that the metadata for creating it is
+      already present in the exported source tree. The example
+      postexport script below (crosstoolchain-expand.sh) expands
+      changelog, lintian override files, rules and control files
+      according to an environment variable 'PKG_FLAVOR'.
+    </para>
+
+    <para>Sample gbp.conf - enables source tree export by specifying
+    the export directory:
+    </para>
+<programlisting>
+[git-buildpackage]
+# use a build area relative to the git repository
+export-dir = ../build-area
+# disable the since the sources are being exported first
+cleaner =
+# post export script that handles expansion of Debian specific files
+postexport = crosstoolchain-expand.sh
+</programlisting>
+
+
+<para>Sample postexport script: crosstoolchain-expand.sh</para>
+<programlisting>
+#!/bin/sh
+#
+# Purpose: this script is intended for creating multiple source and
+# binary Debian packages from one source tree. It can be used in
+# conjunction with git-buildpackage that support a postexport hook
+#
+# A typical use is preparing a bootstrap gcc package that is needed
+# for building newlib and then preparing a full gcc package from the
+# same source tree. The user may specify the package flavor via
+# PKG_FLAVOR environmental variable. 
+#
+#
+# The script expands/processes the following files:
+#
+# - changelog.tmpl is converted to standard Debian changelog
+#
+#
+# - all binary package lintian override template files are expanded
+#   and renamed to the requested package flavor
+#
+# - source package lintian override template file is expanded and
+#   renamed
+#
+# - rules.$PKG_FLAVOR and control.$PKG_FLAVOR are renamed to rules and
+#   control resp.
+
+
+# the template string has been carefully chosen, so that
+# e.g. changelogs that refer to the source package can still be
+# processed by dch/git-dch resp.
+TMPL_STR=-XXXXXX
+
+# by default replace string for the template is empty
+REPLACE_STR=
+
+if [ -n "$PKG_FLAVOR" ]; then
+    REPLACE_STR=-$PKG_FLAVOR
+fi
+
+REPLACE_EXPR="s/$TMPL_STR/$REPLACE_STR/g"
+
+
+# actual processing of relevant files
+cd debian
+
+# expand the template changelog
+# remove the symlinked version
+rm changelog
+chglog_tmpl=changelog.tmpl
+[ -f "$chglog_tmpl" ] || {
+    echo "Missing changelog template (debian/$chglog_tmpl)"
+    exit 1
+}
+cat changelog.tmpl | sed -e "$REPLACE_EXPR" > changelog
+rm changelog.tmpl
+
+# process binary package lintian overrides - each override must match
+# its package name
+for f in *.lintian-overrides.tmpl; do
+    outfile=${f%.tmpl}
+    [ -f "$f" ] || {
+	echo "Missing lintian override files for binary packages"
+	exit 1
+    }
+    cat $f | sed -e "$REPLACE_EXPR" > ${outfile/$TMPL_STR/$REPLACE_STR}
+    rm $f
+done
+
+# process the only source package lintian override
+source_lintian=source/lintian-overrides.tmpl
+cat $source_lintian | sed -e "$REPLACE_EXPR" > ${source_lintian%.tmpl}
+rm $source_lintian
+
+# rules and control file are package flavor specific
+[ -f rules.$PKG_FLAVOR ] && mv rules.$PKG_FLAVOR rules
+[ -f control.$PKG_FLAVOR ] && mv control.$PKG_FLAVOR control
+rm -f rules.* control.*
+
+exit 0
+</programlisting>
+    </sect2>
     </sect1>
     <sect1 id="gbp.building.patch">
     <title>Working with patches</title>
