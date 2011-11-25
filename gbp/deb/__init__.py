@@ -27,6 +27,7 @@ import glob
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
+from gbp.deb.changelog import ChangeLog, NoChangeLogError
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
@@ -63,15 +64,6 @@ compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
 # Map frequently used names of compression types to the internal ones:
 compressor_aliases = { 'bz2' : 'bzip2',
                        'gz'  : 'gzip', }
-
-class NoChangelogError(Exception):
-    """no changelog found"""
-    pass
-
-class ParseChangeLogError(Exception):
-    """problem parsing changelog"""
-    pass
-
 
 class DpkgCompareVersions(gbpc.Command):
     cmd='/usr/bin/dpkg'
@@ -390,58 +382,10 @@ def parse_changelog_repo(repo, branch, filename):
         # repository errors.
         sha = repo.rev_parse("%s:%s" % (branch, filename))
     except GitRepositoryError:
-        raise NoChangelogError, "Changelog %s not found in branch %s" % (filename, branch)
+        raise NoChangeLogError, "Changelog %s not found in branch %s" % (filename, branch)
 
     lines = repo.show(sha)
-    return parse_changelog('\n'.join(lines))
-
-def parse_changelog(contents=None, filename=None):
-    """
-    Parse the content of a changelog file. Either contents, containing
-    the contents of a changelog file, or filename, pointing to a
-    changelog file must be passed.
-
-    Returns:
-
-    cp['Version']: full version string including epoch
-    cp['Upstream-Version']: upstream version, if not debian native
-    cp['Debian-Version']: debian release
-    cp['Epoch']: epoch, if any
-    cp['NoEpoch-Version']: full version string excluding epoch
-    """
-    # Check that either contents or filename is passed (but not both)
-    if (not filename and not contents) or (filename and contents):
-        raise Exception("Either filename or contents must be passed to parse_changelog")
-
-    # If a filename was passed, check if it exists
-    if filename and not os.access(filename, os.F_OK):
-        raise NoChangelogError, "Changelog %s not found" % (filename, )
-
-    # If no filename was passed, let parse_changelog read from stdin
-    if not filename:
-        filename = '-'
-
-    # Note that if contents is None, stdin will just be closed right
-    # away by communicate.
-    cmd = subprocess.Popen(['dpkg-parsechangelog', '-l%s' % filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (output, errors) = cmd.communicate(contents)
-    if cmd.returncode:
-        raise ParseChangeLogError, "Failed to parse changelog.  dpkg-parsechangelog said:\n%s" % (errors, )
-    # Parse the result of dpkg-parsechangelog (which looks like
-    # email headers)
-    cp = email.message_from_string(output)
-    try:
-        if ':' in cp['Version']:
-            cp['Epoch'], cp['NoEpoch-Version'] = cp['Version'].split(':', 1)
-        else:
-            cp['NoEpoch-Version'] = cp['Version']
-        if '-' in cp['NoEpoch-Version']:
-            cp['Upstream-Version'], cp['Debian-Version'] = cp['NoEpoch-Version'].rsplit('-', 1)
-        else:
-            cp['Debian-Version'] = cp['NoEpoch-Version']
-    except TypeError:
-        raise ParseChangeLogError, output.split('\n')[0]
-    return cp
+    return ChangeLog('\n'.join(lines))
 
 
 def orig_file(cp, compression):
@@ -455,18 +399,6 @@ def orig_file(cp, compression):
     """
     ext = compressor_opts[compression][1]
     return "%s_%s.orig.tar.%s" % (cp['Source'], cp['Upstream-Version'], ext)
-
-
-def is_native(cp):
-    """
-    Is this a debian native package
-
-    >>> is_native(dict(Version="1"))
-    True
-    >>> is_native(dict(Version="1-1"))
-    False
-    """
-    return not '-' in cp['Version']
 
 def is_valid_packagename(name):
     "Is this a valid Debian package name?"
@@ -495,17 +427,6 @@ def get_compression(orig_file):
         if o[1] == ext:
             return c
     return None
-
-
-def has_epoch(cp):
-    """
-    Does the topmost version number in the changelog contain an epoch
-    >>> has_epoch(dict(Epoch="1"))
-    True
-    >>> has_epoch(dict())
-    False
-    """
-    return cp.has_key("Epoch")
 
 
 def has_orig(cp, compression, dir):

@@ -26,8 +26,9 @@ import pipes
 import time
 from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
-from gbp.deb import (debian_version_chars, parse_changelog,
+from gbp.deb import (debian_version_chars,
                      parse_dsc, DscFile, UpstreamSource)
+from gbp.deb.changelog import ChangeLog
 from gbp.git import (build_tag, GitRepository,
                      GitRepositoryError, rfc822_date_to_git)
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
@@ -95,7 +96,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
             os.chmod('debian/rules', 0755)
         os.chdir(repo.path)
 
-        dch = parse_changelog(filename=os.path.join(unpack_dir, 'debian/changelog'))
+        dch = ChangeLog(filename=os.path.join(unpack_dir, 'debian/changelog'))
         date= rfc822_date_to_git(dch['Date'])
         author, email = parseaddr(dch['Maintainer'])
         if not (author and email):

@@ -29,7 +29,8 @@ import gbp.log
 from gbp.git import (GitRepositoryError, GitRepository, build_tag, tag_to_version)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
-from gbp.deb import parse_changelog, NoChangelogError, is_native, compare_versions
+from gbp.deb import compare_versions
+from gbp.deb.changelog import ChangeLog, NoChangeLogError
 
 user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -105,7 +106,7 @@ def add_changelog_section(msg, distribution, repo, options, cp,
     "add a new changelog section"
     # If no version(change) was specified guess the new version based on the
     # latest upstream version on the upstream branch
-    if not version and not is_native(cp):
+    if not version and not cp.is_native():
         pattern = options.upstream_tag.replace('%(version)s', '*')
         try:
             tag = repo.find_tag('HEAD', pattern=pattern)
@@ -212,7 +213,7 @@ def do_snapshot(changelog, repo, next_snapshot):
     """
     commit = repo.head
 
-    cp = parse_changelog(filename=changelog)
+    cp = ChangeLog(filename=changelog)
     (release, snapshot) = snapshot_version(cp['Version'])
     snapshot = int(eval(next_snapshot))
 
@@ -387,7 +388,7 @@ def main(argv):
             gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
             raise GbpError, "Use --ignore-branch to ignore or --debian-branch to set the branch name."
 
-        cp = parse_changelog(filename=changelog)
+        cp = ChangeLog(filename=changelog)
 
         if options.since:
             since = options.since
@@ -488,7 +489,7 @@ def main(argv):
         if editor_cmd:
             gbpc.Command(editor_cmd, ["debian/changelog"])()
 
-    except (GbpError, GitRepositoryError, NoChangelogError), err:
+    except (GbpError, GitRepositoryError, NoChangeLogError), err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

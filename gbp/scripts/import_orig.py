@@ -25,12 +25,12 @@ import re
 import subprocess
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import (parse_changelog, UpstreamSource,
-                     NoChangelogError, has_epoch,
+from gbp.deb import (UpstreamSource,
                      do_uscan,
                      parse_changelog_repo, is_valid_packagename,
                      packagename_msg, is_valid_upstreamversion,
                      upstreamversion_msg)
+from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import (GbpError, GbpNothingImported)
@@ -118,16 +118,16 @@ def detect_name_and_version(repo, source, options):
 
     # Try to find the source package name
     try:
-        cp = parse_changelog(filename='debian/changelog')
+        cp = ChangeLog(filename='debian/changelog')
         sourcepackage = cp['Source']
-    except NoChangelogError:
+    except NoChangeLogError:
         try:
             # Check the changelog file from the repository, in case
             # we're not on the debian-branch (but upstream, for
             # example).
             cp = parse_changelog_repo(repo, options.debian_branch, 'debian/changelog')
             sourcepackage = cp['Source']
-        except NoChangelogError:
+        except NoChangeLogError:
             if options.interactive:
                 sourcepackage = ask_package_name(guessed_package)
             else:
@@ -422,9 +422,9 @@ def main(argv):
                         # No need to check the changelog file from the
                         # repository, since we're certain that we're on
                         # the debian-branch
-                        cp = parse_changelog(filename='debian/changelog')
-                        if has_epoch(cp):
-                            epoch = '%s:' % cp['Epoch']
+                        cp = ChangeLog(filename='debian/changelog')
+                        if cp.has_epoch():
+                            epoch = '%s:' % cp.epoch
                     info = { 'version': "%s%s-1" % (epoch, version) }
                     env = { 'GBP_BRANCH': options.debian_branch }
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()

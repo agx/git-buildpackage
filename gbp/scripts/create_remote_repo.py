@@ -26,7 +26,7 @@ import urlparse
 import subprocess
 import tty, termios
 import re
-import gbp.deb as du
+from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
@@ -181,9 +181,9 @@ def main(argv):
             branches += [ PristineTar.branch ]
 
         try:
-            cp = du.parse_changelog(filename=changelog)
+            cp = ChangeLog(filename=changelog)
             pkg = cp['Source']
-        except gbp.deb.NoChangelogError:
+        except NoChangeLogError:
             pkg = None
 
         if not pkg:

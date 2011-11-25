@@ -31,6 +31,7 @@ from gbp.command_wrappers import (Command,
                                   RunAtCommand, CommandExecFailed, PristineTar,
                                   RemoveTree, CatenateTarArchive)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.deb.changelog import ChangeLog, NoChangeLogError, ParseChangeLogError
 from gbp.errors import GbpError
 from glob import glob
 import gbp.log
@@ -175,7 +176,7 @@ def export_source(repo, cp, options, dest_dir, tarball_dir):
 
     # Extract orig tarball if git-overlay option is selected:
     if options.overlay:
-        if du.is_native(cp):
+        if cp.is_native():
             raise GbpError, "Cannot overlay Debian native package"
         extract_orig(os.path.join(tarball_dir, du.orig_file(cp, options.comp_type)), dest_dir)
 
@@ -504,16 +505,14 @@ def main(argv):
                 raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
 
         try:
-            cp = du.parse_changelog(filename=changelog)
-            version = cp['Version']
-            version_no_epoch = cp['NoEpoch-Version']
-            if du.is_native(cp):
+            cp = ChangeLog(filename=changelog)
+            if cp.is_native():
                 major = cp['Debian-Version']
             else:
                 major = cp['Upstream-Version']
-        except du.NoChangelogError:
+        except NoChangeLogError:
             raise GbpError, "'%s' does not exist, not a debian package" % changelog
-        except du.ParseChangeLogError, err:
+        except ParseChangeLogError, err:
             raise GbpError, "Error parsing Changelog: %s" % err
         except KeyError:
             raise GbpError, "Can't parse version from changelog"
@@ -527,7 +526,7 @@ def main(argv):
             # sources and create different tarballs (#640382)
             # We don't delay it in general since we want to fail early if the
             # tarball is missing.
-            if not du.is_native(cp):
+            if not cp.is_native():
                 if options.postexport:
                     gbp.log.info("Postexport hook set, delaying tarball creation")
                 else:
@@ -545,14 +544,14 @@ def main(argv):
                                  extra_env={'GBP_GIT_DIR': repo.git_dir,
                                             'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
 
-                cp = du.parse_changelog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
+                cp = ChangeLog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
                 os.rename(tmp_dir, export_dir)
 
                 # Delayed tarball creation in case a postexport hook is used:
-                if not du.is_native(cp) and options.postexport:
+                if not cp.is_native() and options.postexport:
                     prepare_upstream_tarball(repo, cp, options, tarball_dir,
                                              output_dir)
 
@@ -573,20 +572,20 @@ def main(argv):
             if options.postbuild:
                 arch = os.getenv('ARCH', None) or du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
-                                          (build_dir, cp['Source'], version_no_epoch, arch))
+                                          (build_dir, cp['Source'], cp.noepoch, arch))
                 gbp.log.debug("Looking for changes file %s" % changes)
                 if not os.path.exists(changes):
                     changes = os.path.abspath("%s/../%s_%s_source.changes" %
-                                  (build_dir, cp['Source'], version_no_epoch))
+                                  (build_dir, cp['Source'], cp.noepoch))
                 Command(options.postbuild, shell=True,
                         extra_env={'GBP_CHANGES_FILE': changes,
                                    'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
-            gbp.log.info("Tagging %s" % version)
-            tag = build_tag(options.debian_tag, version)
+            gbp.log.info("Tagging %s" % cp.version)
+            tag = build_tag(options.debian_tag, cp.version)
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
-            repo.create_tag(name=tag, msg="Debian release %s" % version,
+            repo.create_tag(name=tag, msg="Debian release %s" % cp.version,
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
