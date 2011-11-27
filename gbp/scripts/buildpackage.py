@@ -270,6 +270,20 @@ def extract_orig(orig_tarball, dest_dir):
         os.rmdir(upstream.unpacked)
 #}
 
+def fetch_changelog(options):
+    """Fetch the correct changelog based on the options given"""
+    try:
+        # FIXME: fetch correct changelog here in case of export-dir
+        cp = ChangeLog(filename=changelog)
+    except NoChangeLogError:
+        raise GbpError, "'%s' does not exist, not a debian package" % changelog
+    except ParseChangeLogError, err:
+        raise GbpError, "Error parsing Changelog: %s" % err
+    except KeyError:
+        raise GbpError, "Can't parse version from changelog"
+    return cp
+
+
 def prepare_output_dir(dir):
     """Prepare the directory where the build result will be put"""
     output_dir = dir
@@ -504,19 +518,7 @@ def main(argv):
                 gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
                 raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
 
-        try:
-            cp = ChangeLog(filename=changelog)
-            if cp.is_native():
-                major = cp['Debian-Version']
-            else:
-                major = cp['Upstream-Version']
-        except NoChangeLogError:
-            raise GbpError, "'%s' does not exist, not a debian package" % changelog
-        except ParseChangeLogError, err:
-            raise GbpError, "Error parsing Changelog: %s" % err
-        except KeyError:
-            raise GbpError, "Can't parse version from changelog"
-
+        cp = fetch_changelog(options)
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
             tarball_dir = options.tarball_dir or output_dir
@@ -545,6 +547,7 @@ def main(argv):
                                             'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
 
                 cp = ChangeLog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
+                major = (cp.debian_version if cp.is_native() else cp.upstream_version)
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
