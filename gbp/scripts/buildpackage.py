@@ -152,7 +152,30 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
 
 
 #{ Functions to handle export-dir
-def export_source(repo, cp, options, dest_dir, tarball_dir):
+def write_tree(repo, options):
+    """
+    Write a tree of the index or working copy if necessary
+
+    @param repo: the git repository we're acting on
+    @type repo: L{GitRepository}
+    @return: the sha1 of the tree
+    @rtype: C{str}
+    """
+    if options.export_dir:
+        if options.export == index_name:
+            tree = repo.write_tree()
+        elif options.export == wc_name:
+            tree = write_wc(repo)
+        else:
+            tree = options.export
+        if not repo.has_treeish(tree):
+            raise GbpError # git-ls-tree printed an error message already
+    else:
+        tree = None
+    return tree
+
+
+def export_source(repo, tree, cp, options, dest_dir, tarball_dir):
     """
     Export a verion of the source tree when building in a separate directory
 
@@ -164,16 +187,6 @@ def export_source(repo, cp, options, dest_dir, tarball_dir):
     @param tarball_dir: where to fetch the tarball form in overlay mode
     @returns: the temporary directory
     """
-    # write a tree of the index if necessary:
-    if options.export == index_name:
-        tree = repo.write_tree()
-    elif options.export == wc_name:
-        tree = write_wc(repo)
-    else:
-        tree = options.export
-    if not repo.has_treeish(tree):
-        raise GbpError # git-ls-tree printed an error message already
-
     # Extract orig tarball if git-overlay option is selected:
     if options.overlay:
         if cp.is_native():
@@ -270,11 +283,15 @@ def extract_orig(orig_tarball, dest_dir):
         os.rmdir(upstream.unpacked)
 #}
 
-def fetch_changelog(options):
+def fetch_changelog(repo, options, tree):
     """Fetch the correct changelog based on the options given"""
+    changelog = 'debian/changelog'
+
     try:
-        # FIXME: fetch correct changelog here in case of export-dir
-        cp = ChangeLog(filename=changelog)
+        if tree:
+            cp = du.parse_changelog_repo(repo, tree, changelog)
+        else:
+            cp = ChangeLog(filename=changelog)
     except NoChangeLogError:
         raise GbpError, "'%s' does not exist, not a debian package" % changelog
     except ParseChangeLogError, err:
@@ -487,7 +504,6 @@ def parse_args(argv, prefix):
 
 def main(argv):
     retval = 0
-    changelog = 'debian/changelog'
     prefix = "git-"
     cp = None
 
@@ -518,7 +534,8 @@ def main(argv):
                 gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
                 raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
 
-        cp = fetch_changelog(options)
+        tree = write_tree(repo, options)
+        cp = fetch_changelog(repo, options, tree)
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
             tarball_dir = options.tarball_dir or output_dir
@@ -538,7 +555,7 @@ def main(argv):
             # Export to another build dir if requested:
             if options.export_dir:
                 tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
-                export_source(repo, cp, options, tmp_dir, output_dir)
+                export_source(repo, tree, cp, options, tmp_dir, output_dir)
 
                 # Run postexport hook
                 if options.postexport:
@@ -546,7 +563,6 @@ def main(argv):
                                  extra_env={'GBP_GIT_DIR': repo.git_dir,
                                             'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
 
-                cp = ChangeLog(filename=os.path.join(tmp_dir, 'debian', 'changelog'))
                 major = (cp.debian_version if cp.is_native() else cp.upstream_version)
                 export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
