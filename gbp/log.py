@@ -19,7 +19,6 @@
 
 import os
 import sys
-import gbp.tristate
 
 logger = None
 
