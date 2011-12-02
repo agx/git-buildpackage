@@ -1,3 +1,38 @@
+git-buildpackage (0.6.0~git20111202) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [3a3539a] Document that gbp-create-repo is noninteractive
+    (Closes: #643752)
+  * [bf397fc] gbp-pq: Properly check for start of signature (Closes: #646400)
+  * [718f0c3] gbp-pq: Strip .patch and .diff when importing patches without a
+    subject
+  * [3fcf009] command_wrappers.Command: Don't print several error lines
+  * [37e8310] Allow to import upstream tarballs into bare repositories
+    (Closes: #582775)
+  * [abf90ab] Allow to import Debian packages into bare repositories
+  * [8c22803] gbp-pull: massive speedup by just updating the ref to the
+    remote's SHA1 instead of checking out the branch and doing a fast-forward
+    merge.
+  * [af07c40] gbp-pq: Instead of looking for the signature don't let git
+    generate it. Thanks to Robert Luberda
+  * [69d348c] Support postexport hooks. Heavily based on a patch by Jan Čapek
+    (Closes: #640982)
+  * [030744d] Parse the changelog of the exported tree instead of the working
+    copy when using --export. This reduces the number of options needed when
+    using an export dir since the correct tarball is now being created without
+    additional options. (Closes: #564791)
+  * GitRepository: Lots of api, documentation and test updates replacing Git*
+    classes by GitRepository methods. Check the apidocs for details.
+  * [7168735] Switch to dh
+
+  [ Jan Čapek ]
+  * [d2c1033] Documentation update for --git-postexport, --git-postbuild typo
+    fix
+  * [f7a6b07] Additional documentation for postexport hook in the manual - the
+    documentation now provides sample postexport script and gbp.conf
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 02 Dec 2011 19:19:51 +0100
+
 git-buildpackage (0.5.32) unstable; urgency=low
 
   * [efe9220] Use known_compressions in guess_upstream_version too
