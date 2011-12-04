@@ -28,9 +28,9 @@ from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
 from gbp.deb import (debian_version_chars,
                      parse_dsc, DscFile, UpstreamSource)
+from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
-from gbp.git import (build_tag, GitRepository,
-                     GitRepositoryError, rfc822_date_to_git)
+from gbp.git import rfc822_date_to_git
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
 import gbp.log
@@ -109,7 +109,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  committer=dict(name=[None, author][options.author_committer],
                                                 email=[None, email][options.author_committer],
                                                 date=[None, date][options.author_committer_date]))
-        repo.create_tag(build_tag(options.debian_tag, src.version),
+        repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
                         msg="Debian release %s" % src.version,
                         commit=commit,
                         sign=options.sign_tags,
@@ -140,9 +140,9 @@ def print_dsc(dsc):
 
 def move_tag_stamp(repo, format, version):
     "Move tag out of the way appending the current timestamp"
-    old = build_tag(format, version)
+    old = repo.version_to_tag(format, version)
     timestamped = "%s~%s" % (version, int(time.time()))
-    new = build_tag(format, timestamped)
+    new = repo.version_to_tag(format, timestamped)
     repo.move_tag(old, new)
 
 
@@ -237,7 +237,7 @@ def main(argv):
                 print_dsc(src)
 
             try:
-                repo = GitRepository('.')
+                repo = DebianGitRepository('.')
                 is_empty = repo.is_empty()
 
                 (clean, out) = repo.is_clean()
@@ -252,7 +252,7 @@ def main(argv):
 
             if needs_repo:
                 gbp.log.info("No git repository found, creating one.")
-                repo = GitRepository.create(src.pkg)
+                repo = DebianGitRepository.create(src.pkg)
                 os.chdir(repo.path)
 
             if repo.bare:
@@ -263,7 +263,7 @@ def main(argv):
             upstream.unpack(dirs['tmp'], options.filters)
 
             format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
-            tag = build_tag(format[0], src.upstream_version)
+            tag = repo.version_to_tag(format[0], src.upstream_version)
             msg = "%s version %s" % (format[1], src.upstream_version)
 
             if repo.find_version(options.debian_tag, src.version):

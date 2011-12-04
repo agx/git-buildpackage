@@ -26,10 +26,10 @@ import subprocess
 import gbp.command_wrappers as gbpc
 import gbp.dch as dch
 import gbp.log
-from gbp.git import (GitRepositoryError, GitRepository, build_tag, tag_to_version)
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from gbp.errors import GbpError
 from gbp.deb import compare_versions
+from gbp.deb.git import GitRepositoryError, DebianGitRepository
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 
 user_customizations = {}
@@ -110,7 +110,7 @@ def add_changelog_section(msg, distribution, repo, options, cp,
         pattern = options.upstream_tag.replace('%(version)s', '*')
         try:
             tag = repo.find_tag('HEAD', pattern=pattern)
-            upstream = tag_to_version(tag, options.upstream_tag)
+            upstream = repo.tag_to_version(tag, options.upstream_tag)
             if upstream:
                 gbp.log.debug("Found %s." % upstream)
                 new_version = "%s-1" % upstream
@@ -379,7 +379,7 @@ def main(argv):
 
     try:
         try:
-            repo = GitRepository('.')
+            repo = DebianGitRepository('.')
         except GitRepositoryError:
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 

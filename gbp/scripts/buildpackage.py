@@ -26,11 +26,11 @@ import time
 import tempfile
 import shutil
 import gbp.deb as du
-from gbp.git import (GitRepositoryError, GitRepository, build_tag)
 from gbp.command_wrappers import (Command,
                                   RunAtCommand, CommandExecFailed, PristineTar,
                                   RemoveTree, CatenateTarArchive)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError, ParseChangeLogError
 from gbp.errors import GbpError
 from glob import glob
@@ -333,7 +333,7 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
 def git_archive_build_orig(repo, cp, output_dir, options):
     """build orig using git-archive"""
     if options.upstream_tree == 'tag':
-        upstream_tree = build_tag(options.upstream_tag, cp['Upstream-Version'])
+        upstream_tree = repo.version_to_tag(options.upstream_tag, cp['Upstream-Version'])
     elif options.upstream_tree == 'branch':
         upstream_tree = options.upstream_branch
     else:
@@ -512,7 +512,7 @@ def main(argv):
         return 1
 
     try:
-        repo = GitRepository(os.path.curdir)
+        repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:
         gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
@@ -601,7 +601,7 @@ def main(argv):
                                    'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
             gbp.log.info("Tagging %s" % cp.version)
-            tag = build_tag(options.debian_tag, cp.version)
+            tag = repo.version_to_tag(options.debian_tag, cp.version)
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
             repo.create_tag(name=tag, msg="Debian release %s" % cp.version,

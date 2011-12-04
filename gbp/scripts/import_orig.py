@@ -31,7 +31,7 @@ from gbp.deb import (UpstreamSource,
                      packagename_msg, is_valid_upstreamversion,
                      upstreamversion_msg)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
-from gbp.git import (GitRepositoryError, GitRepository, build_tag)
+from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import (GbpError, GbpNothingImported)
 import gbp.log
@@ -338,7 +338,7 @@ def main(argv):
             return ret
 
         try:
-            repo = GitRepository('.')
+            repo = DebianGitRepository('.')
         except GitRepositoryError:
             raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
 
@@ -400,7 +400,7 @@ def main(argv):
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 
-            tag = build_tag(options.upstream_tag, version)
+            tag = repo.version_to_tag(options.upstream_tag, version)
             repo.create_tag(name=tag,
                             msg="Upstream version %s" % version,
                             commit=commit,

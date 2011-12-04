@@ -433,33 +433,6 @@ class GitRepository(object):
         version = version.replace('~', '.')
         return format % dict(version=version)
 
-    def find_version(self, format, version):
-        """
-        Check if a certain version is stored in this repo. Return it's SHA1 in
-        this case. For legacy tags Don't check only the tag but also the
-        message, since the former wasn't injective until recently.
-        You only need to use this funciton if you also need to check for legacy
-        tags.
-
-        @param format: tag pattern
-        @param version: debian version number
-        @return: sha1 of the version tag
-        """
-        tag = build_tag(format, version)
-        legacy_tag = self._build_legacy_tag(format, version)
-        if self.has_tag(tag): # new tags are injective
-            return self.rev_parse(tag)
-        elif self.has_tag(legacy_tag):
-            out, ret = self.__git_getoutput('cat-file', args=['-p', legacy_tag])
-            if ret:
-                return None
-            for line in out:
-                if line.endswith(" %s\n" % version):
-                    return self.rev_parse(legacy_tag)
-                elif line.startswith('---'): # GPG signature start
-                    return None
-        return None
-
     def find_tag(self, commit, pattern=None):
         """
         Find the closest tag to a given commit
@@ -1200,47 +1173,6 @@ class GitRepository(object):
             raise GitRepositoryError, "Cannot clone Git repository %s to %s: %s " % (remote, abspath, err[1])
         return None
 #}
-
-def build_tag(format, version):
-    """Generate a tag from a given format and a version
-
-    >>> build_tag("debian/%(version)s", "0:0~0")
-    'debian/0%0_0'
-    """
-    return format % dict(version=__sanitize_version(version))
-
-
-def __sanitize_version(version):
-    """sanitize a version so git accepts it as a tag
-
-    >>> __sanitize_version("0.0.0")
-    '0.0.0'
-    >>> __sanitize_version("0.0~0")
-    '0.0_0'
-    >>> __sanitize_version("0:0.0")
-    '0%0.0'
-    >>> __sanitize_version("0%0~0")
-    '0%0_0'
-    """
-    return version.replace('~', '_').replace(':', '%')
-
-
-def tag_to_version(tag, format):
-    """Extract the version from a tag
-
-    >>> tag_to_version("upstream/1%2_3-4", "upstream/%(version)s")
-    '1:2~3-4'
-    >>> tag_to_version("foo/2.3.4", "foo/%(version)s")
-    '2.3.4'
-    >>> tag_to_version("foo/2.3.4", "upstream/%(version)s")
-    """
-    version_re = format.replace('%(version)s',
-                                '(?P<version>[\w_%+-.]+)')
-    r = re.match(version_re, tag)
-    if r:
-        version = r.group('version').replace('_', '~').replace('%', ':')
-        return version
-    return None
 
 
 def rfc822_date_to_git(rfc822_date):

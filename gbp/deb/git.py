@@ -1,0 +1,94 @@
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2011 Guido Günther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"""A Debian Changelog"""
+
+import re
+from gbp.git import GitRepository, GitRepositoryError
+
+class DebianGitRepository(GitRepository):
+    """A git repository that holds the source of a Debian package"""
+
+    def find_version(self, format, version):
+        """
+        Check if a certain version is stored in this repo. Return it's SHA1 in
+        this case. For legacy tags Don't check only the tag but also the
+        message, since the former wasn't injective until recently.
+        You only need to use this funciton if you also need to check for legacy
+        tags.
+
+        @param format: tag pattern
+        @param version: debian version number
+        @return: sha1 of the version tag
+        """
+        tag = self.version_to_tag(format, version)
+        legacy_tag = self._build_legacy_tag(format, version)
+        if self.has_tag(tag): # new tags are injective
+            return self.rev_parse(tag)
+        elif self.has_tag(legacy_tag):
+            out, ret = self.__git_getoutput('cat-file', args=['-p', legacy_tag])
+            if ret:
+                return None
+            for line in out:
+                if line.endswith(" %s\n" % version):
+                    return self.rev_parse(legacy_tag)
+                elif line.startswith('---'): # GPG signature start
+                    return None
+        return None
+
+    @staticmethod
+    def version_to_tag(format, version):
+        """Generate a tag from a given format and a version
+
+        >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
+        'debian/0%0_0'
+        """
+        return format % dict(version=DebianGitRepository._sanitize_version(version))
+
+    @staticmethod
+    def _sanitize_version(version):
+        """sanitize a version so git accepts it as a tag
+
+        >>> DebianGitRepository._sanitize_version("0.0.0")
+        '0.0.0'
+        >>> DebianGitRepository._sanitize_version("0.0~0")
+        '0.0_0'
+        >>> DebianGitRepository._sanitize_version("0:0.0")
+        '0%0.0'
+        >>> DebianGitRepository._sanitize_version("0%0~0")
+        '0%0_0'
+        """
+        return version.replace('~', '_').replace(':', '%')
+
+    @staticmethod
+    def tag_to_version(tag, format):
+        """Extract the version from a tag
+
+        >>> DebianGitRepository.tag_to_version("upstream/1%2_3-4", "upstream/%(version)s")
+        '1:2~3-4'
+        >>> DebianGitRepository.tag_to_version("foo/2.3.4", "foo/%(version)s")
+        '2.3.4'
+        >>> DebianGitRepository.tag_to_version("foo/2.3.4", "upstream/%(version)s")
+        """
+        version_re = format.replace('%(version)s',
+                                    '(?P<version>[\w_%+-.]+)')
+        r = re.match(version_re, tag)
+        if r:
+            version = r.group('version').replace('_', '~').replace('%', ':')
+            return version
+        return None
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
