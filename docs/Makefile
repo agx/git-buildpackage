@@ -15,6 +15,8 @@ SGML_MANPAGES=$(patsubst %,%.1,$(COMMANDS))
 POD_MANPAGES=git-pbuilder.1
 MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
 VERSION_ENT=version.ent
+GBP_VERSION=../gbp/version.py
+DEB_VERSION=$(shell sed -ne 's/^gbp_version="\([.a-z0-9~]\+\)"/\1/p' $(GBP_VERSION))
 CHANGELOG=../debian/changelog
 
 all: $(MANUAL) $(MANPAGES)
@@ -31,7 +33,7 @@ git-pbuilder.1: ../bin/git-pbuilder
 
 manual.sgml: $(VERSION_ENT)
 
-$(VERSION_ENT): $(CHANGELOG)
+$(VERSION_ENT): $(GBP_VERSION)
 	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' > $(VERSION_ENT)
 
 clean:
