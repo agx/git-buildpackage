@@ -183,7 +183,7 @@ def safe_patches(series):
     return (tmpdir, series)
 
 
-def import_quilt_patches(repo, branch, series, tries):
+def import_quilt_patches(repo, branch, series, tries, force):
     """
     apply a series of quilt patches in the series file 'series' to branch
     the patch-queue branch for 'branch'
@@ -193,18 +193,27 @@ def import_quilt_patches(repo, branch, series, tries):
     @param series; series file to read patches from
     @param tries: try that many times to apply the patches going back one
                   commit in the branches history after each failure.
+    @param force: import the patch series even if the branch already exists
     """
     tmpdir = None
 
     if is_pq_branch(branch):
-        gbp.log.err("Already on a patch-queue branch '%s' - doing nothing." % branch)
-        raise GbpError
+        if force:
+            branch = pq_branch_base(branch)
+            pq_branch = pq_branch_name(branch)
+            repo.checkout(branch)
+        else:
+            gbp.log.err("Already on a patch-queue branch '%s' - doing nothing." % branch)
+            raise GbpError
     else:
         pq_branch = pq_branch_name(branch)
 
     if repo.has_branch(pq_branch):
-        raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead."
-                         % pq_branch)
+        if force:
+            drop_pq(repo, branch)
+        else:
+            raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead."
+                             % pq_branch)
 
     commits = repo.get_commits(options=['-%d' % tries], first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
@@ -362,6 +371,8 @@ def main(argv):
                       help="verbose command execution")
     parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
     parser.add_config_file_option(option_name="time-machine", dest="time_machine", type="int")
+    parser.add_option("--force", dest="force", action="store_true", default=False,
+                      help="in case of import even import if the branch already exists")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
 
     (options, args) = parser.parse_args(argv)
@@ -398,7 +409,7 @@ def main(argv):
         elif action == "import":
             series = SERIES_FILE
             tries = options.time_machine if (options.time_machine > 0) else 1
-            import_quilt_patches(repo, current, series, tries)
+            import_quilt_patches(repo, current, series, tries, options.force)
             current = repo.get_branch()
             gbp.log.info("Patches listed in '%s' imported on '%s'" %
                           (series, current))
