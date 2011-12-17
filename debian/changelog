@@ -1,3 +1,11 @@
+git-buildpackage (0.6.0~git20111217) experimental; urgency=low
+
+  * [baeee74] docs: fix version string
+  * [2ff6119] pq: add --force option to fore recreation of pq branch so one
+    doesn't have to drop the old one first.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 17 Dec 2011 13:28:12 +0100
+
 git-buildpackage (0.6.0~git20111202) experimental; urgency=low
 
   [ Guido Günther ]
