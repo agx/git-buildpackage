@@ -304,12 +304,17 @@ def get_patch_subject_from_filename(patch):
     'foo'
     >>> get_patch_subject('debian/patches/foo.bar')
     'foo.bar'
+    >>> get_patch_subject('debian/patches/foo')
+    'foo'
     """
     subject = os.path.basename(patch)
     # Strip of .diff or .patch from patch name
-    base, ext = subject.rsplit('.', 1)
-    if ext in [ 'diff', 'patch' ]:
-        subject = base
+    try:
+        base, ext = subject.rsplit('.', 1)
+        if ext in [ 'diff', 'patch' ]:
+            subject = base
+    except ValueError:
+        pass # No ext so keep subject as is
     return subject
 
 def apply_and_commit_patch(repo, patch, topic=None):
