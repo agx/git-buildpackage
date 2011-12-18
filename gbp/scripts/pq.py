@@ -295,6 +295,22 @@ def apply_single_patch(repo, branch, patch, topic=None):
     switch_to_pq_branch(repo, branch)
     apply_and_commit_patch(repo, patch, topic)
 
+def get_patch_subject_from_filename(patch):
+    """
+    Determine the patch's subject based on the patch's filename
+    >>> get_patch_subject('debian/patches/foo.patch')
+    'foo'
+    >>> get_patch_subject('foo.patch')
+    'foo'
+    >>> get_patch_subject('debian/patches/foo.bar')
+    'foo.bar'
+    """
+    subject = os.path.basename(patch)
+    # Strip of .diff or .patch from patch name
+    base, ext = subject.rsplit('.', 1)
+    if ext in [ 'diff', 'patch' ]:
+        subject = base
+    return subject
 
 def apply_and_commit_patch(repo, patch, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
@@ -302,11 +318,7 @@ def apply_and_commit_patch(repo, patch, topic=None):
 
     # If we don't find a subject use the patch's name
     if not header.has_key('subject'):
-        header['subject'] = os.path.basename(patch)
-        # Strip of .diff or .patch from patch name
-        base, ext = header['subject'].rsplit('.', 1)
-        if ext in [ 'diff', 'patch' ]:
-            header['subject'] = base
+        header['subject'] = get_patch_subject_from_filename(patch)
 
     if header.has_key('author') and header.has_key('email'):
         header['name'] = header['author']
