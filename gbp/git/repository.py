@@ -755,7 +755,7 @@ class GitRepository(object):
         extra_env = author_info.get_author_env() if author_info else None
         self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
 
-    def commit_staged(self, msg, author_info=None):
+    def commit_staged(self, msg, author_info=None, edit=False):
         """
         Commit currently staged files to the repository
 
@@ -763,10 +763,14 @@ class GitRepository(object):
         @type msg: C{str}
         @param author_info: authorship information
         @type author_info: L{GitModifier}
+        @param edit: whether to spawn an editor to edit the commit info
+        @type edit: C{bool}
         """
-        self._commit(msg=msg, author_info=author_info)
+        args = GitArgs()
+        args.add_true(edit,  '--edit')
+        self._commit(msg=msg, args=args.args, author_info=author_info)
 
-    def commit_all(self, msg, author_info=None):
+    def commit_all(self, msg, author_info=None, edit=False):
         """
         Commit all changes to the repository
         @param msg: commit message
@@ -774,7 +778,9 @@ class GitRepository(object):
         @param author_info: authorship information
         @type author_info: L{GitModifier}
         """
-        self._commit(msg=msg, args=['-a'], author_info=author_info)
+        args = GitArgs('-a')
+        args.add_true(edit,  '--edit')
+        self._commit(msg=msg, args=args.args, author_info=author_info)
 
     def commit_files(self, files, msg, author_info=None):
         """
