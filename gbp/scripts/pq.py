@@ -30,7 +30,7 @@ from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
                                   CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
-from gbp.pq import (PatchSeries, Patch)
+from gbp.patch_series import (PatchSeries, Patch)
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 PATCH_DIR = "debian/patches/"

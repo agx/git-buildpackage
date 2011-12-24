@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from gbp.pq import Patch
+from gbp.patch_series import Patch
 
 class TestPatch(unittest.TestCase):
     data_dir = "tests/%s_data" % __module__

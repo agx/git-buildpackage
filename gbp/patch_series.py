@@ -46,7 +46,7 @@ class Patch(object):
         self.long_desc = None
 
     def __repr__(self):
-        repr = "<gbp.pq.Patch path='%s' " % self.path
+        repr = "<gbp.patch_series.Patch path='%s' " % self.path
         if self.topic:
             repr += "topic='%s' " % self.topic
         if self.strip != None:
@@ -183,12 +183,12 @@ class PatchSeries(list):
         >>> PatchSeries._read_series(['a/b', \
                             'a -p1', \
                             'a/b -p2'], '.') # doctest:+NORMALIZE_WHITESPACE
-        [<gbp.pq.Patch path='./a/b' topic='a' >,
-         <gbp.pq.Patch path='./a' strip=1 >,
-         <gbp.pq.Patch path='./a/b' topic='a' strip=2 >]
+        [<gbp.patch_series.Patch path='./a/b' topic='a' >,
+         <gbp.patch_series.Patch path='./a' strip=1 >,
+         <gbp.patch_series.Patch path='./a/b' topic='a' strip=2 >]
 
         >>> PatchSeries._read_series(['# foo', 'a/b', '', '# bar'], '.')
-        [<gbp.pq.Patch path='./a/b' topic='a' >]
+        [<gbp.patch_series.Patch path='./a/b' topic='a' >]
 
         @param series: series of patches in quilt format
         @type series: iterable of strings
@@ -251,9 +251,9 @@ class PatchSeries(list):
         Parse a single line from a series file
 
         >>> PatchSeries._parse_line("a/b -p1", '/tmp/patches')
-        <gbp.pq.Patch path='/tmp/patches/a/b' topic='a' strip=1 >
+        <gbp.patch_series.Patch path='/tmp/patches/a/b' topic='a' strip=1 >
         >>> PatchSeries._parse_line("a/b", '.')
-        <gbp.pq.Patch path='./a/b' topic='a' >
+        <gbp.patch_series.Patch path='./a/b' topic='a' >
         """
         line = line.rstrip()
         topic = klass._get_topic(line)
