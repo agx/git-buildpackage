@@ -18,7 +18,9 @@
 
 import os
 import re
-from errors import GbpError
+import subprocess
+import tempfile
+from gbp.errors import GbpError
 
 class Patch(object):
     """
@@ -26,15 +28,22 @@ class Patch(object):
 
     @ivar path: path to the patch
     @type path: string
-    @ivar topic: the topic of the patch
+    @ivar topic: the topic of the patch (the directory component)
     @type topic: string
     @ivar strip: path components to strip (think patch -p<strip>)
     @type strip: integer
+    @ivar info: Information retrieved from a RFC822 style patch header
+    @type info: C{dict} with C{str} keys and values
+    @ivar long_desc: the long description of the patch
     """
+    patch_exts = ['diff', 'patch']
+
     def __init__(self, path, topic=None, strip=None):
         self.path = path
         self.topic = topic
         self.strip = strip
+        self.info = None
+        self.long_desc = None
 
     def __repr__(self):
         repr = "<gbp.pq.Patch path='%s' " % self.path
@@ -44,6 +53,104 @@ class Patch(object):
             repr += "strip=%d " % self.strip
         repr += ">"
         return repr
+
+    def _read_info(self):
+        """
+        Read patch information into a structured form
+
+        using I{git mailinfo}
+        """
+        self.info = {}
+        body = tempfile.NamedTemporaryFile(prefix='gbp_')
+        pipe = subprocess.Popen("git mailinfo '%s' /dev/null < '%s'" %
+                                (body.name, self.path),
+                                shell=True,
+                                stdout=subprocess.PIPE).stdout
+        for line in pipe:
+            if ':' in line:
+                rfc_header, value = line.split(" ", 1)
+                header = rfc_header[:-1].lower()
+                self.info[header] = value.strip()
+        try:
+            self.long_desc = "".join([ line for line in body ])
+            body.close()
+        except IOError as msg:
+            raise GbpError("Failed to read patch header of '%s': %s" %
+                           (self.patch, msg))
+        finally:
+            if os.path.exists(body.name):
+                os.unlink(body.name)
+
+    def _get_subject_from_filename(self):
+        """
+        Determine the patch's subject based on the it's filename
+
+        >>> p = Patch('debian/patches/foo.patch')
+        >>> p._get_subject_from_filename()
+        'foo'
+        >>> Patch('foo.patch')._get_subject_from_filename()
+        'foo'
+        >>> Patch('debian/patches/foo.bar')._get_subject_from_filename()
+        'foo.bar'
+        >>> p = Patch('debian/patches/foo')
+        >>> p._get_subject_from_filename()
+        'foo'
+
+        @return: the patch's subject
+        @rtype: C{str}
+        """
+        subject = os.path.basename(self.path)
+        # Strip of .diff or .patch from patch name
+        try:
+            base, ext = subject.rsplit('.', 1)
+            if ext in self.patch_exts:
+                subject = base
+        except ValueError:
+                pass # No ext so keep subject as is
+        return subject
+
+    def _get_info_field(self, key, get_val=None):
+        """
+        Return the key I{key} from the info C{dict}
+        or use val if I{key} is not a valid key.
+
+        Fill self.info if not already done.
+
+        @param key: key to fetch
+        @type key: C{str}
+        @param get_val: alternate value if key is not in info dict
+        @type get_val: C{str}
+        """
+        if self.info == None:
+            self._read_info()
+
+        if self.info.has_key(key):
+            return self.info[key]
+        else:
+            return get_val() if get_val else None
+
+
+    @property
+    def subject(self):
+        """
+        The patch's subject, either from the patch header or from the filename.
+        """
+        return self._get_info_field('subject', self._get_subject_from_filename)
+
+    @property
+    def author(self):
+        """The patch's author"""
+        return self._get_info_field('author')
+
+    @property
+    def email(self):
+        """The patch author's email address"""
+        return self._get_info_field('email')
+
+    @property
+    def date(self):
+        """The patch's modification time"""
+        return self._get_info_field('date')
 
 
 class PatchSeries(list):

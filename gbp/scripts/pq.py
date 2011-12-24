@@ -30,7 +30,7 @@ from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
                                   CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
-from gbp.pq import PatchSeries
+from gbp.pq import (PatchSeries, Patch)
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 PATCH_DIR = "debian/patches/"
@@ -233,7 +233,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
         for patch in queue:
             gbp.log.debug("Applying %s" % patch.path)
             try:
-                apply_and_commit_patch(repo, patch.path, patch.topic)
+                apply_and_commit_patch(repo, patch, patch.topic)
             except (GbpError, GitRepositoryError, CommandExecFailed):
                 repo.set_branch(branch)
                 repo.delete_branch(pq_branch)
@@ -247,30 +247,6 @@ def import_quilt_patches(repo, branch, series, tries, force):
     if tmpdir:
         gbp.log.debug("Remove temporary patch safe '%s'" % tmpdir)
         shutil.rmtree(tmpdir)
-
-
-def get_mailinfo(patch):
-    """Read patch information into a structured form"""
-
-    info = {}
-    body = os.path.join('.git', 'gbp_patchinfo')
-    pipe = subprocess.Popen("git mailinfo %s /dev/null < %s" % (body, patch),
-                            shell=True, stdout=subprocess.PIPE).stdout
-    for line in pipe:
-        if ':' in line:
-            rfc_header, value = line.split(" ",1)
-            header = rfc_header[:-1].lower()
-            info[header] = value.strip()
-
-    try:
-        f = file(body)
-        commit_msg = "".join([ line for line in f ])
-        f.close()
-        os.unlink(body)
-    except IOError, msg:
-        raise GbpError, "Failed to read patch header of '%s': %s" % (patch, msg)
-
-    return info, commit_msg
 
 
 def switch_to_pq_branch(repo, branch):
@@ -295,55 +271,30 @@ def apply_single_patch(repo, branch, patch, topic=None):
     switch_to_pq_branch(repo, branch)
     apply_and_commit_patch(repo, patch, topic)
 
-def get_patch_subject_from_filename(patch):
-    """
-    Determine the patch's subject based on the patch's filename
-    >>> get_patch_subject('debian/patches/foo.patch')
-    'foo'
-    >>> get_patch_subject('foo.patch')
-    'foo'
-    >>> get_patch_subject('debian/patches/foo.bar')
-    'foo.bar'
-    >>> get_patch_subject('debian/patches/foo')
-    'foo'
-    """
-    subject = os.path.basename(patch)
-    # Strip of .diff or .patch from patch name
-    try:
-        base, ext = subject.rsplit('.', 1)
-        if ext in [ 'diff', 'patch' ]:
-            subject = base
-    except ValueError:
-        pass # No ext so keep subject as is
-    return subject
 
 def apply_and_commit_patch(repo, patch, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
-    header, body = get_mailinfo(patch)
+    author = { 'name': patch.author,
+               'email': patch.email,
+               'date': patch.date }
 
-    # If we don't find a subject use the patch's name
-    if not header.has_key('subject'):
-        header['subject'] = get_patch_subject_from_filename(patch)
-
-    if header.has_key('author') and header.has_key('email'):
-        header['name'] = header['author']
-    else:
+    if not (patch.author and patch.email):
         name, email = get_maintainer_from_control()
         if name:
-            gbp.log.warn("Patch '%s' has no authorship information, using '%s <%s>'"
-                         % (patch, name, email))
-            header['name'] = name
-            header['email'] = email
+            gbp.log.warn("Patch '%s' has no authorship information, "
+                         "using '%s <%s>'" % (patch, name, email))
+            author['name'] = name
+            author['email'] = email
         else:
             gbp.log.warn("Patch %s has no authorship information")
 
-    repo.apply_patch(patch)
+    repo.apply_patch(patch.path)
     tree = repo.write_tree()
-    msg = "%s\n\n%s" % (header['subject'], body)
+    msg = "%s\n\n%s" % (patch.subject, patch.long_desc)
     if topic:
         msg += "\nGbp-Pq-Topic: %s" % topic
-    commit = repo.commit_tree(tree, msg, [repo.head], author=header)
-    repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch)
+    commit = repo.commit_tree(tree, msg, [repo.head], author=author)
+    repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch.path)
 
 
 def drop_pq(repo, branch):
@@ -408,7 +359,7 @@ def main(argv):
             gbp.log.err("No patch name given.")
             return 1
         else:
-            patch = args[2]
+            patchfile = args[2]
     else:
         gbp.log.err("Unknown action '%s'." % args[1])
         return 1
@@ -435,6 +386,7 @@ def main(argv):
         elif action == "rebase":
             rebase_pq(repo, current)
         elif action == "apply":
+            patch = Patch(patchfile)
             apply_single_patch(repo, current, patch, options.topic)
     except CommandExecFailed:
         retval = 1

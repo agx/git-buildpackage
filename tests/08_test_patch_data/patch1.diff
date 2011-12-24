@@ -1,0 +1,7 @@
+From: foo <foo@example.com>
+Date: Sat, 24 Dec 2011 12:05:53 +0100
+Subject: This is
+ patch1
+
+This is the long description.
+It can span several lines.
