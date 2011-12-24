@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-"""Handle patches and patch queues"""
+"""Handle Patches and Patch Series"""
 
 import os
 import re
@@ -22,7 +22,7 @@ from errors import GbpError
 
 class Patch(object):
     """
-    A patch in a L{PatchQueue}
+    A patch in a L{PatchSeries}
 
     @ivar path: path to the patch
     @type path: string
@@ -39,16 +39,16 @@ class Patch(object):
     def __repr__(self):
         repr = "<gbp.pq.Patch path='%s' " % self.path
         if self.topic:
-                repr += "topic='%s' " % self.topic
+            repr += "topic='%s' " % self.topic
         if self.strip != None:
-                repr += "strip=%d " % self.strip
+            repr += "strip=%d " % self.strip
         repr += ">"
         return repr
 
 
-class PatchQueue(list):
+class PatchSeries(list):
     """
-    A series of L{Patch}es (e.g. as read from a quilt series file)
+    A series of L{Patch}es as read from a quilt series file).
     """
 
     @classmethod
@@ -73,14 +73,14 @@ class PatchQueue(list):
         """
         Read patch series
 
-        >>> PatchQueue._read_series(['a/b', \
+        >>> PatchSeries._read_series(['a/b', \
                             'a -p1', \
                             'a/b -p2'], '.') # doctest:+NORMALIZE_WHITESPACE
         [<gbp.pq.Patch path='./a/b' topic='a' >,
          <gbp.pq.Patch path='./a' strip=1 >,
          <gbp.pq.Patch path='./a/b' topic='a' strip=2 >]
 
-        >>> PatchQueue._read_series(['# foo', 'a/b', '', '# bar'], '.')
+        >>> PatchSeries._read_series(['# foo', 'a/b', '', '# bar'], '.')
         [<gbp.pq.Patch path='./a/b' topic='a' >]
 
         @param series: series of patches in quilt format
@@ -89,7 +89,7 @@ class PatchQueue(list):
         @type patch_dir: string
         """
 
-        queue = PatchQueue()
+        queue = PatchSeries()
         for line in series:
             try:
                 if line[0] in [ '\n', '#' ]:
@@ -102,12 +102,12 @@ class PatchQueue(list):
     @staticmethod
     def _get_topic(line):
         """
-        Get the topic from the path's path
+        Get the topic from the patch's path
 
-        >>> PatchQueue._get_topic("a/b c")
+        >>> PatchSeries._get_topic("a/b c")
         'a'
-        >>> PatchQueue._get_topic("asdf")
-        >>> PatchQueue._get_topic("/asdf")
+        >>> PatchSeries._get_topic("asdf")
+        >>> PatchSeries._get_topic("/asdf")
         """
         topic = os.path.dirname(line)
         if topic in [ '', '/' ]:
@@ -119,11 +119,11 @@ class PatchQueue(list):
         """
         Separate the -p<num> option from the patch name
 
-        >>> PatchQueue._split_strip("asdf -p1")
+        >>> PatchSeries._split_strip("asdf -p1")
         ('asdf', 1)
-        >>> PatchQueue._split_strip("a/nice/patch")
+        >>> PatchSeries._split_strip("a/nice/patch")
         ('a/nice/patch', None)
-        >>> PatchQueue._split_strip("asdf foo")
+        >>> PatchSeries._split_strip("asdf foo")
         ('asdf foo', None)
         """
         patch = line
@@ -141,11 +141,11 @@ class PatchQueue(list):
     @classmethod
     def _parse_line(klass, line, patch_dir):
         """
-        Parse a single line from a patch file
+        Parse a single line from a series file
 
-        >>> PatchQueue._parse_line("a/b -p1", '/tmp/patches')
+        >>> PatchSeries._parse_line("a/b -p1", '/tmp/patches')
         <gbp.pq.Patch path='/tmp/patches/a/b' topic='a' strip=1 >
-        >>> PatchQueue._parse_line("a/b", '.')
+        >>> PatchSeries._parse_line("a/b", '.')
         <gbp.pq.Patch path='./a/b' topic='a' >
         """
         line = line.rstrip()

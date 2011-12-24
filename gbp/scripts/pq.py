@@ -30,7 +30,7 @@ from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
                                   CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
-from gbp.pq import PatchQueue
+from gbp.pq import PatchSeries
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 PATCH_DIR = "debian/patches/"
@@ -221,7 +221,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
     if len(commits) > 1:
         tmpdir, series = safe_patches(series)
 
-    queue = PatchQueue.read_series_file(series)
+    queue = PatchSeries.read_series_file(series)
     for commit in commits:
         try:
             gbp.log.info("Trying to apply patches at '%s'" % commit)
