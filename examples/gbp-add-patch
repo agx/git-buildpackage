@@ -32,60 +32,16 @@ commits debian/patches/0010-bla-fasel with this changelog message:
     Thanks: <author>
 """
 
-import email
 import re
 import sys
 import os, os.path
-import subprocess
-import tempfile
 from gbp.command_wrappers import (Command,
                                   CommandExecFailed,
                                   GitCommand)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
-
-class PatchInfo(object):
-        def __init__(self, patch):
-            t_body = tempfile.NamedTemporaryFile(prefix='gbp_add_patch_', dir='.git/')
-            t_patch = tempfile.NamedTemporaryFile(prefix='gbp_add_patch_', dir='.git/')
-            popen = subprocess.Popen(['git', 'mailinfo', t_body.name, t_patch.name],
-                                      stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE)
-            self.name = patch
-            try:
-                f = file(patch)
-            except IOError, msg:
-                raise GbpError, msg
-            out, dummy = popen.communicate(f.read())
-            f.close()
-            self.header = email.message_from_string(out)
-            self.body = t_body.read()
-            t_body.close()
-            self.patch = t_patch.read()
-            t_patch.close()
-
-        def summary(self):
-            return self.header['Subject']
-
-        def author_name(self):
-            return self.header['Author']
-
-        def author(self):
-            return '%(Author)s <%(Email)s>' % self.header
-
-
-class GitCommit(GitCommand):
-    """Wrap git commit to commit staged changes"""
-    def __init__(self, verbose=False, **kwargs):
-        args = [ ['-q'], [] ][verbose]
-        GitCommand.__init__(self, cmd='commit', args=args, **kwargs)
-
-    def __call__(self, msg='', edit=False):
-        args = [ [], ['-e'] ][edit]
-        args += [ [], ['-m', msg] ][len(msg) > 0]
-        self.run_error = "Couldn't %s %s" % (self.cmd, " ".join(self.args + args))
-        GitCommand.__call__(self, args)
+from gbp.patch_series import Patch
 
 
 def build_commit_msg(repo, patch, options):
@@ -95,19 +51,19 @@ def build_commit_msg(repo, patch, options):
     closes = ''
 
     author = repo.get_author_info()
-    if author.name != patch.author_name():
-        thanks = "Thanks: %s" % patch.author_name()
+    if author.name != patch.author:
+        thanks = "Thanks: %s" % patch.author
 
-    for line in patch.body.split('\n'):
+    for line in patch.long_desc.split('\n'):
         if bts_closes.match(line):
             closes += line + '\n'
 
-    patch_name = os.path.basename(patch.name)
+    patch_name = os.path.basename(patch.path)
     msg="""New patch %s
 
 %s
 %s
-%s""" % (patch_name, patch.summary(), thanks, closes)
+%s""" % (patch_name, patch.subject, thanks, closes)
     return msg
 
 
@@ -141,11 +97,11 @@ def main(argv):
         else:
             patchfile = args[1]
 
-        patch = PatchInfo(patchfile)
+        patch = Patch(patchfile)
 
         repo.add_files(patchfile)
         msg = build_commit_msg(repo, patch, options)
-        GitCommit()(edit=options.edit, msg=msg)
+        repo.commit_staged(edit=options.edit, msg=msg)
         # FIXME: handle the series file
 
     except CommandExecFailed:
