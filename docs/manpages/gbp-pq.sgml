@@ -26,11 +26,11 @@
       <arg><option>--topic=</option><replaceable>topic</replaceable></arg>
       <arg><option>--time-machine=</option><replaceable>num</replaceable></arg>
       <group choice="plain">
-      <arg><option>export</option></arg>
-      <arg><option>import</option></arg>
-      <arg><option>rebase</option></arg>
-      <arg><option>drop</option></arg>
-      <arg><option>apply</option></arg>
+	<arg><option>drop</option></arg>
+	<arg><option>export</option></arg>
+	<arg><option>import</option></arg>
+	<arg><option>rebase</option></arg>
+	<arg><option>switch</option></arg>
       </group>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -104,6 +104,16 @@
 	the patch to appear in a separate subdir when exporting the patch queue
 	using <option>export</option>. This can be used to separate upstream
 	pathes from debian specific patches.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>switch</option>
+        </term>
+        <listitem>
+	  <para>
+	    Switch to the patch-queue branch if on the base branch and switch
+	    to base branch if on patch-queue branch.
+	  </para>
         </listitem>
       </varlistentry>
     </variablelist>

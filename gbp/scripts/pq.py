@@ -250,8 +250,10 @@ def import_quilt_patches(repo, branch, series, tries, force):
 
 
 def switch_to_pq_branch(repo, branch):
-    """Switch to patch-queue branch if not already there, create it if it
-       doesn't exist yet"""
+    """
+    Switch to patch-queue branch if not already there, create it if it
+    doesn't exist yet
+    """
     if is_pq_branch (branch):
         return
 
@@ -320,6 +322,16 @@ def rebase_pq(repo, branch):
     GitCommand("rebase")([base])
 
 
+def switch_pq(repo, current):
+    """Switch to patch-queue branch if on base branch and vice versa"""
+    if is_pq_branch(current):
+        base = pq_branch_base(current)
+        gbp.log.info("Switching to %s" % base)
+        repo.checkout(base)
+    else:
+        switch_to_pq_branch(repo, current)
+
+
 def main(argv):
     retval = 0
 
@@ -333,7 +345,8 @@ def main(argv):
         "  rebase         switch to patch queue branch associated to the current\n"
         "                 branch and rebase against current branch.\n"
         "  drop           drop (delete) the patch queue associated to the current branch.\n"
-        "  apply          apply a patch\n")
+        "  apply          apply a patch\n"
+        "  switch         switch to patch-queue branch and vice versa")
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -352,7 +365,7 @@ def main(argv):
     else:
         action = args[1]
 
-    if args[1] in ["export", "import", "rebase", "drop"]:
+    if args[1] in ["export", "import", "rebase", "drop", "switch"]:
         pass
     elif args[1] in ["apply"]:
         if len(args) != 3:
@@ -388,6 +401,8 @@ def main(argv):
         elif action == "apply":
             patch = Patch(patchfile)
             apply_single_patch(repo, current, patch, options.topic)
+        elif action == "switch":
+            switch_pq(repo, current)
     except CommandExecFailed:
         retval = 1
     except GbpError, err:
