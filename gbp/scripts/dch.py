@@ -47,13 +47,13 @@ def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
               release=False, distribution=None, dch_options=''):
     """
     Spawn dch
-    param author: committers name
-    param email: committers email
-    param newversion: start a new version
-    version: the verion to use
-    release: finalize changelog for releaze
-    distribution: distribution to use
-    dch_options: options passed verbatim to dch
+    @param author: committers name
+    @param email: committers email
+    @param newversion: start a new version
+    @param version: the verion to use
+    @param release: finalize changelog for releaze
+    @param distribution: distribution to use
+    @param dch_options: options passed verbatim to dch
     """
     distopt = ""
     versionopt = ""
