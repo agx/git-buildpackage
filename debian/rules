@@ -35,7 +35,7 @@ override_dh_auto_install:
 	dh_auto_install
 	dh_bash-completion
 
-voerride_dh_auto_clean:
+override_dh_auto_clean:
 	dh_auto_clean
 	make -C docs/ clean
 	-rm gbp/version.py
