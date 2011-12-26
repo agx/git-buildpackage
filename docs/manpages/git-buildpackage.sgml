@@ -33,6 +33,7 @@
       <arg><option>--git-[no-]qemubuilder</option></arg>
       <arg><option>--git-dist=</option><replaceable>DIST</replaceable></arg>
       <arg><option>--git-arch=</option><replaceable>ARCH</replaceable></arg>
+      <arg><option>--git-[no-]pbuilder-autoconf</option></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
@@ -160,6 +161,14 @@
 	  using <command>--git-pbuilder</command>. If unset no architecture is
 	  passed to <command>git-pbuilder</command>.
         </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pbuilder-autoconf</option></term>
+        <listitem>
+	  <para>Whether to try to autoconfigure
+	  <command>git-pbuilder</command> or to rely on the settings in
+	  .pbuilderrc. See the <command>git-pbuilder</command>
+          manpage for details.</listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-verbose</option>

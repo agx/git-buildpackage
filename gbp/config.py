@@ -124,6 +124,7 @@ class GbpOptionParser(OptionParser):
                  'create-missing-branches': 'False',
                  'submodules'      : 'False',
                  'time-machine'    : 1,
+                 'pbuilder-autoconf' : 'True',
              }
     help = {
              'debian-branch':
@@ -200,6 +201,8 @@ class GbpOptionParser(OptionParser):
                   "hook run after a successful import, default is '%(postimport)s'",
              'time-machine':
                   "don't try head commit only to apply the patch queue but look TIME_MACHINE commits back",
+             'pbuilder-autoconf':
+                  "Wheter to configure pbuilder automatically.",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),
