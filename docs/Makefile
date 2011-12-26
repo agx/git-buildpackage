@@ -25,7 +25,7 @@ $(MANUAL): manual.sgml chapters/*.sgml manpages/*.sgml
 	docbook-2-html -s local $<
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
-%.1: man.%.sgml
+%.1: man.%.sgml manpages/%.sgml
 	docbook2man -o . $<
 
 git-pbuilder.1: ../bin/git-pbuilder
