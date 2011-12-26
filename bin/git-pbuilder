@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: git-pbuilder,v 1.22 2011-05-23 06:03:13 eagle Exp $
+# $Id: git-pbuilder,v 1.25 2011/12/25 21:17:51 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
@@ -24,36 +24,38 @@
 
 set -e
 
-# Set BUILDER, DIST, and ARCH based on the name we were invoked as.  This
-# allows people to create symlinks like git-pbuilder-lenny and
-# git-qemubuilder-lenny-amd64 pointing to git-pbuilder and auto-detecting the
-# builder, distribution, and architecture from that.
-if [ -z "$BUILDER" ] && [ -z "$DIST" ] ; then
-    BUILDER=${0#*git-}
-    DIST=${BUILDER#*-}
-    BUILDER=${BUILDER%%-*}
-    case $BUILDER in
-        pbuilder|cowbuilder) BUILDER=cowbuilder ;;
-        /*)                  BUILDER=cowbuilder ;;
-    esac
-    case $BUILDER in
-        *builder) ;;
-        *)        BUILDER=cowbuilder ;;
-    esac
-    case $DIST in
-        *builder)
-            DIST=
-            ;;
-        *-*)
-            ARCH=${DIST#*-}
-            DIST=${DIST%%-*}
-            ;;
-    esac
-else
-    BUILDER=cowbuilder
-fi
+# Set default BUILDER, DIST, and ARCH based on the name we were invoked as.
+# This allows people to create symlinks like git-pbuilder-squeeze and
+# git-qemubuilder-squeeze-amd64 pointing to git-pbuilder and auto-detecting
+# the builder, distribution, and architecture from that.
+default_BUILDER=${0#*git-}
+default_DIST=${default_BUILDER#*-}
+default_BUILDER=${default_BUILDER%%-*}
+case $default_BUILDER in
+    pbuilder|cowbuilder) default_BUILDER=cowbuilder ;;
+    /*)                  default_BUILDER=cowbuilder ;;
+esac
+case $default_BUILDER in
+    *builder) ;;
+    *)        default_BUILDER=cowbuilder ;;
+esac
+case $default_DIST in
+    *builder)
+        default_DIST=
+        ;;
+    *-*)
+        default_ARCH=${default_DIST#*-}
+        default_DIST=${default_DIST%%-*}
+        ;;
+esac
+: ${default_BUILDER:=cowbuilder}
 
-# Make sure we have the necessary tools
+# Set BUILDER, DIST, and ARCH, allowing existing settings to override.
+: ${BUILDER:=$default_BUILDER}
+: ${DIST:=$default_DIST}
+: ${ARCH:=$default_ARCH}
+
+# Make sure we have the necessary tools.
 if [ ! -x /usr/sbin/"$BUILDER" ]; then
     echo "$BUILDER not found; you need to install the $BUILDER package" >&2
     exit 1
@@ -62,73 +64,108 @@ fi
 # Default options come from the environment.
 OPTIONS="$GIT_PBUILDER_OPTIONS"
 
-# How we handle options depends on what type of builder we're using.
-case $BUILDER in
-    cowbuilder)
-        # The root directory where different cowbuilder --basepath directories
-        # are found.  git-pbuilder expects them to be named base-<dist>.cow.
-        : ${COWBUILDER_BASE:=/var/cache/pbuilder}
+# How we handle options depends on what type of builder we're using.  Ignore
+# options if $GIT_PBUILDER_AUTOCONF is set to no.
+if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
+    case $BUILDER in
+        pbuilder)
+            # The root directory where different pbuilder --basepath
+            # directories are found.  git-pbuilder expects them to be named
+            # base-<dist>.tgz.
+            : ${PBUILDER_BASE:=/var/cache/pbuilder}
 
-        # If DIST is set, use base-$DIST.cow.  If DIST is not set, the sid
-        # chroot may be either base.cow or base-sid.cow.  Try both.  If ARCH
-        # is set, use base-$DIST-$ARCH.cow.
-        if [ -z "$DIST" ] ; then
-            DIST=sid
-        fi
-        if [ -n "$ARCH" ] ; then
-            BASE="$COWBUILDER_BASE/base-$DIST-$ARCH.cow"
-            OPTIONS="$OPTIONS --architecture $ARCH"
-        elif [ "$DIST" = 'sid' ] ; then
-            if [ -d "$COWBUILDER_BASE/base-sid.cow" ] ; then
-                BASE="$COWBUILDER_BASE/base-sid.cow"
+            # If DIST is set, use base-$DIST.tgz.  If DIST is not set, the sid
+            # chroot may be either base.tgz or base-sid.tgz.  Try both.  If
+            # ARCH is set, use base-$DIST-$ARCH.tgz.
+            : ${DIST:=sid}
+            if [ -n "$ARCH" ] ; then
+                BASE="$PBUILDER_BASE/base-$DIST-$ARCH.tgz"
+                OPTIONS="$OPTIONS --architecture $ARCH"
+            elif [ "$DIST" = 'sid' ] ; then
+                if [ -f "$PBUILDER_BASE/base-sid.tgz" ] ; then
+                    BASE="$PBUILDER_BASE/base-sid.tgz"
+                else
+                    BASE="$PBUILDER_BASE/base.tgz"
+                fi
             else
-                BASE="$COWBUILDER_BASE/base.cow"
+                BASE="$PBUILDER_BASE/base-$DIST.tgz"
             fi
-        else
-            BASE="$COWBUILDER_BASE/base-$DIST.cow"
-        fi
-        OPTIONS="$OPTIONS --basepath $BASE"
+            OPTIONS="$OPTIONS --basetgz $BASE"
 
-        # Make sure the base directory exists.
-        if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
-            echo "Base directory $BASE does not exist" >&2
+            # Make sure the base tarball exists.
+            if [ ! -f "$BASE" ] && [ "$1" != "create" ]; then
+                echo "Base tarball $BASE does not exist" >&2
+                exit 1
+            fi
+
+            # Set --debian-etch-workaround if DIST is etch.  Assume that
+            # everything else is new enough that it will be fine.
+            if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
+                OPTIONS="$OPTIONS --debian-etch-workaround"
+            fi
+            ;;
+    
+        cowbuilder)
+            # The root directory where different cowbuilder --basepath
+            # directories are found.  git-pbuilder expects them to be named
+            # base-<dist>.cow.
+            : ${COWBUILDER_BASE:=/var/cache/pbuilder}
+    
+            # If DIST is set, use base-$DIST.cow.  If DIST is not set, the sid
+            # chroot may be either base.cow or base-sid.cow.  Try both.  If
+            # ARCH is set, use base-$DIST-$ARCH.cow.
+            : ${DIST:=sid}
+            if [ -n "$ARCH" ] ; then
+                BASE="$COWBUILDER_BASE/base-$DIST-$ARCH.cow"
+                OPTIONS="$OPTIONS --architecture $ARCH"
+            elif [ "$DIST" = 'sid' ] ; then
+                if [ -d "$COWBUILDER_BASE/base-sid.cow" ] ; then
+                    BASE="$COWBUILDER_BASE/base-sid.cow"
+                else
+                    BASE="$COWBUILDER_BASE/base.cow"
+                fi
+            else
+                BASE="$COWBUILDER_BASE/base-$DIST.cow"
+            fi
+            OPTIONS="$OPTIONS --basepath $BASE"
+    
+            # Make sure the base directory exists.
+            if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
+                echo "Base directory $BASE does not exist" >&2
+                exit 1
+            fi
+    
+            # Set --debian-etch-workaround if DIST is etch.  Assume that
+            # everything else is new enough that it will be fine.
+            if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
+                OPTIONS="$OPTIONS --debian-etch-workaround"
+            fi
+            ;;
+    
+        qemubuilder)
+            # There always has to be an architecture for qemubuilder, and it
+            # doesn't make much sense to default to the current architecture.
+            # There's probably no good default, but this one at least makes
+            # some sense.
+            : ${DIST:=sid}
+            : ${ARCH:=armel}
+    
+            # There has to be a configuration file matching our distribution
+            # and architecture.
+            QEMUBUILDER_CONFIG="/var/cache/pbuilder/$BUILDER-$ARCH-$DIST.conf"
+            if [ ! -r "$QEMUBUILDER_CONFIG" ]; then
+                echo "Cannot read configuration file $QEMUBUILDER_CONFIG" >&2
+                exit 1
+            fi
+            OPTIONS="$OPTIONS --config $QEMUBUILDER_CONFIG"
+            ;;
+    
+        *)
+            echo "Unknown builder $BUILDER" >&2
             exit 1
-        fi
-
-        # Set --debian-etch-workaround if DIST is etch.  Assume that
-        # everything else is new enough that it will be fine.
-        if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
-            OPTIONS="$OPTIONS --debian-etch-workaround"
-        fi
-        ;;
-
-    qemubuilder)
-        # There always has to be an architecture for qemubuilder, and it
-        # doesn't make much sense to default to the current architecture.
-        # There's probably no good default, but this one at least makes some
-        # sense.
-        if [ -z "$DIST" ] ; then
-            DIST=sid
-        fi
-        if [ -z "$ARCH" ]; then
-            ARCH=armel
-        fi
-
-        # There has to be a configuration file matching our distribution and
-        # architecture.
-        QEMUBUILDER_CONFIG="/var/cache/pbuilder/qemubuilder-$ARCH-$DIST.conf"
-        if [ ! -r "$QEMUBUILDER_CONFIG" ]; then
-            echo "Cannot read configuration file $QEMUBUILDER_CONFIG" >&2
-            exit 1
-        fi
-        OPTIONS="$OPTIONS --config $QEMUBUILDER_CONFIG"
-        ;;
-
-    *)
-        echo "Unknown builder $BUILDER" >&2
-        exit 1
-        ;;
-esac
+            ;;
+    esac
+fi
 
 # If the first argument to the script is update, create, or login, run the
 # builder with the corresponding option under sudo rather than proceeding.
@@ -136,7 +173,11 @@ case $1 in
 update|create|login)
     action="$1"
     shift
-    sudo "$BUILDER" --"$action" --dist "$DIST" $OPTIONS "$@"
+    if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
+        sudo "$BUILDER" --"$action" $OPTIONS "$@"
+    else
+        sudo "$BUILDER" --"$action" --dist "$DIST" $OPTIONS "$@"
+    fi
     exit $?
     ;;
 *)
@@ -147,7 +188,9 @@ update|create|login)
 esac
 
 # Print out some information about what we're doing.
-if [ -n "$ARCH" ] ; then
+if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
+    echo "Building with $BUILDER"
+elif [ -n "$ARCH" ] ; then
     echo "Building with $BUILDER for distribution $DIST, architecture $ARCH"
 else
     echo "Building with $BUILDER for distribution $DIST"
@@ -167,8 +210,12 @@ fi
 
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
-pdebuild --buildresult .. --pbuilder "$BUILDER" \
-    --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
+if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
+    pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
+else
+    pdebuild --buildresult .. --pbuilder "$BUILDER" \
+        --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
+fi
 status="$?"
 if [ -n "`ls ../*_source.changes`" ] ; then
     rm ../*_source.changes
@@ -185,10 +232,10 @@ git-pbuilder - Wrapper around cowbuilder/qemubuilder for git-buildpackage
 
 =head1 SYNOPSIS
 
-DIST=I<distribution> ARCH=I<architecture> [BUILDER=qemubuilder] \
+DIST=I<distribution> ARCH=I<architecture> [BUILDER=(pbuilder|qemubuilder)] \
     B<git-pbuilder> I<debbuild-options>
 
-DIST=I<distribution> ARCH=I<architecture> [BUILDER=qemubuilder] \
+DIST=I<distribution> ARCH=I<architecture> [BUILDER=(pbuilder|qemubuilder)] \
     B<git-pbuilder> (update | create | login) I<cowbuilder-options>
 
 =head1 DESCRIPTION
@@ -198,7 +245,8 @@ B<git-buildpackage>.  It configures B<pdebuild> to use B<cowbuilder> by
 default, passes appropriate options to B<debbuild>, and sets the base path
 for B<cowbuilder> based on the environment variable DIST and, if set, the
 environment variable ARCH.  B<qemubuilder> can be selected instead by
-setting the environment variable BUILDER to C<qemubuilder>.
+setting the environment variable BUILDER to C<qemubuilder>, and
+B<pbuilder> can be selected by setting BUILDER to C<pbuilder>.
 
 By default, B<git-pbuilder> assumes the target distribution is C<sid>, the
 same architecture as the B<cowbuilder> default, and uses
@@ -214,20 +262,36 @@ If B<qemubuilder> is used as the builder, no base directory is used.
 Instead, B<qemubuilder> is invoked with the B<--config> option pointing to
 the file F</var/cache/pbuilder/qemubuilder-I<arch>-I<dist>.conf>
 
-If neither BUILDER nor DIST are set in the environment and B<git-pbuilder>
-is invoked via a name that starts with C<git-*->, the part between the
-hyphens is taken to be the name of the builder to use (with C<pbuilder>
-mapped to B<cowbuilder>.).  The part after the last hyphen is taken to be
-the distribution (if it contains no additional hyphen) or the distribution
-followed by the architecture (if it contains a hyphen).  One can therefore
-create symlinks like C<git-pbuilder-lenny> pointing to B<git-pbuilder> and
-use that name when wanting to use a distribution of C<lenny>, or
-C<git-qemubuilder-sid-armel> to use B<qemubuilder> to build for the
-C<armel> architecture and the C<sid> distribution.
+If B<pbuilder> is used as the builder, B<git-pbuilder> instead looks for
+F</var/cache/pbuilder/base-sid.tgz> by default and
+F</var/cache/pbuilder/base.tgz> if it doesn't exist.  If DIST or ARCH are
+set, they are used to form the expected name of the tgz file in the same
+way as they're used to form the expected base directory for B<cowbuilder>.
+Similar to B<cowbuilder>, B<--debian-etch-workaround> is passed to
+B<pbuilder> if from the DIST setting it looks like the target distribution
+is etch.
+
+If B<git-pbuilder> is invoked via a name that starts with C<git-*->, the
+part between the hyphens is taken to be the default name of the builder to
+use.  However, C<pbuilder> is mapped to B<cowbuilder> for backward
+compatibility; if you want to use B<pbuilder>, you have to explicitly set
+BUILDER.  The part after the last hyphen is taken to be the default
+distribution (if it contains no additional hyphen) or the default
+distribution followed by the default architecture (if it contains a
+hyphen).  One can therefore create symlinks like C<git-pbuilder-squeeze>
+pointing to B<git-pbuilder> and use that name when wanting to use a
+distribution of C<squeeze>, or C<git-qemubuilder-sid-armel> to use
+B<qemubuilder> to build for the C<armel> architecture and the C<sid>
+distribution.  Explicit settings of BUILDER, DIST, or ARCH always override
+any guesses from the command name.
 
 Any arguments are passed as-is to B<dpkg-buildpackage> via the
 B<--debbuildopts> option to B<pdebuild>.  To pass arguments to the builder
 instead, put them in the environment variable GIT_PBUILDER_OPTIONS.
+
+To disable all attempts to discover the base path, tarball, or
+configuration file and set up the pbuilder options and instead rely on the
+settings in .pbuilderrc, set GIT_PBUILDER_AUTOCONF to C<no>.
 
 Normally, one does not run this script directly.  Instead, it's used as
 the builder script for B<git-buildpackage>.  To configure
@@ -256,13 +320,14 @@ to B<git-pbuilder> are passed along to the builder.
 =item ARCH
 
 Sets the target architecture.  For a B<cowbuilder> builder, this sets both
-the base path and is passed as the B<--architecture> option.  For a
-B<qemubuilder>, this controls the path to the configuration file.
+the base path and is passed as the B<--architecture> option.  With
+B<qemubuilder>, this controls the path to the configuration file.  With
+B<pbuilder>, this sets the tgz path and is passed as B<--architecture>.
 
 =item BUILDER
 
 Sets the builder to use.  The only supported settings are C<cowbuilder>
-(the default) and C<qemubuilder>.
+(the default), C<qemubuilder>, and C<pbuilder>.
 
 =item COWBUILDER_BASE
 
@@ -272,17 +337,33 @@ cowbuilder base directories (F</var/cache/pbuilder>).
 =item DIST
 
 Sets the target distribution.  This is used primarily to determine the
-base path for B<cowbuilder> or the configuration file path for
-B<qemubuilder>, but it's also used to determine whether to pass
-B<--debian-etch-workaround> to B<cowbuilder>.
+base path for B<cowbuilder> or B<pbuilder> or the configuration file path
+for B<qemubuilder>, but it's also used to determine whether to pass
+B<--debian-etch-workaround> to B<cowbuilder> or B<pbuilder>.
+
+=item GIT_PBUILDER_AUTOCONF
+
+If set to C<no>, disable the logic that constructs the base path, tarball,
+or configuration file and all other logic to determine the options to pass
+to the builder.  Instead, just run the configured builder and assume its
+configuration is handled elsewhere (such as in F<.pbuilderrc>).  This also
+suppresses setting C<--buildresult ..>, so the user will need to ensure
+that the configuration still puts packages where B<git-buildpackage>
+expects them.
 
 =item GIT_PBUILDER_OPTIONS
 
 Add additional options for the builder.  These options are passed as-is to
-B<cowbuilder> or B<qemubuilder> via B<pdebuild>.  The contents of this
-variable will undergo shell expansion, so any arguments containing shell
-metacharacters or whitespace need to be quoted in the value of the
-environment variable.
+B<cowbuilder>, B<qemubuilder>, or B<pbuilder> via B<pdebuild>.  The
+contents of this variable will undergo shell expansion, so any arguments
+containing shell metacharacters or whitespace need to be quoted in the
+value of the environment variable.
+
+=item PBUILDER_BASE
+
+Set this environment variable to change the defualt location for the
+pbuilder tgz files (F</var/cache/pbuilder>) when BUILDER is set to
+C<pbuilder>.
 
 =back
 
@@ -311,6 +392,19 @@ not.
 
 The C<cowbuilder --basepath> directory used if DIST and ARCH are both set.
 
+=item /var/cache/pbuilder/base-sid.tgz
+
+=item /var/cache/pbuilder/base.tgz
+
+=item /var/cache/pbuilder/base-sid-$ARCH.tgz
+
+=item /var/cache/pbuilder/base-$DIST.tgz
+
+=item /var/cache/pbuilder/base-$DIST-$ARCH.tgz
+
+Similar to the above, the C<pbuilder --basetgz> path used for various
+settings of DIST and ARCH if BUILDER is set to C<pbuilder>.
+
 =item /var/cache/pbuilder/qemubuilder-$ARCH-$DIST.conf
 
 The C<qemubuilder --config> file used.  $ARCH defaults to C<armel> and
@@ -320,8 +414,8 @@ $DIST defaults to C<sid> if not set.
 
 =head1 SEE ALSO
 
-cowbuilder(8), dpkg-buildpackage(1), git-buildpackage(1), pdebuild(1),
-qemubuilder(8), sudo(8)
+cowbuilder(8), dpkg-buildpackage(1), git-buildpackage(1), pbuilder(8),
+pdebuild(1), qemubuilder(8), sudo(8)
 
 The latest version of this script is available from
 L<http://www.eyrie.org/~eagle/software/scripts/>.
