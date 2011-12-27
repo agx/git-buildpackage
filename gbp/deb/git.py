@@ -24,10 +24,11 @@ class DebianGitRepository(GitRepository):
 
     def find_version(self, format, version):
         """
-        Check if a certain version is stored in this repo. Return it's SHA1 in
-        this case. For legacy tags Don't check only the tag but also the
-        message, since the former wasn't injective until recently.
-        You only need to use this funciton if you also need to check for legacy
+        Check if a certain version is stored in this repo and return it's SHA1.
+
+        For legacy tags don't only check the tag itself but also the commit
+        message, since the former wasn't injective until release 0.5.5. You
+        only need to use this function if you also need to check for legacy
         tags.
 
         @param format: tag pattern
