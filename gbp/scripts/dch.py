@@ -145,8 +145,16 @@ def fixup_trailer(repo, git_author, dch_options):
 
 def snapshot_version(version):
     """
-    get the current release and snapshot version
+    Get the current release and snapshot version.
+
     Format is <debian-version>~<release>.gbp<short-commit-id>
+
+    >>> snapshot_version('1.0-1')
+    ('1.0-1', 0)
+    >>> snapshot_version('1.0-1~1.test0')
+    ('1.0-1~1.test0', 0)
+    >>> snapshot_version('1.0-1~2.gbp1234')
+    ('1.0-1', 2)
     """
     try:
         (release, suffix) = version.rsplit('~', 1)
