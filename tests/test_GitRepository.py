@@ -255,6 +255,25 @@ def test_list_files():
     []
     """
 
+def test_get_commits():
+    """
+    Test listing commits
+
+    Methods tested:
+         - L{gbp.git.GitRepository.get_commits}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> commits = repo.get_commits()
+    >>> type(commits) == list and len(commits) == 2
+    True
+    >>> len(repo.get_commits(num=1)) == 1
+    True
+    >>> repo.get_commits(paths=['foo', 'bar'])
+    []
+    >>> repo.get_commits(paths=['testfile']) == commits
+    True
+    """
 
 def test_mirror_clone():
     """

@@ -261,11 +261,11 @@ def guess_snapshot_commit(cp, repo, options):
     # If the current topmost changelog entry has already been tagged rely on
     # the version information only. The upper level relies then on the version
     # info anyway:
-    if repo.find_version(options.debian_tag, cp['Version']):
+    if repo.find_version(options.debian_tag, cp.version):
         return None
     # If we didn't find a snapshot header we look at the point the changelog
     # was last touched.
-    last = repo.get_commits(paths="debian/changelog", options=["-1"])
+    last = repo.get_commits(paths="debian/changelog", num=1)
     if last:
         gbp.log.info("Changelog last touched at '%s'" % last[0])
         return last[0]
@@ -427,8 +427,7 @@ def main(argv):
 
         if args:
             gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
-        commits = repo.get_commits(since=since, until=until,
-                                   paths=" ".join(args),
+        commits = repo.get_commits(since=since, until=until, paths=args,
                                    options=options.git_log.split(" "))
         commits.reverse()
 

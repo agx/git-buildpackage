@@ -215,7 +215,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
             raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead."
                              % pq_branch)
 
-    commits = repo.get_commits(options=['-%d' % tries], first_parent=True)
+    commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
     if len(commits) > 1:

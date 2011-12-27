@@ -879,15 +879,20 @@ class GitRepository(object):
 
 #{ Commit Information
 
-    def get_commits(self, since=None, until=None, paths=None, options=None,
-                   first_parent=False):
+    def get_commits(self, since=None, until=None, paths=None, num=0,
+                    first_parent=False, options=None):
         """
         Get commits from since to until touching paths
 
         @param since: commit to start from
+        @type since: C{str}
         @param until: last commit to get
+        @type until: C{str}
         @param paths: only list commits touching paths
-        @param options: list of options passed to git log
+        @type paths: C{list} of C{str}
+        @param num: maximum number of commits to fetch
+        @type num: C{int}
+        @param options: list of additional options passed to git log
         @type  options: C{list} of C{str}ings
         @param first_parent: only follow first parent when seeing a
                              merge commit
@@ -899,6 +904,9 @@ class GitRepository(object):
         if options:
             args += options
 
+        if num:
+            args += [ '-%d' % num ]
+
         if first_parent:
             args += [ "--first-parent" ]
 
@@ -906,7 +914,9 @@ class GitRepository(object):
             args += ['%s..%s' % (since, until)]
 
         if paths:
-            args += [ "--", paths ]
+            if isinstance(paths, basestring):
+                paths = [ paths ]
+            args += [ "--" ] +  paths
 
         commits, ret = self.__git_getoutput('log', args)
         if ret:
