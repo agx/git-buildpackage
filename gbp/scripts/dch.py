@@ -47,6 +47,7 @@ def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
               release=False, distribution=None, dch_options=''):
     """
     Spawn dch
+
     @param author: committers name
     @param email: committers email
     @param newversion: start a new version
@@ -97,13 +98,13 @@ def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
 
 
 def add_changelog_entry(msg, author, email, dch_options):
-    "add a single changelog entry"
+    """Add a single changelog entry"""
     spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
 
 
 def add_changelog_section(msg, distribution, repo, options, cp,
                           author=None, email=None, version=None, dch_options=''):
-    "add a new changelog section"
+    """Add a new section to the changelog"""
     # If no version(change) was specified guess the new version based on the
     # latest upstream version on the upstream branch
     if not version and not cp.is_native():
@@ -136,9 +137,12 @@ def get_author_email(repo, use_git_config):
 
 
 def fixup_trailer(repo, git_author, dch_options):
-    """fixup the changelog trailer's comitter and email address - it might
-    otherwise point to the last git committer instead of the person creating
-    the changelog"""
+    """
+    Fixup the changelog trailer's comitter and email address.
+
+    It might otherwise point to the last git committer instead of the person
+    creating the changelog
+    """
     author, email = get_author_email(repo, git_author)
     spawn_dch(msg='', author=author, email=email, dch_options=dch_options)
 
@@ -173,18 +177,20 @@ def mangle_changelog(changelog, cp, snapshot=''):
     """
     Mangle changelog to either add or remove snapshot markers
 
-    @param snapshot: SHA1 if snapshot header should be added/maintained, empty if it should be removed
-    @type  snapshot: str
+    @param snapshot: SHA1 if snapshot header should be added/maintained,
+        empty if it should be removed
+    @type  snapshot: C{str}
     """
     try:
         tmpfile = '%s.%s' % (changelog, snapshot)
         cw = file(tmpfile, 'w')
         cr = file(changelog, 'r')
 
+        print >>cw, ("%(Source)s (%(MangledVersion)s) "
+                     "%(Distribution)s; urgency=%(urgency)s\n" % cp)
+
         cr.readline() # skip version and empty line
         cr.readline()
-        print >>cw, "%(Source)s (%(MangledVersion)s) %(Distribution)s; urgency=%(urgency)s\n" % cp
-
         line = cr.readline()
         if snapshot_re.match(line):
             cr.readline() # consume the empty line after the snapshot header
@@ -205,7 +211,7 @@ def mangle_changelog(changelog, cp, snapshot=''):
 
 
 def do_release(changelog, repo, cp, git_author, dch_options):
-    "remove the snapshot header and set the distribution"
+    """Remove the snapshot header and set the distribution"""
     author, email = get_author_email(repo, git_author)
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
@@ -216,8 +222,8 @@ def do_release(changelog, repo, cp, git_author, dch_options):
 
 def do_snapshot(changelog, repo, next_snapshot):
     """
-    Add new snapshot banner to most recent changelog section. The next snapshot
-    number is calculated by eval()'ing next_snapshot
+    Add new snapshot banner to most recent changelog section.
+    The next snapshot number is calculated by eval()'ing next_snapshot.
     """
     commit = repo.head
 
@@ -233,7 +239,7 @@ def do_snapshot(changelog, repo, next_snapshot):
 
 
 def parse_commit(repo, commitid, opts, last_commit=False):
-    """parse a commit and return message, author, and author email"""
+    """Parse a commit and return message, author, and author email"""
     commit_info = repo.get_commit_info(commitid)
     author = commit_info['author']
     email = commit_info['email']
@@ -246,7 +252,7 @@ def parse_commit(repo, commitid, opts, last_commit=False):
 
 def guess_snapshot_commit(cp, repo, options):
     """
-    guess the last commit documented in the changelog from the snapshot banner
+    Guess the last commit documented in the changelog from the snapshot banner
     or the last point the changelog was touched.
     """
     sr = re.search(snapshot_re, cp['Changes'])
@@ -295,7 +301,7 @@ def process_options(options, parser):
 
 
 def process_editor_option(options):
-    # Determine Editor and check if we need it
+    """Determine text editor and check if we need it"""
     states = ['always']
 
     if options.snapshot:
@@ -322,11 +328,16 @@ def main(argv):
     except ConfigParser.ParsingError, err:
         gbp.log.errror(err)
         return 1
-    range_group = GbpOptionGroup(parser, "commit range options", "which commits to add to the changelog")
-    version_group = GbpOptionGroup(parser, "release & version number options", "what version number and release to use")
-    commit_group = GbpOptionGroup(parser, "commit message formatting", "howto format the changelog entries")
-    naming_group = GbpOptionGroup(parser, "branch and tag naming", "branch names and tag formats")
-    custom_group = GbpOptionGroup(parser, "customization", "options for customization")
+    range_group = GbpOptionGroup(parser, "commit range options",
+                                 "which commits to add to the changelog")
+    version_group = GbpOptionGroup(parser, "release & version number options",
+                                   "what version number and release to use")
+    commit_group = GbpOptionGroup(parser, "commit message formatting",
+                                  "howto format the changelog entries")
+    naming_group = GbpOptionGroup(parser, "branch and tag naming",
+                                  "branch names and tag formats")
+    custom_group = GbpOptionGroup(parser, "customization",
+                                  "options for customization")
     parser.add_option_group(range_group)
     parser.add_option_group(version_group)
     parser.add_option_group(commit_group)
@@ -373,9 +384,9 @@ def main(argv):
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
     commit_group.add_config_file_option(option_name="spawn-editor", dest="spawn_editor")
 
-    help_msg = 'Load Python code from CUSTOMIZATION_FILE.  At the moment,' \
-        + ' the only useful thing the code can do is define a custom' \
-        + ' format_changelog_entry() function.'
+    help_msg = ('Load Python code from CUSTOMIZATION_FILE.  At the moment,'
+                ' the only useful thing the code can do is define a custom'
+                ' format_changelog_entry() function.')
     custom_group.add_config_file_option(option_name="customizations",
                                         dest="customization_file",
                                         help=help_msg)
