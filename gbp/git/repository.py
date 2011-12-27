@@ -898,27 +898,17 @@ class GitRepository(object):
                              merge commit
         @type first_parent: C{bool}
         """
+        args = GitArgs('--pretty=format:%H')
+        args.add_true(num, '-%d' % num)
+        args.add_true(first_parent, '--first-parent')
+        args.add_true(since and until, '%s..%s' % (since, until))
+        args.add_cond(options, options)
+        args.add("--")
+        if isinstance(paths, basestring):
+            paths = [ paths ]
+        args.add_cond(paths, paths)
 
-        args = ['--pretty=format:%H']
-
-        if options:
-            args += options
-
-        if num:
-            args += [ '-%d' % num ]
-
-        if first_parent:
-            args += [ "--first-parent" ]
-
-        if since and until:
-            args += ['%s..%s' % (since, until)]
-
-        if paths:
-            if isinstance(paths, basestring):
-                paths = [ paths ]
-            args += [ "--" ] +  paths
-
-        commits, ret = self.__git_getoutput('log', args)
+        commits, ret = self.__git_getoutput('log', args.args)
         if ret:
             where = " on %s" % paths if paths else ""
             raise GitRepositoryError, ("Error getting commits %s..%s%s" %
