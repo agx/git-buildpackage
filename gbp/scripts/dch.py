@@ -102,25 +102,33 @@ def add_changelog_entry(msg, author, email, dch_options):
     spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
 
 
+def guess_version_from_upstream(repo, upstream_tag_format, cp):
+    """
+    Guess the version based on the latest version on the upstream branch
+    """
+    pattern = upstream_tag_format.replace('%(version)s', '*')
+    try:
+        tag = repo.find_tag('HEAD', pattern=pattern)
+        upstream = repo.tag_to_version(tag, upstream_tag_format)
+        if upstream:
+            gbp.log.debug("Found upstream version %s." % upstream)
+            new_version = "%s-1" % upstream
+            if compare_versions(upstream, cp.version) > 0:
+                return new_version
+    except GitRepositoryError:
+        gbp.log.debug("No tag found matching pattern %s." % pattern)
+    return None
+
+
 def add_changelog_section(msg, distribution, repo, options, cp,
-                          author=None, email=None, version=None, dch_options=''):
+                          author=None, email=None, version={}, dch_options=''):
     """Add a new section to the changelog"""
-    # If no version(change) was specified guess the new version based on the
-    # latest upstream version on the upstream branch
     if not version and not cp.is_native():
-        pattern = options.upstream_tag.replace('%(version)s', '*')
-        try:
-            tag = repo.find_tag('HEAD', pattern=pattern)
-            upstream = repo.tag_to_version(tag, options.upstream_tag)
-            if upstream:
-                gbp.log.debug("Found %s." % upstream)
-                new_version = "%s-1" % upstream
-                if compare_versions(upstream, cp['Version']) > 0:
-                    version['version'] = new_version
-        except GitRepositoryError:
-            gbp.log.debug("No tag found matching pattern %s." % pattern)
-    spawn_dch(msg=msg, newversion=True, version=version, author=author, email=email,
-              distribution=distribution, dch_options=dch_options)
+        v = guess_version_from_upstream(repo, options.upstream_tag, cp)
+        if v:
+            version['version'] = v
+    spawn_dch(msg=msg, newversion=True, version=version, author=author,
+              email=email, distribution=distribution, dch_options=dch_options)
 
 
 def get_author_email(repo, use_git_config):
