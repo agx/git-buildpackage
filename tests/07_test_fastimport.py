@@ -1,5 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
+"""Test L{FastImport} class"""
+
 import os
 import shutil
 import tarfile

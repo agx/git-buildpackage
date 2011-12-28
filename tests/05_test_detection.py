@@ -1,3 +1,7 @@
+# vim: set fileencoding=utf-8 :
+
+"""Test tarball compression type detection"""
+
 import os
 import shutil
 import tempfile

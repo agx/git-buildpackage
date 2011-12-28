@@ -1,4 +1,6 @@
-# Test the UpstreamSource class
+# vim: set fileencoding=utf-8 :
+
+"""Test the L{UpstreamSource} class"""
 
 import glob
 import os
@@ -20,6 +22,7 @@ class TestDir(unittest.TestCase):
 
 
 class TestTar(unittest.TestCase):
+    """Test if packing tar archives works"""
     def _check_tar(self, us, positive=[], negative=[]):
         t = tarfile.open(name=us.path, mode="r:bz2")
         for f in positive:
@@ -64,6 +67,7 @@ class TestTar(unittest.TestCase):
 
 
 class TestZip(unittest.TestCase):
+    """Test if unpacking zip archives works"""
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp(prefix='gbp_%s_' % __name__, dir='.')
         self.zipfile = os.path.join(self.tmpdir, "gbp-0.1.zip")

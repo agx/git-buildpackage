@@ -1,3 +1,7 @@
+# vim: set fileencoding=utf-8 :
+
+"""Test L{Patch} class"""
+
 import os
 import unittest
 

@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
-#
-# check if --help works
+
+"""Check if --help works"""
 
 import os
 import unittest

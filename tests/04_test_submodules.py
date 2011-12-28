@@ -1,5 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
+"""Test submodule L{GitRepository} submodule methods"""
+
 import os
 import shutil
 import tarfile

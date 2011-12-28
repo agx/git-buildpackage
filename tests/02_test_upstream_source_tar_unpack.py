@@ -1,5 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
+"""Test L{UpstreamSource}'s tarball unpack"""
+
 import glob
 import os
 import shutil

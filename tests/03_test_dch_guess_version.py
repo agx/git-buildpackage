@@ -1,3 +1,7 @@
+# vim: set fileencoding=utf-8 :
+
+"""Test L{Changelog}'s guess_version_from_upstream"""
+
 import unittest
 
 from gbp.scripts import dch
@@ -28,7 +32,7 @@ class MockedChangeLog(ChangeLog):
 
 
 class TestGuessVersionFromUpstream(unittest.TestCase):
-    """Dest guess_version_from_upstream"""
+    """Test guess_version_from_upstream"""
     def test_guess_no_epoch(self):
         """Guess the new version from the upstream tag"""
         repo = MockGitRepository(upstream_tag='upstream/1.1')
