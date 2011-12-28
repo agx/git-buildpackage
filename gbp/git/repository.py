@@ -423,13 +423,6 @@ class GitRepository(object):
         out, ret =  self.__git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
-    def _build_legacy_tag(self, format, version):
-        """legacy version numbering"""
-        if ':' in version: # strip of any epochs
-            version = version.split(':', 1)[1]
-        version = version.replace('~', '.')
-        return format % dict(version=version)
-
     def find_tag(self, commit, pattern=None):
         """
         Find the closest tag to a given commit

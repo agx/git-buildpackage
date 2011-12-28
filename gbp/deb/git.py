@@ -51,6 +51,19 @@ class DebianGitRepository(GitRepository):
         return None
 
     @staticmethod
+    def _build_legacy_tag(format, version):
+        """
+        Legacy tags (prior to 0.5.5) dropped epochs and didn't honor the '~'
+
+        >>> DebianGitRepository._build_legacy_tag('upstream/%(version)s', '1:2.0~3')
+        'upstream/2.0.3'
+        """
+        if ':' in version: # strip of any epochs
+            version = version.split(':', 1)[1]
+        version = version.replace('~', '.')
+        return format % dict(version=version)
+
+    @staticmethod
     def version_to_tag(format, version):
         """Generate a tag from a given format and a version
 
