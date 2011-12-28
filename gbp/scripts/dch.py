@@ -106,15 +106,16 @@ def guess_version_from_upstream(repo, upstream_tag_format, cp):
     """
     Guess the version based on the latest version on the upstream branch
     """
-    pattern = upstream_tag_format.replace('%(version)s', '*')
+    pattern = upstream_tag_format % dict(version='*')
     try:
         tag = repo.find_tag('HEAD', pattern=pattern)
-        upstream = repo.tag_to_version(tag, upstream_tag_format)
-        if upstream:
-            gbp.log.debug("Found upstream version %s." % upstream)
-            new_version = "%s-1" % upstream
-            if compare_versions(upstream, cp.version) > 0:
-                return new_version
+        version = repo.tag_to_version(tag, upstream_tag_format)
+        if version:
+            gbp.log.debug("Found upstream version %s." % version)
+            if cp.has_epoch():
+                version = "%s:%s" % (cp.epoch, version)
+            if compare_versions(version, cp.version) > 0:
+                return "%s-1" % version
     except GitRepositoryError:
         gbp.log.debug("No tag found matching pattern %s." % pattern)
     return None
