@@ -60,11 +60,11 @@ class GitRepository(object):
         try:
             out, ret = self.__git_getoutput('rev-parse', ['--show-cdup'])
             if ret or out not in [ ['\n'], [] ]:
-                raise GitRepositoryError("No git repo at '%s'" % self.path)
+                raise GitRepositoryError("No Git repository at '%s'" % self.path)
         except GitRepositoryError:
             raise # We already have a useful error message
         except:
-            raise GitRepositoryError("No git repo at '%s'" % self.path)
+            raise GitRepositoryError("No Git repository at '%s'" % self.path)
         self._check_bare()
 
     def __build_env(self, extra_env):
@@ -207,7 +207,7 @@ class GitRepository(object):
         if self.branch != branch:
             self._git_command("branch", args.args)
         else:
-            raise GitRepositoryError, "Can't delete the branch you're on"
+            raise GitRepositoryError("Can't delete the branch you're on")
 
     def get_branch(self):
         """
@@ -441,7 +441,7 @@ class GitRepository(object):
 
         tag, ret = self.__git_getoutput('describe', args)
         if ret:
-            raise GitRepositoryError, "can't find tag for %s" % commit
+            raise GitRepositoryError("Can't find tag for %s" % commit)
         return tag[0].strip()
 
     def get_tags(self, pattern=None):
@@ -524,7 +524,7 @@ class GitRepository(object):
         args = [ "--quiet", "--verify", name ]
         sha, ret = self.__git_getoutput('rev-parse', args)
         if ret:
-            raise GitRepositoryError, "revision '%s' not found" % name
+            raise GitRepositoryError("revision '%s' not found" % name)
         return sha[0].strip()
 
 #{ Trees
@@ -566,7 +566,7 @@ class GitRepository(object):
 
         tree, ret = self.__git_getoutput('write-tree', extra_env=extra_env)
         if ret:
-            raise GitRepositoryError, "can't write out current index"
+            raise GitRepositoryError("Can't write out current index")
         return tree[0].strip()
 #}
 
@@ -837,7 +837,7 @@ class GitRepository(object):
         commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
                                   author=author, committer=committer)
         if not commit:
-            raise GbpError, "Failed to commit tree"
+            raise GbpError("Failed to commit tree")
         self.update_ref("refs/heads/%s" % branch, commit, cur)
         return commit
 
@@ -868,7 +868,7 @@ class GitRepository(object):
         if not ret:
             return sha1.strip()
         else:
-            raise GbpError, "Failed to commit tree: %s" % stderr
+            raise GbpError("Failed to commit tree: %s" % stderr)
 
 #{ Commit Information
 
@@ -912,7 +912,7 @@ class GitRepository(object):
         """git-show id"""
         commit, ret = self.__git_getoutput('show', [ "--pretty=medium", id ])
         if ret:
-            raise GitRepositoryError, "can't get %s" % id
+            raise GitRepositoryError("can't get %s" % id)
         for line in commit:
             yield line
 
@@ -925,7 +925,7 @@ class GitRepository(object):
 
         commits, ret = self.__git_getoutput('log', args)
         if ret:
-            raise GitRepositoryError, "Error grepping log for %s" % regex
+            raise GitRepositoryError("Error grepping log for %s" % regex)
         return [ commit.strip() for commit in commits[::-1] ]
 
     def get_subject(self, commit):
@@ -938,7 +938,8 @@ class GitRepository(object):
         """
         out, ret =  self.__git_getoutput('log', ['-n1', '--pretty=format:%s',  commit])
         if ret:
-            raise GitRepositoryError, "Error getting subject of commit %s" % commit
+            raise GitRepositoryError("Error getting subject of commit %s"
+                                     % commit)
         return out[0].strip()
 
     def get_commit_info(self, commit):
@@ -953,8 +954,8 @@ class GitRepository(object):
                                          ['--pretty=format:%an%n%ae%n%s%n%b%n',
                                           '-n1', commit])
         if ret:
-            raise GitRepositoryError, "Unable to retrieve log entry for %s" \
-                % commit
+            raise GitRepositoryError("Unable to retrieve log entry for %s"
+                                     % commit)
         return {'id' : commit,
                 'author' : out[0].strip(),
                 'email' : out[1].strip(),
@@ -993,7 +994,7 @@ class GitRepository(object):
                  '--output=%s' % output, treeish ]
         out, ret = self.__git_getoutput('archive', args, **kwargs)
         if ret:
-            raise GitRepositoryError, "unable to archive %s"%(treeish)
+            raise GitRepositoryError("Unable to archive %s" % treeish)
 
     def collect_garbage(self, auto=False):
         """
@@ -1117,7 +1118,8 @@ class GitRepository(object):
                     f.write(description)
             return klass(abspath)
         except OSError, err:
-            raise GitRepositoryError, "Cannot create Git repository at %s: %s " % (abspath, err[1])
+            raise GitRepositoryError("Cannot create Git repository at '%s': %s"
+                                     % (abspath, err[1]))
         return None
 
     @classmethod
@@ -1166,7 +1168,9 @@ class GitRepository(object):
                     name = name[:-4]
             return klass(os.path.join(abspath, name))
         except OSError, err:
-            raise GitRepositoryError, "Cannot clone Git repository %s to %s: %s " % (remote, abspath, err[1])
+            raise GitRepositoryError("Cannot clone Git repository "
+                                     "'%s' to '%s': %s"
+                                     % (remote, abspath, err[1]))
         return None
 #}
 
