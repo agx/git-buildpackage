@@ -20,6 +20,7 @@ import ConfigParser
 import sys
 import re
 import os
+import shutil
 import tempfile
 import glob
 import pipes
@@ -77,6 +78,9 @@ def apply_patch(diff):
 
 def apply_deb_tgz(deb_tgz):
     """Apply .debian.tar.gz (V3 source format)"""
+    # Remove any existing data in debian/ as dpkg-source -x does
+    if os.path.isdir('debian'):
+        shutil.rmtree('debian')
     gbpc.UnpackTarArchive(deb_tgz, ".")()
     return True
 
