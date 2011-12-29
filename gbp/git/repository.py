@@ -916,11 +916,19 @@ class GitRepository(object):
         for line in commit:
             yield line
 
-    def grep_log(self, regex, where=None):
+    def grep_log(self, regex, since=None):
+        """
+        Get commmits matching I{regex}
+
+        @param regex: regular expression
+        @type regex: C{str}
+        @param since: where to start grepping (e.g. a branch)
+        @type since: C{str}
+        """
         args = ['--pretty=format:%H']
         args.append("--grep=%s" % regex)
-        if where:
-            args.append(where)
+        if since:
+            args.append(since)
         args.append('--')
 
         commits, ret = self.__git_getoutput('log', args)

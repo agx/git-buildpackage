@@ -128,8 +128,11 @@ def test_delete_branch():
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> repo.create_branch("bar")
     >>> repo.delete_branch("bar")
+    >>> repo.delete_branch("master")
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Can't delete the branch you're on
     """
-
 
 def test_set_branch():
     """
@@ -313,8 +316,11 @@ def test_clone():
          - L{gbp.git.GitRepository.is_empty}
          - L{gbp.git.GitRepository.set_branch}
          - L{gbp.git.GitRepository.branch}
+         - L{gbp.git.GitRepository.get_merge_branch}
          - L{gbp.git.GitRepository.get_remote_branches}
          - L{gbp.git.GitRepository.get_local_branches}
+         - L{gbp.git.GitRepository.get_remote_repos}
+         - L{gbp.git.GitRepository.has_remote_repo}
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
@@ -333,8 +339,16 @@ def test_clone():
     >>> clone.create_branch('foo', 'origin/foo')
     >>> clone.get_merge_branch('foo')
     'origin/foo'
+    >>> clone.create_branch('bar')
+    >>> clone.get_merge_branch('bar') # None if no merge branch exists
     >>> clone.get_local_branches()
-    ['foo', 'master']
+    ['bar', 'foo', 'master']
+    >>> clone.get_remote_repos()
+    ['origin']
+    >>> clone.has_remote_repo('origin')
+    True
+    >>> clone.has_remote_repo('godiug')
+    False
     """
 
 def test_merge():
@@ -401,6 +415,34 @@ def test_create_bare():
     (True, '')
     """
 
+def test_nonexistant():
+    """
+    Check that accessing a non existant repository fails.
+
+    Methods tested:
+         - L{gbp.git.GitRepository.__init__}
+
+    >>> import gbp.git
+    >>> bare = gbp.git.GitRepository("/does/not/exist")
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: No Git repository at '/does/not/exist'
+    """
+
+def test_create_noperm():
+    """
+    Check that creating a repository at a path that isn't writeable fails
+
+    Methods tested:
+         - L{gbp.git.GitRepository.create}
+
+    >>> import gbp.git
+    >>> gbp.git.GitRepository.create("/does/not/exist")
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Cannot create Git repository at '/does/not/exist': Permission denied
+    """
+
 def test_checkout():
     """
     Checkout treeishs
@@ -420,6 +462,10 @@ def test_checkout():
     >>> repo.checkout('master')
     >>> repo.branch
     'master'
+    >>> repo.rev_parse('doesnotexist')
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: revision 'doesnotexist' not found
     >>> sha1 = repo.rev_parse('master')
     >>> repo.checkout(sha1)
     >>> repo.branch
@@ -430,6 +476,87 @@ def test_checkout():
     >>> tag = repo.tags[0]
     >>> repo.checkout(tag)
     >>> repo.branch
+    """
+
+def test_gc():
+    """
+    Test garbace collection
+
+    Methods tested:
+         - L{gbp.git.GitRepository.collect_garbage}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.collect_garbage()
+    """
+
+def test_grep():
+    """
+    Test grepping through commit messages
+
+    Methods tested:
+        - L{gbp.git.GitRepository.grep_log}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.set_branch('master')
+    >>> len(repo.grep_log('foo')) == 2
+    True
+    >>> len(repo.grep_log('foo', 'master')) == 2
+    True
+    >>> repo.grep_log('blafasel')
+    []
+    >>> repo.grep_log('foo', 'doesnotexist')
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Error grepping log for foo
+    """
+
+def test_is_ff():
+    """
+    Test if branch is fast forwardable
+
+    Methods tested:
+        - L{gbp.git.GitRepository.is_fast_forward}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.is_fast_forward('master', 'foo')
+    (True, True)
+    >>> repo.create_branch('ff', 'HEAD^')
+    >>> repo.is_fast_forward('ff', 'master')
+    (True, False)
+    >>> repo.is_fast_forward('master', 'ff')
+    (False, True)
+    """
+
+def test_update_ref():
+    """
+    Test updating a reference
+
+    Methods tested:
+        - L{gbp.git.GitRepository.update_ref}
+
+    >>> import gbp.git, os
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.update_ref('new_ref', 'master', msg='update')
+    >>> os.path.exists(os.path.join(repo.git_dir, 'new_ref'))
+    True
+    """
+
+def test_update_submodules():
+    """
+    Updating submodules if we don't have any is a noop
+
+    Methods tested:
+        - L{gbp.git.GitRepository.has_submodules}
+        - L{gbp.git.GitRepository.update_submodules}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.has_submodules()
+    False
+    >>> repo.update_submodules()
     """
 
 def test_teardown():
