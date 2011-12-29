@@ -1,3 +1,24 @@
+git-buildpackage (0.6.0~git20111229) experimental; urgency=low
+
+  * [686f29c] scripts/pq: handle patches without filename extension. Don't
+    fail if patches don't have a proper patch header and filename extensions
+    (like in the heimdal package)
+  * [248b550] Update git-pbuilder to 1.25.
+    Thanks to Russ Allbery (Closes: #635061, #642355)
+  * [58978c5] Add --[no-]-pbuilder-autoconf to pass GIT_PBUILDER_AUTOCONF=no
+    to git-pbuilder.
+  * [01a2689] gbp-pq: add "switch" action to quickly switch between
+    patch-queue and base branch.
+  * [8f41ffb] docs: add missing dependency to manpage generation
+  * [6bfc8e5] Fix typo in clean target override
+  * [747c05d] dch: Honor epoch when guessing new upstream version.
+    Thanks to a lot to Daniel Dehennin for the testcase (Closes: #652366)
+  * [ed4e523] import_dsc: remove debian/ dir from upstream source after
+    importing it. This gives us the orig tarball on upstream but the debian
+    branch looks the same as with dpkg-source -x. (Closes: #653472)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 29 Dec 2011 14:52:29 +0100
+
 git-buildpackage (0.6.0~git20111217) experimental; urgency=low
 
   * [baeee74] docs: fix version string
