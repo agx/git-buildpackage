@@ -133,7 +133,7 @@ have gbp-pq &&
 _gbp_pq ()
 {
     local options=$(_gbp_options gbp-pq)
-    options="$options export import rebase drop apply"
+    options="$options export import rebase drop apply switch"
     local tristate_opts="--color\="
 
     _gbp_comp "$options" "" "" "$tristate_opts"
