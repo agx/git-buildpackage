@@ -330,24 +330,35 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
         return False
 
 
-def git_archive_build_orig(repo, cp, output_dir, options):
-    """build orig using git-archive"""
-    if options.upstream_tree == 'tag':
-        upstream_tree = repo.version_to_tag(options.upstream_tag, cp['Upstream-Version'])
-    elif options.upstream_tree == 'branch':
+def get_upstream_tree(repo, cp, options):
+    """Determine the upstream tree from the given options"""
+    if options.upstream_tree.upper() == 'TAG':
+        upstream_tree = repo.version_to_tag(options.upstream_tag,
+                                            cp['Upstream-Version'])
+    elif options.upstream_tree.upper() == 'BRANCH':
+        if not repo.has_branch(options.upstream_branch):
+            raise GbpError("%s is not a valid branch" % options.upstream_branch)
         upstream_tree = options.upstream_branch
     else:
-        raise GbpError, "Unknown value %s" % options.upstream_tree
+        upstream_tree = options.upstream_tree
+    if not repo.has_treeish(upstream_tree):
+        raise GbpError # git-ls-tree printed an error message already
+    return upstream_tree
+
+
+def git_archive_build_orig(repo, cp, output_dir, options):
+    """build orig using git-archive"""
+    upstream_tree = get_upstream_tree(repo, cp, options)
     gbp.log.info("%s does not exist, creating from '%s'" % (du.orig_file(cp,
                                                             options.comp_type),
                                                             upstream_tree))
-    if not repo.has_treeish(upstream_tree):
-        raise GbpError # git-ls-tree printed an error message already
-    gbp.log.debug("Building upstream tarball with compression '%s -%s'" % (options.comp_type,
-                                                                           options.comp_level))
+    gbp.log.debug("Building upstream tarball with compression '%s -%s'" %
+                  (options.comp_type, options.comp_level))
     if not git_archive(repo, cp, output_dir, upstream_tree,
-                       options.comp_type, options.comp_level, options.with_submodules):
-        raise GbpError, "Cannot create upstream tarball at '%s'" % output_dir
+                       options.comp_type,
+                       options.comp_level,
+                       options.with_submodules):
+        raise GbpError("Cannot create upstream tarball at '%s'" % output_dir)
 
 
 def guess_comp_type(repo, comp_type, cp, tarball_dir):

@@ -72,7 +72,7 @@ class GbpOptionParser(OptionParser):
                  'cleaner'         : 'debuild -d clean',
                  'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
-                 'upstream-tree'   : 'tag',
+                 'upstream-tree'   : 'TAG',
                  'pristine-tar'    : 'False',
                  'filter-pristine-tar' : 'False',
                  'sign-tags'       : 'False',
