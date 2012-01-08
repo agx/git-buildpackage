@@ -1,6 +1,5 @@
 # vim: set fileencoding=utf-8 :
-#
-# (C) 2006,2007,2008 Guido Günther <agx@sigxcpu.org>
+# (C) 2013 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -14,6 +13,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-"""The various things needed by git-buildpackage and friends"""
+"""Test L{gbp} command wrapper"""
 
-# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
+import unittest
+import gbp.scripts.command
+
+class TestWrapper(unittest.TestCase):
+
+    def test_invalid_command(self):
+        """Test if we can import a valid command"""
+        self.assertEqual(gbp.scripts.command.gbp_command(['argv0', 'asdf']), 2)
+
+    def test_missing_arg(self):
+        self.assertEqual(gbp.scripts.command.gbp_command(['argv0']), 1)
+
