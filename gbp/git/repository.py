@@ -688,7 +688,7 @@ class GitRepository(object):
         """
         extra_env = {}
 
-        if type(paths) in [type(''), type(u'')]:
+        if isinstance(paths, basestring):
             paths = [ paths ]
 
         args = [ '-f' ] if force else []
@@ -710,7 +710,7 @@ class GitRepository(object):
         @param verbose: be verbose
         @type verbose: C{bool}
         """
-        if type(paths) in [type(''), type(u'')]:
+        if isinstance(paths, basestring):
             paths = [ paths ]
 
         args =  [] if verbose else ['--quiet']
@@ -786,7 +786,7 @@ class GitRepository(object):
         @param author_info: authorship information
         @type author_info: L{GitModifier}
         """
-        if type(files) in [type(''), type(u'')]:
+        if isinstance(files, basestring):
             files = [ files ]
         self._commit(msg=msg, args=files, author_info=author_info)
 
