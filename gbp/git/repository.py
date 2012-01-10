@@ -381,8 +381,9 @@ class GitRepository(object):
         @param remote: whether to check remote instead of local branches
         @type remote: C{bool}
         """
-        args = GitArgs('--contains')
+        args = GitArgs()
         args.add_true(remote, '-r')
+        args.add('--contains')
         args.add(commit)
 
         out, ret =  self.__git_getoutput('branch', args.args)

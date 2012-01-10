@@ -117,6 +117,8 @@ def test_create_branch():
     >>> repo.create_branch("foo")
     >>> repo.branch_contains("foo", 'HEAD')
     True
+    >>> repo.branch_contains("doesnotexist", 'HEAD', remote=True)
+    False
     """
 
 def test_delete_branch():
