@@ -386,11 +386,18 @@ def test_fetch():
 
     Methods tested:
          - L{gbp.git.GitRepository.fetch}
+         - L{gbp.git.GitRepository.push}
+         - L{gbp.git.GitRepository.push_tag}
 
     >>> import gbp.git, os
     >>> d = os.path.join(clone_dir, 'gbp_%s_test_repo' % __name__)
     >>> clone = gbp.git.GitRepository(d)
     >>> clone.fetch()
+    >>> clone.push()
+    >>> clone.push('origin')
+    >>> clone.push('origin', 'master')
+    >>> clone.create_tag('tag3')
+    >>> clone.push_tag('origin', 'tag3')
     """
 
 def test_create_bare():

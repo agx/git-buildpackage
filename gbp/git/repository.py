@@ -673,6 +673,44 @@ class GitRepository(object):
         args += [ repo ] if repo else []
         self._git_command("pull", args)
 
+    def push(self, repo=None, src=None, dst=None, ff_only=True):
+        """
+        Push changes to the remote repo
+
+        @param repo: repository to push to
+        @type repo: C{str}
+        @param src: the source ref to push
+        @type src: C{str}
+        @param dst: the name of the destination ref to push to
+        @type dst: C{str}
+        @param ff_only: only push if it's a fast forward update
+        @type ff_only: C{bool}
+        """
+        args = GitArgs()
+        args.add_cond(repo, repo)
+
+        # Allow for src == '' to delete dst on the remote
+        if src != None:
+            refspec = src
+            if dst:
+                refspec += ':%s' % dst
+            if not ff_only:
+                refspec = '+%s' % refspec
+            args.add(refspec)
+        self._git_command("push", args.args)
+
+    def push_tag(self, repo, tag):
+        """
+        Push a tag to the remote repo
+
+        @param repo: repository to push to
+        @type repo: C{str}
+        @param tag: the name of the tag
+        @type tag: C{str}
+        """
+        args = GitArgs(repo, 'tag', tag)
+        self._git_command("push", args.args)
+
 #{ Files
 
     def add_files(self, paths, force=False, index_file=None, work_tree=None):
