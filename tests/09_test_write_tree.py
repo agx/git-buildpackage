@@ -3,16 +3,15 @@
 """Test  L{GitRepository}'s write_tree method"""
 
 import os
-import shutil
-import tempfile
-import unittest
+
+import testutils
 
 import gbp.log
 import gbp.git
 import gbp.errors
 
 
-class TestWriteTree(unittest.TestCase):
+class TestWriteTree(testutils.DebianGitTestRepo):
     def _write_testtree(self):
         """Write a test tree"""
         paths = []
@@ -22,18 +21,6 @@ class TestWriteTree(unittest.TestCase):
                 print >>f, "testdata %d" % i
             paths.append(path)
         return paths
-
-    def setUp(self):
-        gbp.log.setup(False, False)
-        top = os.path.abspath(os.path.curdir)
-        self.tmpdir = os.path.join(top, 'gbp_%s_repo' % __name__)
-        os.mkdir(self.tmpdir)
-
-        repodir = os.path.join(self.tmpdir, 'test_repo')
-        self.repo = gbp.git.GitRepository.create(repodir)
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpdir)
 
     def test_write_tree_index_nonexistant(self):
         """Write out index file to nonexistant dir"""
