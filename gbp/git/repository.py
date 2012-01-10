@@ -370,6 +370,27 @@ class GitRepository(object):
             args = [ '-m', msg ] + args
         self._git_command("update-ref", args)
 
+    def branch_contains(self, branch, commit, remote=False):
+        """
+        Check if branch I{branch} contains commit I{commit}
+
+        @param branch: the branch the commit should be on
+        @type branch: C{str}
+        @param commit: the C{str} commit to check
+        @type commit: C{str}
+        @param remote: whether to check remote instead of local branches
+        @type remote: C{bool}
+        """
+        args = GitArgs('--contains')
+        args.add_true(remote, '-r')
+        args.add(commit)
+
+        out, ret =  self.__git_getoutput('branch', args.args)
+        for line in out:
+            if line.strip() == branch:
+                return True
+        return False
+
 #{ Tags
 
     def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):

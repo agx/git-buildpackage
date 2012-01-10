@@ -110,10 +110,13 @@ def test_create_branch():
 
     Methods tested:
          - L{gbp.git.GitRepository.create_branch}
+         - L{gbp.git.GitRepository.branch_contains}
 
     >>> import gbp.git, shutil
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> repo.create_branch("foo")
+    >>> repo.branch_contains("foo", 'HEAD')
+    True
     """
 
 def test_delete_branch():
