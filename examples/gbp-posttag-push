@@ -16,14 +16,19 @@
 #
 # Options:
 # -d: dry-run
+# -u: push upstream branch too, if not on remote already
+# --verbose: verbose command output
+
 
 import ConfigParser
 import os
 import subprocess
 import sys
 
+import gbp.log
 from gbp.config import GbpOptionParser
 from gbp.deb.git import DebianGitRepository
+
 
 
 class Env(object):
@@ -92,9 +97,12 @@ def main(argv):
                                   dest="upstream_branch")
     parser.add_config_file_option(option_name="upstream-tag",
                                   dest="upstream_tag")
+    parser.add_option("--verbose", action="store_true", dest="verbose",
+                      default=False, help="verbose command execution")
 
     (options, args) = parser.parse_args()
 
+    gbp.log.setup(False, options.verbose)
     repo = DebianGitRepository('.')
 
     if options.dryrun:
