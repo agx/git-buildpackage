@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009,2012 Guido Guenther <agx@sigxcpu.org>
 #
 # gbp-posttag-push: post tag hook to be called by git-buildpackage to push out
 # the newly created tag and to forward the remote branch to that position
-# 
+#
 # it checks for explicit push destinations, if none are found it pushes back to
 # where the branch got merged from. Before pushing it checks if the tag is
 # signed.
@@ -17,25 +17,26 @@
 # Options:
 # -d: dry-run
 
+import ConfigParser
 import os
 import subprocess
 import sys
-import gbp.command_wrappers as gbpc
-from optparse import OptionParser
+
+from gbp.config import GbpOptionParser
+from gbp.deb.git import DebianGitRepository
 
 
 class Env(object):
     pass
 
 
-def get_pushs(env):
+def get_push_targets(env):
     """get a list of push targets"""
     dests = {}
     cmd = "git config --get-regexp 'remote\..*\.push' '%s(:.*)?$'" % env.branch
     for remote in subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split("\n"):
         if not len(remote):
             continue
-        print '"%s"' % remote
         repo, refspec = remote.split()
         repo = ".".join(repo.split('.')[1:-1]) # remote.<repo>.push
         try:
@@ -55,49 +56,82 @@ def get_pull(env):
     return { remote: env.branch }
 
 
-def git_push_sim(args):
+def git_push_sim(*args):
     print "git push %s" % " ".join(args)
 
 
-def main(args):
+def get_upstream_tag(repo, tag, tag_format):
+    # FIXME: This assumes the debian version is the last part after the slash:
+    version = tag.split('/')[-1]
+    no_epoch = version.split(':')[-1]
+    upstream = version.rsplit('-')[0]
+    tag = tag_format % dict(version=upstream)
+    if repo.has_tag(tag):
+        return tag
+    return None
+
+
+def main(argv):
     env = Env()
+    upstream_sha1 = None
 
-    git_verify_tag = gbpc.GitCommand("tag", ["-v"])
+    try:
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                                 usage='%prog [options] paths')
+    except ConfigParser.ParsingError, err:
+        gbp.log.errror(err)
+        return 1
 
-    parser = OptionParser()
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
                       action="store_true", help="dry run, don't push.")
+    parser.add_option("-u", "--push-upstream", dest="push_upstream",
+                      default=False,
+                      action="store_true",
+                      help="also push upstream branch changes")
+    parser.add_config_file_option(option_name="upstream-branch",
+                                  dest="upstream_branch")
+    parser.add_config_file_option(option_name="upstream-tag",
+                                  dest="upstream_tag")
 
     (options, args) = parser.parse_args()
 
+    repo = DebianGitRepository('.')
+
     if options.dryrun:
         print "Dry run mode. Not pushing."
-        git_push = git_push_sim
-    else:
-        git_push = gbpc.GitCommand("push")
+        repo.push = git_push_sim
+        repo.push_tag = git_push_sim
 
     for envvar in [ "GBP_TAG", "GBP_BRANCH", "GBP_SHA1" ]:
         var = os.getenv(envvar)
         if var:
             env.__dict__.setdefault( "%s" % envvar.split("_")[1].lower(), var)
         else:
-            print >>sys.stderr, "%s not set." % envvar 
+            print >>sys.stderr, "%s not set." % envvar
             return 1
 
-    dests = get_pushs(env)
+    dests = get_push_targets(env)
     if not dests:
         dests = get_pull(env)
 
-    try:
-        git_verify_tag([env.tag])
-    except gbpc.CommandExecFailed:
+    upstream_tag = get_upstream_tag(repo, env.tag, options.upstream_tag)
+    if upstream_tag:
+        sha1 = repo.rev_parse("%s^{}" % upstream_tag)
+        if not repo.branch_contains(options.upstream_branch, sha1, remote=True):
+            upstream_sha1 = sha1
+
+    if not repo.verify_tag(env.tag):
         print >>sys.stderr, "Not pushing unsigned tag $GBP_TAG."
         return 0
 
     for dest in dests:
         print "Pushing %s to %s" % (env.sha1, dest)
-        git_push([dest, "tag", env.tag])
-        git_push([dest, "%s:%s" % (env.sha1, dests[dest])])
+        repo.push_tag(dest, env.tag)
+        repo.push(dest, env.sha1, dests[dest])
+        if options.push_upstream and upstream_tag:
+            repo.push_tag(dest, upstream_tag)
+            if upstream_sha1:
+                repo.push(dest, upstream_sha1, options.upstream_branch)
         print "done."
 
 if __name__ == '__main__':
