@@ -21,7 +21,7 @@ import subprocess
 import os.path
 
 import gbp.log as log
-from gbp.command_wrappers import (GitCommand, copy_from)
+from gbp.command_wrappers import (GitCommand, CommandExecFailed, copy_from)
 from gbp.errors import GbpError
 from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit
@@ -455,6 +455,24 @@ class GitRepository(object):
         """
         args = [ '-l', pattern ] if pattern else []
         return [ line.strip() for line in self.__git_getoutput('tag', args)[0] ]
+
+    def verify_tag(self, tag):
+        """
+        Verify a signed tag
+
+        @param tag: the tag's name
+        @type tag: C{str}
+        @return: Whether the signature on the tag could be verified
+        @rtype: C{bool}
+        """
+        args = GitArgs('-v', tag)
+
+        try:
+            self._git_command('tag', args.args)
+        except CommandExecFailed:
+            return False
+        return True
+
 #}
     def force_head(self, commit, hard=False):
         """
