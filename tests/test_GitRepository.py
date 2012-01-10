@@ -158,7 +158,7 @@ def test_set_branch():
 
 def test_tag():
     """
-    Create a tag named I{tag}
+    Create a tag named I{tag} and check it's existance
 
     Methods tested:
          - L{gbp.git.GitRepository.create_tag}
@@ -184,10 +184,26 @@ def test_tag():
     ['tag', 'tag2']
     """
 
+def test_find_tag():
+    """
+    Find tags
+
+    Methods tested:
+         - L{gbp.git.GitRepository.find_tag}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.find_tag('HEAD')
+    'tag2'
+    >>> repo.find_tag('HEAD', pattern='foo*')
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Can't find tag for HEAD
+    """
 
 def test_move_tag():
     """
-    Remove tags
+    Move a tag
 
     Methods tested:
          - L{gbp.git.GitRepository.move_tag}
@@ -404,6 +420,8 @@ def test_fetch():
     >>> clone.push('origin', 'master')
     >>> clone.create_tag('tag3')
     >>> clone.push_tag('origin', 'tag3')
+    >>> clone.add_remote_repo('foo', repo_dir)
+    >>> clone.fetch('foo')
     """
 
 def test_create_bare():
