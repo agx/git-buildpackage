@@ -34,6 +34,7 @@
       <arg><option>--git-dist=</option><replaceable>DIST</replaceable></arg>
       <arg><option>--git-arch=</option><replaceable>ARCH</replaceable></arg>
       <arg><option>--git-[no-]pbuilder-autoconf</option></arg>
+      <arg><option>--git-pbuilder-options</option></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
@@ -169,6 +170,12 @@
 	  <command>git-pbuilder</command> or to rely on the settings in
 	  .pbuilderrc. See the <command>git-pbuilder</command>
           manpage for details.</listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pbuilder-options</option></term>
+        <listitem>
+	  <para>Options to pass to pbuilder</para>
+        </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-verbose</option>

@@ -125,6 +125,7 @@ class GbpOptionParser(OptionParser):
                  'submodules'      : 'False',
                  'time-machine'    : 1,
                  'pbuilder-autoconf' : 'True',
+                 'pbuilder-options': ''
              }
     help = {
              'debian-branch':
@@ -203,6 +204,8 @@ class GbpOptionParser(OptionParser):
                   "don't try head commit only to apply the patch queue but look TIME_MACHINE commits back",
              'pbuilder-autoconf':
                   "Wheter to configure pbuilder automatically.",
+             'pbuilder-options':
+                  "Options to pass to pbuilder, default is '%(pbuilder-options)s'",
            }
     config_files = [ '/etc/git-buildpackage/gbp.conf',
                      os.path.expanduser('~/.gbp.conf'),

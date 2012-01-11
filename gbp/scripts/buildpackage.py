@@ -418,6 +418,8 @@ def setup_pbuilder(options):
             os.environ['BUILDER'] = "qemubuilder"
         if not options.pbuilder_autoconf:
             os.environ['GIT_PBUILDER_AUTOCONF'] = "no"
+        if options.pbuilder_options:
+            os.environ['GIT_PBUILDER_OPTIONS'] = options.pbuilder_options
 
 
 def parse_args(argv, prefix):
@@ -494,6 +496,7 @@ def parse_args(argv, prefix):
     cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
     cmd_group.add_config_file_option(option_name="arch", dest="pbuilder_arch")
     cmd_group.add_boolean_config_file_option(option_name = "pbuilder-autoconf", dest="pbuilder_autoconf")
+    cmd_group.add_config_file_option(option_name="pbuilder-options", dest="pbuilder_options")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir", type="path",
                       help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_config_file_option("export", dest="export",
