@@ -424,6 +424,7 @@ def test_fetch():
     >>> clone.push_tag('origin', 'tag3')
     >>> clone.add_remote_repo('foo', repo_dir)
     >>> clone.fetch('foo')
+    >>> clone.fetch('foo', tags=True)
     """
 
 def test_create_bare():

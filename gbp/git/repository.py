@@ -687,17 +687,18 @@ class GitRepository(object):
         args += [ name, url ]
         self._git_command("remote", args)
 
-    def fetch(self, repo=None):
+    def fetch(self, repo=None, tags=False):
         """
         Download objects and refs from another repository.
 
         @param repo: repository to fetch from
         @type repo: C{str}
         """
-        args =  [ '--quiet' ]
-        args += [repo] if repo else []
+        args = GitArgs('--quiet')
+        args.add_true(tags, '--tags')
+        args.add_cond(repo, repo)
 
-        self._git_command("fetch", args)
+        self._git_command("fetch", args.args)
 
     def pull(self, repo=None, ff_only=False):
         """
