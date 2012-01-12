@@ -437,9 +437,9 @@ def has_orig(cp, compression, dir):
         return False
     return True
 
-def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
+def symlink_orig(orig_file, orig_dir, output_dir, force=False):
     """
-    symlink orig.tar.gz from orig_dir to output_dir
+    symlink orig tarball from orig_dir to output_dir
     @return: True if link was created or src == dst
              False in case of error or src doesn't exist
     """
@@ -449,8 +449,8 @@ def symlink_orig(cp, compression, orig_dir, output_dir, force=False):
     if orig_dir == output_dir:
         return True
 
-    src = os.path.join(orig_dir, orig_file(cp, compression))
-    dst = os.path.join(output_dir, orig_file(cp, compression))
+    src = os.path.join(orig_dir, orig_file)
+    dst = os.path.join(output_dir, orig_file)
     if not os.access(src, os.F_OK):
         return False
     try:

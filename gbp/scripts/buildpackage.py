@@ -141,7 +141,7 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
         gbp.log.debug("Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir))
-        if not du.symlink_orig(cp, options.comp_type, tarball_dir, output_dir, force=True):
+        if not du.symlink_orig(orig_file, tarball_dir, output_dir, force=True):
             gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
         else:
             gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
