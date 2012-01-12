@@ -72,10 +72,10 @@ def pq_branch_base(pq_branch):
     if is_pq_branch(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
-def write_patch(patch, options):
+def write_patch(patch, patch_dir, options):
     """Write the patch exported by 'git-format-patch' to it's final location
        (as specified in the commit)"""
-    oldname = patch[len(PATCH_DIR):]
+    oldname = os.path.basename(patch)
     newname = oldname
     tmpname = patch + ".gbp"
     old = file(patch, 'r')
@@ -101,9 +101,9 @@ def write_patch(patch, options):
             newname = m.group('name')
 
     if topic:
-        topicdir = os.path.join(PATCH_DIR, topic)
+        topicdir = os.path.join(patch_dir, topic)
     else:
-        topicdir = PATCH_DIR
+        topicdir = patch_dir
 
     if not os.path.isdir(topicdir):
         os.makedirs(topicdir, 0755)
@@ -139,7 +139,7 @@ def export_patches(repo, branch, options):
         f = file(SERIES_FILE, 'w')
         gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
         for patch in patches:
-            filename = write_patch(patch, options)
+            filename = write_patch(patch, PATCH_DIR, options)
             f.write(filename[len(PATCH_DIR):] + '\n')
 
         f.close()
