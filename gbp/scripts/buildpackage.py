@@ -29,7 +29,7 @@ import gbp.deb as du
 from gbp.command_wrappers import (Command,
                                   RunAtCommand, CommandExecFailed,
                                   RemoveTree, CatenateTarArchive)
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError, ParseChangeLogError
 from gbp.errors import GbpError
@@ -465,7 +465,7 @@ def parse_args(argv, prefix):
             args.append(arg)
 
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix=prefix)
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix=prefix)
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
         return None, None, None

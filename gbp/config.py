@@ -51,7 +51,7 @@ class GbpOption(Option):
     TYPE_CHECKER['path'] = expand_path
     TYPE_CHECKER['tristate'] = check_tristate
 
-class GbpOptionParser(OptionParser):
+class GbpOptionParserCommon(OptionParser):
     """
     Handles commandline options and parsing of config files
     @ivar command: the gbp command we store the options for
@@ -68,9 +68,7 @@ class GbpOptionParser(OptionParser):
     @cvar config_files: list of config files we parse
     @type config_files: list
     """
-    defaults = { 'builder'         : 'debuild -i -I',
-                 'cleaner'         : 'debuild -d clean',
-                 'debian-branch'   : 'master',
+    defaults = { 'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
                  'upstream-tree'   : 'TAG',
                  'pristine-tar'    : 'False',
@@ -326,5 +324,16 @@ class GbpOptionGroup(OptionGroup):
         self.add_config_file_option(option_name=option_name, dest=dest, action="store_true")
         neg_help = "negates '--%s%s'" % (self.parser.prefix, option_name)
         self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
+
+
+class GbpOptionParserDebian(GbpOptionParserCommon):
+    """
+    Handles commandline options and parsing of config files for Debian tools
+    """
+    defaults = dict(GbpOptionParserCommon.defaults)
+    defaults.update( {
+                       'builder'            : 'debuild -i -I',
+                       'cleaner'            : 'debuild -d clean',
+                     } )
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

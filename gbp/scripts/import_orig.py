@@ -32,7 +32,7 @@ from gbp.deb import (UpstreamSource,
                      upstreamversion_msg)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
-from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
+from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import (GbpError, GbpNothingImported)
 import gbp.log
 
@@ -269,8 +269,8 @@ def set_bare_repo_options(options):
 
 def parse_args(argv):
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                                 usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                       usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
         return None, None

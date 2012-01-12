@@ -22,7 +22,7 @@
 import sys
 import os, os.path
 from gbp.command_wrappers import (Command, CommandExecFailed)
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.config import (GbpOptionParserCommon, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.git import DebianGitRepository
@@ -70,8 +70,8 @@ def fast_forward_branch(branch, repo, options):
 def main(argv):
     retval = 0
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                             usage='%prog [options] - safely update a repository from remote')
+    parser = GbpOptionParserCommon(command=os.path.basename(argv[0]), prefix='',
+                                   usage='%prog [options] - safely update a repository from remote')
     branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
     parser.add_option_group(branch_group)
     branch_group.add_option("--force", action="store_true", dest="force", default=False,

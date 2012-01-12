@@ -26,7 +26,7 @@ import subprocess
 import gbp.command_wrappers as gbpc
 import gbp.dch as dch
 import gbp.log
-from gbp.config import GbpOptionParser, GbpOptionGroup
+from gbp.config import GbpOptionParserDebian, GbpOptionGroup
 from gbp.errors import GbpError
 from gbp.deb import compare_versions
 from gbp.deb.git import GitRepositoryError, DebianGitRepository
@@ -332,8 +332,8 @@ def main(argv):
     version_change = {}
 
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                                 usage='%prog [options] paths')
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                       usage='%prog [options] paths')
     except ConfigParser.ParsingError, err:
         gbp.log.errror(err)
         return 1

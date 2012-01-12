@@ -38,7 +38,7 @@ import os, os.path
 from gbp.command_wrappers import (Command,
                                   CommandExecFailed,
                                   GitCommand)
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.patch_series import Patch
@@ -70,7 +70,7 @@ def build_commit_msg(repo, patch, options):
 def main(argv):
     retval = 0
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] - add a new patch')
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes",
                       help="Meta tags for the bts close commands, default is '%(meta-closes)s'")

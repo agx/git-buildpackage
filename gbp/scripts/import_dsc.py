@@ -32,7 +32,7 @@ from gbp.deb import (debian_version_chars,
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
-from gbp.config import GbpOptionParser, GbpOptionGroup, no_upstream_branch_msg
+from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
 import gbp.log
 
@@ -160,8 +160,8 @@ def set_bare_repo_options(options):
 
 def parse_args(argv):
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                                 usage='%prog [options] /path/to/package.dsc')
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                       usage='%prog [options] /path/to/package.dsc')
     except ConfigParser.ParsingError, err:
         gbp.log.err(err)
         return None, None

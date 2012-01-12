@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
                                   CommandExecFailed)
@@ -337,8 +337,8 @@ def switch_pq(repo, current):
 def main(argv):
     retval = 0
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                             usage="%prog [options] action - maintain patches on a patch queue branch\n"
+    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                   usage="%prog [options] action - maintain patches on a patch queue branch\n"
         "Actions:\n"
         "  export         export the patch queue associated to the current branch\n"
         "                 into a quilt patch series in debian/patches/ and update the\n"

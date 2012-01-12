@@ -28,7 +28,7 @@ import tty, termios
 import re
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
 import gbp.log
@@ -146,8 +146,8 @@ def main(argv):
     retval = 0
     changelog = 'debian/changelog'
 
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                             usage='%prog [options] - create a remote repository')
+    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                   usage='%prog [options] - create a remote repository')
     branch_group = GbpOptionGroup(parser, "branch options", "branch layout and tracking options")
     branch_group.add_config_file_option(option_name="remote-url-pattern", dest="remote_url")
     parser.add_option_group(branch_group)
