@@ -697,7 +697,7 @@ class GitRepository(object):
         args += [ name, url ]
         self._git_command("remote", args)
 
-    def fetch(self, repo=None, tags=False):
+    def fetch(self, repo=None, tags=False, depth=0):
         """
         Download objects and refs from another repository.
 
@@ -705,9 +705,12 @@ class GitRepository(object):
         @type repo: C{str}
         @param tags: whether to fetch all tag objects
         @type tags: C{bool}
+        @param depth: deepen the history of (shallow) repository to depth I{depth}
+        @type depth: C{int}
         """
         args = GitArgs('--quiet')
         args.add_true(tags, '--tags')
+        args.add_cond(depth, '--depth=%s' % depth)
         args.add_cond(repo, repo)
 
         self._git_command("fetch", args.args)
