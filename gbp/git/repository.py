@@ -1084,6 +1084,21 @@ class GitRepository(object):
             args += [ '-p', strip ]
         args.append(patch)
         self._git_command("apply", args)
+
+    def diff(self, obj1, obj2):
+        """
+        Diff two git repository objects
+
+        @param obj1: first object
+        @type types: C{str}
+        @param obj2: second object
+        @type types: C{str}
+        @return: diff
+        @rtype: C{str}
+        """
+        options = GitArgs(obj1, obj2)
+        output, ret = self.__git_getoutput('diff', options.args)
+        return output
 #}
 
     def archive(self, format, prefix, output, treeish, **kwargs):
