@@ -18,10 +18,8 @@
 """manage patches in a patch queue"""
 
 import errno
-import re
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
@@ -31,89 +29,13 @@ from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
 from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
+from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
+                                 write_patch, switch_to_pq_branch,
+                                 apply_single_patch, apply_and_commit_patch,
+                                 drop_pq)
 
-PQ_BRANCH_PREFIX = "patch-queue/"
 PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR,"series")
-
-
-def is_pq_branch(branch):
-    """
-    is branch a patch-queue branch?
-
-    >>> is_pq_branch("foo")
-    False
-    >>> is_pq_branch("patch-queue/foo")
-    True
-    """
-    return [False, True][branch.startswith(PQ_BRANCH_PREFIX)]
-
-
-def pq_branch_name(branch):
-    """
-    get the patch queue branch corresponding to branch
-
-    >>> pq_branch_name("patch-queue/master")
-    >>> pq_branch_name("foo")
-    'patch-queue/foo'
-    """
-    if not is_pq_branch(branch):
-        return PQ_BRANCH_PREFIX + branch
-
-
-def pq_branch_base(pq_branch):
-    """
-    get the branch corresponding to the given patch queue branch
-
-    >>> pq_branch_base("patch-queue/master")
-    'master'
-    >>> pq_branch_base("foo")
-    """
-    if is_pq_branch(pq_branch):
-        return pq_branch[len(PQ_BRANCH_PREFIX):]
-
-def write_patch(patch, patch_dir, options):
-    """Write the patch exported by 'git-format-patch' to it's final location
-       (as specified in the commit)"""
-    oldname = os.path.basename(patch)
-    newname = oldname
-    tmpname = patch + ".gbp"
-    old = file(patch, 'r')
-    tmp = file(tmpname, 'w')
-    in_patch = False
-    topic = None
-
-    # Skip first line (From <sha1>)
-    old.readline()
-    for line in old:
-        if line.lower().startswith("gbp-pq-topic: "):
-            topic = line.split(" ",1)[1].strip()
-            gbp.log.debug("Topic %s found for %s" % (topic, patch))
-            continue
-        tmp.write(line)
-    tmp.close()
-    old.close()
-
-    if not options.patch_numbers:
-        patch_re = re.compile("[0-9]+-(?P<name>.+)")
-        m = patch_re.match(oldname)
-        if m:
-            newname = m.group('name')
-
-    if topic:
-        topicdir = os.path.join(patch_dir, topic)
-    else:
-        topicdir = patch_dir
-
-    if not os.path.isdir(topicdir):
-        os.makedirs(topicdir, 0755)
-
-    os.unlink(patch)
-    dstname = os.path.join(topicdir, newname)
-    gbp.log.debug("Moving %s to %s" % (tmpname, dstname))
-    shutil.move(tmpname, dstname)
-
-    return dstname
 
 
 def export_patches(repo, branch, options):
@@ -146,20 +68,6 @@ def export_patches(repo, branch, options):
         GitCommand('status')(['--', PATCH_DIR])
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
-
-
-def get_maintainer_from_control():
-    """Get the maintainer from the control file"""
-    cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" debian/control'
-    cmdout = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.readlines()
-
-    if len(cmdout) > 0:
-        maintainer = cmdout[0].strip()
-        m = re.match('(?P<name>.*[^ ]) *<(?P<email>.*)>', maintainer)
-        if m:
-            return m.group('name'), m.group('email')
-
-    return None, None
 
 
 def safe_patches(series):
@@ -249,70 +157,6 @@ def import_quilt_patches(repo, branch, series, tries, force):
     if tmpdir:
         gbp.log.debug("Remove temporary patch safe '%s'" % tmpdir)
         shutil.rmtree(tmpdir)
-
-
-def switch_to_pq_branch(repo, branch):
-    """
-    Switch to patch-queue branch if not already there, create it if it
-    doesn't exist yet
-    """
-    if is_pq_branch (branch):
-        return
-
-    pq_branch = pq_branch_name(branch)
-    if not repo.has_branch(pq_branch):
-        try:
-            repo.create_branch(pq_branch)
-        except CommandExecFailed:
-            raise GbpError, ("Cannot create patch-queue branch '%s'. Try 'rebase' instead."
-                % pq_branch)
-
-    gbp.log.info("Switching to '%s'" % pq_branch)
-    repo.set_branch(pq_branch)
-
-
-def apply_single_patch(repo, branch, patch, topic=None):
-    switch_to_pq_branch(repo, branch)
-    apply_and_commit_patch(repo, patch, topic)
-
-
-def apply_and_commit_patch(repo, patch, topic=None):
-    """apply a single patch 'patch', add topic 'topic' and commit it"""
-    author = { 'name': patch.author,
-               'email': patch.email,
-               'date': patch.date }
-
-    if not (patch.author and patch.email):
-        name, email = get_maintainer_from_control()
-        if name:
-            gbp.log.warn("Patch '%s' has no authorship information, "
-                         "using '%s <%s>'" % (patch.path, name, email))
-            author['name'] = name
-            author['email'] = email
-        else:
-            gbp.log.warn("Patch %s has no authorship information")
-
-    repo.apply_patch(patch.path)
-    tree = repo.write_tree()
-    msg = "%s\n\n%s" % (patch.subject, patch.long_desc)
-    if topic:
-        msg += "\nGbp-Pq-Topic: %s" % topic
-    commit = repo.commit_tree(tree, msg, [repo.head], author=author)
-    repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch.path)
-
-
-def drop_pq(repo, branch):
-    if is_pq_branch(branch):
-        gbp.log.err("On a patch-queue branch, can't drop it.")
-        raise GbpError
-    else:
-        pq_branch = pq_branch_name(branch)
-
-    if repo.has_branch(pq_branch):
-        repo.delete_branch(pq_branch)
-        gbp.log.info("Dropped branch '%s'." % pq_branch)
-    else:
-        gbp.log.info("No patch queue branch found - doing nothing.")
 
 
 def rebase_pq(repo, branch):
