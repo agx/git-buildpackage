@@ -151,13 +151,15 @@ def export_patches(repo, branch, options):
 def get_maintainer_from_control():
     """Get the maintainer from the control file"""
     cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" debian/control'
-    maintainer = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.readlines()[0].strip()
+    cmdout = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.readlines()
 
-    m = re.match('(?P<name>.*[^ ]) *<(?P<email>.*)>', maintainer)
-    if m:
-        return m.group('name'), m.group('email')
-    else:
-        return None, None
+    if len(cmdout) > 0:
+        maintainer = cmdout[0].strip()
+        m = re.match('(?P<name>.*[^ ]) *<(?P<email>.*)>', maintainer)
+        if m:
+            return m.group('name'), m.group('email')
+
+    return None, None
 
 
 def safe_patches(series):
