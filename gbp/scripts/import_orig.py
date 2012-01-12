@@ -134,7 +134,9 @@ def detect_name_and_version(repo, source, options):
             sourcepackage = cp['Source']
         except NoChangeLogError:
             if options.interactive:
-                sourcepackage = ask_package_name(guessed_package)
+                sourcepackage = ask_package_name(guessed_package,
+                                                 is_valid_packagename,
+                                                 packagename_msg)
             else:
                 if guessed_package:
                     sourcepackage = guessed_package
@@ -146,7 +148,9 @@ def detect_name_and_version(repo, source, options):
         version = options.version
     else:
         if options.interactive:
-            version = ask_package_version(guessed_version)
+            version = ask_package_version(guessed_version,
+                                          is_valid_upstreamversion,
+                                          upstreamversion_msg)
         else:
             if guessed_version:
                 version = guessed_version
@@ -156,7 +160,7 @@ def detect_name_and_version(repo, source, options):
     return (sourcepackage, version)
 
 
-def ask_package_name(default):
+def ask_package_name(default, name_validator_func, err_msg):
     """
     Ask the user for the source package name.
     @param default: The default package name to suggest to the user.
@@ -166,16 +170,16 @@ def ask_package_name(default):
         if not sourcepackage: # No input, use the default.
             sourcepackage = default
         # Valid package name, return it.
-        if is_valid_packagename(sourcepackage):
+        if name_validator_func(sourcepackage):
             return sourcepackage
 
         # Not a valid package name. Print an extra
         # newline before the error to make the output a
         # bit clearer.
-        gbp.log.warn("\nNot a valid package name: '%s'.\n%s" % (sourcepackage, packagename_msg))
+        gbp.log.warn("\nNot a valid package name: '%s'.\n%s" % (sourcepackage, err_msg))
 
 
-def ask_package_version(default):
+def ask_package_version(default, ver_validator_func, err_msg):
     """
     Ask the user for the upstream package version.
     @param default: The default package version to suggest to the user.
@@ -185,13 +189,13 @@ def ask_package_version(default):
         if not version: # No input, use the default.
             version = default
         # Valid version, return it.
-        if is_valid_upstreamversion(version):
+        if ver_validator_func(version):
             return version
 
         # Not a valid upstream version. Print an extra
         # newline before the error to make the output a
         # bit clearer.
-        gbp.log.warn("\nNot a valid upstream version: '%s'.\n%s" % (version, upstreamversion_msg))
+        gbp.log.warn("\nNot a valid upstream version: '%s'.\n%s" % (version, err_msg))
 
 
 def find_source(options, args):
