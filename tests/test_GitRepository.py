@@ -158,6 +158,23 @@ def test_set_branch():
     """
 
 
+def test_rename_branch():
+    """
+    Create branch named I{baz}, rename it to I{bax} and finally delete it
+
+    Methods tested:
+         - L{gbp.git.GitRepository.create_branch}
+         - L{gbp.git.GitRepository.rename_branch}
+         - L{gbp.git.GitRepository.delete_branch}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.create_branch("baz")
+    >>> repo.rename_branch("baz", "bax")
+    >>> repo.delete_branch("bax")
+    """
+
+
 def test_tag():
     """
     Create a tag named I{tag} and check it's existance

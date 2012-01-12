@@ -178,6 +178,16 @@ class GitRepository(object):
         return self.rev_parse('HEAD')
 
 #{ Branches and Merging
+    def rename_branch(self, branch, newbranch):
+        """
+        Rename branch
+
+        @param branch: name of the branch to be renamed
+        @param newbranch: new name of the branch
+        """
+        args = GitArgs("-m", branch, newbranch)
+        self._git_command("branch", args.args)
+
     def create_branch(self, branch, rev=None):
         """
         Create a new branch
