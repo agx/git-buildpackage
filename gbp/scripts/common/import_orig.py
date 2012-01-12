@@ -57,6 +57,14 @@ def cleanup_tmp_tree(tree):
         gbp.log.err("Removal of tmptree %s failed." % tree)
 
 
+def is_link_target(target, link):
+    """does symlink link already point to target?"""
+    if os.path.exists(link):
+            if os.path.samefile(target, link):
+                return True
+    return False
+
+
 def ask_package_name(default, name_validator_func, err_msg):
     """
     Ask the user for the source package name.
