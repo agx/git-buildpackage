@@ -429,10 +429,10 @@ def get_compression(orig_file):
     return None
 
 
-def has_orig(cp, compression, dir):
-    "Check if orig.tar.gz exists in dir"
+def has_orig(orig_file, dir):
+    "Check if orig tarball exists in dir"
     try:
-        os.stat( os.path.join(dir, orig_file(cp, compression)) )
+        os.stat( os.path.join(dir, orig_file) )
     except OSError:
         return False
     return True

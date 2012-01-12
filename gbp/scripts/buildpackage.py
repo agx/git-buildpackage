@@ -146,7 +146,7 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
         else:
             gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
     # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
-    if options.force_create or (not options.no_create_orig and not du.has_orig(cp, options.comp_type, output_dir)):
+    if options.force_create or (not options.no_create_orig and not du.has_orig(orig_file, output_dir)):
         if not pristine_tar_build_orig(repo, cp, output_dir, options):
             git_archive_build_orig(repo, cp, output_dir, options)
 
@@ -381,7 +381,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
                 tarball_dir = '..'
             detected = None
             for comp in du.compressor_opts.keys():
-                if du.has_orig(cp, comp, tarball_dir):
+                if du.has_orig(du.orig_file(cp, comp), tarball_dir):
                     if detected is not None:
                         raise GbpError, "Multiple orig tarballs found."
                     detected = comp
