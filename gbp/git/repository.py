@@ -899,7 +899,7 @@ class GitRepository(object):
         self._commit(msg=msg, args=files, author_info=author_info)
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
-                   author={}, committer={}):
+                   author={}, committer={}, create_missing_branch=False):
         """
         Replace the current tip of branch I{branch} with the contents from I{unpack_dir}
 
@@ -915,6 +915,9 @@ class GitRepository(object):
         @type author: C{dict} with keys I{name}, I{email}, I{date}
         @param committer: committer information to use for commit
         @type committer: C{dict} with keys I{name}, I{email}, I{date}
+        @param create_missing_branch: create I{branch} as detached branch if it
+            doesn't already exist.
+        @type create_missing_branch: C{bool}
         """
 
         git_index_file = os.path.join(self.path, self._git_dir, 'gbp_index')
@@ -927,7 +930,14 @@ class GitRepository(object):
         tree = self.write_tree(git_index_file)
 
         if branch:
-            cur = self.rev_parse(branch)
+            try:
+                cur = self.rev_parse(branch)
+            except GitRepositoryError:
+                if create_missing_branch == True:
+                    log.debug("Will create missing branch '%s'..." % branch)
+                    cur = None
+                else:
+                    raise
         else: # emtpy repo
             cur = None
             branch = 'master'
