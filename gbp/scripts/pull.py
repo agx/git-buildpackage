@@ -31,7 +31,7 @@ from gbp.scripts.common import ExitCodes
 import gbp.log
 
 
-def fast_forward_branch(rem_repo, branch, repo, options):
+def update_branch(rem_repo, branch, repo, options):
     """
     update branch to its remote branch, fail on non fast forward updates
     unless --force is given
@@ -71,10 +71,17 @@ def fast_forward_branch(rem_repo, branch, repo, options):
                                                 repo.rev_parse(remote, short=12)))
         if repo.branch == branch:
             repo.merge(remote)
-        else:
+        elif can_fast_forward:
             sha1 = repo.rev_parse(remote)
             repo.update_ref("refs/heads/%s" % branch, sha1,
                             msg="gbp: forward %s to %s" % (branch, remote))
+        else:
+            # Merge other branch, if it cannot be fast-forwarded
+            current_branch = repo.branch
+            repo.set_branch(branch)
+            repo.merge(remote)
+            repo.set_branch(current_branch)
+
     return update
 
 
@@ -212,7 +219,7 @@ def main(argv):
                         branches.add(branch)
 
         for branch in branches:
-            if not fast_forward_branch(rem_repo, branch, repo, options):
+            if not update_branch(rem_repo, branch, repo, options):
                 retval = 2
 
         if options.redo_pq:
