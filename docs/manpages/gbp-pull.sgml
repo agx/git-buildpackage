@@ -27,6 +27,7 @@
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--depth=</option><replaceable>depth</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -71,6 +72,13 @@
         <listitem>
 	  <para>The branch in the &git; repository the upstream sources are put
 	  onto. Default is <replaceable>upstream</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--depth</option>=<replaceable>depth</replaceable>
+        </term>
+        <listitem>
+          <para>Git history depth, for deepening shallow git clones.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

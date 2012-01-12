@@ -40,6 +40,8 @@ def parse_args (argv):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    branch_group.add_option("--depth", action="store", dest="depth", default=0,
+                            help="git history depth (for creating shallow clones)")
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -70,7 +72,7 @@ def main(argv):
         pass
 
     try:
-        repo = GitRepository.clone(os.path.curdir, source)
+        repo = GitRepository.clone(os.path.curdir, source, options.depth)
         os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the

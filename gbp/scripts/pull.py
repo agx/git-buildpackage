@@ -81,6 +81,8 @@ def main(argv):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    branch_group.add_option("--depth", action="store", dest="depth", default=0,
+                            help="git history depth (for deepening shallow clones)")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
@@ -112,7 +114,7 @@ def main(argv):
             gbp.log.err(out)
             raise GbpError
 
-        repo.fetch()
+        repo.fetch(options.depth)
         for branch in branches:
             if not fast_forward_branch(branch, repo, options):
                 retval = 2
