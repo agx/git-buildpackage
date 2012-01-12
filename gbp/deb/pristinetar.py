@@ -19,7 +19,8 @@
 import os, re
 import gbp.log
 from gbp.command_wrappers import Command
-from gbp.deb import UpstreamSource, compressor_opts
+from gbp.pkg import compressor_opts
+from gbp.deb import UpstreamSource
 
 class PristineTar(Command):
     """The pristine-tar branch in a git repository"""

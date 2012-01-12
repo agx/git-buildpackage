@@ -28,42 +28,38 @@ import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
+from gbp.pkg import (PkgPolicy, compressor_opts, compressor_aliases)
 
 # When trying to parse a version-number from a dsc or changes file, these are
 # the valid characters.
 debian_version_chars = 'a-zA-Z\d.~+-'
 
-# Valid package names according to Debian Policy Manual 5.6.1:
-# "Package names (both source and binary, see Package, Section 5.6.7)
-# must consist only of lower case letters (a-z), digits (0-9), plus (+)
-# and minus (-) signs, and periods (.). They must be at least two
-# characters long and must start with an alphanumeric character."
-packagename_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\.\+\-~]+$")
-packagename_msg = """Package names must be at least two characters long, start with an
-alphanumeric and can only containg letters (a-z,A-Z), digits
-(0-9), plus signs (+), minus signs (-), periods (.) and hyphens (~)"""
 
-# Valid upstream versions according to Debian Policy Manual 5.6.12:
-# "The upstream_version may contain only alphanumerics[32] and the
-# characters . + - : ~ (full stop, plus, hyphen, colon, tilde) and
-# should start with a digit. If there is no debian_revision then hyphens
-# are not allowed; if there is no epoch then colons are not allowed."
-# Since we don't know about any epochs and debian revisions yet, the
-# last two conditions are not checked.
-upstreamversion_re = re.compile("^[0-9][a-z0-9\.\+\-\:\~]*$")
-upstreamversion_msg = """Upstream version numbers must start with a digit and can only containg lower case
-letters (a-z), digits (0-9), full stops (.), plus signs (+), minus signs
-(-), colons (:) and tildes (~)"""
+class DebianPkgPolicy(PkgPolicy):
+    """Packaging policy for Debian"""
 
-# compression types, extra options and extensions
-compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
-                    'bzip2' : [ '', 'bz2' ],
-                    'lzma'  : [ '', 'lzma' ],
-                    'xz'    : [ '', 'xz' ] }
+    # Valid package names according to Debian Policy Manual 5.6.1:
+    # "Package names (both source and binary, see Package, Section 5.6.7)
+    # must consist only of lower case letters (a-z), digits (0-9), plus (+)
+    # and minus (-) signs, and periods (.). They must be at least two
+    # characters long and must start with an alphanumeric character."
+    packagename_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\.\+\-~]+$")
+    packagename_msg = """Package names must be at least two characters long, start with an
+    alphanumeric and can only containg letters (a-z,A-Z), digits
+    (0-9), plus signs (+), minus signs (-), periods (.) and hyphens (~)"""
 
-# Map frequently used names of compression types to the internal ones:
-compressor_aliases = { 'bz2' : 'bzip2',
-                       'gz'  : 'gzip', }
+    # Valid upstream versions according to Debian Policy Manual 5.6.12:
+    # "The upstream_version may contain only alphanumerics[32] and the
+    # characters . + - : ~ (full stop, plus, hyphen, colon, tilde) and
+    # should start with a digit. If there is no debian_revision then hyphens
+    # are not allowed; if there is no epoch then colons are not allowed."
+    # Since we don't know about any epochs and debian revisions yet, the
+    # last two conditions are not checked.
+    upstreamversion_re = re.compile("^[0-9][a-z0-9\.\+\-\:\~]*$")
+    upstreamversion_msg = """Upstream version numbers must start with a digit and can only containg lower case
+    letters (a-z), digits (0-9), full stops (.), plus signs (+), minus signs
+    (-), colons (:) and tildes (~)"""
+
 
 class DpkgCompareVersions(gbpc.Command):
     cmd='/usr/bin/dpkg'
@@ -445,68 +441,6 @@ def orig_file(cp, compression):
     return UpstreamSource.build_tarball_name(cp['Source'],
                                              cp['Upstream-Version'],
                                              compression)
-
-
-def is_valid_packagename(name):
-    "Is this a valid Debian package name?"
-    return packagename_re.match(name)
-
-def is_valid_upstreamversion(version):
-    "Is this a valid upstream version number?"
-    return upstreamversion_re.match(version)
-
-def get_compression(orig_file):
-    """
-    Given an orig file return the compression used
-
-    >>> get_compression("abc.tar.gz")
-    'gzip'
-    >>> get_compression("abc.tar.bz2")
-    'bzip2'
-    >>> get_compression("abc.tar.foo")
-    >>> get_compression("abc")
-    """
-    try:
-        ext = orig_file.rsplit('.',1)[1]
-    except IndexError:
-        return None
-    for (c, o) in compressor_opts.iteritems():
-        if o[1] == ext:
-            return c
-    return None
-
-
-def has_orig(orig_file, dir):
-    "Check if orig tarball exists in dir"
-    try:
-        os.stat( os.path.join(dir, orig_file) )
-    except OSError:
-        return False
-    return True
-
-def symlink_orig(orig_file, orig_dir, output_dir, force=False):
-    """
-    symlink orig tarball from orig_dir to output_dir
-    @return: True if link was created or src == dst
-             False in case of error or src doesn't exist
-    """
-    orig_dir = os.path.abspath(orig_dir)
-    output_dir = os.path.abspath(output_dir)
-
-    if orig_dir == output_dir:
-        return True
-
-    src = os.path.join(orig_dir, orig_file)
-    dst = os.path.join(output_dir, orig_file)
-    if not os.access(src, os.F_OK):
-        return False
-    try:
-        if os.access(dst, os.F_OK) and force:
-            os.unlink(dst)
-        os.symlink(src, dst)
-    except OSError:
-        return False
-    return True
 
 
 def parse_uscan(out):

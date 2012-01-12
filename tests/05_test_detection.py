@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 from gbp.scripts import buildpackage
-from gbp.deb import (has_orig, orig_file)
+from gbp.deb import (DebianPkgPolicy, orig_file)
 from gbp.errors import GbpError
 
 class MockGitRepository:
@@ -69,11 +69,11 @@ class TestDetection(unittest.TestCase):
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_false(self):
-        self.assertFalse(has_orig(orig_file(self.cp, 'gzip'), self.tmpdir))
+        self.assertFalse(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), self.tmpdir))
 
     def test_has_orig_true(self):
         open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.gz'), "w").close()
-        self.assertTrue(has_orig(orig_file(self.cp, 'gzip'), self.tmpdir))
+        self.assertTrue(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), self.tmpdir))
 
     def test_guess_comp_type_bzip2(self):
         repo = MockGitRepository(with_branch=False)

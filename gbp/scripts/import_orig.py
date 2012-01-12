@@ -23,9 +23,7 @@ import sys
 import re
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import (do_uscan, parse_changelog_repo,
-                     is_valid_packagename, packagename_msg,
-                     is_valid_upstreamversion, upstreamversion_msg)
+from gbp.deb import (DebianPkgPolicy, do_uscan, parse_changelog_repo)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
@@ -101,8 +99,8 @@ def detect_name_and_version(repo, source, options):
         except NoChangeLogError:
             if options.interactive:
                 sourcepackage = ask_package_name(guessed_package,
-                                                 is_valid_packagename,
-                                                 packagename_msg)
+                                                 DebianPkgPolicy.is_valid_packagename,
+                                                 DebianPkgPolicy.packagename_msg)
             else:
                 if guessed_package:
                     sourcepackage = guessed_package
@@ -115,8 +113,8 @@ def detect_name_and_version(repo, source, options):
     else:
         if options.interactive:
             version = ask_package_version(guessed_version,
-                                          is_valid_upstreamversion,
-                                          upstreamversion_msg)
+                                          DebianPkgPolicy.is_valid_upstreamversion,
+                                          DebianPkgPolicy.upstreamversion_msg)
         else:
             if guessed_version:
                 version = guessed_version

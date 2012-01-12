@@ -38,11 +38,12 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              git_archive_submodules,
                                              git_archive_single, dump_tree,
                                              write_wc, drop_index)
+from gbp.pkg import (compressor_opts, compressor_aliases)
 
 def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules):
     "create a compressed orig tarball in output_dir using git_archive"
     try:
-        comp_opts = du.compressor_opts[comp_type][0]
+        comp_opts = compressor_opts[comp_type][0]
     except KeyError:
         raise GbpError, "Unsupported compression type '%s'" % comp_type
 
@@ -86,12 +87,12 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
         gbp.log.debug("Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir))
-        if not du.symlink_orig(orig_file, tarball_dir, output_dir, force=True):
+        if not du.DebianPkgPolicy.symlink_orig(orig_file, tarball_dir, output_dir, force=True):
             gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
         else:
             gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
     # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
-    if options.force_create or (not options.no_create_orig and not du.has_orig(orig_file, output_dir)):
+    if options.force_create or (not options.no_create_orig and not du.DebianPkgPolicy.has_orig(orig_file, output_dir)):
         if not pristine_tar_build_orig(repo, cp, output_dir, options):
             upstream_tree = git_archive_build_orig(repo, cp, output_dir, options)
             if options.pristine_tar_commit:
@@ -290,9 +291,9 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
     upstream_version = cp['Upstream-Version']
 
     if comp_type != 'auto':
-        comp_type = du.compressor_aliases.get(comp_type, comp_type)
+        comp_type = compressor_aliases.get(comp_type, comp_type)
         try:
-            dummy = du.compressor_opts[comp_type]
+            dummy = compressor_opts[comp_type]
         except KeyError:
             gbp.log.warn("Unknown compression type - guessing.")
             comp_type = 'auto'
@@ -302,8 +303,8 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
             if not tarball_dir:
                 tarball_dir = '..'
             detected = None
-            for comp in du.compressor_opts.keys():
-                if du.has_orig(du.orig_file(cp, comp), tarball_dir):
+            for comp in compressor_opts.keys():
+                if du.DebianPkgPolicy.has_orig(du.orig_file(cp, comp), tarball_dir):
                     if detected is not None:
                         raise GbpError, "Multiple orig tarballs found."
                     detected = comp
@@ -320,7 +321,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
             else:
                 commit = repo.pristine_tar_branch
             tarball = repo.get_subject(commit)
-            comp_type = du.get_compression(tarball)
+            comp_type = du.DebianPkgPolicy.get_compression(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:
                 comp_type = 'gzip'
