@@ -254,6 +254,27 @@ def test_delete_tag():
     False
     """
 
+def test_get_obj_type():
+    """
+    Find commit SHA1 related to tags
+
+    Methods tested:
+         - L{gbp.git.GitRepository.create_tag}
+         - L{gbp.git.GitRepository.get_obj_type}
+         - L{gbp.git.GitRepository.delete_tag}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.create_tag("tag3", "tag msg")
+    >>> repo.get_obj_type("tag3")
+    'tag'
+    >>> repo.get_obj_type("HEAD")
+    'commit'
+    >>> repo.get_obj_type("HEAD:testfile")
+    'blob'
+    >>> repo.delete_tag("tag3")
+    """
+
 def test_list_files():
     """
     List files in the index

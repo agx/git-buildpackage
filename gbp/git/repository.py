@@ -618,6 +618,20 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Can't write out current index")
         return tree[0].strip()
+
+    def get_obj_type(self, obj):
+        """
+        Get type of a git repository object
+
+        @param obj: repository object
+        @type obj: C{str}
+        @return: type of the repository object
+        @rtype: C{str}
+        """
+        out, ret = self.__git_getoutput('cat-file', args=['-t', obj])
+        if ret:
+            raise GitRepositoryError("Not a Git repository object: '%s'" % obj)
+        return out[0].strip()
 #}
 
     def get_config(self, name):
