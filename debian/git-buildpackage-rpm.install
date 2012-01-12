@@ -1,2 +1,3 @@
 usr/lib/python2.?/dist-packages/gbp/rpm/
 usr/lib/python2.7/dist-packages/gbp/scripts/import_srpm.py
+usr/lib/python2.7/dist-packages/gbp/scripts/pq_rpm.py
