@@ -143,6 +143,8 @@ def parse_args(argv):
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
+    parser.add_config_file_option(option_name="vendor", action="store",
+                    dest="vendor")
     parser.add_option("--download", action="store_true", dest="download",
                       default=False, help="download source package")
     branch_group.add_config_file_option(option_name="packaging-branch",
@@ -301,7 +303,7 @@ def main(argv):
 
         src_tag_format = options.packaging_tag if options.native \
                                                else options.upstream_tag
-        tag_str_fields = spec.version
+        tag_str_fields = dict(spec.version, vendor=options.vendor.lower())
         src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
         ver_str = compose_version_str(spec.version)
 
@@ -388,8 +390,7 @@ def main(argv):
                     raise GbpError
 
             tag = repo.version_to_tag(options.packaging_tag, tag_str_fields)
-            pkg_vendor = "Native" if options.native else "Downstrean"
-            msg = "%s release %s" % (pkg_vendor, ver_str)
+            msg = "%s release %s" % (options.vendor, ver_str)
 
             if options.orphan_packaging or not sources:
                 commit = repo.commit_dir(dirs['packaging_base'],

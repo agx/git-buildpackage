@@ -524,6 +524,7 @@ class GbpOptionParserRpm(GbpOptionParser):
     defaults = dict(GbpOptionParser.defaults)
     defaults.update({
             'tmp-dir'                   : '/var/tmp/gbp/',
+            'vendor'                    : 'Downstream',
             'packaging-branch'          : 'master',
             'packaging-dir'             : '',
             'packaging-tag'             : 'packaging/%(version)s',
@@ -534,6 +535,8 @@ class GbpOptionParserRpm(GbpOptionParser):
             'tmp-dir':
                 "Base directory under which temporary directories are "
                 "created, default is '%(tmp-dir)s'",
+            'vendor':
+                "Distribution vendor name, default is '%(vendor)s'",
             'packaging-branch':
                 "Branch the packaging is being maintained on, rpm counterpart "
                 "of the 'debian-branch' option, default is "
