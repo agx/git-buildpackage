@@ -516,4 +516,34 @@ class GbpOptionParserDebian(GbpOptionParser):
                        'cleaner'            : '/bin/true',
                      } )
 
+
+class GbpOptionParserRpm(GbpOptionParser):
+    """
+    Handles commandline options and parsing of config files for rpm tools
+    """
+    defaults = dict(GbpOptionParser.defaults)
+    defaults.update({
+            'tmp-dir'                   : '/var/tmp/gbp/',
+            'packaging-branch'          : 'master',
+            'packaging-dir'             : '',
+            'packaging-tag'             : 'packaging/%(version)s',
+                    })
+
+    help = dict(GbpOptionParser.help)
+    help.update({
+            'tmp-dir':
+                "Base directory under which temporary directories are "
+                "created, default is '%(tmp-dir)s'",
+            'packaging-branch':
+                "Branch the packaging is being maintained on, rpm counterpart "
+                "of the 'debian-branch' option, default is "
+                "'%(packaging-branch)s'",
+            'packaging-dir':
+                "Subdir for RPM packaging files, default is "
+                "'%(packaging-dir)s'",
+            'packaging-tag':
+                "Format string for packaging tags, RPM counterpart of the "
+                "'debian-tag' option, default is '%(packaging-tag)s'",
+                 })
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
