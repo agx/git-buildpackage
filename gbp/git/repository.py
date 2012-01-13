@@ -703,6 +703,8 @@ class GitRepository(object):
 
         @param repo: repository to fetch from
         @type repo: C{str}
+        @param tags: whether to fetch all tag objects
+        @type tags: C{bool}
         """
         args = GitArgs('--quiet')
         args.add_true(tags, '--tags')
