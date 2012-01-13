@@ -16,8 +16,11 @@ class MockGitRepository:
         self.with_branch = with_branch
         self.subject = subject
 
-    def has_branch(self, branch):
+    def has_pristine_tar_branch(self):
         return self.with_branch
+
+    def pristine_tar_branch(self):
+        'pristine-tar'
 
     def grep_log(self, regex, branch):
         return None

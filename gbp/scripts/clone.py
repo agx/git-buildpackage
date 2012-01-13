@@ -22,9 +22,9 @@
 import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
-from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (Command, CommandExecFailed,
-                                  PristineTar)
+from gbp.deb.git import DebianGitRepository
+from gbp.git import (GitRepository, GitRepositoryError)
+from gbp.command_wrappers import (Command, CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
 
@@ -72,7 +72,7 @@ def main(argv):
         pass
 
     try:
-        repo = GitRepository.clone(os.path.curdir, source, options.depth)
+        repo = DebianGitRepository.clone(os.path.curdir, source, options.depth)
         os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the
@@ -90,7 +90,7 @@ def main(argv):
         else: # only track gbp's default branches
             branches = [ options.debian_branch, options.upstream_branch ]
             if options.pristine_tar:
-                branches += [ PristineTar.branch ]
+                branches += [ repo.pristine_tar_branch ]
             gbp.log.debug('Will track branches: %s' % branches)
             for branch in branches:
                 remote = 'origin/%s' % branch

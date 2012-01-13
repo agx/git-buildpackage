@@ -126,24 +126,6 @@ class RunAtCommand(Command):
             raise
 
 
-class PristineTar(Command):
-    cmd='/usr/bin/pristine-tar'
-    branch='pristine-tar'
-
-    def __init__(self):
-        if not os.access(self.cmd, os.X_OK):
-            raise GbpError, "%s not found - cannot use pristine-tar" % self.cmd
-        Command.__init__(self, self.cmd)
-
-    def commit(self, archive, branch):
-        self.run_error = 'Couldn\'t commit to "%s"' % branch
-        self.__call__(['commit', archive, branch])
-
-    def checkout(self, archive):
-        self.run_error = 'Couldn\'t checkout "%s"' % os.path.basename(archive)
-        self.__call__(['checkout', archive])
-
-
 class UnpackTarArchive(Command):
     """Wrap tar to unpack a compressed tar archive"""
     def __init__(self, archive, dir, filters=[], compression=None):

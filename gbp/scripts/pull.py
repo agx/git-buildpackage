@@ -21,8 +21,7 @@
 
 import sys
 import os, os.path
-from gbp.command_wrappers import (Command,
-                                  CommandExecFailed, PristineTar)
+from gbp.command_wrappers import (Command, CommandExecFailed)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
@@ -105,8 +104,8 @@ def main(argv):
             if repo.has_branch(branch):
                 branches += [ branch ]
 
-        if repo.has_branch(PristineTar.branch) and options.pristine_tar:
-            branches += [ PristineTar.branch ]
+        if repo.has_pristine_tar_branch() and options.pristine_tar:
+            branches += [ repo.pristine_tar_branch ]
 
         (ret, out) = repo.is_clean()
         if not ret:

@@ -306,7 +306,7 @@ def main(argv):
                     if is_empty:
                         repo.create_branch(options.upstream_branch, commit)
                     if options.pristine_tar:
-                        gbpc.PristineTar().commit(src.tgz, 'refs/heads/%s' % options.upstream_branch)
+                        repo.pristine_tar.commit(src.tgz, options.upstream_branch)
                     parents = [ options.upstream_branch ]
             if not src.native:
                 if is_empty and not repo.has_branch(options.debian_branch):

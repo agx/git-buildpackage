@@ -27,7 +27,7 @@ import tempfile
 import shutil
 import gbp.deb as du
 from gbp.command_wrappers import (Command,
-                                  RunAtCommand, CommandExecFailed, PristineTar,
+                                  RunAtCommand, CommandExecFailed,
                                   RemoveTree, CatenateTarArchive)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
@@ -321,10 +321,11 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
     @return: True: orig tarball build, False: noop
     """
     if options.pristine_tar:
-        pt = PristineTar()
         if not repo.has_branch(pt.branch):
-            gbp.log.warn('Pristine-tar branch "%s" not found' % pt.branch)
-        pt.checkout(os.path.join(output_dir, du.orig_file(cp, options.comp_type)))
+            gbp.log.warn('Pristine-tar branch "%s" not found' %
+                         repo.pristine_tar.branch)
+        repo.pristine_tar.checkout(os.path.join(output_dir,
+                                   du.orig_file(cp, options.comp_type)))
         return True
     else:
         return False
@@ -376,7 +377,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
             comp_type = 'auto'
 
     if comp_type == 'auto':
-        if not repo.has_branch(PristineTar.branch):
+        if not repo.has_pristine_tar_branch():
             if not tarball_dir:
                 tarball_dir = '..'
             detected = None
@@ -391,12 +392,12 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
                 comp_type = 'gzip'
         else:
             regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (srcpkg, upstream_version)
-            commits = repo.grep_log(regex, PristineTar.branch)
+            commits = repo.grep_log(regex, repo.pristine_tar_branch)
             if commits:
                 commit = commits[-1]
                 gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
             else:
-                commit = PristineTar.branch
+                commit = repo.pristine_tar_branch
             tarball = repo.get_subject(commit)
             comp_type = du.get_compression(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)

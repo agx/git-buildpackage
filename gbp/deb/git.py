@@ -18,9 +18,14 @@
 
 import re
 from gbp.git import GitRepository, GitRepositoryError
+from gbp.deb.pristinetar import PristineTar
 
 class DebianGitRepository(GitRepository):
     """A git repository that holds the source of a Debian package"""
+
+    def __init__(self, path):
+        super(DebianGitRepository, self).__init__(path)
+        self.pristine_tar = PristineTar(self)
 
     def find_version(self, format, version):
         """
@@ -111,5 +116,23 @@ class DebianGitRepository(GitRepository):
             version = r.group('version').replace('_', '~').replace('%', ':')
             return version
         return None
+
+    @property
+    def pristine_tar_branch(self):
+        """
+        The name of the pristine-tar branch, whether it already exists or
+        not.
+        """
+        return PristineTar.branch
+
+    def has_pristine_tar_branch(self):
+        """
+        Wheter the repo has a I{pristine-tar} branch.
+
+        @return: C{True} if the repo has pristine-tar commits already, C{False}
+            otherwise
+        @rtype: C{Bool}
+        """
+        return True if self.has_branch(self.pristine_tar_branch) else False
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

@@ -158,6 +158,7 @@ def test_parse_eopch():
     """
 
 def test_parse_name():
+    """
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}
 
@@ -168,3 +169,4 @@ def test_parse_name():
     >>> cl = gbp.deb.changelog.ChangeLog(cl_debian)
     >>> cl.name
     'git-buildpackage'
+    """

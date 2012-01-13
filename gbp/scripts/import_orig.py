@@ -396,7 +396,7 @@ def main(argv):
 
             if options.pristine_tar:
                 if pristine_orig:
-                    gbpc.PristineTar().commit(pristine_orig, 'refs/heads/%s' % upstream_branch)
+                    repo.pristine_tar.commit(pristine_orig, upstream_branch)
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 

@@ -27,7 +27,7 @@ import subprocess
 import tty, termios
 import re
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
-from gbp.command_wrappers import (CommandExecFailed, PristineTar, GitCommand)
+from gbp.command_wrappers import (CommandExecFailed, GitCommand)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
@@ -177,8 +177,8 @@ def main(argv):
             if repo.has_branch(branch):
                 branches += [ branch ]
 
-        if repo.has_branch(PristineTar.branch) and options.pristine_tar:
-            branches += [ PristineTar.branch ]
+        if repo.has_pristine_tar_branch() and options.pristine_tar:
+            branches += [ repo.pristine_tar_branch ]
 
         try:
             cp = ChangeLog(filename=changelog)
