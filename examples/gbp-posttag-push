@@ -124,9 +124,7 @@ def main(argv):
 
     upstream_tag = get_upstream_tag(repo, env.tag, options.upstream_tag)
     if upstream_tag:
-        sha1 = repo.rev_parse("%s^{}" % upstream_tag)
-        if not repo.branch_contains(options.upstream_branch, sha1, remote=True):
-            upstream_sha1 = sha1
+        upstream_sha1 = repo.rev_parse("%s^{}" % upstream_tag)
 
     if not repo.verify_tag(env.tag):
         print >>sys.stderr, "Not pushing unsigned tag $GBP_TAG."
@@ -138,7 +136,8 @@ def main(argv):
         repo.push(dest, env.sha1, dests[dest])
         if options.push_upstream and upstream_tag:
             repo.push_tag(dest, upstream_tag)
-            if upstream_sha1:
+            if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
+                                        upstream_sha1, remote=True):
                 repo.push(dest, upstream_sha1, options.upstream_branch)
         print "done."
 
