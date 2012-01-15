@@ -1095,9 +1095,9 @@ class GitRepository(object):
         Diff two git repository objects
 
         @param obj1: first object
-        @type types: C{str}
+        @type obj1: C{str}
         @param obj2: second object
-        @type types: C{str}
+        @type obj2: C{str}
         @return: diff
         @rtype: C{str}
         """
