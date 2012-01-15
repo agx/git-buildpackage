@@ -28,7 +28,7 @@ override_dh_auto_test:
 
 override_dh_auto_build:
 	dh_auto_build
-	epydoc --config=setup.cfg
+	epydoc -v --config=setup.cfg
 	make -C docs/
 
 override_dh_auto_install:
