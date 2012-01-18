@@ -145,7 +145,7 @@ class GbpOptionParser(OptionParser):
              'import-msg':
                   "format string for commit message, default is '%(import-msg)s'",
              'pristine-tar':
-                  "use pristine-tar to create .orig.tar.gz, default is '%(pristine-tar)s'",
+                  "use pristine-tar to create orig tarball, default is '%(pristine-tar)s'",
              'filter-pristine-tar':
                   "Filter pristine-tar when filter option is used",
              'filter':

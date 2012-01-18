@@ -318,7 +318,7 @@ def prepare_output_dir(dir):
 def pristine_tar_build_orig(repo, cp, output_dir, options):
     """
     build orig using pristine-tar
-    @return: True: orig.tar.gz build, False: noop
+    @return: True: orig tarball build, False: noop
     """
     if options.pristine_tar:
         pt = PristineTar()
@@ -466,9 +466,9 @@ def parse_args(argv, prefix):
     orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     orig_group.add_config_file_option(option_name="force-create", dest="force_create",
-                      help="force creation of orig.tar.gz", action="store_true")
+                      help="force creation of orig tarball", action="store_true")
     orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
-                      help="don't create orig.tar.gz", action="store_true")
+                      help="don't create orig tarball", action="store_true")
     orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",
                       help="location to look for external tarballs")
     orig_group.add_config_file_option(option_name="compression", dest="comp_type",

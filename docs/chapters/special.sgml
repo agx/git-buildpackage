@@ -121,7 +121,7 @@ git-branch debian
 </programlisting>
     <para>
     This uses <command>apt-get</command> to download the source package,
-    puts the orig.tar.gz on the <option>upstream-branch</option> and the
+    puts the orig tarball on the <option>upstream-branch</option> and the
     Debian changes on the <option>debian-branch</option> (by default
     <emphasis>master</emphasis>). The second command
     creates a branch called <emphasis>debian</emphasis>. Now you can easily
