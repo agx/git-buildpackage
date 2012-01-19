@@ -24,7 +24,9 @@ class DebianGitRepository(GitRepository):
 
     def find_version(self, format, version):
         """
-        Check if a certain version is stored in this repo and return it's SHA1.
+        Check if a certain version is stored in this repo and return the SHA1
+        of the related commit. That is, an annotated tag is dereferenced to the
+        commit object it points to.
 
         For legacy tags don't only check the tag itself but also the commit
         message, since the former wasn't injective until release 0.5.5. You
@@ -33,19 +35,21 @@ class DebianGitRepository(GitRepository):
 
         @param format: tag pattern
         @param version: debian version number
-        @return: sha1 of the version tag
+        @return: sha1 of the commit the tag references to
         """
         tag = self.version_to_tag(format, version)
         legacy_tag = self._build_legacy_tag(format, version)
         if self.has_tag(tag): # new tags are injective
-            return self.rev_parse(tag)
+            # dereference to a commit object
+            return self.rev_parse("%s^0" % tag)
         elif self.has_tag(legacy_tag):
             out, ret = self.__git_getoutput('cat-file', args=['-p', legacy_tag])
             if ret:
                 return None
             for line in out:
                 if line.endswith(" %s\n" % version):
-                    return self.rev_parse(legacy_tag)
+                    # dereference to a commit object
+                    return self.rev_parse("%s^0" % legacy_tag)
                 elif line.startswith('---'): # GPG signature start
                     return None
         return None
