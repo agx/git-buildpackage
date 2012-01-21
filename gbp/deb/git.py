@@ -34,8 +34,11 @@ class DebianGitRepository(GitRepository):
         tags.
 
         @param format: tag pattern
+        @type format: C{str}
         @param version: debian version number
+        @type version: C{str}
         @return: sha1 of the commit the tag references to
+        @rtype: C{str}
         """
         tag = self.version_to_tag(format, version)
         legacy_tag = self._build_legacy_tag(format, version)
