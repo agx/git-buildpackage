@@ -43,12 +43,22 @@ class Tristate(object):
             raise TypeError
 
     def __repr__(self):
-        if self._state == ON:
-            return "on"
-        elif self._state == AUTO:
-            return "auto"
+        """
+        >>> Tristate('on').__repr__()
+        'on'
+        >>> Tristate(True).__repr__()
+        'on'
+        >>> Tristate(False).__repr__()
+        'off'
+        >>> Tristate('auto').__repr__()
+        'auto'
+        """
+        if self._state == self.ON:
+            return 'on'
+        elif self._state == self.AUTO:
+            return 'auto'
         else:
-            return "off"
+            return 'off'
 
     @classmethod
     def is_valid_state(self, stat):
