@@ -148,7 +148,18 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
     # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
     if options.force_create or (not options.no_create_orig and not du.has_orig(orig_file, output_dir)):
         if not pristine_tar_build_orig(repo, cp, output_dir, options):
-            git_archive_build_orig(repo, cp, output_dir, options)
+            upstream_tree = git_archive_build_orig(repo, cp, output_dir, options)
+            if options.pristine_tar_commit:
+                if repo.pristine_tar.has_commit(cp.name,
+                                                cp.upstream_version,
+                                                options.comp_type):
+                    gbp.log.debug("%s already on pristine tar branch" %
+                                  orig_file)
+                else:
+                    archive = os.path.join(output_dir, orig_file)
+                    gbp.log.debug("Adding %s to pristine-tar branch" %
+                                  archive)
+                    repo.pristine_tar.commit(archive, upstream_tree)
 
 
 #{ Functions to handle export-dir
@@ -321,14 +332,23 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
     @return: True: orig tarball build, False: noop
     """
     if options.pristine_tar:
-        if not repo.has_branch(pt.branch):
+        if not repo.has_branch(repo.pristine_tar_branch):
             gbp.log.warn('Pristine-tar branch "%s" not found' %
                          repo.pristine_tar.branch)
-        repo.pristine_tar.checkout(os.path.join(output_dir,
-                                   du.orig_file(cp, options.comp_type)))
-        return True
-    else:
-        return False
+        try:
+            repo.pristine_tar.checkout(cp.name,
+                                       cp.upstream_version,
+                                       options.comp_type,
+                                       output_dir)
+            return True
+        except CommandExecFailed:
+            if options.pristine_tar_commit:
+                gbp.log.debug("pristine-tar checkout failed, "
+                              "will commit tarball due to "
+                              "'--pristine-tar-commit'")
+            else:
+                raise
+    return False
 
 
 def get_upstream_tree(repo, cp, options):
@@ -348,7 +368,18 @@ def get_upstream_tree(repo, cp, options):
 
 
 def git_archive_build_orig(repo, cp, output_dir, options):
-    """build orig using git-archive"""
+    """
+    Build orig tarball using git-archive
+
+    @param cp: the changelog of the package we're acting on
+    @type cp: L{ChangeLog}
+    @param output_dir: where to put the tarball
+    @type output_dir: C{Str}
+    @param options: the parsed options
+    @type options: C{dict} of options
+    @return: the tree we built the tarball from
+    @rtype: C{str}
+    """
     upstream_tree = get_upstream_tree(repo, cp, options)
     gbp.log.info("%s does not exist, creating from '%s'" % (du.orig_file(cp,
                                                             options.comp_type),
@@ -360,6 +391,7 @@ def git_archive_build_orig(repo, cp, output_dir, options):
                        options.comp_level,
                        options.with_submodules):
         raise GbpError("Cannot create upstream tarball at '%s'" % output_dir)
+    return upstream_tree
 
 
 def guess_comp_type(repo, comp_type, cp, tarball_dir):
@@ -466,6 +498,8 @@ def parse_args(argv, prefix):
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    orig_group.add_boolean_config_file_option(option_name="pristine-tar-commit",
+                                              dest="pristine_tar_commit")
     orig_group.add_config_file_option(option_name="force-create", dest="force_create",
                       help="force creation of orig tarball", action="store_true")
     orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
@@ -526,6 +560,7 @@ def main(argv):
     cp = None
 
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
+
     if not options:
         return 1
 

@@ -74,6 +74,7 @@ class GbpOptionParser(OptionParser):
                  'upstream-branch' : 'upstream',
                  'upstream-tree'   : 'TAG',
                  'pristine-tar'    : 'False',
+                 'pristine-tar-commit': 'False',
                  'filter-pristine-tar' : 'False',
                  'sign-tags'       : 'False',
                  'force-create'    : 'False',
@@ -146,6 +147,8 @@ class GbpOptionParser(OptionParser):
                   "format string for commit message, default is '%(import-msg)s'",
              'pristine-tar':
                   "use pristine-tar to create orig tarball, default is '%(pristine-tar)s'",
+             'pristine-tar-commit':
+                  "When generating a tarball commit it to the pristine-tar branch '%(pristine-tar-commit)s'",
              'filter-pristine-tar':
                   "Filter pristine-tar when filter option is used",
              'filter':
