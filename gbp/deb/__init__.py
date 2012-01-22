@@ -277,6 +277,34 @@ class UpstreamSource(object):
             if m:
                 return (m.group('package'), m.group('version'))
 
+    @staticmethod
+    def build_tarball_name(name, version, compression, dir=None):
+        """
+        Given a source package's I{name}, I{version} and I{compression}
+        return the name of the corresponding upstream tarball.
+
+        >>> UpstreamSource.build_tarball_name('foo', '1.0', 'bzip2')
+        'foo_1.0.orig.tar.bz2'
+        >>> UpstreamSource.build_tarball_name('bar', '0.0~git1234', 'xz')
+        'bar_0.0~git1234.orig.tar.xz'
+
+        @param name: the source package's name
+        @type name: C{str}
+        @param version: the upstream version
+        @type version: C{str}
+        @param compression: the desired compression
+        @type compression: C{str}
+        @param dir: a directory to prepend
+        @type dir: C{str}
+        @return: the tarballs name corresponding to the input parameters
+        @rtype: C{str}
+        """
+        ext = compressor_opts[compression][1]
+        tarball = "%s_%s.orig.tar.%s" % (name, version, ext)
+        if dir:
+            tarball = os.path.join(dir, tarball)
+        return tarball
+
 
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
@@ -397,8 +425,10 @@ def orig_file(cp, compression):
     >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz")
     'bar_0.0~git1234.orig.tar.xz'
     """
-    ext = compressor_opts[compression][1]
-    return "%s_%s.orig.tar.%s" % (cp['Source'], cp['Upstream-Version'], ext)
+    return UpstreamSource.build_tarball_name(cp['Source'],
+                                             cp['Upstream-Version'],
+                                             compression)
+
 
 def is_valid_packagename(name):
     "Is this a valid Debian package name?"
