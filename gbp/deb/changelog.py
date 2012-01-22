@@ -82,6 +82,10 @@ class ChangeLog(object):
     def __setitem__(self, item, value):
         self._cp[item] = value
 
+    @property
+    def name(self):
+        """The packges name"""
+        return self._cp['Source']
 
     @property
     def version(self):

@@ -119,7 +119,7 @@ def test_parse_no_eopch():
 
 def test_parse_eopch():
     """
-    Parse a the changelog of a package without eopch
+    Parse a the changelog of a package without epoch
 
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}
@@ -156,3 +156,15 @@ def test_parse_eopch():
     >>> cl.is_native()
     False
     """
+
+def test_parse_name():
+    Methods tested:
+         - L{gbp.deb.changelog.ChangeLog.__init__}
+
+    Properties tested:
+         - L{gbp.deb.changelog.ChangeLog.name}
+
+    >>> import gbp.deb.changelog
+    >>> cl = gbp.deb.changelog.ChangeLog(cl_debian)
+    >>> cl.name
+    'git-buildpackage'
