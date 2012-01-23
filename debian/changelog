@@ -1,3 +1,28 @@
+git-buildpackage (0.6.0~git20120123) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [90fb9b2] Add "gbp-pq switch" to bash completion
+  * [8328c32] Allow to specify the upstream tree via --upstream-tree without
+    the indirection to --upstream-branch.
+  * [3d4adca] gbp-posttag-push: Allow to push the upstream tag too via the -u
+    option.
+  * [2d84986] gbp-post-tag-push: Add --verbose option to ease debugging
+  * [cd41023] git-buildpackage: Allow to pass pbuilder options via commandline
+    or gbp.conf
+  * [a31c95b] Update to git-pbuilder 1.27. This adds support for creating
+    backport build environments. Thanks to Russ Allbery
+  * [338ee68] git-buildpackage: Add --pristine-tar-commit option. This option
+    allows to auto commit a generated tarball to the pristine-tar branch to
+    simplify building non-dfsg clean packages and to make it easier to track
+    uptream git without having to commit the generated tarball manually.
+
+  [ Markus Lehtonen ]
+  * [0c47432] Add git-depth option to gbp-clone and gbp-pull.  Allows creating
+    and deepening shallow clones. This is sometimes useful for e.g. saving
+    bandwidth when cloning.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 23 Jan 2012 22:13:38 +0100
+
 git-buildpackage (0.6.0~git20111229) experimental; urgency=low
 
   * [686f29c] scripts/pq: handle patches without filename extension. Don't
