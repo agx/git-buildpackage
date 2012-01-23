@@ -933,7 +933,7 @@ class GitRepository(object):
             try:
                 cur = self.rev_parse(branch)
             except GitRepositoryError:
-                if create_missing_branch == True:
+                if create_missing_branch:
                     log.debug("Will create missing branch '%s'..." % branch)
                     cur = None
                 else:
