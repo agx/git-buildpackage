@@ -27,7 +27,7 @@ class PristineTar(Command):
 
     def __init__(self, repo):
         self.repo = repo
-        super(PristineTar, self).__init__(self.cmd)
+        super(PristineTar, self).__init__(self.cmd, cwd=repo.path)
 
     def has_commit(self, package, version, comp_type=None):
         """
