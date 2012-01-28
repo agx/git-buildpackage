@@ -1131,6 +1131,19 @@ class GitRepository(object):
 #}
 
     def archive(self, format, prefix, output, treeish, **kwargs):
+        """
+        Create an archive from a treeish
+
+        @param format: the type of archive to create, e.g. 'tar.gz'
+        @type format: C{str}
+        @param prefix: prefix to prepend to each filename in the archive
+        @type prefix: C{str}
+        @param output: the name of the archive to create
+        @type output: C{str}
+        @param treeish: the treeish to create the archive from
+        @type treeish: C{str}
+        @param kwargs: additional commandline options passed to git-archive
+        """
         args = [ '--format=%s' % format, '--prefix=%s' % prefix,
                  '--output=%s' % output, treeish ]
         out, ret = self.__git_getoutput('archive', args, **kwargs)
