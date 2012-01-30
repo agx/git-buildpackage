@@ -17,6 +17,7 @@
 """Handle checkin and checkout of archives from the pristine-tar branch"""
 
 import os, re
+import gbp.log
 from gbp.command_wrappers import Command
 from gbp.deb import UpstreamSource, compressor_opts
 
