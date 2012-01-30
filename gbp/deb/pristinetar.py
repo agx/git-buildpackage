@@ -59,7 +59,7 @@ class PristineTar(Command):
             return None
 
         if not comp_type:
-            ext = '\w+'
+            ext = '\w\+'
         else:
             ext = compressor_opts[comp_type][1]
 
