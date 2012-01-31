@@ -1,3 +1,20 @@
+git-buildpackage (0.6.0~git20120124) experimental; urgency=low
+
+  [ Markus Lehtonen ]
+  * [b7d7016] gbp-pq: don't crash in get_maintainer_from_control() even if
+    debian/control is missing.
+
+  [ Guido Günther ]
+  * [c5eee2b] PristineTar: add missing import for debug output
+  * [3ca0a98] PristineTar: fix match when not passing in a compression type
+  * [45ab61b] Depend on pristine-tar for the tests
+  * [041dbf2] GitRepository: allow to capture stderr in __git_inout
+    stderr was always None.
+  * [e6fd2ce] GitRepository: Use _git_inout() in __init__()
+    to avoid misleading error message
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 31 Jan 2012 10:22:13 +0100
+
 git-buildpackage (0.6.0~git20120123) experimental; urgency=low
 
   [ Guido Günther ]
