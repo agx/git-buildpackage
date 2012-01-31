@@ -104,7 +104,8 @@ class GitRepository(object):
         output += popen.stdout.readlines()
         return output, popen.returncode
 
-    def __git_inout(self, command, args, input, extra_env=None):
+    def __git_inout(self, command, args, input, extra_env=None, cwd=None,
+                    capture_stderr=False):
         """
         Run a git command with input and return output
 
@@ -116,15 +117,23 @@ class GitRepository(object):
         @type args: C{list}
         @param extra_env: extra environment variables to pass
         @type extra_env: C{dict}
+        @param capture_stderr: whether to capture stderr
+        @type capture_stderr: C{bool}
         @return: stdout, stderr, return code
-        @rtype: C{tuple}
+        @rtype: C{tuple} of C{str}, C{str}, C{int}
         """
+        if not cwd:
+            cwd = self.path
+
+        stderr_arg = subprocess.PIPE if capture_stderr else None
+
         env = self.__build_env(extra_env)
         cmd = ['git', command] + args
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
+                                 stderr=stderr_arg,
                                  env=env,
                                  cwd=self.path)
         (stdout, stderr) = popen.communicate(input)
@@ -982,7 +991,11 @@ class GitRepository(object):
         args = [ tree ]
         for parent in parents:
             args += [ '-p' , parent ]
-        sha1, stderr, ret = self.__git_inout('commit-tree', args, msg, extra_env)
+        sha1, stderr, ret = self.__git_inout('commit-tree',
+                                             args,
+                                             msg,
+                                             extra_env,
+                                             capture_stderr=True)
         if not ret:
             return sha1.strip()
         else:
