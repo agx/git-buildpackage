@@ -106,7 +106,7 @@ class GitRepository(object):
         output += popen.stdout.readlines()
         return output, popen.returncode
 
-    def __git_inout(self, command, args, input, extra_env=None, cwd=None,
+    def _git_inout(self, command, args, input, extra_env=None, cwd=None,
                     capture_stderr=False):
         """
         Run a git command with input and return output
@@ -993,11 +993,11 @@ class GitRepository(object):
         args = [ tree ]
         for parent in parents:
             args += [ '-p' , parent ]
-        sha1, stderr, ret = self.__git_inout('commit-tree',
-                                             args,
-                                             msg,
-                                             extra_env,
-                                             capture_stderr=True)
+        sha1, stderr, ret = self._git_inout('commit-tree',
+                                            args,
+                                            msg,
+                                            extra_env,
+                                            capture_stderr=True)
         if not ret:
             return sha1.strip()
         else:
