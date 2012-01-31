@@ -106,8 +106,8 @@ class GitRepository(object):
         output += popen.stdout.readlines()
         return output, popen.returncode
 
-    def _git_inout(self, command, args, input, extra_env=None, cwd=None,
-                    capture_stderr=False):
+    def _git_inout(self, command, args, input=None, extra_env=None, cwd=None,
+                   capture_stderr=False):
         """
         Run a git command with input and return output
 
