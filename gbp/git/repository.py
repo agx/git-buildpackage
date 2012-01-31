@@ -21,7 +21,7 @@ import subprocess
 import os.path
 
 import gbp.log as log
-from gbp.command_wrappers import (GitCommand, CommandExecFailed, copy_from)
+from gbp.command_wrappers import (GitCommand, CommandExecFailed)
 from gbp.errors import GbpError
 from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit

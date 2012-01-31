@@ -212,28 +212,4 @@ class GitCommand(Command):
         self.run_error = "Couldn't run git %s" % cmd
 
 
-def copy_from(orig_dir, filters=[]):
-    """
-    copy a source tree over via tar
-    @param orig_dir: where to copy from
-    @type orig_dir: string
-    @param filters: tar exclude pattern
-    @type filters: list of strings
-    @return: list of copied files
-    @rtype: list
-    """
-    exclude = [("--exclude=%s" % filter) for filter in filters]
-
-    try:
-        p1 = subprocess.Popen(["tar"] + exclude + ["-cSpf", "-", "." ], stdout=subprocess.PIPE, cwd=orig_dir)
-        p2 = subprocess.Popen(["tar", "-xvSpf", "-" ], stdin=p1.stdout, stdout=subprocess.PIPE)
-        files = p2.communicate()[0].split('\n')
-    except OSError, err:
-        raise GbpError, "Cannot copy files: %s" % err
-    except ValueError, err:
-        raise GbpError, "Cannot copy files: %s" % err
-    if p1.wait() or p2.wait():
-        raise GbpError, "Cannot copy files, pipe failed."
-    return [ os.path.normpath(f) for f in files if files ]
-
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
