@@ -47,20 +47,22 @@ class GitRepository(object):
 
     def _check_bare(self):
         """Check whether this is a bare repository"""
-        out, ret = self._git_getoutput('rev-parse', ['--is-bare-repository'])
+        out, dummy, ret = self._git_inout('rev-parse', ['--is-bare-repository'],
+                                          capture_stderr=True)
         if ret:
             raise GitRepositoryError(
                 "Failed to get repository state at '%s'" % self.path)
-        self._bare = False if  out[0].strip() != 'true' else True
+        self._bare = False if  out.strip() != 'true' else True
         self._git_dir = '' if self._bare else '.git'
 
     def __init__(self, path):
         self._path = os.path.abspath(path)
         self._bare = False
         try:
-            out, ret = self._git_getoutput('rev-parse', ['--show-cdup'])
-            if ret or out not in [ ['\n'], [] ]:
-                raise GitRepositoryError("No Git repository at '%s'" % self.path)
+            out, dummy, ret = self._git_inout('rev-parse', ['--show-cdup'],
+                                              capture_stderr=True)
+            if ret or out.strip():
+                raise GitRepositoryError("No Git repository at '%s': '%s'" % (self.path, out))
         except GitRepositoryError:
             raise # We already have a useful error message
         except:
