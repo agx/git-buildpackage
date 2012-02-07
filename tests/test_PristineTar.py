@@ -71,7 +71,8 @@ def test_create_tarball():
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
-    >>> repo.archive('tar.gz', 'upstream/', '../upstream_1.0.orig.tar.gz', 'upstream')
+    >>> repo.archive('tar', 'upstream/', '../upstream_1.0.orig.tar', 'upstream')
+    >>> gbp.command_wrappers.Command('gzip', [ '-n', '%s/../upstream_1.0.orig.tar' % repo_dir])()
     """
 
 def test_pristine_tar_commit():
