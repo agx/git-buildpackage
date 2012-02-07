@@ -88,9 +88,11 @@ def is_link_target(target, link):
 
 def symlink_orig(archive, pkg, version):
     """
-    create a symlink <pkg>_<version>.orig.tar.<ext> so pristine-tar will see the
-    correct basename
+    Create a symlink from I{archive} ti I{<pkg>_<version>.orig.tar.<ext>} so
+    pristine-tar will see the correct basename.
+
     @return: archive path to be used by pristine tar
+    @rtype: C{str}
     """
     if os.path.isdir(archive):
         return None
@@ -225,7 +227,7 @@ def find_source(options, args):
 
 def repacked_tarball_name(source, name, version):
     if source.is_orig():
-        # Repacked orig tarballs get need a different name since there's already
+        # Repacked orig tarball needs a different name since there's already
         # one with that name
         name = os.path.join(
                     os.path.dirname(source.path),
