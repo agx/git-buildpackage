@@ -112,7 +112,14 @@ class UpstreamSource(object):
             self.unpacked = self.path
 
     def _check_orig(self):
-        """Check if archive can be used as orig tarball"""
+        """
+        Check if upstream source format can be used as orig tarball.
+        This doesn't imply that the tarball is correctly named.
+
+        @return: C{True} if upstream source format is suitable
+            as upstream tarball, C{False} otherwise.
+        @rtype: C{bool}
+        """
         if self.is_dir():
             self._orig = False
             return
@@ -191,8 +198,8 @@ class UpstreamSource(object):
 
     def _unpack_tar(self, dir, filters):
         """
-        unpack a .orig.tar.gz to tmpdir, leave the cleanup to the caller in case of
-        an error
+        Unpack a tarball to I{dir} applying a list of I{filters}. Leave the
+        cleanup to the caller in case of an error.
         """
         try:
             unpackArchive = gbpc.UnpackTarArchive(self.path, dir, filters)
@@ -203,7 +210,7 @@ class UpstreamSource(object):
 
     def pack(self, newarchive, filters=[]):
         """
-        recreate a new archive from the current one
+        Recreate a new archive from the current one
 
         @param newarchive: the name of the new archive
         @type newarchive: string
