@@ -1,3 +1,11 @@
+git-buildpackage (0.6.0~git20120207) experimental; urgency=low
+
+  * Upload to unstable
+  * [1e51936] git-import-orig: Properly detect .tgz and other abbreviated file
+    extensions (Closes: #658777)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 07 Feb 2012 23:24:48 +0100
+
 git-buildpackage (0.6.0~git20120124) experimental; urgency=low
 
   [ Markus Lehtonen ]
