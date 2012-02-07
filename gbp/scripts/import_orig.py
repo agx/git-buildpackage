@@ -97,6 +97,9 @@ def symlink_orig(archive, pkg, version):
     if os.path.isdir(archive):
         return None
     ext = os.path.splitext(archive)[1]
+    if ext in ['.tgz', '.tbz2', '.tlz', '.txz' ]:
+        ext = ".%s" % ext[2:]
+
     link = "../%s_%s.orig.tar%s" % (pkg, version, ext)
     if os.path.basename(archive) != os.path.basename(link):
         try:
