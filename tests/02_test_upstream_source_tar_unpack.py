@@ -50,12 +50,12 @@ class TestUnpack:
     def test_upstream_source_type(self):
         for (comp, archive) in self.archives.iteritems():
             source = gbp.deb.UpstreamSource(archive[0])
-            assert source.is_orig == True
-            assert source.is_dir == False
+            assert source.is_orig() == True
+            assert source.is_dir() == False
             assert source.unpacked == None
             source.unpack(".")
-            assert source.is_orig == True
-            assert source.is_dir == False
+            assert source.is_orig() == True
+            assert source.is_dir() == False
             assert type(source.unpacked) == str
 
     def test_upstream_source_unpack(self):

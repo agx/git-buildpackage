@@ -94,8 +94,6 @@ class UpstreamSource(object):
     Upstream source. Can be either an unpacked dir, a tarball or another type
     of archive
 
-    @cvar is_dir: are the upstream sources an unpacked dir
-    @type is_dir: boolean
     @cvar _orig: are the upstream sources already suitable as an upstream
                  tarball
     @type _orig: boolean
@@ -105,19 +103,17 @@ class UpstreamSource(object):
     @type _unpacked: string
     """
     def __init__(self, name, unpacked=None):
-        self.is_dir = False
         self._orig = False
         self._path = name
         self.unpacked = unpacked
 
-        self.is_dir = [False, True][os.path.isdir(name)]
         self._check_orig()
-        if self.is_dir:
+        if self.is_dir():
             self.unpacked = self.path
 
     def _check_orig(self):
         """Check if archive can be used as orig tarball"""
-        if self.is_dir:
+        if self.is_dir():
             self._orig = False
             return
 
@@ -130,9 +126,21 @@ class UpstreamSource(object):
         except IndexError:
             self._orig = False
 
-    @property
     def is_orig(self):
+        """
+        @return: C{True} if sources are suitable as upstream source,
+            C{False} otherwise
+        @rtype: C{bool}
+        """
         return self._orig
+
+    def is_dir(self):
+        """
+        @return: C{True} if if upstream sources are an unpacked directory,
+            C{False} otherwise
+        @rtype: C{bool}
+        """
+        return True if os.path.isdir(self._path) else False
 
     @property
     def path(self):
@@ -143,7 +151,7 @@ class UpstreamSource(object):
         Unpack packed upstream sources into a given directory
         and determine the toplevel of the source tree.
         """
-        if self.is_dir:
+        if self.is_dir():
             raise GbpError, "Cannot unpack directory %s" % self.path
 
         if not filters:

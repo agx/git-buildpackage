@@ -62,7 +62,7 @@ class OrigUpstreamSource(UpstreamSource):
         """
         if ((options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0)):
             return True
-        elif not self.is_orig:
+        elif not self.is_orig():
             if len(options.filters):
                 return True
             elif options.pristine_tar:
@@ -224,7 +224,7 @@ def find_source(options, args):
 
 
 def repacked_tarball_name(source, name, version):
-    if source.is_orig:
+    if source.is_orig():
         # Repacked orig tarballs get need a different name since there's already
         # one with that name
         name = os.path.join(
@@ -242,7 +242,7 @@ def repack_source(source, name, version, tmpdir, filters):
     """Repack the source tree"""
     name = repacked_tarball_name(source, name, version)
     repacked = source.pack(name, filters)
-    if source.is_orig: # the tarball was filtered on unpack
+    if source.is_orig(): # the tarball was filtered on unpack
         repacked.unpacked = source.unpacked
     else: # otherwise unpack the generated tarball get a filtered tree
         if tmpdir:
@@ -360,7 +360,7 @@ def main(argv):
         if repo.bare:
             set_bare_repo_options(options)
 
-        if not source.is_dir:
+        if not source.is_dir():
             tmpdir = tempfile.mkdtemp(dir='../')
             source.unpack(tmpdir, options.filters)
             gbp.log.debug("Unpacked '%s' to '%s'" % (source.path, source.unpacked))
