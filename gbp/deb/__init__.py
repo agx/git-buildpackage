@@ -126,7 +126,9 @@ class UpstreamSource(object):
 
         parts = self._path.split('.')
         try:
-            if parts[-2] == 'tar':
+            if parts[-1] == 'tgz':
+                self._orig = True
+            elif parts[-2] == 'tar':
                 if (parts[-1] in compressor_opts or
                     parts[-1] in compressor_aliases):
                         self._orig = True
