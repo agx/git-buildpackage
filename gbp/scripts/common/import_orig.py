@@ -20,7 +20,7 @@
 import os
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import UpstreamSource
+from gbp.pkg import UpstreamSource
 from gbp.errors import GbpError
 import gbp.log
 

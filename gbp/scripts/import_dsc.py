@@ -26,8 +26,9 @@ import glob
 import pipes
 import time
 import gbp.command_wrappers as gbpc
+from gbp.pkg import UpstreamSource
 from gbp.deb import (debian_version_chars,
-                     parse_dsc, DscFile, UpstreamSource)
+                     parse_dsc, DscFile)
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git

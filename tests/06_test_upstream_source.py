@@ -10,7 +10,7 @@ import tempfile
 import unittest
 import zipfile
 
-from gbp.deb import UpstreamSource
+from gbp.pkg import UpstreamSource
 
 class TestDir(unittest.TestCase):
     def test_directory(self):

@@ -49,7 +49,7 @@ class TestUnpack:
 
     def test_upstream_source_type(self):
         for (comp, archive) in self.archives.iteritems():
-            source = gbp.deb.UpstreamSource(archive[0])
+            source = gbp.pkg.UpstreamSource(archive[0])
             assert source.is_orig() == True
             assert source.is_dir() == False
             assert source.unpacked == None
@@ -60,13 +60,13 @@ class TestUnpack:
 
     def test_upstream_source_unpack(self):
         for (comp, archive) in self.archives.iteritems():
-            source = gbp.deb.UpstreamSource(archive[0])
+            source = gbp.pkg.UpstreamSource(archive[0])
             source.unpack(".")
             self._check_files(archive[1], comp)
 
     def test_upstream_source_unpack_no_filter(self):
         for (comp, archive) in self.archives.iteritems():
-            source = gbp.deb.UpstreamSource(archive[0])
+            source = gbp.pkg.UpstreamSource(archive[0])
             source.unpack(".", [])
             self._check_files(archive[1], comp)
 
@@ -74,7 +74,7 @@ class TestUnpack:
         exclude = "README"
 
         for (comp, archive) in self.archives.iteritems():
-            source = gbp.deb.UpstreamSource(archive[0])
+            source = gbp.pkg.UpstreamSource(archive[0])
             source.unpack(".", [exclude])
             archive[1].remove(exclude)
             self._check_files(archive[1], comp)
