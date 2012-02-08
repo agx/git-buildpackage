@@ -104,7 +104,7 @@ def test_pristine_has_commit():
     >>> repo.pristine_tar.has_commit('upstream', '1.0')
     True
     >>> branch = repo.rev_parse('pristine-tar')
-    >>> commit = repo.pristine_tar.get_commit('upstream', '1.0')
+    >>> commit = repo.pristine_tar.get_commit('upstream_1.0.orig.tar.gz')
     >>> branch == commit
     True
     """

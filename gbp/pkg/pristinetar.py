@@ -16,11 +16,9 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Handle checkin and checkout of archives from the pristine-tar branch"""
 
-import os, re
+import os
 import gbp.log
 from gbp.command_wrappers import Command
-from gbp.pkg import compressor_opts
-from gbp.deb import DebianPkgPolicy
 
 class PristineTar(Command):
     """The pristine-tar branch in a git repository"""
@@ -31,41 +29,28 @@ class PristineTar(Command):
         self.repo = repo
         super(PristineTar, self).__init__(self.cmd, cwd=repo.path)
 
-    def has_commit(self, package, version, comp_type=None):
+    def has_commit(self, archive_regexp):
         """
         Do we have a pristine-tar commit for package I{package} at version
         {version} with compression type I{comp_type}?
 
-        @param package: the package to look for
-        @type package: C{str}
-        @param version: the upstream version to look for
-        @type version: C{str}
-        @param comp_type: the compression type
-        @type comp_type: C{str}
+        @param archive_regexp: archive name to look for (regexp wildcards allowed)
+        @type archive_regexp: C{str}
         """
-        return True if self.get_commit(package, version, comp_type) else False
+        return True if self.get_commit(archive_regexp) else False
 
-    def get_commit(self, package, version, comp_type=None):
+    def get_commit(self, archive_regexp):
         """
         Get the pristine-tar commit of package I{package} in version I{version}
         and compression type I{comp_type}
 
-        @param package: the package to look for
-        @type package: C{str}
-        @param version: the version to look for
-        @param comp_type: the compression type
-        @type comp_type: C{str}
+        @param archive_regexp: archive name to look for (regexp wildcards allowed)
+        @type archive_regexp: C{str}
         """
         if not self.repo.has_pristine_tar_branch():
             return None
 
-        if not comp_type:
-            ext = '\w\+'
-        else:
-            ext = compressor_opts[comp_type][1]
-
-        regex = ('pristine-tar .* %s_%s\.orig\.tar\.%s' %
-                 (package, version, ext))
+        regex = ('pristine-tar .* %s' % archive_regexp)
         commits = self.repo.grep_log(regex, self.branch)
         if commits:
             commit = commits[-1]
@@ -73,29 +58,15 @@ class PristineTar(Command):
             return commit
         return None
 
-    def _checkout(self, archive):
+    def checkout(self, archive):
+        """
+        Checkout an orig archive from pristine-tar branch
+
+        @param archive: the name of the orig archive
+        @type archive: C{str}
+        """
         self.run_error = 'Couldn\'t checkout "%s"' % os.path.basename(archive)
         self.__call__(['checkout', archive])
-
-    def checkout(self, package, version, comp_type, output_dir):
-        """
-        Checkout the orig tarball for package I{package} of I{version} and
-        compression type I{comp_type} to I{output_dir}
-
-        @param package: the package to generate the orig tarball for
-        @type package: C{str}
-        @param version: the version to check generate the orig tarball for
-        @type version: C{str}
-        @param comp_type: the compression type of the tarball
-        @type comp_type: C{str}
-        @param output_dir: the directory to put the tarball into
-        @type output_dir: C{str}
-        """
-        name = DebianPkgPolicy.build_tarball_name(package,
-                                                  version,
-                                                  comp_type,
-                                                  output_dir)
-        self._checkout(name)
 
     def commit(self, archive, upstream):
         """
