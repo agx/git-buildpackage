@@ -20,7 +20,7 @@ import os, re
 import gbp.log
 from gbp.command_wrappers import Command
 from gbp.pkg import compressor_opts
-from gbp.deb import UpstreamSource
+from gbp.deb import DebianPkgPolicy
 
 class PristineTar(Command):
     """The pristine-tar branch in a git repository"""
@@ -91,10 +91,10 @@ class PristineTar(Command):
         @param output_dir: the directory to put the tarball into
         @type output_dir: C{str}
         """
-        name = UpstreamSource.build_tarball_name(package,
-                                                 version,
-                                                 comp_type,
-                                                 output_dir)
+        name = DebianPkgPolicy.build_tarball_name(package,
+                                                  version,
+                                                  comp_type,
+                                                  output_dir)
         self._checkout(name)
 
     def commit(self, archive, upstream):
