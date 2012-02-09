@@ -3,11 +3,11 @@
 """
 Test pristine-tar related methods in
 
-    L{gbp.deb.PristineTar}
+    - L{gbp.deb.PristineTar}
 
 and
 
-    L{gbp.deb.git.DebianGitRepository}
+    - L{gbp.deb.git.DebianGitRepository}
 
 This testcase creates this reposity:
 
@@ -26,7 +26,7 @@ def test_create():
     Create a repository
 
     Methods tested:
-         - L{gbp.deb.DebianGitRepository.create}
+         - L{gbp.deb.git.DebianGitRepository.create}
 
     >>> import os, gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository.create(repo_dir)
@@ -37,8 +37,8 @@ def test_empty_repo():
     Empty repos have no branch pristine-tar branch
 
     Methods tested:
-         - L{gbp.deb.DebianGitRepository.has_pristine_tar_branch}
-         -L {gbp.deb.PristineTar.has_commit}
+         - L{gbp.deb.git.DebianGitRepository.has_pristine_tar_branch}
+         - L{gbp.deb.pristinetar.PristineTar.has_commit}
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
@@ -53,8 +53,8 @@ def test_commit_dir():
     Empty repos have no branch pristine-tar branch
 
     Methods tested:
-         - L{gbp.git.repository.commit_dir}
-         - L{gbp.git.repository.create_branch}
+         - L{gbp.git.repository.GitRepository.commit_dir}
+         - L{gbp.git.repository.GitRepository.create_branch}
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
@@ -67,7 +67,7 @@ def test_create_tarball():
     Create a tarball from a git tree
 
     Methods tested:
-         -L {gbp.git.repository.archive}
+         - L{gbp.deb.git.DebianGitRepository.archive}
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
@@ -79,7 +79,7 @@ def test_pristine_tar_commit():
     Commit the delta to the pristine-tar branch
 
     Methods tested:
-         -L {gbp.deb.PristineTar.commit}
+         - L{gbp.deb.pristinetar.PristineTar.commit}
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
@@ -91,8 +91,8 @@ def test_pristine_has_commit():
     Find delta on the pristine tar branch
 
     Methods tested:
-         -L {gbp.deb.PristineTar.has_commit}
-         -L {gbp.deb.PristineTar.get_commit}
+         - L{gbp.deb.pristinetar.PristineTar.has_commit}
+         - L{gbp.deb.pristinetar.PristineTar.get_commit}
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
@@ -113,7 +113,7 @@ def test_pristine_tar_checkout():
     Checkout a tarball using pristine-tar
 
     Methods tested:
-         -L {gbp.deb.PristineTar.checkout}
+         - L{gbp.deb.pristinetar.PristineTar.checkout}
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
