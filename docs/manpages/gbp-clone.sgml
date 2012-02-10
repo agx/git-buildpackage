@@ -48,7 +48,7 @@
         </term>
         <listitem>
 	  <para>Track all branches, not only <replaceable>debian</replaceable>
-	  and <replaceable>upstream</replaceable>.
+	  and <replaceable>upstream</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -56,7 +56,7 @@
         </term>
         <listitem>
 	  <para>The branch in the Git repository the Debian package is being
-	  developed on, default is <replaceable>master</replaceable>.
+	  developed on, default is <replaceable>master</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -89,6 +89,7 @@
         </listitem>
       </varlistentry>
     </variablelist>
+  </refsect1>
   <refsect1>
       &man.git.config-files;
   </refsect1>

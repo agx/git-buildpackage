@@ -4,6 +4,7 @@
     <title>Handling non-DFSG clean upstream sources</title>
     <para>If you have to handle non DFSG clean upstream sources you can use a
     different branch which you have to create once:
+    </para>
     <screen>
 &gitcmd; branch dfsg_clean upstream
     </screen>
@@ -37,6 +38,7 @@ cleanup-script.sh
 &gitcmd; checkout <replaceable>master</replaceable>
 &gitcmd; pull <replaceable>.</replaceable> <replaceable>dfsg_clean</replaceable>
     </screen>
+    </sect1>
 
     <sect1 id="gbp.special.nmus">
     <title>Importing NMUs</title>
@@ -108,6 +110,7 @@ builder = /usr/bin/git-pbuilder
 	one of your &git; repositories instead of
 	<filename>~/.gbp.conf</filename>.
     </para>
+    </sect1>
 
     <sect1 id="gbp.special.hacking">
     <title>Working on random packages</title>
@@ -119,6 +122,7 @@ git-import-dsc --download <filename>package</filename>
 cd <filename>package</filename>
 git-branch debian
 </programlisting>
+    </para>
     <para>
     This uses <command>apt-get</command> to download the source package,
     puts the orig tarball on the <option>upstream-branch</option> and the

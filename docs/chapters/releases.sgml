@@ -21,6 +21,7 @@
     <option>--release</option>.</para>
     <para>
     But what if you want to have an (unreleased) snapshot for intermediate testing:
+    </para>
 <screen>
 &git-dch; <option>--snapshot</option>
 </screen>

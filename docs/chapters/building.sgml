@@ -9,6 +9,7 @@
     During the development phase (when you're either not on the
     <emphasis>debian-branch</emphasis> or when you have uncommitted changes in
     your repository) you'll usually use:
+    </para>
 <screen>
 &git-buildpackage; <option>--git-ignore-new</option>
 </screen>
@@ -96,6 +97,7 @@ export-dir=../build-area
 <option>postbuild</option>=<replaceable>lintian $GBP_CHANGES_FILE</replaceable>
 </programlisting>
 	to your <filename>.gbp.conf</filename>.
+    </para>
     </sect2>
     <sect2 id="gbp.building.push">
     <title>Pushing into a remote repository</title>

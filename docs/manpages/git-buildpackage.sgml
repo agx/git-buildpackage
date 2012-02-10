@@ -108,7 +108,7 @@
         <listitem>
           <para>Don't abort if there are uncommitted changes in the source tree
           or the current branch doesn't match the
-          <replaceable>debian-branch</replaceable>.
+          <replaceable>debian-branch</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -160,7 +160,7 @@
         <listitem>
 	  <para>Build for architecture <replaceable>ARCH</replaceable> when
 	  using <command>--git-pbuilder</command>. If unset no architecture is
-	  passed to <command>git-pbuilder</command>.
+	  passed to <command>git-pbuilder</command>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -169,7 +169,7 @@
 	  <para>Whether to try to autoconfigure
 	  <command>git-pbuilder</command> or to rely on the settings in
 	  .pbuilderrc. See the <command>git-pbuilder</command>
-          manpage for details.</listitem>
+          manpage for details.</para></listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-pbuilder-options</option></term>
@@ -284,8 +284,9 @@
           or the application specified via <option>--git-builder</option>.</para>
           <para>Exported environment variables are:
           <envar>GBP_GIT_DIR</envar> (the repository the package is being built from),
-          <envar>GBP_BUILD_DIR</envar> (the build dir).
+          <envar>GBP_BUILD_DIR</envar> (the build dir).</para>
         </listitem>
+      </varlistentry>
       <varlistentry>
         <term><option>--git-debian-tag=</option><replaceable>tag-format</replaceable>
         </term>

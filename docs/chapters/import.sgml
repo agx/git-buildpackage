@@ -88,6 +88,7 @@ by version number.
     <para>
     If the &git; repository wasn't created with &git-import-dsc; you have to tell
     &git-buildpackage; and friends where to find the upstream sources.
+    </para>
     <sect2>
     <title>Upstream sources on a branch</title>
     <para>
@@ -176,5 +177,6 @@ EOF
 <command>dh_make</command>
     </screen>
     That's it, you're done. If you want to publish you're new repository you can use &gbp-create-remote-repo;.
+    </para>
     </sect1>
 </chapter>

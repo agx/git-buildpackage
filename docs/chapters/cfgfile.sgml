@@ -33,22 +33,22 @@
       <varlistentry>
       <term>[git-buildpackage]</term>
       <listitem><para>Options in this section apply to &git-buildpackage; only and override options from the
-      [DEFAULT] section.</listitem>
+      [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-import-orig]</term>
       <listitem><para>Options in this section apply to &git-import-orig; only and override options from the
-      [DEFAULT] section.</listitem>
+      [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-import-dsc]</term>
       <listitem><para>Options in this section apply to &git-import-dsc; only and override options from the
-      [DEFAULT] section.</listitem>
+      [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-dch]</term>
       <listitem><para>Options in this section apply to &git-dch; only and override options from the
-      [DEFAULT] section.</listitem>
+      [DEFAULT] section.</para></listitem>
       </varlistentry>
     </variablelist>
     The actual options in these sections are the command line options without
