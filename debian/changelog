@@ -1,3 +1,11 @@
+git-buildpackage (0.6.0~git20120210) unstable; urgency=low
+
+  * [d279757] PristineTar: fix links in testcases
+  * [44814b7] Include missing doctests in generated API docs
+  * [3875d5d] gbp-pull: Use a DebianGitRepository (Closes: #659290)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 10 Feb 2012 09:30:47 +0100
+
 git-buildpackage (0.6.0~git20120209) unstable; urgency=low
 
   * Upload to unstable
