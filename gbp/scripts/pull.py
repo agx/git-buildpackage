@@ -24,7 +24,8 @@ import os, os.path
 from gbp.command_wrappers import (Command, CommandExecFailed)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
-from gbp.git import (GitRepositoryError, GitRepository)
+from gbp.git import GitRepositoryError
+from gbp.deb.git import DebianGitRepository
 import gbp.log
 
 def fast_forward_branch(branch, repo, options):
@@ -91,7 +92,7 @@ def main(argv):
     gbp.log.setup(options.color, options.verbose)
 
     try:
-        repo = GitRepository(os.path.curdir)
+        repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:
         gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
