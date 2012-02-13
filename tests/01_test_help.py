@@ -7,6 +7,8 @@ import unittest
 
 class TestHelp(unittest.TestCase):
     """Test help output of gbp commands"""
+    os.environ['PYTHONPATH'] = '.'
+
     def testHelp(self):
         for prog in [ "buildpackage", "import-orig", "import-dsc", "dch" ]:
             ret = os.system("bin/git-%s --help >/dev/null" % prog)
