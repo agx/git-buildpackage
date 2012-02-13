@@ -21,7 +21,7 @@
 
 import sys
 import os, os.path
-from gbp.config import (GbpOptionParserCommon, GbpOptionGroup)
+from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
 from gbp.command_wrappers import (Command, CommandExecFailed)
@@ -30,8 +30,8 @@ import gbp.log
 
 
 def parse_args (argv):
-    parser = GbpOptionParserCommon(command=os.path.basename(argv[0]), prefix='',
-                                   usage='%prog [options] repository - clone a remote repository')
+    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                             usage='%prog [options] repository - clone a remote repository')
     branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
     parser.add_option_group(branch_group)
 

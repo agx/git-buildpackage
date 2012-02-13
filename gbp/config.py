@@ -51,7 +51,7 @@ class GbpOption(Option):
     TYPE_CHECKER['path'] = expand_path
     TYPE_CHECKER['tristate'] = check_tristate
 
-class GbpOptionParserCommon(OptionParser):
+class GbpOptionParser(OptionParser):
     """
     Handles commandline options and parsing of config files
     @ivar command: the gbp command we store the options for
@@ -326,11 +326,11 @@ class GbpOptionGroup(OptionGroup):
         self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
 
 
-class GbpOptionParserDebian(GbpOptionParserCommon):
+class GbpOptionParserDebian(GbpOptionParser):
     """
     Handles commandline options and parsing of config files for Debian tools
     """
-    defaults = dict(GbpOptionParserCommon.defaults)
+    defaults = dict(GbpOptionParser.defaults)
     defaults.update( {
                        'builder'            : 'debuild -i -I',
                        'cleaner'            : 'debuild -d clean',
