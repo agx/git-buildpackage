@@ -28,10 +28,18 @@ GBP_VERSION=../gbp/version.py
 DEB_VERSION=$(shell sed -ne 's/^gbp_version="\([.a-z0-9~-]\+\)"/\1/p' $(GBP_VERSION))
 CHANGELOG=../debian/changelog
 
+# Stuff to build docs outside Debian
+HAVE_SGML2X ?= 1
+GTK_DOC_CATALOG_FILE ?= /usr/share/sgml/gtk-doc/gtk-doc.cat
+
 all: $(MANUAL) $(MANPAGES)
 
 $(MANUAL): manual.sgml chapters/*.sgml manpages/*.sgml
+ifeq ($(HAVE_SGML2X),1)
 	docbook-2-html -s local $<
+else
+	docbook2html -d local-nosgml2x.dsl -c $(GTK_DOC_CATALOG_FILE) -o $(MANUAL) $<
+endif
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
 # We build manpages under 'buildxref/' just to get an updated cross-reference
