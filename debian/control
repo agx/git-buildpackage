@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 7.0.50~), python (>> 2.6.6-3~),
  pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil, python-nose,
  bash-completion, perl, python-epydoc, python-coverage, python-setuptools,
 # For the testsuite
- git-core, bzip2, unzip, pristine-tar
+ git, bzip2, unzip, pristine-tar
 Standards-Version: 3.9.2
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
 Vcs-Browser: http://git.debian.org/?p=users/agx/git-buildpackage.git
@@ -16,7 +16,7 @@ X-Python-Version: >= 2.6
 Package: git-buildpackage
 Architecture: all
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, devscripts (>= 2.10.66~),
- git (>= 1:1.7.0.4-2) | git-core (>= 1:1.5.0.1-1), python-dateutil
+ git (>= 1:1.7.0.4-2), python-dateutil
 Recommends: pristine-tar (>= 0.5), cowbuilder
 Suggests: python-notify, unzip
 Description: Suite to help with Debian packages in Git repositories

@@ -57,5 +57,5 @@ setup(name = "gbp",
                   'bin/git-pbuilder'],
       packages = find_packages(),
       data_files = [("/etc/git-buildpackage/", ["gbp.conf"]),],
-      setup_requires=['nose>=1.0', 'coverage>=3.4'],
+      setup_requires=['nose>=0.11.1', 'coverage>=2.85'],
 )
