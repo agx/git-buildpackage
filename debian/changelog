@@ -1,3 +1,19 @@
+git-buildpackage (0.6.0~git20120218) unstable; urgency=low
+
+  [ Markus Lehtonen ]
+  * [24e7725] Make pristine_tar testcases pass with older git versions that
+    don't support user-defined output formats (tar filters) in git-archive.
+
+  [ Guido Günther ]
+  * [14d36c0] Depend on git instead of git-core (Closes: #659661)
+  * [f25fa9b] Lower dependencies on python-nose and python-coverage the
+    versions in Squeeze are recent enough.
+  * [7e41626] Require git 1.7 which is already in Squeeze and Lenny Backports
+  * [63411b7] gbp-pq: Properly print patch name when guessing authorship
+    information
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 18 Feb 2012 16:16:48 +0100
+
 git-buildpackage (0.6.0~git20120210) unstable; urgency=low
 
   * [d279757] PristineTar: fix links in testcases
