@@ -286,7 +286,7 @@ def apply_and_commit_patch(repo, patch, topic=None):
         name, email = get_maintainer_from_control()
         if name:
             gbp.log.warn("Patch '%s' has no authorship information, "
-                         "using '%s <%s>'" % (patch, name, email))
+                         "using '%s <%s>'" % (patch.path, name, email))
             author['name'] = name
             author['email'] = email
         else:
