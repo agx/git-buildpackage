@@ -116,7 +116,7 @@
         </term>
         <listitem>
           <para>use this tag format when tagging upstream versions,
-	  default is <replaceable>upstream/&lt;version&gt;</replaceable></para>
+	  default is <replaceable>upstream/%(versions)s</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>

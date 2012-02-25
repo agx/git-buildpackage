@@ -96,7 +96,7 @@
         </term>
         <listitem>
           <para>tag format used, when tagging debian versions,
-  	  default is <replaceable>debian/&lt;version&gt;</replaceable></para>
+  	  default is <replaceable>debian/%(version)s</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>

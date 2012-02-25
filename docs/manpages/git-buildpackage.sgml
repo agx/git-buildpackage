@@ -292,7 +292,7 @@
         </term>
         <listitem>
           <para>use this tag format when tagging Debian versions,
-  	  default is <replaceable>debian/&lt;version&gt;</replaceable></para>
+  	  default is <replaceable>debian/%(version)s</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
