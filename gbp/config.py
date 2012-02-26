@@ -148,7 +148,7 @@ class GbpOptionParser(OptionParser):
              'pristine-tar-commit':
                   "When generating a tarball commit it to the pristine-tar branch '%(pristine-tar-commit)s'",
              'filter-pristine-tar':
-                  "Filter pristine-tar when filter option is used",
+                  "Filter pristine-tar when filter option is used, default is '%(filter-pristine-tar)s'",
              'filter':
                   "files to filter out during import (can be given multiple times), default is %(filter)s",
              'git-author':
@@ -202,9 +202,10 @@ class GbpOptionParser(OptionParser):
              'postimport':
                   "hook run after a successful import, default is '%(postimport)s'",
              'time-machine':
-                  "don't try head commit only to apply the patch queue but look TIME_MACHINE commits back",
+                  ("don't try head commit only to apply the patch queue but look TIME_MACHINE commits back. "
+                   "Default is '%(time-machine)d'"),
              'pbuilder-autoconf':
-                  "Wheter to configure pbuilder automatically.",
+                  "Wheter to configure pbuilder automatically. Default is '%(pbuilder-autoconf)s'",
              'pbuilder-options':
                   "Options to pass to pbuilder, default is '%(pbuilder-options)s'",
            }
