@@ -1,3 +1,27 @@
+git-buildpackage (0.6.0~git20120226) experimental; urgency=low
+
+  [ Markus Lehtonen ]
+  * [bca9f76] Refactor config.py as preparation for rpm support.
+  * [38afb27] docs: add missing tags to sgml files
+  * [2081900] gbp-pq: refactor args of write_patch()
+    Allows defining the formerly hardcoded patch_dir. This makes write_patch()
+    re-usable in the upcoming RPM-tools.
+
+  [ Guido Günther ]
+  * Upload to experimental so the current version in sid can move to testing
+    first.
+  * [7726bca] Make sure we test the built modules not the system ones
+  * [1018809] copy_from: remove, not used anymore
+  * [09e4080] docs: make version pattern match the code (Closes: #650465)
+    Thanks: Leo 'costela' Antunes
+  * [970fbaa] config.py: Add default value print out to all options
+  * [f3aa87f] GitRepository.merge: add edit option defaulting to False
+    (Closes: #659239)
+  * [67c8513] Depend on git >= 1:1.7.9.1-1~ for a working "git merge
+    --no-edit". Thanks to Jonathan Nieder
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 26 Feb 2012 12:09:23 +0100
+
 git-buildpackage (0.6.0~git20120218) unstable; urgency=low
 
   [ Markus Lehtonen ]
