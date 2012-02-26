@@ -299,7 +299,7 @@ class GitRepository(object):
         remote += merge.replace("refs/heads","", 1)
         return remote
 
-    def merge(self, commit, verbose=False):
+    def merge(self, commit, verbose=False, edit=False):
         """
         Merge changes from the named commit into the current branch
 
@@ -307,9 +307,12 @@ class GitRepository(object):
         @type commit: C{str}
         @param verbose: whether to print a summary after the merge
         @type verbose: C{bool}
+        @param edit: wheter to invoke an editor to edit the merge message
+        @type edit: C{bool}
         """
         args = GitArgs()
         args.add_cond(verbose, '--summary', '--no-summary')
+        args.add_cond(edit, '--edit', '--no-edit')
         args.add(commit)
         self._git_command("merge", args.args)
 
