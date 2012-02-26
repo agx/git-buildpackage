@@ -303,11 +303,15 @@ class GitRepository(object):
         """
         Merge changes from the named commit into the current branch
 
-        @param commit: the commit to merge from (usually a branch name)
+        @param commit: the commit to merge from (usually a branch name or tag)
         @type commit: C{str}
+        @param verbose: whether to print a summary after the merge
+        @type verbose: C{bool}
         """
-        args = [ "--summary"  ] if verbose else [ "--no-summary" ]
-        self._git_command("merge", args + [ commit ])
+        args = GitArgs()
+        args.add_cond(verbose, '--summary', '--no-summary')
+        args.add(commit)
+        self._git_command("merge", args.args)
 
     def is_fast_forward(self, from_branch, to_branch):
         """
