@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2011,2012 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -308,9 +308,9 @@ def main(argv):
                     if options.pristine_tar:
                         repo.pristine_tar.commit(src.tgz, options.upstream_branch)
                     parents = [ options.upstream_branch ]
-            if not src.native:
                 if is_empty and not repo.has_branch(options.debian_branch):
                     repo.create_branch(options.debian_branch, commit)
+            if not src.native:
                 if src.diff or src.deb_tgz:
                     apply_debian_patch(repo, upstream.unpacked, src, options, parents)
                 else:
