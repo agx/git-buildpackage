@@ -1,3 +1,22 @@
+git-buildpackage (0.6.0~git20120227) unstable; urgency=low
+
+  * Upload to unstable
+  * [45d7dc8] import_dsc: Create debian branch for native packages too
+    (Closes: #663001)
+  * [80cf6d4] Add manual page for gbp.conf.
+    Thanks to Jari Alto for the POD version (Closes: #661748)
+  * [a8b8536] Build-require a git version that supports --no-edit
+    (Closes: #663103)
+  * [b4cfcab] Remove build/ directory during clean so we don't step on any
+    epydoc leftovers
+  * [b6a4387] Bump standards version to 3.9.3
+  * [6f2f554] GbpOptionParser: allow to modify list of parsed conf files
+    by setting the GBP_CONF_FILES environment variable.
+  * [38870d5] git-import-dscs: allow to ignore gbp.conf files stored in the
+    repository (Closes: #660898)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 08 Mar 2012 18:56:42 +0100
+
 git-buildpackage (0.6.0~git20120226) experimental; urgency=low
 
   [ Markus Lehtonen ]
