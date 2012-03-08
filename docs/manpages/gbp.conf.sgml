@@ -154,6 +154,17 @@ An example set up for packaging work:
 </programlisting>
 
 <refsect1>
+  <title>ENVIRONMENT</title>
+   <variablelist>
+      <varlistentry>
+      <term>GBP_CONF_FILES</term>
+      <listitem><para>Colon separated list of files to parse. The default is
+the above list of configuration files.</para></listitem>
+      </varlistentry>
+   </variablelist>
+</refsect1>
+
+<refsect1>
   <title>FILES</title>
 <para>
   See See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.

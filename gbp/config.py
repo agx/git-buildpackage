@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2010,2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010-2012 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -65,8 +65,8 @@ class GbpOptionParser(OptionParser):
     @type defaults: dict
     @cvar help: help messages
     @type help: dict
-    @cvar config_files: list of config files we parse
-    @type config_files: list
+    @cvar def_config_files: list of default config files we parse
+    @type def_config_files: list
     """
     defaults = { 'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
@@ -209,15 +209,43 @@ class GbpOptionParser(OptionParser):
              'pbuilder-options':
                   "Options to pass to pbuilder, default is '%(pbuilder-options)s'",
            }
-    config_files = [ '/etc/git-buildpackage/gbp.conf',
-                     os.path.expanduser('~/.gbp.conf'),
-                     '.gbp.conf',
-                     'debian/gbp.conf',
-                     '.git/gbp.conf' ]
 
+    def_config_files = [ '/etc/git-buildpackage/gbp.conf',
+                         '~/.gbp.conf',
+                         '.gbp.conf',
+                         'debian/gbp.conf',
+                         '.git/gbp.conf' ]
 
-    def __parse_config_files(self):
-        """parse the possible config files and set appropriate values default values"""
+    @classmethod
+    def get_config_files(klass):
+        """
+        Get list of config files from the I{GBP_CONF_FILES} environment
+        variable.
+
+        @return: list of config files we need to parse
+        @rtype: C{list}
+
+        >>> if os.environ.has_key('GBP_CONF_FILES'): del os.environ['GBP_CONF_FILES']
+        >>> files = GbpOptionParser.get_config_files()
+
+        # Remove the ~-expanded one
+        >>> del files[1]
+        >>> files
+        ['/etc/git-buildpackage/gbp.conf', '.gbp.conf', 'debian/gbp.conf', '.git/gbp.conf']
+
+        >>> os.environ['GBP_CONF_FILES'] = 'test1:test2'
+        >>> GbpOptionParser.get_config_files()
+        ['test1', 'test2']
+        """
+        envvar = os.environ.get('GBP_CONF_FILES')
+        files = envvar.split(':') if envvar else klass.def_config_files
+        return [ os.path.expanduser(f) for f in files ]
+
+    def _parse_config_files(self):
+        """
+        Parse the possible config files and set appropriate values
+        default values
+        """
         parser = SafeConfigParser(self.defaults)
         parser.read(self.config_files)
         self.config = dict(parser.defaults())
@@ -232,13 +260,15 @@ class GbpOptionParser(OptionParser):
         else:
             self.config['filter'] = []
 
-
     def __init__(self, command, prefix='', usage=None):
         self.command = command
         self.prefix = prefix
         self.config = {}
-        self.__parse_config_files()
-        OptionParser.__init__(self, option_class=GbpOption, usage=usage, version='%s %s' % (self.command, gbp_version))
+        self.config_files = self.get_config_files()
+        self._parse_config_files()
+        OptionParser.__init__(self, option_class=GbpOption,
+                              usage=usage, version='%s %s' % (self.command,
+                                                              gbp_version))
 
     def _is_boolean(self, dummy, *unused, **kwargs):
         """is option_name a boolean option"""
