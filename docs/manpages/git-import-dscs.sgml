@@ -20,6 +20,7 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &git-import-dscs;
+      <arg><option>options</option></arg>
       <arg><option>git-import-dsc options</option></arg>
       <arg choice="plain"><replaceable>pkg_1.dsc</replaceable></arg>
       <arg choice="plain"><replaceable>pkg_2.dsc</replaceable></arg>
@@ -31,6 +32,7 @@
     <cmdsynopsis>
       &git-import-dscs;
       <arg choice="req">--debsnap</arg>
+      <arg><option>options</option></arg>
       <arg><option>git-import-dsc options</option></arg>
       <arg choice="req"><replaceable>package</replaceable></arg>
     </cmdsynopsis>
@@ -58,6 +60,15 @@
         </term>
         <listitem>
 	  <para>Fetch snapshots from snapshots.debian.org using debsnap.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-repo-config</option>
+        </term>
+        <listitem>
+	  <para>Ignore <filename>gbp.conf</filename> files stored in the git
+repository itself. This can be useful to ignore branch informations and other
+options shipped in the package source.</para>
         </listitem>
       </varlistentry>
      </variablelist>

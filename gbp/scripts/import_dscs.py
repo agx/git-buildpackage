@@ -25,6 +25,7 @@ from gbp.deb import parse_dsc, DscFile, DpkgCompareVersions
 from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.scripts import import_dsc
+from gbp.config import GbpOptionParser
 import gbp.log
 
 class DscCompareVersions(DpkgCompareVersions):
@@ -64,12 +65,24 @@ def fetch_snapshots(pkg, downloaddir):
 
     return [os.path.join(downloaddir, dsc) for dsc in dscs]
 
+def set_gbp_conf_files():
+    """
+    Filter out all gbp.conf files that are local to the git repository and set
+    GBP_CONF_FILES accordingly so git-import-dsc will only use these.
+    """
+    files = GbpOptionParser.get_config_files()
+    global_config = [ f for f in files if f.startswith('/') ]
+    gbp_conf_files = ':'.join(global_config)
+    os.environ['GBP_CONF_FILES'] = gbp_conf_files
+    gbp.log.debug("Setting GBP_CONF_FILES to '%s'" % gbp_conf_files)
 
 def print_help():
-    print """Usage:
-    git-import-dscs [git-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
-or
-    git-import-dscs --debsnap [git-import-dsc options] package
+    print """Usage: git-import-dscs [options] [git-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
+       git-import-dscs --debsnap [options] [git-import-dsc options] package
+
+Options:
+
+    --ignore-repo-config: ignore gbp.conf in git repo
 """
 
 
@@ -88,6 +101,9 @@ def main(argv):
             verbose = True 
         gbp.log.setup(False, verbose)
 
+        if '--ignore-repo-config' in import_args:
+            set_gbp_conf_files()
+            import_args.remove('--ignore-repo-config')
         # Not using Configparser since we want to pass all unknown options
         # unaltered to git-import-dsc
         if '--debsnap' in import_args:
