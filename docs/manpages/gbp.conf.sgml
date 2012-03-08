@@ -111,6 +111,19 @@ Boolean options can bei either <option>True</option> or <option>False</option>. 
     pristine-tar = False
 </programlisting>
 <para>respectively.</para>
+<note>
+<para>
+To see the current set of values that would be applied after parsing the
+configuration files run the command with <option>--help</option> and check it's
+output.
+</para>
+</note>
+<note>
+<para>
+ <command>git-import-dscs</command> and <command>git-pbuilder</command>
+can't be configured via gbp.conf.
+</para>
+</note>
 
   </refsect1>
   <refsect1>
@@ -208,15 +221,7 @@ the above list of configuration files.</para></listitem>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <citerefentry>
-      <refentrytitle>git-import-dscs</refentrytitle>
-      <manvolnum>1</manvolnum>
-    </citerefentry>,
-    <citerefentry>
       <refentrytitle>git-import-orig</refentrytitle>
-      <manvolnum>1</manvolnum>
-    </citerefentry>,
-    <citerefentry>
-      <refentrytitle>git-pbuilder</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <citerefentry>
