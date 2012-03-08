@@ -1,0 +1,11 @@
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+  <!ENTITY % COMMON SYSTEM "common.ent">
+  %COMMON;
+  <!ENTITY % MANPAGES SYSTEM "manpages/manpages.ent">
+  %MANPAGES;
+]>
+
+<reference>
+<title>gbp.conf Manual</title>
+&man.gbp.conf;
+</reference>

@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-COMMANDS = git-buildpackage  \
+MANS = git-buildpackage  \
            git-import-dsc    \
            git-import-dscs   \
            git-import-orig   \
@@ -8,10 +8,11 @@ COMMANDS = git-buildpackage  \
            gbp-pull          \
            gbp-clone         \
            gbp-pq            \
-           gbp-create-remote-repo
+           gbp-create-remote-repo \
+           gbp.conf
 
 MANUAL=manual-html
-SGML_MANPAGES=$(patsubst %,%.1,$(COMMANDS))
+SGML_MANPAGES=$(patsubst %,%.1,$(MANS))
 POD_MANPAGES=git-pbuilder.1
 MANPAGES=$(SGML_MANPAGES) $(POD_MANPAGES)
 VERSION_ENT=version.ent

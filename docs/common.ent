@@ -17,6 +17,7 @@
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">
   <!ENTITY pdebuildcmd		"<command>pdebuild</command>">
   <!ENTITY debuildcmd		"<command>debuild</command>">
+  <!ENTITY gbp.conf		"<filename>gbp.conf</filename>">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY git	       "<productname>Git</productname>">

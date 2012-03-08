@@ -1,0 +1,225 @@
+<refentry id="gbp.man.gbp.conf">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+   <refentrytitle>gbp.conf</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&gbp.conf;</refname>
+    <refpurpose>git-buildpackage configuration file</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+   <variablelist>
+      <varlistentry>
+      <term>/etc/git-buildpackage/gbp.conf</term>
+      <listitem><para>system wide</para></listitem>
+      </varlistentry>
+      <varlistentry>
+      <term>~/.gbp.conf</term>
+      <listitem><para>per user</para></listitem>
+      </varlistentry>
+      <varlistentry>
+      <term>.gbp.conf</term>
+      <listitem><para>per branch, can be published with the
+      repository (deprecated)</para></listitem>
+      </varlistentry>
+      <varlistentry>
+      <term>debian/gbp.conf</term>
+      <listitem><para>per branch, can be published with the
+      repository</para></listitem>
+      </varlistentry>
+      <varlistentry>
+      <term>.git/gbp.conf</term>
+      <listitem><para>per repository</para></listitem>
+      </varlistentry>
+    </variablelist>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+      The <filename>gbp.conf</filename> provides default global options and specific options
+      for &git-buildpackage; commands. All have the same format and are parsed in the above order. The
+      file consists of several sections, one for each command. Comments start with a hash sign
+      (<option>#</option>). The generic file syntax is:
+    </para>
+<programlisting>
+    [DEFAULT]
+    # This is section for global settings. Affects all commands
+    key = value
+
+    [&lt;command&gt;]
+    # Specific sections for each command, like &git-buildpackage;
+    key = value
+</programlisting>
+
+<para>
+
+<option>key=value</option> pairs of the command sections reflect the command line
+options and their settings. For example <xref linkend="gbp.man.git.buildpackage">
+manualpage contains the <option>--git-export-dir</option>=<parameter>diirectory</parameter>
+option which can be turned into configuration file setting by dropping the
+<option>--git</option> prefix with:
+
+<programlisting>
+    [git-buildpackage]
+    export-dir = directory
+</programlisting>
+
+<para>
+Notice that some option are actually repeatable, or take Python lists.
+For example the <xref linkend="gbp.man.git.import.orig"> commmand has the
+<option>--filter</option>=<parameter>pattern</parameter> option which can
+be truned into a configuration file option like this:
+
+<programlisting>
+    [git-import-orig]
+    filter = .svn
+    filter = .hg
+</programlisting>
+
+<para>
+An alternative way is to write it using Python list syntax:
+</para>
+
+<programlisting>
+    [git-import-orig]
+    filter = [ '.svn', '.hg' ]
+</programlisting>
+
+<para>
+Boolean options can bei either <option>True</option> or <option>False</option>. For example
+<xref linkend="gbp.man.git.import.orig">; has the <option>--pristine-tar</option> and
+<option>--no-pristine-tar</option> options which translate to:
+</para>
+<programlisting>
+    [git-import-orig]
+    pristine-tar = True
+</programlisting>
+
+<para>and</para>
+
+<programlisting>
+    [git-import-orig]
+    pristine-tar = False
+</programlisting>
+<para>respectively.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+<para>
+An example set up for packaging work:
+</para>
+
+<programlisting>
+ # $HOME/gbp.conf
+
+ [DEFAULT]
+ pristine-tar = True
+ cleaner = fakeroot debian/rules clean
+
+ [git-buildpackage]
+ export-dir  = ../build-area/
+
+ [git-import-orig]
+ dch = False
+ filter = .svn
+ filter = .hg
+ filter = .bzr
+ filter = CVS
+ filter = debian/*
+ filter = */debian/*
+ filter-pristine-tar = True
+
+ [git-import-dsc]
+ filter = [
+        'CVS',
+        '.cvsignore',
+        '.hg',
+        '.hgignore'
+        '.bzr',
+        '.bzrignore',
+        '.gitignore'
+        ]
+
+ # End of file
+</programlisting>
+
+<refsect1>
+  <title>FILES</title>
+<para>
+  See See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
+</para>
+</refsect1>
+
+<refsect1>
+  <title>STANDARDS</title>
+<para>
+  The at <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
+    <citetitle>The Git-Buildpackage Manual</citetitle></ulink> at
+  <filename>/usr/share/doc/git-buildpackage/manual-html/index.html</filename>
+</para>
+</refsect1>
+
+<refsect1>
+  <title>SEE ALSO</title>
+  <para>
+    <citerefentry>
+      <refentrytitle>gbp-clone</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>gbp-create-remote-repo</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>gbp-pq</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>
+    <citerefentry>
+      <refentrytitle>gbp-pull</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>git-dch</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>git-import-dsc</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>git-import-dscs</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>git-import-orig</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>git-pbuilder</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>git-buildpackage</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </citerefentry>,
+  </para>
+</refsect1>
+<refsect1>
+  <title>AUTHORS</title>
+  <para>&dhusername; &dhemail;</para>
+  <para>This manual page is based on a POD version by Jari Aalto <email>jari.aalto@cante.net</email>.
+	Released under license GNU GPL version 2 or (at your option) any later.
+    version.
+  </para>
+  </refsect1>
+</refentry>
