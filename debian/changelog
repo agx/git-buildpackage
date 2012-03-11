@@ -1,3 +1,10 @@
+git-buildpackage (0.6.0~git20120311) unstable; urgency=low
+
+  * [83dcb28] Move gbp.conf manpage to section 5 and add references from the
+    other manpages
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 11 Mar 2012 19:23:35 +0100
+
 git-buildpackage (0.6.0~git20120227) unstable; urgency=low
 
   * Upload to unstable
