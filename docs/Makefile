@@ -39,5 +39,5 @@ $(VERSION_ENT): $(GBP_VERSION)
 
 clean:
 	-rm -r manual-html/
-	-rm *.1 manpage.* $(VERSION_ENT)
+	-rm *.1 *.5 manpage.* $(VERSION_ENT)
 

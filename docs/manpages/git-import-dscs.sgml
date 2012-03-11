@@ -96,6 +96,10 @@ options shipped in the package source.</para>
         <refentrytitle>git-dch</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
+      <citerefentry>
+        <refentrytitle>gbp.conf</refentrytitle>
+	&dhconfsection;
+      </citerefentry>,
       &man.seealso.common;
     </para>
   </refsect1>

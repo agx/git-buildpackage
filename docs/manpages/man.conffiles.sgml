@@ -1,30 +1,4 @@
     <title>CONFIGURATION FILES</title>
-    <para>Four configuration files are parsed to set defaults for the above
-    commandline arguments: </para>
-    <variablelist>
-      <varlistentry>
-      <term>/etc/git-buildpackage/gbp.conf</term>
-      <listitem><para>system wide configuraton</para></listitem>
-      </varlistentry>
-      <varlistentry>
-      <term>~/.gbp.conf</term>
-      <listitem><para>per user configuration</para></listitem>
-      </varlistentry>
-      <varlistentry>
-      <term>.gbp.conf</term>
-      <listitem><para>per branch configuration, can be published with the
-      repository</para></listitem> 
-      </varlistentry> 
-      <varlistentry>
-      <term>debian/gbp.conf</term>
-      <listitem><para>per branch configuration, can be published with the
-      repository</para></listitem> 
-      </varlistentry>
-      <varlistentry>
-      <term>.git/gbp.conf</term>
-      <listitem><para>per repository configuration</para></listitem> 
-      </varlistentry> 
-    </variablelist>
-      <para>
-      See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
-      </para>
+    <para>Several <filename>gbp.conf</filename> files are parsed 
+    to set defaults for the above commandline arguments. See the
+    <xref linkend="gbp.man.gbp.conf"> manpage for details.</para>

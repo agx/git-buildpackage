@@ -326,11 +326,14 @@
         <refentrytitle>git-import-orig</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
+      <citerefentry>
+        <refentrytitle>gbp.conf</refentrytitle>
+	&dhconfsection;
+      </citerefentry>,
       &man.seealso.common;
       <ulink url="https://honk.sigxcpu.org/cl2vcs">
-      <citetitle>Cl2vcs</citetitle></ulink>
+      <citetitle>Cl2vcs</citetitle></ulink>,
     </para>
-
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>

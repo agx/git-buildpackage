@@ -1,6 +1,7 @@
   <!ENTITY dhfirstname 		"<firstname>Guido</firstname>">
   <!ENTITY dhsurname   		"<surname>Guenther</surname>">
   <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
+  <!ENTITY dhconfsection  	"<manvolnum>5</manvolnum>">
   <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhusername  		"Guido Guenther">
   <!ENTITY git-buildpackage 	"<command>git-buildpackage</command>">

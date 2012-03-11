@@ -10,7 +10,7 @@
   </refentryinfo>
   <refmeta>
    <refentrytitle>gbp.conf</refentrytitle>
-    &dhsection;
+    &dhconfsection;
   </refmeta>
   <refnamediv>
     <refname>&gbp.conf;</refname>
@@ -227,7 +227,7 @@ the above list of configuration files.</para></listitem>
     <citerefentry>
       <refentrytitle>git-buildpackage</refentrytitle>
       <manvolnum>1</manvolnum>
-    </citerefentry>,
+    </citerefentry>
   </para>
 </refsect1>
 <refsect1>

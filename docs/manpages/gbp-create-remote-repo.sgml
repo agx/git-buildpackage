@@ -127,6 +127,10 @@
       <citerefentry>
         <refentrytitle>gbp-pull</refentrytitle>
         <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>gbp.conf</refentrytitle>
+	&dhconfsection;
       </citerefentry>
     </para>
   </refsect1>
