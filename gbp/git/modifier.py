@@ -76,3 +76,19 @@ class GitModifier(object):
         """
         return self._get_env('committer')
 
+    def __getitem__(self, key):
+        if key in self.keys():
+            return self.__dict__[key]
+        else:
+            raise KeyError
+
+    def keys(self):
+        return [ 'name', 'email', 'date' ]
+
+    def items(self):
+        items = []
+        for key in self.keys():
+            val = self.__dict__[key]
+            if val:
+                items.append((key, val))
+        return items

@@ -935,6 +935,7 @@ class GitRepository(object):
         @type author: C{dict} with keys I{name}, I{email}, I{date}
         @param committer: committer information to use for commit
         @type committer: C{dict} with keys I{name}, I{email}, I{date}
+            or L{GitModifier}
         @param create_missing_branch: create I{branch} as detached branch if it
             doesn't already exist.
         @type create_missing_branch: C{bool}
@@ -987,7 +988,7 @@ class GitRepository(object):
         @param msg: commit message
         @param parents: parents of this commit
         @param author: authorship information
-        @type author: C{dict} with keys 'name' and 'email'
+        @type author: C{dict} with keys 'name' and 'email' or L{GitModifier}
         @param committer: comitter information
         @type committer: C{dict} with keys 'name' and 'email'
         """

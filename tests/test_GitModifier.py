@@ -9,9 +9,10 @@ def test_author():
     Methods tested:
          - L{gbp.git.GitModifier.get_author_env}
          - L{gbp.git.GitModifier.get_committer_env}
+         - L{gbp.git.GitModifier.keys}
 
     >>> import gbp.git
-    >>> modifier = gbp.git.GitModifier("foo", "bar")
+    >>> modifier = gbp.git.GitModifier('foo', 'bar')
     >>> modifier.name
     'foo'
     >>> modifier.email
@@ -24,4 +25,11 @@ def test_author():
     Traceback (most recent call last):
     ...
     GitModifierError: Neither comitter nor author
+    >>> modifier.keys()
+    ['name', 'email', 'date']
+    >>> modifier['name']
+    'foo'
+    >>> modifier['email']
+    'bar'
+    >>> modifier['date']
     """
