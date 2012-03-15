@@ -25,13 +25,13 @@ import tempfile
 import glob
 import pipes
 import time
-from email.Utils import parseaddr
 import gbp.command_wrappers as gbpc
 from gbp.deb import (debian_version_chars,
                      parse_dsc, DscFile, UpstreamSource)
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
+from gbp.git.modifier import GitModifier
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
 import gbp.log
@@ -85,6 +85,31 @@ def apply_deb_tgz(deb_tgz):
     return True
 
 
+def get_author_from_changelog(dir):
+    """
+    Get author from debian/changelog
+    """
+    dch = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
+    date = rfc822_date_to_git(dch.date)
+    if not (dch.author or dch.email):
+        gbp.log.warn("Failed to parse maintainer")
+
+    return GitModifier(dch.author, dch.email, date)
+
+
+def get_committer_from_author(author, options):
+    """
+    Based on the options fill in the committer
+    """
+    committer = GitModifier()
+    if options.author_committer:
+        committer.name = author.name
+        committer.email = author.email
+    if options.author_committer_date:
+        committer.date = author.date
+    return committer
+
+
 def apply_debian_patch(repo, unpack_dir, src, options, parents):
     """apply the debian patch and tag appropriately"""
     try:
@@ -100,19 +125,14 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
             os.chmod('debian/rules', 0755)
         os.chdir(repo.path)
 
-        dch = ChangeLog(filename=os.path.join(unpack_dir, 'debian/changelog'))
-        date= rfc822_date_to_git(dch['Date'])
-        author, email = parseaddr(dch['Maintainer'])
-        if not (author and email):
-            gbp.log.warn("Failed to parse maintainer")
+        author = get_author_from_changelog(unpack_dir)
+        committer = get_committer_from_author(author, options)
         commit = repo.commit_dir(unpack_dir,
                                  "Imported Debian patch %s" % src.version,
                                  branch = options.debian_branch,
                                  other_parents = parents,
-                                 author=dict(name=author, email = email, date = date),
-                                 committer=dict(name=[None, author][options.author_committer],
-                                                email=[None, email][options.author_committer],
-                                                date=[None, date][options.author_committer_date]))
+                                 author=author,
+                                 committer=committer)
         repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
                         msg="Debian release %s" % src.version,
                         commit=commit,
@@ -294,9 +314,18 @@ def main(argv):
                                         "\nAlso check the --create-missing-branches option.")
                             raise GbpError
 
+                if src.native:
+                    author = get_author_from_changelog(upstream.unpacked)
+                    committer = get_committer_from_author(author, options)
+                else:
+                    author = committer = {}
+
                 commit = repo.commit_dir(upstream.unpacked,
                                          "Imported %s" % msg,
-                                         branch)
+                                         branch,
+                                         author=author,
+                                         committer=committer)
+
                 repo.create_tag(name=tag,
                                 msg=msg,
                                 commit=commit,
