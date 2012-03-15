@@ -1,3 +1,12 @@
+git-buildpackage (0.6.0~git20120315) unstable; urgency=low
+
+  * [3cac77f] docs: Fix path to gbp-configure-unpatched-source. Thanks to
+    Tobias Frost (Closes: #664063)
+  * [2f08cbd] Parse author and comitter from changelog for native package too
+    (Closes: #662993)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 15 Mar 2012 22:39:00 +0100
+
 git-buildpackage (0.6.0~git20120311) unstable; urgency=low
 
   * [83dcb28] Move gbp.conf manpage to section 5 and add references from the
