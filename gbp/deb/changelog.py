@@ -126,3 +126,25 @@ class ChangeLog(object):
         Whether this is a native Debian package
         """
         return not '-' in self.version
+
+    @property
+    def author(self):
+        """
+        The author of the last modification
+        """
+        return email.Utils.parseaddr(self._cp['Maintainer'])[0]
+
+    @property
+    def email(self):
+        """
+        The author's email
+        """
+        return email.Utils.parseaddr(self._cp['Maintainer'])[1]
+
+    @property
+    def date(self):
+        """
+        The date of the last modification as rfc822 date
+        """
+        return self._cp['Date']
+

@@ -170,3 +170,25 @@ def test_parse_name():
     >>> cl.name
     'git-buildpackage'
     """
+
+def test_parse_last_mod():
+    """
+    Test author, email and date of last modification
+
+    Methods tested:
+         - L{gbp.deb.changelog.ChangeLog.__init__}
+
+    Properties tested:
+         - L{gbp.deb.changelog.ChangeLog.name}
+         - L{gbp.deb.changelog.ChangeLog.email}
+         - L{gbp.deb.changelog.ChangeLog.date}
+
+    >>> import gbp.deb.changelog
+    >>> cl = gbp.deb.changelog.ChangeLog(cl_debian)
+    >>> cl.author.startswith('Guido')
+    True
+    >>> cl.email
+    'agx@sigxcpu.org'
+    >>> cl.date
+    'Mon, 17 Oct 2011 10:15:22 +0200'
+    """
