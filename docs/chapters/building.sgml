@@ -279,7 +279,7 @@ exit 0
     In order to avoid a patched (unclean) source tree after the build you
     can use &dpkg-source;'s <option>unapply-patches</option> option and
     tell &git; to ignore the <filename>.pc</filename> directory.
-    <filename>/usr/share/doc/examples/git-buildpackage/examples/gbp-config-unpatched-source</filename>
+    <filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>
     sets up these two files for you.
     </para>
     </sect1>
