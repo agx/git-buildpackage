@@ -47,50 +47,59 @@ def print_config(remote, branches):
         remote = %s
         merge = refs/heads/%s""" % (branch, remote['name'], branch)
 
+def sort_dict(d):
+    """Return a sorted list of (key, value) tuples"""
+    s = []
+    for key in sorted(d.iterkeys()):
+        s.append((key, d[key]))
+    return s
 
-def parse_remote(remote_url, name, pkg):
+def parse_url(remote_url, name, pkg):
     """
     Sanity check our remote URL
 
-    >>> parse_remote("ssh://host/path/%(pkg)s", "origin", "package")
-    {'name': 'origin', 'url': 'ssh://host/path/package', 'host': 'host', 'base': '', 'pkg': 'package', 'port': None, 'dir': '/path/package'}
+    >>> sort_dict(parse_url("ssh://host/path/%(pkg)s", "origin", "package"))
+    [('base', ''), ('dir', '/path/package'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', None), ('scheme', 'ssh'), ('url', 'ssh://host/path/package')]
 
-    >>> parse_remote("ssh://host:22/path/repo.git", "origin", "package")
-    {'name': 'origin', 'url': 'ssh://host:22/path/repo.git', 'host': 'host', 'base': '', 'pkg': 'package', 'port': '22', 'dir': '/path/repo.git'}
+    >>> sort_dict(parse_url("ssh://host:22/path/repo.git", "origin", "package"))
+    [('base', ''), ('dir', '/path/repo.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('url', 'ssh://host:22/path/repo.git')]
 
-    >>> parse_remote("ssh://host:22/~/path/%(pkg)s.git", "origin", "package")
-    {'name': 'origin', 'url': 'ssh://host:22/~/path/package.git', 'host': 'host', 'base': '~/', 'pkg': 'package', 'port': '22', 'dir': 'path/package.git'}
+    >>> sort_dict(parse_url("ssh://host:22/~/path/%(pkg)s.git", "origin", "package"))
+    [('base', '~/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('url', 'ssh://host:22/~/path/package.git')]
 
-    >>> parse_remote("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package")
-    {'name': 'origin', 'url': 'ssh://host:22/~user/path/package.git', 'host': 'host', 'base': '~user/', 'pkg': 'package', 'port': '22', 'dir': 'path/package.git'}
+    >>> sort_dict(parse_url("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package"))
+    [('base', '~user/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('url', 'ssh://host:22/~user/path/package.git')]
 
-    >>> parse_remote("git://host/repo.git", "origin", "package")
+    >>> parse_url("git://host/repo.git", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: Remote URL must use ssh protocol.
-    >>> parse_remote("ssh://host/path/repo", "origin", "package")
+    GbpError: URL must use ssh protocol.
+    >>> parse_url("ssh://host/path/repo", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: Remote URL needs to contain either a repository name or '%(pkg)s'
-    >>> parse_remote("ssh://host:asdf/path/%(pkg)s.git", "origin", "package")
+    GbpError: URL needs to contain either a repository name or '%(pkg)s'
+    >>> parse_url("ssh://host:asdf/path/%(pkg)s.git", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: Remote URL contains invalid port.
-    >>> parse_remote("ssh://host/~us er/path/%(pkg)s.git", "origin", "package")
+    GbpError: URL contains invalid port.
+    >>> parse_url("ssh://host/~us er/path/%(pkg)s.git", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: Remote URL contains invalid ~username expansion.
+    GbpError: URL contains invalid ~username expansion.
     """
     frags = urlparse.urlparse(remote_url)
-    if frags.scheme not in ['ssh', 'git+ssh']:
-        raise GbpError, "Remote URL must use ssh protocol."
+    if frags.scheme in ['ssh', 'git+ssh', '']:
+        scheme = frags.scheme
+    else:
+        raise GbpError, "URL must use ssh protocol."
+
     if not '%(pkg)s' in remote_url and not remote_url.endswith(".git"):
-        raise GbpError, "Remote URL needs to contain either a repository name or '%(pkg)s'"
+        raise GbpError, "URL needs to contain either a repository name or '%(pkg)s'"
 
     if ":" in frags.netloc:
         (host, port) = frags.netloc.split(":", 1)
         if not re.match(r"^[0-9]+$", port):
-            raise GbpError, "Remote URL contains invalid port."
+            raise GbpError, "URL contains invalid port."
     else:
         host = frags.netloc
         port = None
@@ -98,7 +107,7 @@ def parse_remote(remote_url, name, pkg):
     if frags.path.startswith("/~"):
         m = re.match(r"/(~[a-zA-Z0-9_-]*/)(.*)", frags.path)
         if not m:
-            raise GbpError, "Remote URL contains invalid ~username expansion."
+            raise GbpError, "URL contains invalid ~username expansion."
         base = m.group(1)
         path = m.group(2)
     else:
@@ -111,7 +120,8 @@ def parse_remote(remote_url, name, pkg):
                'base': base,
                'host': host,
                'port': port,
-               'name': name}
+               'name': name,
+               'scheme': scheme }
     return remote
 
 
@@ -152,6 +162,7 @@ def push_branches(remote, branches):
 def main(argv):
     retval = 0
     changelog = 'debian/changelog'
+    cmd = []
 
     parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                    usage='%prog [options] - create a remote repository')
@@ -198,7 +209,7 @@ def main(argv):
             pkg = os.path.basename(os.path.abspath(os.path.curdir))
             pkg = os.path.splitext(pkg)[0]
 
-        remote = parse_remote(options.remote_url, options.name, pkg)
+        remote = parse_url(options.remote_url, options.name, pkg)
         if repo.has_remote_repo(options.name):
             raise GbpError, "You already have a remote name '%s' defined for this repository." % options.name
         gbp.log.info("Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote)
@@ -222,12 +233,14 @@ echo "%(pkg)s packaging" > description
         if options.verbose:
             print remote_script
 
-        ssh = ["ssh"]
-        if remote["port"]:
-            ssh.extend(["-p", remote["port"]])
-        ssh.extend([remote["host"], "sh"])
+        if remote["scheme"]:
+            cmd = ["ssh"]
+            if remote["port"]:
+                cmd.extend(["-p", remote["port"]])
+            cmd.append(remote["host"])
+        cmd.append("sh")
 
-        proc = subprocess.Popen(ssh, stdin=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         proc.communicate(remote_script)
         if proc.returncode:
             raise GbpError, "Error creating remote repository"
