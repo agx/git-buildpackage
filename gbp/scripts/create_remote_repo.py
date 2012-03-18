@@ -117,12 +117,18 @@ def parse_remote(remote_url, name, pkg):
 
 def read_yn():
     fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
     try:
-        tty.setraw(sys.stdin.fileno())
+        old_settings = termios.tcgetattr(fd)
+    except termios.error:
+        old_settings = None
+
+    try:
+        if old_settings:
+            tty.setraw(sys.stdin.fileno())
         ch = sys.stdin.read(1)
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        if old_settings:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
     if ch in ( 'y', 'Y' ):
         return True
