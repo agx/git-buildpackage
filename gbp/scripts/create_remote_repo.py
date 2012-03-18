@@ -30,7 +30,8 @@ from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.errors import GbpError
-from gbp.git import (GitRepositoryError, GitRepository)
+from gbp.git import GitRepositoryError
+from gbp.deb.git import DebianGitRepository
 import gbp.log
 
 def print_config(remote, branches):
@@ -165,7 +166,7 @@ def main(argv):
     gbp.log.setup(options.color, options.verbose)
 
     try:
-        repo = GitRepository(os.path.curdir)
+        repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:
         gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
