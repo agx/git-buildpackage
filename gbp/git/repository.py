@@ -1275,22 +1275,21 @@ class GitRepository(object):
 
         @param path: where to create the repository
         @type path: C{str}
+        @param bare: whether to create a bare repository
+        @type bare: C{bool}
         @return: git repository object
         @rtype: L{GitRepository}
         """
+        args = GitArgs()
         abspath = os.path.abspath(path)
 
-        if bare:
-            args = [ '--bare' ]
-            git_dir = ''
-        else:
-            args = []
-            git_dir = '.git'
+        args.add_true(bare, '--bare')
+        git_dir = '' if bare else '.git'
 
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
-            GitCommand("init", args, cwd=abspath)()
+            GitCommand("init", args.args, cwd=abspath)()
             if description:
                 with file(os.path.join(abspath, git_dir, "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
