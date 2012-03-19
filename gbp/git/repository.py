@@ -1314,6 +1314,10 @@ class GitRepository(object):
         @type depth: C{int}
         @param recursive: whether to clone submodules
         @type recursive: C{bool}
+        @param mirror: whether to pass --mirror to git-clone
+        @type mirror: C{bool}
+        @param bare: whether to create a bare repository
+        @type bare: C{bool}
         @param auto_name: If I{True} create a directory below I{path} based on
             the I{remote}s name. Otherwise create the repo directly at I{path}.
         @type auto_name: C{bool}
