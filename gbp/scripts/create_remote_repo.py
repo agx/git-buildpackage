@@ -130,20 +130,21 @@ def build_remote_script(remote):
     Create the script that will be run on the remote side
 
     >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg'})
-    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n    echo "Repository at "basedir" already exists - giving up."\\n    exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\n'
+    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\n'
     """
-    remote_script =  """
-set -e
-umask 002
-if [ -d %(base)s"%(dir)s" ]; then
-    echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."
-    exit 1
-fi
-mkdir -p %(base)s"%(dir)s"
-cd %(base)s"%(dir)s"
-git init --bare --shared
-echo "%(pkg)s packaging" > description
-""" % remote
+    remote_script_pattern =  ['',
+      'set -e',
+      'umask 002',
+      'if [ -d %(base)s"%(dir)s" ]; then',
+      '  echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."',
+      '  exit 1',
+      'fi',
+      'mkdir -p %(base)s"%(dir)s"',
+      'cd %(base)s"%(dir)s"',
+      'git init --bare --shared',
+      'echo "%(pkg)s packaging" > description',
+       '' ]
+    remote_script = '\n'.join(remote_script_pattern) % remote
     return remote_script
 
 
