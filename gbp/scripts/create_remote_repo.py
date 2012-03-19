@@ -125,6 +125,47 @@ def parse_url(remote_url, name, pkg):
     return remote
 
 
+def build_remote_script(remote):
+    """
+    Create the script that will be run on the remote side
+
+    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg'})
+    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n    echo "Repository at "basedir" already exists - giving up."\\n    exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\n'
+    """
+    remote_script =  """
+set -e
+umask 002
+if [ -d %(base)s"%(dir)s" ]; then
+    echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."
+    exit 1
+fi
+mkdir -p %(base)s"%(dir)s"
+cd %(base)s"%(dir)s"
+git init --bare --shared
+echo "%(pkg)s packaging" > description
+""" % remote
+    return remote_script
+
+
+def build_cmd(remote):
+    """
+    Build the command we pass the script to
+
+    >>> build_cmd({'scheme': ''})
+    ['sh']
+    >>> build_cmd({'scheme': 'ssh', 'host': 'host', 'port': 80})
+    ['ssh', '-p', 80, 'host', 'sh']
+    """
+    cmd = []
+    if remote["scheme"]:
+        cmd.append('ssh')
+        if remote["port"]:
+            cmd.extend(['-p', remote['port']])
+        cmd.append(remote["host"])
+    cmd.append('sh')
+    return cmd
+
+
 def read_yn():
     fd = sys.stdin.fileno()
     try:
@@ -216,29 +257,13 @@ def main(argv):
         if not read_yn():
             raise GbpError, "Aborted."
 
-        # Create and run the remote script
-        remote_script =  """
-set -e
-umask 002
-if [ -d %(base)s"%(dir)s" ]; then
-    echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."
-    exit 1
-fi
-mkdir -p %(base)s"%(dir)s"
-cd %(base)s"%(dir)s"
-git init --bare --shared
-echo "%(pkg)s packaging" > description
-""" % remote
-
+        remote_script = build_remote_script(remote)
         if options.verbose:
             print remote_script
 
-        if remote["scheme"]:
-            cmd = ["ssh"]
-            if remote["port"]:
-                cmd.extend(["-p", remote["port"]])
-            cmd.append(remote["host"])
-        cmd.append("sh")
+        cmd = build_cmd(remote)
+        if options.verbose:
+            print cmd
 
         proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         proc.communicate(remote_script)
