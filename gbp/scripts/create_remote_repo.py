@@ -35,6 +35,23 @@ from gbp.deb.git import DebianGitRepository
 import gbp.log
 
 def print_config(remote, branches):
+    """
+    Print out the git config to push to the newly created repo.
+
+    >>> print_config({'name': 'name', 'url': 'url'}, ['foo', 'bar'])
+    [remote "name"]
+            url = url
+            fetch = +refs/heads/*:refs/remotes/name/*
+            push = foo
+            push = bar
+    [branch "foo"]
+            remote = name
+            merge = refs/heads/foo
+    [branch "bar"]
+            remote = name
+            merge = refs/heads/bar
+    """
+
     print """[remote "%(name)s"]
         url = %(url)s
         fetch = +refs/heads/*:refs/remotes/%(name)s/*""" % remote
