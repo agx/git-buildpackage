@@ -124,7 +124,8 @@ class GbpOptionParser(OptionParser):
                  'submodules'      : 'False',
                  'time-machine'    : 1,
                  'pbuilder-autoconf' : 'True',
-                 'pbuilder-options': ''
+                 'pbuilder-options': '',
+                 'template-dir': '',
              }
     help = {
              'debian-branch':
@@ -208,6 +209,8 @@ class GbpOptionParser(OptionParser):
                   "Wheter to configure pbuilder automatically. Default is '%(pbuilder-autoconf)s'",
              'pbuilder-options':
                   "Options to pass to pbuilder, default is '%(pbuilder-options)s'",
+             'template-dir':
+                  "Template directory used by git init, default is %(template-dir)s",
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',

@@ -24,6 +24,7 @@
       <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--remote-url-pattern=</option><replaceable>url-pattern</replaceable></arg>
       <arg><option>--remote-name=</option><replaceable>name</replaceable></arg>
+      <arg><option>--template-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -65,6 +66,15 @@
         <listitem>
 	  <para>What name git will use when refering to that repository, e.g.
 	  'origin'.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--template-dir</option>=<replaceable>directory</replaceable>
+        </term>
+        <listitem>
+	  <para>Template directory to pass to <command>git init</command> on the remote
+	  side. This can be used to customize the remote repository, e.g. to set up hooks.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>

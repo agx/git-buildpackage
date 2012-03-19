@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2010,2012 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -16,9 +16,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
-
 """Create a remote repo based on the current one"""
-# TODO: allow to add hooks by default
 
 import sys
 import os, os.path
@@ -71,21 +69,21 @@ def sort_dict(d):
         s.append((key, d[key]))
     return s
 
-def parse_url(remote_url, name, pkg):
+def parse_url(remote_url, name, pkg, template_dir=None):
     """
     Sanity check our remote URL
 
     >>> sort_dict(parse_url("ssh://host/path/%(pkg)s", "origin", "package"))
-    [('base', ''), ('dir', '/path/package'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', None), ('scheme', 'ssh'), ('url', 'ssh://host/path/package')]
+    [('base', ''), ('dir', '/path/package'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', None), ('scheme', 'ssh'), ('template-dir', None), ('url', 'ssh://host/path/package')]
 
     >>> sort_dict(parse_url("ssh://host:22/path/repo.git", "origin", "package"))
-    [('base', ''), ('dir', '/path/repo.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('url', 'ssh://host:22/path/repo.git')]
+    [('base', ''), ('dir', '/path/repo.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('template-dir', None), ('url', 'ssh://host:22/path/repo.git')]
 
     >>> sort_dict(parse_url("ssh://host:22/~/path/%(pkg)s.git", "origin", "package"))
-    [('base', '~/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('url', 'ssh://host:22/~/path/package.git')]
+    [('base', '~/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('template-dir', None), ('url', 'ssh://host:22/~/path/package.git')]
 
-    >>> sort_dict(parse_url("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package"))
-    [('base', '~user/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('url', 'ssh://host:22/~user/path/package.git')]
+    >>> sort_dict(parse_url("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package", "/doesnot/exist"))
+    [('base', '~user/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('template-dir', '/doesnot/exist'), ('url', 'ssh://host:22/~user/path/package.git')]
 
     >>> parse_url("git://host/repo.git", "origin", "package")
     Traceback (most recent call last):
@@ -138,7 +136,8 @@ def parse_url(remote_url, name, pkg):
                'host': host,
                'port': port,
                'name': name,
-               'scheme': scheme }
+               'scheme': scheme,
+               'template-dir': template_dir}
     return remote
 
 
@@ -146,10 +145,18 @@ def build_remote_script(remote):
     """
     Create the script that will be run on the remote side
 
-    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg'})
+    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': None})
     '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\n'
+    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': '/doesnot/exist'})
+    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared --template=/doesnot/exist\\necho "pkg packaging" > description\\n'
+
     """
-    remote_script_pattern =  ['',
+    remote = remote
+    remote['git-init-args'] = '--bare --shared'
+    if remote['template-dir']:
+        remote['git-init-args'] += (' --template=%s'
+                                    % remote['template-dir'])
+    remote_script_pattern = ['',
       'set -e',
       'umask 002',
       'if [ -d %(base)s"%(dir)s" ]; then',
@@ -158,9 +165,9 @@ def build_remote_script(remote):
       'fi',
       'mkdir -p %(base)s"%(dir)s"',
       'cd %(base)s"%(dir)s"',
-      'git init --bare --shared',
+      'git init %(git-init-args)s',
       'echo "%(pkg)s packaging" > description',
-       '' ]
+      '' ]
     remote_script = '\n'.join(remote_script_pattern) % remote
     return remote_script
 
@@ -237,6 +244,7 @@ def main(argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_option("--remote-name", dest="name", default="origin",
                       help="The name of the remote, default is 'origin'")
+    parser.add_config_file_option(option_name="template-dir", dest="template_dir")
 
     (options, args) = parser.parse_args(argv)
     gbp.log.setup(options.color, options.verbose)
@@ -268,7 +276,10 @@ def main(argv):
             pkg = os.path.basename(os.path.abspath(os.path.curdir))
             pkg = os.path.splitext(pkg)[0]
 
-        remote = parse_url(options.remote_url, options.name, pkg)
+        remote = parse_url(options.remote_url,
+                           options.name,
+                           pkg,
+                           options.template_dir)
         if repo.has_remote_repo(options.name):
             raise GbpError("You already have a remote name '%s' defined for this repository." % options.name)
 
