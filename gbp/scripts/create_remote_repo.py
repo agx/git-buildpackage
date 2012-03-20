@@ -108,15 +108,15 @@ def parse_url(remote_url, name, pkg):
     if frags.scheme in ['ssh', 'git+ssh', '']:
         scheme = frags.scheme
     else:
-        raise GbpError, "URL must use ssh protocol."
+        raise GbpError("URL must use ssh protocol.")
 
     if not '%(pkg)s' in remote_url and not remote_url.endswith(".git"):
-        raise GbpError, "URL needs to contain either a repository name or '%(pkg)s'"
+        raise GbpError("URL needs to contain either a repository name or '%(pkg)s'")
 
     if ":" in frags.netloc:
         (host, port) = frags.netloc.split(":", 1)
         if not re.match(r"^[0-9]+$", port):
-            raise GbpError, "URL contains invalid port."
+            raise GbpError("URL contains invalid port.")
     else:
         host = frags.netloc
         port = None
@@ -124,7 +124,7 @@ def parse_url(remote_url, name, pkg):
     if frags.path.startswith("/~"):
         m = re.match(r"/(~[a-zA-Z0-9_-]*/)(.*)", frags.path)
         if not m:
-            raise GbpError, "URL contains invalid ~username expansion."
+            raise GbpError("URL contains invalid ~username expansion.")
         base = m.group(1)
         path = m.group(2)
     else:
@@ -270,10 +270,11 @@ def main(argv):
 
         remote = parse_url(options.remote_url, options.name, pkg)
         if repo.has_remote_repo(options.name):
-            raise GbpError, "You already have a remote name '%s' defined for this repository." % options.name
+            raise GbpError("You already have a remote name '%s' defined for this repository." % options.name)
+
         gbp.log.info("Shall I create a repository for '%(pkg)s' at '%(url)s' now? (y/n)?" % remote)
         if not read_yn():
-            raise GbpError, "Aborted."
+            raise GbpError("Aborted.")
 
         remote_script = build_remote_script(remote)
         if options.verbose:
@@ -286,7 +287,7 @@ def main(argv):
         proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         proc.communicate(remote_script)
         if proc.returncode:
-            raise GbpError, "Error creating remote repository"
+            raise GbpError("Error creating remote repository")
 
         push_branches(remote, branches)
         if options.track:
@@ -298,7 +299,7 @@ def main(argv):
 
     except CommandExecFailed:
         retval = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1
