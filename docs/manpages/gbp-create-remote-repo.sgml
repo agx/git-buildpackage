@@ -25,6 +25,7 @@
       <arg><option>--remote-url-pattern=</option><replaceable>url-pattern</replaceable></arg>
       <arg><option>--remote-name=</option><replaceable>name</replaceable></arg>
       <arg><option>--template-dir=</option><replaceable>directory</replaceable></arg>
+      <arg><option>--remote-config=</option><replaceable>config</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -74,6 +75,16 @@
         <listitem>
 	  <para>Template directory to pass to <command>git init</command> on the remote
 	  side. This can be used to customize the remote repository, e.g. to set up hooks.
+	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--remote-config</option>=<replaceable>config</replaceable>
+        </term>
+        <listitem>
+	  <para>Name of a config file section in <filename>gbp.conf</filename>
+          that specifies the above paramters. See <xref linkend="gbp.man.gbp.conf">
+          manpage for details.
 	  </para>
         </listitem>
       </varlistentry>

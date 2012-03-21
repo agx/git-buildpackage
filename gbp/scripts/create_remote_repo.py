@@ -225,10 +225,30 @@ def push_branches(remote, branches):
     gitPush([remote['url'], '--tags'])
 
 
-def parse_args(argv):
+def parse_args(argv, sections=[]):
+    """
+    Parse the command line arguments and config files.
+
+    @param argv: the command line arguments
+    @type argv: C{list} of C{str}
+    @param sections: additional sections to add to the config file parser
+        besides the command name
+    @type sections: C{list} of C{str}
+    """
+
+    # We simpley handle the template section as an additional config file
+    # section to parse, this makes e.g. --help work as expected:
+    for arg in argv:
+        if arg.startswith('--remote-config='):
+            sections = ['remote-config %s' % arg.split('=',1)[1]]
+            break
+    else:
+        sections = []
+
     parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                    usage='%prog [options] - '
-                                   'create a remote repository')
+                                   'create a remote repository',
+                                   sections=sections)
     branch_group = GbpOptionGroup(parser,
                                   "branch options",
                                   "branch layout and tracking options")
@@ -257,8 +277,8 @@ def parse_args(argv):
                       help="The name of the remote, default is 'origin'")
     parser.add_config_file_option(option_name="template-dir",
                                   dest="template_dir")
-    parser.add_config_file_option(option_name="remote-template",
-                                  dest="remote_template")
+    parser.add_config_file_option(option_name="remote-config",
+                                  dest="remote_config")
 
     (options, args) = parser.parse_args(argv)
 
@@ -270,9 +290,13 @@ def main(argv):
     changelog = 'debian/changelog'
     cmd = []
 
-    options, args = parse_args(argv)
-    gbp.log.setup(options.color, options.verbose)
+    try:
+        options, args = parse_args(argv)
+    except Exception as e:
+        print >>sys.stderr, "%s" % e
+        return 1
 
+    gbp.log.setup(options.color, options.verbose)
     try:
         repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:

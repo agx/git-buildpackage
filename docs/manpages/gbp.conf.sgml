@@ -58,6 +58,11 @@
     [&lt;command&gt;]
     # Specific sections for each command, like &git-buildpackage;
     key = value
+
+    [remote-config &lt;name&gt;]
+    # Specific sections for a remote configuration. This can be used several
+    # times to set up remote configuration for gbp-create-remote-repo
+    key = value
 </programlisting>
 
 <para>
@@ -124,6 +129,32 @@ output.
 can't be configured via gbp.conf.
 </para>
 </note>
+
+<para>
+<xref linkend="gbp.man.gbp.create.remote.repo"> can additionally parse remote site
+configurations from <filename>gbp.conf</filename>. For example a configration like:
+</para>
+
+<programlisting>
+[remote-config pkg-libvirt]
+# Location of the repository
+remote-url-pattern = ssh://git.debian.org/git/pkg-libvirt/%(pkg)s
+# Template dir to passed to git-init
+template-dir = /srv/alioth.debian.org/chroot/home/groups/pkg-libvirt/git-template
+</programlisting>
+
+<para>
+Can be used to create remote repositories for the pkg-libvirt project using:
+</para>
+
+<programlisting>
+gbp-create-remote-repo --remote-config=pkg-libvirt
+</programlisting>
+
+<para>
+This can be useful if you're often creating new remote repositores for
+different projects.
+</para>
 
   </refsect1>
   <refsect1>

@@ -126,6 +126,7 @@ class GbpOptionParser(OptionParser):
                  'pbuilder-autoconf' : 'True',
                  'pbuilder-options': '',
                  'template-dir': '',
+                 'remote-config': '',
              }
     help = {
              'debian-branch':
@@ -210,7 +211,9 @@ class GbpOptionParser(OptionParser):
              'pbuilder-options':
                   "Options to pass to pbuilder, default is '%(pbuilder-options)s'",
              'template-dir':
-                  "Template directory used by git init, default is %(template-dir)s",
+                  "Template directory used by git init, default is '%(template-dir)s'",
+             'remote-config':
+                  "Remote defintion in gbp.conf used to create the remote repository",
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',
@@ -357,6 +360,7 @@ class GbpOptionParser(OptionParser):
         self.add_config_file_option(option_name=option_name, dest=dest, action="store_true")
         neg_help = "negates '--%s%s'" % (self.prefix, option_name)
         self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
+
 
 class GbpOptionGroup(OptionGroup):
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
