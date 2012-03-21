@@ -264,6 +264,14 @@ class GbpOptionParser(OptionParser):
             self.config['filter'] = []
 
     def __init__(self, command, prefix='', usage=None):
+        """
+        @param command: the command to build the config parser for
+        @type command: C{str}
+        @param prefix: A prefix to add to all command line options
+        @type prefix: C{str}
+        @param usage: a usage description
+        @type usage: C{str}
+        """
         self.command = command
         self.prefix = prefix
         self.config = {}
