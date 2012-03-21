@@ -225,28 +225,52 @@ def push_branches(remote, branches):
     gitPush([remote['url'], '--tags'])
 
 
+def parse_args(argv):
+    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                   usage='%prog [options] - '
+                                   'create a remote repository')
+    branch_group = GbpOptionGroup(parser,
+                                  "branch options",
+                                  "branch layout and tracking options")
+    branch_group.add_config_file_option(option_name="remote-url-pattern",
+                                        dest="remote_url")
+    parser.add_option_group(branch_group)
+    branch_group.add_config_file_option(option_name="upstream-branch",
+                                        dest="upstream_branch")
+    branch_group.add_config_file_option(option_name="debian-branch",
+                                        dest="debian_branch")
+    branch_group.add_boolean_config_file_option(option_name="pristine-tar",
+                                                dest="pristine_tar")
+    branch_group.add_boolean_config_file_option(option_name="track",
+                                                dest='track')
+    parser.add_option("-v", "--verbose",
+                      action="store_true",
+                      dest="verbose",
+                      default=False,
+                      help="verbose command execution")
+    parser.add_config_file_option(option_name="color",
+                                  dest="color",
+                                  type='tristate')
+    parser.add_option("--remote-name",
+                      dest="name",
+                      default="origin",
+                      help="The name of the remote, default is 'origin'")
+    parser.add_config_file_option(option_name="template-dir",
+                                  dest="template_dir")
+    parser.add_config_file_option(option_name="remote-template",
+                                  dest="remote_template")
+
+    (options, args) = parser.parse_args(argv)
+
+    return options, args
+
+
 def main(argv):
     retval = 0
     changelog = 'debian/changelog'
     cmd = []
 
-    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
-                                   usage='%prog [options] - create a remote repository')
-    branch_group = GbpOptionGroup(parser, "branch options", "branch layout and tracking options")
-    branch_group.add_config_file_option(option_name="remote-url-pattern", dest="remote_url")
-    parser.add_option_group(branch_group)
-    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
-    branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
-    branch_group.add_boolean_config_file_option(option_name="track", dest='track')
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_option("--remote-name", dest="name", default="origin",
-                      help="The name of the remote, default is 'origin'")
-    parser.add_config_file_option(option_name="template-dir", dest="template_dir")
-
-    (options, args) = parser.parse_args(argv)
+    options, args = parse_args(argv)
     gbp.log.setup(options.color, options.verbose)
 
     try:
