@@ -17,7 +17,7 @@
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser, NoSectionError
 from copy import copy
 import os.path
 try:
@@ -252,8 +252,17 @@ class GbpOptionParser(OptionParser):
         parser = SafeConfigParser(self.defaults)
         parser.read(self.config_files)
         self.config = dict(parser.defaults())
+
         if parser.has_section(self.command):
             self.config.update(dict(parser.items(self.command, raw=True)))
+
+        for section in self.sections:
+            if parser.has_section(section):
+                self.config.update(dict(parser.items(section, raw=True)))
+            else:
+                raise NoSectionError("Mandatory section [%s] does not exist."
+                                     % section)
+
         # filter can be either a list or a string, always build a list:
         if self.config['filter']:
             if self.config['filter'].startswith('['):
@@ -263,7 +272,7 @@ class GbpOptionParser(OptionParser):
         else:
             self.config['filter'] = []
 
-    def __init__(self, command, prefix='', usage=None):
+    def __init__(self, command, prefix='', usage=None, sections=[]):
         """
         @param command: the command to build the config parser for
         @type command: C{str}
@@ -271,8 +280,12 @@ class GbpOptionParser(OptionParser):
         @type prefix: C{str}
         @param usage: a usage description
         @type usage: C{str}
+        @param sections: additional (non optional) config file sections
+            to parse
+        @type sections: C{list} of C{str}
         """
         self.command = command
+        self.sections = sections
         self.prefix = prefix
         self.config = {}
         self.config_files = self.get_config_files()
