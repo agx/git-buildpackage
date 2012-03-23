@@ -1,3 +1,20 @@
+git-buildpackage (0.6.0~git20120324) experimental; urgency=low
+
+  * [8fd6162] gbp-create-remote-repo: Use DebianGitRepository (Closes: #664283)
+  * [ddaa653] gbp-create-remote-repo: don't expect a terminal so you can do
+    'echo y | gbp-create-remote-repo'
+  * [92cc7ba] gbp-create-remote-repo: allow to use local file transport too
+  * [6d4b4ff] gbp create-remote-repo: allow to pass template directory to git
+    init so it's possible to set up remote hooks.
+  * [b9d03af] gbp-create-remote-repo: add --remote-config. This specifies an
+    additional config file section that can be used to preconfigure different
+    remote locations.
+  * [d6e0e8d] git-import-orig: Allow to pass in an upstream vcs tag.  This
+    allows to link the import-orig commit with the corresponding upstream vcs
+    tag. See #664771 for a discussion.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 23 Mar 2012 23:58:42 +0100
+
 git-buildpackage (0.6.0~git20120315) unstable; urgency=low
 
   * [3cac77f] docs: Fix path to gbp-configure-unpatched-source. Thanks to
