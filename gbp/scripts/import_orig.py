@@ -292,6 +292,8 @@ def parse_args(argv):
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                       dest="upstream_branch")
+    branch_group.add_option("--upstream-vcs-tag", dest="vcs_tag",
+                            help="Upstream VCS tag add to the merge commit")
     branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
@@ -395,7 +397,17 @@ def main(argv):
 
             import_branch = [ options.upstream_branch, None ][is_empty]
             msg = upstream_import_commit_msg(options, version)
-            commit = repo.commit_dir(source.unpacked, msg=msg, branch=import_branch)
+
+            if options.vcs_tag:
+                parents = [repo.rev_parse("%s^{}" % options.vcs_tag)]
+            else:
+                parents = None
+
+            commit = repo.commit_dir(source.unpacked,
+                                     msg=msg,
+                                     branch=import_branch,
+                                     other_parents=parents,
+                                     )
             if not commit:
                 raise GbpError, "Import of upstream version %s failed." % version
 
