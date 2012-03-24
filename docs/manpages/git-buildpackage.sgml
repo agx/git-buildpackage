@@ -42,6 +42,7 @@
       <arg><option>--git-postexport=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
       <arg><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|treeish]</replaceable></arg>
@@ -293,6 +294,14 @@
         <listitem>
           <para>use this tag format when tagging Debian versions,
   	  default is <replaceable>debian/%(version)s</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable>
+        </term>
+        <listitem>
+          <para>use this tag format when looking for tags of upstream versions,
+  	  default is <replaceable>upstream/%(version)s</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
