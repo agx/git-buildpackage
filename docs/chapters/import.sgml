@@ -63,7 +63,7 @@ by version number.
     </screen>
     The <option>--filter</option> option can be used multiple times for more
     complex filtering.
-    </para> 
+    </para>
     <para>
     If you expect a merge conflict you can delay the merge to the
     <option>debian-branch</option> via the <option>--no-merge</option> and pull in
@@ -98,7 +98,7 @@ by version number.
     <screen>
 &gitcmd; branch upstream theupstream-branch
 &gitcmd; branch <option>-D</option> theupstream-branch
-    </screen> 
+    </screen>
     or you can tell &git-buildpackage; the name of the branch to use as
     <option>upstream-branch</option>:
     <screen>
@@ -136,7 +136,7 @@ EOF
     <para>In order to fix this you can prepend the upstream sources as a
     single commit to your tree using &git;'s <ulink
     url="http://git.or.cz/gitwiki/GraftPoint">grafts</ulink>. Afterwards you
-    can simply create a branch as explained above and &git-import-orig; will 
+    can simply create a branch as explained above and &git-import-orig; will
     work as expected.</para>
     <para>Alternatively, if you are only importing source from original tarballs
     (for instance when converting from a Subversion repository where the
@@ -169,7 +169,7 @@ EOF
 <command>mkdir</command> package-0.1
 <command>cd</command> package-0.1
 <command>git init</command>
-    </screen> 
+    </screen>
     <para>Then you import the upstream sources, branch off the
     <option>upstream-branch</option> branch and add the debian files (e.g. via dh_make):
     <screen>
@@ -179,4 +179,59 @@ EOF
     That's it, you're done. If you want to publish you're new repository you can use &gbp-create-remote-repo;.
     </para>
     </sect1>
+
+    <sect1 id="gbp.import.upstream-git">
+    <title>When upstream uses GIT</title>
+    <para>
+      If upstream already uses git for packaging there are several ways to handle packaging. Two will
+      be described in a bit detail here:
+
+      <sect2 id="gbp.import.upstream.git.notarball">
+	<title>No upstream tarballs</title>
+	<para>If upstream doesn't build upstream tarballs or you don't care about them the simplest
+	  way is to clone upstreams repository and create a separate packaging branch in there.
+	</para>
+
+	<para>
+	  &git-buildpackage; will by default create an upstream tarball for you. By default it will
+	  be created from the tag name given by the <option>--git-upstream-tag</option> option.
+	  You can customize it's value via the <option>upstream-tag</option> configuration variable.
+	</para>
+
+	<para>
+	  A common upstream format is to put a <replaceable>v</replaceable> in front of the version number.
+	  In this case the configuration option would look like:
+	</para>
+	<screen>
+[git-buildpackage]
+upstream-tag = v%(version)s
+	</screen>
+	<para>
+	  <replaceable>version</replaceable> will be replaced with the upstream version number as read from
+	  <filename>debian/changelog</filename>.
+	</para>
+	<para>If you're using &pristine-tar; you can make &git-buildpackage commit the tarball back to the
+	  pristine-tar branch by using the <option>--git-pristine-tar-commit</option> option.
+	</para>
+      </sect2>
+
+      <sect2 id="gbp.import.upstream.git.tarball">
+	<title>Upstream tarballs</title>
+	<para>If you want to track upstream's git but continue to import the upstream tarballs,
+	  e.g. to make sure the tarball uploaded
+	  to &debian; has the same checksum as upstream's you can use the <option>--upstream-vcs-tag</option> option
+	  when importing new tarballs with &git-import-orig;. Assuming you have the upstream source in your
+	  repository with a tag <replaceable>v0.0.1</replaceable> you can use:
+	  <screen>
+	    &git-import-orig; --upstream-vcs-tag=v0.0.1 foo_0.0.1.orig.tar.gz
+	  </screen>
+	  to add upstream's tag as additional parent to the merge commit.
+	  See <ulink url="http://bugs.debian.org/664771">#664771</ulink> for more details.
+	</para>
+      </sect2>
+
+    </sect1>
 </chapter>
+
+<!--  LocalWords:  tarballs
+ -->
