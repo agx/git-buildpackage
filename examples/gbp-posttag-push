@@ -38,7 +38,7 @@ class Env(object):
 def get_push_targets(env):
     """get a list of push targets"""
     dests = {}
-    cmd = "git config --get-regexp 'remote\..*\.push' '%s(:.*)?$'" % env.branch
+    cmd = "git config --get-regexp 'remote\..*\.push' '^%s(:.*)?$'" % env.branch
     for remote in subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split("\n"):
         if not len(remote):
             continue
