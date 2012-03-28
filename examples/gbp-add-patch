@@ -75,7 +75,7 @@ def main(argv):
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes",
                       help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
     parser.add_option("-e", "--edit", action="store_true", dest="edit", default=False,
-                      help="edit commit message befor committing")
+                      help="edit commit message before committing")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
 
