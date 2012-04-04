@@ -1,3 +1,14 @@
+git-buildpackage (0.6.0~git20120404) unstable; urgency=low
+
+  * [f4529a4] docs: add --git-upstream-tag to git-buildpackage's manpage
+  * [96332cc] Start documenting useful options when upstream uses git. This is
+    quiet terse yet so follow up bugs are welcome. (Closes: #664771)
+  * [eae4e4a] gbp-posttag-push: Tighten branch regexp so we don't push to
+    branches ending with the same name accidentally.
+  * [169a924] gbp-add-patch: Fix typo
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 04 Apr 2012 18:50:19 +0200
+
 git-buildpackage (0.6.0~git20120324) experimental; urgency=low
 
   * [8fd6162] gbp-create-remote-repo: Use DebianGitRepository (Closes: #664283)
