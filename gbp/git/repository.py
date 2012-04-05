@@ -1345,7 +1345,8 @@ class GitRepository(object):
             if not name:
                 name = remote.rstrip('/').rsplit('/',1)[1]
                 if (mirror or bare):
-                    name = "%s.git" % name
+                    if not name.endswith('.git'):
+                        name = "%s.git" % name
                 elif name.endswith('.git'):
                     name = name[:-4]
             return klass(os.path.join(abspath, name))
