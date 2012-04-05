@@ -372,7 +372,11 @@ class GitRepository(object):
         """
         args = GitArgs()
         args.add_cond(verbose, '--summary', '--no-summary')
-        args.add_cond(edit, '--edit', '--no-edit')
+        if (self._cmd_has_feature('merge', 'edit')):
+            args.add_cond(edit, '--edit', '--no-edit')
+        else:
+            log.debug("Your git suite doesn't support --edit/--no-edit "
+                      "option for git-merge ")
         args.add(commit)
         self._git_command("merge", args.args)
 
