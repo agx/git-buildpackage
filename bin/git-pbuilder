@@ -76,6 +76,7 @@ fi
 
 # Default options come from the environment.
 OPTIONS="$GIT_PBUILDER_OPTIONS"
+OUTPUT_DIR="${GIT_PBUILDER_OUTPUT_DIR:-../}"
 
 # How we handle options depends on what type of builder we're using.  Ignore
 # options if $GIT_PBUILDER_AUTOCONF is set to no.
@@ -244,7 +245,7 @@ fi
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
     pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
 else
-    pdebuild --buildresult .. --pbuilder "$BUILDER" \
+    pdebuild --buildresult $OUTPUT_DIR --pbuilder "$BUILDER" \
         --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
 fi
 status="$?"
@@ -398,6 +399,10 @@ B<cowbuilder>, B<qemubuilder>, or B<pbuilder> via B<pdebuild>.  The
 contents of this variable will undergo shell expansion, so any arguments
 containing shell metacharacters or whitespace need to be quoted in the
 value of the environment variable.
+
+=item GIT_PBUILDER_OUTPUT_DIR
+
+Where pbuilder puts the build result. Default is '..'.
 
 =item PBUILDER_BASE
 
