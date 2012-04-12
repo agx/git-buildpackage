@@ -122,7 +122,7 @@
       <varlistentry>
         <term><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option></term>
         <listitem>
-          <para>Use <replaceable>BUILD_CMD</replaceable> instead of <command>debuild -i\.git -I.git</command></para>
+          <para>Use <replaceable>BUILD_CMD</replaceable> instead of <command>debuild -i -I</command></para>
         </listitem>
       </varlistentry>
       <varlistentry>
