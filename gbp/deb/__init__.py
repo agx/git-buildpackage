@@ -38,10 +38,10 @@ debian_version_chars = 'a-zA-Z\d.~+-'
 # must consist only of lower case letters (a-z), digits (0-9), plus (+)
 # and minus (-) signs, and periods (.). They must be at least two
 # characters long and must start with an alphanumeric character."
-packagename_re = re.compile("^[a-z0-9][a-z0-9\.\+\-]+$")
+packagename_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\.\+\-~]+$")
 packagename_msg = """Package names must be at least two characters long, start with an
-alphanumeric and can only containg lower case letters (a-z), digits
-(0-9), plus signs (+), minus signs (-), and periods (.)"""
+alphanumeric and can only containg letters (a-z,A-Z), digits
+(0-9), plus signs (+), minus signs (-), periods (.) and hyphens (~)"""
 
 # Valid upstream versions according to Debian Policy Manual 5.6.12:
 # "The upstream_version may contain only alphanumerics[32] and the
