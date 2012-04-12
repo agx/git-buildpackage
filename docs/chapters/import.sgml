@@ -185,6 +185,7 @@ EOF
     <para>
       If upstream already uses git for packaging there are several ways to handle packaging. Two will
       be described in a bit detail here:
+    </para>
 
       <sect2 id="gbp.import.upstream.git.notarball">
 	<title>No upstream tarballs</title>

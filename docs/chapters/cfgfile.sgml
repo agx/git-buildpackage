@@ -57,6 +57,7 @@
     </variablelist>
     The actual options in these sections are the command line options without
     the '--' prefix. So <option>--upstream-branch=</option><replaceable>dfsgfree</replaceable> would read:
+    </para>
 <screen>
 <option>upstream-branch</option>=<replaceable>dfsgfree</replaceable>
 </screen>
