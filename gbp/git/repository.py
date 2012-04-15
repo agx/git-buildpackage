@@ -559,7 +559,7 @@ class GitRepository(object):
             return (True, '')
 
         clean_msg = 'nothing to commit'
-        out, ret = self._git_getoutput('status')
+        out, ret = self._git_getoutput('status', extra_env={'LC_ALL': 'C'})
         if ret:
             raise GbpError("Can't get repository status")
         ret = False
