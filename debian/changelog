@@ -1,3 +1,20 @@
+git-buildpackage (0.6.0~git20120415) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [1e68f6e] gbp.git.repository: don't append a second .git when mirroring a
+    repository
+  * [b7797f9] ALlow to set the output directory via GIT_PBUILDER_OUTPUT_DIR.
+    Helps with #657277
+  * [407dfa1] Make the upstream version check match policy
+    (Closes: #668554)
+  * [d1ed77a] Ignore locale when checking for a clean repository
+    (Closes: #668896)
+
+  [ Jö Fahlke ]
+  * [43e3a60] docs: correct --git-builder default value
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 15 Apr 2012 19:05:32 +0200
+
 git-buildpackage (0.6.0~git20120404) unstable; urgency=low
 
   * [f4529a4] docs: add --git-upstream-tag to git-buildpackage's manpage
