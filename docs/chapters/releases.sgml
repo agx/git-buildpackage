@@ -119,11 +119,19 @@ Git-Dch: Ignore
 will not show up in the generated changelog in any way.
 </para>
 <para>
-To only include the short description in the commit and skip the body use:
+To include the full commit message in the changelog use:
+<screen>
+Git-Dch: Full
+</screen>
+</para>
+<para>
+To only include the short description in the changelog and skip the body use:
 <screen>
 Git-Dch: Short
 </screen>
-This only takes effect when running &git-dch; with the <option>--full</option> option.
+The latter only takes effect when running &git-dch; with the
+<option>--full</option> option, since including only the short
+description is the default.
 </para>
 <para>
 Usually changelog entries should correspond to a single &git; commit. In this case it's

@@ -119,7 +119,7 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     (thanks, body) = extract_thanks_info(body, options)
     body = filter_ignore_rx_matches(body, options)
 
-    if options.full and not 'short' in git_dch_cmds:
+    if 'full' in git_dch_cmds or (options.full and not 'short' in git_dch_cmds):
         # Add all non-blank body lines.
         entry.extend([line for line in body if line.strip()])
     if thanks:

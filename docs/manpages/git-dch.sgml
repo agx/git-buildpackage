@@ -259,9 +259,14 @@
         </term>
         <listitem><para>
 	Supported actions are: <replaceable>Ignore</replaceable> which will ignore
-	this commit when generating <filename>debian/changelog</filename> and
-	<replaceable>Short</replaceable> which will only use the description 
-	(the first line) of the commit message when generating the changelog entry.
+	this commit when generating <filename>debian/changelog</filename>,
+	<replaceable>Short</replaceable> which will only use the
+	description (the first line) of the commit message when
+	generating the changelog entry (useful when
+	<option>--full</option> is given) and
+	<replaceable>Full</replaceable> which will use the full commit
+	message when generating the changelog entry (useful when
+	<option>--full</option> is not given).
         </para></listitem>
       </varlistentry>
       <varlistentry>
