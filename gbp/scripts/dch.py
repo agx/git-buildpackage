@@ -246,7 +246,6 @@ def do_snapshot(changelog, repo, next_snapshot):
     mangle_changelog(changelog, cp, commit)
     return snapshot, commit
 
-
 def parse_commit(repo, commitid, opts, last_commit=False):
     """Parse a commit and return message, author, and author email"""
     commit_info = repo.get_commit_info(commitid)
@@ -324,6 +323,10 @@ def process_editor_option(options):
         return None
 
 
+def changelog_commit_msg(options, version):
+    return options.commit_msg % dict(version=version)
+
+
 def main(argv):
     ret = 0
     changelog = 'debian/changelog'
@@ -392,6 +395,10 @@ def main(argv):
     commit_group.add_boolean_config_file_option(option_name="multimaint", dest="multimaint")
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
     commit_group.add_config_file_option(option_name="spawn-editor", dest="spawn_editor")
+    parser.add_config_file_option(option_name="commit-msg",
+                      dest="commit_msg")
+    parser.add_option("-c", "--commit", action="store_true", dest="commit", default=False,
+                      help="commit changelog file after generating")
 
     help_msg = ('Load Python code from CUSTOMIZATION_FILE.  At the moment,'
                 ' the only useful thing the code can do is define a custom'
@@ -515,6 +522,16 @@ def main(argv):
 
         if editor_cmd:
             gbpc.Command(editor_cmd, ["debian/changelog"])()
+
+        if options.commit:
+            # Get the version from the changelog file (since dch might
+            # have incremented it, there's no way we can already know
+            # the version).
+            version = ChangeLog(filename=changelog).version
+            # Commit the changes to the changelog file
+            msg = changelog_commit_msg(options, version)
+            repo.commit_files([changelog], msg)
+            gbp.log.info("Changelog has been committed for version %s" % version)
 
     except (GbpError, GitRepositoryError, NoChangeLogError), err:
         if len(err.__str__()):

@@ -37,6 +37,8 @@
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]multimaint-merge</option></arg>
       <arg><option>--spawn-editor=[always|snapshot|release]</option></arg>
+      <arg><option>--commit-msg=</option><replaceable>msg-format</replaceable></arg>
+      <arg><option>--commit</option></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -219,6 +221,24 @@
         <listitem>
 	  <para>Whether to spawn an editor: always, when doing snapshots or
 	  when doing a release.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--commit-msg=</option><replaceable>msg-format</replaceable>
+        </term>
+        <listitem>
+	  <para>use this format string for the commit message when
+	  committing the generated changelog file (when
+	  <option>--commit</option> is given). Default is
+	  <replaceable>Update changelog for %(version)s
+	  release</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--commit</option>
+        </term>
+        <listitem>
+	  <para>Commit the generated changelog.</para>
         </listitem>
       </varlistentry>
     </variablelist>

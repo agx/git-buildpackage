@@ -86,6 +86,7 @@ class GbpOptionParser(OptionParser):
                  'debian-tag'      : 'debian/%(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
                  'import-msg'      : 'Imported Upstream version %(version)s',
+                 'commit-msg'      : 'Update changelog for %(version)s release',
                  'filter'          : [],
                  'snapshot-number' : 'snapshot + 1',
                  'git-log'         : '--no-merges',
@@ -144,7 +145,9 @@ class GbpOptionParser(OptionParser):
              'keyid':
                   "GPG keyid to sign tags with, default is '%(keyid)s'",
              'import-msg':
-                  "format string for commit message, default is '%(import-msg)s'",
+                  "format string for git-import-orig commit message, default is '%(import-msg)s'",
+             'commit-msg':
+                  "format string for git-dch commit message, default is '%(commit-msg)s'",
              'pristine-tar':
                   "use pristine-tar to create orig tarball, default is '%(pristine-tar)s'",
              'pristine-tar-commit':
