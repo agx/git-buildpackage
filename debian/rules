@@ -15,6 +15,7 @@ PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 	dh $@ --with python2
 
 override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	dh_auto_test
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
@@ -25,6 +26,9 @@ override_dh_auto_test:
 	
 	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q \
 		gbp gbp.scripts gbp.git gbp.deb
+else
+	@echo "Checks disabled via DEB_BUILD_OPTIONS"
+endif
 
 override_dh_auto_build:
 	dh_auto_build
