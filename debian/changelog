@@ -1,3 +1,35 @@
+git-buildpackage (0.6.0~git20120419) experimental; urgency=low
+
+  [ Guido Günther ]
+  * [3b34b26] Make building with DEB_BUILD_OPTIONS=nocheck skip all tests
+    heavily based on a patch by Matthijs Kooijman (Closes: #669149)
+
+  [ Matthijs Kooijman ]
+  * [a43e9b9] Git-Dch: Full in commit messages.
+    This new tag makes git-dch use the full commit message when generating
+    the Debian changelog file, even when --full is not given. (Closes: #669159)
+  * [b72702f] Bug#669145: Add git-dch --commit and --commit-msg options
+    (Closes: #669145)
+
+  [ Markus Lehtonen ]
+  * [19b6e24] docs: add some missing tags to sgml files
+  * [9c4f34c] Refactor gbp-pq as preparation for rpm support.
+    Separate some functions of gbp-pq into a basemodule, intended to be
+    re-used by the upcoming rpm variant of the tool.
+    Also, introduces a new python subpackage gbp.scripts.common to be used
+    for the re-usable parts of the scripts in the refactoring work.
+  * [c8e4807] Refactor git-buildpackage as preparation for rpm support.
+    Separate some functions of git-buildpackage into a basemodule, intended
+    to be re-used by the upcoming rpm variant of the tool.
+  * [27c35b1] import-orig: refactor args of ask_package_* functions.
+    Makes ask_package_name() and ask_package_version() more generic and
+    re-usable in the upcoming RPM-tools.
+  * [5826e9c] Refactor git-import-orig as preparation for rpm support.
+    Separate some functions of git-import-orig into a baselib, intended to
+    be re-used by the upcoming rpm variant of the tool.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 19 Apr 2012 00:24:03 +0200
+
 git-buildpackage (0.6.0~git20120415) unstable; urgency=low
 
   [ Guido Günther ]
