@@ -1115,7 +1115,7 @@ class GitRepository(object):
 
 
 #{ Patches
-    def format_patches(self, start, end, output_dir, signature=True):
+    def format_patches(self, start, end, output_dir, signature=True, thread=None):
         """
         Output the commits between start and end as patches in output_dir
         """
@@ -1123,6 +1123,7 @@ class GitRepository(object):
                           '-o', output_dir)
         options.add_cond(not signature, '--no-signature')
         options.add('%s...%s' % (start, end))
+        options.add_cond(thread, '--thread=%s' % thread, '--no-thread')
 
         output, ret = self._git_getoutput('format-patch', options.args)
         return [ line.strip() for line in output ]
