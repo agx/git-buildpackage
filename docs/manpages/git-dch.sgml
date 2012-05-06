@@ -24,21 +24,35 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--ignore-branch</option></arg>
-      <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
-      <arg><option>--snapshot</option></arg>
-      <arg><option>--release</option></arg>
-      <arg><option>--auto</option></arg>
+      <group>
+        <arg><option>--snapshot</option></arg>
+	<arg><option>--release</option></arg>
+      </group>
+      <group>
+	<arg><option>--auto</option></arg>
+	<arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+      </group>
+      <arg><option>--new-version=</option><replaceable>version</replaceable></arg>
+      <group>
+	<arg><option>--bpo</option></arg>
+	<arg><option>--nmu</option></arg>
+	<arg><option>--qa</option></arg>
+      </group>
       <arg><option>--[no-]full</option></arg>
       <arg><option>--[no-]meta</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
       <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
+      <arg><option>--id-length=</option><replaceable>number</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
       <arg><option>--[no-]git-author</option></arg>
+      <arg><option>--[no-]multimaint</option></arg>
       <arg><option>--[no-]multimaint-merge</option></arg>
       <arg><option>--spawn-editor=[always|snapshot|release]</option></arg>
       <arg><option>--commit-msg=</option><replaceable>msg-format</replaceable></arg>
       <arg><option>--commit</option></arg>
+      <arg><option>--customization=</option><replaceable>customization-file</replaceable></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
