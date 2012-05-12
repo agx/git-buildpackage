@@ -165,7 +165,7 @@ class GbpOptionParser(OptionParser):
              'ignore-new':
                   "build with uncommited changes in the source tree, default is '%(ignore-new)s'",
              'ignore-branch':
-                  "build although debian-branch != current branch, default is '%(ignore-new)s'",
+                  "build although debian-branch != current branch, default is '%(ignore-branch)s'",
              'overlay':
                   "extract orig tarball when using export-dir option, default is '%(overlay)s'",
              'remote-url-pattern':
