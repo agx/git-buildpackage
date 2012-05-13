@@ -299,6 +299,26 @@ class GitRepository(object):
         remote += merge.replace("refs/heads","", 1)
         return remote
 
+    def get_merge_base(self, commit1, commit2):
+        """
+        Get the common ancestor between two commits
+
+        @param commit1: commit SHA1 or name of a branch or tag
+        @type commit1: C{str}
+        @param commit2: commit SHA1 or name of a branch or tag
+        @type commit2: C{str}
+        @return: SHA1 of the common ancestor
+        @rtype: C{str}
+        """
+        args = GitArgs()
+        args.add(commit1)
+        args.add(commit2)
+        sha1, stderr, ret = self._git_inout('merge-base', args.args, capture_stderr=True)
+        if not ret:
+            return sha1.strip()
+        else:
+            raise GitRepositoryError("Failed to get common ancestor: %s" % stderr.strip())
+
     def merge(self, commit, verbose=False, edit=False):
         """
         Merge changes from the named commit into the current branch

@@ -631,6 +631,24 @@ def test_update_submodules():
     >>> repo.update_submodules()
     """
 
+def test_get_merge_base():
+    """
+    Find the common ancestor of two objects
+
+    Methods tested:
+        - L{gbp.git.GitRepository.get_merge_bsae}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> sha1 = repo.get_merge_base('master', 'foo')
+    >>> len(sha1)
+    40
+    >>> repo.get_merge_base('master', 'doesnotexist')
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Failed to get common ancestor: fatal: Not a valid object name doesnotexist
+    """
+
 def test_teardown():
     """
     Perform the teardown
