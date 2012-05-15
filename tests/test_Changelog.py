@@ -192,3 +192,27 @@ def test_parse_last_mod():
     >>> cl.date
     'Mon, 17 Oct 2011 10:15:22 +0200'
     """
+
+def test_parse_sections():
+    """
+    Test if we can parse sections out of the changelog
+
+    Methods tested:
+         - L{gbp.deb.changelog.ChangeLog.__init__}
+         - L{gbp.deb.changelog.ChangeLogSection.__init__}
+         - L{gbp.deb.changelog.ChangeLogSection.parse}
+
+    Properties tested:
+         - L{gbp.deb.changelog.ChangeLog.sections}
+
+    >>> import gbp.deb.changelog
+    >>> cl = gbp.deb.changelog.ChangeLog(cl_debian)
+    >>> cl.sections[0].package
+    'git-buildpackage'
+    >>> cl.sections[0].version
+    '0.5.32'
+    >>> cl.sections[1].package
+    'git-buildpackage'
+    >>> cl.sections[1].version
+    '0.5.31'
+    """

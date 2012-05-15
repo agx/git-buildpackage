@@ -28,6 +28,37 @@ class ParseChangeLogError(Exception):
     """Problem parsing changelog"""
     pass
 
+
+class ChangeLogSection(object):
+    """A section in the changelog describing one particular version"""
+    def __init__(self, package, version):
+        self._package = package
+        self._version = version
+
+    @property
+    def package(self):
+        return self._package
+
+    @property
+    def version(self):
+        return self._version
+
+    @classmethod
+    def parse(klass, section):
+        """
+        Parse one changelog section
+
+        @param section: a changelog section
+        @type section: C{str}
+        @returns: the parse changelog section
+        @rtype: L{ChangeLogSection}
+        """
+        header = section.split('\n')[0]
+        package = header.split()[0]
+        version = header.split()[1][1:-1]
+        return klass(package, version)
+
+
 class ChangeLog(object):
     """A Debian changelog"""
 
@@ -75,6 +106,11 @@ class ChangeLog(object):
             raise ParseChangeLogError, output.split('\n')[0]
 
         self._cp = cp
+        if contents:
+            self._contents = contents[:]
+        else:
+            with file(filename) as f:
+                self._contents = f.read()
 
     def __getitem__(self, item):
         return self._cp[item]
@@ -148,3 +184,23 @@ class ChangeLog(object):
         """
         return self._cp['Date']
 
+    @property
+    def sections_iter(self):
+        """
+        Iterate over sections in the changelog
+        """
+        section = ''
+        for line in self._contents.split('\n'):
+            if line and line[0] not in [ ' ', '\t' ]:
+                section += line
+            else:
+                if section:
+                    yield ChangeLogSection.parse(section)
+                    section = ''
+
+    @property
+    def sections(self):
+        """
+        Get sections in the changelog
+        """
+        return list(self.sections_iter)
