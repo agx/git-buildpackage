@@ -37,7 +37,8 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              git_archive_submodules,
                                              git_archive_single, dump_tree,
                                              write_wc, drop_index)
-from gbp.pkg import (UpstreamSource, compressor_opts, compressor_aliases)
+from gbp.pkg import (UpstreamSource, compressor_opts, compressor_aliases,
+                     parse_archive_filename)
 
 def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules):
     "create a compressed orig tarball in output_dir using git_archive"
@@ -318,7 +319,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
             else:
                 commit = repo.pristine_tar_branch
             tarball = repo.get_commit_info(commit)['subject']
-            comp_type = du.DebianPkgPolicy.get_compression(tarball)
+            (base_name, archive_fmt, comp_type) = parse_archive_filename(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:
                 comp_type = 'gzip'

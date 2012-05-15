@@ -34,6 +34,66 @@ compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
 compressor_aliases = { 'bz2' : 'bzip2',
                        'gz'  : 'gzip', }
 
+# Supported archive formats
+arhive_formats = [ 'tar', 'zip' ]
+
+# Map combined file extensions to arhive and compression format
+archive_ext_aliases = { 'tgz'   : ('tar', 'gzip'),
+                        'tbz2'  : ('tar', 'bzip2'),
+                        'tlz'   : ('tar', 'lzma'),
+                        'txz'   : ('tar', 'xz')}
+
+def parse_archive_filename(filename):
+    """
+    Given an filename return the basename (i.e. filename without the
+    archive and compression extensions), archive format and compression
+    method used.
+
+    @param filename: the name of the file
+    @type filename: string
+    @return: tuple containing basename, archive format and compression method
+    @rtype: C{tuple} of C{str}
+
+    >>> parse_archive_filename("abc.tar.gz")
+    ('abc', 'tar', 'gzip')
+    >>> parse_archive_filename("abc.tar.bz2")
+    ('abc', 'tar', 'bzip2')
+    >>> parse_archive_filename("abc.def.tbz2")
+    ('abc.def', 'tar', 'bzip2')
+    >>> parse_archive_filename("abc.def.tar.xz")
+    ('abc.def', 'tar', 'xz')
+    >>> parse_archive_filename("abc.zip")
+    ('abc', 'zip', None)
+    >>> parse_archive_filename("abc.lzma")
+    ('abc', None, 'lzma')
+    >>> parse_archive_filename("abc.tar.foo")
+    ('abc.tar.foo', None, None)
+    >>> parse_archive_filename("abc")
+    ('abc', None, None)
+    """
+    (base_name, archive_fmt, compression) = (filename, None, None)
+
+    # Split filename to pieces
+    split = filename.split(".")
+    if len(split) > 1:
+        if split[-1] in archive_ext_aliases:
+            base_name = ".".join(split[:-1])
+            (archive_fmt, compression) = archive_ext_aliases[split[-1]]
+        elif split[-1] in arhive_formats:
+            base_name = ".".join(split[:-1])
+            (archive_fmt, compression) = (split[-1], None)
+        else:
+            for (c, o) in compressor_opts.iteritems():
+                if o[1] == split[-1]:
+                    base_name = ".".join(split[:-1])
+                    compression = c
+                    if len(split) > 2 and split[-2] in arhive_formats:
+                        base_name = ".".join(split[:-2])
+                        archive_fmt = split[-2]
+
+    return (base_name, archive_fmt, compression)
+
+
 class PkgPolicy(object):
     """
     Common helpers for packaging policy.
@@ -70,27 +130,6 @@ class PkgPolicy(object):
         if cls.upstreamversion_re is None:
             raise NotImplementedError("Class needs to provide upstreamversion_re")
         return True if cls.upstreamversion_re.match(version) else False
-
-    @staticmethod
-    def get_compression(orig_file):
-        """
-        Given an orig file return the compression used
-
-        >>> PkgPolicy.get_compression("abc.tar.gz")
-        'gzip'
-        >>> PkgPolicy.get_compression("abc.tar.bz2")
-        'bzip2'
-        >>> PkgPolicy.get_compression("abc.tar.foo")
-        >>> PkgPolicy.get_compression("abc")
-        """
-        try:
-            ext = orig_file.rsplit('.',1)[1]
-        except IndexError:
-            return None
-        for (c, o) in compressor_opts.iteritems():
-            if o[1] == ext:
-                return c
-        return None
 
     @staticmethod
     def has_orig(orig_file, dir):
