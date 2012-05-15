@@ -636,7 +636,7 @@ def test_get_merge_base():
     Find the common ancestor of two objects
 
     Methods tested:
-        - L{gbp.git.GitRepository.get_merge_bsae}
+        - L{gbp.git.GitRepository.get_merge_base}
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
