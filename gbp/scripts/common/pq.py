@@ -167,7 +167,7 @@ def apply_and_commit_patch(repo, patch, topic=None):
         else:
             gbp.log.warn("Patch %s has no authorship information")
 
-    repo.apply_patch(patch.path)
+    repo.apply_patch(patch.path, strip=patch.strip)
     tree = repo.write_tree()
     msg = "%s\n\n%s" % (patch.subject, patch.long_desc)
     if topic:

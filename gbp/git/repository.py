@@ -1226,8 +1226,8 @@ class GitRepository(object):
             args += [ '-C', context ]
         if index:
             args.append("--index")
-        if strip:
-            args += [ '-p', strip ]
+        if strip != None:
+            args += [ '-p', str(strip) ]
         args.append(patch)
         self._git_command("apply", args)
 
