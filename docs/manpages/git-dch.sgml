@@ -198,6 +198,29 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--bpo</option>
+        </term>
+        <listitem>
+	  <para>Increment the Debian release number for an upload to
+          backports, and add a backport upload changelog comment.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--nmu</option>
+        </term>
+        <listitem>
+	  <para>Increment  the  Debian  release  number  for a non-maintainer upload.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--qa</option>
+        </term>
+        <listitem>
+	  <para>Increment the Debian release number for a Debian QA Team
+          upload, and add a QA upload changelog comment.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git-log=</option><replaceable>git-log-options</replaceable>
         </term>
         <listitem>
