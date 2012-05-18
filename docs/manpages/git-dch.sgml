@@ -39,6 +39,7 @@
 	<arg><option>--bpo</option></arg>
 	<arg><option>--nmu</option></arg>
 	<arg><option>--qa</option></arg>
+	<arg><option>--team</option></arg>
       </group>
       <arg><option>--[no-]full</option></arg>
       <arg><option>--[no-]meta</option></arg>
@@ -188,6 +189,12 @@
 	  <replaceable>newversion</replaceable>. Together with
 	  <option>--snapshot</option> the snapshot number will be appended to
 	  <replaceable>newversion</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--team</option></term>
+        <listitem>
+          <para>Create a Team upload changelog entry.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
