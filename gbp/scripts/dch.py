@@ -377,7 +377,7 @@ def main(argv):
     version_group.add_option("-N", "--new-version", dest="new_version",
                       help="use this as base for the new version number")
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
-                      help="Increment the Debian release number for an upload to lenny-backports, and add a backport upload changelog comment.")
+                      help="Increment the Debian release number for an upload to backports, and add a backport upload changelog comment.")
     version_group.add_option("--nmu", dest="nmu", action="store_true", default=False,
                       help="Increment  the  Debian  release  number  for a non-maintainer upload")
     version_group.add_option("--qa", dest="qa", action="store_true", default=False,
