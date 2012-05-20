@@ -71,6 +71,7 @@ class ChangeLog(object):
         """
         self._contents = ''
         self._cp = None
+        self._filename = filename
 
         # Check that either contents or filename is passed (but not both)
         if (not filename and not contents) or (filename and contents):
@@ -121,6 +122,11 @@ class ChangeLog(object):
 
     def __setitem__(self, item, value):
         self._cp[item] = value
+
+    @property
+    def filename(self):
+        """The filename (path) of the changelog"""
+        return self._filename
 
     @property
     def name(self):
