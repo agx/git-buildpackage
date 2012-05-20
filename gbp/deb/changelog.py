@@ -64,29 +64,34 @@ class ChangeLog(object):
 
     def __init__(self, contents=None, filename=None):
         """
-        Parse an existing changelog, Either contents, containing the contents
-        of a changelog file, or filename, pointing to a changelog file must be
-        passed.
+        @param contents: the contents of the changelog
+        @type contents: C{str}
+        @param filename: the filename of the changelog
+        @param filename: C{str}
         """
+        self._contents = ''
+        self._cp = None
+
         # Check that either contents or filename is passed (but not both)
         if (not filename and not contents) or (filename and contents):
             raise Exception("Either filename or contents must be passed")
 
-        # If a filename was passed, check if it exists
         if filename and not os.access(filename, os.F_OK):
             raise NoChangeLogError, "Changelog %s not found" % (filename, )
 
-        # If no filename was passed, let's read from stdin
-        if not filename:
-            filename = '-'
+        if contents:
+            self._contents = contents[:]
+        else:
+            self._read()
+        self._parse()
 
-        # Note that if contents is None, stdin will just be closed right
-        # away by communicate.
-        cmd = subprocess.Popen(['dpkg-parsechangelog', '-l%s' % filename],
+    def _parse(self):
+        """Parse a changelog based on the already read contents."""
+        cmd = subprocess.Popen(['dpkg-parsechangelog', '-l-'],
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
-        (output, errors) = cmd.communicate(contents)
+        (output, errors) = cmd.communicate(self._contents)
         if cmd.returncode:
             raise ParseChangeLogError("Failed to parse changelog. "
                                       "dpkg-parsechangelog said:\n%s" % (errors, ))
@@ -106,10 +111,9 @@ class ChangeLog(object):
             raise ParseChangeLogError, output.split('\n')[0]
 
         self._cp = cp
-        if contents:
-            self._contents = contents[:]
-        else:
-            with file(filename) as f:
+
+    def _read(self):
+            with file(self.filename) as f:
                 self._contents = f.read()
 
     def __getitem__(self, item):
