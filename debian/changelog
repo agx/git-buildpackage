@@ -1,3 +1,45 @@
+git-buildpackage (0.6.0~git20120524) experimental; urgency=low
+
+  [ Markus Lehtonen ]
+  * [3308868] Refactor deb helpers: introduce PkgPolicy class.  Create a new
+    'pkg' basemodule, intended to be re-used by the upcoming rpm package
+    helpers. Move some deb functionality to a new pkg.PkgPolicy class, to be
+    used as a base for different package types. Introduces Deb-specific
+    deb.DebianPkgPolicy.
+  * [082679d] Refactor deb helpers: move build_tarball_name() from
+    UpstreamSource class to DebianPkgPolicy.
+  * [f495df9] Refactor deb helpers: move UpstreamSource class to pkg base
+    module. This refactor is preparation to the upcoming rpm support.
+
+  [ Guido Günther ]
+  * [83165aa] GitRepository.format_patches: allow to set threading format
+    and disable it by default.
+  * [5de6410] docs: complete git-dch synopsis
+  * [1eeb298] Add gbp.deb.ChangeLogSection to parse package and version out of
+    a changelog section
+  * [1ea487e] Don't explicitly refer to lenny-backports.
+    Thanks to Salvatore Bonaccorso
+  * [9d1459b] gbp.deb.changelog: Split parsing into a separate function
+    this will allow us to reparse the changelog after manipulation with dch.
+  * [2ecf9e3] gbp.deb.ChangeLog: Add filename property
+
+  [ Jérémy Lal ]
+  * [ae850da] --ignore-branch config help fix
+
+  [ Daniel Dehennin ]
+  * [c57d4af] gbp.git.repository: Add a "git merge-base" wrapper
+    (Closes: #672642)
+  * [edc6483] Provide minimalist debian/control object
+    (Closes: #673473)
+
+  [ Salvatore Bonaccorso ]
+  * [bb32e94] git-dch: Add support for --team switch for Team uploads
+    (Closes: #673368)
+  * [016bf21] Document --bpo, --nmu and --qa in git-dch's manpage
+    (Closes: #673422)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 24 May 2012 14:05:47 +0200
+
 git-buildpackage (0.6.0~git20120419) experimental; urgency=low
 
   [ Guido Günther ]
