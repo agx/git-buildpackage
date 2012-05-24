@@ -41,6 +41,7 @@
 
       <arg><option>options</option></arg>
       <arg choice="req"><option>--download</option></arg>
+      <arg><option>--[no-]allow-unauthenticated</option></arg>
       <group choice="plain">
       <arg><replaceable>URL</replaceable></arg>
       <arg><replaceable>source-package</replaceable></arg>
@@ -137,6 +138,13 @@
 	  <replaceable>URL</replaceable>. The former uses &apt-get; to download
 	  the source while the later uses &dget;.
 	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--allow-unauthenticated</option>
+        </term>
+        <listitem>
+	  <para>Whether to skip signature verification on downloads.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

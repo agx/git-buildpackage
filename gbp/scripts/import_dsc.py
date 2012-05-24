@@ -41,22 +41,22 @@ class SkipImport(Exception):
     pass
 
 
-def download_source(pkg, dirs):
+def download_source(pkg, dirs, unauth):
+    opts = [ '--download-only' ]
+    if unauth:
+        opts.append('--allow-unauthenticated')
+
     if re.match(r'[a-z]{1,5}://', pkg):
-        mode='dget'
+        cmd = 'dget'
+        opts += ['-q', pkg]
     else:
-        mode='apt-get'
+        cmd = 'apt-get'
+        opts += ['-qq', 'source', pkg]
 
     dirs['download'] = os.path.abspath(tempfile.mkdtemp())
-    gbp.log.info("Downloading '%s' using '%s'..." % (pkg, mode))
-    if mode == 'apt-get':
-        gbpc.RunAtCommand('apt-get',
-                          ['-qq', '--download-only', 'source', pkg],
-                          shell=False)(dir=dirs['download'])
-    else:
-        gbpc.RunAtCommand('dget',
-                          ['-q', '--download-only', pkg],
-                          shell=False)(dir=dirs['download'])
+    gbp.log.info("Downloading '%s' using '%s'..." % (pkg, cmd))
+
+    gbpc.RunAtCommand(cmd, opts, shell=False)(dir=dirs['download'])
     dsc = glob.glob(os.path.join(dirs['download'], '*.dsc'))[0]
     return dsc
 
@@ -229,6 +229,8 @@ def parse_args(argv):
                       dest="author_committer")
     import_group.add_boolean_config_file_option(option_name="author-date-is-committer-date",
                       dest="author_committer_date")
+    import_group.add_boolean_config_file_option(option_name="allow-unauthenticated",
+                      dest="allow_unauthenticated")
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose)
@@ -251,7 +253,9 @@ def main(argv):
         else:
             pkg = args[0]
             if options.download:
-                dsc = download_source(pkg, dirs=dirs)
+                dsc = download_source(pkg,
+                                      dirs=dirs,
+                                      unauth=options.allow_unauthenticated)
             else:
                 dsc = pkg
 

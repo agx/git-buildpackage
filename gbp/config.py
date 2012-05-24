@@ -128,6 +128,7 @@ class GbpOptionParser(OptionParser):
                  'pbuilder-options': '',
                  'template-dir': '',
                  'remote-config': '',
+                 'allow-unauthenticated': 'False',
              }
     help = {
              'debian-branch':
@@ -217,6 +218,8 @@ class GbpOptionParser(OptionParser):
                   "Template directory used by git init, default is '%(template-dir)s'",
              'remote-config':
                   "Remote defintion in gbp.conf used to create the remote repository",
+             'allow-unauthenticated':
+                  "Don't verify integrity of downloaded source",
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',
