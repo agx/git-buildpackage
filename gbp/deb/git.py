@@ -18,14 +18,14 @@
 
 import re
 from gbp.git import GitRepository, GitRepositoryError
-from gbp.deb.pristinetar import PristineTar
+from gbp.deb.pristinetar import DebianPristineTar
 
 class DebianGitRepository(GitRepository):
     """A git repository that holds the source of a Debian package"""
 
     def __init__(self, path):
         super(DebianGitRepository, self).__init__(path)
-        self.pristine_tar = PristineTar(self)
+        self.pristine_tar = DebianPristineTar(self)
 
     def find_version(self, format, version):
         """
@@ -123,7 +123,7 @@ class DebianGitRepository(GitRepository):
         The name of the pristine-tar branch, whether it already exists or
         not.
         """
-        return PristineTar.branch
+        return DebianPristineTar.branch
 
     def has_pristine_tar_branch(self):
         """
