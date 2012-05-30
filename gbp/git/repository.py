@@ -567,10 +567,13 @@ class GitRepository(object):
             args += [ commit, '--' ]
             self._git_command("reset", args)
 
-    def is_clean(self):
+    def is_clean(self, ignore_untracked=False):
         """
         Does the repository contain any uncommitted modifications?
 
+        @param ignore_untracked: whether to ignore untracked files when
+            checking the repository status
+        @type ignore_untracked: C{bool}
         @return: C{True} if the repository is clean, C{False} otherwise
             and Git's status message
         @rtype: C{tuple}
@@ -579,7 +582,13 @@ class GitRepository(object):
             return (True, '')
 
         clean_msg = 'nothing to commit'
-        out, ret = self._git_getoutput('status', extra_env={'LC_ALL': 'C'})
+
+        args = GitArgs()
+        args.add_false(untracked, '-uno')
+
+        out, ret = self._git_getoutput('status',
+                                       args.args,
+                                       extra_env={'LC_ALL': 'C'})
         if ret:
             raise GbpError("Can't get repository status")
         ret = False
