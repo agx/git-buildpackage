@@ -35,72 +35,6 @@ user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 
 
-def system(cmd):
-    try:
-        gbpc.Command(cmd, shell=True)()
-    except gbpc.CommandExecFailed:
-        raise GbpError
-
-
-def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
-              release=False, distribution=None, dch_options=''):
-    """
-    Spawn dch
-
-    @param author: committers name
-    @param email: committers email
-    @param newversion: start a new version
-    @param version: the verion to use
-    @param release: finalize changelog for releaze
-    @param distribution: distribution to use
-    @param dch_options: options passed verbatim to dch
-    """
-    distopt = ""
-    versionopt = ""
-    env = ""
-
-    if newversion:
-        if version:
-            try:
-                versionopt = version['increment']
-            except KeyError:
-                versionopt = '--newversion=%s' % version['version']
-        else:
-            versionopt = '-i'
-    elif release:
-        versionopt = "--release --no-force-save-on-release"
-        msg = None
-
-    if author and email:
-        env = """DEBFULLNAME="%s" DEBEMAIL="%s" """ % (author, email)
-
-    if distribution:
-        distopt = "--distribution=%s" % distribution
-
-    cmd = '%(env)s dch --no-auto-nmu %(distopt)s %(versionopt)s %(dch_options)s ' % locals()
-    if msg:
-        cmd += '-- "[[[insert-git-dch-commit-message-here]]]"'
-    else:
-        cmd += '-- ""'
-    system(cmd)
-    if msg:
-        old_cl = open("debian/changelog", "r")
-        new_cl = open("debian/changelog.bak", "w")
-        for line in old_cl:
-            if line == "  * [[[insert-git-dch-commit-message-here]]]\n":
-                print >> new_cl, "  * " + msg[0]
-                for line in msg[1:]:
-                    print >> new_cl, "    " + line
-            else:
-                print >> new_cl, line,
-        os.rename("debian/changelog.bak", "debian/changelog")
-
-
-def add_changelog_entry(msg, author, email, dch_options):
-    """Add a single changelog entry"""
-    spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
-
-
 def guess_version_from_upstream(repo, upstream_tag_format, cp):
     """
     Guess the version based on the latest version on the upstream branch
@@ -114,17 +48,6 @@ def guess_version_from_upstream(repo, upstream_tag_format, cp):
     except GitRepositoryError:
         gbp.log.debug("No upstream tag found")
     return None
-
-
-def add_changelog_section(msg, distribution, repo, options, cp,
-                          author=None, email=None, version={}, dch_options=''):
-    """Add a new section to the changelog"""
-    if not version and not cp.is_native():
-        v = guess_version_from_upstream(repo, options.upstream_tag, cp)
-        if v:
-            version['version'] = v
-    spawn_dch(msg=msg, newversion=True, version=version, author=author,
-              email=email, distribution=distribution, dch_options=dch_options)
 
 
 def get_author_email(repo, use_git_config):
@@ -148,7 +71,7 @@ def fixup_trailer(repo, git_author, dch_options):
     creating the changelog
     """
     author, email = get_author_email(repo, git_author)
-    spawn_dch(msg='', author=author, email=email, dch_options=dch_options)
+    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options)
 
 
 def snapshot_version(version):
@@ -221,7 +144,7 @@ def do_release(changelog, repo, cp, git_author, dch_options):
     if snapshot:
         cp['MangledVersion'] = release
         mangle_changelog(changelog, cp)
-    spawn_dch(release=True, author=author, email=email, dch_options=dch_options)
+    cp.spawn_dch(release=True, author=author, email=email, dch_options=dch_options)
 
 
 def do_snapshot(changelog, repo, next_snapshot):
@@ -289,15 +212,16 @@ def process_options(options, parser):
     if options.since and options.auto:
         parser.error("'--since' and '--auto' are incompatible options")
 
+    dch_options = []
     if options.multimaint_merge:
-        dch_options = "--multimaint-merge"
+        dch_options.append("--multimaint-merge")
     else:
-        dch_options = "--nomultimaint-merge"
+        dch_options.append("--nomultimaint-merge")
 
     if options.multimaint:
-        dch_options += " --multimaint"
+        dch_options.append("--multimaint")
     else:
-        dch_options += " --nomultimaint"
+        dch_options.append("--nomultimaint")
 
     get_customizations(options.customization_file)
     return dch_options
@@ -480,6 +404,12 @@ def main(argv):
         else:
             add_section = False
 
+        if add_section and not version_change and not cp.is_native():
+            # Get version from upstream if none provided
+            v = guess_version_from_upstream(repo, options.upstream_tag, cp)
+            if v:
+                version_change['version'] = v
+
         i = 0
         for c in commits:
             i += 1
@@ -493,18 +423,15 @@ def main(argv):
             if add_section:
                 # Add a section containing just this message (we can't
                 # add an empty section with dch)
-                add_changelog_section(distribution="UNRELEASED", msg=commit_msg,
-                                      version=version_change,
-                                      author=commit_author,
-                                      email=commit_email,
-                                      dch_options=dch_options,
-                                      repo=repo,
-                                      options=options,
-                                      cp=cp)
+                cp.add_section(distribution="UNRELEASED", msg=commit_msg,
+                               version=version_change,
+                               author=commit_author,
+                               email=commit_email,
+                               dch_options=dch_options)
                 # Adding a section only needs to happen once.
                 add_section = False
             else:
-                add_changelog_entry(commit_msg, commit_author, commit_email, dch_options)
+                cp.add_entry(commit_msg, commit_author, commit_email, dch_options)
 
 
         # Show a message if there were no commits (not even ignored
@@ -515,12 +442,9 @@ def main(argv):
         if add_section:
             # If we end up here, then there were no commits to include,
             # so we put a dummy message in the new section.
-            add_changelog_section(distribution="UNRELEASED", msg=["UNRELEASED"],
-                                  version=version_change,
-                                  dch_options=dch_options,
-                                  repo=repo,
-                                  options=options,
-                                  cp=cp)
+            cp.add_section(distribution="UNRELEASED", msg=["UNRELEASED"],
+                           version=version_change,
+                           dch_options=dch_options)
 
         fixup_trailer(repo, git_author=options.git_author,
                       dch_options=dch_options)
@@ -545,7 +469,7 @@ def main(argv):
             repo.commit_files([changelog], msg)
             gbp.log.info("Changelog has been committed for version %s" % version)
 
-    except (GbpError, GitRepositoryError, NoChangeLogError) as err:
+    except (gbpc.CommandExecFailed, GbpError, GitRepositoryError, NoChangeLogError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

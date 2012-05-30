@@ -223,3 +223,88 @@ def test_parse_sections():
     >>> cl.sections[1].version
     '0.5.31'
     """
+
+def test_add_section():
+    """
+    Test if we can add a section to an existant changelog
+
+    Methods tested:
+         - L{gbp.deb.changelog.ChangeLog.__init__}
+         - L{gbp.deb.changelog.ChangeLog._parse}
+         - L{gbp.deb.changelog.ChangeLog.add_section}
+         - L{gbp.deb.changelog.ChangeLog.spawn_dch}
+
+    >>> import os
+    >>> import tempfile
+    >>> import shutil
+    >>> import gbp.deb.changelog
+    >>> olddir = os.path.abspath(os.path.curdir)
+    >>> testdir = tempfile.mkdtemp(prefix='gbp-test-changelog-')
+    >>> testdebdir = os.path.join(testdir, 'debian')
+    >>> testclname = os.path.join(testdebdir, "changelog")
+    >>> os.mkdir(testdebdir)
+    >>> clh = open(os.path.join(testdebdir, "changelog"), "w")
+    >>> clh.write(cl_debian)
+    >>> clh.close()
+    >>> os.chdir(testdir)
+    >>> os.path.abspath(os.path.curdir) == testdir
+    True
+    >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
+    >>> cl.add_section(msg=["Test add section"], distribution=None, author="Debian Maintainer", email="maint@debian.org")
+    >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
+    >>> cl.version
+    '0.5.33'
+    >>> cl.debian_version
+    '0.5.33'
+    >>> cl['Distribution']
+    'UNRELEASED'
+    >>> 'Test add section' in cl['Changes']
+    True
+    >>> os.chdir(olddir)
+    >>> os.path.abspath(os.path.curdir) == olddir
+    True
+    >>> shutil.rmtree(testdir, ignore_errors=True)
+    """
+
+def test_add_entry():
+    """
+    Test if we can add an entry to an existant changelog
+
+    Methods tested:
+         - L{gbp.deb.changelog.ChangeLog.__init__}
+         - L{gbp.deb.changelog.ChangeLog._parse}
+         - L{gbp.deb.changelog.ChangeLog.add_entry}
+         - L{gbp.deb.changelog.ChangeLog.spawn_dch}
+
+    >>> import os
+    >>> import tempfile
+    >>> import shutil
+    >>> import gbp.deb.changelog
+    >>> olddir = os.path.abspath(os.path.curdir)
+    >>> testdir = tempfile.mkdtemp(prefix='gbp-test-changelog-')
+    >>> testdebdir = os.path.join(testdir, 'debian')
+    >>> testclname = os.path.join(testdebdir, "changelog")
+    >>> os.mkdir(testdebdir)
+    >>> clh = open(os.path.join(testdebdir, "changelog"), "w")
+    >>> clh.write(cl_debian)
+    >>> clh.close()
+    >>> os.chdir(testdir)
+    >>> os.path.abspath(os.path.curdir) == testdir
+    True
+    >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
+    >>> cl.add_section(msg=["Test add section"], distribution=None, author="Debian Maintainer", email="maint@debian.org")
+    >>> cl.add_entry(msg=["Test add entry"], author="Debian Maintainer", email="maint@debian.org")
+    >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
+    >>> cl.version
+    '0.5.33'
+    >>> cl.debian_version
+    '0.5.33'
+    >>> cl['Distribution']
+    'UNRELEASED'
+    >>> 'Test add entry' in cl['Changes']
+    True
+    >>> os.chdir(olddir)
+    >>> os.path.abspath(os.path.curdir) == olddir
+    True
+    >>> shutil.rmtree(testdir, ignore_errors=True)
+    """

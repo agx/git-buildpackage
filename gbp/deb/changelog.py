@@ -19,6 +19,7 @@
 import email
 import os
 import subprocess
+from gbp.command_wrappers import Command
 
 class NoChangeLogError(Exception):
     """No changelog found"""
@@ -214,3 +215,98 @@ class ChangeLog(object):
         Get sections in the changelog
         """
         return list(self.sections_iter)
+
+    @staticmethod
+    def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
+                  release=False, distribution=None, dch_options=[]):
+        """
+        Spawn dch
+
+        @param author: committers name
+        @type author: C{str}
+        @param email: committers email
+        @type email: C{str}
+        @param newversion: start a new version
+        @type newversion: C{bool}
+        @param version: the verion to use
+        @type version: C{str}
+        @param release: finalize changelog for releaze
+        @type release: C{bool}
+        @param distribution: distribution to use
+        @type distribution: C{str}
+        @param dch_options: options passed verbatim to dch
+        @type dch_options: C{list}
+        """
+        env = {}
+        args = ['--no-auto-nmu']
+        if newversion:
+            if version:
+                try:
+                    args.append(version['increment'])
+                except KeyError:
+                    args.append('--newversion=%s' % version['version'])
+            else:
+                args.append('-i')
+        elif release:
+            args.extend(["--release", "--no-force-save-on-release"])
+            msg = None
+
+        if author and email:
+            env = {'DEBFULLNAME': author, 'DEBEMAIL': email}
+
+        if distribution:
+            args.append("--distribution=%s" % distribution)
+
+        args.extend(dch_options)
+        args.append('--')
+        if msg:
+            args.append('[[[insert-git-dch-commit-message-here]]]')
+        else:
+            args.append('')
+        dch = Command('dch', args, extra_env=env)
+        dch.call([])
+        if msg:
+            old_cl = open("debian/changelog", "r")
+            new_cl = open("debian/changelog.bak", "w")
+            for line in old_cl:
+                if line == "  * [[[insert-git-dch-commit-message-here]]]\n":
+                    print >> new_cl, "  * " + msg[0]
+                    for line in msg[1:]:
+                        print >> new_cl, "    " + line
+                else:
+                    print >> new_cl, line,
+            os.rename("debian/changelog.bak", "debian/changelog")
+
+    def add_entry(self, msg, author=None, email=None, dch_options=[]):
+        """Add a single changelog entry
+
+        @param msg: log message to add
+        @type msg: C{str}
+        @param author: name of the author of the log message
+        @type author: C{str}
+        @param email: email of the author of the log message
+        @type email: C{str}
+        @param dch_options: options passed verbatim to dch
+        @type dch_options: C{list}
+        """
+        self.spawn_dch(msg=msg, author=author, email=email, dch_options=dch_options)
+
+    def add_section(self, msg, distribution, author=None, email=None,
+                    version={}, dch_options=[]):
+        """Add a new section to the changelog
+
+        @param msg: log message to add
+        @type msg: C{str}
+        @param distribution: distribution to set for the new changelog entry
+        @type distribution: C{str}
+        @param author: name of the author of the log message
+        @type author: C{str}
+        @param email: email of the author of the log message
+        @type email: C{str}
+        @param version: version to set for the new changelog entry
+        @param version: C{dict}
+        @param dch_options: options passed verbatim to dch
+        @type dch_options: C{list}
+        """
+        self.spawn_dch(msg=msg, newversion=True, version=version, author=author,
+                       email=email, distribution=distribution, dch_options=dch_options)
