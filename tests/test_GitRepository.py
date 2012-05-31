@@ -351,6 +351,7 @@ def test_get_commit_info():
          - L{gbp.git.GitRepository.get_commit_info}
 
     >>> import gbp.git
+    >>> from datetime import datetime
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> info = repo.get_commit_info('HEAD')
     >>> info['id']
@@ -360,6 +361,9 @@ def test_get_commit_info():
     >>> info['subject']
     'foo'
     >>> '@' in info['author'].email
+    True
+    >>> now = datetime.now()
+    >>> (now - datetime.fromtimestamp(int(info['author'].date.split()[0]))).seconds < 10
     True
     """
 

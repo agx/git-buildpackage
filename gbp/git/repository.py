@@ -1209,8 +1209,8 @@ class GitRepository(object):
         @return: the commit's including id, author, email, subject and body
         @rtype: dict
         """
-        args = GitArgs('--pretty=format:%an%x00%ae%x00%s%x00%b%x00',
-                       '-z', '--quiet', commit)
+        args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%s%x00%b%x00',
+                       '-z', '--quiet', '--date=raw', commit)
         out, err, ret =  self._git_inout('show', args.args)
         if ret:
             raise GitRepositoryError("Unable to retrieve commit info for %s"
@@ -1219,12 +1219,13 @@ class GitRepository(object):
         fields = out.split('\x00')
 
         author = GitModifier(fields[0].strip(),
-                             fields[1].strip())
+                             fields[1].strip(),
+                             fields[2].strip())
 
         return {'id' : commit,
                 'author' : author,
-                'subject' : fields[2],
-                'body' : fields[3]}
+                'subject' : fields[3],
+                'body' : fields[4]}
 
 #{ Patches
     def format_patches(self, start, end, output_dir, signature=True, thread=None):
