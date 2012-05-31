@@ -636,7 +636,6 @@ class GitRepository(object):
         @return: C{True} if the repository has that tree, C{False} otherwise
         @rtype: C{bool}
         """
-
         out, ret =  self._git_getoutput('ls-tree', [ treeish ])
         return [ True, False ][ret != 0]
 
@@ -644,7 +643,7 @@ class GitRepository(object):
         """
         Create a tree object from the current index
 
-        @param index_file: alternate index file to write the current index to
+        @param index_file: alternate index file to read changes from
         @type index_file: C{str}
         @return: the new tree object's sha1
         @rtype: C{str}
@@ -658,6 +657,26 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Can't write out current index")
         return tree[0].strip()
+
+    def make_tree(self, contents):
+        """
+        Create a tree based on contents. I{contents} has the same format than
+        the I{GitRepository.list_tree} output.
+        """
+        out=''
+        args = GitArgs('-z')
+
+        for obj in contents:
+             mode, type, sha1, name = obj
+             out += '%s %s %s\t%s\0' % (mode, type, sha1, name)
+
+        sha1, err, ret =  self._git_inout('mktree',
+                                          args.args,
+                                          out,
+                                          capture_stderr=True)
+        if ret:
+            raise GitRepositoryError("Failed to mktree: '%s'" % err)
+        return sha1.strip()
 
     def get_obj_type(self, obj):
         """

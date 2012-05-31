@@ -617,32 +617,28 @@ def test_update_ref():
     """
 
 
-def test_write_file():
+def test_make_tree():
     """
-    Test git-write-file
+    Test git-mk-tree
 
     Methods tested:
         - L{gbp.git.GitRepository.write_file}
-
-    >>> import gbp.git
-    >>> repo = gbp.git.GitRepository(repo_dir)
-    >>> repo.write_file('testfile')
-    '19af7398c894bc5e86e17259317e4db519e9241f'
-    """
-
-
-def test_list_tree():
-    """
-    Test git-ls-tree
-
-    Methods tested:
         - L{gbp.git.GitRepository.list_tree}
+        - L{gbp.git.GitRepository.make_tree}
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
-    >>> repo.list_tree('HEAD')
+    >>> sha1 = repo.write_file('testfile')
+    >>> sha1
+    '19af7398c894bc5e86e17259317e4db519e9241f'
+    >>> head = repo.list_tree('HEAD')
+    >>> head
     [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
+    >>> head.append(['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile2'])
+    >>> repo.make_tree(head)
+    '745951810c9e22fcc6de9b23f05efd6ab5512123'
     """
+
 
 def test_update_submodules():
     """
