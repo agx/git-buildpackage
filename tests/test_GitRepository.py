@@ -616,6 +616,20 @@ def test_update_ref():
     True
     """
 
+
+def test_list_tree():
+    """
+    Test git-ls-tree
+
+    Methods tested:
+        - L{gbp.git.GitRepository.list_tree}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.list_tree('HEAD')
+    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
+    """
+
 def test_update_submodules():
     """
     Updating submodules if we don't have any is a noop

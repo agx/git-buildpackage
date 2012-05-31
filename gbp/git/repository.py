@@ -672,6 +672,33 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Not a Git repository object: '%s'" % obj)
         return out[0].strip()
+
+    def list_tree(self, treeish, recurse=False):
+        """
+        Get a trees content. It returns a list of objects that match the
+        'ls-tree' output: [ mode, type, sha1, path ].
+
+        @param treeish: the treeish object to list
+        @type treeish: C{str}
+        @param recurse: whether to list the tree recursively
+        @type recurse: C{bool}
+        @return: the tree
+        @rtype: C{list} of objects. See above.
+        """
+        args = GitArgs('-z')
+        args.add_true(recurse, '-r')
+        args.add(treeish)
+
+        out, err, ret =  self._git_inout('ls-tree', args.args, capture_stderr=True)
+        if ret:
+            raise GitRepositoryError("Failed to ls-tree '%s': '%s'" % (treeish, err))
+
+        tree = []
+        for line in out.split('\0'):
+            if line:
+                tree.append(line.split(None, 3))
+        return tree
+
 #}
 
     def get_config(self, name):
