@@ -617,6 +617,20 @@ def test_update_ref():
     """
 
 
+def test_write_file():
+    """
+    Test git-write-file
+
+    Methods tested:
+        - L{gbp.git.GitRepository.write_file}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.write_file('testfile')
+    '19af7398c894bc5e86e17259317e4db519e9241f'
+    """
+
+
 def test_list_tree():
     """
     Test git-ls-tree

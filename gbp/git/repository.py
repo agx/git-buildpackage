@@ -917,6 +917,31 @@ class GitRepository(object):
         else:
             return []
 
+
+    def write_file(self, filename, filters=True):
+        """
+        Hash a single file and write it into the object database
+
+        @param filename: the filename to the content of the file to hash
+        @type filename: C{str}
+        @param filters: whether to run filters
+        @type filters: C{bool}
+        @return: the hash of the file
+        @rtype: C{str}
+        """
+        args = GitArgs('-w', '-t', 'blob')
+        args.add_false(filters, '--no-filters')
+        args.add(filename)
+
+        sha1, stderr, ret = self._git_inout('hash-object',
+                                            args.args,
+                                            capture_stderr=True)
+        if not ret:
+            return sha1.strip()
+        else:
+            raise GbpError("Failed to hash %s: %s" % (filename, stderr))
+#}
+
 #{ Comitting
 
     def _commit(self, msg, args=[], author_info=None):
