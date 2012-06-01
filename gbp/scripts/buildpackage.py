@@ -135,14 +135,14 @@ def write_tree(repo, options):
 
 def export_source(repo, tree, cp, options, dest_dir, tarball_dir):
     """
-    Export a verion of the source tree when building in a separate directory
+    Export a version of the source tree when building in a separate directory
 
     @param repo: the git repository to export from
     @type repo: L{gbp.git.GitRepository}
     @param cp: the package's changelog
     @param options: options to apply
     @param dest_dir: where to export the source to
-    @param tarball_dir: where to fetch the tarball form in overlay mode
+    @param tarball_dir: where to fetch the tarball from in overlay mode
     @returns: the temporary directory
     """
     # Extract orig tarball if git-overlay option is selected:
@@ -175,14 +175,13 @@ def extract_orig(orig_tarball, dest_dir):
 
     # Check if tarball extracts into a single folder or not:
     if upstream.unpacked != dest_dir:
-        # If it extracts a single folder, move all of its contents to dest_dir:
-        r = glob("%s/*" % upstream.unpacked)
-        r.extend(glob("%s/.*" % upstream.unpacked)) # include hidden files and folders
-        for f in r:
-            os.rename(f, os.path.join(dest_dir, os.path.basename(f)))
+        # If it extracts a single folder, move its contents to dest_dir:
+        gbp.log.debug("Moving %s to %s" % (upstream.unpacked, dest_dir))
+        tmpdir = dest_dir + '.new'
+        os.rename(upstream.unpacked, tmpdir)
+        os.rmdir(dest_dir)
+        os.rename(tmpdir, dest_dir)
 
-        # Remove that single folder:
-        os.rmdir(upstream.unpacked)
 #}
 
 def fetch_changelog(repo, options, tree):
