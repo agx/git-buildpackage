@@ -1,3 +1,23 @@
+git-buildpackage (0.6.0~git20120601) unstable; urgency=low
+
+  * Upload to unstable
+  * [a5f0d87] git-import-dsc: add --allow-unauthenticated
+    (Closes: #670623)
+  * [a116edd] Refactor deb helpers: move PristineTar class based on a patch
+    by Markus Lehtonen. This refactor is preparation to the upcoming rpm
+    support.
+  * [f52a417] git-buildpackage: add missing import so move_old_export works
+    again
+  * [16f0309] git-buildpackage overlay-mode: don't fail on files named like
+    the tarball. Instead of moving individual files around simply rename the
+    directories. This is faster and independent of the tarballs content.
+    (Closes: #675412)
+  * [7f580d9] git-buildpackage: allow to build packages from detached HEAD
+    state with --git-ignore-branch.
+    (Closes: #661598)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 01 Jun 2012 23:44:17 +0200
+
 git-buildpackage (0.6.0~git20120524) experimental; urgency=low
 
   [ Markus Lehtonen ]
