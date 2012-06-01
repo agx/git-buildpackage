@@ -448,6 +448,7 @@ def main(argv):
     retval = 0
     prefix = "git-"
     cp = None
+    branch = None
 
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
 
@@ -463,7 +464,6 @@ def main(argv):
         repo_dir = os.path.abspath(os.path.curdir)
 
     try:
-        branch = repo.get_branch()
         Command(options.cleaner, shell=True)()
         if not options.ignore_new:
             (ret, out) = repo.is_clean()
@@ -471,6 +471,13 @@ def main(argv):
                 gbp.log.err("You have uncommitted changes in your source tree:")
                 gbp.log.err(out)
                 raise GbpError, "Use --git-ignore-new to ignore."
+
+        try:
+            branch = repo.get_branch()
+        except GitRepositoryError:
+            # Not being on any branch is o.k. with --git-ignore-branch
+            if not options.ignore_branch:
+                raise
 
         if not options.ignore_new and not options.ignore_branch:
             if branch != options.debian_branch:
@@ -529,7 +536,7 @@ def main(argv):
 
             setup_pbuilder(options)
             # Finally build the package:
-            RunAtCommand(options.builder, dpkg_args, shell=True, 
+            RunAtCommand(options.builder, dpkg_args, shell=True,
                          extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)
             if options.postbuild:
                 arch = os.getenv('ARCH', None) or du.get_arch()
@@ -553,7 +560,7 @@ def main(argv):
                 sha = repo.rev_parse("%s^{}" % tag)
                 Command(options.posttag, shell=True,
                         extra_env={'GBP_TAG': tag,
-                                   'GBP_BRANCH': branch,
+                                   'GBP_BRANCH': branch or '(no branch)',
                                    'GBP_SHA1': sha})()
     except CommandExecFailed:
         retval = 1
