@@ -22,6 +22,7 @@ import errno
 import os, os.path
 import sys
 import tempfile
+import time
 import shutil
 import gbp.deb as du
 from gbp.command_wrappers import (Command,
