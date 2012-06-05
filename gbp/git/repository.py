@@ -139,7 +139,7 @@ class GitRepository(object):
                                  stdout=subprocess.PIPE,
                                  stderr=stderr_arg,
                                  env=env,
-                                 cwd=self.path)
+                                 cwd=cwd)
         (stdout, stderr) = popen.communicate(input)
         return stdout, stderr, popen.returncode
 
