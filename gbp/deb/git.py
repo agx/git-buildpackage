@@ -51,7 +51,7 @@ class DebianGitRepository(GitRepository):
             # dereference to a commit object
             return self.rev_parse("%s^0" % tag)
         elif self.has_tag(legacy_tag):
-            out, ret = self.__git_getoutput('cat-file', args=['-p', legacy_tag])
+            out, ret = self._git_getoutput('cat-file', args=['-p', legacy_tag])
             if ret:
                 return None
             for line in out:
