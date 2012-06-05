@@ -595,10 +595,11 @@ class GitRepository(object):
             args += [ '--match' , pattern ]
         args += [ commit ]
 
-        tag, ret = self._git_getoutput('describe', args)
+        tag, err, ret = self._git_inout('describe', args, capture_stderr=True)
         if ret:
-            raise GitRepositoryError("Can't find tag for %s" % commit)
-        return tag[0].strip()
+            raise GitRepositoryError("Can't find tag for %s. Git error: %s" % \
+                                         (commit, err.strip()))
+        return tag.strip()
 
     def get_tags(self, pattern=None):
         """

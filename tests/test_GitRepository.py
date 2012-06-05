@@ -256,7 +256,7 @@ def test_find_tag():
     >>> repo.find_tag('HEAD', pattern='foo*')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Can't find tag for HEAD
+    GitRepositoryError: Can't find tag for HEAD. Git error: fatal: No names found, cannot describe anything.
     """
 
 def test_move_tag():
