@@ -881,6 +881,28 @@ def test_get_merge_base():
     GitRepositoryError: Failed to get common ancestor: fatal: Not a valid object name doesnotexist
     """
 
+def test_status():
+    r"""
+    Methods tested:
+        - L{gbp.git.GitRepository.status}
+
+    >>> import gbp.git, os, shutil
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> fname = os.path.join(repo.path, "test_status")
+    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), fname)
+    >>> repo.status().items()
+    [('??', ['test_status'])]
+    >>> repo.status(['bla*']).items()
+    []
+    >>> repo.status(['te*']).items()
+    [('??', ['test_status'])]
+    >>> repo.add_files(repo.path, force=True)
+    >>> repo.commit_all(msg='added %s' % fname)
+    >>> _ = repo._git_inout('mv', [fname, fname + 'new'])
+    >>> repo.status().items()
+    [('R ', ['test_status\x00test_statusnew'])]
+    """
+
 def test_cmd_has_feature():
     r"""
     Methods tested:

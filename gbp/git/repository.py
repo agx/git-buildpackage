@@ -820,6 +820,39 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Can't execute repository clean: %s" % err)
 
+    def status(self, pathlist=None):
+        """
+        Check status of repository.
+
+        @param pathlist: List of paths to check status for
+        @type pathlist: C{list}
+        @return C{dict} of C{lists} of paths, where key is a git status flag.
+        @rtype C{dict}
+        """
+        options = GitArgs('--porcelain', '-z')
+        if pathlist:
+            for path in pathlist:
+                options.add(path)
+
+        out, err, ret = self._git_inout('status', options.args,
+                                        extra_env={'LC_ALL': 'C'})
+        if ret:
+            raise GitRepositoryError("Can't get repository status: %s" % err)
+
+        elements = out.split('\x00')
+        result = defaultdict(list)
+
+        while elements[0] != '':
+            element = elements.pop(0)
+            status = element[:2]
+            filepath = element[3:]
+            # Expect to have two filenames for renames and copies
+            if status[0] in ['R', 'C']:
+                filepath = elements.pop(0) + '\x00' + filepath
+            result[status].append(filepath)
+
+        return result
+
     def is_empty(self):
         """
         Is the repository empty?
