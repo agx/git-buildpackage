@@ -132,94 +132,126 @@ class GbpOptionParser(OptionParser):
              }
     help = {
              'debian-branch':
-                  "branch the Debian package is being developed on, default is '%(debian-branch)s'",
+                  ("Branch the Debian package is being developed on, "
+                   "default is '%(debian-branch)s'"),
              'upstream-branch':
-                  "upstream branch, default is '%(upstream-branch)s'",
+                  "Upstream branch, default is '%(upstream-branch)s'",
              'upstream-tree':
-                  "where to generate the upstream tarball from (tag or branch), default is '%(upstream-tree)s'",
+                  ("Where to generate the upstream tarball from "
+                   "(tag or branch), default is '%(upstream-tree)s'"),
              'debian-tag':
-                  "format string for debian tags, default is '%(debian-tag)s'",
+                  ("Format string for debian tags, "
+                   "default is '%(debian-tag)s'"),
              'upstream-tag':
-                  "format string for upstream tags, default is '%(upstream-tag)s'",
+                  ("Format string for upstream tags, "
+                   "default is '%(upstream-tag)s'"),
              'sign-tags':
-                  "sign tags, default is '%(sign-tags)s'",
+                  "Whether to sign tags, default is '%(sign-tags)s'",
              'keyid':
                   "GPG keyid to sign tags with, default is '%(keyid)s'",
              'import-msg':
-                  "format string for git-import-orig commit message, default is '%(import-msg)s'",
+                  ("Format string for commit message used to commit "
+                   "the upstream tarball, default is '%(import-msg)s'"),
              'commit-msg':
-                  "format string for git-dch commit message, default is '%(commit-msg)s'",
+                  ("Format string for commit messag used to commit, "
+                   "the changelog, default is '%(commit-msg)s'"),
              'pristine-tar':
-                  "use pristine-tar to create orig tarball, default is '%(pristine-tar)s'",
+                  ("Use pristine-tar to create orig tarball, "
+                   "default is '%(pristine-tar)s'"),
              'pristine-tar-commit':
-                  "When generating a tarball commit it to the pristine-tar branch '%(pristine-tar-commit)s'",
+                  ("When generating a tarball commit it to the pristine-tar branch '%(pristine-tar-commit)s' "
+                   "default is '%(pristine-tar-commit)s'"),
              'filter-pristine-tar':
                   "Filter pristine-tar when filter option is used, default is '%(filter-pristine-tar)s'",
              'filter':
-                  "files to filter out during import (can be given multiple times), default is %(filter)s",
+                  "Files to filter out during import (can be given multiple times), default is %(filter)s",
              'git-author':
-                  "use name and email from git-config for changelog trailer, default is '%(git-author)s'",
+                  "Use name and email from git-config for changelog trailer, default is '%(git-author)s'",
              'full':
-                  "include the full commit message instead of only the first line, default is '%(full)s'",
+                  "Include the full commit message instead of only the first line, default is '%(full)s'",
              'meta':
-                  "parse meta tags in commit messages, default is '%(meta)s'",
+                  "Parse meta tags in commit messages, default is '%(meta)s'",
              'ignore-new':
-                  "build with uncommited changes in the source tree, default is '%(ignore-new)s'",
+                  "Build with uncommited changes in the source tree, default is '%(ignore-new)s'",
              'ignore-branch':
-                  "build although debian-branch != current branch, default is '%(ignore-branch)s'",
+                  ("Build although debian-branch != current branch, "
+                   "default is '%(ignore-branch)s'"),
              'overlay':
-                  "extract orig tarball when using export-dir option, default is '%(overlay)s'",
+                  ("extract orig tarball when using export-dir option, "
+                   "default is '%(overlay)s'"),
              'remote-url-pattern':
-                  "Remote url pattern to create the repo at, default is '%(remote-url-pattern)s'",
+                  ("Remote url pattern to create the repo at, "
+                   "default is '%(remote-url-pattern)s'"),
              'multimaint':
                   "Note multiple maintainers, default is '%(multimaint)s'",
              'multimaint-merge':
-                  "Merge commits by maintainer, default is '%(multimaint-merge)s'",
+                  ("Merge commits by maintainer, "
+                   "default is '%(multimaint-merge)s'"),
              'pbuilder':
-                  "Invoke git-pbuilder for building, default is '%(pbuilder)s'",
+                  ("Invoke git-pbuilder for building, "
+                   "default is '%(pbuilder)s'"),
              'dist':
-                  "Build for this distribution when using git-pbuilder, default is '%(dist)s'",
+                  ("Build for this distribution when using git-pbuilder, "
+                   "default is '%(dist)s'"),
              'arch':
-                  "Build for this architecture when using git-pbuilder, default is '%(arch)s'",
+                  ("Build for this architecture when using git-pbuilder, "
+                   "default is '%(arch)s'"),
              'qemubuilder':
-                  "Invoke git-pbuilder with qemubuilder for building, default is '%(qemubuilder)s'",
+                  ("Invoke git-pbuilder with qemubuilder for building, "
+                   "default is '%(qemubuilder)s'"),
              'interactive':
-                  "Run command interactive, default is '%(interactive)s'",
+                  "Run command interactively, default is '%(interactive)s'",
              'color':
-                  "color output, default is '%(color)s'",
+                  "Whether to use colored output, default is '%(color)s'",
              'spawn-editor':
-                  "Whether to spawn an editor after adding the changelog entry, default is '%(spawn-editor)s'",
+                  ("Whether to spawn an editor after adding the "
+                   "changelog entry, default is '%(spawn-editor)s'"),
              'patch-numbers':
-                  "Whether to number patch files, default is %(patch-numbers)s",
+                  ("Whether to number patch files, "
+                   "default is %(patch-numbers)s"),
              'notify':
-                  "Whether to send a desktop notification after the build, default is '%(notify)s'",
+                  ("Whether to send a desktop notification after the build, "
+                   "default is '%(notify)s'"),
              'merge':
-                  "after the import merge the result to the debian branch, default is '%(merge)s'",
+                  ("After the import merge the result to the debian branch, "
+                   "default is '%(merge)s'"),
              'track':
-                  "set up tracking for remote branches, default is '%(track)s'",
+                  ("Set up tracking for remote branches, "
+                   "default is '%(track)s'"),
              'author-is-committer':
-                  "Use the authors's name also as the comitter's name, default is '%(author-is-committer)s'",
+                  ("Use the authors's name also as the comitter's name, "
+                   "default is '%(author-is-committer)s'"),
              'author-date-is-committer-date':
-                  "Use the authors's date as the comitter's date, default is '%(author-date-is-committer-date)s'",
+                  ("Use the authors's date as the comitter's date, "
+                   "default is '%(author-date-is-committer-date)s'"),
              'create-missing-branches':
-                  "Create missing branches automatically, default is '%(create-missing-branches)s'",
+                  ("Create missing branches automatically, "
+                   "default is '%(create-missing-branches)s'"),
              'submodules':
-                  "Transparently handle submodules in the upstream tree, default is '%(submodules)s'",
+                  ("Transparently handle submodules in the upstream tree, "
+                   "default is '%(submodules)s'"),
              'postimport':
-                  "hook run after a successful import, default is '%(postimport)s'",
+                  ("hook run after a successful import, "
+                   "default is '%(postimport)s'"),
              'time-machine':
-                  ("don't try head commit only to apply the patch queue but look TIME_MACHINE commits back. "
-                   "Default is '%(time-machine)d'"),
+                  ("don't try head commit only to apply the patch queue "
+                   "but look TIME_MACHINE commits back, "
+                   "default is '%(time-machine)d'"),
              'pbuilder-autoconf':
-                  "Wheter to configure pbuilder automatically. Default is '%(pbuilder-autoconf)s'",
+                  ("Wheter to configure pbuilder automatically, "
+                   "default is '%(pbuilder-autoconf)s'"),
              'pbuilder-options':
-                  "Options to pass to pbuilder, default is '%(pbuilder-options)s'",
+                  ("Options to pass to pbuilder, "
+                   "default is '%(pbuilder-options)s'"),
              'template-dir':
-                  "Template directory used by git init, default is '%(template-dir)s'",
+                  ("Template directory used by git init, "
+                   "default is '%(template-dir)s'"),
              'remote-config':
-                  "Remote defintion in gbp.conf used to create the remote repository",
+                  ("Remote defintion in gbp.conf used to create the remote "
+                   "repository, default is '%(remote-config)s'"),
              'allow-unauthenticated':
-                  "Don't verify integrity of downloaded source",
+                  ("Don't verify integrity of downloaded source, "
+                   "default is '%(allow-unauthenticated)s'"),
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',
