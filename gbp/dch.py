@@ -106,7 +106,7 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     GitRepository.get_commit_info()).  If last_commit is not False,
     then this entry is the last one in the series."""
     entry = [commit_info['subject']]
-    body = commit_info['body']
+    body = commit_info['body'].splitlines()
     commitid = commit_info['id']
     (git_dch_cmds, body) = extract_git_dch_cmds(body, options)
 

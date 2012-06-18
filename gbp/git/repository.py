@@ -1192,17 +1192,19 @@ class GitRepository(object):
         @return: the commit's including id, author, email, subject and body
         @rtype: dict
         """
-        out, ret =  self._git_getoutput('log',
-                                         ['--pretty=format:%an%n%ae%n%s%n%b%n',
-                                          '-n1', commit])
-        if ret:
-            raise GitRepositoryError("Unable to retrieve log entry for %s"
+        args = GitArgs('--pretty=format:%an%x00%ae%x00%s%x00%b%x00',
+                       '-z', '--quiet', commit)
+        out, err, ret =  self._git_inout('show', args.args)
+        if ret > 1:
+            raise GitRepositoryError("Unable to retrieve commit info for %s"
                                      % commit)
+
+        fields = out.split('\x00')
         return {'id' : commit,
-                'author' : out[0].strip(),
-                'email' : out[1].strip(),
-                'subject' : out[2].rstrip(),
-                'body' : [line.rstrip() for line in  out[3:]]}
+                'author' : fields[0].strip(),
+                'email' : fields[1].strip(),
+                'subject' : fields[2],
+                'body' : fields[3]}
 
 
 #{ Patches

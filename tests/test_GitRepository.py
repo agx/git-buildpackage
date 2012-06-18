@@ -354,7 +354,7 @@ def test_get_commit_info():
     >>> info['id']
     'HEAD'
     >>> info['body']
-    ['']
+    ''
     >>> info['subject']
     'foo'
     >>> '@' in info['email']
