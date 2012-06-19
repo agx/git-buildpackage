@@ -19,6 +19,7 @@
 import re
 import subprocess
 import os.path
+from collections import defaultdict
 
 import gbp.log as log
 from gbp.command_wrappers import (GitCommand, CommandExecFailed)
@@ -1210,7 +1211,7 @@ class GitRepository(object):
         @rtype: dict
         """
         args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%cn%x00%ce%x00%cd%x00%s%x00%b%x00',
-                       '-z', '--quiet', '--date=raw', commit)
+                       '-z', '--date=raw', '--name-status', commit)
         out, err, ret =  self._git_inout('show', args.args)
         if ret:
             raise GitRepositoryError("Unable to retrieve commit info for %s"
@@ -1225,11 +1226,21 @@ class GitRepository(object):
                                 fields[4].strip(),
                                 fields[5].strip())
 
+        files = defaultdict(list)
+        file_fields = fields[8:]
+        # For some reason git returns one extra empty field for merge commits
+        if file_fields[0] == '': file_fields.pop(0)
+        while len(file_fields) and file_fields[0] != '':
+            status = file_fields.pop(0).strip()
+            path = file_fields.pop(0)
+            files[status].append(path)
+
         return {'id' : commit,
                 'author' : author,
                 'committer' : committer,
                 'subject' : fields[6],
-                'body' : fields[7]}
+                'body' : fields[7],
+                'files' : files}
 
 #{ Patches
     def format_patches(self, start, end, output_dir, signature=True, thread=None):

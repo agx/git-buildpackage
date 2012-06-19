@@ -369,6 +369,8 @@ def test_get_commit_info():
     True
     >>> (now - datetime.fromtimestamp(int(info['committer'].date.split()[0]))).seconds < 10
     True
+    >>> info['files']
+    defaultdict(<type 'list'>, {'M': ['testfile']})
     """
 
 def test_mirror_clone():
