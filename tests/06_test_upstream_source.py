@@ -13,13 +13,21 @@ import zipfile
 from gbp.pkg import UpstreamSource
 
 class TestDir(unittest.TestCase):
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp(prefix='gbp_%s_' % __name__, dir='.')
+        self.upstream_dir = os.path.join(self.tmpdir, 'test-1.0')
+        os.mkdir(self.upstream_dir)
+
     def test_directory(self):
         """Upstream source is a directory"""
-        source = UpstreamSource('.')
+        source = UpstreamSource(self.upstream_dir)
         self.assertEqual(source.is_orig(), False)
-        self.assertEqual(source.path, '.')
-        self.assertEqual(source.unpacked, '.')
+        self.assertEqual(source.path, self.upstream_dir)
+        self.assertEqual(source.unpacked, self.upstream_dir)
 
+    def tearDown(self):
+        if not os.getenv("GBP_TESTS_NOCLEAN"):
+            shutil.rmtree(self.tmpdir)
 
 class TestTar(unittest.TestCase):
     """Test if packing tar archives works"""
