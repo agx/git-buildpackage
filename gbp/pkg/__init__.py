@@ -265,6 +265,9 @@ class UpstreamSource(object):
         Guess the package name and version from the filename of an upstream
         archive.
 
+        @param extra_regex: extra regular expression to check
+        @type extra_regex: raw C{string}
+
         >>> UpstreamSource('foo-bar_0.2.orig.tar.gz').guess_version()
         ('foo-bar', '0.2')
         >>> UpstreamSource('foo-Bar_0.2.orig.tar.gz').guess_version()
@@ -293,12 +296,16 @@ class UpstreamSource(object):
         @rtype: tuple
         """
         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
-        extensions = r'\.tar\.(%s)' % "|".join(self.known_compressions())
+        if self.is_dir():
+            extensions = ''
+        else:
+            extensions = r'\.tar\.(%s)' % "|".join(self.known_compressions())
 
         version_filters = map ( lambda x: x % (version_chars, extensions),
-                           ( # Debian package_<version>.orig.tar.gz:
+                           ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
                              r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig%s',
-                             # Upstream package-<version>.tar.gz:
+                             # Upstream 'package-<version>.tar.gz'
+                             # or directory 'package-<version>':
                              r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)%s'))
         if extra_regex:
             version_filters = extra_regex + version_filters
