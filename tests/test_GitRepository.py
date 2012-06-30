@@ -430,6 +430,8 @@ def test_clone():
     ['origin']
     >>> clone.has_remote_repo('origin')
     True
+    >>> clone.has_branch('origin/master', remote=True)
+    True
     >>> clone.has_remote_repo('godiug')
     False
     """
