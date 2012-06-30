@@ -340,6 +340,27 @@ def test_get_commits():
     True
     """
 
+
+def test_get_commit_info():
+    """
+    Test inspecting commits
+
+    Methods tested:
+         - L{gbp.git.GitRepository.get_commit_info}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> info = repo.get_commit_info('HEAD')
+    >>> info['id']
+    'HEAD'
+    >>> info['body']
+    ['']
+    >>> info['subject']
+    'foo'
+    >>> '@' in info['email']
+    True
+    """
+
 def test_mirror_clone():
     """
     Mirror a repository
