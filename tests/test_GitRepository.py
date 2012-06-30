@@ -357,7 +357,7 @@ def test_get_commit_info():
     ''
     >>> info['subject']
     'foo'
-    >>> '@' in info['email']
+    >>> '@' in info['author'].email
     True
     """
 

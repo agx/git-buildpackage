@@ -1200,12 +1200,14 @@ class GitRepository(object):
                                      % commit)
 
         fields = out.split('\x00')
+
+        author = GitModifier(fields[0].strip(),
+                             fields[1].strip())
+
         return {'id' : commit,
-                'author' : fields[0].strip(),
-                'email' : fields[1].strip(),
+                'author' : author,
                 'subject' : fields[2],
                 'body' : fields[3]}
-
 
 #{ Patches
     def format_patches(self, start, end, output_dir, signature=True, thread=None):

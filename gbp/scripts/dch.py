@@ -249,8 +249,8 @@ def do_snapshot(changelog, repo, next_snapshot):
 def parse_commit(repo, commitid, opts, last_commit=False):
     """Parse a commit and return message, author, and author email"""
     commit_info = repo.get_commit_info(commitid)
-    author = commit_info['author']
-    email = commit_info['email']
+    author = commit_info['author'].name
+    email = commit_info['author'].email
     format_entry = user_customizations.get('format_changelog_entry')
     if not format_entry:
         format_entry = dch.format_changelog_entry
