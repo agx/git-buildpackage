@@ -362,8 +362,12 @@ def test_get_commit_info():
     'foo'
     >>> '@' in info['author'].email
     True
+    >>> '@' in info['committer'].email
+    True
     >>> now = datetime.now()
     >>> (now - datetime.fromtimestamp(int(info['author'].date.split()[0]))).seconds < 10
+    True
+    >>> (now - datetime.fromtimestamp(int(info['committer'].date.split()[0]))).seconds < 10
     True
     """
 

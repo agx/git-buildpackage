@@ -1209,7 +1209,7 @@ class GitRepository(object):
         @return: the commit's including id, author, email, subject and body
         @rtype: dict
         """
-        args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%s%x00%b%x00',
+        args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%cn%x00%ce%x00%cd%x00%s%x00%b%x00',
                        '-z', '--quiet', '--date=raw', commit)
         out, err, ret =  self._git_inout('show', args.args)
         if ret:
@@ -1221,11 +1221,15 @@ class GitRepository(object):
         author = GitModifier(fields[0].strip(),
                              fields[1].strip(),
                              fields[2].strip())
+        committer = GitModifier(fields[3].strip(),
+                                fields[4].strip(),
+                                fields[5].strip())
 
         return {'id' : commit,
                 'author' : author,
-                'subject' : fields[3],
-                'body' : fields[4]}
+                'committer' : committer,
+                'subject' : fields[6],
+                'body' : fields[7]}
 
 #{ Patches
     def format_patches(self, start, end, output_dir, signature=True, thread=None):
