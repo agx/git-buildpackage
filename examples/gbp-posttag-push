@@ -83,7 +83,7 @@ def main(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] paths')
-    except ConfigParser.ParsingError, err:
+    except ConfigParser.ParsingError as err:
         gbp.log.errror(err)
         return 1
 

@@ -1138,7 +1138,7 @@ class GitRepository(object):
         commits, ret = self._git_getoutput('log', args.args)
         if ret:
             where = " on %s" % paths if paths else ""
-            raise GitRepositoryError, ("Error getting commits %s..%s%s" %
+            raise GitRepositoryError("Error getting commits %s..%s%s" %
                         (since, until, where))
         return [ commit.strip() for commit in commits ]
 
@@ -1391,7 +1391,7 @@ class GitRepository(object):
                     description += '\n' if description[-1] != '\n' else ''
                     f.write(description)
             return klass(abspath)
-        except OSError, err:
+        except OSError as err:
             raise GitRepositoryError("Cannot create Git repository at '%s': %s"
                                      % (abspath, err[1]))
         return None
@@ -1446,7 +1446,7 @@ class GitRepository(object):
                 elif name.endswith('.git'):
                     name = name[:-4]
             return klass(os.path.join(abspath, name))
-        except OSError, err:
+        except OSError as err:
             raise GitRepositoryError("Cannot clone Git repository "
                                      "'%s' to '%s': %s"
                                      % (remote, abspath, err[1]))

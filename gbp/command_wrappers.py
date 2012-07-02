@@ -108,8 +108,8 @@ class Command(object):
         """
         try:
             ret = self.__call(args)
-        except OSError, e:
-            raise CommandExecFailed, "Execution failed: %s" % e
+        except OSError as e:
+            raise CommandExecFailed("Execution failed: %s" % e)
         return ret
 
 

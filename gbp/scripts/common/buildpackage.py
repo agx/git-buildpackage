@@ -97,7 +97,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules):
     try:
         ret = pipe.copy('', '')
         if ret:
-            raise GbpError, "Error in dump_tree archive pipe"
+            raise GbpError("Error in dump_tree archive pipe")
 
         if with_submodules:
             if repo.has_submodules():
@@ -113,11 +113,11 @@ def dump_tree(repo, export_dir, treeish, with_submodules):
                 ret = pipe.copy('', '')
                 os.chdir(top)
                 if ret:
-                     raise GbpError, "Error in dump_tree archive pipe in submodule %s" % subdir
-    except OSError, err:
+                     raise GbpError("Error in dump_tree archive pipe in submodule %s" % subdir)
+    except OSError as err:
         gbp.log.err("Error dumping tree to %s: %s" % (output_dir, err[0]))
         return False
-    except GbpError, err:
+    except GbpError as err:
         gbp.log.err(err)
         return False
     except Exception as e:

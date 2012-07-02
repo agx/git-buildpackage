@@ -47,7 +47,7 @@ except ImportError:
 else:
     try:
         CLIENT = ZeitgeistClient()
-    except RuntimeError, e:
+    except RuntimeError as e:
         print "Unable to connect to Zeitgeist, won't send events. Reason: '%s'" %e
 
 

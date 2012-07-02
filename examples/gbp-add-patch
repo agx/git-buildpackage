@@ -106,7 +106,7 @@ def main(argv):
 
     except CommandExecFailed:
         retval = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             print >>sys.stderr, err
         retval = 1

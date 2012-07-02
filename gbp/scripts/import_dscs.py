@@ -61,7 +61,7 @@ def fetch_snapshots(pkg, downloaddir):
 
     dscs = glob.glob(os.path.join(downloaddir, '*.dsc'))
     if not dscs:
-        raise GbpError, 'No package downloaded'
+        raise GbpError('No package downloaded')
 
     return [os.path.join(downloaddir, dsc) for dsc in dscs]
 
@@ -136,7 +136,7 @@ def main(argv):
             (clean, out) = repo.is_clean()
             if not clean:
                 gbp.log.err("Repository has uncommitted changes, commit these first: ")
-                raise GbpError, out
+                raise GbpError(out)
             else:
                 dirs['pkg'] = dirs['top']
         except GitRepositoryError:
@@ -149,7 +149,7 @@ def main(argv):
         for dsc in dscs[1:]:
             importer.importdsc(dsc)
 
-    except (GbpError, gbpc.CommandExecFailed), err:
+    except (GbpError, gbpc.CommandExecFailed) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

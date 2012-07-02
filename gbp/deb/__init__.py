@@ -94,20 +94,20 @@ class DpkgCompareVersions(gbpc.Command):
 
     def __init__(self):
         if not os.access(self.cmd, os.X_OK):
-            raise GbpError, "%s not found - cannot use compare versions" % self.cmd
+            raise GbpError("%s not found - cannot use compare versions" % self.cmd)
         gbpc.Command.__init__(self, self.cmd, ['--compare-versions'])
 
     def __call__(self, version1, version2):
         self.run_error = "Couldn't compare %s with %s" % (version1, version2)
         res = gbpc.Command.call(self, [ version1, 'lt', version2 ])
         if res not in [ 0, 1 ]:
-            raise gbpc.CommandExecFailed, "%s: bad return code %d" % (self.run_error, res)
+            raise gbpc.CommandExecFailed("%s: bad return code %d" % (self.run_error, res))
         if res == 0:
             return -1
         elif res == 1:
             res = gbpc.Command.call(self, [ version1, 'gt', version2 ])
             if res not in [ 0, 1 ]:
-                raise gbpc.CommandExecFailed, "%s: bad return code %d" % (self.run_error, res)
+                raise gbpc.CommandExecFailed("%s: bad return code %d" % (self.run_error, res))
             if res == 0:
                 return 1
         return 0
@@ -174,13 +174,13 @@ class DscFile(object):
         f.close()
 
         if not self.pkg:
-            raise GbpError, "Cannot parse package name from '%s'" % self.dscfile
+            raise GbpError("Cannot parse package name from '%s'" % self.dscfile)
         elif not self.tgz:
-            raise GbpError, "Cannot parse archive name from '%s'" % self.dscfile
+            raise GbpError("Cannot parse archive name from '%s'" % self.dscfile)
         if not self.upstream_version:
-            raise GbpError, "Cannot parse version number from '%s'" % self.dscfile
+            raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
         if not self.native and not self.debian_version:
-            raise GbpError, "Cannot parse Debian version number from '%s'" % self.dscfile
+            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
 
     def _get_version(self):
         version = [ "", self.epoch + ":" ][len(self.epoch) > 0]
@@ -200,8 +200,8 @@ def parse_dsc(dscfile):
     """parse dsc by creating a DscFile object"""
     try:
         dsc = DscFile(dscfile)
-    except IOError, err:
-        raise GbpError, "Error reading dsc file: %s" % err
+    except IOError as err:
+        raise GbpError("Error reading dsc file: %s" % err)
 
     return dsc
 
@@ -217,7 +217,7 @@ def parse_changelog_repo(repo, branch, filename):
         # repository errors.
         sha = repo.rev_parse("%s:%s" % (branch, filename))
     except GitRepositoryError:
-        raise NoChangeLogError, "Changelog %s not found in branch %s" % (filename, branch)
+        raise NoChangeLogError("Changelog %s not found in branch %s" % (filename, branch))
 
     lines = repo.show(sha)
     return ChangeLog('\n'.join(lines))

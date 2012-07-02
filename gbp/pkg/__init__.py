@@ -175,13 +175,13 @@ class UpstreamSource(object):
         and determine the toplevel of the source tree.
         """
         if self.is_dir():
-            raise GbpError, "Cannot unpack directory %s" % self.path
+            raise GbpError("Cannot unpack directory %s" % self.path)
 
         if not filters:
             filters = []
 
         if type(filters) != type([]):
-            raise GbpError, "Filters must be a list"
+            raise GbpError("Filters must be a list")
 
         self._unpack_archive(dir, filters)
         self.unpacked = self._unpacked_toplevel(dir)
@@ -200,7 +200,7 @@ class UpstreamSource(object):
         try:
             gbpc.UnpackZipArchive(self.path, dir)()
         except gbpc.CommandExecFailed:
-            raise GbpError, "Unpacking of %s failed" % self.path
+            raise GbpError("Unpacking of %s failed" % self.path)
 
     def _unpacked_toplevel(self, dir):
         """unpacked archives can contain a leading directory or not"""
@@ -236,13 +236,13 @@ class UpstreamSource(object):
         @rtype: UpstreamSource
         """
         if not self.unpacked:
-            raise GbpError, "Need an unpacked source tree to pack"
+            raise GbpError("Need an unpacked source tree to pack")
 
         if not filters:
             filters = []
 
         if type(filters) != type([]):
-            raise GbpError, "Filters must be a list"
+            raise GbpError("Filters must be a list")
 
         try:
             unpacked = self.unpacked.rstrip('/')

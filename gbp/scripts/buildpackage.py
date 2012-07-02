@@ -46,7 +46,7 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submo
     try:
         comp_opts = compressor_opts[comp_type][0]
     except KeyError:
-        raise GbpError, "Unsupported compression type '%s'" % comp_type
+        raise GbpError("Unsupported compression type '%s'" % comp_type)
 
     output = os.path.join(output_dir, du.orig_file(cp, comp_type))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
@@ -63,7 +63,7 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submo
     except CommandExecFailed:
         gbp.log.err("Error generating submodules' archives")
         return False
-    except OSError, err:
+    except OSError as err:
         gbp.log.err("Error creating %s: %s" % (output, err[0]))
         return False
     except GbpError:
@@ -148,7 +148,7 @@ def export_source(repo, tree, cp, options, dest_dir, tarball_dir):
     # Extract orig tarball if git-overlay option is selected:
     if options.overlay:
         if cp.is_native():
-            raise GbpError, "Cannot overlay Debian native package"
+            raise GbpError("Cannot overlay Debian native package")
         extract_orig(os.path.join(tarball_dir, du.orig_file(cp, options.comp_type)), dest_dir)
 
     gbp.log.info("Exporting '%s' to '%s'" % (options.export, dest_dir))
@@ -160,7 +160,7 @@ def move_old_export(target):
     """move a build tree away if it exists"""
     try:
         os.mkdir(target)
-    except OSError, (e, msg):
+    except OSError as (e, msg):
         if e == errno.EEXIST:
             os.rename(target, "%s.obsolete.%s" % (target, time.time()))
 
@@ -194,11 +194,11 @@ def fetch_changelog(repo, options, tree):
         else:
             cp = ChangeLog(filename=changelog)
     except NoChangeLogError:
-        raise GbpError, "'%s' does not exist, not a debian package" % changelog
-    except ParseChangeLogError, err:
-        raise GbpError, "Error parsing Changelog: %s" % err
+        raise GbpError("'%s' does not exist, not a debian package" % changelog)
+    except ParseChangeLogError as err:
+        raise GbpError("Error parsing Changelog: %s" % err)
     except KeyError:
-        raise GbpError, "Can't parse version from changelog"
+        raise GbpError("Can't parse version from changelog")
     return cp
 
 
@@ -211,9 +211,9 @@ def prepare_output_dir(dir):
 
     try:
         os.mkdir(output_dir)
-    except OSError, (e, msg):
+    except OSError as (e, msg):
         if e != errno.EEXIST:
-            raise GbpError, "Cannot create output dir %s" % output_dir
+            raise GbpError("Cannot create output dir %s" % output_dir)
     return output_dir
 
 def pristine_tar_build_orig(repo, cp, output_dir, options):
@@ -306,7 +306,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
             for comp in compressor_opts.keys():
                 if du.DebianPkgPolicy.has_orig(du.orig_file(cp, comp), tarball_dir):
                     if detected is not None:
-                        raise GbpError, "Multiple orig tarballs found."
+                        raise GbpError("Multiple orig tarballs found.")
                     detected = comp
             if detected is not None:
                 comp_type = detected
@@ -356,7 +356,7 @@ def parse_args(argv, prefix):
 
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix=prefix)
-    except ConfigParser.ParsingError, err:
+    except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None, None
 
@@ -470,7 +470,7 @@ def main(argv):
             if not ret:
                 gbp.log.err("You have uncommitted changes in your source tree:")
                 gbp.log.err(out)
-                raise GbpError, "Use --git-ignore-new to ignore."
+                raise GbpError("Use --git-ignore-new to ignore.")
 
         try:
             branch = repo.get_branch()
@@ -482,7 +482,7 @@ def main(argv):
         if not options.ignore_new and not options.ignore_branch:
             if branch != options.debian_branch:
                 gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
-                raise GbpError, "Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name."
+                raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
 
         tree = write_tree(repo, options)
         cp = fetch_changelog(repo, options, tree)
@@ -564,7 +564,7 @@ def main(argv):
                                    'GBP_SHA1': sha})()
     except CommandExecFailed:
         retval = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1

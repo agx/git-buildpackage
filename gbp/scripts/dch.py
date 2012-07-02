@@ -215,8 +215,8 @@ def mangle_changelog(changelog, cp, snapshot=''):
         cr.close()
         os.unlink(changelog)
         os.rename(tmpfile, changelog)
-    except OSError, e:
-        raise GbpError, "Error mangling changelog %s" % e
+    except OSError as e:
+        raise GbpError("Error mangling changelog %s" % e)
 
 
 def do_release(changelog, repo, cp, git_author, dch_options):
@@ -337,7 +337,7 @@ def main(argv):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                        usage='%prog [options] paths')
-    except ConfigParser.ParsingError, err:
+    except ConfigParser.ParsingError as err:
         gbp.log.errror(err)
         return 1
     range_group = GbpOptionGroup(parser, "commit range options",
@@ -418,12 +418,12 @@ def main(argv):
         try:
             repo = DebianGitRepository('.')
         except GitRepositoryError:
-            raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
+            raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
         branch = repo.get_branch()
         if options.debian_branch != branch and not options.ignore_branch:
             gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
-            raise GbpError, "Use --ignore-branch to ignore or --debian-branch to set the branch name."
+            raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
 
         cp = ChangeLog(filename=changelog)
 
@@ -441,7 +441,7 @@ def main(argv):
             if not since:
                 since = repo.find_version(options.debian_tag, cp['Version'])
                 if not since:
-                    raise GbpError, "Version %s not found" % cp['Version']
+                    raise GbpError("Version %s not found" % cp['Version'])
 
         if args:
             gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
@@ -537,7 +537,7 @@ def main(argv):
             repo.commit_files([changelog], msg)
             gbp.log.info("Changelog has been committed for version %s" % version)
 
-    except (GbpError, GitRepositoryError, NoChangeLogError), err:
+    except (GbpError, GitRepositoryError, NoChangeLogError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

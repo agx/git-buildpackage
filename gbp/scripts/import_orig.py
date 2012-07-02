@@ -62,8 +62,8 @@ def symlink_orig(archive, pkg, version):
         try:
             if not is_link_target(archive, link):
                 os.symlink(os.path.abspath(archive), link)
-        except OSError, err:
-                raise GbpError, "Cannot symlink '%s' to '%s': %s" % (archive, link, err[1])
+        except OSError as err:
+                raise GbpError("Cannot symlink '%s' to '%s': %s" % (archive, link, err[1]))
         return link
     else:
         return archive
@@ -98,7 +98,7 @@ def detect_name_and_version(repo, source, options):
                 if guessed_package:
                     sourcepackage = guessed_package
                 else:
-                    raise GbpError, "Couldn't determine upstream package name. Use --interactive."
+                    raise GbpError("Couldn't determine upstream package name. Use --interactive.")
 
     # Try to find the version.
     if options.version:
@@ -112,7 +112,7 @@ def detect_name_and_version(repo, source, options):
             if guessed_version:
                 version = guessed_version
             else:
-                raise GbpError, "Couldn't determine upstream version. Use '-u<version>' or --interactive."
+                raise GbpError("Couldn't determine upstream version. Use '-u<version>' or --interactive.")
 
     return (sourcepackage, version)
 
@@ -125,27 +125,27 @@ def find_source(options, args):
     """
     if options.uscan: # uscan mode
         if args:
-            raise GbpError, "you can't pass both --uscan and a filename."
+            raise GbpError("you can't pass both --uscan and a filename.")
 
         gbp.log.info("Launching uscan...")
         try:
             status, source = do_uscan()
         except KeyError:
-            raise GbpError, "error running uscan - debug by running uscan --verbose"
+            raise GbpError("error running uscan - debug by running uscan --verbose")
 
         if status:
             if source:
                 gbp.log.info("using %s" % source)
                 args.append(source)
             else:
-                raise GbpError, "uscan didn't download anything, and no source was found in ../"
+                raise GbpError("uscan didn't download anything, and no source was found in ../")
         else:
             gbp.log.info("package is up to date, nothing to do.")
             return None
     if len(args) > 1: # source specified
-        raise GbpError, "More than one archive specified. Try --help."
+        raise GbpError("More than one archive specified. Try --help.")
     elif len(args) == 0:
-        raise GbpError, "No archive to import specified. Try --help."
+        raise GbpError("No archive to import specified. Try --help.")
     else:
         archive = OrigUpstreamSource(args[0])
         return archive
@@ -165,7 +165,7 @@ def parse_args(argv):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                        usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
-    except ConfigParser.ParsingError, err:
+    except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None
 
@@ -241,7 +241,7 @@ def main(argv):
         try:
             repo = DebianGitRepository('.')
         except GitRepositoryError:
-            raise GbpError, "%s is not a git repository" % (os.path.abspath('.'))
+            raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
         # an empty repo has now branches:
         initial_branch = repo.get_branch()
@@ -256,7 +256,7 @@ def main(argv):
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
             gbp.log.err("Repository has uncommitted changes, commit these first: ")
-            raise GbpError, out
+            raise GbpError(out)
 
         if repo.bare:
             set_bare_repo_options(options)
@@ -275,7 +275,7 @@ def main(argv):
         # Don't mess up our repo with git metadata from an upstream tarball
         try:
             if os.path.isdir(os.path.join(source.unpacked, '.git/')):
-                raise GbpError, "The orig tarball contains .git metadata - giving up."
+                raise GbpError("The orig tarball contains .git metadata - giving up.")
         except OSError:
             pass
 
@@ -303,7 +303,7 @@ def main(argv):
                                      other_parents=parents,
                                      )
             if not commit:
-                raise GbpError, "Import of upstream version %s failed." % version
+                raise GbpError("Import of upstream version %s failed." % version)
 
             if options.pristine_tar:
                 if pristine_orig:
@@ -326,7 +326,7 @@ def main(argv):
                 try:
                     repo.merge(tag)
                 except gbpc.CommandExecFailed:
-                    raise GbpError, """Merge failed, please resolve."""
+                    raise GbpError("Merge failed, please resolve.")
                 if options.postimport:
                     epoch = ''
                     if os.access('debian/changelog', os.R_OK):
@@ -340,12 +340,12 @@ def main(argv):
                     env = { 'GBP_BRANCH': options.debian_branch }
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
         except gbpc.CommandExecFailed:
-            raise GbpError, "Import of %s failed" % source.path
-    except GbpNothingImported, err:
+            raise GbpError("Import of %s failed" % source.path)
+    except GbpNothingImported as err:
         gbp.log.err(err)
         repo.set_branch(initial_branch)
         ret = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

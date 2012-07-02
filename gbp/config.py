@@ -367,7 +367,7 @@ class GbpOptionParser(OptionParser):
         elif default.lower() in ["false", "0" ]:
             val = 'False'
         else:
-            raise ValueError, "Boolean options must be True or False"
+            raise ValueError("Boolean options must be True or False")
         return eval(val)
 
     def get_default(self, option_name, **kwargs):

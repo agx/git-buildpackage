@@ -49,9 +49,9 @@ def export_patches(repo, branch, options):
     pq_branch = pq_branch_name(branch)
     try:
         shutil.rmtree(PATCH_DIR)
-    except OSError, (e, msg):
+    except OSError as (e, msg):
         if e != errno.ENOENT:
-            raise GbpError, "Failed to remove patch dir: %s" % msg
+            raise GbpError("Failed to remove patch dir: %s" % msg)
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
@@ -122,8 +122,8 @@ def import_quilt_patches(repo, branch, series, tries, force):
         if force:
             drop_pq(repo, branch)
         else:
-            raise GbpError, ("Patch queue branch '%s'. already exists. Try 'rebase' instead."
-                             % pq_branch)
+            raise GbpError("Patch queue branch '%s'. already exists. Try 'rebase' instead."
+                           % pq_branch)
 
     commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
@@ -137,7 +137,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
             gbp.log.info("Trying to apply patches at '%s'" % commit)
             repo.create_branch(pq_branch, commit)
         except CommandExecFailed:
-            raise GbpError, ("Cannot create patch-queue branch '%s'." % pq_branch)
+            raise GbpError("Cannot create patch-queue branch '%s'." % pq_branch)
 
         repo.set_branch(pq_branch)
         for patch in queue:
@@ -152,7 +152,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
             # All patches applied successfully
             break
     else:
-        raise GbpError, "Couldn't apply patches"
+        raise GbpError("Couldn't apply patches")
 
     if tmpdir:
         gbp.log.debug("Remove temporary patch safe '%s'" % tmpdir)
@@ -251,7 +251,7 @@ def main(argv):
             switch_pq(repo, current)
     except CommandExecFailed:
         retval = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1

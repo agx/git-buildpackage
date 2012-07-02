@@ -127,7 +127,7 @@ def main(argv):
         repo.set_branch(current)
     except CommandExecFailed:
         retval = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1

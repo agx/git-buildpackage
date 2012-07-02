@@ -168,7 +168,7 @@ class PatchSeries(list):
 
         try:
             s = file(seriesfile)
-        except Exception, err:
+        except Exception as err:
             raise GbpError("Cannot open series file: %s" % err)
 
         queue = klass._read_series(s, patch_dir)

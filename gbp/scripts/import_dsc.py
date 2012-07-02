@@ -71,7 +71,7 @@ def apply_patch(diff):
         if ret:
             gbp.log.err("Error import %s: %d" % (diff, ret))
             return False
-    except OSError, err:
+    except OSError as err:
         gbp.log.err("Error importing %s: %s" % (diff, err[0]))
         return False
     return True
@@ -183,7 +183,7 @@ def parse_args(argv):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                        usage='%prog [options] /path/to/package.dsc')
-    except ConfigParser.ParsingError, err:
+    except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None
 
@@ -261,7 +261,7 @@ def main(argv):
 
             src = parse_dsc(dsc)
             if src.pkgformat not in [ '1.0', '3.0' ]:
-                raise GbpError, "Importing %s source format not yet supported." % src.pkgformat
+                raise GbpError("Importing %s source format not yet supported." % src.pkgformat)
             if options.verbose:
                 print_dsc(src)
 
@@ -272,7 +272,7 @@ def main(argv):
                 (clean, out) = repo.is_clean()
                 if not clean and not is_empty:
                     gbp.log.err("Repository has uncommitted changes, commit these first: ")
-                    raise GbpError, out
+                    raise GbpError(out)
 
             except GitRepositoryError:
                 # no repo found, create one
@@ -357,10 +357,10 @@ def main(argv):
         gbp.log.err("Interrupted. Aborting.")
     except gbpc.CommandExecFailed:
         ret = 1
-    except GitRepositoryError, msg:
+    except GitRepositoryError as msg:
         gbp.log.err("Git command failed: %s" % msg)
         ret = 1
-    except GbpError, err:
+    except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

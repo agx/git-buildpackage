@@ -78,7 +78,7 @@ class ChangeLog(object):
             raise Exception("Either filename or contents must be passed")
 
         if filename and not os.access(filename, os.F_OK):
-            raise NoChangeLogError, "Changelog %s not found" % (filename, )
+            raise NoChangeLogError("Changelog %s not found" % (filename, ))
 
         if contents:
             self._contents = contents[:]
@@ -109,7 +109,7 @@ class ChangeLog(object):
             else:
                 cp['Debian-Version'] = cp['NoEpoch-Version']
         except TypeError:
-            raise ParseChangeLogError, output.split('\n')[0]
+            raise ParseChangeLogError(output.split('\n')[0])
 
         self._cp = cp
 
