@@ -1195,7 +1195,7 @@ class GitRepository(object):
         args = GitArgs('--pretty=format:%an%x00%ae%x00%s%x00%b%x00',
                        '-z', '--quiet', commit)
         out, err, ret =  self._git_inout('show', args.args)
-        if ret > 1:
+        if ret:
             raise GitRepositoryError("Unable to retrieve commit info for %s"
                                      % commit)
 
