@@ -561,7 +561,12 @@ def test_checkout():
     Traceback (most recent call last):
     ...
     GitRepositoryError: revision 'doesnotexist' not found
+    >>> sha1 = repo.rev_parse('master', short=10)
+    >>> len(sha1)
+    10
     >>> sha1 = repo.rev_parse('master')
+    >>> len(sha1)
+    40
     >>> repo.checkout(sha1)
     >>> repo.branch
     >>> repo.get_branch()

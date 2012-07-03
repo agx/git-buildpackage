@@ -602,7 +602,7 @@ class GitRepository(object):
         # an empty repo has no branches:
         return False if self.branch else True
 
-    def rev_parse(self, name, short=None):
+    def rev_parse(self, name, short=0):
         """
         Find the SHA1 of a given name
 
@@ -614,7 +614,7 @@ class GitRepository(object):
         @rtype: C{str}
         """
         args = GitArgs("--quiet", "--verify")
-        args.add_cond(short, '--short=%s' % short)
+        args.add_cond(short, '--short=%d' % short)
         args.add(name)
         sha, ret = self._git_getoutput('rev-parse', args.args)
         if ret:
