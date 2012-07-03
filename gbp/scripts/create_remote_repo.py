@@ -358,7 +358,7 @@ def main(argv):
 
     except CommandExecFailed:
         retval = 1
-    except GbpError as err:
+    except (GbpError, GitRepositoryError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1

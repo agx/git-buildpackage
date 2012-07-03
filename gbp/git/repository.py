@@ -44,6 +44,8 @@ class GitRepository(object):
     @type _path: C{str}
     @ivar _bare: Whether this is a bare repository
     @type _bare: C{bool}
+    @raises GitRepositoryError: on git errors GitRepositoryError is raised by
+        all methods.
     """
 
     def _check_bare(self):
@@ -156,7 +158,11 @@ class GitRepository(object):
         @param extra_env: extra environment variables to set when running command
         @type extra_env: C{dict}
         """
-        GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
+        try:
+            GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
+        except CommandExecFailed as excobj:
+            raise GitRepositoryError("Error running git %s: %s" %
+                                     (command, excobj))
 
     @property
     def path(self):
@@ -542,7 +548,7 @@ class GitRepository(object):
 
         try:
             self._git_command('tag', args.args)
-        except CommandExecFailed:
+        except GitRepositoryError:
             return False
         return True
 
@@ -1418,7 +1424,11 @@ class GitRepository(object):
         try:
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
-            GitCommand("init", args.args, cwd=abspath)()
+            try:
+                GitCommand("init", args.args, cwd=abspath)()
+            except CommandExecFailed as  excobj:
+                raise GitRepositoryError("Error running git init: %s" % excobj)
+
             if description:
                 with file(os.path.join(abspath, git_dir, "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
@@ -1470,7 +1480,12 @@ class GitRepository(object):
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
 
-            GitCommand("clone", args.args, cwd=abspath)()
+            try:
+                GitCommand("clone", args.args, cwd=abspath)()
+            except CommandExecFailed as excobj:
+                raise GitRepositoryError("Error running git clone: %s" %
+                                         excobj)
+
             if not name:
                 name = remote.rstrip('/').rsplit('/',1)[1]
                 if (mirror or bare):

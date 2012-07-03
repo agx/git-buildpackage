@@ -325,7 +325,7 @@ def main(argv):
                 repo.set_branch(options.debian_branch)
                 try:
                     repo.merge(tag)
-                except gbpc.CommandExecFailed:
+                except GitRepositoryError:
                     raise GbpError("Merge failed, please resolve.")
                 if options.postimport:
                     epoch = ''
@@ -339,7 +339,7 @@ def main(argv):
                     info = { 'version': "%s%s-1" % (epoch, version) }
                     env = { 'GBP_BRANCH': options.debian_branch }
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
-        except gbpc.CommandExecFailed:
+        except (gbpc.CommandExecFailed, GitRepositoryError):
             raise GbpError("Import of %s failed" % source.path)
     except GbpNothingImported as err:
         gbp.log.err(err)

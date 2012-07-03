@@ -24,7 +24,6 @@ import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
-from gbp.command_wrappers import (Command, CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
 
@@ -100,8 +99,9 @@ def main(argv):
 
         repo.set_branch(options.debian_branch)
 
-    except CommandExecFailed:
-        retval = 1
+    except GitRepositoryError as err:
+        gbp.log.err("Git command failed: %s" % err)
+        ret = 1
     except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)

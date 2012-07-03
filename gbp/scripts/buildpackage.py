@@ -60,7 +60,7 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submo
         else:
             git_archive_single(treeish, output, prefix,
                                comp_type, comp_level, comp_opts)
-    except CommandExecFailed:
+    except (GitRepositoryError, CommandExecFailed):
         gbp.log.err("Error generating submodules' archives")
         return False
     except OSError as err:
@@ -564,7 +564,7 @@ def main(argv):
                                    'GBP_SHA1': sha})()
     except CommandExecFailed:
         retval = 1
-    except GbpError as err:
+    except (GbpError, GitRepositoryError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1

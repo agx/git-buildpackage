@@ -23,8 +23,7 @@ import os
 import shutil
 import subprocess
 from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
-                                  CommandExecFailed)
+from gbp.command_wrappers import (Command, GitCommand, RunAtCommand)
 from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
@@ -138,7 +137,7 @@ def switch_to_pq_branch(repo, branch):
     if not repo.has_branch(pq_branch):
         try:
             repo.create_branch(pq_branch)
-        except CommandExecFailed:
+        except GitRepositoryError:
             raise GbpError("Cannot create patch-queue branch '%s'. Try 'rebase' instead."
                            % pq_branch)
 

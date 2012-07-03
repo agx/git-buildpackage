@@ -35,9 +35,7 @@ commits debian/patches/0010-bla-fasel with this changelog message:
 import re
 import sys
 import os, os.path
-from gbp.command_wrappers import (Command,
-                                  CommandExecFailed,
-                                  GitCommand)
+from gbp.command_wrappers import (Command)
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
@@ -104,7 +102,7 @@ def main(argv):
         repo.commit_staged(edit=options.edit, msg=msg)
         # FIXME: handle the series file
 
-    except CommandExecFailed:
+    except GitRepositoryError:
         retval = 1
     except GbpError as err:
         if len(err.__str__()):

@@ -149,7 +149,7 @@ def main(argv):
         for dsc in dscs[1:]:
             importer.importdsc(dsc)
 
-    except (GbpError, gbpc.CommandExecFailed) as err:
+    except (GbpError, gbpc.CommandExecFailed, GitRepositoryError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

@@ -136,7 +136,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
         try:
             gbp.log.info("Trying to apply patches at '%s'" % commit)
             repo.create_branch(pq_branch, commit)
-        except CommandExecFailed:
+        except GitRepositoryError:
             raise GbpError("Cannot create patch-queue branch '%s'." % pq_branch)
 
         repo.set_branch(pq_branch)
@@ -144,7 +144,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
             gbp.log.debug("Applying %s" % patch.path)
             try:
                 apply_and_commit_patch(repo, patch, patch.topic)
-            except (GbpError, GitRepositoryError, CommandExecFailed):
+            except (GbpError, GitRepositoryError):
                 repo.set_branch(branch)
                 repo.delete_branch(pq_branch)
                 break
@@ -251,7 +251,7 @@ def main(argv):
             switch_pq(repo, current)
     except CommandExecFailed:
         retval = 1
-    except GbpError as err:
+    except (GbpError, GitRepositoryError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         retval = 1
