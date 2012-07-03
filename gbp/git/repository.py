@@ -602,17 +602,21 @@ class GitRepository(object):
         # an empty repo has no branches:
         return False if self.branch else True
 
-    def rev_parse(self, name):
+    def rev_parse(self, name, short=None):
         """
         Find the SHA1 of a given name
 
         @param name: the name to look for
         @type name: C{str}
+        @param short:  try to abbreviate SHA1 to given length
+        @type short: C{int}
         @return: the name's sha1
         @rtype: C{str}
         """
-        args = [ "--quiet", "--verify", name ]
-        sha, ret = self._git_getoutput('rev-parse', args)
+        args = GitArgs("--quiet", "--verify")
+        args.add_cond(short, '--short=%s' % short)
+        args.add(name)
+        sha, ret = self._git_getoutput('rev-parse', args.args)
         if ret:
             raise GitRepositoryError("revision '%s' not found" % name)
         return sha[0].strip()
