@@ -33,3 +33,34 @@ def test_author():
     'bar'
     >>> modifier['date']
     """
+
+def test_date():
+    """
+    Methods tested:
+         - L{gbp.git.GitModifier.__init__}
+
+    Properties tested:
+         - L{gbp.git.GitModifier.date}
+         - L{gbp.git.GitModifier.datetime}
+         - L{gbp.git.GitModifier.tz_offset}
+
+    >>> import gbp.git
+    >>> import datetime
+    >>> modifier = gbp.git.GitModifier('foo', 'bar', 1)
+    >>> modifier.date
+    '1 +0000'
+    >>> modifier.date = '1 +0400'
+    >>> modifier.date
+    '1 +0400'
+    >>> modifier['date']
+    '1 +0400'
+    >>> modifier.datetime
+    datetime.datetime(1970, 1, 1, 0, 0, 1)
+    >>> modifier.date = datetime.datetime(1970, 1, 1, 0, 0, 1)
+    >>> modifier.date
+    '1 +0000'
+    >>> modifier.datetime
+    datetime.datetime(1970, 1, 1, 0, 0, 1)
+    >>> modifier.tz_offset
+    '+0000'
+    """

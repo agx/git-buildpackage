@@ -20,8 +20,9 @@ Someone who modifiers something in git
 like committing changes or authoring a patch
 """
 
-from gbp.git.errors import GitError
+import calendar, datetime
 
+from gbp.git.errors import GitError
 
 class GitModifierError(GitError):
     """Exception thrown by L{GitModifier}"""
@@ -31,9 +32,33 @@ class GitModifierError(GitError):
 class GitModifier(object):
     """Stores authorship/comitter information"""
     def __init__(self, name=None, email=None, date=None):
+        """
+        @param name: the modifier's name
+        @type name: C{str}
+        @param email: the modifier's email
+        @type email: C{str}
+        @param date: the date of the modification
+        @type date: C{str} (git raw date), C{int} (timestamp) or I{datetime} object
+        """
         self.name = name
         self.email = email
-        self.date = date
+        self._parse_date(date)
+
+    def _parse_date(self, date):
+        self._offset = '+0000'
+        self._date = None
+
+        if isinstance(date, basestring):
+            timestamp, offset = date.split()
+            self._date = datetime.datetime.utcfromtimestamp(int(timestamp))
+            self._offset = offset
+        elif type(date) in  [ type(0), type(0.0) ]:
+            self._date = datetime.datetime.utcfromtimestamp(date)
+        elif isinstance(date, datetime.datetime):
+            self._date = date
+        elif date != None:
+            raise ValueError("Date '%s' not timestamp, "
+                             "datetime object or git raw date" % date)
 
     def _get_env(self, who):
         """Get author or comitter information as env var dictionary"""
@@ -49,6 +74,30 @@ class GitModifier(object):
         if self.date:
             extra_env['GIT_%s_DATE' % who] = self.date
         return extra_env
+
+    def get_date(self):
+        """Return date as a git raw date"""
+        if self._date:
+            return "%s %s" % (calendar.timegm(self._date.utctimetuple()),
+                              self._offset)
+        else:
+            return None
+
+    def set_date(self, date):
+        """Set date from timestamp, git raw date or datetime object"""
+        self._parse_date(date)
+
+    date = property(get_date, set_date)
+
+    @property
+    def datetime(self):
+        """Return the date as datetime object"""
+        return self._date
+
+    @property
+    def tz_offset(self):
+        """Return the date's UTC offset"""
+        return self._offset
 
     def get_author_env(self):
         """
@@ -77,10 +126,10 @@ class GitModifier(object):
         return self._get_env('committer')
 
     def __getitem__(self, key):
-        if key in self.keys():
-            return self.__dict__[key]
+        if key == 'date':
+            return self.date
         else:
-            raise KeyError
+            return self.__dict__[key]
 
     def keys(self):
         return [ 'name', 'email', 'date' ]
