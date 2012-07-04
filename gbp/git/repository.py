@@ -745,7 +745,7 @@ class GitRepository(object):
         @rtype: L{GitModifier}
         """
         try:
-           name =  self.get_config("user.email")
+           name =  self.get_config("user.name")
         except KeyError:
            name = os.getenv("USER")
         try:
