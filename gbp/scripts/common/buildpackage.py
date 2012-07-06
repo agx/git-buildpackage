@@ -128,9 +128,9 @@ def dump_tree(repo, export_dir, treeish, with_submodules):
     return True
 
 
-def write_wc(repo):
+def write_wc(repo, force=True):
     """write out the current working copy as a treeish object"""
-    repo.add_files(repo.path, force=True, index_file=wc_index)
+    repo.add_files(repo.path, force=force, index_file=wc_index)
     tree = repo.write_tree(index_file=wc_index)
     return tree
 
