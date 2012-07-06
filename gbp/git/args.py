@@ -15,6 +15,8 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import collections
+
 class GitArgs(object):
     """
     Handle arguments to git commands
@@ -23,6 +25,8 @@ class GitArgs(object):
     ['-h', '--no-foo']
     >>> GitArgs().add('--more-foo', '--less-bar').args
     ['--more-foo', '--less-bar']
+    >>> GitArgs().add(['--foo', '--bar']).args
+    ['--foo', '--bar']
     >>> GitArgs().add_cond(1 > 2, '--opt', '--no-opt').args
     ['--no-opt']
     >>> GitArgs().add_true(True, '--true').args
@@ -44,7 +48,15 @@ class GitArgs(object):
         """
         Add arguments to argument list
         """
-        self._args += list(args)
+        for arg in args:
+            if isinstance(arg, basestring):
+                self._args.append(arg)
+            elif isinstance(arg, collections.Iterable):
+                for i in iter(arg):
+                    self._args.append(str(i))
+            else:
+                self._args.append(str(arg))
+
         return self
 
     def add_true(self, condition, *args):
