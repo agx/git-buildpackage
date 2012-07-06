@@ -25,6 +25,7 @@ try:
 except ImportError:
     gbp_version = "[Unknown version]"
 import gbp.tristate
+from gbp.git import GitRepositoryError, GitRepository
 
 no_upstream_branch_msg = """
 Repository does not have branch '%s' for upstream sources. If there is none see
@@ -307,28 +308,32 @@ class GbpOptionParser(OptionParser):
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',
                          '~/.gbp.conf',
-                         '.gbp.conf',
-                         'debian/gbp.conf',
-                         '.git/gbp.conf' ]
+                         '%(top_dir)s/.gbp.conf',
+                         '%(top_dir)s/debian/gbp.conf',
+                         '%(git_dir)s/gbp.conf' ]
 
     @classmethod
-    def get_config_files(klass):
+    def get_config_files(klass, no_local=False):
         """
         Get list of config files from the I{GBP_CONF_FILES} environment
         variable.
 
+        @param no_local: don't return the per-repo configuration files
+        @type no_local: C{str}
         @return: list of config files we need to parse
         @rtype: C{list}
 
         >>> conf_backup = os.getenv('GBP_CONF_FILES')
         >>> if conf_backup is not None: del os.environ['GBP_CONF_FILES']
+        >>> homedir = os.path.expanduser("~")
         >>> files = GbpOptionParser.get_config_files()
-
-        # Remove the ~-expanded one
-        >>> del files[1]
-        >>> files
-        ['/etc/git-buildpackage/gbp.conf', '.gbp.conf', 'debian/gbp.conf', '.git/gbp.conf']
-
+        >>> files_mangled = [file.replace(homedir, 'HOME') for file in files]
+        >>> files_mangled
+        ['/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf', '%(top_dir)s/.gbp.conf', '%(top_dir)s/debian/gbp.conf', '%(git_dir)s/gbp.conf']
+        >>> files = GbpOptionParser.get_config_files(no_local=True)
+        >>> files_mangled = [file.replace(homedir, 'HOME') for file in files]
+        >>> files_mangled
+        ['/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf']
         >>> os.environ['GBP_CONF_FILES'] = 'test1:test2'
         >>> GbpOptionParser.get_config_files()
         ['test1', 'test2']
@@ -337,7 +342,24 @@ class GbpOptionParser(OptionParser):
         """
         envvar = os.environ.get('GBP_CONF_FILES')
         files = envvar.split(':') if envvar else klass.def_config_files
-        return [ os.path.expanduser(f) for f in files ]
+        files = [os.path.expanduser(fname) for fname in files]
+        if no_local:
+            files = [fname for fname in files if fname.startswith('/')]
+        return files
+
+    def _read_config_file(self, parser, repo, filename):
+        """Read config file"""
+        str_fields = {}
+        if repo:
+            str_fields['git_dir'] = repo.git_dir
+            if not repo.bare:
+                str_fields['top_dir'] = repo.path
+        try:
+            filename = filename % str_fields
+        except KeyError:
+            # Skip if filename wasn't expanded, i.e. we're not in git repo
+            return
+        parser.read(filename)
 
     def parse_config_files(self):
         """
@@ -349,7 +371,14 @@ class GbpOptionParser(OptionParser):
         self.config = dict(self.__class__.defaults)
         # Update with the values from the defaults section. This is needed
         # in case the config file doesn't have a [<command>] section at all
-        parser.read(self.config_files)
+        config_files = self.get_config_files()
+        try:
+            repo = GitRepository(".")
+        except GitRepositoryError:
+            repo = None
+        # Read all config files
+        for filename in config_files:
+            self._read_config_file(parser, repo, filename)
         self.config.update(dict(parser.defaults()))
 
         # Make sure we read any legacy sections prior to the real subcommands
@@ -405,7 +434,6 @@ class GbpOptionParser(OptionParser):
         self.sections = sections
         self.prefix = prefix
         self.config = {}
-        self.config_files = self.get_config_files()
         self.parse_config_files()
         self.valid_options = []
 
