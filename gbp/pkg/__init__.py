@@ -179,8 +179,9 @@ class UpstreamSource(object):
     @cvar _unpacked: path to the unpacked source tree
     @type _unpacked: string
     """
-    def __init__(self, name, unpacked=None):
+    def __init__(self, name, unpacked=None, pkg_policy=PkgPolicy):
         self._orig = False
+        self._pkg_policy = pkg_policy
         self._path = name
         self.unpacked = unpacked
 
@@ -317,7 +318,7 @@ class UpstreamSource(object):
         except gbpc.CommandExecFailed:
             # repackArchive already printed an error
             raise GbpError
-        return UpstreamSource(newarchive)
+        return type(self)(newarchive)
 
     @staticmethod
     def known_compressions():

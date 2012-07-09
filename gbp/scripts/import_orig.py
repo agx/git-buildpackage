@@ -23,13 +23,14 @@ import sys
 import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
+from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
 import gbp.log
-from gbp.scripts.common.import_orig import (OrigUpstreamSource, cleanup_tmp_tree,
+from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
                                             repack_source, is_link_target)
 
@@ -167,7 +168,7 @@ def find_source(use_uscan, args):
     elif len(args) == 0:
         raise GbpError("No archive to import specified. Try --help.")
     else:
-        archive = OrigUpstreamSource(args[0])
+        archive = DebianUpstreamSource(args[0])
         return archive
 
 
@@ -300,7 +301,7 @@ def main(argv):
             source.unpack(tmpdir, options.filters)
             gbp.log.debug("Unpacked '%s' to '%s'" % (source.path, source.unpacked))
 
-        if source.needs_repack(options):
+        if orig_needs_repack(source, options):
             gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
             (source, tmpdir)  = repack_source(source, sourcepackage, version, tmpdir, options.filters)
 
