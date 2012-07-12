@@ -1497,7 +1497,7 @@ class GitRepository(object):
         # the latter.
         submodules = []
         if path is None:
-            path = "."
+            path = self.path
 
         args = [ treeish ]
         if recursive:
@@ -1508,8 +1508,9 @@ class GitRepository(object):
             mode, objtype, commit, name = line[:-1].split(None, 3)
             # A submodules is shown as "commit" object in ls-tree:
             if objtype == "commit":
-                nextpath = os.path.sep.join([path, name])
-                submodules.append( (nextpath, commit) )
+                nextpath = os.path.join(path, name)
+                submodules.append( (nextpath.replace(self.path,'').lstrip('/'),
+                                    commit) )
                 if recursive:
                     submodules += self.get_submodules(commit, path=nextpath,
                                                       recursive=recursive)
