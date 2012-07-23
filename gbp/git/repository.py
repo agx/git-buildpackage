@@ -795,11 +795,12 @@ class GitRepository(object):
         @param fetch: whether to fetch immediately from the remote side
         @type fetch: C{bool}
         """
-        args = [ "add" ]
-        args += [] if tags else [ '--no-tags']
-        args += [ '--fetch' ] if fetch else []
-        args += [ name, url ]
-        self._git_command("remote", args)
+        args = GitArgs('add')
+        args.add_false(tags, '--no-tags')
+        args.add_true(fetch, '--fetch')
+        args.add(name, url)
+        self._git_command("remote", args.args)
+
 
     def fetch(self, repo=None, tags=False, depth=0):
         """
