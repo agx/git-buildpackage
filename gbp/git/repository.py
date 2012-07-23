@@ -801,6 +801,9 @@ class GitRepository(object):
         args.add(name, url)
         self._git_command("remote", args.args)
 
+    def remove_remote_repo(self, name):
+        args = GitArgs('rm', name)
+        self._git_command("remote", args.args)
 
     def fetch(self, repo=None, tags=False, depth=0):
         """

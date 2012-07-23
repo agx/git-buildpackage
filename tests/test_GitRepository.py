@@ -473,6 +473,8 @@ def test_fetch():
          - L{gbp.git.GitRepository.fetch}
          - L{gbp.git.GitRepository.push}
          - L{gbp.git.GitRepository.push_tag}
+         - L{gbp.git.GitRepository.add_remote_repo}
+         - L{gbp.git.GitRepository.remove_remote_repo}
 
     >>> import gbp.git, os
     >>> d = os.path.join(clone_dir, 'gbp_%s_test_repo' % __name__)
@@ -486,6 +488,7 @@ def test_fetch():
     >>> clone.add_remote_repo('foo', repo_dir)
     >>> clone.fetch('foo')
     >>> clone.fetch('foo', tags=True)
+    >>> clone.remove_remote_repo('foo')
     """
 
 def test_create_bare():
