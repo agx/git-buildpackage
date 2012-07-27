@@ -584,7 +584,7 @@ class GitRepository(object):
         clean_msg = 'nothing to commit'
 
         args = GitArgs()
-        args.add_false(untracked, '-uno')
+        args.add_true(ignore_untracked, '-uno')
 
         out, ret = self._git_getoutput('status',
                                        args.args,
