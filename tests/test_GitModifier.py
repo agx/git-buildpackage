@@ -25,8 +25,6 @@ def test_author():
     Traceback (most recent call last):
     ...
     GitModifierError: Neither comitter nor author
-    >>> modifier.keys()
-    ['name', 'email', 'date']
     >>> modifier['name']
     'foo'
     >>> modifier['email']
@@ -64,3 +62,15 @@ def test_date():
     >>> modifier.tz_offset
     '+0000'
     """
+
+def test_dict():
+    """
+    Test C{dict} interface
+    >>> import gbp.git
+    >>> modifier = gbp.git.GitModifier('foo', 'bar', 1)
+    >>> sorted(modifier.keys())
+    ['date', 'email', 'name']
+    >>> sorted(modifier.items())
+    [('date', '1 +0000'), ('email', 'bar'), ('name', 'foo')]
+    """
+
