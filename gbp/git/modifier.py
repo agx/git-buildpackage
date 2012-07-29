@@ -137,7 +137,7 @@ class GitModifier(object):
     def items(self):
         items = []
         for key in self.keys():
-            val = self.__dict__[key]
+            val = self.__getitem__(key)
             if val:
                 items.append((key, val))
         return items
