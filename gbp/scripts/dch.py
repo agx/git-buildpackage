@@ -78,7 +78,7 @@ def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
     if distribution:
         distopt = "--distribution=%s" % distribution
 
-    cmd = '%(env)s dch --no-auto-nmu  %(distopt)s %(versionopt)s %(dch_options)s ' % locals()
+    cmd = '%(env)s dch --no-auto-nmu %(distopt)s %(versionopt)s %(dch_options)s ' % locals()
     if msg:
         cmd += '-- "[[[insert-git-dch-commit-message-here]]]"'
     else:
@@ -379,7 +379,7 @@ def main(argv):
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
                       help="Increment the Debian release number for an upload to backports, and add a backport upload changelog comment.")
     version_group.add_option("--nmu", dest="nmu", action="store_true", default=False,
-                      help="Increment  the  Debian  release  number  for a non-maintainer upload")
+                      help="Increment the Debian release number for a non-maintainer upload")
     version_group.add_option("--qa", dest="qa", action="store_true", default=False,
                       help="Increment the Debian release number for a Debian QA Team upload, and add a QA upload changelog comment.")
     version_group.add_option("--team", dest="team", action="store_true", default=False,
@@ -453,11 +453,11 @@ def main(argv):
         if options.new_version or options.bpo or options.nmu or options.qa or options.team:
             if options.bpo:
                 version_change['increment'] = '--bpo'
-            elif  options.nmu:
+            elif options.nmu:
                 version_change['increment'] = '--nmu'
-            elif  options.qa:
+            elif options.qa:
                 version_change['increment'] = '--qa'
-            elif  options.team:
+            elif options.team:
                 version_change['increment'] = '--team'
             else:
                 version_change['version'] = options.new_version

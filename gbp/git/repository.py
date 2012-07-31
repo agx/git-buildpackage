@@ -55,7 +55,7 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError(
                 "Failed to get repository state at '%s'" % self.path)
-        self._bare = False if  out.strip() != 'true' else True
+        self._bare = False if out.strip() != 'true' else True
         self._git_dir = '' if self._bare else '.git'
 
     def __init__(self, path):
@@ -499,7 +499,7 @@ class GitRepository(object):
         @return: C{True} if the repository has that tag, C{False} otherwise
         @rtype: C{bool}
         """
-        out, ret =  self._git_getoutput('tag', [ '-l', tag ])
+        out, ret = self._git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
     def find_tag(self, commit, pattern=None):
@@ -1210,7 +1210,7 @@ class GitRepository(object):
 
     def get_commit_info(self, commit):
         """
-        Look up data of a specific  commit
+        Look up data of a specific commit
 
         @param commit: the commit to inspect
         @return: the commit's including id, author, email, subject and body
@@ -1426,7 +1426,7 @@ class GitRepository(object):
                 os.makedirs(abspath)
             try:
                 GitCommand("init", args.args, cwd=abspath)()
-            except CommandExecFailed as  excobj:
+            except CommandExecFailed as excobj:
                 raise GitRepositoryError("Error running git init: %s" % excobj)
 
             if description:

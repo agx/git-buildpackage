@@ -57,7 +57,7 @@ def git_archive_submodules(repo, treeish, output, prefix, comp_type, comp_level,
         for (subdir, commit) in repo.get_submodules(treeish):
             tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
 
-            gbp.log.debug("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
+            gbp.log.debug("Processing submodule %s (%s)" % (subdir, commit[0:8]))
             repo.archive(format='tar', prefix='%s/%s/' % (prefix, tarpath),
                          output=submodule_tarfile, treeish=commit, cwd=subdir)
             CatenateTarArchive(tarfile)(submodule_tarfile)
@@ -103,7 +103,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules):
             if repo.has_submodules():
                 repo.update_submodules()
             for (subdir, commit) in repo.get_submodules(treeish):
-                gbp.log.info("Processing submodule  %s (%s)" % (subdir, commit[0:8]))
+                gbp.log.info("Processing submodule %s (%s)" % (subdir, commit[0:8]))
                 tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
                 os.chdir(subdir)
                 pipe = pipes.Template()
