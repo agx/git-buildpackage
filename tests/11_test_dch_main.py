@@ -28,6 +28,7 @@ cl_debian = """test-package (0.9-1) unstable; urgency=low
  -- Debian Maintainer <maint@debian.org>  Mon, 17 Oct 2011 10:15:22 +0200
 """
 
+@unittest.skipIf(not os.path.exists('/usr/bin/dch'), "Dch not found")
 class TestScriptDch(DebianGitTestRepo):
     """Test git-dch"""
 
