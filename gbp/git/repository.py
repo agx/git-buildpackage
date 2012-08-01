@@ -445,6 +445,8 @@ class GitRepository(object):
 
         out, ret =  self._git_getoutput('branch', args.args)
         for line in out:
+            # remove prefix '*' for current branch before comparing
+            line = line.replace('*', '')
             if line.strip() == branch:
                 return True
         return False
