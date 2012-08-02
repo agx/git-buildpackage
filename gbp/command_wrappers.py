@@ -33,8 +33,8 @@ class CommandExecFailed(Exception):
 
 class Command(object):
     """
-    Wraps a shell command, so we don't have to store any kind of command line options in 
-    one of the git-buildpackage commands
+    Wraps a shell command, so we don't have to store any kind of command
+    line options in one of the git-buildpackage commands
     """
 
     def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None):
@@ -51,14 +51,18 @@ class Command(object):
             self.env = None
 
     def __call(self, args):
-        """wraps subprocess.call so we can be verbose and fix python's SIGPIPE handling"""
+        """
+        Wraps subprocess.call so we can be verbose and fix python's
+        SIGPIPE handling
+        """
         def default_sigpipe():
-            "restore default signal handler (http://bugs.python.org/issue1652)"
+            "Restore default signal handler (http://bugs.python.org/issue1652)"
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
         log.debug("%s %s %s" % (self.cmd, self.args, args))
         cmd = [ self.cmd ] + self.args + args
-        if self.shell: # subprocess.call only cares about the first argument if shell=True
+        if self.shell:
+            # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
         return subprocess.call(cmd, cwd=self.cwd, shell=self.shell,
                                env=self.env, preexec_fn=default_sigpipe)
@@ -73,7 +77,8 @@ class Command(object):
         try:
             retcode = self.__call(args)
             if retcode < 0:
-                err_detail = "%s was terminated by signal %d" % (self.cmd, -retcode)
+                err_detail = "%s was terminated by signal %d" % (self.cmd,
+                                                                 -retcode)
             elif retcode > 0:
                 err_detail = "%s returned %d" % (self.cmd, retcode)
         except OSError as e:
@@ -85,9 +90,11 @@ class Command(object):
         return retcode
 
     def __call__(self, args=[]):
-        """Run the command, convert all errors into CommandExecFailed, assumes
+        """
+        Run the command, convert all errors into CommandExecFailed, assumes
         that the lower levels printed an error message - only useful if you
-        only expect 0 as result
+        only expect 0 as result.
+
         >>> Command("/bin/true")(["foo", "bar"])
         >>> Command("/foo/bar")()
         Traceback (most recent call last):
@@ -98,7 +105,10 @@ class Command(object):
             raise CommandExecFailed
 
     def call(self, args):
-        """like __call__ but don't use stderr and let the caller handle the return status
+        """
+        Like __call__ but don't use stderr and let the caller handle the
+        return status
+
         >>> Command("/bin/true").call(["foo", "bar"])
         0
         >>> Command("/foo/bar").call(["foo", "bar"]) # doctest:+ELLIPSIS
@@ -136,7 +146,8 @@ class UnpackTarArchive(Command):
         if not compression:
             compression = '-a'
 
-        Command.__init__(self, 'tar', exclude + ['-C', dir, compression, '-xf', archive ])
+        Command.__init__(self, 'tar', exclude +
+                         ['-C', dir, compression, '-xf', archive ])
         self.run_error = 'Couldn\'t unpack "%s"' % self.archive
 
 
@@ -150,7 +161,8 @@ class PackTarArchive(Command):
         if not compression:
             compression = '-a'
 
-        Command.__init__(self, 'tar', exclude + ['-C', dir, compression, '-cf', archive, dest])
+        Command.__init__(self, 'tar', exclude +
+                         ['-C', dir, compression, '-cf', archive, dest])
         self.run_error = 'Couldn\'t repack "%s"' % self.archive
 
 
