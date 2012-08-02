@@ -23,7 +23,8 @@ import sys
 import re
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import (DebianPkgPolicy, do_uscan, parse_changelog_repo)
+from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
+from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
@@ -124,19 +125,21 @@ def find_source(options, args):
     @raise GbpError: raised on all detected errors
     """
     if options.uscan: # uscan mode
+        uscan = Uscan()
+
         if args:
             raise GbpError("you can't pass both --uscan and a filename.")
 
         gbp.log.info("Launching uscan...")
         try:
-            status, source = do_uscan()
-        except KeyError:
-            raise GbpError("error running uscan - debug by running uscan --verbose")
+            uscan.scan()
+        except UscanError as e:
+            raise GbpError("%s" % e)
 
-        if status:
-            if source:
-                gbp.log.info("using %s" % source)
-                args.append(source)
+        if not uscan.uptodate:
+            if uscan.tarball:
+                gbp.log.info("using %s" % uscan.tarball)
+                args.append(uscan.tarball)
             else:
                 raise GbpError("uscan didn't download anything, and no source was found in ../")
         else:

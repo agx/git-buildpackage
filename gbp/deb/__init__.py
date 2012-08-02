@@ -222,7 +222,6 @@ def parse_changelog_repo(repo, branch, filename):
     lines = repo.show(sha)
     return ChangeLog('\n'.join(lines))
 
-
 def orig_file(cp, compression):
     """
     The name of the orig file belonging to changelog cp
@@ -235,70 +234,6 @@ def orig_file(cp, compression):
     return DebianPkgPolicy.build_tarball_name(cp['Source'],
                                               cp['Upstream-Version'],
                                               compression)
-
-
-def parse_uscan(out):
-    """
-    Parse the uscan output return (True, tarball) if a new version was
-    downloaded and could be located. If the tarball can't be located it returns
-    (True, None). Returns (False, None) if the current version is up to date.
-
-    >>> parse_uscan("<status>up to date</status>")
-    (False, None)
-    >>> parse_uscan("<target>virt-viewer_0.4.0.orig.tar.gz</target>")
-    (True, '../virt-viewer_0.4.0.orig.tar.gz')
-
-    @param out: uscan output
-    @type out: string
-    @return: status and tarball name
-    @rtype: tuple
-    """
-    source = None
-    if "<status>up to date</status>" in out:
-        return (False, None)
-    else:
-        # Check if uscan downloaded something
-        for row in out.split("\n"):
-            # uscan >= 2.10.70 has a target element:
-            m = re.match(r"<target>(.*)</target>", row)
-            if m:
-                source = '../%s' % m.group(1)
-                break
-            elif row.startswith('<messages>'):
-                m = re.match(r".*symlinked ([^\s]+) to it", row)
-                if m:
-                    source = "../%s" % m.group(1)
-                    break
-                m = re.match(r"Successfully downloaded updated package ([^<]+)", row)
-                if m:
-                    source = "../%s" % m.group(1)
-                    break
-        # try to determine the already downloaded sources name
-        else:
-            d = {}
-            for row in out.split("\n"):
-                for n in ('package', 'upstream-version', 'upstream-url'):
-                    m = re.match("<%s>(.*)</%s>" % (n,n), row)
-                    if m:
-                        d[n] = m.group(1)
-            d["ext"] = os.path.splitext(d['upstream-url'])[1]
-            # We want the name of the orig tarball if possible
-            source = "../%(package)s_%(upstream-version)s.orig.tar%(ext)s" % d
-            if not os.path.exists(source):
-                # Fall back to the sources name otherwise
-                source = "../%s" % d['upstream-url'].rsplit('/',1)[1]
-                print source
-                if not os.path.exists(source):
-                    source = None
-        return (True, source)
-
-
-def do_uscan():
-    """invoke uscan to fetch a new upstream version"""
-    p = subprocess.Popen(['uscan', '--symlink', '--destdir=..', '--dehs'], stdout=subprocess.PIPE)
-    out = p.communicate()[0]
-    return parse_uscan(out)
-
 
 def get_arch():
     pipe = subprocess.Popen(["dpkg", "--print-architecture"], shell=False, stdout=subprocess.PIPE)
