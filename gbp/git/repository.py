@@ -451,6 +451,44 @@ class GitRepository(object):
                 return True
         return False
 
+    def set_upstream_branch(self, local_branch, upstream):
+        """
+        Set upstream branches for local branch
+
+        @param local_branch: name of the local branch
+        @type local_branch: C{str}
+        @param upstream: remote/branch, for example origin/master
+        @type upstream: C{str}
+        """
+
+        # check if both branches exist
+        for branch, remote in [(local_branch, False), (upstream, True)]:
+            if not self.has_branch(branch, remote=remote):
+                raise GitRepositoryError("Branch %s doesn't exist!" % branch)
+
+            self._git_getoutput('branch', ["--set-upstream", local_branch, upstream])
+
+
+    def get_upstream_branch(self, local_branch):
+        """
+        Get upstream branch for the local branch
+
+        @param local_branch: name fo the local branch
+        @type local_branch: C{str}
+        @return: upstream (remote/branch) or  '' if no upstream found
+        @rtype: C{str}
+
+        """
+        args = GitArgs('--format=%(upstream:short)')
+        if self.has_branch(local_branch, remote=False):
+            args.add('refs/heads/%s' % local_branch)
+        else:
+            raise GitRepositoryError("Branch %s doesn't exist!" % local_branch)
+
+        out = self._git_getoutput('for-each-ref', args.args)[0]
+
+        return out[0].strip()
+
 #{ Tags
 
     def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):

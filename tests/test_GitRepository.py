@@ -177,6 +177,43 @@ def test_rename_branch():
     """
 
 
+def test_set_upstream_branch():
+    """
+    Set upstream branch master -> origin/master
+
+    >>> import os, shutil
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> os.makedirs(os.path.join(repo.git_dir, 'refs/remotes/origin'))
+    >>> shutil.copy(os.path.join(repo.git_dir, 'refs/heads/master'), \
+                    os.path.join(repo.git_dir, 'refs/remotes/origin/'))
+    >>> repo.set_upstream_branch('master', 'origin/master')
+    >>> repo.get_upstream_branch('master')
+    'origin/master'
+    >>> repo.set_upstream_branch('bla', 'origin/master')
+    Traceback (most recent call last):
+    GitRepositoryError: Branch bla doesn't exist!
+    >>> repo.set_upstream_branch('foo', 'origin/bla')
+    Traceback (most recent call last):
+    GitRepositoryError: Branch origin/bla doesn't exist!
+
+    """
+
+def test_get_upstream_branch():
+    """
+    Get info about upstream branches set in test_set_upstream_branch
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.get_upstream_branch('master')
+    'origin/master'
+    >>> repo.get_upstream_branch('foo')
+    ''
+    >>> repo.get_upstream_branch('bla')
+    Traceback (most recent call last):
+    GitRepositoryError: Branch bla doesn't exist!
+    """
+
 def test_tag():
     """
     Create a tag named I{tag} and check it's existance
