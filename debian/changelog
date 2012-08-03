@@ -1,3 +1,98 @@
+git-buildpackage (0.6.0~git20120803) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [6287b0d] gbp.conf: Make config option printing more consistent
+  * [9430ee1] Make TestDir testcase use a newly created directory neeeded for
+    the upcoming packagename/version parsing support
+  * [e9d239b] UpstreamSource: automatically detect package name and versions
+    from directories of the form packagename-<version>
+  * [41482a3] tests: test GitRepository.get_commit_info()
+  * [dd593a0] GitRepository: return GitModifier object instead of separate
+    fields this make sure the number of return values doesn't stays sane when
+    also returning timestamps and committer information.
+  * [92a744e] GitRepository: Add test that covers remote branches in
+    has_branch()
+  * [e6e0150] Make exception syntax consistent
+  * [d3ee4b0] GitRepository: Make rev_parse's short option an int everywhere
+  * [891ea2b] git.repository.GitRepository.add_remote_repo: use GitArgs
+  * [036db95] gbp.git.GitRepository: Add remove_remote
+  * [4db02e5] Fix variable renaming
+  * [f4da964] GitModifier: More flexible date handling.
+    Allow to pass in the date as datetime object, timestamp or git raw date.
+    and allow to retrieve these values. This make constructing GitModifiers
+    from python simpler.
+  * [cd829c9] GitRepository: raise GitRepositoryError on git errors.
+    Raise GitRepositoryError in cases where CommandExecFailed (from
+    GitCommand) was previously silently passed forward.
+    Heavily based on a patch by Markus Lehtonen.
+  * [7a9f947] GitModifier: use __getitem__ to fetch date
+    instead of accessing __dict__ directly which only has _date.
+  * [c4524f8] GitModifier: add tests for dict interface
+  * [c47deff] Remove multiple spaces
+  * [56a8672] Skip tests requiring devscripts if dch is not there
+    so tests don't fail on rpm based systems.
+  * [5961a4d] Test help output by importing the modules
+    so we get correct coverage information for the scripts
+  * [68efed1] gbp.command_wrappers: Reformat to 80 chars line length
+  * [aa2ba85] Add tests for gbp.deb.{DpkgCompareVersions,DscFile}
+  * [83577af] Move uscan to separate class
+  * [776cbb7] Improve error reporting from uscan
+    by parsing out the warnings and error fields from the dehs output.
+
+  [ Markus Lehtonen ]
+  * [9b68e37] import-orig: move is_link_target() to common module.
+    This change makes is_link_target() re-usable in the upcoming RPM-tools.
+  * [36e0986] common/pq: use strip in apply_and_commit_patch()
+    Use the strip information of the patch when applying patches. Also,
+    changes GitRepository.apply_patch() to accept integer values as 'strip'
+    argument.
+  * [cc1ebfd] PristineTar: move Debian-specific stuff to DebianPristineTar.
+    Continuation to the PristineTar refactoring, makes the "common"
+    PristineTar independent of DebianPkgPolicy. This commit moves the
+    Debian-specific has_commit() and checkout() methods to DebianPristineTar
+    class and replaces them with more generic functions in the base class.
+    Also, drops the Debian-specific get_commit() method completely, as it
+    was not used outside the PristineTar class itself.
+  * [18fc698] GitRepository: fix process cwd in _git_inout()
+  * [1e85978] GitRepository: make get_commit_info() more robust.
+    Now uses git-show instead of git-log. This is needed for further
+    enhancements (namely to get name-status for merge commits). Also, use
+    null-character as the field separator which makes parsing more reliable.
+    The method now returns 'body' of the commit message as is, without
+    stripping or splitting to lines.
+    In addition, get_commit_info() now uses GitArgs and _git_inout() instead
+    of the deprecated _git_getoutput().
+  * [2c668bf] GitRepository/get_commit_info: check return value of git command
+    correctly
+  * [4d56ab6] GitRepository/rev_parse: add new argument 'short'
+    Adds a new argument to get abbreviated SHA1.
+    Also, modifies rev_parse() to use GitArgs class.
+  * [ba55f9e] GitRepository/get_author_info: return user.name as name.
+    Return users full name (user.name) instead of email (user.email) as the
+    'name' of the author when taking the value from git config.
+  * [21ac2d8] GitRepository: option to ignore untracked in is_clean()
+    Add an option to ignore untracked files when checking if the repository
+    is clean.
+  * [7f9776f] GitRepository/get_commit_info: add author timestamp.
+    Add author timestamps to the info returned by get_commit_info() method.
+  * [32f725f] GitRepository/get_commit_info: add committer info.
+    Add committer to the info returned by get_commit_info() method. Returns
+    committer name, email and timestamp as a GitModifier object.
+  * [6e4138f] GitRepository/get_commit_info: add file status.
+    Add file status and name to the info returned by the get_commit_info()
+    method.
+
+  [ Ed Bartosh ]
+  * [9c54298] deb.git: Fixed typo in method name
+    the double underscore prefix was dropped ages ago.
+
+  [ Daniel Dehennin ]
+  * [b970ca0] Test behavior of gbp.scripts.dch.main().
+    * tests/11_test_dch_main.py: Test common cases with "--release" and
+      "--snapshot". Try 2 consecutive snapshots to check for merged entries.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 03 Aug 2012 19:26:48 +0200
+
 git-buildpackage (0.6.0~git20120601) unstable; urgency=low
 
   * Upload to unstable
