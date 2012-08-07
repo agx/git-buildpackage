@@ -1392,7 +1392,7 @@ class GitRepository(object):
         @rtype: dict
         """
         commit_sha1 = self.rev_parse("%s^0" % commitish)
-        args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%cn%x00%ce%x00%cd%x00%s%x00%b%x00',
+        args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%cn%x00%ce%x00%cd%x00%s%x00%f%x00%b%x00',
                        '-z', '--date=raw', '--name-status', commit_sha1)
         out, err, ret =  self._git_inout('show', args.args)
         if ret:
@@ -1409,7 +1409,7 @@ class GitRepository(object):
                                 fields[5].strip())
 
         files = defaultdict(list)
-        file_fields = fields[8:]
+        file_fields = fields[9:]
         # For some reason git returns one extra empty field for merge commits
         if file_fields[0] == '': file_fields.pop(0)
         while len(file_fields) and file_fields[0] != '':
@@ -1421,7 +1421,8 @@ class GitRepository(object):
                 'author' : author,
                 'committer' : committer,
                 'subject' : fields[6],
-                'body' : fields[7],
+                'patchname' : fields[7],
+                'body' : fields[8],
                 'files' : files}
 
 #{ Patches

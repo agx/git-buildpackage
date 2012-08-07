@@ -442,6 +442,8 @@ def test_get_commit_info():
     True
     >>> (now - datetime.fromtimestamp(int(info['committer'].date.split()[0]))).seconds < 10
     True
+    >>> info['patchname']
+    'foo'
     >>> info['files']
     defaultdict(<type 'list'>, {'M': ['testfile']})
     """
