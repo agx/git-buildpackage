@@ -8,6 +8,7 @@ import os
 import shutil
 import tarfile
 import tempfile
+from nose.tools import eq_, ok_
 
 import gbp.log
 import gbp.git
@@ -98,23 +99,29 @@ def test_dump_tree():
     assert os.path.exists(os.path.join(dumpdir, submodules[0].name, testfile_name))
 
 
-def test_create_tarball():
+def test_create_tarballs():
     """Create an upstream tarball"""
-    cp = { "Source": "test", "Upstream-Version": "0.1" }
-    assert buildpackage.git_archive(repo,
-                                        cp,
-                                        str(tmpdir),
-                                        "HEAD",
-                                        "bzip2",
-                                        "9",
-                                        True)
+    # Tarball with submodules
+    changelog = { "Source": "test", "Upstream-Version": "0.1" }
+    ok_(buildpackage.git_archive(repo, changelog, str(tmpdir), "HEAD", "bzip2",
+                                 "9", True))
+    # Tarball without submodules
+    changelog = { "Source": "test", "Upstream-Version": "0.2" }
+    ok_(buildpackage.git_archive(repo, changelog, str(tmpdir), "HEAD", "bzip2",
+                                 "9", False))
 
-def test_check_tarfile():
+def test_check_tarfiles():
     """Check the contents of the created tarfile"""
-    t = tarfile.open(tmpdir.join("test_0.1.orig.tar.bz2"), 'r:*')
-    files = t.getmembers()
-    assert "test-0.1/.gitmodules" in [ f.name for f in files ]
-    assert len(files) == 6
+    # Check tarball with submodules
+    tarobj = tarfile.open(tmpdir.join("test_0.1.orig.tar.bz2"), 'r:*')
+    files = tarobj.getmembers()
+    ok_("test-0.1/.gitmodules" in [ f.name for f in files ])
+    eq_(len(files) , 6)
+    # Check tarball without submodules
+    tarobj = tarfile.open(tmpdir.join("test_0.2.orig.tar.bz2"), 'r:*')
+    files = tarobj.getmembers()
+    ok_(("test-0.2/%s" % testfile_name) in [ f.name for f in files ])
+    eq_(len(files) , 4)
 
 def test_add_whitespace_submodule():
     """Add a second submodule with name containing whitespace"""
