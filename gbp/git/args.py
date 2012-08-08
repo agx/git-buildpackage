@@ -23,6 +23,8 @@ class GitArgs(object):
 
     >>> GitArgs('-h', '--no-foo').args
     ['-h', '--no-foo']
+    >>> GitArgs('-n', 123).args
+    ['-n', '123']
     >>> GitArgs().add('--more-foo', '--less-bar').args
     ['--more-foo', '--less-bar']
     >>> GitArgs().add(['--foo', '--bar']).args
@@ -38,7 +40,8 @@ class GitArgs(object):
     """
 
     def __init__(self, *args):
-        self._args = list(args)
+        self._args = []
+        self.add(args)
 
     @property
     def args(self):
@@ -68,7 +71,7 @@ class GitArgs(object):
         @param args: arguments to add
         """
         if condition:
-            self._args += list(args)
+            self.add(*args)
         return self
 
     def add_false(self, condition, *args):
@@ -94,10 +97,9 @@ class GitArgs(object):
         @param noopt: option to add if I{condition} is C{False}
         @type noopt: C{str} or C{list}
         """
-        if isinstance(opt, basestring):
-            opt = [ opt ]
-        if isinstance(noopt, basestring):
-            noopt = [ noopt ]
-        self._args += opt if condition else noopt
+        if condition:
+            self.add(opt)
+        else:
+            self.add(noopt)
         return self
 
