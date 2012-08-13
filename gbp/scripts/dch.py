@@ -338,7 +338,7 @@ def main(argv):
         parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                        usage='%prog [options] paths')
     except ConfigParser.ParsingError as err:
-        gbp.log.errror(err)
+        gbp.log.err(err)
         return 1
     range_group = GbpOptionGroup(parser, "commit range options",
                                  "which commits to add to the changelog")
