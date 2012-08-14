@@ -1,4 +1,4 @@
-<refentry id="gbp.man.gbp.conf">
+<refentry id="man.gbp.conf">
   <refentryinfo>
     <address>
       &dhemail;
@@ -68,7 +68,7 @@
 <para>
 
 <option>key=value</option> pairs of the command sections reflect the command line
-options and their settings. For example <xref linkend="gbp.man.git.buildpackage">
+options and their settings. For example <xref linkend="man.git.buildpackage">
 manualpage contains the <option>--git-export-dir</option>=<parameter>diirectory</parameter>
 option which can be turned into configuration file setting by dropping the
 <option>--git</option> prefix with:
@@ -81,7 +81,7 @@ option which can be turned into configuration file setting by dropping the
 
 <para>
 Notice that some option are actually repeatable, or take Python lists.
-For example the <xref linkend="gbp.man.git.import.orig"> commmand has the
+For example the <xref linkend="man.git.import.orig"> commmand has the
 <option>--filter</option>=<parameter>pattern</parameter> option which can
 be truned into a configuration file option like this:
 </para>
@@ -103,7 +103,7 @@ An alternative way is to write it using Python list syntax:
 
 <para>
 Boolean options can bei either <option>True</option> or <option>False</option>. For example
-<xref linkend="gbp.man.git.import.orig">; has the <option>--pristine-tar</option> and
+<xref linkend="man.git.import.orig">; has the <option>--pristine-tar</option> and
 <option>--no-pristine-tar</option> options which translate to:
 </para>
 <programlisting>
@@ -133,7 +133,7 @@ can't be configured via gbp.conf.
 </note>
 
 <para>
-<xref linkend="gbp.man.gbp.create.remote.repo"> can additionally parse remote site
+<xref linkend="man.gbp.create.remote.repo"> can additionally parse remote site
 configurations from <filename>gbp.conf</filename>. For example a configration like:
 </para>
 

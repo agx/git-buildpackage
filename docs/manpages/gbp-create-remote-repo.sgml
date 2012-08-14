@@ -1,4 +1,4 @@
-<refentry id="gbp.man.gbp.create.remote.repo">
+<refentry id="man.gbp.create.remote.repo">
   <refentryinfo>
     <address>
       &dhemail;
@@ -83,7 +83,7 @@
         </term>
         <listitem>
 	  <para>Name of a config file section in <filename>gbp.conf</filename>
-          that specifies the above paramters. See <xref linkend="gbp.man.gbp.conf">
+          that specifies the above paramters. See <xref linkend="man.gbp.conf">
           manpage for details.
 	  </para>
         </listitem>

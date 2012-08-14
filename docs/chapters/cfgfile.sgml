@@ -91,6 +91,6 @@ upstream-branch=notdfsgclean
 git-log=--no-merges
 </programlisting>
 <para>
-For more details see the <xref linkend="gbp.man.gbp.conf"> manual page.
+For more details see the <xref linkend="man.gbp.conf"> manual page.
 </para>
 </chapter>

@@ -25,7 +25,7 @@
   &ch.cfgfile;
   &ch.special;
 
-  <appendix id="gbp.man.reference">
+  <appendix id="man.reference">
     <title>Command Reference</title>
     &man.git.buildpackage;
     &man.git.importdsc;

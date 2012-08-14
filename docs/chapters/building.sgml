@@ -87,7 +87,7 @@ export-dir=../build-area
     <title>Running lintian</title>
 	<para>&git-buildpackage; exports several variables into the
 	<option>posttag</option>'s environment (for details see the <xref
-	linkend="gbp.man.git.buildpackage">).
+	linkend="man.git.buildpackage">).
 	To invoke &lintian; we need to tell it where to find the changes file:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-postbuild</option>=<replaceable>'lintian $GBP_CHANGES_FILE'</replaceable>
@@ -155,7 +155,7 @@ echo "done."
     <title>Running postexport hook</title>
     <para>&git-buildpackage; exports several variables into the
 	<option>postexport</option>'s environment (for details see
-	the <xref linkend="gbp.man.git.buildpackage">). The motivation
+	the <xref linkend="man.git.buildpackage">). The motivation
 	for the postexport action is to allow further adjustment of
 	the sources prior to building the package. A typical use case
 	scenario is to allow creating multiple source and binary

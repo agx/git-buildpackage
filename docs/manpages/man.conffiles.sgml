@@ -1,4 +1,4 @@
     <title>CONFIGURATION FILES</title>
     <para>Several <filename>gbp.conf</filename> files are parsed 
     to set defaults for the above commandline arguments. See the
-    <xref linkend="gbp.man.gbp.conf"> manpage for details.</para>
+    <xref linkend="man.gbp.conf"> manpage for details.</para>
