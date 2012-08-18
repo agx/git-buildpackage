@@ -253,7 +253,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--[no]-multimaintmerge</option>
+        <term><option>--[no-]multimaint-merge</option>
         </term>
         <listitem>
           <para>Merge commits by maintainer.</para>
