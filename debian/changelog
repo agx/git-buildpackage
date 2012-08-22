@@ -1,3 +1,25 @@
+git-buildpackage (0.6.0~git20120822) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [e05bfb9] dch: Fix error reporting on parsing errors
+  * [f4162be] manpage: Fix typo in git-dch's multimain-merge option
+    (Closes: #684322)
+  * [e8d175a] manpages: correct manual section and remove duplicate entry
+
+  [ Zhang Qiang ]
+  * [0af1e72] GitRepository/branch_contains: remove prefix '*' in branch name.
+
+  [ Markus Lehtonen ]
+  * [678f85f] docs: fix cross-referencing in manpages.
+  * [f0d4b0d] docs: make refentry ids of manpages more consistent
+  * [dc3b3b6] GitArgs/add: support iterable and non-string args.
+
+  [ Ed Bartosh ]
+  * [7524bbb] GitRepository: Implement set_upstream_branch and
+    get_upstream_branch methods
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 22 Aug 2012 10:58:07 +0200
+
 git-buildpackage (0.6.0~git20120803) unstable; urgency=low
 
   [ Guido Günther ]
