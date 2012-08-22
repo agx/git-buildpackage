@@ -213,18 +213,9 @@ the above list of configuration files.</para></listitem>
 
 <refsect1>
   <title>FILES</title>
-<para>
-  See See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
-</para>
-</refsect1>
-
-<refsect1>
-  <title>STANDARDS</title>
-<para>
-  The at <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
-    <citetitle>The Git-Buildpackage Manual</citetitle></ulink> at
-  <filename>/usr/share/doc/git-buildpackage/manual-html/index.html</filename>
-</para>
+  <para>
+    See See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
+  </para>
 </refsect1>
 
 <refsect1>
@@ -261,7 +252,9 @@ the above list of configuration files.</para></listitem>
     <citerefentry>
       <refentrytitle>git-buildpackage</refentrytitle>
       <manvolnum>1</manvolnum>
-    </citerefentry>
+    </citerefentry>,
+    <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
+    <citetitle>The Git-Buildpackage Manual</citetitle></ulink>
   </para>
 </refsect1>
 <refsect1>
