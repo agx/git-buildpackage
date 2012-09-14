@@ -410,6 +410,23 @@ def test_get_commit_info():
     defaultdict(<type 'list'>, {'M': ['testfile']})
     """
 
+def test_diff():
+    """
+    Test git-diff
+
+    Methods tested:
+         - L{gbp.git.GitRepository.diff}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> len(repo.diff('HEAD~1', 'HEAD')) > 3
+    True
+    >>> len(repo.diff('HEAD~1', 'HEAD', 'testfile')) > 3
+    True
+    >>> len(repo.diff('HEAD~1', 'HEAD', 'filenotexist')) == 0
+    True
+    """
+
 def test_mirror_clone():
     """
     Mirror a repository
