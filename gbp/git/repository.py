@@ -1639,6 +1639,33 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Git diff failed")
         return output
+
+    def diff_status(self, obj1, obj2):
+        """
+        Get file-status of two git repository objects
+
+        @param obj1: first object
+        @type obj1: C{str}
+        @param obj2: second object
+        @type obj2: C{str}
+        @return: name-status
+        @rtype: C{defaultdict} of C{str}
+        """
+        options = GitArgs('--name-status', '-z', obj1, obj2)
+        output, stderr, ret = self._git_inout('diff', options.args)
+
+        elements = output.split('\x00')
+        result = defaultdict(list)
+
+        while elements[0] != '':
+            status = elements.pop(0)[0]
+            filepath = elements.pop(0)
+            # Expect to have two filenames for renames and copies
+            if status in ['R', 'C']:
+                filepath = elements.pop(0) + '\x00' + filepath
+            result[status].append(filepath)
+
+        return result
 #}
 
     def archive(self, format, prefix, output, treeish, **kwargs):
