@@ -16,7 +16,6 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """A Git repository"""
 
-import re
 import subprocess
 import os.path
 from collections import defaultdict

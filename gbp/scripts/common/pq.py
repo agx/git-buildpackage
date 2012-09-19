@@ -22,11 +22,9 @@ import re
 import os
 import shutil
 import subprocess
-from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (Command, GitCommand, RunAtCommand)
+from gbp.git import GitRepositoryError
 from gbp.errors import GbpError
 import gbp.log
-from gbp.patch_series import (PatchSeries, Patch)
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 
@@ -75,14 +73,13 @@ def write_patch(patch, patch_dir, options):
     tmpname = patch + ".gbp"
     old = file(patch, 'r')
     tmp = file(tmpname, 'w')
-    in_patch = False
     topic = None
 
     # Skip first line (From <sha1>)
     old.readline()
     for line in old:
         if line.lower().startswith("gbp-pq-topic: "):
-            topic = line.split(" ",1)[1].strip()
+            topic = line.split(" ", 1)[1].strip()
             gbp.log.debug("Topic %s found for %s" % (topic, patch))
             continue
         tmp.write(line)
@@ -114,7 +111,8 @@ def write_patch(patch, patch_dir, options):
 def get_maintainer_from_control():
     """Get the maintainer from the control file"""
     cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" debian/control'
-    cmdout = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.readlines()
+    cmdout = subprocess.Popen(cmd, shell=True,
+                              stdout=subprocess.PIPE).stdout.readlines()
 
     if len(cmdout) > 0:
         maintainer = cmdout[0].strip()
@@ -130,7 +128,7 @@ def switch_to_pq_branch(repo, branch):
     Switch to patch-queue branch if not already there, create it if it
     doesn't exist yet
     """
-    if is_pq_branch (branch):
+    if is_pq_branch(branch):
         return
 
     pq_branch = pq_branch_name(branch)
@@ -138,8 +136,8 @@ def switch_to_pq_branch(repo, branch):
         try:
             repo.create_branch(pq_branch)
         except GitRepositoryError:
-            raise GbpError("Cannot create patch-queue branch '%s'. Try 'rebase' instead."
-                           % pq_branch)
+            raise GbpError("Cannot create patch-queue branch '%s'. "
+                           "Try 'rebase' instead." % pq_branch)
 
     gbp.log.info("Switching to '%s'" % pq_branch)
     repo.set_branch(pq_branch)
@@ -152,9 +150,9 @@ def apply_single_patch(repo, branch, patch, topic=None):
 
 def apply_and_commit_patch(repo, patch, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
-    author = { 'name': patch.author,
-               'email': patch.email,
-               'date': patch.date }
+    author = {'name': patch.author,
+              'email': patch.email,
+              'date': patch.date }
 
     if not (patch.author and patch.email):
         name, email = get_maintainer_from_control()

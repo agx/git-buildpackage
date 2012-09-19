@@ -22,10 +22,9 @@ import os
 import shutil
 import sys
 import tempfile
-from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+from gbp.config import GbpOptionParserDebian
 from gbp.git import (GitRepositoryError, GitRepository)
-from gbp.command_wrappers import (Command, GitCommand, RunAtCommand,
-                                  CommandExecFailed)
+from gbp.command_wrappers import (GitCommand, CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)

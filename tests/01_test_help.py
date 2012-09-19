@@ -2,7 +2,6 @@
 
 """Check if --help works"""
 
-import os
 import unittest
 
 class TestHelp(unittest.TestCase):

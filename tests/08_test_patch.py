@@ -7,6 +7,7 @@ import unittest
 
 from gbp.patch_series import Patch
 
+
 class TestPatch(unittest.TestCase):
     data_dir = "tests/%s_data" % __module__
 
@@ -35,4 +36,3 @@ class TestPatch(unittest.TestCase):
                          "It can span several lines.\n",
                          p.long_desc)
         self.assertEqual('Sat, 24 Dec 2011 12:05:53 +0100', p.date)
-

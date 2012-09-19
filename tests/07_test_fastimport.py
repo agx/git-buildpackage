@@ -4,8 +4,6 @@
 
 import os
 import shutil
-import tarfile
-import tempfile
 
 import gbp.log
 import gbp.git

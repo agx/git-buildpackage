@@ -2,7 +2,6 @@
 
 """Test L{UpstreamSource}'s tarball unpack"""
 
-import glob
 import os
 import shutil
 import tarfile
