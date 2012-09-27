@@ -352,6 +352,10 @@ class UpstreamSource(object):
         ('foo-bar', '0.2')
         >>> UpstreamSource('foo-bar_0.2.orig.tar.lzma').guess_version()
         ('foo-bar', '0.2')
+        >>> UpstreamSource('foo-bar-0.2.zip').guess_version()
+        ('foo-bar', '0.2')
+        >>> UpstreamSource('foo-bar-0.2.tlz').guess_version()
+        ('foo-bar', '0.2')
 
         @param extra_regex: additional regex to apply, needs a 'package' and a
                             'version' group
@@ -360,20 +364,20 @@ class UpstreamSource(object):
         """
         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
         if self.is_dir():
-            extensions = ''
+            basename = os.path.basename(self.path)
         else:
-            extensions = r'\.tar\.(%s)' % "|".join(self.known_compressions())
+            basename = parse_archive_filename(os.path.basename(self.path))[0]
 
-        version_filters = map ( lambda x: x % (version_chars, extensions),
+        version_filters = map ( lambda x: x % version_chars,
                            ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
-                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig%s',
+                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
                              # Upstream 'package-<version>.tar.gz'
                              # or directory 'package-<version>':
-                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)%s'))
+                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)'))
         if extra_regex:
             version_filters = extra_regex + version_filters
 
         for filter in version_filters:
-            m = re.match(filter, os.path.basename(self.path))
+            m = re.match(filter, basename)
             if m:
                 return (m.group('package'), m.group('version'))
