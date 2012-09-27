@@ -753,6 +753,31 @@ def test_get_merge_base():
     GitRepositoryError: Failed to get common ancestor: fatal: Not a valid object name doesnotexist
     """
 
+def test_cmd_has_feature():
+    r"""
+    Methods tested:
+        - L{gbp.git.GitRepository._cmd_has_feature}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo._cmd_has_feature("commit", "a")
+    True
+    >>> repo._cmd_has_feature("commit", "reuse-message")
+    True
+    >>> repo._cmd_has_feature("merge", "n")
+    True
+    >>> repo._cmd_has_feature("merge", "stat")
+    True
+    >>> repo._cmd_has_feature("format-patch", "cc")
+    True
+    >>> repo._cmd_has_feature("merge", "foobaroption")
+    False
+    >>> repo._cmd_has_feature("foobarcmd", "foobaroption")
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Invalid git command: foobarcmd
+    """
+
 def test_teardown():
     """
     Perform the teardown

@@ -18,6 +18,7 @@
 
 import subprocess
 import os.path
+import re
 from collections import defaultdict
 
 import gbp.log as log
@@ -162,6 +163,39 @@ class GitRepository(object):
         except CommandExecFailed as excobj:
             raise GitRepositoryError("Error running git %s: %s" %
                                      (command, excobj))
+
+    def _cmd_has_feature(self, command, feature):
+        """
+        Check if the git command has certain feature enabled.
+
+        @param command: git command
+        @type command: C{str}
+        @param feature: feature / command option to check
+        @type feature: C{str}
+        @return: True if feature is supported
+        @rtype: C{bool}
+        """
+        args = GitArgs(command, '-m')
+        help, foo, ret = self._git_inout('help', args.args)
+        if ret:
+            raise GitRepositoryError("Invalid git command: %s" % command)
+
+        # Parse git command man page
+        section_re = re.compile(r'^(?P<section>[A-Z].*)')
+        option_re = re.compile(r'--?(?P<name>[a-zA-Z\-]+).*')
+        man_section = None
+        for line in help.splitlines():
+            if man_section == "OPTIONS" and line.startswith('       -'):
+                opts = line.split(',')
+                for opt in opts:
+                    match = option_re.match(opt.strip())
+                    if match and match.group('name') == feature:
+                        return True
+            # Check man section
+            match = section_re.match(line)
+            if match:
+                man_section = match.group('section')
+        return False
 
     @property
     def path(self):
