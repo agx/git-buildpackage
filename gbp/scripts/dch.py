@@ -384,6 +384,8 @@ def main(argv):
                       help="Increment the Debian release number for a Debian QA Team upload, and add a QA upload changelog comment.")
     version_group.add_option("--team", dest="team", action="store_true", default=False,
                       help="Increment the Debian release number for a Debian Team upload, and add a Team upload changelog comment.")
+    version_group.add_option("--security", dest="security", action="store_true", default=False,
+                      help="Increment the Debian release number for a security upload and add a security upload changelog comment.")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
@@ -450,7 +452,8 @@ def main(argv):
         commits.reverse()
 
         # add a new changelog section if:
-        if options.new_version or options.bpo or options.nmu or options.qa or options.team:
+        if (options.new_version or options.bpo or options.nmu or options.qa or
+            options.team or options.security):
             if options.bpo:
                 version_change['increment'] = '--bpo'
             elif options.nmu:
@@ -459,6 +462,8 @@ def main(argv):
                 version_change['increment'] = '--qa'
             elif options.team:
                 version_change['increment'] = '--team'
+            elif options.security:
+                version_change['increment'] = '--security'
             else:
                 version_change['version'] = options.new_version
             # the user wants to force a new version
