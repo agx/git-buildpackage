@@ -804,7 +804,7 @@ def main(argv):
         source = None
         retval = 1
     finally:
-        drop_index()
+        drop_index(repo)
 
     if not options.tag_only:
         if options.export_dir and options.purge and not retval:

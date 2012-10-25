@@ -626,7 +626,7 @@ def main(argv):
             gbp.log.err(err)
         retval = 1
     finally:
-        drop_index()
+        drop_index(repo)
         del_tmpdir()
 
     if not options.tag_only:
