@@ -131,7 +131,11 @@ def import_quilt_patches(repo, branch, series, tries, force):
         tmpdir, series = safe_patches(series)
 
     queue = PatchSeries.read_series_file(series)
+
+    i = len(commits)
     for commit in commits:
+        if len(commits):
+            gbp.log.info("%d tries left" % i)
         try:
             gbp.log.info("Trying to apply patches at '%s'" % commit)
             repo.create_branch(pq_branch, commit)
@@ -150,6 +154,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
         else:
             # All patches applied successfully
             break
+        i-=1
     else:
         raise GbpError("Couldn't apply patches")
 
