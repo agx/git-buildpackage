@@ -16,7 +16,7 @@ X-Python-Version: >= 2.6
 Package: git-buildpackage
 Architecture: all
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, devscripts (>= 2.10.66~),
- git (>= 1:1.7.9.1-1~), python-dateutil
+ git (>= 1:1.7.9.1-1~), python-dateutil, man-db
 Recommends: pristine-tar (>= 0.5), cowbuilder
 Suggests: python-notify, unzip
 Description: Suite to help with Debian packages in Git repositories
