@@ -1446,7 +1446,7 @@ class GitRepository(object):
             otherwise
         @rtype: C{bool}
         """
-        if os.path.exists('.gitmodules'):
+        if os.path.exists(os.path.join(self.path, '.gitmodules')):
             return True
         else:
             return False
