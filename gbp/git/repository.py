@@ -1316,20 +1316,22 @@ class GitRepository(object):
                                      % commit)
         return out[0].strip()
 
-    def get_commit_info(self, commit):
+    def get_commit_info(self, commitish):
         """
-        Look up data of a specific commit
+        Look up data of a specific commit-ish. Dereferences given commit-ish
+        to the commit it points to.
 
-        @param commit: the commit to inspect
+        @param commitish: the commit-ish to inspect
         @return: the commit's including id, author, email, subject and body
         @rtype: dict
         """
+        commit_sha1 = self.rev_parse("%s^0" % commitish)
         args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%cn%x00%ce%x00%cd%x00%s%x00%b%x00',
-                       '-z', '--date=raw', '--name-status', commit)
+                       '-z', '--date=raw', '--name-status', commit_sha1)
         out, err, ret =  self._git_inout('show', args.args)
         if ret:
             raise GitRepositoryError("Unable to retrieve commit info for %s"
-                                     % commit)
+                                     % commitish)
 
         fields = out.split('\x00')
 
@@ -1349,7 +1351,7 @@ class GitRepository(object):
             path = file_fields.pop(0)
             files[status].append(path)
 
-        return {'id' : commit,
+        return {'id' : commitish,
                 'author' : author,
                 'committer' : committer,
                 'subject' : fields[6],
