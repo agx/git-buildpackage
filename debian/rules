@@ -17,6 +17,7 @@ PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	dh_auto_test
+	export DEB_VENDOR="Debian";			\
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
