@@ -21,7 +21,6 @@ import os
 import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.pkg import UpstreamSource
-from gbp.errors import GbpError
 import gbp.log
 
 class OrigUpstreamSource(UpstreamSource):

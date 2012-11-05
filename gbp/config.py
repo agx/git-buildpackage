@@ -129,6 +129,7 @@ class GbpOptionParser(OptionParser):
                  'template-dir': '',
                  'remote-config': '',
                  'allow-unauthenticated': 'False',
+                 'symlink-orig': 'True',
              }
     help = {
              'debian-branch':
@@ -252,6 +253,10 @@ class GbpOptionParser(OptionParser):
              'allow-unauthenticated':
                   ("Don't verify integrity of downloaded source, "
                    "default is '%(allow-unauthenticated)s'"),
+             'symlink-orig':
+                  ("Whether to creat a symlink from the upstream tarball "
+                   "to the orig.tar.gz if needed, default is "
+                   "'%(symlink-orig)s'")
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',
