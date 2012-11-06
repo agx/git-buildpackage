@@ -4,7 +4,7 @@
 
 import os
 
-import testutils
+import tests.testutils as testutils
 
 import gbp.log
 import gbp.git

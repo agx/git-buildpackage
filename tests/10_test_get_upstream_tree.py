@@ -2,7 +2,7 @@
 
 """Test  L{buildpackage}'s get_upstream_tree method"""
 
-import testutils
+import tests.testutils as testutils
 
 import gbp.errors
 import gbp.scripts.buildpackage as buildpackage

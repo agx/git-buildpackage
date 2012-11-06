@@ -4,7 +4,7 @@
 
 import unittest
 
-from testutils import DebianGitTestRepo
+from tests.testutils import DebianGitTestRepo
 
 from gbp.scripts import dch
 
