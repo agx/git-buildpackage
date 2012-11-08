@@ -265,8 +265,7 @@ def main(argv):
         is_empty = False if initial_branch else True
 
         if not repo.has_branch(options.upstream_branch) and not is_empty:
-            gbp.log.err(no_upstream_branch_msg % options.upstream_branch)
-            raise GbpError
+            raise GbpError(no_upstream_branch_msg % options.upstream_branch)
 
         (sourcepackage, version) = detect_name_and_version(repo, source, options)
 
