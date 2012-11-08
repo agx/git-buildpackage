@@ -9,7 +9,7 @@
     </author>
   </refentryinfo>
   <refmeta>
-   <refentrytitle>git-import-orig</refentrytitle> 
+   <refentrytitle>git-import-orig</refentrytitle>
     &dhsection;
   </refmeta>
   <refnamediv>
@@ -33,9 +33,13 @@
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--[no-]filter-pristine-tar</option></arg>
+      <arg><option>--[no-]symlink-orig</option></arg>
       <arg><option>--postimport=cmd</option></arg>
-      <arg><option>--uscan</option></arg>
+      <arg><option>--[no-]interactive</option></arg>
+      <group choice="plain">
       <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
+      <arg><option>--uscan</option></arg>
+      </group>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -43,13 +47,15 @@
     <para>
     &git-import-orig; imports <replaceable>upstream-source</replaceable> into
     the &git; repository. <replaceable>upstream-source</replaceable> can either
-    be a gzip or bzip2 compressed tar archive or an already unpacked source
-    tree. If it is already of the form
+    be a gzip, bzip2, lzma or xz compressed tar archive, a zip archive or an
+    already unpacked source tree. If it is already of the form
     <replaceable>package-name_version.orig.tar.gz</replaceable>, the version
     information is read from the tarball's filename otherwise it can be
     given on the command line via <option>--upstream-version</option>.
-    </para>
-     
+    If the source package name or version can't be determined
+    &git-import-orig; will prompt for it unless <option>--no-interactive</option>
+    is given.</para>
+
     <para>The sources are placed on the upstream branch (default:
     <replaceable>upstream</replaceable>), tagged and merged onto the debian
     branch (default: <replaceable>master</replaceable>).
@@ -96,14 +102,14 @@
         </term>
         <listitem>
 	  <para>
-	    Add <replaceable>tag_name</replaceable> as additional parent to the commit 
+	    Add <replaceable>tag_name</replaceable> as additional parent to the commit
 	    of the upstream tarball. Useful when upstream uses git and you want to
 	    link to it's revision history.
 	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option></term> 
+        <term><option>--verbose</option></term>
 	<term><option>-v</option></term>
         <listitem>
           <para>verbose execution</para>
@@ -148,18 +154,32 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--pristine-tar</option>
+        <term><option>--[no-]pristine-tar</option>
         </term>
         <listitem>
-          <para>generate pristine-tar delta file</para>
+          <para>generate <command>pristine-tar</command> delta file</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--filter-pristine-tar</option>
+        <term><option>--[no-]filter-pristine-tar</option>
         </term>
         <listitem>
 	  <para>if using a filter also filter the files out of the tarball
-	  passed to pristine tar</para>
+	  passed to <command>pristine-tar</command></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]symlink-orig</option></term>
+        <listitem>
+	  <para>
+	    Whether to create and keep a symlink from the upstream tarball
+            to a Debian policy conformant upstream tarball name located in
+	    <filename class='directory'>../</filename>.
+	  </para>
+	  <para>
+	    This is a good idea if not using <command>pristine-tar</command>
+	    since it avoids creating a new tarball with a different md5sum.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -169,7 +189,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--uscan</option></term> 
+        <term><option>--uscan</option></term>
         <listitem>
           <para>Use uscan to fetch new upstream version.</para>
         </listitem>
@@ -214,3 +234,6 @@
 
   </refsect1>
 </refentry>
+
+<!--  LocalWords:  xz lzma bzip gzip tarball
+ -->
