@@ -1257,7 +1257,10 @@ class GitRepository(object):
         args = GitArgs('--pretty=format:%H')
         args.add_true(num, '-%d' % num)
         args.add_true(first_parent, '--first-parent')
-        args.add_true(since and until, '%s..%s' % (since, until))
+        if since:
+            args.add("%s..%s" % (since, until or 'HEAD'))
+        elif until:
+            args.add(until)
         args.add_cond(options, options)
         args.add("--")
         if isinstance(paths, basestring):

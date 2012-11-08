@@ -373,6 +373,16 @@ def test_get_commits():
     True
     >>> len(repo.get_commits(num=1)) == 1
     True
+    >>> commits2 = repo.get_commits(since='HEAD~1')
+    >>> len(commits2) == 1
+    True
+    >>> commits2[0] == commits[0]
+    True
+    >>> commits2 = repo.get_commits(until='HEAD~1')
+    >>> len(commits2) == 1
+    True
+    >>> commits2[0] == commits[-1]
+    True
     >>> repo.get_commits(paths=['foo', 'bar'])
     []
     >>> repo.get_commits(paths=['testfile']) == commits
