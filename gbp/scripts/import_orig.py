@@ -320,8 +320,6 @@ def main(argv):
                                      branch=import_branch,
                                      other_parents=parents,
                                      )
-            if not commit:
-                raise GbpError("Import of upstream version %s failed." % version)
 
             if options.pristine_tar:
                 if pristine_orig:
