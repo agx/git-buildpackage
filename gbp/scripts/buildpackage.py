@@ -21,9 +21,7 @@ import ConfigParser
 import errno
 import os, os.path
 import sys
-import tempfile
 import time
-import shutil
 import gbp.deb as du
 from gbp.command_wrappers import (Command,
                                   RunAtCommand, CommandExecFailed,
@@ -32,7 +30,6 @@ from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError, ParseChangeLogError
 from gbp.errors import GbpError
-from glob import glob
 import gbp.log
 import gbp.notifications
 from gbp.scripts.common.buildpackage import (index_name, wc_name,
