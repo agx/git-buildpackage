@@ -27,7 +27,7 @@ from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
-from gbp.errors import (GbpError, GbpNothingImported)
+from gbp.errors import GbpError
 import gbp.log
 from gbp.scripts.common.import_orig import (OrigUpstreamSource, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
@@ -357,10 +357,6 @@ def main(argv):
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
         except (gbpc.CommandExecFailed, GitRepositoryError):
             raise GbpError("Import of %s failed" % source.path)
-    except GbpNothingImported as err:
-        gbp.log.err(err)
-        repo.set_branch(initial_branch)
-        ret = 1
     except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)
