@@ -154,15 +154,16 @@ def apply_and_commit_patch(repo, patch, topic=None):
               'email': patch.email,
               'date': patch.date }
 
+    patch_fn = os.path.basename(patch.path)
     if not (patch.author and patch.email):
         name, email = get_maintainer_from_control()
         if name:
             gbp.log.warn("Patch '%s' has no authorship information, "
-                         "using '%s <%s>'" % (patch.path, name, email))
+                         "using '%s <%s>'" % (patch_fn, name, email))
             author['name'] = name
             author['email'] = email
         else:
-            gbp.log.warn("Patch %s has no authorship information")
+            gbp.log.warn("Patch '%s' has no authorship information" % patch_fn)
 
     repo.apply_patch(patch.path, strip=patch.strip)
     tree = repo.write_tree()
