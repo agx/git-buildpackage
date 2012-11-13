@@ -207,9 +207,11 @@ def main(argv):
     parser.add_option("--force", dest="force", action="store_true", default=False,
                       help="in case of import even import if the branch already exists")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+    parser.add_config_file_option(option_name="color-scheme",
+                                  dest="color_scheme")
 
     (options, args) = parser.parse_args(argv)
-    gbp.log.setup(options.color, options.verbose)
+    gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if len(args) < 2:
         gbp.log.err("No action given.")

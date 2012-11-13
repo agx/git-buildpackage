@@ -227,6 +227,8 @@ def parse_args(argv):
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+    parser.add_config_file_option(option_name="color-scheme",
+                                  dest="color_scheme")
 
     # Accepted for compatibility
     parser.add_option("--no-dch", dest='no_dch', action="store_true",
@@ -235,7 +237,7 @@ def parse_args(argv):
                       default=False, help="use uscan(1) to download the new tarball.")
 
     (options, args) = parser.parse_args(argv[1:])
-    gbp.log.setup(options.color, options.verbose)
+    gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if options.no_dch:
         gbp.log.warn("'--no-dch' passed. This is now the default, please remove this option.")

@@ -270,6 +270,8 @@ def parse_args(argv, sections=[]):
     parser.add_config_file_option(option_name="color",
                                   dest="color",
                                   type='tristate')
+    parser.add_config_file_option(option_name="color-scheme",
+                                  dest="color_scheme")
     parser.add_option("--remote-name",
                       dest="name",
                       default="origin",
@@ -295,7 +297,7 @@ def main(argv):
         print >>sys.stderr, "%s" % e
         return 1
 
-    gbp.log.setup(options.color, options.verbose)
+    gbp.log.setup(options.color, options.verbose, options.color_scheme)
     try:
         repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:

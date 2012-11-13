@@ -113,6 +113,7 @@ class GbpOptionParser(OptionParser):
                  'arch'            : '',
                  'interactive'     : 'True',
                  'color'           : 'auto',
+                 'color-scheme'   : '',
                  'customizations'  : '',
                  'spawn-editor'    : 'release',
                  'patch-numbers'   : 'True',
@@ -204,6 +205,11 @@ class GbpOptionParser(OptionParser):
                   "Run command interactively, default is '%(interactive)s'",
              'color':
                   "Whether to use colored output, default is '%(color)s'",
+             'color-scheme':
+                  ("Colors to use in output (when color is enabled), format "
+                   "is '<debug>:<info>:<warning>:<error>', e.g. "
+                   "'cyan:34::'. Numerical values and color names are "
+                   "accepted, empty fields indicate using the default."),
              'spawn-editor':
                   ("Whether to spawn an editor after adding the "
                    "changelog entry, default is '%(spawn-editor)s'"),
