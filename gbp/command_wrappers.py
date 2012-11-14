@@ -23,8 +23,7 @@ import subprocess
 import os
 import os.path
 import signal
-import log
-from errors import GbpError
+import gbp.log as log
 
 class CommandExecFailed(Exception):
     """Exception raised by the Command class"""
@@ -40,7 +39,8 @@ class Command(object):
     def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None):
         self.cmd = cmd
         self.args = args
-        self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] + self.args))
+        self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] +
+                                                         self.args))
         self.shell = shell
         self.retcode = 1
         self.cwd = cwd
@@ -81,8 +81,8 @@ class Command(object):
                                                                  -retcode)
             elif retcode > 0:
                 err_detail = "%s returned %d" % (self.cmd, retcode)
-        except OSError as e:
-            err_detail = "Execution failed: " + e.__str__()
+        except OSError as err:
+            err_detail = "Execution failed: %s" % err
             retcode = 1
         if retcode:
             log.err("%s: %s" % (self.run_error, err_detail))
@@ -118,8 +118,8 @@ class Command(object):
         """
         try:
             ret = self.__call(args)
-        except OSError as e:
-            raise CommandExecFailed("Execution failed: %s" % e)
+        except OSError as err:
+            raise CommandExecFailed("Execution failed: %s" % err)
         return ret
 
 
@@ -141,7 +141,7 @@ class UnpackTarArchive(Command):
     def __init__(self, archive, dir, filters=[], compression=None):
         self.archive = archive
         self.dir = dir
-        exclude = [("--exclude=%s" % filter) for filter in filters]
+        exclude = [("--exclude=%s" % _filter) for _filter in filters]
 
         if not compression:
             compression = '-a'
@@ -156,7 +156,7 @@ class PackTarArchive(Command):
     def __init__(self, archive, dir, dest, filters=[], compression=None):
         self.archive = archive
         self.dir = dir
-        exclude = [("--exclude=%s" % filter) for filter in filters]
+        exclude = [("--exclude=%s" % _filter) for _filter in filters]
 
         if not compression:
             compression = '-a'
