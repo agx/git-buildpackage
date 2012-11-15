@@ -19,103 +19,125 @@
 
 import os
 import sys
-
-logger = None
-
-class Logger(object):
-
-    DEBUG, INFO, WARNING, ERROR = range(4)
-
-    COLOR_NONE = 0
-    COLOR_BLACK, COLOR_RED, COLOR_GREEN = range(30,33)
-
-    COLOR_SEQ = "\033[%dm"
-    BOLD_SEQ = "\033[1m"
+import logging
+from logging import (DEBUG, INFO, WARNING, ERROR, CRITICAL, getLogger)
 
 
-    format = ("%(color)s"
-              "gbp:%(levelname)s: "
-              "%(message)s"
-              "%(coloroff)s")
+COLORS = dict([('none', 0)] + zip(['black', 'red', 'green', 'yellow', 'blue',
+                                   'magenta', 'cyan', 'white'], range(30, 38)))
+DEFAULT_COLOR_SCHEME = {DEBUG: COLORS['green'],
+                        INFO: COLORS['green'],
+                        WARNING: COLORS['red'],
+                        ERROR: COLORS['red'],
+                        CRITICAL: COLORS['red']}
 
-    def __init__(self):
-        self.levels = { self.DEBUG:   [ 'debug', self.COLOR_GREEN ],
-                        self.INFO:    [ 'info',  self.COLOR_GREEN ],
-                        self.WARNING: [ 'warn',  self.COLOR_RED   ],
-                        self.ERROR:   [ 'error', self.COLOR_RED   ], }
-        self.color = False
-        self.level = self.INFO
-        self.get_color = self.get_coloroff = self._color_dummy
 
-    def set_level(self, level):
-        self.level = level
+class GbpFilter(object):
+    """Filter for enabling selective output"""
+    def __init__(self, levels):
+        self._levels = levels
 
-    def _is_tty(self):
-        if (os.getenv("EMACS") and
-            os.getenv("INSIDE_EMACS", "").endswith(",comint")):
-            return False
-
-        if (sys.stderr.isatty() and
-            sys.stdout.isatty()):
+    def filter(self, record):
+        """Do we show the record"""
+        if record.levelno in self._levels:
             return True
-
         return False
 
+
+class GbpStreamHandler(logging.StreamHandler):
+    """Special stream handler for enabling colored output"""
+
+    COLOR_SEQ = "\033[%dm"
+    OFF_SEQ = "\033[0m"
+
+    def __init__(self, stream=None, color=True):
+        super(GbpStreamHandler, self).__init__(stream)
+        self._color = color
+        msg_fmt = "%(color)s%(name)s:%(levelname)s: %(message)s%(coloroff)s"
+        self.setFormatter(logging.Formatter(fmt=msg_fmt))
+
     def set_color(self, color):
-        if type(color) == type(True):
-            self.color = color
-        else:
-            if color.is_on():
-                self.color = True
-            elif color.is_auto():
-                self.color = self._is_tty()
-            else:
-                self.color = False
+        """Set/unset colorized output"""
+        self._color = color
 
-        if self.color:
-            self.get_color = self._color
-            self.get_coloroff = self._color_off
-        else:
-            self.get_color = self.get_coloroff = self._color_dummy
+    def set_format(self, fmt):
+        """Set logging format"""
+        self.setFormatter(logging.Formatter(fmt=fmt))
 
-    def _color_dummy(self, level=None):
-        return ""
-
-    def _color(self, level):
-        return self.COLOR_SEQ % (self.levels[level][1])
-
-    def _color_off(self):
-        return self.COLOR_SEQ % self.COLOR_NONE
+    def format(self, record):
+        """Colorizing formatter"""
+        # Never write color-escaped output to non-tty streams
+        record.color = record.coloroff = ""
+        if self._color and self.stream.isatty():
+            record.color = self.COLOR_SEQ % DEFAULT_COLOR_SCHEME[record.levelno]
+            record.coloroff = self.OFF_SEQ
+        return super(GbpStreamHandler, self).format(record)
 
 
-    def log(self, level, message):
-        if level < self.level:
-            return
+class GbpLogger(logging.Logger):
+    """Logger class for git-buildpackage"""
 
-        out = [sys.stdout, sys.stderr][level >= self.WARNING]
-        print >>out, self.format % { 'levelname': self.levels[level][0],
-                                     'color': self.get_color(level),
-                                     'message': message,
-                                     'coloroff': self.get_coloroff()}
+    def __init__(self, name, color=True, *args, **kwargs):
+        super(GbpLogger, self).__init__(name, *args, **kwargs)
+        self._default_handlers = [GbpStreamHandler(sys.stdout, color),
+                                  GbpStreamHandler(sys.stderr, color)]
+        self._default_handlers[0].addFilter(GbpFilter([DEBUG, INFO]))
+        self._default_handlers[1].addFilter(GbpFilter([WARNING, ERROR,
+                                                       CRITICAL]))
+        for hdlr in self._default_handlers:
+            self.addHandler(hdlr)
+
+    def set_color(self, color):
+        """Set/unset colorized output of the default handlers"""
+        for hdlr in self._default_handlers:
+            hdlr.set_color(color)
+
+    def set_format(self, fmt):
+        """Set the format of the default handlers"""
+        for hdlr in self._default_handlers:
+            hdlr.set_format(fmt)
 
 
 def err(msg):
-    logger.log(Logger.ERROR, msg)
+    """Logs a message with level ERROR on the GBP logger"""
+    LOGGER.error(msg)
 
 def warn(msg):
-    logger.log(Logger.WARNING, msg)
+    """Logs a message with level WARNING on the GBP logger"""
+    LOGGER.warning(msg)
 
 def info(msg):
-    logger.log(Logger.INFO, msg)
+    """Logs a message with level INFO on the GBP logger"""
+    LOGGER.info(msg)
 
 def debug(msg):
-    logger.log(Logger.DEBUG, msg)
+    """Logs a message with level DEBUG on the GBP logger"""
+    LOGGER.debug(msg)
+
+def _use_color(color):
+    """Parse the color option"""
+    if isinstance(color, bool):
+        return color
+    else:
+        if color.is_on():
+            return True
+        elif color.is_auto():
+            in_emacs = (os.getenv("EMACS") and
+                        os.getenv("INSIDE_EMACS", "").endswith(",comint"))
+            return not in_emacs
+    return False
 
 def setup(color, verbose):
-    logger.set_color(color)
+    """Basic logger setup"""
+    LOGGER.set_color(_use_color(color))
     if verbose:
-        logger.set_level(Logger.DEBUG)
+        LOGGER.setLevel(DEBUG)
+    else:
+        LOGGER.setLevel(INFO)
 
-if not logger:
-    logger = Logger()
+
+# Initialize the module
+logging.setLoggerClass(GbpLogger)
+
+LOGGER = getLogger("gbp")
 
