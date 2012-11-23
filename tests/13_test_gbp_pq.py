@@ -26,6 +26,16 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         self.assertIn('foo', self.repo.list_files())
 
 
+    def test_topic(self):
+        """Test if setting a topic works"""
+        patch = gbp.patch_series.Patch(
+            os.path.join(os.path.abspath(os.path.curdir),
+                         'tests/data/foo.patch'))
+
+        gbp.scripts.common.pq.apply_and_commit_patch(self.repo, patch, None,
+                                                     topic='foobar')
+        info = self.repo.get_commit_info('HEAD')
+        self.assertIn('Gbp-Pq-Topic: foobar', info['body'])
 
     @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
     def test_debian_missing_author(self):
