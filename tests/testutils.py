@@ -7,7 +7,6 @@ import unittest
 import gbp.log
 import gbp.deb.git
 import gbp.errors
-import gbp.scripts.buildpackage as buildpackage
 
 class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single test"""
@@ -35,6 +34,11 @@ class DebianGitTestRepo(unittest.TestCase):
         @type content: C{str}
         """
         path = os.path.join(self.repo.path, name)
+
+        d = os.path.dirname(path)
+        if not os.path.exists(d):
+            os.makedirs(d)
+
         with file(path, 'w+') as f:
             content == None or f.write(content)
         self.repo.add_files(name, force=True)
