@@ -145,12 +145,12 @@ def switch_to_pq_branch(repo, branch):
     repo.set_branch(pq_branch)
 
 
-def apply_single_patch(repo, branch, patch, topic=None):
+def apply_single_patch(repo, branch, patch, get_author_info, topic=None):
     switch_to_pq_branch(repo, branch)
-    apply_and_commit_patch(repo, patch, topic)
+    apply_and_commit_patch(repo, patch, get_author_info, topic)
 
 
-def apply_and_commit_patch(repo, patch, topic=None):
+def apply_and_commit_patch(repo, patch, get_author_info, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
     author = {'name': patch.author,
               'email': patch.email,
@@ -158,7 +158,7 @@ def apply_and_commit_patch(repo, patch, topic=None):
 
     patch_fn = os.path.basename(patch.path)
     if not (patch.author and patch.email):
-        name, email = get_maintainer_from_control(repo)
+        name, email = get_author_info(repo)
         if name:
             gbp.log.warn("Patch '%s' has no authorship information, "
                          "using '%s <%s>'" % (patch_fn, name, email))

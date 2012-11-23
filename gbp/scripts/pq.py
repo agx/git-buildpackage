@@ -31,7 +31,7 @@ from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                  write_patch, switch_to_pq_branch,
                                  apply_single_patch, apply_and_commit_patch,
-                                 drop_pq)
+                                 drop_pq, get_maintainer_from_control)
 
 PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR,"series")
@@ -146,7 +146,9 @@ def import_quilt_patches(repo, branch, series, tries, force):
         for patch in queue:
             gbp.log.debug("Applying %s" % patch.path)
             try:
-                apply_and_commit_patch(repo, patch, patch.topic)
+                apply_and_commit_patch(repo, patch,
+                                       get_maintainer_from_control,
+                                       patch.topic)
             except (GbpError, GitRepositoryError):
                 repo.set_branch(branch)
                 repo.delete_branch(pq_branch)
@@ -250,7 +252,9 @@ def main(argv):
             rebase_pq(repo, current)
         elif action == "apply":
             patch = Patch(patchfile)
-            apply_single_patch(repo, current, patch, options.topic)
+            apply_single_patch(repo, current, patch,
+                               get_maintainer_from_control,
+                               options.topic)
         elif action == "switch":
             switch_pq(repo, current)
     except CommandExecFailed:
