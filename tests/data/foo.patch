@@ -1,0 +1,12 @@
+From: Guido Günther <agx@sigxcpu.org>
+Subject: foobar
+
+    foo
+
+diff --git a/foo b/foo
+new file mode 100644
+index 0000000..257cc56
+--- /dev/null
++++ b/foo
+@@ -0,0 +1 @@
++foo
