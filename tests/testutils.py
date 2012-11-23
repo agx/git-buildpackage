@@ -23,7 +23,7 @@ class DebianGitTestRepo(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
 
-    def add_file(self, name, content=None):
+    def add_file(self, name, content=None, msg=None):
         """
         Add a single file with name I{name} and content I{content}. If
         I{content} is C{none} the content of the file is undefined.
@@ -42,4 +42,4 @@ class DebianGitTestRepo(unittest.TestCase):
         with file(path, 'w+') as f:
             content == None or f.write(content)
         self.repo.add_files(name, force=True)
-        self.repo.commit_files(path, "added %s" % name)
+        self.repo.commit_files(path, msg or "added %s" % name)
