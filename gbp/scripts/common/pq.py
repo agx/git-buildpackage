@@ -108,9 +108,11 @@ def write_patch(patch, patch_dir, options):
     return dstname
 
 
-def get_maintainer_from_control():
+def get_maintainer_from_control(repo):
     """Get the maintainer from the control file"""
-    cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" debian/control'
+    control = os.path.join(repo.path, 'debian', 'control')
+
+    cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" %s' % control
     cmdout = subprocess.Popen(cmd, shell=True,
                               stdout=subprocess.PIPE).stdout.readlines()
 
@@ -156,7 +158,7 @@ def apply_and_commit_patch(repo, patch, topic=None):
 
     patch_fn = os.path.basename(patch.path)
     if not (patch.author and patch.email):
-        name, email = get_maintainer_from_control()
+        name, email = get_maintainer_from_control(repo)
         if name:
             gbp.log.warn("Patch '%s' has no authorship information, "
                          "using '%s <%s>'" % (patch_fn, name, email))
