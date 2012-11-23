@@ -355,7 +355,7 @@ class GitRepository(object):
         args.add(commit2)
         sha1, stderr, ret = self._git_inout('merge-base', args.args, capture_stderr=True)
         if not ret:
-            return sha1.strip()
+            return self.strip_sha1(sha1)
         else:
             raise GitRepositoryError("Failed to get common ancestor: %s" % stderr.strip())
 
@@ -713,7 +713,34 @@ class GitRepository(object):
         sha, ret = self._git_getoutput('rev-parse', args.args)
         if ret:
             raise GitRepositoryError("revision '%s' not found" % name)
-        return sha[0].strip()
+        return self.strip_sha1(sha[0], short)
+
+    @staticmethod
+    def strip_sha1(sha1, length=0):
+        """
+        Strip a given sha1 and check if the resulting
+        hash has the expected length.
+
+        >>> GitRepository.strip_sha1('  58ef37dbeb12c44b206b92f746385a6f61253c0a\\n')
+        '58ef37dbeb12c44b206b92f746385a6f61253c0a'
+        >>> GitRepository.strip_sha1('58ef37d', 10)
+        Traceback (most recent call last):
+        ...
+        GitRepositoryError: '58ef37d' is not a valid sha1 of length 10
+        >>> GitRepository.strip_sha1('58ef37d', 7)
+        '58ef37d'
+        >>> GitRepository.strip_sha1('foobar')
+        Traceback (most recent call last):
+        ...
+        GitRepositoryError: 'foobar' is not a valid sha1
+        """
+        s = sha1.strip()
+        l = length if length else 40
+
+        if len(s) != l:
+            raise GitRepositoryError("'%s' is not a valid sha1%s" %
+                                     (s, " of length %d" % l if length else ""))
+        return s
 
 #{ Trees
     def checkout(self, treeish):
@@ -774,7 +801,7 @@ class GitRepository(object):
                                           capture_stderr=True)
         if ret:
             raise GitRepositoryError("Failed to mktree: '%s'" % err)
-        return sha1.strip()
+        return self.strip_sha1(sha1)
 
     def get_obj_type(self, obj):
         """
@@ -1058,7 +1085,7 @@ class GitRepository(object):
                                             args.args,
                                             capture_stderr=True)
         if not ret:
-            return sha1.strip()
+            return self.strip_sha1(sha1)
         else:
             raise GbpError("Failed to hash %s: %s" % (filename, stderr))
 #}
@@ -1202,7 +1229,7 @@ class GitRepository(object):
                                             extra_env,
                                             capture_stderr=True)
         if not ret:
-            return sha1.strip()
+            return self.strip_sha1(sha1)
         else:
             raise GbpError("Failed to commit tree: %s" % stderr)
 
