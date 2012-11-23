@@ -144,7 +144,6 @@ def parse_url(remote_url, name, pkg, template_dir=None):
 def build_remote_script(remote):
     """
     Create the script that will be run on the remote side
-
     >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': None})
     '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\n'
     >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': '/doesnot/exist'})

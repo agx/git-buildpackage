@@ -22,8 +22,8 @@
       <arg><option>--git-[no-]ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
-      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
-      <arg><option>--notify=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--git-color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--git-upstream-branch=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--git-ignore-branch</option></arg>
