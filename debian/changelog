@@ -1,3 +1,65 @@
+git-buildpackage (0.6.0~git20121124) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [c3c2778] Add minimal debian/source/format parser
+  * [3878867] PEP-8 and pyflakes cleanups
+  * [30c1821] Add support dch's --security option
+  * [4970b42] gbp-pq: Print number of import tries left
+  * [cf48b03] Allow to remove the orig tarball symlink that's used make
+    pristine-tar see the correct orig tarball name.
+    (Closes: #692401)
+  * [09ba538] GbpError accepts an error message so no need to print it
+    separately.
+  * [a488695] Minor git-import-orig manpage improvements
+  * [4c9bb9f] Add missing git- prefix to --color and --notify options.
+    Thanks to Filippo Rusconi (Closes: #693978)
+  * [9478bad] testutils: create missing directories when adding a file
+  * [691856d] Use an absolute path when parsing the control file so we can't
+    accidentally parse a file from another dir.
+  * [d248720] Test apply_and_commit_patch
+  * [3952091] gbp-pq: Allow to pass in custom function to fetch authorship
+    information so the RPM based tools don't need to rely on a control file
+    but can e.g. look at the spec file.
+  * [7f2c9c1] gbp-pq: Test if setting a topic works
+  * [f4d493d] Add sha1 stripping in a single place so we can easily sanity
+    check the result.
+  * [95ec21a] Output test results in xunit format too to make it more useful
+    in Jenkins CI builds
+  * [24fdd97] Test gbp.pq.common.write_patch
+  * [824e83e] gbp-pq: don't use plural form when there's only one try left
+  * [8b01d37] git-import-dscs: Properly catch import errors
+    (Closes: #694113)
+
+  [ Dmitrijs Ledkovs ]
+  * [323bdcf] Fix  testsuite failure if DEB_VENDOR != Debian.
+    (Closes: #692289)
+
+  [ Markus Lehtonen ]
+  * [f4d2e21] GitRepository: implement _cmd_has_feature() method to allow
+    compatibility with older git versions.
+  * [dfbedfe] GitRepository: fix merge() for older git versions using
+    _cmd_has_feature() in GitRepository.merge().
+  * [ba854d8] GitRepository/diff: add 'paths' argument to makes the diff
+    function more versatile
+  * [b7cdef5] GitRepository/diff: catch git error.
+  * [fe1e120] command_wrappers: suppress some pylint warnings
+  * [4ed1b43] notifications.py: remove unused import
+  * [0a9bf99] tests: make tests a Python module to make it possible to reuse
+    code between various tests.
+  * [932b1c0] pq: fix "no authorship" warning messages.
+  * [1da7e0d] import-orig: remove dead if statement.
+  * [3678906] import-orig: remove dead GbpNothingImported exception
+  * [8bc7921] GitRepository/get_commits: more flexible revision ranges.
+  * [36d13cb] GitRepository/get_submodules: use correct path.
+  * [3362147] GitRepository/get_commit_info: support tags.
+  * [03cdea0] GitRepository/has_submodules: use correct .gitmodules file.
+
+  [ Ed Bartosh ]
+  * [8bb62f5] GitRepository.find_tag: change deprecated _git_getoutput to
+    _git_inout
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 24 Nov 2012 14:55:24 +0100
+
 git-buildpackage (0.6.0~git20120822) unstable; urgency=low
 
   [ Guido Günther ]
