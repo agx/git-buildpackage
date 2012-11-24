@@ -21,7 +21,7 @@ import os
 import sys
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import parse_dsc, DscFile, DpkgCompareVersions
+from gbp.deb import parse_dsc, DpkgCompareVersions
 from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.scripts import import_dsc
@@ -48,8 +48,10 @@ def fetch_snapshots(pkg, downloaddir):
     "Fetch snapshots using debsnap von snapshots.debian.org"
     dscs = None
 
-    gbp.log.info("Downloading snapshots of '%s' to '%s'..." % (pkg, downloaddir))
-    debsnap = gbpc.Command("debsnap", [ '--force', '--destdir=%s' % (downloaddir), pkg])
+    gbp.log.info("Downloading snapshots of '%s' to '%s'..." %
+                 (pkg, downloaddir))
+    debsnap = gbpc.Command("debsnap", [ '--force', '--destdir=%s' %
+                                        (downloaddir), pkg])
     try:
         debsnap()
     except gbpc.CommandExecFailed:
@@ -98,7 +100,7 @@ def main(argv):
         import_args = argv[1:]
 
         if '--verbose' in import_args:
-            verbose = True 
+            verbose = True
         gbp.log.setup(False, verbose)
 
         if '--ignore-repo-config' in import_args:
@@ -135,7 +137,8 @@ def main(argv):
             repo = GitRepository('.')
             (clean, out) = repo.is_clean()
             if not clean:
-                gbp.log.err("Repository has uncommitted changes, commit these first: ")
+                gbp.log.err("Repository has uncommitted changes, "
+                            "commit these first: ")
                 raise GbpError(out)
             else:
                 dirs['pkg'] = dirs['top']

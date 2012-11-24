@@ -27,13 +27,13 @@ import pipes
 import time
 import gbp.command_wrappers as gbpc
 from gbp.pkg import UpstreamSource
-from gbp.deb import (debian_version_chars,
-                     parse_dsc, DscFile)
+from gbp.deb import  parse_dsc
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
 from gbp.git.modifier import GitModifier
-from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
+from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
+                        no_upstream_branch_msg)
 from gbp.errors import GbpError
 import gbp.log
 
