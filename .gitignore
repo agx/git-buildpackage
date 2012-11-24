@@ -4,6 +4,7 @@
 gbp/version.py
 build/
 gbp.egg-info/
+nosetests.xml
 
 docs/*.1
 docs/manual-html/
