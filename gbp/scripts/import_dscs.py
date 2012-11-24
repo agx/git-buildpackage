@@ -41,7 +41,7 @@ class GitImportDsc(object):
         self.args = args
 
     def importdsc(self, dsc):
-        import_dsc.main(['git-import-dsc'] + self.args + [dsc.dscfile])
+        return import_dsc.main(['git-import-dsc'] + self.args + [dsc.dscfile])
 
 
 def fetch_snapshots(pkg, downloaddir):
@@ -146,11 +146,13 @@ def main(argv):
             # no git repository there yet
             dirs['pkg'] = os.path.join(dirs['top'], dscs[0].pkg)
 
-        importer.importdsc(dscs[0])
+        if importer.importdsc(dscs[0]):
+            raise GbpError("Failed to import '%s'" % dscs[0])
         os.chdir(dirs['pkg'])
 
         for dsc in dscs[1:]:
-            importer.importdsc(dsc)
+            if importer.importdsc(dsc):
+                raise GbpError("Failed to import '%s'" % dscs[0])
 
     except (GbpError, gbpc.CommandExecFailed, GitRepositoryError) as err:
         if len(err.__str__()):
