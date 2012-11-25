@@ -141,20 +141,20 @@ def parse_url(remote_url, name, pkg, template_dir=None):
     return remote
 
 
-def build_remote_script(remote):
+def build_remote_script(remote, branch):
     """
     Create the script that will be run on the remote side
-    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': None})
-    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\n'
-    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': '/doesnot/exist'})
-    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared --template=/doesnot/exist\\necho "pkg packaging" > description\\n'
-
+    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': None}, 'branch')
+    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\necho "ref: refs/heads/branch" > HEAD\\n'
+    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': '/doesnot/exist'}, 'branch')
+    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared --template=/doesnot/exist\\necho "pkg packaging" > description\\necho "ref: refs/heads/branch" > HEAD\\n'
     """
-    remote = remote
-    remote['git-init-args'] = '--bare --shared'
-    if remote['template-dir']:
-        remote['git-init-args'] += (' --template=%s'
-                                    % remote['template-dir'])
+    args = remote
+    args['branch'] = branch
+    args['git-init-args'] = '--bare --shared'
+    if args['template-dir']:
+        args['git-init-args'] += (' --template=%s'
+                                    % args['template-dir'])
     remote_script_pattern = ['',
       'set -e',
       'umask 002',
@@ -166,8 +166,9 @@ def build_remote_script(remote):
       'cd %(base)s"%(dir)s"',
       'git init %(git-init-args)s',
       'echo "%(pkg)s packaging" > description',
+      'echo "ref: refs/heads/%(branch)s" > HEAD',
       '' ]
-    remote_script = '\n'.join(remote_script_pattern) % remote
+    remote_script = '\n'.join(remote_script_pattern) % args
     return remote_script
 
 
@@ -336,7 +337,7 @@ def main(argv):
         if not read_yn():
             raise GbpError("Aborted.")
 
-        remote_script = build_remote_script(remote)
+        remote_script = build_remote_script(remote, branches[0])
         if options.verbose:
             print remote_script
 
