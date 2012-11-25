@@ -144,6 +144,11 @@ def _parse_color_scheme(color_scheme=""):
     scheme = {}
     colors = color_scheme.split(':')
     levels = (DEBUG, INFO, WARNING, ERROR)
+
+    if color_scheme and len(colors) != len(levels):
+        raise ValueError("Number color fields in color scheme not %d'"
+                         % len(levels))
+
     for field, color in enumerate(colors):
         level = levels[field]
         try:
