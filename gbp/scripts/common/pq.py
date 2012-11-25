@@ -65,43 +65,142 @@ def pq_branch_base(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
 
+def patch_read_header(src):
+    """
+    Read a patches header and split it into single lines. We
+    assume the header ends at the first line starting with
+    "diff ..."
+    """
+    header = []
+
+    for line in src:
+        if line.startswith('diff '):
+            break
+        else:
+            header.append(line)
+    else:
+        raise GbpError("Failed to find patch header in %s" % src.name)
+    return header
+
+
+def patch_header_parse_topic(header):
+    """
+    Parse the topic from the patch header removing the corresponding
+    line. This mangles the header in place.
+
+    @param header: patch header
+    @type header: C{list} of C{str}
+
+    >>> h = ['foo', 'gbp-pq-topic: bar']
+    >>> patch_header_parse_topic(h)
+    'bar'
+    >>> h
+    ['foo']
+    """
+    topic = None
+    index = -1
+
+    for line in header:
+        if line.lower().startswith("gbp-pq-topic: "):
+            index = header.index(line)
+            break
+    if index != -1:
+        topic = header[index].split(" ", 1)[1].strip()
+        del header[index]
+    return topic
+
+
+def patch_header_mangle_newline(header):
+    """
+    Look for the diff stat separator and remove
+    trailing new lines before it. This mangles
+    the header in place.
+
+    @param header: patch header
+    @type header: C{list} of C{str}
+
+    >>> h = ['foo bar\\n', '\\n', 'bar', '\\n', '\\n', '\\n', '---\\n', '\\n']
+    >>> patch_header_mangle_newline(h)
+    >>> h
+    ['foo bar\\n', '\\n', 'bar', '\\n', '---\\n', '\\n']
+    """
+    while True:
+        try:
+            index = header.index('---\n')
+        except ValueError:
+            return
+        try:
+            # Remove trailing newlines until we have at
+            # at most one left
+            if header[index-1] == header[index-2] == '\n':
+                del header[index-2]
+            else:
+                return
+        except IndexError:
+            return
+
+
+def patch_write_header(srcname, dstname):
+    """
+    Write out the patch header doing any necessary processing such
+    as detecting and removing a given topic, dropping trailing
+    new lines and skipping the first line containing the sha1.
+    """
+    topic = None
+
+    with file(srcname) as src:
+        header = patch_read_header(src)
+        header_len = len(''.join(header))
+
+        topic = patch_header_parse_topic(header)
+        patch_header_mangle_newline(header)
+
+    with file(dstname, 'w') as dst:
+        dst.write(''.join(header[1:]))
+
+    return (header_len, topic)
+
+
+def patch_write_content(srcname, dstname, header_len):
+    """
+    Write out the patch body skipping the header
+    """
+    with file(srcname) as src:
+        src.seek(header_len, 0)
+        with file(dstname, 'a') as dst:
+            dst.write(src.read())
+
+
 def write_patch(patch, patch_dir, options):
     """Write the patch exported by 'git-format-patch' to it's final location
        (as specified in the commit)"""
     oldname = os.path.basename(patch)
-    newname = oldname
     tmpname = patch + ".gbp"
-    old = file(patch, 'r')
-    tmp = file(tmpname, 'w')
     topic = None
 
-    # Skip first line (From <sha1>)
-    old.readline()
-    for line in old:
-        if line.lower().startswith("gbp-pq-topic: "):
-            topic = line.split(" ", 1)[1].strip()
-            gbp.log.debug("Topic %s found for %s" % (topic, patch))
-            continue
-        tmp.write(line)
-    tmp.close()
-    old.close()
+    header_len, topic = patch_write_header(patch, tmpname)
+    patch_write_content(patch, tmpname, header_len)
 
-    if not options.patch_numbers:
+    if options.patch_numbers:
+        newname = oldname
+    else:
         patch_re = re.compile("[0-9]+-(?P<name>.+)")
         m = patch_re.match(oldname)
         if m:
             newname = m.group('name')
+        else:
+            raise GbpError("Can't get patch name from '%s'" % oldname)
 
     if topic:
-        topicdir = os.path.join(patch_dir, topic)
+        dstdir = os.path.join(patch_dir, topic)
     else:
-        topicdir = patch_dir
+        dstdir = patch_dir
 
-    if not os.path.isdir(topicdir):
-        os.makedirs(topicdir, 0755)
+    if not os.path.isdir(dstdir):
+        os.makedirs(dstdir, 0755)
 
     os.unlink(patch)
-    dstname = os.path.join(topicdir, newname)
+    dstname = os.path.join(dstdir, newname)
     gbp.log.debug("Moving %s to %s" % (tmpname, dstname))
     shutil.move(tmpname, dstname)
 
