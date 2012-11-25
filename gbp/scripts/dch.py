@@ -22,7 +22,6 @@ import os.path
 import re
 import sys
 import shutil
-import subprocess
 import gbp.command_wrappers as gbpc
 import gbp.dch as dch
 import gbp.log
@@ -424,7 +423,13 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
-        branch = repo.get_branch()
+        try:
+            branch = repo.get_branch()
+        except GitRepositoryError:
+            # Not being on any branch is o.k. with --ignore-branch
+            if not options.ignore_branch:
+                raise
+
         if options.debian_branch != branch and not options.ignore_branch:
             gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
             raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
