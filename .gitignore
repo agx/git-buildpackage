@@ -1,6 +1,7 @@
 *.pyc
 .noseids
 .coverage
+.ropeproject/
 gbp/version.py
 build/
 gbp.egg-info/
