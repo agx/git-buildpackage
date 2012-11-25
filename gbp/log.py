@@ -71,6 +71,7 @@ class GbpStreamHandler(logging.StreamHandler):
         if self._color and self.stream.isatty():
             record.color = self.COLOR_SEQ % DEFAULT_COLOR_SCHEME[record.levelno]
             record.coloroff = self.OFF_SEQ
+        record.levelname = record.levelname.lower()
         return super(GbpStreamHandler, self).format(record)
 
 
