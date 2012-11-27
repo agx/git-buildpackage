@@ -736,10 +736,12 @@ class GitRepository(object):
         ...
         GitRepositoryError: 'foobar' is not a valid sha1
         """
+        maxlen = 40
         s = sha1.strip()
-        l = length if length else 40
 
-        if len(s) < l:
+        l = length or maxlen
+
+        if len(s) < l or len(s) > maxlen:
             raise GitRepositoryError("'%s' is not a valid sha1%s" %
                                      (s, " of length %d" % l if length else ""))
         return s
