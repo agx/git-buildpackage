@@ -22,7 +22,7 @@ import re
 import os
 import shutil
 import subprocess
-from gbp.git import GitRepositoryError
+from gbp.git import GitRepositoryError, GitModifier
 from gbp.errors import GbpError
 import gbp.log
 
@@ -219,9 +219,9 @@ def get_maintainer_from_control(repo):
         maintainer = cmdout[0].strip()
         m = re.match('(?P<name>.*[^ ]) *<(?P<email>.*)>', maintainer)
         if m:
-            return m.group('name'), m.group('email')
+            return GitModifier(m.group('name'), m.group('email'))
 
-    return None, None
+    return GitModifier()
 
 
 def switch_to_pq_branch(repo, branch):
@@ -244,25 +244,22 @@ def switch_to_pq_branch(repo, branch):
     repo.set_branch(pq_branch)
 
 
-def apply_single_patch(repo, branch, patch, get_author_info, topic=None):
+def apply_single_patch(repo, branch, patch, fallback_author, topic=None):
     switch_to_pq_branch(repo, branch)
-    apply_and_commit_patch(repo, patch, get_author_info, topic)
+    apply_and_commit_patch(repo, patch, fallback_author, topic)
 
 
-def apply_and_commit_patch(repo, patch, get_author_info, topic=None):
+def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
-    author = {'name': patch.author,
-              'email': patch.email,
-              'date': patch.date }
+    author = GitModifier(patch.author, patch.email, patch.date)
 
     patch_fn = os.path.basename(patch.path)
-    if not (patch.author and patch.email):
-        name, email = get_author_info(repo)
-        if name:
-            gbp.log.warn("Patch '%s' has no authorship information, "
-                         "using '%s <%s>'" % (patch_fn, name, email))
-            author['name'] = name
-            author['email'] = email
+    if not (author.name and author.email):
+        if fallback_author and fallback_author['name']:
+            author = fallback_author
+            gbp.log.warn("Patch '%s' has no authorship information, using "
+                         "'%s <%s>'" % (patch_fn, author['name'],
+                                        author['email']))
         else:
             gbp.log.warn("Patch '%s' has no authorship information" % patch_fn)
 

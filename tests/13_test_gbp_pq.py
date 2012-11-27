@@ -69,8 +69,8 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         self.add_file("debian/control",
                       "Maintainer: Guido Günther <gg@godiug.net>")
 
-        c = pq.get_maintainer_from_control
-        pq.apply_and_commit_patch(self.repo, patch, c)
+        maintainer = pq.get_maintainer_from_control(self.repo)
+        pq.apply_and_commit_patch(self.repo, patch, maintainer)
         info = self.repo.get_commit_info('HEAD')
         self.assertEqual(info['author'].email, 'gg@godiug.net')
         self.assertIn('foo', self.repo.list_files())

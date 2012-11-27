@@ -124,6 +124,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
             raise GbpError("Patch queue branch '%s'. already exists. Try 'rebase' instead."
                            % pq_branch)
 
+    maintainer = get_maintainer_from_control(repo)
     commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
@@ -146,9 +147,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
         for patch in queue:
             gbp.log.debug("Applying %s" % patch.path)
             try:
-                apply_and_commit_patch(repo, patch,
-                                       get_maintainer_from_control,
-                                       patch.topic)
+                apply_and_commit_patch(repo, patch, maintainer, patch.topic)
             except (GbpError, GitRepositoryError):
                 repo.set_branch(branch)
                 repo.delete_branch(pq_branch)
@@ -254,9 +253,8 @@ def main(argv):
             rebase_pq(repo, current)
         elif action == "apply":
             patch = Patch(patchfile)
-            apply_single_patch(repo, current, patch,
-                               get_maintainer_from_control,
-                               options.topic)
+            maintainer = get_maintainer_from_control(repo)
+            apply_single_patch(repo, current, patch, maintainer, options.topic)
         elif action == "switch":
             switch_pq(repo, current)
     except CommandExecFailed:
