@@ -39,6 +39,8 @@ class Tristate(object):
                 self._state = self.AUTO
             else:
                 self._state = self.OFF
+        elif type(val) is Tristate:
+            self._state = val.state
         else:
             raise TypeError
 
@@ -64,6 +66,11 @@ class Tristate(object):
     def is_valid_state(self, stat):
         if state.lower() in self._VALID_NAMES:
             return True
+
+    @property
+    def state(self):
+        """Get current state"""
+        return self._state
 
     def is_auto(self):
         return [False, True][self._state == self.AUTO]
