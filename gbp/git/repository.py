@@ -729,6 +729,8 @@ class GitRepository(object):
         GitRepositoryError: '58ef37d' is not a valid sha1 of length 10
         >>> GitRepository.strip_sha1('58ef37d', 7)
         '58ef37d'
+        >>> GitRepository.strip_sha1('123456789', 7)
+        '123456789'
         >>> GitRepository.strip_sha1('foobar')
         Traceback (most recent call last):
         ...
@@ -737,7 +739,7 @@ class GitRepository(object):
         s = sha1.strip()
         l = length if length else 40
 
-        if len(s) != l:
+        if len(s) < l:
             raise GitRepositoryError("'%s' is not a valid sha1%s" %
                                      (s, " of length %d" % l if length else ""))
         return s
