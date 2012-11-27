@@ -62,11 +62,6 @@ class Tristate(object):
         else:
             return 'off'
 
-    @classmethod
-    def is_valid_state(self, stat):
-        if state.lower() in self._VALID_NAMES:
-            return True
-
     @property
     def state(self):
         """Get current state"""
