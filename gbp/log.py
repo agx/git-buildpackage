@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 from logging import (DEBUG, INFO, WARNING, ERROR, CRITICAL, getLogger)
+import gbp.tristate
 
 
 COLORS = dict([('none', 0)] + zip(['black', 'red', 'green', 'yellow', 'blue',
@@ -50,16 +51,16 @@ class GbpStreamHandler(logging.StreamHandler):
     COLOR_SEQ = "\033[%dm"
     OFF_SEQ = "\033[0m"
 
-    def __init__(self, stream=None, color=True):
+    def __init__(self, stream=None, color='auto'):
         super(GbpStreamHandler, self).__init__(stream)
-        self._color = color
+        self._color = gbp.tristate.Tristate(color)
         self._color_scheme = DEFAULT_COLOR_SCHEME.copy()
         msg_fmt = "%(color)s%(name)s:%(levelname)s: %(message)s%(coloroff)s"
         self.setFormatter(logging.Formatter(fmt=msg_fmt))
 
     def set_color(self, color):
         """Set/unset colorized output"""
-        self._color = color
+        self._color = gbp.tristate.Tristate(color)
 
     def set_color_scheme(self, color_scheme={}):
         """Set logging colors"""
@@ -70,11 +71,20 @@ class GbpStreamHandler(logging.StreamHandler):
         """Set logging format"""
         self.setFormatter(logging.Formatter(fmt=fmt))
 
+    def _use_color(self):
+        """Check if to print in color or not"""
+        if self._color.is_on():
+            return True
+        elif self._color.is_auto():
+            in_emacs = (os.getenv("EMACS") and
+                        os.getenv("INSIDE_EMACS", "").endswith(",comint"))
+            return self.stream.isatty() and not in_emacs
+        return False
+
     def format(self, record):
         """Colorizing formatter"""
-        # Never write color-escaped output to non-tty streams
         record.color = record.coloroff = ""
-        if self._color and self.stream.isatty():
+        if self._use_color():
             record.color = self.COLOR_SEQ % self._color_scheme[record.levelno]
             record.coloroff = self.OFF_SEQ
         record.levelname = record.levelname.lower()
@@ -84,7 +94,7 @@ class GbpStreamHandler(logging.StreamHandler):
 class GbpLogger(logging.Logger):
     """Logger class for git-buildpackage"""
 
-    def __init__(self, name, color=True, *args, **kwargs):
+    def __init__(self, name, color='auto', *args, **kwargs):
         super(GbpLogger, self).__init__(name, *args, **kwargs)
         self._default_handlers = [GbpStreamHandler(sys.stdout, color),
                                   GbpStreamHandler(sys.stderr, color)]
@@ -126,19 +136,6 @@ def debug(msg):
     """Logs a message with level DEBUG on the GBP logger"""
     LOGGER.debug(msg)
 
-def _use_color(color):
-    """Parse the color option"""
-    if isinstance(color, bool):
-        return color
-    else:
-        if color.is_on():
-            return True
-        elif color.is_auto():
-            in_emacs = (os.getenv("EMACS") and
-                        os.getenv("INSIDE_EMACS", "").endswith(",comint"))
-            return not in_emacs
-    return False
-
 def _parse_color_scheme(color_scheme=""):
     """Set logging colors"""
     scheme = {}
@@ -161,7 +158,7 @@ def _parse_color_scheme(color_scheme=""):
 
 def setup(color, verbose, color_scheme=""):
     """Basic logger setup"""
-    LOGGER.set_color(_use_color(color))
+    LOGGER.set_color(color)
     LOGGER.set_color_scheme(_parse_color_scheme(color_scheme))
     if verbose:
         LOGGER.setLevel(DEBUG)
