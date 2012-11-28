@@ -357,6 +357,12 @@ def main(argv):
                     info = { 'version': "%s%s-1" % (epoch, version) }
                     env = { 'GBP_BRANCH': options.debian_branch }
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
+            # Update working copy and index if we've possibly updated the
+            # checked out branch
+            current_branch = repo.get_branch()
+            if (current_branch == options.upstream_branch or
+                current_branch == repo.pristine_tar_branch):
+                repo.force_head(current_branch, hard=True)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = err.__str__() if len(err.__str__()) else ''
             raise GbpError("Import of %s failed: %s" % (source.path, msg))
