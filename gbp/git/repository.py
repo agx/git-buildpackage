@@ -1481,7 +1481,7 @@ class GitRepository(object):
         args.append(patch)
         self._git_command("apply", args)
 
-    def diff(self, obj1, obj2=None, paths=None):
+    def diff(self, obj1, obj2=None, paths=None, stat=False, summary=False):
         """
         Diff two git repository objects
 
@@ -1491,10 +1491,19 @@ class GitRepository(object):
         @type obj2: C{str}
         @param paths: List of paths to diff
         @type paths: C{list}
+        @param stat: Show diffstat
+        @type stat: C{bool} or C{int} or C{str}
+        @param summary: Show diffstat
+        @type summary: C{bool}
         @return: diff
         @rtype: C{str}
         """
-        options = GitArgs()
+        options = GitArgs('-p')
+        if stat is True:
+            options.add('--stat')
+        elif stat:
+            options.add('--stat=%s' % stat)
+        options.add_true(summary, '--summary')
         options.add(obj1)
         options.add_true(obj2, obj2)
         if paths:
