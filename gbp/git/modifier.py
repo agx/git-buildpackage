@@ -28,6 +28,17 @@ class GitModifierError(GitError):
     """Exception thrown by L{GitModifier}"""
     pass
 
+class GitTz(datetime.tzinfo):
+    """Simple class to store the utc offset only"""
+    def __init__(self, offset_sec=0, *args, **kwargs):
+        super(GitTz, self).__init__(*args, **kwargs)
+        self._offset = datetime.timedelta(seconds=offset_sec)
+
+    def utcoffset(self, dt):
+        return self._offset
+
+    def dst(self, dt):
+        return datetime.timedelta(0)
 
 class GitModifier(object):
     """Stores authorship/comitter information"""
@@ -45,17 +56,22 @@ class GitModifier(object):
         self._parse_date(date)
 
     def _parse_date(self, date):
-        self._offset = '+0000'
         self._date = None
+        tz = GitTz(0)
 
         if isinstance(date, basestring):
             timestamp, offset = date.split()
-            self._date = datetime.datetime.utcfromtimestamp(int(timestamp))
-            self._offset = offset
+            offset_h = int(offset[:-2])
+            offset_m = int(offset[-2:])
+            tz = GitTz(offset_h*3600 + offset_m*60)
+            self._date = datetime.datetime.fromtimestamp(int(timestamp), tz)
         elif type(date) in  [ type(0), type(0.0) ]:
-            self._date = datetime.datetime.utcfromtimestamp(date)
+            self._date = datetime.datetime.fromtimestamp(date, tz)
         elif isinstance(date, datetime.datetime):
-            self._date = date
+            if date.tzinfo:
+                self._date = date
+            else:
+                self._date = date.replace(tzinfo=tz)
         elif date != None:
             raise ValueError("Date '%s' not timestamp, "
                              "datetime object or git raw date" % date)
@@ -79,7 +95,7 @@ class GitModifier(object):
         """Return date as a git raw date"""
         if self._date:
             return "%s %s" % (calendar.timegm(self._date.utctimetuple()),
-                              self._offset)
+                              self._date.strftime('%z'))
         else:
             return None
 
@@ -97,7 +113,7 @@ class GitModifier(object):
     @property
     def tz_offset(self):
         """Return the date's UTC offset"""
-        return self._offset
+        return self._date.strftime('%z')
 
     def get_author_env(self):
         """
@@ -131,7 +147,8 @@ class GitModifier(object):
         else:
             return self.__dict__[key]
 
-    def keys(self):
+    @staticmethod
+    def keys():
         return [ 'name', 'email', 'date' ]
 
     def items(self):

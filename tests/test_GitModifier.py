@@ -54,13 +54,13 @@ def test_date():
     '1 +0400'
     >>> modifier['date']
     '1 +0400'
-    >>> modifier.datetime
-    datetime.datetime(1970, 1, 1, 0, 0, 1)
+    >>> modifier.datetime   # doctest: +ELLIPSIS
+    datetime.datetime(1970, 1, 1, 4, 0, 1, tzinfo=<gbp.git.modifier.GitTz...>)
     >>> modifier.date = datetime.datetime(1970, 1, 1, 0, 0, 1)
     >>> modifier.date
     '1 +0000'
-    >>> modifier.datetime
-    datetime.datetime(1970, 1, 1, 0, 0, 1)
+    >>> modifier.datetime   # doctest: +ELLIPSIS
+    datetime.datetime(1970, 1, 1, 0, 0, 1, tzinfo=<gbp.git.modifier.GitTz...>)
     >>> modifier.tz_offset
     '+0000'
     """
