@@ -598,6 +598,43 @@ class GitRepository(object):
         out, ret = self._git_getoutput('tag', [ '-l', tag ])
         return [ False, True ][len(out)]
 
+    def describe(self, commitish, pattern=None, longfmt=False, always=False,
+                 abbrev=None):
+        """
+        Describe commit, relative to the latest tag reachable from it.
+
+        @param commitish: the commit-ish to describe
+        @type commitish: C{str}
+        @param pattern: only look for tags matching I{pattern}
+        @type pattern: C{str}
+        @param longfmt: describe the commit in the long format
+        @type longfmt: C{bool}
+        @param always: return commit sha1 as fallback if no tag is found
+        @type always: C{bool}
+        @param abbrev: abbreviate sha1 to given length instead of the default
+        @type abbrev: None or C{long}
+        @return: tag name plus/or the abbreviated sha1
+        @rtype: C{str}
+        """
+        args = GitArgs()
+        args.add_true(pattern, ['--match' , pattern])
+        args.add_true(longfmt, '--long')
+        # 'long' and 'abbrev=0' are incompatible, behave similar to
+        # 'always' and 'abbrev=0'
+        if longfmt and abbrev == 0:
+            args.add('--abbrev=40')
+        elif abbrev is not None:
+            args.add('--abbrev=%s' % abbrev)
+        args.add_true(always, '--always')
+        args.add(commitish)
+
+        tag, err, ret = self._git_inout('describe', args.args,
+                                        capture_stderr=True)
+        if ret:
+            raise GitRepositoryError("Can't describe %s. Git error: %s" % \
+                                         (commitish, err.strip()))
+        return tag.strip()
+
     def find_tag(self, commit, pattern=None):
         """
         Find the closest tag to a given commit
@@ -609,16 +646,7 @@ class GitRepository(object):
         @return: the found tag
         @rtype: C{str}
         """
-        args =  [ '--abbrev=0' ]
-        if pattern:
-            args += [ '--match' , pattern ]
-        args += [ commit ]
-
-        tag, err, ret = self._git_inout('describe', args, capture_stderr=True)
-        if ret:
-            raise GitRepositoryError("Can't find tag for %s. Git error: %s" % \
-                                         (commit, err.strip()))
-        return tag.strip()
+        return self.describe(commit, pattern, abbrev=0)
 
     def get_tags(self, pattern=None):
         """
