@@ -52,6 +52,7 @@
       <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
+      <arg><option>--git-[no-]pristine-tar-commit</option></arg>
       <arg><option>--git-dont-purge</option></arg>
       <arg><option>--git-tag-only</option></arg>
       <arg><option>--git-retag</option></arg>
@@ -408,6 +409,21 @@
         <listitem>
 	  <para>don't fail tag operations if a tag with the same version
 	  already exists</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pristine-tar</option>
+        </term>
+        <listitem>
+	  <para>Use pristine-tar when generating the upstream tarball if it doesn't exist.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pristine-tar-commit</option>
+        </term>
+        <listitem>
+	  <para>Commit the pristine-tar delta to the pristine-tar branch if a new tarball was
+          generated and the pristine-tar data isn't already there.</para>
         </listitem>
       </varlistentry>
     </variablelist>
