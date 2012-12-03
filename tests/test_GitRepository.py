@@ -12,6 +12,10 @@ This testcase creates several repositores:
 """
 
 import os
+import gbp.log
+
+gbp.log.setup(color=False, verbose=True)
+
 repo_dir = os.path.abspath(
              os.path.join(os.path.curdir, 'gbp_%s_test_repo' % __name__))
 bare_dir = os.path.abspath(
