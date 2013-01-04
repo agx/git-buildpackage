@@ -116,12 +116,29 @@ class ComponentTestBase(object):
         self._capture_log(False)
 
     @classmethod
-    def _check_repo_state(cls, repo, current_branch, branches):
+    def _check_repo_state(cls, repo, current_branch, branches, files=None):
         """Check that repository is clean and given branches exist"""
         branch = repo.branch
         assert branch == current_branch
         assert repo.is_clean()
         assert set(repo.get_local_branches()) == set(branches)
+        if files is not None:
+            # Get files of the working copy recursively
+            local = set()
+            for dirpath, dirnames, filenames in os.walk(repo.path):
+                # Skip git dir(s)
+                if '.git' in dirnames:
+                    dirnames.remove('.git')
+                for filename in filenames:
+                    local.add(os.path.relpath(os.path.join(dirpath, filename),
+                                              repo.path))
+                for dirname in dirnames:
+                    local.add(os.path.relpath(os.path.join(dirpath, dirname),
+                                              repo.path) + '/')
+            extra = local - set(files)
+            assert not extra, "Unexpected files in repo: %s" % list(extra)
+            missing = set(files) - local
+            assert not missing, "Files missing from repo: %s" % list(missing)
 
     def _capture_log(self, capture=True):
         """ Capture log"""
