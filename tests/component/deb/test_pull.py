@@ -50,3 +50,32 @@ class TestPull(ComponentTestBase):
         self._check_repo_state(cloned, 'master', ['master'])
         eq_(pull(['argv0']), 0)
         assert len(repo.get_commits()) == 1
+
+    @RepoFixtures.quilt30()
+    def test_pull_all(self, repo):
+        """Test the '--all' commandline option"""
+        # Create new branch in repo
+        repo.create_branch('foob')
+
+        # Clone and create new commits in origin
+        dest = os.path.join(self._tmpdir, 'cloned_repo')
+        clone(['arg0', '--all', repo.path, dest])
+        cloned = ComponentTestGitRepository(dest)
+        tmp_workdir = os.path.join(self._tmpdir, 'tmp_workdir')
+        os.mkdir(tmp_workdir)
+        with open(os.path.join(tmp_workdir, 'new_file'), 'w'):
+            pass
+        repo.commit_dir(tmp_workdir, 'New commit in master', branch='master')
+        repo.commit_dir(tmp_workdir, 'New commit in foob', branch='foob')
+
+        # Check that the branch is not updated when --all is not used
+        eq_(pull(['argv0']), 0)
+        eq_(len(cloned.get_commits(until='master')), 3)
+        eq_(len(cloned.get_commits(until='upstream')), 1)
+        eq_(len(cloned.get_commits(until='foob')), 2)
+
+        # Check that --all updates all branches
+        repo.commit_dir(tmp_workdir, 'New commit in upstream', branch='upstream')
+        eq_(pull(['argv0', '--all']), 0)
+        eq_(len(cloned.get_commits(until='foob')), 3)
+        eq_(len(cloned.get_commits(until='upstream')), 2)
