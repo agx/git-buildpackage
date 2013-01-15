@@ -251,10 +251,12 @@ def apply_single_patch(repo, branch, patch, fallback_author, topic=None):
 
 def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
-    author = GitModifier(patch.author, patch.email, patch.date)
+    author = {'name': patch.author,
+              'email': patch.email,
+              'date': patch.date }
 
     patch_fn = os.path.basename(patch.path)
-    if not (author.name and author.email):
+    if not (author['name'] and author['email']):
         if fallback_author and fallback_author['name']:
             author = fallback_author
             gbp.log.warn("Patch '%s' has no authorship information, using "
