@@ -62,7 +62,8 @@ def fast_forward_branch(rem_repo, branch, repo, options):
             gbp.log.info("Non-fast forwarding '%s' due to --force" % branch)
             update = True
         else:
-            gbp.log.warn("Skipping non-fast forward of '%s' - use --force" % branch)
+            gbp.log.warn("Skipping non-fast forward of '%s' - use --force or "
+                         "update manually" % branch)
 
     if update:
         gbp.log.info("Updating '%s': %s..%s" % (branch,
@@ -90,6 +91,9 @@ def build_parser(name):
     branch_group.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
     branch_group.add_option("--force", action="store_true", dest="force", default=False,
                             help="force a branch update even if it can't be fast forwarded")
+    branch_group.add_option("--all", action="store_true", default=False,
+                            help="update all remote-tracking branches that "
+                                 "have identical name in the remote")
     branch_group.add_option("--redo-pq", action="store_true", dest="redo_pq", default=False,
                             help="redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
@@ -140,7 +144,7 @@ def main(argv):
         return 1
 
     try:
-        branches = []
+        branches = set()
         try:
             current = repo.get_branch()
         except GitRepositoryError:
@@ -153,10 +157,23 @@ def main(argv):
 
         for branch in [options.debian_branch, options.upstream_branch]:
             if repo.has_branch(branch):
-                branches += [branch]
+                branches.add(branch)
 
         if repo.has_pristine_tar_branch() and options.pristine_tar:
-            branches += [repo.pristine_tar_branch]
+            branches.add(repo.pristine_tar_branch)
+
+        if options.all:
+            current_remote = repo.get_merge_branch(current)
+            if current_remote:
+                fetch_remote = current_remote.split('/')[0]
+            else:
+                fetch_remote = 'origin'
+            for branch in repo.get_local_branches():
+                merge_branch = repo.get_merge_branch(branch)
+                if merge_branch:
+                    rem, rem_br = merge_branch.split('/', 1)
+                    if rem == fetch_remote and branch == rem_br:
+                        branches.add(branch)
 
         (ret, out) = repo.is_clean()
         if not ret:

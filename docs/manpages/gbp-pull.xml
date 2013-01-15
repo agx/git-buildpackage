@@ -23,6 +23,7 @@
 
       &man.common.options.synopsis;
       <arg><option>--force</option></arg>
+      <arg><option>--all</option></arg>
       <arg><option>--redo-pq</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--ignore-branch</option></arg>
@@ -60,6 +61,13 @@
 	  <para>Force a branch update even if this results in a non fast
 	  forward update. <warning><para>Forcing a branch update
 	  makes you lose your modifications.</para></warning></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--all</option></term>
+        <listitem>
+	  <para>Update all remote-tracking branches that have identical name in the
+            remote repository.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
