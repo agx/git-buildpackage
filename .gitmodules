@@ -1,0 +1,3 @@
+[submodule "tests/component/deb/data"]
+	path = tests/component/deb/data
+	url = /var/scratch/debian/git-buildpackage/gbp-testdata/.git
