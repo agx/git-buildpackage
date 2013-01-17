@@ -16,6 +16,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"""
+Module for testing individual command line tools of the git-buildpackage suite
+"""
 
 import os
 import shutil
@@ -64,8 +67,8 @@ class ComponentTestGitRepository(GitRepository):
         try:
             status = submodules[data]
         except KeyError:
-            raise SkipTest("Skipping '%s', testdata directory not a known submodule."
-                           % __name__)
+            raise SkipTest("Skipping '%s', testdata directory not a known "
+                           "submodule." % __name__)
 
         if status[0] == '-':
             raise SkipTest("Skipping '%s', testdata directory not initialized. "
