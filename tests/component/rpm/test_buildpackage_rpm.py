@@ -605,3 +605,21 @@ class TestGbpRpm(RpmRepoTestBase):
         # Packaging dir should be taken from spec file if it is defined
         eq_(mock_gbp(['--git-packaging-dir=foo',
                       '--git-spec-file=packaging/gbp-test-native.spec']), 0)
+
+    def test_option_spec_vcs_tag(self):
+        """Test the --git-spec-vcs-tag cmdline option"""
+        repo = self.init_test_repo('gbp-test-native')
+
+        eq_(mock_gbp(['--git-spec-vcs-tag=foobar-%(commit)s']), 0)
+        sha1 = repo.rev_parse('HEAD')
+        num_tags = 0
+        with open('../rpmbuild/SPECS/gbp-test-native.spec') as fobj:
+            for line in fobj.readlines():
+                if line.startswith('VCS: '):
+                    ok_(re.match(r'VCS:\s+foobar-%s\n$' % sha1, line))
+                    num_tags += 1
+        eq_(num_tags, 1)
+
+        # Test invalid key
+        eq_(mock_gbp(['--git-spec-vcs-tag=%(invalid-key)s']), 1)
+        self._check_log(-1, r".*Failed to format %\(invalid-key\)s")
