@@ -15,6 +15,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Test L{gbp.pq}"""
 
+from . import context
+
 import os
 import logging
 import unittest
@@ -32,9 +34,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
     def test_apply_and_commit_patch(self):
         """Test applying a single patch"""
-        patch = gbp.patch_series.Patch(
-            os.path.join(os.path.abspath(os.path.curdir),
-                         'tests/data/foo.patch'))
+        patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
         pq.apply_and_commit_patch(self.repo, patch, None)
         self.assertIn('foo', self.repo.list_files())
@@ -42,9 +42,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
     def test_topic(self):
         """Test if setting a topic works"""
-        patch = gbp.patch_series.Patch(
-            os.path.join(os.path.abspath(os.path.curdir),
-                         'tests/data/foo.patch'))
+        patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
         pq.apply_and_commit_patch(self.repo, patch, None, topic='foobar')
         info = self.repo.get_commit_info('HEAD')
@@ -56,9 +54,8 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         Check if we parse the author from debian control
         if it's missing.
         """
-        patch = gbp.patch_series.Patch(
-            os.path.join(os.path.abspath(os.path.curdir),
-                         'tests/data/foo.patch'))
+
+        patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
         # Overwrite data parsed from patch:
         patch.author
@@ -84,9 +81,8 @@ class TestApplySinglePatch(testutils.DebianGitTestRepo):
 
     def test_apply_single_patch(self):
         """Test applying a single patch"""
-        patch = gbp.patch_series.Patch(
-            os.path.join(os.path.abspath(os.path.curdir),
-                         'tests/data/foo.patch'))
+
+        patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
         pq.apply_single_patch(self.repo, 'master', patch, None)
         self.assertIn('foo', self.repo.list_files())
@@ -97,6 +93,9 @@ class TestWritePatch(testutils.DebianGitTestRepo):
     def setUp(self):
         testutils.DebianGitTestRepo.setUp(self)
         self.add_file('bar', 'bar')
+
+    def tearDown(self):
+        context.teardown()
 
     def test_write_patch(self):
         """Test moving a patch to it's final location"""
@@ -109,9 +108,9 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         self.add_file('foo', 'foo', msg)
 
         # Write it out as patch and check it's existence
-        d = os.getcwd()
-        patchfile = self.repo.format_patches('HEAD^', 'HEAD', d)[0]
-        expected = os.path.join(d, '0001-added-foo.patch')
+        d = context.new_tmpdir(__name__)
+        patchfile = self.repo.format_patches('HEAD^', 'HEAD', str(d))[0]
+        expected = os.path.join(str(d), '0001-added-foo.patch')
         self.assertEqual(expected, patchfile)
         pq.write_patch(patchfile, self.repo.path, opts)
         expected = os.path.join(self.repo.path,
@@ -129,3 +128,6 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         diff = self.repo.diff('master', 'testapply')
         # Branches must be identical afterwards
         self.assertEqual('', diff)
+
+def _patch_path(name):
+    return os.path.join(context.projectdir, 'tests/data', name)

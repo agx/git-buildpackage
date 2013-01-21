@@ -3,9 +3,8 @@
 """
 Test L{gbp.deb.changelog.ChangeLog}
 """
-
+from . import context
 import os
-import nose
 
 cl_debian = """git-buildpackage (0.5.32) unstable; urgency=low
 

@@ -4,6 +4,8 @@
 Test L{gbp.deb.control.Control}
 """
 
+from . import context
+
 cl_debian = """Source: git-buildpackage
 Section: vcs
 Priority: optional

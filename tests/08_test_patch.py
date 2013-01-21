@@ -2,6 +2,8 @@
 
 """Test L{Patch} class"""
 
+from . import context
+
 import os
 import unittest
 

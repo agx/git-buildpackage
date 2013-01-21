@@ -2,14 +2,17 @@
 
 """Test L{UpstreamSource}'s tarball unpack"""
 
+from . import context
+
 import os
 import shutil
 import tarfile
 import tempfile
+import unittest
 
-import gbp.deb
+import gbp.pkg
 
-class TestUnpack:
+class TestUnpack(unittest.TestCase):
     """Make sure we unpack gzip and bzip2 archives correctly"""
     archive_prefix = "archive"
 
@@ -34,17 +37,15 @@ class TestUnpack:
         return name, filelist
 
     def setUp(self):
-        self.dir = tempfile.mkdtemp(prefix='gbp_%s_' % __name__, dir='.')
-        self.top = os.path.abspath(os.curdir)
-        os.chdir(self.dir)
+        self.dir = context.new_tmpdir(__name__)
+        self.top = context.projectdir
+        context.chdir(self.dir)
         self.archives = {}
         for ext in [ "gz", "bz2" ]:
             self.archives[ext] = self._create_archive(ext)
 
     def tearDown(self):
-        os.chdir(self.top)
-        if not os.getenv("GBP_TESTS_NOCLEAN"):
-            shutil.rmtree(self.dir)
+        context.teardown()
 
     def test_upstream_source_type(self):
         for (comp, archive) in self.archives.iteritems():

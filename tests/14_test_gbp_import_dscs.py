@@ -15,6 +15,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Test L{gbp.pq}"""
 
+from . import context
+
 import os
 import testutils
 import gbp.scripts.import_dscs as import_dscs
@@ -58,9 +60,8 @@ class TestImportDscs(testutils.DebianGitTestRepo):
     """Test L{gbp.scripts.import_dscs}'s """
 
     def setUp(self):
-        self.toplevel = os.getcwd()
         testutils.DebianGitTestRepo.setUp(self)
-        os.chdir(self.repo.path)
+        context.chdir(self.repo.path)
 
     def test_import_success(self):
         """Test importing success with stub"""
@@ -83,5 +84,5 @@ class TestImportDscs(testutils.DebianGitTestRepo):
 
     def tearDown(self):
         testutils.DebianGitTestRepo.tearDown(self)
-        os.chdir(self.toplevel)
+        context.teardown()
 

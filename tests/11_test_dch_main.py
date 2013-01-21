@@ -2,6 +2,8 @@
 
 """Test L{gbp.scripts.dch} main"""
 
+from . import context
+
 import unittest
 
 from tests.testutils import DebianGitTestRepo
@@ -48,7 +50,7 @@ class TestScriptDch(DebianGitTestRepo):
         self.upstream_tag = "upstream/%(version)s"
         self.top = os.path.abspath(os.path.curdir)
         os.mkdir(os.path.join(self.repo.path, "debian"))
-        os.chdir(self.repo.path)
+        context.chdir(self.repo.path)
         self.add_file("debian/changelog", cl_debian)
         self.add_file("debian/control", """Source: test-package\nSection: test\n""")
         self.options = ["--upstream-tag=%s" % self.upstream_tag, "--debian-branch=debian",
@@ -57,7 +59,6 @@ class TestScriptDch(DebianGitTestRepo):
 
 
     def tearDown(self):
-        os.chdir(self.top)
         DebianGitTestRepo.tearDown(self)
 
 

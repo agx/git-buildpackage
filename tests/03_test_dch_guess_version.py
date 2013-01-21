@@ -2,7 +2,10 @@
 
 """Test L{Changelog}'s guess_version_from_upstream"""
 
+from . import context
+
 import testutils
+import unittest
 
 from gbp.scripts import dch
 from gbp.deb.changelog import ChangeLog

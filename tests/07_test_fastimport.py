@@ -2,32 +2,28 @@
 
 """Test L{FastImport} class"""
 
+from . import context
+
 import os
 import shutil
+import tempfile
 
 import gbp.log
 import gbp.git
 
 repo = None
 fastimport = None
-tmpdir = None
 tf_name = 'testfile'
 tl_name = 'a_testlink'
 
 def setup():
-    global repo, tmpdir
+    global repo
 
-    gbp.log.setup(False, False)
-    top = os.path.abspath(os.curdir)
-    tmpdir = os.path.join(top,'gbp_%s_repo' % __name__)
-    os.mkdir(tmpdir)
-
-    repodir = os.path.join(tmpdir, 'test_repo')
-    repo = gbp.git.GitRepository.create(repodir)
+    tmpdir = context.new_tmpdir(__name__)
+    repo = gbp.git.GitRepository.create(tmpdir.join('test_repo'))
 
 def teardown():
-    if not os.getenv("GBP_TESTS_NOCLEAN") and tmpdir:
-        shutil.rmtree(tmpdir)
+    context.teardown()
 
 def test_init_fastimport():
     """Create a fastimport object"""

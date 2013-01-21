@@ -4,6 +4,8 @@
 Test L{gbp.git.GitModifier}
 """
 
+from . import context
+
 def test_author():
     """
     Methods tested:

@@ -11,20 +11,16 @@ This testcase creates several repositores:
     - A mirror of I{repo} below L{mirror_clone_dir} called I{mirror}
 """
 
+from . import context
+
 import os
 import gbp.log
 
 gbp.log.setup(color=False, verbose=True)
 
-repo_dir = os.path.abspath(
-             os.path.join(os.path.curdir, 'gbp_%s_test_repo' % __name__))
-bare_dir = os.path.abspath(
-             os.path.join(os.path.curdir, 'gbp_%s_test_bare' % __name__))
-clone_dir = os.path.abspath(
-             os.path.join(os.path.curdir, 'gbp_%s_test_clone' % __name__))
-mirror_clone_dir = os.path.abspath(
-             os.path.join(os.path.curdir, 'gbp_%s_test_mirror_clone' % __name__))
-
+repo_dir, bare_dir, clone_dir, mirror_clone_dir = map(
+    lambda x, tmpdir=context.new_tmpdir(__name__): tmpdir.join(x),
+    ['repo', 'bare', 'clone', 'mirror_clone'])
 
 def test_create():
     """
@@ -539,7 +535,7 @@ def test_pull():
          - L{gbp.git.GitRepository.pull}
 
     >>> import gbp.git, os
-    >>> d = os.path.join(clone_dir, 'gbp_%s_test_repo' % __name__)
+    >>> d = os.path.join(clone_dir, 'repo')
     >>> clone = gbp.git.GitRepository(d)
     >>> clone.set_branch('master')
     >>> clone.pull()
@@ -557,7 +553,7 @@ def test_fetch():
          - L{gbp.git.GitRepository.remove_remote_repo}
 
     >>> import gbp.git, os
-    >>> d = os.path.join(clone_dir, 'gbp_%s_test_repo' % __name__)
+    >>> d = os.path.join(clone_dir, 'repo')
     >>> clone = gbp.git.GitRepository(d)
     >>> clone.fetch()
     >>> clone.push()
@@ -817,11 +813,7 @@ def test_teardown():
     """
     Perform the teardown
 
-    >>> import shutil, os
-    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(repo_dir)
-    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(bare_dir)
-    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(mirror_clone_dir)
-    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(clone_dir)
+    >>> context.teardown()
     """
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

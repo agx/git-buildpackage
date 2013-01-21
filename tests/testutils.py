@@ -1,5 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
+from . import context
+
 import os
 import shutil
 import unittest
@@ -12,16 +14,13 @@ class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single unit test"""
 
     def setUp(self):
-        gbp.log.setup(False, False)
-        top = os.path.abspath(os.path.curdir)
-        self.tmpdir = os.path.join(top, 'gbp_%s_repo' % __name__)
-        os.mkdir(self.tmpdir)
+        self.tmpdir = context.new_tmpdir(__name__)
 
-        repodir = os.path.join(self.tmpdir, 'test_repo')
+        repodir = self.tmpdir.join('test_repo')
         self.repo = gbp.deb.git.DebianGitRepository.create(repodir)
 
     def tearDown(self):
-        shutil.rmtree(self.tmpdir)
+        context.teardown()
 
     def add_file(self, name, content=None, msg=None):
         """

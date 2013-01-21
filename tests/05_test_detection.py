@@ -2,6 +2,8 @@
 
 """Test tarball compression type detection"""
 
+from . import context
+
 import os
 import shutil
 import tempfile
@@ -30,28 +32,28 @@ class MockGitRepository:
 
 class TestDetection(unittest.TestCase):
     def setUp(self):
-        self.tmpdir = tempfile.mkdtemp()
+        self.tmpdir = context.new_tmpdir(__name__)
         self.cp = {'Source': 'source', 'Upstream-Version': '1.2'}
 
     def tearDown(self):
-        shutil.rmtree(self.tmpdir)
+        context.teardown()
 
     def test_guess_comp_type_no_pristine_tar_no_orig(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'auto', self.cp, self.tmpdir)
+            repo, 'auto', self.cp, str(self.tmpdir))
         self.assertEqual('gzip', guessed)
 
     def test_guess_comp_type_no_pristine_tar_with_orig(self):
-        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.bz2'), "w").close()
+        open(self.tmpdir.join('source_1.2.orig.tar.bz2'), "w").close()
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'auto', self.cp, self.tmpdir)
+            repo, 'auto', self.cp, str(self.tmpdir))
         self.assertEqual('bzip2', guessed)
 
     def test_guess_comp_type_no_pristine_tar_with_multiple_origs(self):
-        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.gz'), "w").close()
-        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.xz'), "w").close()
+        open(self.tmpdir.join('source_1.2.orig.tar.gz'), "w").close()
+        open(self.tmpdir.join('source_1.2.orig.tar.xz'), "w").close()
         repo = MockGitRepository(with_branch=False)
         self.assertRaises(
             GbpError,
@@ -59,21 +61,21 @@ class TestDetection(unittest.TestCase):
             repo,
             'auto',
             self.cp,
-            self.tmpdir)
+            str(self.tmpdir))
 
     def test_guess_comp_type_auto_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
         repo = MockGitRepository(with_branch=True, subject=subject)
         guessed = buildpackage.guess_comp_type(
-            repo, 'auto', self.cp, self.tmpdir)
+            repo, 'auto', self.cp, str(self.tmpdir))
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_false(self):
-        self.assertFalse(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), self.tmpdir))
+        self.assertFalse(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), str(self.tmpdir)))
 
     def test_has_orig_true(self):
-        open(os.path.join(self.tmpdir, 'source_1.2.orig.tar.gz'), "w").close()
-        self.assertTrue(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), self.tmpdir))
+        open(self.tmpdir.join('source_1.2.orig.tar.gz'), "w").close()
+        self.assertTrue(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), str(self.tmpdir)))
 
     def test_guess_comp_type_bzip2(self):
         repo = MockGitRepository(with_branch=False)

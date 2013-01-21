@@ -2,6 +2,8 @@
 
 """Test L{gbp.deb}"""
 
+from . import context
+
 import os, tempfile, unittest
 
 import gbp.deb

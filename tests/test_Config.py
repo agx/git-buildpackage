@@ -5,6 +5,8 @@ Test L{gbp.config.GbpOptionParser}
 Test L{gbp.config.GbpOptionParserDebian}
 """
 
+from . import context
+
 def test_option_parser():
     """
     Methods tested:

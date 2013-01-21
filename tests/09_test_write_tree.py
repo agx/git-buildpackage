@@ -2,6 +2,8 @@
 
 """Test  L{GitRepository}'s write_tree method"""
 
+from . import context
+
 import os
 
 import tests.testutils as testutils

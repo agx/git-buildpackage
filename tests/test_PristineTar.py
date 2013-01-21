@@ -15,11 +15,12 @@ This testcase creates this reposity:
 
 """
 
+from . import context
+
 import os
-tmp_dir = os.path.abspath(
-            os.path.join(os.path.curdir, 'gbp_%s_test' % __name__))
-repo_dir = os.path.join(tmp_dir, 'repo')
-test_data = os.path.abspath("tests/test_PristineTar_data")
+
+repo_dir = context.new_tmpdir(__name__).join('repo')
+test_data = os.path.join(context.projectdir, "tests/test_PristineTar_data")
 
 def test_create():
     """
@@ -126,8 +127,7 @@ def test_teardown():
     """
     Perform the teardown
 
-    >>> import shutil, os
-    >>> os.getenv("GBP_TESTS_NOCLEAN") or shutil.rmtree(tmp_dir)
+    >>> context.teardown()
     """
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
