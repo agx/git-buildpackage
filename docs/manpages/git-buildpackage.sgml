@@ -187,14 +187,14 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
+        <term><option>--git-color=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
           <para>Whether to use colored output.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--notify=</option><replaceable>[auto|on|off]</replaceable>
+        <term><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
           <para>Whether to send a desktop notification after the build.</para>
