@@ -117,6 +117,7 @@ def main(argv):
             raise GbpError
 
         repo.fetch(depth=options.depth)
+        repo.fetch(depth=options.depth, tags=True)
         for branch in branches:
             if not fast_forward_branch(branch, repo, options):
                 retval = 2
