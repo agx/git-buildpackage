@@ -4,6 +4,9 @@
 Test L{gbp.deb.changelog.ChangeLog}
 """
 
+import os
+import nose
+
 cl_debian = """git-buildpackage (0.5.32) unstable; urgency=low
 
   * [efe9220] Use known_compressions in guess_upstream_version too
@@ -42,6 +45,10 @@ cl_epoch="""xserver-xorg-video-nv (1:1.2.0-3) unstable; urgency=low
  -- David Nusinow <dnusinow@debian.org>  Mon, 18 Sep 2006 19:57:45 -0400
 """
 
+def setup():
+    """Setup test module"""
+    if not os.path.exists('/usr/bin/dch'):
+        raise nose.SkipTest('dch tool not present')
 
 def test_parse_debian_only():
     """
