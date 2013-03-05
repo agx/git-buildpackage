@@ -130,6 +130,7 @@ class ComponentTestBase(object):
             gbp.log.LOGGER.addHandler(self._loghandler)
         elif self._log is not None:
             gbp.log.LOGGER.removeHandler(self._loghandler)
+            self._loghandler.close()
             self._loghandler = None
             self._log.close()
             self._log = None
