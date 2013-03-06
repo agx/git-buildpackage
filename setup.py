@@ -19,6 +19,7 @@
 
 import subprocess
 from setuptools import setup, find_packages
+import os
 
 
 def fetch_version():
@@ -40,7 +41,6 @@ def fetch_version():
 
     return version
 
-
 setup(name = "gbp",
       version = fetch_version(),
       author = u'Guido Günther',
@@ -57,5 +57,6 @@ setup(name = "gbp",
                   'bin/git-pbuilder'],
       packages = find_packages(exclude=['tests', 'tests.*']),
       data_files = [("/etc/git-buildpackage/", ["gbp.conf"]),],
-      setup_requires=['nose>=0.11.1', 'coverage>=2.85'],
+      setup_requires=['nose>=0.11.1', 'coverage>=2.85'] if \
+                        os.getenv('WITHOUT_NOSETESTS') is None else []
 )
