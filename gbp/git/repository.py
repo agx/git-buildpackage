@@ -183,12 +183,19 @@ class GitRepository(object):
         # Parse git command man page
         section_re = re.compile(r'^(?P<section>[A-Z].*)')
         option_re = re.compile(r'--?(?P<name>[a-zA-Z\-]+).*')
+        optopt_re = re.compile(r'--\[(?P<prefix>[a-zA-Z\-]+)\]-?')
         man_section = None
         for line in help.splitlines():
             if man_section == "OPTIONS" and line.startswith('       -'):
                 opts = line.split(',')
                 for opt in opts:
-                    match = option_re.match(opt.strip())
+                    opt = opt.strip()
+                    match = optopt_re.match(opt)
+                    if match:
+                        opts.append(re.sub(optopt_re, '--', opt))
+                        prefix = match.group('prefix').strip('-')
+                        opt = re.sub(optopt_re, '--%s-' % prefix, opt)
+                    match = option_re.match(opt)
                     if match and match.group('name') == feature:
                         return True
             # Check man section

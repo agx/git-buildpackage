@@ -803,6 +803,10 @@ def test_cmd_has_feature():
     Traceback (most recent call last):
     ...
     GitRepositoryError: Invalid git command: foobarcmd
+    >>> repo._cmd_has_feature("show", "standard-notes")
+    True
+    >>> repo._cmd_has_feature("show", "no-standard-notes")
+    True
     """
 
 def test_teardown():
