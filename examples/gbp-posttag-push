@@ -84,7 +84,7 @@ def main(argv):
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] paths')
     except ConfigParser.ParsingError as err:
-        gbp.log.errror(err)
+        gbp.log.error(err)
         return 1
 
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
