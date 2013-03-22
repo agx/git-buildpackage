@@ -38,12 +38,14 @@ class PkgPolicy(object):
     @classmethod
     def is_valid_packagename(cls, name):
         "Is this a valid package name?"
-        return cls.packagename_re.match(name)
+        return True if cls.packagename_re.match(name) else False
 
     @classmethod
     def is_valid_upstreamversion(cls, version):
-        "Is this a valid upstream version number?"
-        return cls.upstreamversion_re.match(version)
+        """
+        Is this a valid upstream version number?
+        """
+        return True if cls.upstreamversion_re.match(version) else False
 
     @staticmethod
     def get_compression(orig_file):
