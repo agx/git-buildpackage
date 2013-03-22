@@ -32,7 +32,14 @@ debian_version_chars = 'a-zA-Z\d.~+-'
 
 
 class DebianPkgPolicy(PkgPolicy):
-    """Packaging policy for Debian"""
+    """
+    Packaging policy for Debian Source Packages
+
+    >>> DebianPkgPolicy.is_valid_upstreamversion('1:9.8.4.dfsg.P1-6')
+    True
+    >>> DebianPkgPolicy.is_valid_upstreamversion('-1')
+    False
+    """
 
     # Valid package names according to Debian Policy Manual 5.6.1:
     # "Package names (both source and binary, see Package, Section 5.6.7)
@@ -51,7 +58,7 @@ class DebianPkgPolicy(PkgPolicy):
     # are not allowed; if there is no epoch then colons are not allowed."
     # Since we don't know about any epochs and debian revisions yet, the
     # last two conditions are not checked.
-    upstreamversion_re = re.compile("^[0-9][a-z0-9\.\+\-\:\~]*$")
+    upstreamversion_re = re.compile("^[0-9][a-zA-Z0-9\.\+\-\:\~]*$")
     upstreamversion_msg = """Upstream version numbers must start with a digit and can only containg lower case
     letters (a-z), digits (0-9), full stops (.), plus signs (+), minus signs
     (-), colons (:) and tildes (~)"""
