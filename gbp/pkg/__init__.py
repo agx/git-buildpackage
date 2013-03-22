@@ -35,16 +35,40 @@ compressor_aliases = { 'bz2' : 'bzip2',
                        'gz'  : 'gzip', }
 
 class PkgPolicy(object):
+    """
+    Common helpers for packaging policy.
+    """
+    packagename_re = None
+    packagename_msg = None
+    upstreamversion_re = None
+    upstreamversion_msg = None
+
     @classmethod
     def is_valid_packagename(cls, name):
-        "Is this a valid package name?"
+        """
+        Is this a valid package name?
+
+        >>> PkgPolicy.is_valid_packagename('doesnotmatter')
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Class needs to provide packagename_re
+        """
+        if cls.packagename_re is None:
+            raise NotImplementedError("Class needs to provide packagename_re")
         return True if cls.packagename_re.match(name) else False
 
     @classmethod
     def is_valid_upstreamversion(cls, version):
         """
         Is this a valid upstream version number?
+
+        >>> PkgPolicy.is_valid_upstreamversion('doesnotmatter')
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Class needs to provide upstreamversion_re
         """
+        if cls.upstreamversion_re is None:
+            raise NotImplementedError("Class needs to provide upstreamversion_re")
         return True if cls.upstreamversion_re.match(version) else False
 
     @staticmethod
