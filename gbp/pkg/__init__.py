@@ -21,10 +21,8 @@ import os
 import re
 import glob
 
-import gbp.log
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
-from gbp.command_wrappers import Command
 
 # compression types, extra options and extensions
 compressor_opts = { 'gzip'  : [ '-n', 'gz' ],

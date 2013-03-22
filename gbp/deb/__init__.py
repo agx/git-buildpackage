@@ -16,13 +16,9 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """provides some debian source package related helpers"""
 
-import commands
-import email
 import os
 import re
 import subprocess
-import sys
-import glob
 
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
