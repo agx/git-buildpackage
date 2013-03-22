@@ -53,6 +53,7 @@
       <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
       <arg><option>--git-[no-]pristine-tar-commit</option></arg>
+      <arg><option>--git-[no-]-purge</option></arg>
       <arg><option>--git-dont-purge</option></arg>
       <arg><option>--git-tag-only</option></arg>
       <arg><option>--git-retag</option></arg>
@@ -390,10 +391,17 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--git[-no]-purge</option>
+        </term>
+        <listitem>
+	  <para>Purge (remove) temporary build directory after build</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git-dont-purge</option>
         </term>
         <listitem>
-	  <para>retain exported build directory after build</para>
+	  <para>Deprecated, use --git-no-purge instead.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

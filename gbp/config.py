@@ -131,6 +131,7 @@ class GbpOptionParser(OptionParser):
                  'remote-config': '',
                  'allow-unauthenticated': 'False',
                  'symlink-orig': 'True',
+                 'purge': 'True',
              }
     help = {
              'debian-branch':
@@ -262,7 +263,9 @@ class GbpOptionParser(OptionParser):
              'symlink-orig':
                   ("Whether to creat a symlink from the upstream tarball "
                    "to the orig.tar.gz if needed, default is "
-                   "'%(symlink-orig)s'")
+                   "'%(symlink-orig)s'"),
+              'purge':
+                  "Purge exported package build directory. Default is '%(purge)s'",
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',

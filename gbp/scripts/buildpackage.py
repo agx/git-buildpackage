@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006-2013 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -425,8 +425,9 @@ def parse_args(argv, prefix):
                       help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_config_file_option("export", dest="export",
                       help="export treeish object TREEISH, default is '%(export)s'", metavar="TREEISH")
-    export_group.add_option("--git-dont-purge", action="store_false", dest="purge", default=True,
-                      help="retain exported package build directory")
+    export_group.add_boolean_config_file_option(option_name="purge", dest="purge")
+    export_group.add_option("--git-dont-purge", action="store_true", dest="dont_purge", default=False,
+                            help="deprecated, use --git-no-purge instead")
     export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
     options, args = parser.parse_args(args)
 
@@ -439,6 +440,11 @@ def parse_args(argv, prefix):
     if options.overlay and not options.export_dir:
         gbp.log.err("Overlay must be used with --git-export-dir")
         return None, None, None
+
+    # --git-dont-purge is deprecated:
+    if options.dont_purge:
+        gbp.log.warning("--git-dont-purge is depreceted, use --git-no-purge instead")
+        options.purge = False
 
     return options, args, dpkg_args
 

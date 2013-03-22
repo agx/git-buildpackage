@@ -68,7 +68,7 @@ export-dir=../build-area
 #export-dir=/home/debian-packages/build-area
 </programlisting>
     &git-buildpackage; will cleanup the build-area after a successful build. If
-    you want to keep the build tree use <replaceable>--git-dont-purge</replaceable>.
+    you want to keep the build tree use <replaceable>--git-no-purge</replaceable>.
     </para>
     </sect1>
     <sect1 id="gbp.building.hooks">
