@@ -559,7 +559,7 @@ def main(argv):
             tag = repo.version_to_tag(options.debian_tag, cp.version)
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
-            repo.create_tag(name=tag, msg="Debian release %s" % cp.version,
+            repo.create_tag(name=tag, msg="%s Debian release %s" % (cp['Source'], cp.version),
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
