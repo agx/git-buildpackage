@@ -62,6 +62,28 @@ class DebianGitRepository(GitRepository):
                     return None
         return None
 
+    def debian_version_from_upstream(self, upstream_tag_format, commit='HEAD',
+                                     epoch=None):
+        """
+        Build the Debian version that a package based on upstream commit
+        I{commit} would carry taking into account a possible epoch.
+
+        @param upstream_tag_format; the tag format on the upstream branch
+        @type upstream_tag_format; C{str}
+        @param commit: the commit to search for the latest upstream version
+        @param epoch: an epoch to use
+        @returns: a new debian version
+        @raises: L{GitRepositoryError} if no upstream tag was found
+        """
+        pattern = upstream_tag_format % dict(version='*')
+        tag = self.find_tag(commit, pattern=pattern)
+        version = self.tag_to_version(tag, upstream_tag_format)
+
+        version += "-1"
+        if epoch:
+            version = "%s:%s" % (epoch, version)
+        return version
+
     @staticmethod
     def _build_legacy_tag(format, version):
         """
