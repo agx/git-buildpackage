@@ -68,12 +68,12 @@ class DebianGitRepository(GitRepository):
         Build the Debian version that a package based on upstream commit
         I{commit} would carry taking into account a possible epoch.
 
-        @param upstream_tag_format; the tag format on the upstream branch
-        @type upstream_tag_format; C{str}
+        @param upstream_tag_format: the tag format on the upstream branch
+        @type upstream_tag_format: C{str}
         @param commit: the commit to search for the latest upstream version
         @param epoch: an epoch to use
         @returns: a new debian version
-        @raises: L{GitRepositoryError} if no upstream tag was found
+        @raises GitRepositoryError: if no upstream tag was found
         """
         pattern = upstream_tag_format % dict(version='*')
         tag = self.find_tag(commit, pattern=pattern)
