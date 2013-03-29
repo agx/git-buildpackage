@@ -13,7 +13,6 @@ This testcase creates several repositores:
 
 from . import context
 
-import os
 import gbp.log
 
 gbp.log.setup(color=False, verbose=True)
@@ -73,7 +72,7 @@ def test_add_files():
     Properties tested:
          - L{gbp.git.GitRepository.head}
 
-    >>> import gbp.git, shutil
+    >>> import gbp.git, shutil, os
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), \
                                  os.path.join(repo.path, "testfile"))

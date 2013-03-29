@@ -1,0 +1,75 @@
+# vim: set fileencoding=utf-8 :
+#
+# (C) 2013 Guido Günther <agx@sigxcpu.org>
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"""provides some debian source package related helpers"""
+
+import os
+from gbp.deb.format import DebianSourceFormat
+from gbp.deb.changelog import ChangeLog
+
+class FileVfs(object):
+    def __init__(self, dir):
+        """
+        Access files in a unpaced Debian source package.
+
+        @param dir: the toplevel of the source tree
+        @type dir: C{str}
+        """
+        self._dir = dir
+
+    def open(self, path, flags=None):
+        flags = flags or 'r'
+        return file(os.path.join(self._dir, path), flags)
+
+class DebianSourceError(Exception):
+    pass
+
+class DebianSource(object):
+    """
+    A debianized source tree
+
+    Querying/setting information in a debianized source tree
+    involves several files. This class provides a common interface.
+    """
+    def __init__(self, vfs):
+        """
+        @param vfs: a class that implemented GbpVFS interfacce or
+             a directory (which will used the DirGbpVFS class.
+        """
+        if isinstance(vfs, basestring):
+            self._vfs = FileVfs(vfs)
+        else:
+            self._vfs = vfs
+
+    def is_native(self):
+        """
+        Whether this is a native debian package
+        """
+        try:
+            ff = self._vfs.open('debian/source/format')
+            f = DebianSourceFormat(ff.read())
+            return f.type == 'native'
+        except IOError as e:
+            pass # Fall back to changelog parsing
+
+        try:
+            clf = self._vfs.open('debian/changelog')
+            cl = ChangeLog(clf.read())
+            return cl.is_native()
+        except IOError as e:
+            raise DebianSourceError("Failed to determine source format: %s" % e)
+
+

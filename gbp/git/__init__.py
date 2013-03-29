@@ -25,6 +25,7 @@ from gbp.git.errors import GitError
 from gbp.git.repository import GitRepository, GitRepositoryError
 from gbp.git.fastimport import FastImport
 from gbp.git.args import GitArgs
+from gbp.git.vfs import GitVfs
 
 
 def rfc822_date_to_git(rfc822_date):

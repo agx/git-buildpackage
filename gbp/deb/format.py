@@ -40,6 +40,7 @@ class DebianSourceFormat(object):
     ...
     DebianSourceFormatError: Cannot get source format from '1.0 broken'
     """
+    format_file = 'debian/source/format'
 
     def _parse(self, content):
         parts = content.split()
@@ -68,6 +69,9 @@ class DebianSourceFormat(object):
         """The 'type' (e.g. git, native)"""
         return self._type
 
+    def __str__(self):
+        return "%s (%s)" % (self._version, self._type)
+
     @classmethod
     def parse_file(klass, filename):
         """
@@ -91,6 +95,21 @@ class DebianSourceFormat(object):
         with file(filename) as f:
             return klass(f.read())
 
+    @classmethod
+    def from_content(klass, version, type, format_file=None):
+        """
+        Write a format file from I{type} and I{format} at
+        I{format_file}
+
+        @param version: the source package format version
+        @param type: the format type
+        @param format_file: the format file to create with
+            the above parameters
+        """
+        format_file = format_file or klass.format_file
+        with file(klass.format_file, 'w') as f:
+            f.write("%s (%s)" % (version, type))
+        return klass.parse_file(klass.format_file)
 
 if __name__ == "__main__":
     import doctest

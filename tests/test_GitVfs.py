@@ -4,12 +4,12 @@
 Test L{gbp.git.GitVfs}
 """
 
-import os
 import gbp.log
 
 from . import context
 
 gbp.log.setup(color=False, verbose=True)
+import gbp.git
 
 def test_read():
     repo_dir = context.new_tmpdir(__name__)
@@ -18,10 +18,10 @@ def test_read():
 
     Methods tested:
          - L{gbp.git.GitVfs.open}
-         - L{gbp.git._File.readline}
-         - L{gbp.git._File.readlines}
-         - L{gbp.git._File.read}
-         - L{gbp.git._File.close}
+         - L{gbp.git.GitVfs._File.readline}
+         - L{gbp.git.GitVfs._File.readlines}
+         - L{gbp.git.GitVfs._File.read}
+         - L{gbp.git.GitVfs._File.close}
 
     >>> import os, gbp.git.vfs
     >>> repo = gbp.git.GitRepository.create(str(repo_dir))

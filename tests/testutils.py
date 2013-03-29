@@ -3,7 +3,6 @@
 from . import context
 
 import os
-import shutil
 import unittest
 
 import gbp.log
