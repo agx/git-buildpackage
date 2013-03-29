@@ -1,3 +1,56 @@
+git-buildpackage (0.6.0~git20130329) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [703da99] Remove unused imports
+  * [db66286] Return boolean types from is_ methods instead of a match object
+    or None
+  * [db3505f] Better document how one derives from PkgTypes
+  * [eb999f7] Allow for upper case characters in the upstream version
+    (Closes: #703694)
+  * [fc9d019] Purging of the build dir should be configurable via a config file
+    so introduce --git[-no]-purge which is consistent with the other
+    boolean options and deprecate --git-dont-purge. (Closes: #702200)
+  * [5925499] Split out building a debian version from an upstream commit
+    based on a patch by Daniel Dehennin
+    Needed for #672954, #646684, #669171
+  * [dafb5a3] Fix docstring
+
+  [ Markus Lehtonen ]
+  * [8b80e38] ComponentTestBase: close streamhandler when stopping log capture
+  * [5ef9e77] gbp-pull: update tags, too.
+    To make sure that the tags are in sync with the remote.
+  * [6fc1c08] tests/component: pylint fixes.
+    Add module docstring and wrap one overlong line.
+  * [7709f21] tests: skip test_Changelog if 'dch' tool is not available
+  * [dcf7467] setup: possibility to skip nosetest requirements.
+    Makes it possible to not require test requirements by defining
+    WITHOUT_NOSETESTS environment variable when running setup.
+  * [3d80b2f] GitRepository/_cmd_has_feature: more intelligent parsing.
+    More intelligent parsing of the git output (man page). Try to
+    parse optional options like '--[no-]standard-notes' of git-show
+    correctly. In this example both 'no-standard-notes' and 'standard-notes'
+    would be available.
+  * [57bbd0a] GitArgs: utilize the add() method in other add_X methods.
+    Only use the add() method for updating the argument list. This makes the
+    code more robust and makes all add method variant types support the same
+    argument types.
+  * [3b873f7] ComponentTestBase: capability to check files of repo.
+    Makes it possible to check that the correct files are present in
+    the working copy of the repo.
+  * [64ed77c] tests.test_GitRepository: import and setup gbp.log.
+    In order to initialize gbp logging properly. Fixes false positives when
+    the GitRepository tests are run alone.
+
+  [ Zhang Qiang ]
+  * [6703edc] packaging: Add man as dependency.
+    Required by GitRepository._cmd_has_feature() method.
+
+  [ Daniel Kahn Gillmor ]
+  * [4323cc8] Include the name of the package being built in the debian tag
+    message.  (Closes: #704018)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 29 Mar 2013 12:34:07 +0100
+
 git-buildpackage (0.6.0~git20130314) unstable; urgency=low
 
   [ Guido Günther ]
