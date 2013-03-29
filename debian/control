@@ -3,7 +3,9 @@ Section: vcs
 Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends: debhelper (>= 7.0.50~), python (>> 2.6.6-3~),
- pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil, python-nose,
+ pychecker, gtk-doc-tools, sgml2x, docbook-utils, jade, python-dateutil,
+ python-nose,
+ python-nosexcover,
  bash-completion, perl, python-epydoc, python-coverage, python-setuptools,
 # For the testsuite
  git (>= 1:1.7.9.1-1~), bzip2, unzip, pristine-tar, devscripts

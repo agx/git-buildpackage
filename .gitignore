@@ -2,6 +2,7 @@
 .noseids
 .coverage
 .ropeproject/
+coverage.xml
 gbp/version.py
 build/
 gbp.egg-info/
