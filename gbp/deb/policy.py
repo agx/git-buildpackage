@@ -54,6 +54,9 @@ class DebianPkgPolicy(PkgPolicy):
     letters (a-z), digits (0-9), full stops (.), plus signs (+), minus signs
     (-), colons (:) and tildes (~)"""
 
+    # Valid characters in a debian version
+    debianversion_chars = 'a-zA-Z\\d.~+-'
+
     @staticmethod
     def build_tarball_name(name, version, compression, dir=None):
         """

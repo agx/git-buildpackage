@@ -28,10 +28,7 @@ from gbp.pkg import UpstreamSource
 # Make sure these are available with 'import gbp.deb'
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.policy import DebianPkgPolicy
-
-# When trying to parse a version-number from a dsc or changes file, these are
-# the valid characters.
-debian_version_chars = 'a-zA-Z\d.~+-'
+from gbp.deb.dscfile import DscFile
 
 class DpkgCompareVersions(gbpc.Command):
     cmd='/usr/bin/dpkg'
@@ -57,89 +54,6 @@ class DpkgCompareVersions(gbpc.Command):
         return 0
 
 
-class DscFile(object):
-    """Keeps all needed data read from a dscfile"""
-    compressions = r"(%s)" % '|'.join(UpstreamSource.known_compressions())
-    pkg_re = re.compile(r'Source:\s+(?P<pkg>.+)\s*')
-    version_re = re.compile(r'Version:\s((?P<epoch>\d+)\:)?(?P<version>[%s]+)\s*$' % debian_version_chars)
-    tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+(\.orig)?\.tar\.%s)' % compressions)
-    diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+\.diff.(gz|bz2))')
-    deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+\.debian.tar.%s)' % compressions)
-    format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*')
-
-    def __init__(self, dscfile):
-        self.pkg = ""
-        self.tgz = ""
-        self.diff = ""
-        self.deb_tgz = ""
-        self.pkgformat = "1.0"
-        self.debian_version = ""
-        self.upstream_version = ""
-        self.native = False
-        self.dscfile = os.path.abspath(dscfile)
-
-        f = file(self.dscfile)
-        fromdir = os.path.dirname(os.path.abspath(dscfile))
-        for line in f:
-            m = self.version_re.match(line)
-            if m and not self.upstream_version:
-                if '-' in m.group('version'):
-                    self.debian_version = m.group('version').split("-")[-1]
-                    self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
-                    self.native = False
-                else:
-                    self.native = True # Debian native package
-                    self.upstream_version = m.group('version')
-                if m.group('epoch'):
-                    self.epoch = m.group('epoch')
-                else:
-                    self.epoch = ""
-                continue
-            m = self.pkg_re.match(line)
-            if m:
-                self.pkg = m.group('pkg')
-                continue
-            m = self.deb_tgz_re.match(line)
-            if m:
-                self.deb_tgz = os.path.join(fromdir, m.group('deb_tgz'))
-                continue
-            m = self.tar_re.match(line)
-            if m:
-                self.tgz = os.path.join(fromdir, m.group('tar'))
-                continue
-            m = self.diff_re.match(line)
-            if m:
-                self.diff = os.path.join(fromdir, m.group('diff'))
-                continue
-            m = self.format_re.match(line)
-            if m:
-                self.pkgformat = m.group('format')
-                continue
-        f.close()
-
-        if not self.pkg:
-            raise GbpError("Cannot parse package name from '%s'" % self.dscfile)
-        elif not self.tgz:
-            raise GbpError("Cannot parse archive name from '%s'" % self.dscfile)
-        if not self.upstream_version:
-            raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
-        if not self.native and not self.debian_version:
-            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
-
-    def _get_version(self):
-        version = [ "", self.epoch + ":" ][len(self.epoch) > 0]
-        if self.native:
-            version += self.upstream_version
-        else:
-            version += "%s-%s" % (self.upstream_version, self.debian_version)
-        return version
-
-    version = property(_get_version)
-
-    def __str__(self):
-        return "<%s object %s>" % (self.__class__.__name__, self.dscfile)
-
-
 def parse_dsc(dscfile):
     """parse dsc by creating a DscFile object"""
     try:
@@ -148,6 +62,7 @@ def parse_dsc(dscfile):
         raise GbpError("Error reading dsc file: %s" % err)
 
     return dsc
+
 
 def parse_changelog_repo(repo, branch, filename):
     """
