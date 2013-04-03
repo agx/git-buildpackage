@@ -41,3 +41,36 @@ class DebianGitTestRepo(unittest.TestCase):
             content == None or f.write(content)
         self.repo.add_files(name, force=True)
         self.repo.commit_files(path, msg or "added %s" % name)
+
+class OsReleaseFile(object):
+    """Repesents a simple file with key-value pairs"""
+
+    def __init__(self, filename):
+        self._values = {}
+
+        try:
+            with open(filename, 'r') as filed:
+                for line in filed.readlines():
+                    try:
+                        key, value = line.split('=', 1)
+                    except ValueError:
+                        pass
+                    else:
+                        self._values[key] = value.strip()
+        except IOError as err:
+            gbp.log.info('Failed to read OS release file %s: %s' %
+                            (filename, err))
+
+    def __getitem__(self, key):
+        if key in self._values:
+            return self._values[key]
+        return None
+
+    def __contains__(self, key):
+        return key in self._values
+
+    def __str__(self):
+        return str(self._values)
+
+    def __repr__(self):
+        return repr(self._values)

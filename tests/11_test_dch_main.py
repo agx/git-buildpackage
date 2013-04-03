@@ -6,15 +6,25 @@ from . import context
 
 import unittest
 
-from tests.testutils import DebianGitTestRepo
+from tests.testutils import DebianGitTestRepo, OsReleaseFile
 
 from gbp.scripts import dch
 
 import os
 import re
 
-# Snapshot of version 0.9-2~1
-snap_header_0_9 = r'^test-package\s\(0.9-2~1\.gbp([0-9a-f]{6})\)\sUNRELEASED;\surgency=low'
+# For Ubuntu compatibility
+os_release = OsReleaseFile('/etc/lsb-release')
+
+# OS release codename and snapshot of version 0.9-2~1
+if os_release['DISTRIB_ID'] == 'Ubuntu':
+    os_codename = os_release['DISTRIB_CODENAME']
+    snap_header_0_9 = r'^test-package\s\(0.9-1ubuntu1~1\.gbp([0-9a-f]{6})\)\sUNRELEASED;\surgency=low'
+    new_version_0_9 = '0.9-1ubuntu1'
+else:
+    os_codename = 'unstable'
+    snap_header_0_9 = r'^test-package\s\(0.9-2~1\.gbp([0-9a-f]{6})\)\sUNRELEASED;\surgency=low'
+    new_version_0_9 = '0.9-2'
 # Snapshot of version 1.0-1~1
 snap_header_1 = r'^test-package\s\(1.0-1~1\.gbp([0-9a-f]{6})\)\sUNRELEASED;\surgency=low'
 # Snapshot of version 1.0-1~2
@@ -83,7 +93,7 @@ class TestScriptDch(DebianGitTestRepo):
         """Test dch.py like git-dch script does: new upstream version - release"""
         options = ["--release"]
         lines = self.run_dch(options)
-        self.assertEqual("test-package (1.0-1) unstable; urgency=low\n", lines[0])
+        self.assertEqual("test-package (1.0-1) %s; urgency=low\n" % os_codename, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 
@@ -161,7 +171,7 @@ class TestScriptDch(DebianGitTestRepo):
         options = ["--auto"]
         options.append("--release")
         lines = self.run_dch(options)
-        self.assertEqual("test-package (1.0-1) unstable; urgency=low\n", lines[0])
+        self.assertEqual("test-package (1.0-1) %s; urgency=low\n" % os_codename, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 
@@ -281,7 +291,7 @@ class TestScriptDch(DebianGitTestRepo):
         options = ["--release"]
         options.append("--urgency=emergency")
         lines = self.run_dch(options)
-        self.assertEqual("test-package (1.0-1) unstable; urgency=emergency\n", lines[0])
+        self.assertEqual("test-package (1.0-1) %s; urgency=emergency\n" % os_codename, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 
@@ -303,7 +313,7 @@ class TestScriptDch(DebianGitTestRepo):
         self.repo.create_tag("debian/0.9-1", msg="Pre stable release version 0.9-1", commit="HEAD~2")
         self.repo.delete_tag("upstream/1.0")
         lines = self.run_dch()
-        self.assertEqual("test-package (0.9-2) UNRELEASED; urgency=low\n", lines[0])
+        self.assertEqual("test-package (%s) UNRELEASED; urgency=low\n" % new_version_0_9, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 
@@ -312,7 +322,7 @@ class TestScriptDch(DebianGitTestRepo):
         self.repo.delete_tag("upstream/1.0")
         options = ["--release"]
         lines = self.run_dch(options)
-        self.assertEqual("test-package (0.9-2) unstable; urgency=low\n", lines[0])
+        self.assertEqual("test-package (%s) %s; urgency=low\n" % (new_version_0_9, os_codename), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 
@@ -321,7 +331,7 @@ class TestScriptDch(DebianGitTestRepo):
         self.repo.delete_tag("upstream/1.0")
         options = ["--auto"]
         lines = self.run_dch(options)
-        self.assertEqual("test-package (0.9-2) UNRELEASED; urgency=low\n", lines[0])
+        self.assertEqual("test-package (%s) UNRELEASED; urgency=low\n" % new_version_0_9, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 
@@ -343,7 +353,7 @@ class TestScriptDch(DebianGitTestRepo):
         options = ["--auto"]
         options.append("--release")
         lines = self.run_dch(options)
-        self.assertEqual("test-package (0.9-2) unstable; urgency=low\n", lines[0])
+        self.assertEqual("test-package (%s) %s; urgency=low\n" % (new_version_0_9, os_codename), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
 

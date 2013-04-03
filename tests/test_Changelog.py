@@ -238,6 +238,8 @@ def test_add_section():
     >>> import tempfile
     >>> import shutil
     >>> import gbp.deb.changelog
+    >>> from tests.testutils import OsReleaseFile
+    >>> os_release = OsReleaseFile('/etc/lsb-release')
     >>> olddir = os.path.abspath(os.path.curdir)
     >>> testdir = tempfile.mkdtemp(prefix='gbp-test-changelog-')
     >>> testdebdir = os.path.join(testdir, 'debian')
@@ -252,11 +254,13 @@ def test_add_section():
     >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
     >>> cl.add_section(msg=["Test add section"], distribution=None, author="Debian Maintainer", email="maint@debian.org")
     >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
-    >>> cl.version
-    '0.5.33'
-    >>> cl.debian_version
-    '0.5.33'
-    >>> cl['Distribution'] in ['UNRELEASED', 'unstable']
+    >>> version = '0.5.32ubuntu1' if os_release['DISTRIB_ID'] == 'Ubuntu' else '0.5.33'
+    >>> cl.version == version
+    True
+    >>> cl.debian_version == version
+    True
+    >>> distributions = ['UNRELEASED', os_release['DISTRIB_CODENAME'] or 'unstable']
+    >>> cl['Distribution'] in distributions
     True
     >>> 'Test add section' in cl['Changes']
     True
@@ -280,6 +284,8 @@ def test_add_entry():
     >>> import tempfile
     >>> import shutil
     >>> import gbp.deb.changelog
+    >>> from tests.testutils import OsReleaseFile
+    >>> os_release = OsReleaseFile('/etc/lsb-release')
     >>> olddir = os.path.abspath(os.path.curdir)
     >>> testdir = tempfile.mkdtemp(prefix='gbp-test-changelog-')
     >>> testdebdir = os.path.join(testdir, 'debian')
@@ -295,11 +301,13 @@ def test_add_entry():
     >>> cl.add_section(msg=["Test add section"], distribution=None, author="Debian Maintainer", email="maint@debian.org")
     >>> cl.add_entry(msg=["Test add entry"], author="Debian Maintainer", email="maint@debian.org")
     >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
-    >>> cl.version
-    '0.5.33'
-    >>> cl.debian_version
-    '0.5.33'
-    >>> cl['Distribution'] in ['UNRELEASED', 'unstable']
+    >>> version = '0.5.32ubuntu1' if os_release['DISTRIB_ID'] == 'Ubuntu' else '0.5.33'
+    >>> cl.version == version
+    True
+    >>> cl.debian_version == version
+    True
+    >>> distributions = ['UNRELEASED', os_release['DISTRIB_CODENAME'] or 'unstable']
+    >>> cl['Distribution'] in distributions
     True
     >>> 'Test add entry' in cl['Changes']
     True
