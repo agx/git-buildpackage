@@ -163,7 +163,7 @@
         <listitem>
 	  <para>Create a snapshot release entry. This adds a snapshot release
 	  number and a warning banner to the changelog entry. The release
-	  version number is being autoincremented with every new snapshot
+	  version number is being auto incremented with every new snapshot
 	  release to avoid packages downgrades during snapshot testing.</para>
         </listitem>
       </varlistentry>
@@ -330,7 +330,7 @@
       of &git-dch; <option>-S</option> so that later snapshots automatically
       have a higher version number. To leave snapshot mode invoke &git-dch;
       with the <option>--release</option> option. This removes the pseudo
-      heaader and unmangles the version number so the released version has a
+      header and unmangles the version number so the released version has a
       higher version number than the snapshots.
       </para>
   </refsect1>
@@ -377,7 +377,7 @@
 	    <para>
 	      Indicate in the <filename>debian/changelog</filename> that the bug was 
 	      closed by this commit. See the <option>--meta-closes</option>
-	      on howto extend this for other bugtrackers.
+	      on how to extend this for other bugtrackers.
 	    </para>
 	  </listitem>
       </varlistentry>
