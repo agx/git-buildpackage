@@ -1287,10 +1287,9 @@ class GitRepository(object):
 
     def show(self, id):
         """git-show id"""
-        commit, stderr, ret = self._git_inout('show', ["--pretty=medium", id],
-                                              capture_stderr=True)
+        commit, ret = self._git_getoutput('show', [ "--pretty=medium", id ])
         if ret:
-            raise GitRepositoryError("can't get %s: %s" % (id, stderr))
+            raise GitRepositoryError("can't get %s" % id)
         for line in commit:
             yield line
 
