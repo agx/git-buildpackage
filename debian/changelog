@@ -1,3 +1,37 @@
+git-buildpackage (0.6.0~git20130413) unstable; urgency=low
+
+  [ Daniel Dehennin ]
+  * [a9bf9cf] Move debian/changelog manipulation to gbp.deb.changelog.ChangeLog.
+    (Closes: #672954)
+  * [ae4a368] Add option to manage distribution fields for non snapshot mode.
+    The snapshot mode fails to merge two "debian/changelog" entries if the
+    distribution is not "UNRELEASED".
+    (Closes: #646684)
+  * [920053e] Add urgency management.
+
+  [ Guido Günther ]
+  * [62d3b99] Move DebianPkgPolicy to separate module
+  * [7335735] Move DscFile to separate module
+  * [e5d9816] Generate coverage xml for cobertura style coverage information
+    that can be picked up by e.g. Jenkins
+  * [6eb2ddc] Use _git_inout for git.show
+    so we don't spew the error message on stdout for nonexistent objects
+  * [d510f2a] Honor debian/source/format when checking if a package is a
+    native package (Closes: #669267)
+
+  [ Markus Lehtonen ]
+  * [54679eb] Add .coveragerc.
+    To get correct report if coverage is invoked directly (not through
+    nose/disttools) in order to get an xml report, for example.
+
+  [ Thomas Koch ]
+  * [3d6b68a] tests: Use tempfile.mkdtemp to create temp dirs for tests.
+    This puts test dirs below /tmp which often is a tmpfs.
+    All tests include the context module which consolidates tmpdir creation
+    and cleanup, undoes a chdir in teardown and silences log messages.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 13 Apr 2013 14:27:06 +0200
+
 git-buildpackage (0.6.0~git20130329) unstable; urgency=low
 
   [ Guido Günther ]
