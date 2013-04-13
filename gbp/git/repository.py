@@ -1287,12 +1287,12 @@ class GitRepository(object):
 
     def show(self, id):
         """git-show id"""
-        commit, ret = self._git_getoutput('show', [ "--pretty=medium", id ])
+        obj, stderr, ret = self._git_inout('show', ["--pretty=medium", id],
+                                              capture_stderr=True)
         if ret:
-            raise GitRepositoryError("can't get %s" % id)
-        for line in commit:
-            yield line
-
+            raise GitRepositoryError("can't get %s: %s" % (id, stderr.rstrip()))
+        return obj
+        
     def grep_log(self, regex, since=None):
         """
         Get commmits matching I{regex}

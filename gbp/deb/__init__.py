@@ -17,13 +17,11 @@
 """provides some debian source package related helpers"""
 
 import os
-import re
 import subprocess
 
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
-from gbp.pkg import UpstreamSource
 
 # Make sure these are available with 'import gbp.deb'
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
@@ -78,8 +76,7 @@ def parse_changelog_repo(repo, branch, filename):
     except GitRepositoryError:
         raise NoChangeLogError("Changelog %s not found in branch %s" % (filename, branch))
 
-    lines = repo.show(sha)
-    return ChangeLog('\n'.join(lines))
+    return ChangeLog(repo.show(sha))
 
 def orig_file(cp, compression):
     """
