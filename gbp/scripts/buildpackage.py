@@ -28,7 +28,8 @@ from gbp.command_wrappers import (Command,
                                   RemoveTree)
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
-from gbp.deb.changelog import ChangeLog, NoChangeLogError, ParseChangeLogError
+from gbp.deb.source import DebianSource
+from gbp.git.vfs import GitVfs
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
@@ -130,13 +131,13 @@ def write_tree(repo, options):
     return tree
 
 
-def export_source(repo, tree, cp, options, dest_dir, tarball_dir):
+def export_source(repo, tree, source, options, dest_dir, tarball_dir):
     """
     Export a version of the source tree when building in a separate directory
 
     @param repo: the git repository to export from
     @type repo: L{gbp.git.GitRepository}
-    @param cp: the package's changelog
+    @param source: the source package
     @param options: options to apply
     @param dest_dir: where to export the source to
     @param tarball_dir: where to fetch the tarball from in overlay mode
@@ -144,9 +145,12 @@ def export_source(repo, tree, cp, options, dest_dir, tarball_dir):
     """
     # Extract orig tarball if git-overlay option is selected:
     if options.overlay:
-        if cp.is_native():
+        if source.is_native():
             raise GbpError("Cannot overlay Debian native package")
-        extract_orig(os.path.join(tarball_dir, du.orig_file(cp, options.comp_type)), dest_dir)
+        extract_orig(os.path.join(tarball_dir,
+                                  du.orig_file(source.changelog,
+                                               options.comp_type)),
+                     dest_dir)
 
     gbp.log.info("Exporting '%s' to '%s'" % (options.export, dest_dir))
     if not dump_tree(repo, dest_dir, tree, options.with_submodules):
@@ -181,22 +185,18 @@ def extract_orig(orig_tarball, dest_dir):
 
 #}
 
-def fetch_changelog(repo, options, tree):
-    """Fetch the correct changelog based on the options given"""
-    changelog = 'debian/changelog'
-
+def source_vfs(repo, options, tree):
+    """Init source package info either from git or from working copy"""
+    # FIXME: just init the correct vfs
     try:
         if tree:
-            cp = du.parse_changelog_repo(repo, tree, changelog)
+            source = DebianSource(GitVfs(repo, tree))
         else:
-            cp = ChangeLog(filename=changelog)
-    except NoChangeLogError:
-        raise GbpError("'%s' does not exist, not a debian package" % changelog)
-    except ParseChangeLogError as err:
-        raise GbpError("Error parsing Changelog: %s" % err)
-    except KeyError:
-        raise GbpError("Can't parse version from changelog")
-    return cp
+            source = DebianSource('.')
+            source.is_native() # check early if this works
+    except Exception as e:
+        raise GbpError("Can't determine package type: %s" % e)
+    return source
 
 
 def prepare_output_dir(dir):
@@ -452,7 +452,7 @@ def parse_args(argv, prefix):
 def main(argv):
     retval = 0
     prefix = "git-"
-    cp = None
+    source = None
     branch = None
 
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
@@ -490,7 +490,7 @@ def main(argv):
                 raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
 
         tree = write_tree(repo, options)
-        cp = fetch_changelog(repo, options, tree)
+        source = source_vfs(repo, options, tree)
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
             tarball_dir = options.tarball_dir or output_dir
@@ -500,17 +500,17 @@ def main(argv):
             # sources and create different tarballs (#640382)
             # We don't delay it in general since we want to fail early if the
             # tarball is missing.
-            if not cp.is_native():
+            if not source.is_native():
                 if options.postexport:
                     gbp.log.info("Postexport hook set, delaying tarball creation")
                 else:
-                    prepare_upstream_tarball(repo, cp, options, tarball_dir,
+                    prepare_upstream_tarball(repo, source.changelog, options, tarball_dir,
                                              output_dir)
 
             # Export to another build dir if requested:
             if options.export_dir:
-                tmp_dir = os.path.join(output_dir, "%s-tmp" % cp['Source'])
-                export_source(repo, tree, cp, options, tmp_dir, output_dir)
+                tmp_dir = os.path.join(output_dir, "%s-tmp" % source.changelog['Source'])
+                export_source(repo, tree, source.changelog, options, tmp_dir, output_dir)
 
                 # Run postexport hook
                 if options.postexport:
@@ -518,15 +518,16 @@ def main(argv):
                                  extra_env={'GBP_GIT_DIR': repo.git_dir,
                                             'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
 
-                major = (cp.debian_version if cp.is_native() else cp.upstream_version)
-                export_dir = os.path.join(output_dir, "%s-%s" % (cp['Source'], major))
+                major = (source.changelog.debian_version if source.is_native()
+                         else source.changelog.upstream_version)
+                export_dir = os.path.join(output_dir, "%s-%s" % (source.changelog['Source'], major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
                 os.rename(tmp_dir, export_dir)
 
                 # Delayed tarball creation in case a postexport hook is used:
-                if not cp.is_native() and options.postexport:
-                    prepare_upstream_tarball(repo, cp, options, tarball_dir,
+                if not source.is_native() and options.postexport:
+                    prepare_upstream_tarball(repo, source.changelog, options, tarball_dir,
                                              output_dir)
 
             if options.export_dir:
@@ -546,20 +547,26 @@ def main(argv):
             if options.postbuild:
                 arch = os.getenv('ARCH', None) or du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
-                                          (build_dir, cp['Source'], cp.noepoch, arch))
+                                          (build_dir,
+                                           source.changelog['Source'],
+                                           source.changelog.noepoch, arch))
                 gbp.log.debug("Looking for changes file %s" % changes)
                 if not os.path.exists(changes):
                     changes = os.path.abspath("%s/../%s_%s_source.changes" %
-                                  (build_dir, cp['Source'], cp.noepoch))
+                                  (build_dir,
+                                   source.changelog['Source'],
+                                   source.changelog.noepoch))
                 Command(options.postbuild, shell=True,
                         extra_env={'GBP_CHANGES_FILE': changes,
                                    'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
-            gbp.log.info("Tagging %s" % cp.version)
-            tag = repo.version_to_tag(options.debian_tag, cp.version)
+            gbp.log.info("Tagging %s" % source.changelog.version)
+            tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
-            repo.create_tag(name=tag, msg="%s Debian release %s" % (cp['Source'], cp.version),
+            repo.create_tag(name=tag,
+                            msg="%s Debian release %s" % (source.changelog['Source'],
+                                                          source.changelog.version),
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
@@ -580,7 +587,9 @@ def main(argv):
         if options.export_dir and options.purge and not retval:
             RemoveTree(export_dir)()
 
-        if cp and not gbp.notifications.notify(cp, not retval, options.notify):
+        if source.changelog and not gbp.notifications.notify(source.changelog,
+                                                             not retval,
+                                                             options.notify):
             gbp.log.err("Failed to send notification")
             retval = 1
 

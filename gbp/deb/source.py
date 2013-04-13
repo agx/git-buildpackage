@@ -49,6 +49,8 @@ class DebianSource(object):
         @param vfs: a class that implemented GbpVFS interfacce or
              a directory (which will used the DirGbpVFS class.
         """
+        self._changelog = None
+
         if isinstance(vfs, basestring):
             self._vfs = FileVfs(vfs)
         else:
@@ -66,10 +68,16 @@ class DebianSource(object):
             pass # Fall back to changelog parsing
 
         try:
-            clf = self._vfs.open('debian/changelog')
-            cl = ChangeLog(clf.read())
-            return cl.is_native()
+            return self.changelog.is_native()
         except IOError as e:
             raise DebianSourceError("Failed to determine source format: %s" % e)
 
-
+    @property
+    def changelog(self):
+        """
+        Return the L{gbp.deb.ChangeLog}
+        """
+        if not self._changelog:
+            clf = self._vfs.open('debian/changelog')
+            self._changelog = ChangeLog(clf.read())
+        return self._changelog

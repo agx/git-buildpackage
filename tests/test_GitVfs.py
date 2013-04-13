@@ -11,8 +11,8 @@ from . import context
 gbp.log.setup(color=False, verbose=True)
 import gbp.git
 
+
 def test_read():
-    repo_dir = context.new_tmpdir(__name__)
     """
     Create a repository
 
@@ -24,6 +24,7 @@ def test_read():
          - L{gbp.git.GitVfs._File.close}
 
     >>> import os, gbp.git.vfs
+    >>> repo_dir = context.new_tmpdir(__name__)
     >>> repo = gbp.git.GitRepository.create(str(repo_dir))
     >>> f = file(os.path.join(repo.path, 'foo.txt'), 'w')
     >>> content = 'al pha\\na\\nb\\nc'
