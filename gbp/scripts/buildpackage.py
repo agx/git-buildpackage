@@ -587,9 +587,9 @@ def main(argv):
         if options.export_dir and options.purge and not retval:
             RemoveTree(export_dir)()
 
-        if source.changelog and not gbp.notifications.notify(source.changelog,
-                                                             not retval,
-                                                             options.notify):
+        if source and not gbp.notifications.notify(source.changelog,
+                                                   not retval,
+                                                   options.notify):
             gbp.log.err("Failed to send notification")
             retval = 1
 
