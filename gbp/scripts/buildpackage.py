@@ -509,7 +509,7 @@ def main(argv):
 
             # Export to another build dir if requested:
             if options.export_dir:
-                tmp_dir = os.path.join(output_dir, "%s-tmp" % source.changelog['Source'])
+                tmp_dir = os.path.join(output_dir, "%s-tmp" % source.sourcepkg)
                 export_source(repo, tree, source.changelog, options, tmp_dir, output_dir)
 
                 # Run postexport hook
@@ -520,7 +520,7 @@ def main(argv):
 
                 major = (source.changelog.debian_version if source.is_native()
                          else source.changelog.upstream_version)
-                export_dir = os.path.join(output_dir, "%s-%s" % (source.changelog['Source'], major))
+                export_dir = os.path.join(output_dir, "%s-%s" % (source.sourcepkg, major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
                 os.rename(tmp_dir, export_dir)
@@ -548,13 +548,13 @@ def main(argv):
                 arch = os.getenv('ARCH', None) or du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir,
-                                           source.changelog['Source'],
+                                           source.sourcepkg,
                                            source.changelog.noepoch, arch))
                 gbp.log.debug("Looking for changes file %s" % changes)
                 if not os.path.exists(changes):
                     changes = os.path.abspath("%s/../%s_%s_source.changes" %
                                   (build_dir,
-                                   source.changelog['Source'],
+                                   source.sourcepkg,
                                    source.changelog.noepoch))
                 Command(options.postbuild, shell=True,
                         extra_env={'GBP_CHANGES_FILE': changes,
@@ -565,7 +565,7 @@ def main(argv):
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
             repo.create_tag(name=tag,
-                            msg="%s Debian release %s" % (source.changelog['Source'],
+                            msg="%s Debian release %s" % (source.sourcepkg,
                                                           source.changelog.version),
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:

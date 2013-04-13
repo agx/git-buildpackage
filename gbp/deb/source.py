@@ -81,3 +81,10 @@ class DebianSource(object):
             clf = self._vfs.open('debian/changelog')
             self._changelog = ChangeLog(clf.read())
         return self._changelog
+
+    @property
+    def sourcepkg(self):
+        """
+        The source package's name
+        """
+        return self.changelog['Source']
