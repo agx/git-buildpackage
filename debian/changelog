@@ -1,3 +1,9 @@
+git-buildpackage (0.6.0~git20130414) unstable; urgency=low
+
+  * [e948bd3] Don't try access source before it's filled
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 13 Apr 2013 19:36:57 +0200
+
 git-buildpackage (0.6.0~git20130413) unstable; urgency=low
 
   [ Daniel Dehennin ]
