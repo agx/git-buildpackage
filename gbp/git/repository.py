@@ -72,8 +72,8 @@ class GitRepository(object):
             raise GitRepositoryError("No Git repository at '%s'" % self.path)
         self._check_bare()
 
-    @classmethod
-    def __build_env(cls, extra_env):
+    @staticmethod
+    def __build_env(extra_env):
         """Prepare environment for subprocess calls"""
         env = None
         if extra_env is not None:
