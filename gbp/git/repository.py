@@ -72,7 +72,8 @@ class GitRepository(object):
             raise GitRepositoryError("No Git repository at '%s'" % self.path)
         self._check_bare()
 
-    def __build_env(self, extra_env):
+    @classmethod
+    def __build_env(cls, extra_env):
         """Prepare environment for subprocess calls"""
         env = None
         if extra_env is not None:
@@ -131,11 +132,17 @@ class GitRepository(object):
         """
         if not cwd:
             cwd = self.path
+        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr)
 
+    @classmethod
+    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr):
+        """
+        As _git_inout but can be used without an instance
+        """
+        cmd = ['git', command] + args
+        env = cls.__build_env(extra_env)
         stderr_arg = subprocess.PIPE if capture_stderr else None
 
-        env = self.__build_env(extra_env)
-        cmd = ['git', command] + args
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
                                  stdin=subprocess.PIPE,
@@ -1553,9 +1560,16 @@ class GitRepository(object):
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
             try:
-                GitCommand("init", args.args, cwd=abspath)()
-            except CommandExecFailed as excobj:
+                stdout, stderr, ret = klass.__git_inout(command='init',
+                                                        args=args.args,
+                                                        input=None,
+                                                        extra_env=None,
+                                                        cwd=abspath,
+                                                        capture_stderr=True)
+            except Exception as excobj:
                 raise GitRepositoryError("Error running git init: %s" % excobj)
+            if ret:
+                raise GitRepositoryError("Error running git init: %s" % stderr)
 
             if description:
                 with file(os.path.join(abspath, git_dir, "description"), 'w') as f:
