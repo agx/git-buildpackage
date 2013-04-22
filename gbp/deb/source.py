@@ -78,8 +78,11 @@ class DebianSource(object):
         Return the L{gbp.deb.ChangeLog}
         """
         if not self._changelog:
-            clf = self._vfs.open('debian/changelog')
-            self._changelog = ChangeLog(clf.read())
+            try:
+                clf = self._vfs.open('debian/changelog')
+                self._changelog = ChangeLog(clf.read())
+            except IOError as err:
+                raise DebianSourceError('Failed to read changelog: %s' % err)
         return self._changelog
 
     @property
