@@ -83,6 +83,7 @@ class GbpOptionParser(OptionParser):
                  'prebuild'        : '',
                  'postexport'      : '',
                  'postimport'      : '',
+                 'hooks'           : 'True',
                  'debian-tag'      : 'debian/%(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
                  'import-msg'      : 'Imported Upstream version %(version)s',
@@ -241,6 +242,8 @@ class GbpOptionParser(OptionParser):
              'postimport':
                   ("hook run after a successful import, "
                    "default is '%(postimport)s'"),
+             'hooks':
+                  ("Enable running all hooks, default is %(hooks)s"),
              'time-machine':
                   ("don't try head commit only to apply the patch queue "
                    "but look TIME_MACHINE commits back, "

@@ -41,6 +41,7 @@
       <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-postexport=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>command</replaceable></arg>
+      <arg><option>--git-[no-]hooks=</option></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
@@ -288,6 +289,14 @@
           <para>Exported environment variables are:
           <envar>GBP_GIT_DIR</envar> (the repository the package is being built from),
           <envar>GBP_BUILD_DIR</envar> (the build dir).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-[no-]hooks</option></term>
+        <listitem>
+      <para>Enable running all (cleaner, postexport, prebuild, postbuild,
+      and posttag) hooks. Note: the <option>--git-builder</option> command is
+      not affected by this option.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
