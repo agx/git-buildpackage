@@ -28,7 +28,7 @@ from gbp.command_wrappers import (Command,
                                   RemoveTree)
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
-from gbp.deb.source import DebianSource
+from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.git.vfs import GitVfs
 from gbp.errors import GbpError
 import gbp.log
@@ -579,6 +579,10 @@ def main(argv):
     except (GbpError, GitRepositoryError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
+        retval = 1
+    except DebianSourceError as err:
+        gbp.log.err(err)
+        source = None
         retval = 1
     finally:
         drop_index()
