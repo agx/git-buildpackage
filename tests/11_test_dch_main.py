@@ -186,7 +186,7 @@ class TestScriptDch(DebianGitTestRepo):
 
     def test_dch_main_new_upstream_version_with_distribution(self):
         """Test dch.py like git-dch script does: new upstream version - set distribution"""
-        options = ["--distribution=testing"]
+        options = ["--distribution=testing", "--force-distribution"]
         lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) testing; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
@@ -195,7 +195,7 @@ class TestScriptDch(DebianGitTestRepo):
     def test_dch_main_new_upstream_version_with_release_distribution(self):
         """Test dch.py like git-dch script does: new upstream version - release - set distribution"""
         options = ["--release"]
-        options.append("--distribution=testing")
+        options.extend(["--distribution=testing", "--force-distribution"])
         lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) testing; urgency=low\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
