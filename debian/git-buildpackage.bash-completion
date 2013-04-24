@@ -80,7 +80,7 @@ have git-buildpackage &&
 _git_buildpackage()
 {
     local options=$(_gbp_options git-buildpackage)
-    local branch_opts="--git-debian-branch\= --git-upstream-branch\="
+    local branch_opts="--git-debian-branch\= --git-upstream-branch\= --git-upstream-tree\="
     local tag_opts="--git-debian-tag\= --git-upstream-tag\="
     local tristate_opts="--git-color\= --git-notify\="
     local cbdist_opts="--git-dist\="
