@@ -1623,10 +1623,16 @@ class GitRepository(object):
                 os.makedirs(abspath)
 
             try:
-                GitCommand("clone", args.args, cwd=abspath)()
-            except CommandExecFailed as excobj:
-                raise GitRepositoryError("Error running git clone: %s" %
-                                         excobj)
+                stdout, stderr, ret = klass.__git_inout(command='clone',
+                                                        args=args.args,
+                                                        input=None,
+                                                        extra_env=None,
+                                                        cwd=abspath,
+                                                        capture_stderr=True)
+            except Exception as excobj:
+                raise GitRepositoryError("Error running git clone: %s" % excobj)
+            if ret:
+                raise GitRepositoryError("Error running git clone: %s" % stderr)
 
             if not name:
                 name = remote.rstrip('/').rsplit('/',1)[1]
