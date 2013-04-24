@@ -22,7 +22,6 @@ import re
 from collections import defaultdict
 
 import gbp.log as log
-from gbp.command_wrappers import (GitCommand, CommandExecFailed)
 from gbp.errors import GbpError
 from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit
@@ -166,10 +165,16 @@ class GitRepository(object):
         @type extra_env: C{dict}
         """
         try:
-            GitCommand(command, args, extra_env=extra_env, cwd=self.path)()
-        except CommandExecFailed as excobj:
-            raise GitRepositoryError("Error running git %s: %s" %
-                                     (command, excobj))
+            stdout, stderr, ret = self._git_inout(command=command,
+                                                  args=args,
+                                                  input=None,
+                                                  extra_env=extra_env,
+                                                  capture_stderr=True)
+        except Exception as excobj:
+            raise GitRepositoryError("Error running git %s: %s" % (command, excobj))
+        if ret:
+            raise GitRepositoryError("Error running git %s: %s" % (command, stderr))
+
 
     def _cmd_has_feature(self, command, feature):
         """
