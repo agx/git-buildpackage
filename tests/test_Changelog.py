@@ -255,8 +255,8 @@ def test_add_section():
     '0.5.33'
     >>> cl.debian_version
     '0.5.33'
-    >>> cl['Distribution']
-    'UNRELEASED'
+    >>> cl['Distribution'] in ['UNRELEASED', 'unstable']
+    True
     >>> 'Test add section' in cl['Changes']
     True
     >>> os.chdir(olddir)
@@ -298,8 +298,8 @@ def test_add_entry():
     '0.5.33'
     >>> cl.debian_version
     '0.5.33'
-    >>> cl['Distribution']
-    'UNRELEASED'
+    >>> cl['Distribution'] in ['UNRELEASED', 'unstable']
+    True
     >>> 'Test add entry' in cl['Changes']
     True
     >>> os.chdir(olddir)
