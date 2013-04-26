@@ -63,7 +63,8 @@ class DebianSource(object):
         try:
             ff = self._vfs.open('debian/source/format')
             f = DebianSourceFormat(ff.read())
-            return f.type == 'native'
+            if f.type:
+                return f.type == 'native'
         except IOError as e:
             pass # Fall back to changelog parsing
 
