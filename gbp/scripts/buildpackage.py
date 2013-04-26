@@ -125,7 +125,7 @@ def write_tree(repo, options):
         else:
             tree = options.export
         if not repo.has_treeish(tree):
-            raise GbpError # git-ls-tree printed an error message already
+            raise GbpError("%s is not a valid treeish" % tree)
     else:
         tree = None
     return tree
@@ -250,7 +250,7 @@ def get_upstream_tree(repo, cp, options):
     else:
         upstream_tree = options.upstream_tree
     if not repo.has_treeish(upstream_tree):
-        raise GbpError # git-ls-tree printed an error message already
+        raise GbpError("%s is not a valid treeish" % upstream_tree)
     return upstream_tree
 
 
