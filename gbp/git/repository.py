@@ -1349,10 +1349,15 @@ class GitRepository(object):
             args.append(since)
         args.append('--')
 
-        commits, ret = self._git_getoutput('log', args)
+        stdout, stderr, ret = self._git_inout('log', args,
+                                              capture_stderr=True)
         if ret:
-            raise GitRepositoryError("Error grepping log for %s" % regex)
-        return [ commit.strip() for commit in commits[::-1] ]
+            raise GitRepositoryError("Error grepping log for %s: %s" %
+                                     (regex, stderr[:-1]))
+        if stdout:
+            return [ commit.strip() for commit in stdout.split('\n')[::-1] ]
+        else:
+            return []
 
     def get_subject(self, commit):
         """

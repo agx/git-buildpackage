@@ -695,7 +695,7 @@ def test_gc():
     >>> repo.collect_garbage()
     """
 
-def test_grep():
+def test_grep_log():
     """
     Test grepping through commit messages
 
@@ -714,7 +714,7 @@ def test_grep():
     >>> repo.grep_log('foo', 'doesnotexist')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Error grepping log for foo
+    GitRepositoryError: Error grepping log for foo: fatal: bad revision 'doesnotexist'
     """
 
 def test_is_ff():
