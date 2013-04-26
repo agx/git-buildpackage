@@ -17,10 +17,11 @@
 
 from . import context
 
-import os
 import testutils
+import gbp.log
 import gbp.scripts.import_dscs as import_dscs
 
+from gbp.errors import GbpError
 
 class StubGitImportDsc(object):
     """
@@ -55,13 +56,18 @@ def stub_parse_dsc(filename):
 import_dscs.GitImportDsc = StubGitImportDsc
 import_dscs.parse_dsc = stub_parse_dsc
 
-
 class TestImportDscs(testutils.DebianGitTestRepo):
     """Test L{gbp.scripts.import_dscs}'s """
 
     def setUp(self):
         testutils.DebianGitTestRepo.setUp(self)
         context.chdir(self.repo.path)
+        self.orig_err = gbp.log.err
+        gbp.log.err = self._check_err_msg
+
+    def _check_err_msg(self, err):
+        self.assertIsInstance(err, GbpError)
+        self.assertIn("Failed to import", err.message)
 
     def test_import_success(self):
         """Test importing success with stub"""
@@ -83,6 +89,7 @@ class TestImportDscs(testutils.DebianGitTestRepo):
         self.assertEqual(ret, 1)
 
     def tearDown(self):
+        gbp.log.err = self.orig_err
         testutils.DebianGitTestRepo.tearDown(self)
         context.teardown()
 
