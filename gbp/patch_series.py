@@ -62,7 +62,7 @@ class Patch(object):
         """
         self.info = {}
         body = tempfile.NamedTemporaryFile(prefix='gbp_')
-        pipe = subprocess.Popen("git mailinfo '%s' /dev/null < '%s'" %
+        pipe = subprocess.Popen("git mailinfo '%s' /dev/null 2>/dev/null < '%s'" %
                                 (body.name, self.path),
                                 shell=True,
                                 stdout=subprocess.PIPE).stdout
