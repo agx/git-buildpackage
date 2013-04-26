@@ -20,7 +20,7 @@ class MockOptions(object):
 
 class TestGetUpstreamTree(testutils.DebianGitTestRepo):
     def test_valid_upstream_branch(self):
-        """Write out index file to nonexistant dir"""
+        """Get upstream tree from a valid upstream branch"""
         self.add_file('foo')
         self.repo.create_branch('upstream')
         options = MockOptions(upstream_tree='BRANCH',
@@ -29,7 +29,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.assertEqual(t, 'upstream')
 
     def test_invalid_upstream_branch(self):
-        """Write out index file to nonexistant dir"""
+        """Getting upstream tree from a invalid upstream branch must fail"""
         self.add_file('foo')
         options = MockOptions(upstream_tree='BRANCH',
                               upstream_branch='upstream')
@@ -40,7 +40,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
                           options)
 
     def test_valid_tree(self):
-        """Write out index file to nonexistant dir"""
+        """Get upstream tree from a valid upstream tree"""
         self.add_file('foo')
         tree = self.repo.rev_parse('master')
         options = MockOptions(upstream_tree=tree)
@@ -48,7 +48,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.assertEqual(t, tree)
 
     def test_invalid_tree(self):
-        """Write out index file to nonexistant dir"""
+        """Getting upstream tree from an invalid tree must fail"""
         self.add_file('foo')
         options = MockOptions(upstream_tree='doesnotexist')
         self.assertRaises(gbp.errors.GbpError,
@@ -58,7 +58,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
                           options)
 
     def test_valid_tag(self):
-        """Write out index file to nonexistant dir"""
+        """Get upstream tree from a valid tag"""
         self.add_file('foo')
         self.repo.rev_parse('master')
         cp = { 'Upstream-Version': '1.0~rc3' }
@@ -69,7 +69,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.assertEqual(tag, "upstream/1.0_rc3")
 
     def test_invalid_tag(self):
-        """Write out index file to nonexistant dir"""
+        """Getting upstream tree from an invalid tag must fail"""
         self.add_file('foo')
         cp = { 'Upstream-Version': '1.0~rc3' }
         options = MockOptions(upstream_tree="TAG",
