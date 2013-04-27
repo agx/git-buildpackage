@@ -357,8 +357,9 @@ def main(argv):
                     info = { 'version': "%s%s-1" % (epoch, version) }
                     env = { 'GBP_BRANCH': options.debian_branch }
                     gbpc.Command(options.postimport % info, extra_env=env, shell=True)()
-        except (gbpc.CommandExecFailed, GitRepositoryError):
-            raise GbpError("Import of %s failed" % source.path)
+        except (gbpc.CommandExecFailed, GitRepositoryError) as err:
+            msg = err.__str__() if len(err.__str__()) else ''
+            raise GbpError("Import of %s failed: %s" % (source.path, msg))
     except GbpError as err:
         if len(err.__str__()):
             gbp.log.err(err)

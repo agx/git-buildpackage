@@ -139,8 +139,9 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                         commit=commit,
                         sign=options.sign_tags,
                         keyid=options.keyid)
-    except (gbpc.CommandExecFailed, GitRepositoryError):
-        gbp.log.err("Failed to import Debian package")
+    except (gbpc.CommandExecFailed, GitRepositoryError) as err:
+        msg = err.__str__() if len(err.__str__()) else ''
+        gbp.log.err("Failed to import Debian package: %s" % msg)
         raise GbpError
     finally:
         os.chdir(repo.path)
