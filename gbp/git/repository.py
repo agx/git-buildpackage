@@ -830,10 +830,12 @@ class GitRepository(object):
         else:
             extra_env = None
 
-        tree, ret = self._git_getoutput('write-tree', extra_env=extra_env)
+        tree, stderr, ret = self._git_inout('write-tree', [],
+                                            extra_env=extra_env,
+                                            capture_stderr=True)
         if ret:
-            raise GitRepositoryError("Can't write out current index")
-        return tree[0].strip()
+            raise GitRepositoryError("Can't write out current index: %s" % stderr[:-1])
+        return tree.strip()
 
     def make_tree(self, contents):
         """
