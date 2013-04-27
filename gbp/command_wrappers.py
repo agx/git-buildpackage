@@ -67,7 +67,7 @@ class Command(object):
         return subprocess.call(cmd, cwd=self.cwd, shell=self.shell,
                                env=self.env, preexec_fn=default_sigpipe)
 
-    def __run(self, args):
+    def __run(self, args, quiet=False):
         """
         run self.cmd adding args as additional arguments
 
@@ -84,24 +84,24 @@ class Command(object):
         except OSError as err:
             err_detail = "Execution failed: %s" % err
             retcode = 1
-        if retcode:
+        if retcode and not quiet:
             log.err("%s: %s" % (self.run_error, err_detail))
         self.retcode = retcode
         return retcode
 
-    def __call__(self, args=[]):
+    def __call__(self, args=[], quiet=False):
         """
         Run the command, convert all errors into CommandExecFailed, assumes
         that the lower levels printed an error message - only useful if you
         only expect 0 as result.
 
         >>> Command("/bin/true")(["foo", "bar"])
-        >>> Command("/foo/bar")()
+        >>> Command("/foo/bar")(quiet=True)
         Traceback (most recent call last):
         ...
         CommandExecFailed
         """
-        if self.__run(args):
+        if self.__run(args, quiet):
             raise CommandExecFailed
 
     def call(self, args):
