@@ -828,7 +828,7 @@ def test_cmd_has_feature():
     >>> repo._cmd_has_feature("foobarcmd", "foobaroption")
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Invalid git command: foobarcmd
+    GitRepositoryError: Invalid git command 'foobarcmd': No manual entry for gitfoobarcmd
     >>> repo._cmd_has_feature("show", "standard-notes")
     True
     >>> repo._cmd_has_feature("show", "no-standard-notes")

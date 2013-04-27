@@ -188,9 +188,12 @@ class GitRepository(object):
         @rtype: C{bool}
         """
         args = GitArgs(command, '-m')
-        help, foo, ret = self._git_inout('help', args.args)
+        help, stderr, ret = self._git_inout('help',
+                                           args.args,
+                                           capture_stderr=True)
         if ret:
-            raise GitRepositoryError("Invalid git command: %s" % command)
+            raise GitRepositoryError("Invalid git command '%s': %s"
+                                     % (command, stderr[:-1]))
 
         # Parse git command man page
         section_re = re.compile(r'^(?P<section>[A-Z].*)')
