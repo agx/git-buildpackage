@@ -28,6 +28,7 @@ import gbp.log
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup
 from gbp.errors import GbpError
 from gbp.deb import compare_versions
+from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.deb.git import GitRepositoryError, DebianGitRepository
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 
@@ -376,7 +377,8 @@ def main(argv):
             gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
             raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
 
-        cp = ChangeLog(filename=changelog)
+        source = DebianSource('.')
+        cp = source.changelog
 
         if options.since:
             since = options.since
@@ -426,7 +428,7 @@ def main(argv):
         else:
             add_section = False
 
-        if add_section and not version_change and not cp.is_native():
+        if add_section and not version_change and not source.is_native():
             # Get version from upstream if none provided
             v = guess_version_from_upstream(repo, options.upstream_tag, cp)
             if v:
@@ -491,7 +493,11 @@ def main(argv):
             repo.commit_files([changelog], msg)
             gbp.log.info("Changelog has been committed for version %s" % version)
 
-    except (gbpc.CommandExecFailed, GbpError, GitRepositoryError, NoChangeLogError) as err:
+    except (gbpc.CommandExecFailed,
+            GbpError,
+            GitRepositoryError,
+            DebianSourceError,
+            NoChangeLogError) as err:
         if len(err.__str__()):
             gbp.log.err(err)
         ret = 1

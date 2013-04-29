@@ -66,6 +66,8 @@ def parse_changelog_repo(repo, branch, filename):
     """
     Parse the changelog file from given branch in the git
     repository.
+
+    FIXME: this should use *Vfs methods
     """
     try:
         # Note that we could just pass in the branch:filename notation
