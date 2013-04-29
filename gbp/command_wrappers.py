@@ -36,13 +36,16 @@ class Command(object):
     line options in one of the git-buildpackage commands
     """
 
-    def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None):
+    def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None,
+                 capture_stderr=False):
         self.cmd = cmd
         self.args = args
         self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] +
                                                          self.args))
         self.shell = shell
         self.retcode = 1
+        self.stderr = ''
+        self.capture_stderr = capture_stderr
         self.cwd = cwd
         if extra_env is not None:
             self.env = os.environ.copy()
@@ -60,16 +63,27 @@ class Command(object):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
         log.debug("%s %s %s" % (self.cmd, self.args, args))
+        self.stderr = ''
+        stderr_arg = subprocess.PIPE if self.capture_stderr else None
         cmd = [ self.cmd ] + self.args + args
         if self.shell:
             # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-        return subprocess.call(cmd, cwd=self.cwd, shell=self.shell,
-                               env=self.env, preexec_fn=default_sigpipe)
+        popen = subprocess.Popen(cmd,
+                                 cwd=self.cwd,
+                                 shell=self.shell,
+                                 env=self.env,
+                                 preexec_fn=default_sigpipe,
+                                 stderr=stderr_arg)
+        (dummy, stderr) = popen.communicate()
+        self.stderr = stderr
+        return popen.returncode
 
     def __run(self, args, quiet=False):
         """
         run self.cmd adding args as additional arguments
+
+        @param quiet: don't log errors to stderr Mostly useful during unit testing.
 
         Be verbose about errors and encode them in the return value, don't pass
         on exceptions.
@@ -91,9 +105,13 @@ class Command(object):
 
     def __call__(self, args=[], quiet=False):
         """
-        Run the command, convert all errors into CommandExecFailed, assumes
-        that the lower levels printed an error message - only useful if you
-        only expect 0 as result.
+        Run the command and convert all errors into CommandExecFailed. Assumes
+        that the lower levels printed an error message (the command itself and
+        also via our logging api) - only useful if you only expect 0 as result.
+
+        @param quiet: don't log failed execution to stderr. Mostly useful during
+            unit testing
+        @type quiet: C{bool}
 
         >>> Command("/bin/true")(["foo", "bar"])
         >>> Command("/foo/bar")(quiet=True)
@@ -106,8 +124,7 @@ class Command(object):
 
     def call(self, args):
         """
-        Like __call__ but don't use stderr and let the caller handle the
-        return status
+        Like __call__ but let the caller handle the return status.
 
         >>> Command("/bin/true").call(["foo", "bar"])
         0
