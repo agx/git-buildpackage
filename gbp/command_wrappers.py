@@ -50,7 +50,6 @@ class Command(object):
         else:
             self.env = None
 
-    # FIXME: should we make this similiar to __git_inout ?
     def __call(self, args):
         """
         Wraps subprocess.call so we can be verbose and fix python's
@@ -65,12 +64,6 @@ class Command(object):
         if self.shell:
             # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-        popen = subprocess.Popen(cmd,
-                                 cwd=self.cwd,
-                                 shell=self.shell,
-                                 preexec_fn=default_sigpipe,
-                                 stderr=subprocess.PIPE)
-        (dummy, stderr) = popen.communicate(input)
         return subprocess.call(cmd, cwd=self.cwd, shell=self.shell,
                                env=self.env, preexec_fn=default_sigpipe)
 
