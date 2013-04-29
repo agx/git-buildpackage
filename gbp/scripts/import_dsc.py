@@ -27,7 +27,7 @@ import pipes
 import time
 import gbp.command_wrappers as gbpc
 from gbp.pkg import UpstreamSource
-from gbp.deb import  parse_dsc
+from gbp.deb.dscfile import DscFile
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
@@ -263,7 +263,7 @@ def main(argv):
             else:
                 dsc = pkg
 
-            src = parse_dsc(dsc)
+            src = DscFile.parse(dsc)
             if src.pkgformat not in [ '1.0', '3.0' ]:
                 raise GbpError("Importing %s source format not yet supported." % src.pkgformat)
             if options.verbose:

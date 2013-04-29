@@ -45,16 +45,16 @@ class DscStub(object):
         self.filename = filename
         self.version = version
 
-def stub_parse_dsc(filename):
-    # filename is like file1.dsc, file2.dsc, use
-    # the digit as version number
-    version = filename[4]
-    return DscStub(filename, version)
-
+    @classmethod
+    def parse(cls, filename):
+        # filename is like file1.dsc, file2.dsc, use
+        # the digit as version number
+        version = filename[4]
+        return cls(filename, version)
 
 # hook up stubs
 import_dscs.GitImportDsc = StubGitImportDsc
-import_dscs.parse_dsc = stub_parse_dsc
+import_dscs.DscFile = DscStub
 
 class TestImportDscs(testutils.DebianGitTestRepo):
     """Test L{gbp.scripts.import_dscs}'s """

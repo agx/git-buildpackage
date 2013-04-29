@@ -21,7 +21,8 @@ import os
 import sys
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.deb import parse_dsc, DpkgCompareVersions
+from gbp.deb import DpkgCompareVersions
+from gbp.deb.dscfile import DscFile
 from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.scripts import import_dsc
@@ -119,7 +120,7 @@ def main(argv):
         else:
             for arg in argv[::-1]:
                 if arg.endswith('.dsc'):
-                    dscs.append(parse_dsc(arg))
+                    dscs.append(DscFile.parse(arg))
                     import_args.remove(arg)
 
         if not use_debsnap and not dscs:
@@ -128,7 +129,7 @@ def main(argv):
 
         if use_debsnap:
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp())
-            dscs = [ parse_dsc(f) for f in fetch_snapshots(pkg, dirs['tmp']) ]
+            dscs = [ DscFile.parse(f) for f in fetch_snapshots(pkg, dirs['tmp']) ]
 
         dscs.sort(cmp=dsc_cmp)
         importer = GitImportDsc(import_args)

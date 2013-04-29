@@ -26,7 +26,6 @@ from gbp.git import GitRepositoryError
 # Make sure these are available with 'import gbp.deb'
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.policy import DebianPkgPolicy
-from gbp.deb.dscfile import DscFile
 
 class DpkgCompareVersions(gbpc.Command):
     cmd='/usr/bin/dpkg'
@@ -50,16 +49,6 @@ class DpkgCompareVersions(gbpc.Command):
             if res == 0:
                 return 1
         return 0
-
-
-def parse_dsc(dscfile):
-    """parse dsc by creating a DscFile object"""
-    try:
-        dsc = DscFile(dscfile)
-    except IOError as err:
-        raise GbpError("Error reading dsc file: %s" % err)
-
-    return dsc
 
 
 def parse_changelog_repo(repo, branch, filename):

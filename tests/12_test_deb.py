@@ -7,6 +7,8 @@ from . import context
 import os, tempfile, unittest
 
 import gbp.deb
+
+from gbp.deb.dscfile import DscFile
 from gbp.command_wrappers import CommandExecFailed
 
 class TestDscFile(unittest.TestCase):
@@ -51,9 +53,9 @@ Files:
     def tearDown(self):
         os.unlink(self.dscfile.name)
 
-    def test_parse_dsc_file(self):
+    def test_dscfile_parse(self):
         """Test parsing a valid dsc file"""
-        dsc = gbp.deb.parse_dsc(self.dscfile.name)
+        dsc = DscFile.parse(self.dscfile.name)
         self.assertEqual(dsc.version, '0.9.12-4')
 
 

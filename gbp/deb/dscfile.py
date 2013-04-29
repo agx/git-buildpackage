@@ -110,4 +110,12 @@ class DscFile(object):
     def __str__(self):
         return "<%s object %s>" % (self.__class__.__name__, self.dscfile)
 
+    @classmethod
+    def parse(cls, filename):
+        try:
+            dsc = cls(filename)
+        except IOError as err:
+            raise GbpError("Error reading dsc file: %s" % err)
+        return dsc
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
