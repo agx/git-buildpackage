@@ -168,12 +168,6 @@ class ChangeLog(object):
         """
         return self._cp.has_key('Epoch')
 
-    def is_native(self):
-        """
-        Whether this is a native Debian package
-        """
-        return not '-' in self.version
-
     @property
     def author(self):
         """

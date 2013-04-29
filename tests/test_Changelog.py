@@ -56,7 +56,6 @@ def test_parse_debian_only():
 
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}
-         - L{gbp.deb.changelog.ChangeLog.is_native}
 
     Properties tested:
          - L{gbp.deb.changelog.ChangeLog.version}
@@ -81,8 +80,6 @@ def test_parse_debian_only():
     True
     >>> cl.epoch
     >>> cl.upstream_version
-    >>> cl.is_native()
-    True
     """
 
 def test_parse_no_eopch():
@@ -92,7 +89,6 @@ def test_parse_no_eopch():
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}
          - L{gbp.deb.changelog.ChangeLog.has_epoch}
-         - L{gbp.deb.changelog.ChangeLog.is_native}
 
     Properties tested:
          - L{gbp.deb.changelog.ChangeLog.version}
@@ -120,8 +116,6 @@ def test_parse_no_eopch():
     '1.0'
     >>> cl.has_epoch()
     False
-    >>> cl.is_native()
-    False
     """
 
 def test_parse_eopch():
@@ -131,7 +125,6 @@ def test_parse_eopch():
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}
          - L{gbp.deb.changelog.ChangeLog.has_epoch}
-         - L{gbp.deb.changelog.ChangeLog.is_native}
 
     Properties tested:
          - L{gbp.deb.changelog.ChangeLog.version}
@@ -160,8 +153,6 @@ def test_parse_eopch():
     '1.2.0'
     >>> cl.has_epoch()
     True
-    >>> cl.is_native()
-    False
     """
 
 def test_parse_name():

@@ -69,7 +69,7 @@ class DebianSource(object):
             pass # Fall back to changelog parsing
 
         try:
-            return self.changelog.is_native()
+            return not '-' in self.changelog.version
         except IOError as e:
             raise DebianSourceError("Failed to determine source format: %s" % e)
 
