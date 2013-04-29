@@ -124,7 +124,8 @@ class Command(object):
 
     def call(self, args):
         """
-        Like __call__ but let the caller handle the return status.
+        Like __call__ but let the caller handle the return status and don't
+        use the logging api for errors.
 
         >>> Command("/bin/true").call(["foo", "bar"])
         0

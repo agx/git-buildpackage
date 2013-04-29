@@ -28,23 +28,33 @@ from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.policy import DebianPkgPolicy
 
 class DpkgCompareVersions(gbpc.Command):
-    cmd='/usr/bin/dpkg'
+    dpkg = '/usr/bin/dpkg'
 
     def __init__(self):
-        if not os.access(self.cmd, os.X_OK):
-            raise GbpError("%s not found - cannot use compare versions" % self.cmd)
-        gbpc.Command.__init__(self, self.cmd, ['--compare-versions'])
+        if not os.access(self.dpkg, os.X_OK):
+            raise GbpError("%s not found - cannot use compare versions" % self.dpkg)
+        gbpc.Command.__init__(self, self.dpkg, ['--compare-versions'], capture_stderr=True)
 
     def __call__(self, version1, version2):
+        """
+        Compare two package versions. Return 0 if the versions are equal, -1 1 if version1 < version2,
+        and 1 oterwise.
+
+        @raises CommandExecFailed: if the version comparison fails
+        """
         self.run_error = "Couldn't compare %s with %s" % (version1, version2)
-        res = gbpc.Command.call(self, [ version1, 'lt', version2 ])
+        res = self.call([ version1, 'lt', version2 ])
         if res not in [ 0, 1 ]:
+            if self.stderr:
+                self.run_error += ' (%s)' % self.stderr
             raise gbpc.CommandExecFailed("%s: bad return code %d" % (self.run_error, res))
         if res == 0:
             return -1
         elif res == 1:
-            res = gbpc.Command.call(self, [ version1, 'gt', version2 ])
+            res = self.call([ version1, 'gt', version2 ])
             if res not in [ 0, 1 ]:
+                if self.stderr:
+                    self.run_error += ' (%s)' % self.stderr
                 raise gbpc.CommandExecFailed("%s: bad return code %d" % (self.run_error, res))
             if res == 0:
                 return 1
