@@ -52,8 +52,11 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
     def test_debian_missing_author(self):
         """
         Check if we parse the author from debian control
-        if it's missing.
+        if it's missing in the patch.
         """
+        def _check_log(msg):
+            self.assertEqual(msg, "Patch 'foo.patch' has no authorship "
+                         "information, using 'Guido Günther <gg@godiug.net>'")
 
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
@@ -67,7 +70,10 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
                       "Maintainer: Guido Günther <gg@godiug.net>")
 
         maintainer = pq.get_maintainer_from_control(self.repo)
+        orig_warn = gbp.log.warn
+        gbp.log.warn = _check_log
         pq.apply_and_commit_patch(self.repo, patch, maintainer)
+        gbp.log.warn = orig_warn
         info = self.repo.get_commit_info('HEAD')
         self.assertEqual(info['author'].email, 'gg@godiug.net')
         self.assertIn('foo', self.repo.list_files())
