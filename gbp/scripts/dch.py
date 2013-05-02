@@ -271,6 +271,7 @@ def main(argv):
     until = 'HEAD'
     found_snapshot_header = False
     version_change = {}
+    branch = None
 
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
