@@ -69,11 +69,13 @@ def fast_forward_branch(branch, repo, options):
 
 def main(argv):
     retval = 0
+    current = None
 
     parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] - safely update a repository from remote')
     branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
     parser.add_option_group(branch_group)
+    branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
     branch_group.add_option("--force", action="store_true", dest="force", default=False,
                       help="force a branch update even if can't be fast forwarded")
     branch_group.add_option("--redo-pq", action="store_true", dest="redo_pq", default=False,
@@ -101,7 +103,15 @@ def main(argv):
 
     try:
         branches = []
-        current = repo.get_branch()
+        try:
+            current = repo.get_branch()
+        except GitRepositoryError:
+            # Not being on any branch is o.k. with --git-ignore-branch
+            if  options.ignore_branch:
+                current = repo.head
+                gbp.log.info("Found detached head at '%s'" % current)
+            else:
+                raise
 
         for branch in [ options.debian_branch, options.upstream_branch ]:
             if repo.has_branch(branch):
