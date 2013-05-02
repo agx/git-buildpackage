@@ -22,6 +22,7 @@ import os
 import shutil
 import sys
 import tempfile
+import re
 from gbp.config import GbpOptionParserDebian
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (GitCommand, CommandExecFailed)
@@ -29,12 +30,33 @@ from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
-                                 write_patch, switch_to_pq_branch,
+                                 format_patch, switch_to_pq_branch,
                                  apply_single_patch, apply_and_commit_patch,
                                  drop_pq, get_maintainer_from_control)
 
 PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR,"series")
+
+
+def generate_patches(repo, start, end, outdir, options):
+    """
+    Generate patch files from git
+    """
+    gbp.log.info("Generating patches from git (%s..%s)" % (start, end))
+    patches = []
+    for treeish in [start, end]:
+        if not repo.has_treeish(treeish):
+            raise GbpError('%s not a valid tree-ish' % treeish)
+
+    # Generate patches
+    rev_list = reversed(repo.get_commits(start, end))
+    topic_regex = 'gbp-pq-topic:\s*(?P<topic>\S.*)'
+    for commit in rev_list:
+        info = repo.get_commit_info(commit)
+        format_patch(outdir, repo, info, patches, options.patch_numbers,
+                     topic_regex=topic_regex)
+
+    return patches
 
 
 def export_patches(repo, branch, options):
@@ -54,18 +76,12 @@ def export_patches(repo, branch, options):
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
-    patches = repo.format_patches(branch,
-                                  pq_branch, PATCH_DIR,
-                                  signature=False,
-                                  symmetric=False)
-    if patches:
-        f = open(SERIES_FILE, 'w')
-        gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
-        for patch in patches:
-            filename = write_patch(patch, PATCH_DIR, options)
-            f.write(filename[len(PATCH_DIR):] + '\n')
+    patches = generate_patches(repo, branch, pq_branch, PATCH_DIR, options)
 
-        f.close()
+    if patches:
+        with open(SERIES_FILE, 'w') as seriesfd:
+            for patch in patches:
+                seriesfd.write(os.path.relpath(patch, PATCH_DIR) + '\n')
         GitCommand('status')(['--', PATCH_DIR])
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
