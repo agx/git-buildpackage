@@ -301,11 +301,14 @@ class GitRepository(object):
         @return: current branch
         @rtype: C{str}
         """
-        out, ret = self._git_getoutput('symbolic-ref', [ 'HEAD' ])
+        out, dummy, ret = self._git_inout('symbolic-ref', [ 'HEAD' ],
+                                           capture_stderr=True)
         if ret:
+            # We don't append stderr since
+            # "fatal: ref HEAD is not a symbolic ref" confuses people
             raise GitRepositoryError("Currently not on a branch")
 
-        ref = out[0][:-1]
+        ref = out.split('\n')[0]
         # Check if ref really exists
         failed = self._git_getoutput('show-ref', [ ref ])[1]
         if not failed:
