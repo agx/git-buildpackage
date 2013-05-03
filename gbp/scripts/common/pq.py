@@ -68,6 +68,29 @@ def pq_branch_base(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
 
+def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds):
+    """Parse gbp commands from commit message"""
+    cmd_re = re.compile(r'^%s:\s*(?P<cmd>[a-z-]+)(\s+(?P<args>\S.*))?' %
+                            cmd_tag, flags=re.I)
+    commands = {}
+    for line in info['body'].splitlines():
+        match = re.match(cmd_re, line)
+        if match:
+            cmd = match.group('cmd').lower()
+            if arg_cmds and cmd in arg_cmds:
+                if match.group('args'):
+                    commands[cmd] = match.group('args')
+                else:
+                    gbp.log.warn("Ignoring gbp-command '%s' in commit %s: "
+                                 "missing cmd arguments" % (line, info['id']))
+            elif noarg_cmds and cmd in noarg_cmds:
+                commands[cmd] = match.group('args')
+            else:
+                gbp.log.warn("Ignoring unknow gbp-command '%s' in commit %s"
+                                % (line, info['id']))
+    return commands
+
+
 def patch_path_filter(file_status, exclude_regex=None):
     """
     Create patch include paths, i.e. a "negation" of the exclude paths.

@@ -30,8 +30,9 @@ from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
-                                 format_patch, switch_to_pq_branch,
-                                 apply_single_patch, apply_and_commit_patch,
+                                 parse_gbp_commands, format_patch,
+                                 switch_to_pq_branch, apply_single_patch,
+                                 apply_and_commit_patch,
                                  drop_pq, get_maintainer_from_control)
 
 PATCH_DIR = "debian/patches/"
@@ -53,8 +54,12 @@ def generate_patches(repo, start, end, outdir, options):
     topic_regex = 'gbp-pq-topic:\s*(?P<topic>\S.*)'
     for commit in rev_list:
         info = repo.get_commit_info(commit)
-        format_patch(outdir, repo, info, patches, options.patch_numbers,
-                     topic_regex=topic_regex)
+        cmds = parse_gbp_commands(info, 'gbp', ('ignore'), None)
+        if not 'ignore' in cmds:
+            format_patch(outdir, repo, info, patches, options.patch_numbers,
+                         topic_regex=topic_regex)
+        else:
+            gbp.log.info('Ignoring commit %s' % info['id'])
 
     return patches
 
