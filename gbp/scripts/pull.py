@@ -77,7 +77,7 @@ def main(argv):
     parser.add_option_group(branch_group)
     branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
     branch_group.add_option("--force", action="store_true", dest="force", default=False,
-                      help="force a branch update even if can't be fast forwarded")
+                      help="force a branch update even if it can't be fast forwarded")
     branch_group.add_option("--redo-pq", action="store_true", dest="redo_pq", default=False,
                       help="redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
