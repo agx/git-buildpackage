@@ -25,6 +25,7 @@
       <arg><option>--force</option></arg>
       <arg><option>--redo-pq</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--ignore-branch</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--depth=</option><replaceable>depth</replaceable></arg>
@@ -47,7 +48,7 @@
         <term><option>--force</option></term>
         <listitem>
 	  <para>force a branch update even if this results in a non fast
-	  forward update. <warning><para>Forcing a branch updates
+	  forward update. <warning><para>Forcing a branch update
 	  makes you lose your modifications.</para></warning></para>
         </listitem>
       </varlistentry>
@@ -56,6 +57,13 @@
         <listitem>
 	  <para>also rebuild the corresponding patch-queue using &gbp-pq;.
 	  <warning><para>This drops the patch-queue branch if it exists.</para></warning></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-branch</option>
+        </term>
+        <listitem>
+	  <para>Don't care if we're on a branch or in detached head state.
         </listitem>
       </varlistentry>
       <varlistentry>
