@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# - Use "execute shell" step in Jenkins like
+#
+#   export ARCH=i386
+#   export DIST=sid
+#   jenkins-scratchbuilder
+#
+# - jenkins must be be able to invoke cowbuilder/pbuilder via sudo:
+#
+#   %pbuilder ALL = SETENV: NOPASSWD: /usr/sbin/cowbuilder, /usr/sbin/pbuilder
+#
+# - It assumes you checked out the sources into scratchbuild/
+
+set +e
+
+# Remove old build artifacts from workspace
+rm -f *.deb *.changes *.build *.dsc
+
+# We assume jenkins was told to checkout into a specific subdir
+# named scratchbuild
+cd scratchbuild/
+
+# Make sure we have an uptodate cowbuilder environment
+# Note that git-pbuilder will pick up $DIST and $ARCH from the environment
+[ -d /var/cache/pbuilder/base.cow ] || git-pbuilder create
+git-pbuilder update
+
+# Cleanup any leftovers
+git clean -dfx
+
+# Reset the changelog
+git checkout -f debian/changelog
+
+# Create a monitonically increasing changelog by including the build number
+git-dch -S -a --ignore-branch --snapshot-number=${BUILD_NUMBER}
+
+# Build the package
+[ -z ARCH ] || GBP_OPTS="$GBP_OPTS --git-arch=$ARCH"
+[ -z DIST ] || GBP_OPTS="$GBP_OPTS --git-dist=$DIST"
+git-buildpackage ${GBP_OPTS} --git-ignore-branch --git-pbuilder --git-cleaner=/bin/true --git-ignore-new --git-pristine-tar -b
