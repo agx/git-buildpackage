@@ -1,3 +1,24 @@
+git-buildpackage (0.6.0~git20130506) unstable; urgency=low
+
+  [ Guido Günther ]
+  * Get rid of lots of spurious output to stderr, only report it in error
+    cases. This makes the tools and the testsuite less chatty.
+  * [4abfa6a] gbp-pull: Fix typo in help output
+  * [90ffae8] manpages: Document gbp-pull's --ignore-branch option
+
+  [ Markus Lehtonen ]
+  * [9e3267a] DebianSource: raise DebianSourceError if reading changelog fails
+  * [a36dc64] buildpackage: catch and handle DebianSourceError gracefully
+  * tests: fixes for older dch
+  * [36341dd] GitRepository: add describe() method.
+  * [ae63dba] DebianSource: fix is_native()
+    Determine from changelog if debian/source/format does not provide any type
+    (1.0 format).
+  * [f880910] tests: Fix tests for Ubuntu.
+  * [f9722f6] buildpackage: implement --[no-]hooks option.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 06 May 2013 19:18:49 +0200
+
 git-buildpackage (0.6.0~git20130414) unstable; urgency=low
 
   * [e948bd3] Don't try access source before it's filled
