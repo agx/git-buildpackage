@@ -317,7 +317,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
                 gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
             else:
                 commit = repo.pristine_tar_branch
-            tarball = repo.get_subject(commit)
+            tarball = repo.get_commit_info(commit)['subject']
             comp_type = du.DebianPkgPolicy.get_compression(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:

@@ -24,8 +24,8 @@ class MockGitRepository:
     def grep_log(self, regex, branch):
         return None
 
-    def get_subject(self, commit):
-        return self.subject
+    def get_commit_info(self, commit):
+        return {'subject': self.subject}
 
 class TestDetection(unittest.TestCase):
     def setUp(self):
