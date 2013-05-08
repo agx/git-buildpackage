@@ -190,6 +190,7 @@ class GitRepository(object):
         args = GitArgs(command, '-m')
         help, stderr, ret = self._git_inout('help',
                                            args.args,
+                                           extra_env={'LC_ALL': 'C'},
                                            capture_stderr=True)
         if ret:
             raise GitRepositoryError("Invalid git command '%s': %s"
