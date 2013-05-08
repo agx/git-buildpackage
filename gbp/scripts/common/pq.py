@@ -21,11 +21,14 @@
 import re
 import os
 import subprocess
+import datetime
+import time
 from email.message import Message
 from email.header import Header
 from email.charset import Charset, QP
 
-from gbp.git import GitRepositoryError, GitModifier
+from gbp.git import GitRepositoryError
+from gbp.git.modifier import GitModifier, GitTz
 from gbp.errors import GbpError
 import gbp.log
 
@@ -198,6 +201,29 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
         if patch:
             series.append(patch)
     return patch
+
+
+def format_diff(outdir, filename, repo, start, end, path_exclude_regex=None):
+    """Create a patch of diff between two repository objects"""
+
+    info = {'author': repo.get_author_info()}
+    now = datetime.datetime.now().replace(tzinfo=GitTz(-time.timezone))
+    info['author'].set_date(now)
+    info['subject'] = "Raw diff %s..%s" % (start, end)
+    info['body'] = ("Raw diff between %s '%s' and\n%s '%s'\n" %
+                    (repo.get_obj_type(start), start,
+                    repo.get_obj_type(end), end))
+    if not filename:
+        filename = '%s-to-%s.diff' % (start, end)
+    filename = os.path.join(outdir, filename)
+
+    file_status = repo.diff_status(start, end)
+    paths = patch_path_filter(file_status, path_exclude_regex)
+    if paths:
+        diff = repo.diff(start, end, paths=paths, stat=80, summary=True,
+                         text=True)
+        return write_patch_file(filename, info, diff)
+    return None
 
 
 def get_maintainer_from_control(repo):
