@@ -21,7 +21,9 @@
 import re
 import os
 import subprocess
-import textwrap
+from email.message import Message
+from email.header import Header
+from email.charset import Charset, QP
 
 from gbp.git import GitRepositoryError, GitModifier
 from gbp.errors import GbpError
@@ -89,21 +91,36 @@ def write_patch_file(filename, commit_info, diff):
         return None
     try:
         with open(filename, 'w') as patch:
+            msg = Message()
+            charset = Charset('utf-8')
+            charset.body_encoding = None
+            charset.header_encoding = QP
+
+            # Write headers
             name = commit_info['author']['name']
             email = commit_info['author']['email']
-            # Put name in quotes if special characters found
+            # Git compat: put name in quotes if special characters found
             if re.search("[,.@()\[\]\\\:;]", name):
                 name = '"%s"' % name
-            patch.write('From: %s <%s>\n' % (name, email))
+            from_header = Header(unicode(name, 'utf-8'), charset, 77, 'from')
+            from_header.append(unicode('<%s>' % email))
+            msg['From'] = from_header
             date = commit_info['author'].datetime
-            patch.write('Date: %s\n' %
-                        date.strftime('%a, %-d %b %Y %H:%M:%S %z'))
-            subj_lines = textwrap.wrap('Subject: ' + commit_info['subject'],
-                                       77, subsequent_indent=' ',
-                                       break_long_words=False,
-                                       break_on_hyphens=False)
-            patch.write('\n'.join(subj_lines) + '\n\n')
-            patch.writelines(commit_info['body'])
+            datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
+            msg['Date'] = Header(unicode(datestr, 'utf-8'), charset, 77, 'date')
+            msg['Subject'] = Header(unicode(commit_info['subject'], 'utf-8'),
+                                    charset, 77, 'subject')
+            # Write message body
+            if commit_info['body']:
+                # Strip extra linefeeds
+                body = commit_info['body'].rstrip() + '\n'
+                try:
+                    msg.set_payload(body.encode('ascii'))
+                except UnicodeDecodeError:
+                    msg.set_payload(body, charset)
+            patch.write(msg.as_string(unixfrom=False))
+
+            # Write diff
             patch.write('---\n')
             patch.write(diff)
     except IOError as err:
