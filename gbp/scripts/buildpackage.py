@@ -521,7 +521,7 @@ def main(argv):
             # Export to another build dir if requested:
             if options.export_dir:
                 tmp_dir = os.path.join(output_dir, "%s-tmp" % source.sourcepkg)
-                export_source(repo, tree, source.changelog, options, tmp_dir, output_dir)
+                export_source(repo, tree, source, options, tmp_dir, output_dir)
 
                 # Run postexport hook
                 if options.postexport:
