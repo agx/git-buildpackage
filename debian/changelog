@@ -1,3 +1,18 @@
+git-buildpackage (0.6.0~git20130530) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [f4acd7a] GitRepository: Use LC_ALL=C when checking features.
+    This fixes the doctest and also makes sure we use an up to date manpage.
+    Thanks to Daniel Dehennin for the report.
+  * [9c5bd03] Add Jenkins Scratchbuilder example.
+    It's a simple script that can be used to build Debian packages via gbp
+    and Jenkins.
+
+  [ Gaudenz Steinlin ]
+  * [47f2dea] git-buildpackage: Unbreak overlay mode (Closes: #708636)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 30 May 2013 15:24:05 +0200
+
 git-buildpackage (0.6.0~git20130506) unstable; urgency=low
 
   [ Guido Günther ]
