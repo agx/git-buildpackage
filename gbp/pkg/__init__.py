@@ -172,6 +172,8 @@ class PkgPolicy(object):
         ('foo-bar', '0.2')
         >>> PkgPolicy.guess_upstream_src_version('foo-bar-0.2.tlz')
         ('foo-bar', '0.2')
+        >>> PkgPolicy.guess_upstream_src_version('foo-bar_0.2.tar.gz')
+        ('foo-bar', '0.2')
         """
         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
         basename = parse_archive_filename(os.path.basename(filename))[0]
@@ -179,8 +181,9 @@ class PkgPolicy(object):
         version_filters = map ( lambda x: x % version_chars,
                            ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
                              r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
+                             # Debian native: 'package_<version>.tar.gz'
+                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)',
                              # Upstream 'package-<version>.tar.gz'
-                             # or Debian native 'package_<version>.tar.gz'
                              # or directory 'package-<version>':
                              r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)'))
         if extra_regex:
