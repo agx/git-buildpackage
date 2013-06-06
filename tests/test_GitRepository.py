@@ -487,6 +487,8 @@ def test_diff():
     True
     >>> len(repo.diff('HEAD~1', 'HEAD', 'testfile')) > 3
     True
+    >>> len(repo.diff('HEAD~1', 'HEAD', 'testfile', text=True)) > 3
+    True
     >>> len(repo.diff('HEAD~1', 'HEAD', 'filenotexist')) == 0
     True
     """
