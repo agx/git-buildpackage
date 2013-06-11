@@ -446,6 +446,8 @@ def test_get_commit_info():
     'foo'
     >>> info['files']
     defaultdict(<type 'list'>, {'M': ['testfile']})
+    >>> repo.get_subject('HEAD')
+    'foo'
     """
 
 def test_diff():

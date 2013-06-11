@@ -1342,7 +1342,7 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("can't get %s: %s" % (id, stderr.rstrip()))
         return obj
-        
+
     def grep_log(self, regex, since=None):
         """
         Get commmits matching I{regex}
@@ -1372,15 +1372,13 @@ class GitRepository(object):
         """
         Gets the subject of a commit.
 
+        @deprecated: Use get_commit_info directly
+
         @param commit: the commit to get the subject from
         @return: the commit's subject
         @rtype: C{str}
         """
-        out, ret =  self._git_getoutput('log', ['-n1', '--pretty=format:%s',  commit])
-        if ret:
-            raise GitRepositoryError("Error getting subject of commit %s"
-                                     % commit)
-        return out[0].strip()
+        return self.get_commit_info(commit)['subject']
 
     def get_commit_info(self, commitish):
         """
