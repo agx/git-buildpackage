@@ -360,8 +360,8 @@ def main(argv):
             # Update working copy and index if we've possibly updated the
             # checked out branch
             current_branch = repo.get_branch()
-            if (current_branch == options.upstream_branch or
-                current_branch == repo.pristine_tar_branch):
+            if current_branch in [ options.upstream_branch,
+                                   repo.pristine_tar_branch]:
                 repo.force_head(current_branch, hard=True)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = err.__str__() if len(err.__str__()) else ''
