@@ -311,6 +311,15 @@ class GbpOptionParser(OptionParser):
         parser.read(self.config_files)
         self.config = dict(parser.defaults())
 
+        if not (self.command.startswith('gbp-') or
+                self.command.startswith('git-')):
+            # Invoked as gbp <subcommand> syntax, so parse the old sections
+            # of {gbp.git}-<subcommand> for backward compatibility:
+            for prefix in ['gbp', 'git']:
+                oldcmd = '%s-%s' % (prefix, self.command)
+                if parser.has_section(oldcmd):
+                    self.config.update(dict(parser.items(oldcmd, raw=True)))
+
         if parser.has_section(self.command):
             self.config.update(dict(parser.items(self.command, raw=True)))
 
