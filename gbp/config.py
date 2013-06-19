@@ -307,7 +307,7 @@ class GbpOptionParser(OptionParser):
         Parse the possible config files and set appropriate values
         default values
         """
-        parser = SafeConfigParser(self.defaults)
+        parser = SafeConfigParser(dict(self.__class__.defaults))
         parser.read(self.config_files)
         self.config = dict(parser.defaults())
 
