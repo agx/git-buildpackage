@@ -80,3 +80,27 @@ def test_parser_fallback():
     >>> parser.config['no']
     'truth'
     """
+
+def test_filter():
+    """
+    The filter option should always parse as a list
+    >>> import os
+    >>> from gbp.config import GbpOptionParser
+    >>> parser = GbpOptionParser('bar')
+    >>> tmpdir = str(context.new_tmpdir('bar'))
+    >>> confname = os.path.join(tmpdir, 'gbp.conf')
+    >>> parser.config_files = [confname]
+    >>> f = file(confname, 'w')
+    >>> f.write('[bar]\\nfilter = asdf\\n')
+    >>> f.close()
+    >>> parser._parse_config_files()
+    >>> parser.config['filter']
+    ['asdf']
+    >>> f = file(confname, 'w')
+    >>> f.write("[bar]\\nfilter = ['this', 'is', 'a', 'list']\\n")
+    >>> f.close()
+    >>> parser._parse_config_files()
+    >>> parser.config['filter']
+    ['this', 'is', 'a', 'list']
+    """
+
