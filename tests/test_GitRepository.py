@@ -266,6 +266,12 @@ def test_describe():
     >>> repo.describe('HEAD', pattern='foo*', always=True, abbrev=16) == sha[:16]
     True
     >>> tag = repo.describe('HEAD', longfmt=True, abbrev=16) == 'tag2-0-g%s' % sha[:16]
+    >>> repo.delete_tag('tag2')
+    >>> repo.describe('HEAD', tags=True)
+    'tag'
+    >>> repo.describe('HEAD', tags=True, exact_match=True)
+    'tag'
+    >>> repo.create_tag('tag2', msg='foo')
     """
 
 def test_find_tag():
