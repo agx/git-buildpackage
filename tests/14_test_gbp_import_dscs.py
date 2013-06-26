@@ -44,6 +44,7 @@ class DscStub(object):
     def __init__(self, filename, version):
         self.filename = filename
         self.version = version
+        self.dscfile = filename
 
     @classmethod
     def parse(cls, filename):
