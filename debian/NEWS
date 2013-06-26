@@ -1,4 +1,4 @@
-git-buildpackage (0.6.0~) unstable; urgency=low
+git-buildpackage (0.6.0) unstable; urgency=low
 
   In order to provide a more consistent and git like interface a new gbp super
   command was added as a front end to all git-* and gbp-* commands. So what was

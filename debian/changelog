@@ -1,3 +1,62 @@
+git-buildpackage (0.6.0) unstable; urgency=low
+
+  [ Guido Günther ]
+  * Introduce gbp supercommand to get rid of the git-<command> vs.
+    gbp-<command> inconsistencies:
+      * [12dce5f] Add wrapper for all gbp commands.  So like git you can now
+        use gbp <command> instead of git-<command> or gbp-<command>. The
+        manpages and docs aren't adjusted yet.
+      * [416f690] Bash complete on "gbp <command>" too
+      * [5684b18] Add gbp manpage
+      * [6b1b41f] docs: Use gbp <command> instead of {git,gbp}-<command>
+      * [daccfa0] manpages: Changes references from git- to gbp-
+      * [1d90e73] docs: Rename the entities from &git-<command>; to
+        &gbp-<command>;
+      * [1eea5d5] gbp.conf: Use command names instead of {git,gbp}-
+      * [c365f7c] Rename the sgml files from git- to gbp-
+      * [55fded7] NEWS: add a note about the new gbp super command
+      * [b47b7e8] Update package description
+      * [fe9f925] GbpOptionParser: Make sure we parse the old config sections.
+        For backward compatibility between {gbp,git}-<command> and "gbp
+        <command>" make sure we parse the former sections if using the later.
+      * [375014d] gbp: support --help
+      * [a5aff11] Consistently call gbp the supercommand and robustify against
+        invalid modules names.
+      * [e09ef94] gbp-import-dscs: invoke gbp import-dsc instead of
+        git-import-dsc
+      * [38d43b4] config: Don't fill in the parser with all defaults.
+  * [4d6eecb] GitRepository.get_subject: use get_commit_info.
+    This kills another _git_getoutput. Also deprecate the method since we
+    don't need to special case the subject.
+  * [caff99c] GbpOptionParser: Make sure we access the GbpOptionParser*'s
+    default dict and not the one from the OptionParser. The instance's default
+    dict this gets reset to empty when invoking OptionParser.__init__.
+  * [1158503] GbpOptionParser: add test for 'filter' option handling
+  * [ed63276] Git-Ignore generated gbp.conf.5 too
+  * [3966076] Remove unused imports
+  * [b59818d] import-dsc: print filename instead of object name
+
+  [ Markus Lehtonen ]
+  * [fa414e5] gitmodifier: make the datetime object always have timezone.  To
+    be consistent with the date property and for easier compatibility with git
+    dates.
+  * [f717975] GitRepository/get_commit_info: add patchname to info.
+    Add a new 'patchname' field to the information returned by
+    get_commit_info. That is, the subject in a sanitized format, similar to
+    what git-format-patch uses.
+  * [74d956f] import-orig: keep working copy in sync with branch HEAD.
+    Update working copy and index (to branch HEAD) if we modify the
+    currently checked-out branch. Otherwise the repository is left in
+    unclean state when the current branch is upstream or pristine-tar and
+    the '--no-merge' option is used.
+  * [a30f9e7] buildpackage: use get_commit_info() instead of get_subject()
+    Utilize the get_commit_info() method of GitRepository instead of the
+    deprecated get_subject().
+  * [75cbd9a] GitRepository/diff: allow single object.
+    Allow diffing a single object, e.g. getting diff from single commit.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 26 Jun 2013 16:36:41 +0200
+
 git-buildpackage (0.6.0~git20130530) unstable; urgency=low
 
   [ Guido Günther ]
