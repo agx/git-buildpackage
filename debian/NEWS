@@ -1,3 +1,17 @@
+git-buildpackage (0.6.0~) unstable; urgency=low
+
+  In order to provide a more consistent and git like interface a new gbp super
+  command was added as a front end to all git-* and gbp-* commands. So what was
+  either git-<command> or gbp-<command> is now
+
+      gbp <command>
+
+  The old commands are still provided for backward compatibility but will be
+  removed in a future release so please update any scripts and tools relying on
+  it.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 26 Jun 2013 13:38:16 +0200
+
 git-buildpackage (0.4.61) unstable; urgency=low
 
   In order to not override dpkg-buildpackge's defaults for 3.0 source packages
