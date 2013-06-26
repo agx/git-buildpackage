@@ -307,9 +307,13 @@ class GbpOptionParser(OptionParser):
         Parse the possible config files and set appropriate values
         default values
         """
-        parser = SafeConfigParser(dict(self.__class__.defaults))
+        parser = SafeConfigParser()
+        # Fill in the built in values
+        self.config = dict(self.__class__.defaults)
+        # Update with the values from the defaults section. This is needed
+        # in case the config file doesn't have a [<command>] section at all
         parser.read(self.config_files)
-        self.config = dict(parser.defaults())
+        self.config.update(dict(parser.defaults()))
 
         if not (self.command.startswith('gbp-') or
                 self.command.startswith('git-')):
@@ -320,6 +324,7 @@ class GbpOptionParser(OptionParser):
                 if parser.has_section(oldcmd):
                     self.config.update(dict(parser.items(oldcmd, raw=True)))
 
+        # Update with command specific settings
         if parser.has_section(self.command):
             self.config.update(dict(parser.items(self.command, raw=True)))
 
