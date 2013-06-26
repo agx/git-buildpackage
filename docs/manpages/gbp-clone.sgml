@@ -97,7 +97,7 @@
     <title>SEE ALSO</title>
     <para>
       <citerefentry>
-        <refentrytitle>git-buildpackage</refentrytitle>
+        <refentrytitle>gbp-buildpackage</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>

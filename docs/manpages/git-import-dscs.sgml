@@ -81,19 +81,19 @@ options shipped in the package source.</para>
 
     <para>
       <citerefentry>
-        <refentrytitle>git-import-dsc</refentrytitle>
+        <refentrytitle>gbp-import-dsc</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>
-        <refentrytitle>git-buildpackage</refentrytitle>
+        <refentrytitle>gbp-buildpackage</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>
-        <refentrytitle>git-import-orig</refentrytitle>
+        <refentrytitle>gbp-import-orig</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>
-        <refentrytitle>git-dch</refentrytitle>
+        <refentrytitle>gbp-dch</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>

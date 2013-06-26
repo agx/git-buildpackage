@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>&gbp.conf;</refname>
-    <refpurpose>git-buildpackage configuration file</refpurpose>
+    <refpurpose>Gbp configuration file</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
    <variablelist>
@@ -46,7 +46,7 @@
     <title>DESCRIPTION</title>
     <para>
       The <filename>gbp.conf</filename> provides default global options and specific options
-      for &git-buildpackage; commands. All have the same format and are parsed in the above order. The
+      for &gbp; commands. All have the same format and are parsed in the above order. The
       file consists of several sections, one for each command. Comments start with a hash sign
       (<option>#</option>). The generic file syntax is:
     </para>
@@ -64,6 +64,10 @@
     # times to set up remote configuration for gbp-create-remote-repo
     key = value
 </programlisting>
+<para>
+For backwards compatibility sections starting with <filename>git-</filename> or
+<filename>gbp-</filename> are still supported.
+</para>
 
 <para>
 
@@ -75,7 +79,7 @@ option which can be turned into configuration file setting by dropping the
 </para>
 
 <programlisting>
-    [git-buildpackage]
+    [buildpackage]
     export-dir = directory
 </programlisting>
 
@@ -87,7 +91,7 @@ be truned into a configuration file option like this:
 </para>
 
 <programlisting>
-    [git-import-orig]
+    [import-orig]
     filter = .svn
     filter = .hg
 </programlisting>
@@ -97,7 +101,7 @@ An alternative way is to write it using Python list syntax:
 </para>
 
 <programlisting>
-    [git-import-orig]
+    [import-orig]
     filter = [ '.svn', '.hg' ]
 </programlisting>
 
@@ -107,14 +111,14 @@ Boolean options can bei either <option>True</option> or <option>False</option>. 
 <option>--no-pristine-tar</option> options which translate to:
 </para>
 <programlisting>
-    [git-import-orig]
+    [import-orig]
     pristine-tar = True
 </programlisting>
 
 <para>and</para>
 
 <programlisting>
-    [git-import-orig]
+    [import-orig]
     pristine-tar = False
 </programlisting>
 <para>respectively.</para>
@@ -127,7 +131,7 @@ output.
 </note>
 <note>
 <para>
- <command>git-import-dscs</command> and <command>git-pbuilder</command>
+ <command>gbp import-dscs</command> and <command>git-pbuilder</command>
 can't be configured via gbp.conf.
 </para>
 </note>
@@ -172,10 +176,10 @@ An example set up for packaging work:
  pristine-tar = True
  cleaner = fakeroot debian/rules clean
 
- [git-buildpackage]
+ [buildpackage]
  export-dir  = ../build-area/
 
- [git-import-orig]
+ [import-orig]
  dch = False
  filter = .svn
  filter = .hg
@@ -185,7 +189,7 @@ An example set up for packaging work:
  filter = */debian/*
  filter-pristine-tar = True
 
- [git-import-dsc]
+ [import-dsc]
  filter = [
         'CVS',
         '.cvsignore',
@@ -238,19 +242,19 @@ the above list of configuration files.</para></listitem>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <citerefentry>
-      <refentrytitle>git-dch</refentrytitle>
+      <refentrytitle>gbp-dch</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <citerefentry>
-      <refentrytitle>git-import-dsc</refentrytitle>
+      <refentrytitle>gbp-import-dsc</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <citerefentry>
-      <refentrytitle>git-import-orig</refentrytitle>
+      <refentrytitle>gbp-import-orig</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <citerefentry>
-      <refentrytitle>git-buildpackage</refentrytitle>
+      <refentrytitle>gbp-buildpackage</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry>,
     <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
