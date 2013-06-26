@@ -27,6 +27,7 @@
 
   <appendix id="man.reference">
     <title>Command Reference</title>
+    &man.gbp;
     &man.git.buildpackage;
     &man.git.importdsc;
     &man.git.importdscs;

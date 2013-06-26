@@ -9,6 +9,7 @@
   <!ENTITY git-import-dsc	"<command>git-import-dsc</command>">
   <!ENTITY git-import-dscs	"<command>git-import-dscs</command>">
   <!ENTITY git-dch		"<command>git-dch</command>">
+  <!ENTITY gbp		        "<command>gbp</command>">
   <!ENTITY gbp-pull		"<command>gbp-pull</command>">
   <!ENTITY gbp-clone		"<command>gbp-clone</command>">
   <!ENTITY gbp-pq		"<command>gbp-pq</command>">

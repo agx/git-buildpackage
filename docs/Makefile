@@ -5,6 +5,7 @@ MAN1S = git-buildpackage  \
         git-import-dscs   \
         git-import-orig   \
         git-dch           \
+        gbp               \
         gbp-pull          \
         gbp-clone         \
         gbp-pq            \
