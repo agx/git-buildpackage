@@ -7,5 +7,5 @@
 
 <reference>
 <title>git-buildpackage Manual</title>
-&man.git.dch;
+&man.gbp.importdsc;
 </reference>

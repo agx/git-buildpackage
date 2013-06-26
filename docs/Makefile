@@ -1,10 +1,10 @@
 #!/usr/bin/make
 
-MAN1S = git-buildpackage  \
-        git-import-dsc    \
-        git-import-dscs   \
-        git-import-orig   \
-        git-dch           \
+MAN1S = gbp-buildpackage  \
+        gbp-import-dsc    \
+        gbp-import-dscs   \
+        gbp-import-orig   \
+        gbp-dch           \
         gbp               \
         gbp-pull          \
         gbp-clone         \

@@ -7,5 +7,5 @@
 
 <reference>
 <title>git-buildpackage Manual</title>
-&man.git.importorig;
+&man.gbp.importorig;
 </reference>

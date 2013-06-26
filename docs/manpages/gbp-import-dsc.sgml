@@ -175,7 +175,7 @@
      </variablelist>
   </refsect1>
   <refsect1>
-    &man.git.config-files;
+    &man.gbp.config-files;
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>

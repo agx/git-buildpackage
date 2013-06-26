@@ -447,7 +447,7 @@
     </variablelist>
   </refsect1>
   <refsect1>
-      &man.git.config-files;
+      &man.gbp.config-files;
       <para>All options in the config files are specified without the 'git-' prefix.</para>
   </refsect1>
   <refsect1>

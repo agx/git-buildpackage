@@ -28,11 +28,11 @@
   <appendix id="man.reference">
     <title>Command Reference</title>
     &man.gbp;
-    &man.git.buildpackage;
-    &man.git.importdsc;
-    &man.git.importdscs;
-    &man.git.importorig;
-    &man.git.dch;
+    &man.gbp.buildpackage;
+    &man.gbp.importdsc;
+    &man.gbp.importdscs;
+    &man.gbp.importorig;
+    &man.gbp.dch;
     &man.gbp.clone;
     &man.gbp.pull;
     &man.gbp.pq;
