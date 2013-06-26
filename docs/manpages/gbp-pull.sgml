@@ -13,7 +13,7 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>&gbp-pull;</refname>
+    <refname>gbp-pull</refname>
 
     <refpurpose>Safely update a repository from remote</refpurpose>
   </refnamediv>

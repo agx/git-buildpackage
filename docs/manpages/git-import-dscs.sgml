@@ -9,12 +9,12 @@
     </author>
   </refentryinfo>
   <refmeta>
-    <refentrytitle>git-import-dscs</refentrytitle>
+    <refentrytitle>gbp-import-dscs</refentrytitle>
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>&git-import-dscs;</refname>
-
+    <refname>git-import-dscs</refname>
+    <refname>gbp-import-dscs</refname>
     <refpurpose>Import multiple versions of a Debian source packages into a Git repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>

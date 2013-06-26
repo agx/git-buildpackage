@@ -13,7 +13,7 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>&gbp-create-remote-repo;</refname>
+    <refname>gbp-create-remote-repo</refname>
 
     <refpurpose>Create remote repositories</refpurpose>
   </refnamediv>

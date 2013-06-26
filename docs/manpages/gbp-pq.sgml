@@ -13,7 +13,7 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>&gbp-pq;</refname>
+    <refname>gbp-pq</refname>
 
     <refpurpose>Manage quilt patches on patch queue branches in git</refpurpose>
   </refnamediv>

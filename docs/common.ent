@@ -4,16 +4,16 @@
   <!ENTITY dhconfsection  	"<manvolnum>5</manvolnum>">
   <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhusername  		"Guido Guenther">
-  <!ENTITY git-buildpackage 	"<command>git-buildpackage</command>">
-  <!ENTITY git-import-orig	"<command>git-import-orig</command>">
-  <!ENTITY git-import-dsc	"<command>git-import-dsc</command>">
-  <!ENTITY git-import-dscs	"<command>git-import-dscs</command>">
-  <!ENTITY git-dch		"<command>git-dch</command>">
+  <!ENTITY git-buildpackage 	"<command>gbp buildpackage</command>">
+  <!ENTITY git-import-orig	"<command>gbp import-orig</command>">
+  <!ENTITY git-import-dsc	"<command>gbp import-dsc</command>">
+  <!ENTITY git-import-dscs	"<command>gbp import-dscs</command>">
+  <!ENTITY git-dch		"<command>gbp dch</command>">
   <!ENTITY gbp		        "<command>gbp</command>">
-  <!ENTITY gbp-pull		"<command>gbp-pull</command>">
-  <!ENTITY gbp-clone		"<command>gbp-clone</command>">
-  <!ENTITY gbp-pq		"<command>gbp-pq</command>">
-  <!ENTITY gbp-create-remote-repo "<command>gbp-create-remote-repo</command>">
+  <!ENTITY gbp-pull		"<command>gbp pull</command>">
+  <!ENTITY gbp-clone		"<command>gbp clone</command>">
+  <!ENTITY gbp-pq		"<command>gbp pq</command>">
+  <!ENTITY gbp-create-remote-repo "<command>gbp create-remote-repo</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">

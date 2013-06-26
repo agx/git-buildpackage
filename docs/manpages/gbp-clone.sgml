@@ -13,7 +13,7 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>&gbp-clone;</refname>
+    <refname>gbp-clone</refname>
 
     <refpurpose>Clone a repository from remote</refpurpose>
   </refnamediv>
