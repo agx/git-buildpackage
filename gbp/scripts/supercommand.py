@@ -15,11 +15,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-"""Wrapper for all gbp commands"""
+"""Supercommand for all gbp commands"""
 
+import re
 import sys
 
+# Command is this module and common/ is shared code
+# so we don't allow these to be imported:
+invalid_modules = [ 'common', 'supercommand' ]
+
 def sanitize(cmd):
+    """
+    '-' is not allowed in module names
+    so turn it into an underscore.
+    """
     return cmd.replace('-', '_')
 
 def usage():
@@ -35,15 +44,18 @@ The most commonly used commands are:
     import-dscs  - import multiple Debian source packages
 """
 
-def import_command(cmd):
-    if '.' in cmd:
-        raise ImportError('Illegal module name')
+def import_command(modulename):
+    """
+    Import the module that implements the given command
+    """
+    if (not re.match(r'[a-z][a-z0-9_]', modulename) or
+        modulename in invalid_modules):
+        raise ImportError('Illegal module name %s' % modulename)
 
-    m = __import__('gbp.scripts.%s' % cmd, fromlist='main', level=0)
-    return m
+    return __import__('gbp.scripts.%s' % modulename, fromlist='main', level=0)
 
 
-def gbp_command(argv=None):
+def supercommand(argv=None):
     argv = argv or sys.argv
 
     if len(argv) < 2:

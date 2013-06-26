@@ -16,14 +16,27 @@
 """Test L{gbp} command wrapper"""
 
 import unittest
-import gbp.scripts.command
+import gbp.scripts.supercommand
 
-class TestWrapper(unittest.TestCase):
+class TestSuperCommand(unittest.TestCase):
+
+    def test_import(self):
+        self.assertRaises(ImportError,
+                          gbp.scripts.supercommand.import_command,
+                          'not.allowed')
+        self.assertRaises(ImportError,
+                          gbp.scripts.supercommand.import_command,
+                          'not/allowed')
+        self.assertRaises(ImportError,
+                          gbp.scripts.supercommand.import_command,
+                          '0notallowed')
 
     def test_invalid_command(self):
         """Test if we can import a valid command"""
-        self.assertEqual(gbp.scripts.command.gbp_command(['argv0', 'asdf']), 2)
+        self.assertEqual(gbp.scripts.supercommand.supercommand(
+                         ['argv0', 'asdf']), 2)
 
     def test_missing_arg(self):
-        self.assertEqual(gbp.scripts.command.gbp_command(['argv0']), 1)
+        self.assertEqual(gbp.scripts.supercommand.supercommand(
+                         ['argv0']), 1)
 

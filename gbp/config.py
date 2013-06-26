@@ -313,8 +313,8 @@ class GbpOptionParser(OptionParser):
 
         if not (self.command.startswith('gbp-') or
                 self.command.startswith('git-')):
-            # Invoked as gbp <subcommand> syntax, so parse the old sections
-            # of {gbp.git}-<subcommand> for backward compatibility:
+            # Invoked as gbp <command> syntax, so parse the old sections
+            # of {gbp.git}-<command> for backward compatibility:
             for prefix in ['gbp', 'git']:
                 oldcmd = '%s-%s' % (prefix, self.command)
                 if parser.has_section(oldcmd):
