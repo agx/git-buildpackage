@@ -19,7 +19,7 @@
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
-      &git-import-dscs;
+      &gbp-import-dscs;
       <arg><option>options</option></arg>
       <arg><option>git-import-dsc options</option></arg>
       <arg choice="plain"><replaceable>pkg_1.dsc</replaceable></arg>
@@ -30,7 +30,7 @@
     <para>or</para>
 
     <cmdsynopsis>
-      &git-import-dscs;
+      &gbp-import-dscs;
       <arg choice="req">--debsnap</arg>
       <arg><option>options</option></arg>
       <arg><option>git-import-dsc options</option></arg>
@@ -40,9 +40,9 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-dscs; imports several versions of a Debian source package into
+    &gbp-import-dscs; imports several versions of a Debian source package into
     a &git; repository. To do so it sorts the packages by their versions first
-    and then imports them via calling &git-import-dsc; on each package. 
+    and then imports them via calling &gbp-import-dsc; on each package. 
     </para> 
 
     <para>
@@ -73,7 +73,7 @@ options shipped in the package source.</para>
       </varlistentry>
      </variablelist>
     <para>
-    All other options are passed on verbatim to &git-import-dsc;.
+    All other options are passed on verbatim to &gbp-import-dsc;.
     </para>
   </refsect1>
   <refsect1>

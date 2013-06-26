@@ -2,7 +2,7 @@
     <title>Building packages from the &git; repository</title>
     <para>
     In order to build a &debian; package from the &git; repository you use:
-    &git-buildpackage;. This builds the upstream tarball as will be described below and
+    &gbp-buildpackage;. This builds the upstream tarball as will be described below and
     invokes &debuild; to build the package. To use another build command you
     can use the <option>--git-builder</option> option as described later in the manual
     but &debuild; is nice since it can invoke <productname>lintian</productname>.
@@ -11,9 +11,9 @@
     your repository) you'll usually use:
     </para>
 <screen>
-&git-buildpackage; <option>--git-ignore-new</option>
+&gbp-buildpackage; <option>--git-ignore-new</option>
 </screen>
-    <para>If &git-buildpackage; doesn't find a valid upstream tarball it will
+    <para>If &gbp-buildpackage; doesn't find a valid upstream tarball it will
     create one by looking at the tag matching the upstream version. To change
     this behaviour see the <option>--git-upstream-tree</option> option.
     </para><para>
@@ -26,7 +26,7 @@
     <para>Once you're satisfied with the build and want to do a release you commit all
     your changes and issue:</para>
 <screen>
-&git-buildpackage; <option>--git-tag</option>
+&gbp-buildpackage; <option>--git-tag</option>
 </screen>
     <para>This will again build the debian package and tag the final result after
     extracting the current version from the changelog. If you want &gpg; signed
@@ -38,9 +38,9 @@
     <sect1 id="gbp.building.export">
     <title>Using a separate build dir</title>
     <para>Tools like &svn-buildpackage; use a separate build-area. To achieve a similar behaviour
-    with &git-buildpackage; use the <option>--git-export-dir</option> option:</para>
+    with &gbp-buildpackage; use the <option>--git-export-dir</option> option:</para>
 <screen>
-&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area/</replaceable>
+&gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area/</replaceable>
 </screen>
     <para>This will export the head of the ecurrent branch to
     <replaceable>../build-area/package-version</replaceable>, build the
@@ -48,11 +48,11 @@
     <option>--git-export</option> to export any treeish object, here are some
     examples:</para>
 <screen>
-&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>debian/0.4.3</replaceable>
-&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>etch</replaceable>
-&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>8caed309653d69b7ab440e3d35abc090eb4c6697</replaceable>
-&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>INDEX</replaceable>
-&git-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>WC</replaceable>
+&gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>debian/0.4.3</replaceable>
+&gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>etch</replaceable>
+&gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>8caed309653d69b7ab440e3d35abc090eb4c6697</replaceable>
+&gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>INDEX</replaceable>
+&gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>WC</replaceable>
 </screen>
     <para>The special argument <replaceable>INDEX</replaceable> exports the
     state of the current index which can be used to include staged but uncommitted
@@ -67,7 +67,7 @@ export-dir=../build-area
 # to use the same build area for all packages use an absolute path:
 #export-dir=/home/debian-packages/build-area
 </programlisting>
-    &git-buildpackage; will cleanup the build-area after a successful build. If
+    &gbp-buildpackage; will cleanup the build-area after a successful build. If
     you want to keep the build tree use <replaceable>--git-no-purge</replaceable>.
     </para>
     </sect1>
@@ -85,7 +85,7 @@ export-dir=../build-area
     </para>
     <sect2 id="gbp.building.lintian">
     <title>Running lintian</title>
-	<para>&git-buildpackage; exports several variables into the
+	<para>&gbp-buildpackage; exports several variables into the
 	<option>posttag</option>'s environment (for details see the <xref
 	linkend="man.git.buildpackage">).
 	To invoke &lintian; we need to tell it where to find the changes file:
@@ -102,7 +102,7 @@ export-dir=../build-area
     <sect2 id="gbp.building.push">
     <title>Pushing into a remote repository</title>
 	<para>If you want to push your changes automatically after a successful build and tag
-	you can use &git-buildpackage;'s posttag hook. A very simple invocation would look like this:
+	you can use &gbp-buildpackage;'s posttag hook. A very simple invocation would look like this:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>
 </programlisting>
@@ -153,7 +153,7 @@ echo "done."
     </sect2>
     <sect2 id="gbp.building.postexport">
     <title>Running postexport hook</title>
-    <para>&git-buildpackage; exports several variables into the
+    <para>&gbp-buildpackage; exports several variables into the
 	<option>postexport</option>'s environment (for details see
 	the <xref linkend="man.git.buildpackage">). The motivation
 	for the postexport action is to allow further adjustment of

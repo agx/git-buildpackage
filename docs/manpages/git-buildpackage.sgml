@@ -19,7 +19,7 @@
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
-      &git-buildpackage;
+      &gbp-buildpackage;
       <arg><option>--git-[no-]ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
@@ -64,10 +64,10 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-buildpackage; is used to build Debian source and .deb packages from a &git; repository.
+    &gbp-buildpackage; is used to build Debian source and .deb packages from a &git; repository.
     </para>
     <para>
-        &git-buildpackage; will, in order:
+        &gbp-buildpackage; will, in order:
    </para>
     <itemizedlist>
         <listitem><para>Verify that it is being executed from the
@@ -88,7 +88,7 @@
             (or the application specified via <option>--git-builder</option>)
             with arguments instructing it to ignore &git; meta-data in
             the diff.gz, passing along all arguments given to
-            &git-buildpackage; that don't start with --git-.
+            &gbp-buildpackage; that don't start with --git-.
           </para>
         </listitem>
 	<listitem><para>
@@ -216,7 +216,7 @@
         <term><option>--git-debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>If you're not on this branch when invoking &git-buildpackage;
+	  <para>If you're not on this branch when invoking &gbp-buildpackage;
 	  it will fail. Default is <replaceable>master</replaceable>. This is
 	  done to make sure you don't accidentally release from a topic branch.
 	  Not being on this branch will be ignored when using

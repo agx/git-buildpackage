@@ -56,7 +56,7 @@
     key = value
 
     [&lt;command&gt;]
-    # Specific sections for each command, like &git-buildpackage;
+    # Specific sections for each command, like &gbp-buildpackage;
     key = value
 
     [remote-config &lt;name&gt;]

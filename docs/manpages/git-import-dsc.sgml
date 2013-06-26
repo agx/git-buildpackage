@@ -19,7 +19,7 @@
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
-      &git-import-dsc;
+      &gbp-import-dsc;
 
       <arg><option>--verbose</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -37,7 +37,7 @@
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
-      &git-import-dsc;
+      &gbp-import-dsc;
 
       <arg><option>options</option></arg>
       <arg choice="req"><option>--download</option></arg>
@@ -51,7 +51,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-dsc; imports a Debian source package into a &git; repository,
+    &gbp-import-dsc; imports a Debian source package into a &git; repository,
     notes the package version in the commit logs, and commits the change. All
     information, including package name, version, Debian  diffs, and upstream
     source is automatically detected from the source package.

@@ -19,7 +19,7 @@
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
-      &git-import-orig;
+      &gbp-import-orig;
 
       <arg><option>--verbose</option></arg>
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
@@ -45,7 +45,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-import-orig; imports <replaceable>upstream-source</replaceable> into
+    &gbp-import-orig; imports <replaceable>upstream-source</replaceable> into
     the &git; repository. <replaceable>upstream-source</replaceable> can either
     be a gzip, bzip2, lzma or xz compressed tar archive, a zip archive or an
     already unpacked source tree. If it is already of the form
@@ -53,7 +53,7 @@
     information is read from the tarball's filename otherwise it can be
     given on the command line via <option>--upstream-version</option>.
     If the source package name or version can't be determined
-    &git-import-orig; will prompt for it unless <option>--no-interactive</option>
+    &gbp-import-orig; will prompt for it unless <option>--no-interactive</option>
     is given.</para>
 
     <para>The sources are placed on the upstream branch (default:
@@ -93,7 +93,7 @@
         <listitem>
 	  <para>The branch in the Git repository the Debian package is being
 	  developed on, default is <replaceable>master</replaceable>. After
-	  importing the new sources on the upstream branch, &git-import-orig;
+	  importing the new sources on the upstream branch, &gbp-import-orig;
 	  will try to merge the new version onto this branch.</para>
         </listitem>
       </varlistentry>

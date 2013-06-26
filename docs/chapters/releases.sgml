@@ -3,7 +3,7 @@
     <para>When branching and merging frequently, the different Debian changelog
     entries on the different branches tend to get into the way of the automatic
     merge and the the merge fails - leaving the (pathological) merge to the
-    committer. In order to avoid this &git-dch; offers a way for creating
+    committer. In order to avoid this &gbp-dch; offers a way for creating
     changelog entries from &git; commits before doing a
     release or anytime between releases.</para> 
     <para>
@@ -12,7 +12,7 @@
     <emphasis>debian/changelog</emphasis> at all. Then, when done, do:
     </para>
 <screen>
-&git-dch; <option>--release</option>
+&gbp-dch; <option>--release</option>
 </screen>
     <para> This will look up the latest released version in the changelog,
     increment the version in the &debian; changelog, generate changelog
@@ -23,7 +23,7 @@
     But what if you want to have an (unreleased) snapshot for intermediate testing:
     </para>
 <screen>
-&git-dch; <option>--snapshot</option>
+&gbp-dch; <option>--snapshot</option>
 </screen>
    <para>will generate a snapshot release with a specially crafted version number
    and a warning in the changelog that this is a snapshort release:
@@ -37,22 +37,22 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
 </programlisting>
    <para>During subsequent calls with <option>--snapshot</option> this version
    number will continue to increase. Since the snapshot banners contains the
-   commit id of the current branch head, &git-dch; can figure out what to
+   commit id of the current branch head, &gbp-dch; can figure out what to
    append to the changelog by itself:
 <screen>
-&git-dch; <option>--snapshot</option> <option>--auto</option>
+&gbp-dch; <option>--snapshot</option> <option>--auto</option>
 </screen>
    will fetch the commit id and add changelog entries from that point to the
    current HEAD - again auto incrementing the version number. If you don't want
    to start at that commit id, you can specify any id or tag with:</para>
 <screen>
-&git-dch; <option>--since</option>=<replaceable>e76a6a180a57701ae4ae381f74523cacb3152780</replaceable> <option>--snapshot</option>
+&gbp-dch; <option>--since</option>=<replaceable>e76a6a180a57701ae4ae381f74523cacb3152780</replaceable> <option>--snapshot</option>
 </screen>
    <para>
-   After testing you can remove the snapshot header by a final &git-dch; call:
+   After testing you can remove the snapshot header by a final &gbp-dch; call:
    </para>
 <screen>
-&git-dch; <option>--since</option>=<replaceable>HEAD</replaceable> <option>--release</option>
+&gbp-dch; <option>--since</option>=<replaceable>HEAD</replaceable> <option>--release</option>
 </screen>
    <para>
    This will add no further entries but simply remove the specially crafted
@@ -66,10 +66,10 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
     can give any python expression that evaluates to a positive integer to
     calculate the new snapshot number:</para>
 <screen>
-&git-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>1</replaceable>
-&git-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>'snapshot + 2'</replaceable>
-&git-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>'os.popen("git-log --pretty=oneline | wc -l").readlines()[0]'</replaceable>
-&git-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>`git-log --pretty=oneline debian/0.3.3 | wc -l`</replaceable>
+&gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>1</replaceable>
+&gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>'snapshot + 2'</replaceable>
+&gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>'os.popen("git-log --pretty=oneline | wc -l").readlines()[0]'</replaceable>
+&gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>`git-log --pretty=oneline debian/0.3.3 | wc -l`</replaceable>
 </screen>
 <para>
 You can also add the snapshot-number calculation to <filename>gbp.conf</filename>:
@@ -129,7 +129,7 @@ To only include the short description in the changelog and skip the body use:
 <screen>
 Git-Dch: Short
 </screen>
-The latter only takes effect when running &git-dch; with the
+The latter only takes effect when running &gbp-dch; with the
 <option>--full</option> option, since including only the short
 description is the default.
 </para>
@@ -144,7 +144,7 @@ Cl2vcs</ulink> for how this looks.
 </para>
 <para>
 The inclusion of the commit id can be done automatically
-via &git-dch;'s <option>--id-length</option> option. Using
+via &gbp-dch;'s <option>--id-length</option> option. Using
 <option>--id-length</option>=<replaceable>7</replaceable>  would change the above example to:
 <screen>
     * [571bfd4] New upstream version (Closes: #1000) - thanks to cool upstream

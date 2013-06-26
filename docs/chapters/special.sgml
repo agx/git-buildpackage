@@ -18,7 +18,7 @@
     <emphasis>master</emphasis>):
     </para>
     <screen>
-&git-import-orig; --no-merge <filename>/path/to/nondfsg-clean-package_10.4.orig.tar.gz</filename>
+&gbp-import-orig; --no-merge <filename>/path/to/nondfsg-clean-package_10.4.orig.tar.gz</filename>
 &gitcmd; <option>tag</option> 10.4
     </screen>
     <para>
@@ -50,11 +50,11 @@ cleanup-script.sh
 &gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>master</replaceable>
     </screen>
     <para>
-    To import an NMU change into the git repository and use &git-import-dsc;:
+    To import an NMU change into the git repository and use &gbp-import-dsc;:
     </para>
     <screen>
 &gitcmd; checkout <replaceable>master</replaceable>
-&git-import-dsc; <option>--debian-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/package_1.0-1nmu0.dsc</filename>
+&gbp-import-dsc; <option>--debian-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/package_1.0-1nmu0.dsc</filename>
     </screen>
     <para>
     This will import the NMU onto the branched named <emphasis>nmu</emphasis>
@@ -96,7 +96,7 @@ builder = /usr/bin/git-pbuilder
 	<envar>sid</envar> distribution. If you want to build for another
 	distribution pass this in the <envar>DIST</envar> environment variable.
 
-	Invoking &git-buildpackage; will now invoke &pdebuildcmd; by
+	Invoking &gbp-buildpackage; will now invoke &pdebuildcmd; by
 	default and all additional command line arguments are passed to
 	<command>dpkg-buildpackage</command>. If you want to use
 	<command>debuild</command> again (without modifying
@@ -106,7 +106,7 @@ builder = /usr/bin/git-pbuilder
 </programlisting>
 
 	Furthermore, if you don't want this for all your invocations of
-	&git-buildpackage; you can use <filename>.git/gbp.conf</filename> in
+	&gbp-buildpackage; you can use <filename>.git/gbp.conf</filename> in
 	one of your &git; repositories instead of
 	<filename>~/.gbp.conf</filename>.
     </para>

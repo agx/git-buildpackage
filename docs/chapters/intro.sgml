@@ -1,7 +1,7 @@
 <chapter id="gbp.intro">
     <title>Introduction</title>
     <para>
-      Welcome to &git-buildpackage;, a system that integrates the
+      Welcome to &gbp-buildpackage;, a system that integrates the
       <ulink url="http://www.debian.org/">Debian</ulink> package build
       system with <ulink url="http://git.or.cz/">Git</ulink>. The current version of this manual can be found at
       <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage">here</ulink>.
@@ -29,7 +29,7 @@
 <sect1 id="gbp.repository">
 	<title>Repository Layout and Terminology</title>
 	<para>The only requirement on the repository layout for using
-	&git-buildpackage; and friends is, that the branch the debian work is
+	&gbp-buildpackage; and friends is, that the branch the debian work is
 	being done on is different from the branch the upstream sources are
 	being maintained on (this, of course, has no meaning for Debian native
 	packages). This is necessary to be able to build upstream tarballs and
@@ -70,7 +70,7 @@
 
 	<para>You're completely
 	free to pick any repository layout and the branch names above are only
-	&git-buildpackage;'s defaults. They can be changed at any point in time
+	&gbp-buildpackage;'s defaults. They can be changed at any point in time
 	and you can work with an arbitrary number of branches.
 	For example branches like  <emphasis>nmu</emphasis>,
 	<emphasis>bpo</emphasis> or <emphasis>stable</emphasis> might
@@ -78,13 +78,13 @@
 	and branches like <emphasis>dfsg_free</emphasis> or
 	<emphasis>snapshots</emphasis> might become your
 	<option>upstream-branch</option> - it doesn't matter if these branches
-	are maintained with &git-import-orig; or not.</para>
+	are maintained with &gbp-import-orig; or not.</para>
 
 	<para>Since Git-Buildpackage only works with local &git;-repositories
 	you have to use <command>git-push</command> in order to publish your
 	changes to remote repositories like <ulink
 	url="http://git.debian.org/">git.debian.org</ulink>, this can also be
-	automized with &git-buildpackage;'s <option>post-tag</option>
+	automized with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
 </sect1>
 
@@ -94,24 +94,24 @@
     	A typical, simple workflow consists of the following steps:
     </para>
     <orderedlist>
-	<listitem><para>Import a new Debian package via &git-import-dsc;. This
+	<listitem><para>Import a new Debian package via &gbp-import-dsc;. This
 	imports the &debian; Package on the <option>debian-branch</option>
 	and the upstream sources on the <option>upstream-branch</option>.</para></listitem>
 	<listitem><para>Develop, test, commit changes. During this time you can
-	always build the package with &git-buildpackage;. In case you have
+	always build the package with &gbp-buildpackage;. In case you have
 	uncommitted changes in your source tree you can use the
 	<option>--git-ignore-new</option> option.</para></listitem>
 	<listitem><para>Optionally you can create the Debian changelog entries
-	using &git-dch; and create snapshot releases for testing using its
+	using &gbp-dch; and create snapshot releases for testing using its
 	<option>--snapshot</option> option.</para></listitem>
 	<listitem><para>Once satisfied you can build the final package with
-	&git-buildpackage; <option>--git-tag</option>. This additionally
+	&gbp-buildpackage; <option>--git-tag</option>. This additionally
 	creates a tag within &git; so you can switch back to that version later
 	at any time. The format of the tags can be specified, tags can
 	be &gpg; signed.</para></listitem>
 	<listitem><para>When a new upstream version is released and upstream
-	isn't using &git; you can import the new version via &git-import-orig;
-	onto the <option>upstream-branch</option>.  &git-import-orig; will
+	isn't using &git; you can import the new version via &gbp-import-orig;
+	onto the <option>upstream-branch</option>.  &gbp-import-orig; will
 	by default try to merge the new upstream version onto the
 	<option>debian-branch</option>. You can skip the merge with
 	<option>--no-merge</option>.  After resolving any potential conflicts

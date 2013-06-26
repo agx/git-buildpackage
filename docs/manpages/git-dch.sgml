@@ -19,7 +19,7 @@
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
-      &git-dch;
+      &gbp-dch;
 
       <arg><option>--verbose</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -63,20 +63,20 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &git-dch; reads git commit messages and generates the Debian changelog from
-    it. If no arguments are given &git-dch; starts from the last tagged Debian
+    &gbp-dch; reads git commit messages and generates the Debian changelog from
+    it. If no arguments are given &gbp-dch; starts from the last tagged Debian
     package version up to the current tip of the current branch. If the
     distribution of the topmost section in
     <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>
     the changelog entries will be inserted into this section. Otherwise a new
     section will be created.</para>
-    <para>If <option>--auto</option> is given &git-dch; tries to guess the
+    <para>If <option>--auto</option> is given &gbp-dch; tries to guess the
     last &git; commit documented in the changelog - this only works in snapshot
-    mode. Otherwise <option>--since</option> can be used to tell &git-dch;
+    mode. Otherwise <option>--since</option> can be used to tell &gbp-dch;
     at which point it should start in the &git; history.</para>
     <para>
     The additional path arguments can be used to restrict the repository paths
-    &git-dch; looks at. Setting <replaceable>path</replaceable> to
+    &gbp-dch; looks at. Setting <replaceable>path</replaceable> to
     <emphasis>debian/</emphasis> is a good choice if upstream uses &git; and
     all Debian packaging changes are restricted to the
     <replaceable>debian/</replaceable> subdir. In more sophisticated cases
@@ -321,14 +321,14 @@
       Snapshot mode can be used for quick test and install cycles without
       having to worry about version numbers or changelog entries.
       </para><para>
-      When using <option>--snapshot</option> or <option>-S</option> &git-dch;
+      When using <option>--snapshot</option> or <option>-S</option> &gbp-dch;
       uses a pseudo header in the Debian changelog to remember the last git
       commit it added a changelog entry for. It also sets a version number
       ending in
       <replaceable>~&lt;snaspshotnumber&gt;.gbp&lt;commitid&gt;</replaceable>.
       It automatically increments the snapshot number on subsequent invocations
-      of &git-dch; <option>-S</option> so that later snapshots automatically
-      have a higher version number. To leave snapshot mode invoke &git-dch;
+      of &gbp-dch; <option>-S</option> so that later snapshots automatically
+      have a higher version number. To leave snapshot mode invoke &gbp-dch;
       with the <option>--release</option> option. This removes the pseudo
       header and unmangles the version number so the released version has a
       higher version number than the snapshots.

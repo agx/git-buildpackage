@@ -27,27 +27,27 @@
     <variablelist>
       <varlistentry>
       <term>[DEFAULT]</term>
-      <listitem><para>Options in this section apply to &git-buildpackage;,
-      &git-import-orig;, &git-import-dsc; and &git-dch;.</para></listitem>
+      <listitem><para>Options in this section apply to &gbp-buildpackage;,
+      &gbp-import-orig;, &gbp-import-dsc; and &gbp-dch;.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-buildpackage]</term>
-      <listitem><para>Options in this section apply to &git-buildpackage; only and override options from the
+      <listitem><para>Options in this section apply to &gbp-buildpackage; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-import-orig]</term>
-      <listitem><para>Options in this section apply to &git-import-orig; only and override options from the
+      <listitem><para>Options in this section apply to &gbp-import-orig; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-import-dsc]</term>
-      <listitem><para>Options in this section apply to &git-import-dsc; only and override options from the
+      <listitem><para>Options in this section apply to &gbp-import-dsc; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>[git-dch]</term>
-      <listitem><para>Options in this section apply to &git-dch; only and override options from the
+      <listitem><para>Options in this section apply to &gbp-dch; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
@@ -62,7 +62,7 @@
 <option>upstream-branch</option>=<replaceable>dfsgfree</replaceable>
 </screen>
 <para>
-    in the config file. In the special case of &git-buildpackage; the stripped
+    in the config file. In the special case of &gbp-buildpackage; the stripped
     prefix is not '--' but '--git-'. Here's a more complete example:
 </para>
 <programlisting>
