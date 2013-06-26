@@ -31,28 +31,28 @@
       &gbp-import-orig;, &gbp-import-dsc; and &gbp-dch;.</para></listitem>
       </varlistentry>
       <varlistentry>
-      <term>[git-buildpackage]</term>
+      <term>[buildpackage]</term>
       <listitem><para>Options in this section apply to &gbp-buildpackage; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
-      <term>[git-import-orig]</term>
+      <term>[import-orig]</term>
       <listitem><para>Options in this section apply to &gbp-import-orig; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
-      <term>[git-import-dsc]</term>
+      <term>[import-dsc]</term>
       <listitem><para>Options in this section apply to &gbp-import-dsc; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
-      <term>[git-dch]</term>
+      <term>[dch]</term>
       <listitem><para>Options in this section apply to &gbp-dch; only and override options from the
       [DEFAULT] section.</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>...</term>
-      <listitem><para>Same for the other <command>git-*</command> and <command>gbp-*</command> commands</para></listitem>
+      <listitem><para>Same for the other &gbp; commands</para></listitem>
       </varlistentry>
     </variablelist>
     The actual options in these sections are the command line options without
@@ -74,20 +74,20 @@ upstream-branch=upstream
 # the default branch for the debian patch
 debian-branch=master
 
-[git-buildpackage]
+[buildpackage]
 upstream-branch=dfsgclean
 # Sign tags with GPG:
 sign-tags = True
 # Keyid to sign tags with
 #keyid = 0xdeadbeef
 
-[git-import-orig]
+[import-orig]
 upstream-branch=notdfsgclean
 
-[git-import-dsc]
+[import-dsc]
 upstream-branch=notdfsgclean
 
-[git-dch]
+[dch]
 git-log=--no-merges
 </programlisting>
 <para>
