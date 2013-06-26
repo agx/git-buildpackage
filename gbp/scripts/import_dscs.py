@@ -42,7 +42,7 @@ class GitImportDsc(object):
         self.args = args
 
     def importdsc(self, dsc):
-        return import_dsc.main(['git-import-dsc'] + self.args + [dsc.dscfile])
+        return import_dsc.main(['gbp', 'import-dsc'] + self.args + [dsc.dscfile])
 
 
 def fetch_snapshots(pkg, downloaddir):
@@ -71,7 +71,7 @@ def fetch_snapshots(pkg, downloaddir):
 def set_gbp_conf_files():
     """
     Filter out all gbp.conf files that are local to the git repository and set
-    GBP_CONF_FILES accordingly so git-import-dsc will only use these.
+    GBP_CONF_FILES accordingly so gbp import-dsc will only use these.
     """
     files = GbpOptionParser.get_config_files()
     global_config = [ f for f in files if f.startswith('/') ]
@@ -80,8 +80,8 @@ def set_gbp_conf_files():
     gbp.log.debug("Setting GBP_CONF_FILES to '%s'" % gbp_conf_files)
 
 def print_help():
-    print """Usage: git-import-dscs [options] [git-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
-       git-import-dscs --debsnap [options] [git-import-dsc options] package
+    print """Usage: gbp import-dscs [options] [gbp-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
+       gbp import-dscs --debsnap [options] [gbp-import-dsc options] package
 
 Options:
 
@@ -108,7 +108,7 @@ def main(argv):
             set_gbp_conf_files()
             import_args.remove('--ignore-repo-config')
         # Not using Configparser since we want to pass all unknown options
-        # unaltered to git-import-dsc
+        # unaltered to gbp import-dsc
         if '--debsnap' in import_args:
             use_debsnap = True
             import_args.remove('--debsnap')
