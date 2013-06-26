@@ -53,12 +53,17 @@ def gbp_command(argv=None):
     cmd = argv[1]
     args = argv[1:]
 
-    cmd = sanitize(cmd)
+    if cmd in ['--help', '-h']:
+        usage()
+        return 0
+
+    modulename = sanitize(cmd)
     try:
-        module = import_command(cmd)
+        module = import_command(modulename)
     except ImportError as e:
         print >>sys.stderr, "'%s' is not a valid command." % cmd
-        if '--debug' in args:
+        usage()
+        if '--verbose' in args:
             print >>sys.stderr, e
         return 2
 
