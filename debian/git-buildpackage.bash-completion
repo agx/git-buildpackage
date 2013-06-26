@@ -3,7 +3,7 @@
 # Bash tab auto-completion rules for git-buildpackage.
 #
 # Copyright (C) 2010  Siegfried-Angel Gevatter Pujals <siegfried@gevatter.com>
-# Copyright (C) 2010  Guido Guenther <agx@sigxcpu.org>
+# Copyright (C) 2010,2013  Guido Guenther <agx@sigxcpu.org>
 #
 # Distributed under the GNU General Public License, version 2.0.
 
@@ -75,9 +75,26 @@ _gbp_comp ()
     COMPREPLY=($(compgen -W "$tab_opts" -- $cur))
 }
 
+# check if we can find a gbp command on the commandline
+_gbp_find_cmd_on_cmdline ()
+{
+    local cmds="$1" # list of commands to check for
+    local word cmd c=1
+
+    while [ $c -lt $((COMP_CWORD)) ]; do
+	word="${COMP_WORDS[c]}"
+	for cmd in $cmds; do
+	    if [ "$cmd" = "$word" ]; then
+		echo "$cmd"
+		return
+	    fi
+	done
+	((c++))
+    done
+}
 
 have git-buildpackage &&
-_git_buildpackage()
+_gbp_buildpackage()
 {
     local options=$(_gbp_options git-buildpackage)
     local branch_opts="--git-debian-branch\= --git-upstream-branch\= --git-upstream-tree\="
@@ -88,11 +105,11 @@ _git_buildpackage()
     _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts" \
               "$cbdist_opts"
 }
-[ "${have:-}" ] && complete -F _git_buildpackage -o default git-buildpackage
+[ "${have:-}" ] && complete -F _gbp_buildpackage -o default git-buildpackage
 
 
 have git-dch &&
-_git_dch ()
+_gbp_dch ()
 {
     local options=$(_gbp_options git-dch)
     local branch_opts="--debian-branch\="
@@ -101,11 +118,11 @@ _git_dch ()
 
     _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
-[ "${have:-}" ] && complete -F _git_dch -o default git-dch
+[ "${have:-}" ] && complete -F _gbp_dch -o default git-dch
 
 
 have git-import-orig &&
-_git_import_orig ()
+_gbp_import_orig ()
 {
     local options=$(_gbp_options git-import-orig)
     local branch_opts="--debian-branch\= --upstream-branch\="
@@ -114,11 +131,11 @@ _git_import_orig ()
 
     _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
-[ "${have:-}" ] && complete -F _git_import_orig -o default git-import-orig
+[ "${have:-}" ] && complete -F _gbp_import_orig -o default git-import-orig
 
 
 have git-import-dsc &&
-_git_import_dsc ()
+_gbp_import_dsc ()
 {
     local options=$(_gbp_options git-import-dsc)
     local branch_opts="--debian-branch\= --upstream-branch\="
@@ -127,7 +144,7 @@ _git_import_dsc ()
 
     _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
 }
-[ "${have:-}" ] && complete -F _git_import_dsc -o default git-import-dsc
+[ "${have:-}" ] && complete -F _gbp_import_dsc -o default git-import-dsc
 
 have gbp-pq &&
 _gbp_pq ()
@@ -174,3 +191,28 @@ _gbp_create_remote_repo ()
     _gbp_comp "$options" "$branch_opts" "" "$tristate_opts"
 }
 [ "${have:-}" ] && complete -F _gbp_create_remote_repo -o default gbp-create-remote-repo
+
+have gbp &&
+_gbp ()
+{
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local commands="buildpackage       \
+                    clone              \
+                    create-remote-repo \
+                    dch                \
+                    import-dsc         \
+                    import-dscs        \
+                    import-orig        \
+                    pq                 \
+                    pull"
+    local func
+
+    command=$(_gbp_find_cmd_on_cmdline "$commands")
+    if [ -z $command ]; then
+	COMPREPLY=( $(compgen -W "$commands" -- $cur ) )
+    else
+	func=_gbp_$(echo $command | sed -e 's/-/_/g')
+	$func
+    fi
+}
+[ "${have:-}" ] && complete -F _gbp -o default gbp
