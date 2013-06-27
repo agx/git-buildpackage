@@ -16,6 +16,7 @@ Build-Depends:
  python-epydoc,
  python-nose,
  python-nosexcover,
+ python-pkg-resources,
  python-setuptools,
  sgml2x,
 # For the testsuite
@@ -39,6 +40,7 @@ Depends: ${python:Depends},
  git (>= 1:1.7.9.1-1~),
  man-db,
  python-dateutil,
+ python-pkg-resources,
 Recommends: pristine-tar (>= 0.5), cowbuilder
 Suggests: python-notify, unzip
 Description: Suite to help with Debian packages in Git repositories
