@@ -43,6 +43,13 @@
           <para>verbose execution</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--help</option>
+        </term>
+        <listitem>
+          <para>Print help</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
