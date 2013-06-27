@@ -1,3 +1,11 @@
+git-buildpackage (0.6.1) unstable; urgency=low
+
+  * [42769e3] Split {Build-,}Deps per line
+    and sort alphabetically
+  * [747a273] Depend on python-pkg-resources (Closes: #714238)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 27 Jun 2013 11:23:03 +0200
+
 git-buildpackage (0.6.0) unstable; urgency=low
 
   [ Guido Günther ]
