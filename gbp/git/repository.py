@@ -337,8 +337,9 @@ class GitRepository(object):
             ref = 'refs/remotes/%s' % branch
         else:
             ref = 'refs/heads/%s' % branch
-        failed = self._git_getoutput('show-ref', [ ref ])[1]
-        if failed:
+        try:
+            self._git_command('show-ref', [ ref ])
+        except GitRepositoryError:
             return False
         return True
 
