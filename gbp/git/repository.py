@@ -301,8 +301,10 @@ class GitRepository(object):
         """
         On what branch is the current working copy
 
-        @return: current branch
+        @return: current branch or C{None} in an empty repo
         @rtype: C{str}
+        @raises GitRepositoryError: if HEAD is not a symbolic ref
+          (e.g. when in detached HEAD state)
         """
         out, dummy, ret = self._git_inout('symbolic-ref', [ 'HEAD' ],
                                            capture_stderr=True)
@@ -310,12 +312,16 @@ class GitRepository(object):
             # We don't append stderr since
             # "fatal: ref HEAD is not a symbolic ref" confuses people
             raise GitRepositoryError("Currently not on a branch")
-
         ref = out.split('\n')[0]
+
         # Check if ref really exists
-        failed = self._git_getoutput('show-ref', [ ref ])[1]
-        if not failed:
-            return ref[11:] # strip /refs/heads
+        try:
+            self._git_command('show-ref', [ ref ])
+            branch = ref[11:] # strip /refs/heads
+        except GitRepositoryError:
+            branch = None  # empty repo
+        return branch
+
 
     def has_branch(self, branch, remote=False):
         """
