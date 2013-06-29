@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2008,2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2008,2011,2013 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -141,10 +141,11 @@ class GitRepository(object):
         cmd = ['git', command] + args
         env = cls.__build_env(extra_env)
         stderr_arg = subprocess.PIPE if capture_stderr else None
+        stdin_arg = subprocess.PIPE if input else None
 
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
-                                 stdin=subprocess.PIPE,
+                                 stdin=stdin_arg,
                                  stdout=subprocess.PIPE,
                                  stderr=stderr_arg,
                                  env=env,
