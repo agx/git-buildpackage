@@ -15,12 +15,14 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Test L{gbp} command wrapper"""
 
+import sys
 import unittest
 import gbp.scripts.supercommand
 
 class TestSuperCommand(unittest.TestCase):
 
     def test_import(self):
+        """Test the importer itself"""
         self.assertRaises(ImportError,
                           gbp.scripts.supercommand.import_command,
                           'not.allowed')
@@ -30,11 +32,22 @@ class TestSuperCommand(unittest.TestCase):
         self.assertRaises(ImportError,
                           gbp.scripts.supercommand.import_command,
                           '0notallowed')
+        self.assertIsNotNone(gbp.scripts.supercommand.import_command('pq'))
 
     def test_invalid_command(self):
-        """Test if we can import a valid command"""
+        """Test if we fail correctly with an invalid command"""
+        old_stderr = sys.stderr
+        with file('/dev/null', 'w') as sys.stderr:
+            self.assertEqual(gbp.scripts.supercommand.supercommand(
+                             ['argv0', 'asdf']), 2)
+            self.assertEqual(gbp.scripts.supercommand.supercommand(
+                             ['argv0', 'asdf', '--verbose']), 2)
+        sys.stderr = old_stderr
+
+    def test_help_command(self):
+        """Invoking with --help must not raise an error"""
         self.assertEqual(gbp.scripts.supercommand.supercommand(
-                         ['argv0', 'asdf']), 2)
+                         ['argv0', '--help']), 0)
 
     def test_missing_arg(self):
         self.assertEqual(gbp.scripts.supercommand.supercommand(
