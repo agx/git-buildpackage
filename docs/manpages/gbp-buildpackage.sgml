@@ -447,10 +447,6 @@
     </variablelist>
   </refsect1>
   <refsect1>
-      &man.gbp.config-files;
-      <para>All options in the config files are specified without the 'git-' prefix.</para>
-  </refsect1>
-  <refsect1>
     <title>EXAMPLES</title>
     <para>Build a Debian package using &git-pbuilder; which in turn invokes &cowbuildercmd;.
       Instruct cowbuilder to build within a Wheezy chroot for i386.</para>
@@ -466,6 +462,7 @@
   </refsect1>
   <refsect1>
       &man.gbp.config-files;
+      <para>All options in the config files are specified without the 'git-' prefix.</para>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
