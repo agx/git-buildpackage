@@ -451,6 +451,23 @@
       <para>All options in the config files are specified without the 'git-' prefix.</para>
   </refsect1>
   <refsect1>
+    <title>EXAMPLES</title>
+    <para>Build a Debian package using &git-pbuilder; which in turn invokes &cowbuildercmd;.
+      Instruct cowbuilder to build within a Wheezy chroot for i386.</para>
+    <screen>
+      &gbp-buildpackage; --git-pbuilder --git-arch=i386 --git-dist=wheezy
+    </screen>
+    <para>
+      Note that the above needs a &cowbuildercmd; chroot already. This can be created using:
+    </para>
+    <screen>
+      DIST=wheezy DIST=i386 &git-pbuilder; create
+    </screen>
+  </refsect1>
+  <refsect1>
+      &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
     <title>SEE ALSO</title>
     <para>
       <citerefentry>
@@ -472,6 +489,10 @@
       <citerefentry>
         <refentrytitle>git-pbuilder</refentrytitle>
         <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>cowbuilder</refentrytitle>
+        <manvolnum>8</manvolnum>
       </citerefentry>,
       <citerefentry>
         <refentrytitle>gbp.conf</refentrytitle>

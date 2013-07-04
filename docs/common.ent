@@ -14,8 +14,10 @@
   <!ENTITY gbp-clone		"<command>gbp clone</command>">
   <!ENTITY gbp-pq		"<command>gbp pq</command>">
   <!ENTITY gbp-create-remote-repo "<command>gbp create-remote-repo</command>">
+  <!ENTITY git-pbuilder		"<command>git pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
+  <!ENTITY cowbuildercmd	"<command>cowbuilder</command>">
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">
   <!ENTITY pdebuildcmd		"<command>pdebuild</command>">
   <!ENTITY debuildcmd		"<command>debuild</command>">
