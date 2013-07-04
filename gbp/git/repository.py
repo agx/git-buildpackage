@@ -538,8 +538,8 @@ class GitRepository(object):
             if not self.has_branch(branch, remote=remote):
                 raise GitRepositoryError("Branch %s doesn't exist!" % branch)
 
-            self._git_inout('branch', ["--set-upstream", local_branch, upstream],
-                            capture_stderr=True)
+        self._git_inout('branch', ["--set-upstream", local_branch, upstream],
+                        capture_stderr=True)
 
     def get_upstream_branch(self, local_branch):
         """
