@@ -186,6 +186,7 @@ def test_set_upstream_branch():
     >>> os.makedirs(os.path.join(repo.git_dir, 'refs/remotes/origin'))
     >>> shutil.copy(os.path.join(repo.git_dir, 'refs/heads/master'), \
                     os.path.join(repo.git_dir, 'refs/remotes/origin/'))
+    >>> repo.add_remote_repo('origin', 'git://git.example.com/git/origin')
     >>> repo.set_upstream_branch('master', 'origin/master')
     >>> repo.get_upstream_branch('master')
     'origin/master'
@@ -195,7 +196,6 @@ def test_set_upstream_branch():
     >>> repo.set_upstream_branch('foo', 'origin/bla')
     Traceback (most recent call last):
     GitRepositoryError: Branch origin/bla doesn't exist!
-
     """
 
 def test_get_upstream_branch():
