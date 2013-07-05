@@ -1063,7 +1063,7 @@ class GitRepository(object):
 
         self._git_command("fetch", args.args)
 
-    def pull(self, repo=None, ff_only=False):
+    def pull(self, repo=None, ff_only=False, all_remotes=False):
         """
         Fetch and merge from another repository
 
@@ -1071,11 +1071,16 @@ class GitRepository(object):
         @type repo: C{str}
         @param ff_only: only merge if this results in a fast forward merge
         @type ff_only: C{bool}
+        @param all_remotes: fetch all remotes
+        @type all_remotes: C{bool}
         """
-        args = []
-        args += [ '--ff-only' ] if ff_only else []
-        args += [ repo ] if repo else []
-        self._git_command("pull", args)
+        args = GitArgs()
+        args.add_true(ff_only, '--ff-only')
+        if all_remotes:
+            args.add_true(all_remotes, '--all')
+        else:
+            args.add_true(repo, repo)
+        self._git_command("pull", args.args)
 
     def push(self, repo=None, src=None, dst=None, ff_only=True, force=False,
              tags=False):

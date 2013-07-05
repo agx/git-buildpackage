@@ -595,6 +595,8 @@ def test_pull():
     >>> clone = gbp.git.GitRepository(d)
     >>> clone.set_branch('master')
     >>> clone.pull()
+    >>> clone.pull(all_remotes=True)
+    >>> clone.pull('origin', all_remotes=True)
     """
 
 def test_fetch():
