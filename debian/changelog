@@ -1,3 +1,9 @@
+git-buildpackage (0.6.1~bpo70+1) wheezy-backports; urgency=low
+
+  * Rebuild for wheezy-backports.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 08 Jul 2013 20:05:18 +0200
+
 git-buildpackage (0.6.1) unstable; urgency=low
 
   * [42769e3] Split {Build-,}Deps per line
