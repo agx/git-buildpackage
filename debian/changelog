@@ -1,3 +1,41 @@
+git-buildpackage (0.6.2) unstable; urgency=low
+
+  * [194d396] Document gbp's help option
+  * [56068e5] Git.Repository.__git_inout: properly set stdin.
+    We should set stdin to subprocess.PIPE when piping input according
+    to the subprocess docs.
+  * [585439e] Git.Repository.__git_inout: Close all other file descriptors.
+    No need to leak fds to the child.
+  * [9af1868] gbp.git.Repository.get_branch(): use _git_command
+    instead of the deprecated _git_inout and clarify the return codes and
+    exceptions raised.
+  * [a2ce387] gbp.git.GitRepository.has_branch(): use _git_command instead of
+    the deprecated _git_getoutput
+  * [2145c58] Test succesful import too and make sure we don't spew to stderr
+    during this test
+  * [8d2ceba] Make sure we keep our test coverage
+  * [00a4162] Switch to debhelper level 9 which is available in Wheezy
+  * [55ba9b8] Update Vcs-Browser URL
+  * [e829dc5] Add symlinks to the manpages for the deprecated commands and
+    make lintian happy (Closes: #714489)
+  * [fc74aa2] Fix broken xrefs
+  * [2a233a7] Add examples for importing upstream sources
+  * [cef5bae] Add gbp buildpackage example showing git-pbuilder invocation
+  * [1b38d90] Remove duplicate config files section in the "gbp buildpackage"
+    man page
+  * [a22eee2] GitRepository.set_upstream_branch: Newer git wants a valid
+    remote repo entry so set one in the tests before trying to set the
+    upstream branch. Found with git 1.8.3.2
+  * [7762b17] GitRepository.set_upstream_branch: don't try to set upstream
+    twice.  Move setting of the upstream branch out of the loop. This worked
+    by accident so far.
+  * [b615db5] GitRepository.set_upstream_branch: Catch errors to set upstream
+    branch
+  * [b8e921e] GitRepository.set_upstream_branch: use --set-upstream-to if
+    available since --set-upstream is deprecated.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 09 Jul 2013 21:46:00 +0200
+
 git-buildpackage (0.6.1) unstable; urgency=low
 
   * [42769e3] Split {Build-,}Deps per line
