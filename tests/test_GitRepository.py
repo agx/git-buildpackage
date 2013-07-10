@@ -600,6 +600,7 @@ def test_fetch():
     >>> clone.add_remote_repo('foo', repo_dir)
     >>> clone.fetch('foo')
     >>> clone.fetch('foo', tags=True)
+    >>> clone.fetch('foo', refspec='refs/heads/master')
     >>> clone.remove_remote_repo('foo')
     """
 
