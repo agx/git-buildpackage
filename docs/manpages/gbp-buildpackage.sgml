@@ -42,7 +42,7 @@
       <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-postexport=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>command</replaceable></arg>
-      <arg><option>--git-[no-]hooks=</option></arg>
+      <arg><option>--git-[no-]hooks</option></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
