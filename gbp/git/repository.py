@@ -1519,7 +1519,7 @@ class GitRepository(object):
         self._git_command("apply", args)
 
     def diff(self, obj1, obj2=None, paths=None, stat=False, summary=False,
-             text=False):
+             text=False, ignore_submodules=True):
         """
         Diff two git repository objects
 
@@ -1535,6 +1535,8 @@ class GitRepository(object):
         @type summary: C{bool}
         @param text: Generate textual diffs, treat all files as text
         @type text: C{bool}
+        @param ignore_submodules: ignore changes to submodules
+        @type ignore_submodules: C{bool}
         @return: diff
         @rtype: C{str}
         """
@@ -1545,6 +1547,7 @@ class GitRepository(object):
             options.add('--stat=%s' % stat)
         options.add_true(summary, '--summary')
         options.add_true(text, '--text')
+        options.add_true(ignore_submodules, '--ignore-submodules=all')
         options.add(obj1)
         options.add_true(obj2, obj2)
         if paths:
