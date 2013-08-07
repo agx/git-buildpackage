@@ -601,6 +601,7 @@ def test_fetch():
     >>> clone.fetch('foo')
     >>> clone.fetch('foo', tags=True)
     >>> clone.fetch('foo', refspec='refs/heads/master')
+    >>> clone.fetch(all_remotes=True)
     >>> clone.remove_remote_repo('foo')
     """
 

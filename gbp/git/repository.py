@@ -1013,7 +1013,8 @@ class GitRepository(object):
         args = GitArgs('rm', name)
         self._git_command("remote", args.args)
 
-    def fetch(self, repo=None, tags=False, depth=0, refspec=None):
+    def fetch(self, repo=None, tags=False, depth=0, refspec=None,
+              all_remotes=False):
         """
         Download objects and refs from another repository.
 
@@ -1025,12 +1026,17 @@ class GitRepository(object):
         @type depth: C{int}
         @param refspec: refspec to use instead of the default from git config
         @type refspec: C{str}
+        @param all_remotes: fetch all remotes
+        @type all_remotes: C{bool}
         """
         args = GitArgs('--quiet')
         args.add_true(tags, '--tags')
         args.add_cond(depth, '--depth=%s' % depth)
-        args.add_cond(repo, repo)
-        args.add_cond(refspec, refspec)
+        if all_remotes:
+            args.add_true(all_remotes, '--all')
+        else:
+            args.add_cond(repo, repo)
+            args.add_cond(refspec, refspec)
 
         self._git_command("fetch", args.args)
 
