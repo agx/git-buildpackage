@@ -838,7 +838,7 @@ class GitRepository(object):
         @return: C{True} if the repository has that tree, C{False} otherwise
         @rtype: C{bool}
         """
-        out, dummy, ret =  self._git_inout('ls-tree', [ treeish ],
+        _out, _err, ret =  self._git_inout('ls-tree', [treeish],
                                            capture_stderr=True)
         return [ True, False ][ret != 0]
 
