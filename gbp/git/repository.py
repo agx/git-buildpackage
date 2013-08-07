@@ -1077,7 +1077,8 @@ class GitRepository(object):
         args += [ repo ] if repo else []
         self._git_command("pull", args)
 
-    def push(self, repo=None, src=None, dst=None, ff_only=True, force=False):
+    def push(self, repo=None, src=None, dst=None, ff_only=True, force=False,
+             tags=False):
         """
         Push changes to the remote repo
 
@@ -1092,10 +1093,13 @@ class GitRepository(object):
         @param force: force push, can cause the remote repository to lose
         commits; use it with care
         @type force: C{bool}
+        @param tags: push all refs under refs/tags, in addition to other refs
+        @type tags: C{bool}
         """
         args = GitArgs()
         args.add_cond(repo, repo)
         args.add_true(force, "-f")
+        args.add_true(tags, "--tags")
 
         # Allow for src == '' to delete dst on the remote
         if src != None:
