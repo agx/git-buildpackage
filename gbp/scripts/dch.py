@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007, 2008, 2009, 2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007, 2008, 2009, 2010, 2013 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -192,26 +192,44 @@ def parse_commit(repo, commitid, opts, last_commit=False):
     return entry, (author, email)
 
 
-def guess_snapshot_commit(cp, repo, options):
+def guess_documented_commit(cp, repo, tagformat):
     """
-    Guess the last commit documented in the changelog from the snapshot banner
-    or the last point the changelog was touched.
+    Guess the last commit documented in the changelog from the snapshot banner,
+    the last tagged version or the last point the changelog was touched.
+
+    @param cp: the changelog
+    @param repo: the git repository
+    @param tagformat: the format for Debian tags
+    @returns: the commit that was last documented in the changelog
+    @rtype: C{str}
+    @raises GbpError: In case we fail to find a commit to start at
     """
+    # Check for snapshot banner
     sr = re.search(snapshot_re, cp['Changes'])
     if sr:
         return sr.group('commit')
-    # If the current topmost changelog entry has already been tagged rely on
-    # the version information only. The upper level relies then on the version
-    # info anyway:
-    if repo.find_version(options.debian_tag, cp.version):
-        return None
-    # If we didn't find a snapshot header we look at the point the changelog
-    # was last touched.
+
+    # Check if the latest version in the changelog is already tagged. If
+    # so this is the last documented commit.
+    commit = repo.find_version(tagformat, cp.version)
+    if commit:
+        gbp.log.info("Found tag for topmost changelog version '%s'" % commit)
+        return commit
+
+    # Check when the changelog was last touched
     last = repo.get_commits(paths="debian/changelog", num=1)
     if last:
         gbp.log.info("Changelog last touched at '%s'" % last[0])
         return last[0]
+
+    # Changelog not touched yet
     return None
+
+
+def has_snapshot_banner(cp):
+    """Whether the changelog has a snapshot banner"""
+    sr = re.search(snapshot_re, cp['Changes'])
+    return True if sr else False
 
 
 def get_customizations(customization_file):
@@ -269,7 +287,7 @@ def main(argv):
     ret = 0
     changelog = 'debian/changelog'
     until = 'HEAD'
-    found_snapshot_header = False
+    found_snapshot_banner = False
     version_change = {}
     branch = None
 
@@ -386,13 +404,14 @@ def main(argv):
         else:
             since = ''
             if options.auto:
-                since = guess_snapshot_commit(cp, repo, options)
+                since = guess_documented_commit(cp, repo, options.debian_tag)
                 if since:
-                    gbp.log.info("Continuing from commit '%s'" % since)
-                    found_snapshot_header = True
+                    msg = "Continuing from commit '%s'" % since
                 else:
-                    gbp.log.info("Couldn't find snapshot header, using version info")
-            if not since:
+                    msg = "Starting from first commit"
+                gbp.log.info(msg)
+                found_snapshot_banner = has_snapshot_banner(cp)
+            else: # Fallback: continue from last tag
                 since = repo.find_version(options.debian_tag, cp['Version'])
                 if not since:
                     raise GbpError("Version %s not found" % cp['Version'])
@@ -420,10 +439,10 @@ def main(argv):
                 version_change['version'] = options.new_version
             # the user wants to force a new version
             add_section = True
-        elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_header and commits:
+        elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_banner and commits:
             # the last version was a release and we have pending commits
             add_section = True
-        elif options.snapshot and not found_snapshot_header:
+        elif options.snapshot and not found_snapshot_banner:
             # the user want to switch to snapshot mode
             add_section = True
         else:
