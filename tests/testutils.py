@@ -8,6 +8,7 @@ import unittest
 import gbp.log
 import gbp.deb.git
 import gbp.errors
+from gbp.deb.changelog import ChangeLog
 
 class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single unit test"""
@@ -74,3 +75,15 @@ class OsReleaseFile(object):
 
     def __repr__(self):
         return repr(self._values)
+
+class MockedChangeLog(ChangeLog):
+    contents = """foo (%s) experimental; urgency=low
+
+  %s
+
+ -- Debian Maintainer <maint@debian.org>  Sat, 01 Jan 2012 00:00:00 +0100"""
+
+    def __init__(self, version, changes = "a important change"):
+        ChangeLog.__init__(self,
+                           contents=self.contents % (version, changes))
+
