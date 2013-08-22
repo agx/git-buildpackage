@@ -37,6 +37,7 @@ def fetch_version():
         pass # Failing is fine, we just can't print the version then
 
     with file('gbp/version.py', 'w') as f:
+        f.write('"The current gbp version number"\n')
         f.write('gbp_version="%s"\n' % version)
 
     return version
