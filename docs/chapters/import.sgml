@@ -232,6 +232,76 @@ upstream-tag = v%(version)s
       </sect2>
 
     </sect1>
+    <sect1 id="gbp.branch.naming">
+      <title>Branch layout</title>
+      <para>
+	By default &gbp; uses one branch to keep the Debian packaging called <emphasis>master</emphasis>
+	and a branch to keep the upstream packaging called <emphasis>upstream</emphasis>.
+      </para>
+      <para>
+	This layout is simple to get started but fails short if one needs to maintain several versions of
+	the package at the same time. Therefore the following layout is recommended:
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>
+	    debian/&lt;release&gt;
+	  </term>
+	  <listitem>
+	    <para>
+	      the Debian packaging for a release <emphasis>jessie</emphasis>,
+	      <emphasis>wheezy</emphasis> or <emphasis>sid</emphasis>, <emphasis>experimental</emphasis>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    upstream/&lt;release&gt;
+	  </term>
+	  <listitem>
+	    <para>
+	      the upstream sources for a release matching one of the above
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    security/&lt;release&gt;
+	  </term>
+	  <listitem>
+	    <para>
+	      security updates for a certain release
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    backports/&lt;release&gt;
+	  </term>
+	  <listitem>
+	    <para>
+	      security updates for a certain release
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    dfsg/&lt;release&gt;
+	  </term>
+	  <listitem>
+	    <para>
+	      the dfsg clean upstream sources in case the cleanup is done via a &git;
+	      merge from upstream to this branch.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+      <para>
+	In case &pristine-tar; is being used there will be a single <emphasis>pristine-tar</emphasis>
+	branch that keeps all binary deltas.
+      </para>
+    </sect1>
 </chapter>
 
 <!--  LocalWords:  tarballs
