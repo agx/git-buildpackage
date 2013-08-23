@@ -81,7 +81,7 @@ def upstream_import_commit_msg(options, version):
 def detect_name_and_version(repo, source, options):
     # Guess defaults for the package name and version from the
     # original tarball.
-    (guessed_package, guessed_version) = source.guess_version() or ('', '')
+    guessed_package, guessed_version = source.guess_version()
 
     # Try to find the source package name
     try:
