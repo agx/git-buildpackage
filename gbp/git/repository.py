@@ -1443,14 +1443,27 @@ class GitRepository(object):
                 'files' : files}
 
 #{ Patches
-    def format_patches(self, start, end, output_dir, signature=True, thread=None):
+    def format_patches(self, start, end, output_dir,
+                       signature=True,
+                       thread=None,
+                       symmetric=True):
         """
-        Output the commits between start and end as patches in output_dir
+        Output the commits between start and end as patches in output_dir.
+
+        This outputs the revisions I{start...end} by default. When using
+        I{symmetric} to C{false} it uses I{start..end} instead.
+
+        @param start: the commit on the left side of the revision range
+        @param end: the commit on the right hand side of the revisino range
+        @param output_dir: directory to write the patches to
+        @param signature: whether to output a signature
+        @param thread: whether to include In-Reply-To references
+        @param symmetric: whether to use the symmetric difference (see above)
         """
         options = GitArgs('-N', '-k',
                           '-o', output_dir)
         options.add_cond(not signature, '--no-signature')
-        options.add('%s...%s' % (start, end))
+        options.add('%s%s%s' % (start, '...' if symmetric else '..', end))
         options.add_cond(thread, '--thread=%s' % thread, '--no-thread')
 
         output, ret = self._git_getoutput('format-patch', options.args)
