@@ -54,8 +54,10 @@ def export_patches(repo, branch, options):
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
-    patches = repo.format_patches(branch, pq_branch, PATCH_DIR,
-                                  signature=False)
+    patches = repo.format_patches(branch,
+                                  pq_branch, PATCH_DIR,
+                                  signature=False,
+                                  symmetric=False)
     if patches:
         f = file(SERIES_FILE, 'w')
         gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
