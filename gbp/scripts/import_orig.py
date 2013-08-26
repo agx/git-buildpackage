@@ -33,14 +33,6 @@ from gbp.scripts.common.import_orig import (OrigUpstreamSource, cleanup_tmp_tree
                                             ask_package_name, ask_package_version,
                                             repack_source, is_link_target)
 
-# Try to import readline, since that will cause raw_input to get fancy
-# line editing and history capabilities. However, if readline is not
-# available, raw_input will still work.
-try:
-    import readline
-except ImportError:
-    pass
-
 
 def prepare_pristine_tar(archive, pkg, version):
     """
