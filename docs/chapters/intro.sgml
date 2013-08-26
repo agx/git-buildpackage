@@ -3,7 +3,7 @@
     <para>
       Welcome to &gbp;, a system that integrates the
       <ulink url="http://www.debian.org/">Debian</ulink> package build
-      system with <ulink url="http://git.or.cz/">Git</ulink>. The current version of this manual can be found at
+      system with <ulink url="http://git.or.cz/">Git</ulink>. The current version of this manual can be found
       <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage">here</ulink>.
     </para>
     <para>
