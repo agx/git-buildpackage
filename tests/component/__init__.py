@@ -121,7 +121,10 @@ class ComponentTestBase(object):
         branch = repo.branch
         assert branch == current_branch
         assert repo.is_clean()
-        assert set(repo.get_local_branches()) == set(branches)
+        local_branches = repo.get_local_branches()
+        assert_msg = "Branches: expected %s, found %s" % (branches,
+                                                          local_branches)
+        assert set(local_branches) == set(branches), assert_msg
         if files is not None:
             # Get files of the working copy recursively
             local = set()
