@@ -1,3 +1,34 @@
+git-buildpackage (0.6.3) unstable; urgency=low
+
+  * [60ffe95] --git-hooks doesn't take an argument
+  * [7a29e42] Move MockedChangelog to testutils and allow to specify the
+    content so we can reuse it for other dch tests.
+  * [938e4cd] dch: make automatic adding of new sections more robust.
+    The code that determined if we found a snapshot header was obfuscated by
+    the code that determines the commits to add. Split those and better
+    document their purpose. Also always return the commit to start from so we
+    don't need to repeat the logic in the upper levels.
+  * [d0fb6d8] Minor docstring updates
+  * [388cfb8] docs: Add recommended branch layout.
+    It'd be nice to have similar branch layouts among packages so recommend
+    one that worked well so far.
+  * [34b2079] GitRepository: allow to use '..' instead of '...'
+    The symmetric difference isn't always useful since it includes changes
+    from both branches. See #680705.
+  * [f793ed0] pq: exclude patches from Debian packaging branch.
+    When regenerating the patch queue including patches from the Debian
+    branch is not useful. Addresses parts of #680705.
+    Thanks to Benjamin Cama for the detailed analysis.
+  * [283c847] docs: Refert to gbp in the introduction since this wraps all
+    commands now.
+    Thanks to Ross Boylan for pointing out that the current wording is
+    confusing.
+  * [8f073eb] docs: remove superfluous at
+  * [c9d3d93] Use open() instead of file() since the later doesn't exist in
+    python3
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 28 Aug 2013 19:35:34 +0200
+
 git-buildpackage (0.6.2) unstable; urgency=low
 
   * [194d396] Document gbp's help option
