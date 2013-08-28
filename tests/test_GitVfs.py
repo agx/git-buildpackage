@@ -26,7 +26,7 @@ def test_read():
     >>> import os, gbp.git.vfs
     >>> repo_dir = context.new_tmpdir(__name__)
     >>> repo = gbp.git.GitRepository.create(str(repo_dir))
-    >>> f = file(os.path.join(repo.path, 'foo.txt'), 'w')
+    >>> f = open(os.path.join(repo.path, 'foo.txt'), 'w')
     >>> content = 'al pha\\na\\nb\\nc'
     >>> f.write('al pha\\na\\nb\\nc')
     >>> f.close()

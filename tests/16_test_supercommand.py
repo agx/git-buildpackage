@@ -37,7 +37,7 @@ class TestSuperCommand(unittest.TestCase):
     def test_invalid_command(self):
         """Test if we fail correctly with an invalid command"""
         old_stderr = sys.stderr
-        with file('/dev/null', 'w') as sys.stderr:
+        with open('/dev/null', 'w') as sys.stderr:
             self.assertEqual(gbp.scripts.supercommand.supercommand(
                              ['argv0', 'asdf']), 2)
             self.assertEqual(gbp.scripts.supercommand.supercommand(

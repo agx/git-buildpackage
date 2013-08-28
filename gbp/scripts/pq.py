@@ -59,7 +59,7 @@ def export_patches(repo, branch, options):
                                   signature=False,
                                   symmetric=False)
     if patches:
-        f = file(SERIES_FILE, 'w')
+        f = open(SERIES_FILE, 'w')
         gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
         for patch in patches:
             filename = write_patch(patch, PATCH_DIR, options)

@@ -126,8 +126,8 @@ def mangle_changelog(changelog, cp, snapshot=''):
     """
     try:
         tmpfile = '%s.%s' % (changelog, snapshot)
-        cw = file(tmpfile, 'w')
-        cr = file(changelog, 'r')
+        cw = open(tmpfile, 'w')
+        cr = open(changelog, 'r')
 
         print >>cw, ("%(Source)s (%(MangledVersion)s) "
                      "%(Distribution)s; urgency=%(urgency)s\n" % cp)

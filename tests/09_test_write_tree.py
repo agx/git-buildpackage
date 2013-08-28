@@ -19,7 +19,7 @@ class TestWriteTree(testutils.DebianGitTestRepo):
         paths = []
         for i in range(4):
             path = os.path.join(self.repo.path, 'testfile%d' % i)
-            with file(path, 'w') as f:
+            with open(path, 'w') as f:
                 print >>f, "testdata %d" % i
             paths.append(path)
         return paths

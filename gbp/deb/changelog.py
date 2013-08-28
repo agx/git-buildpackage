@@ -115,7 +115,7 @@ class ChangeLog(object):
         self._cp = cp
 
     def _read(self):
-            with file(self.filename) as f:
+            with open(self.filename) as f:
                 self._contents = f.read()
 
     def __getitem__(self, item):

@@ -47,7 +47,7 @@ class Control(object):
             if not os.access(filename, os.F_OK):
                 raise NoControlError("Control file %s does not exist" % filename)
 
-            with file(filename) as f:
+            with open(filename) as f:
                 control = email.message_from_file(f)
 
         if not control.items():

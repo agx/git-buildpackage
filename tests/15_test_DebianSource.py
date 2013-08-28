@@ -52,7 +52,7 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         self.assertRaises(DebianSourceError,
                           source.is_native)
 
-        with file('debian/changelog', 'w') as f:
+        with open('debian/changelog', 'w') as f:
             f.write("""git-buildpackage (0.2.3) git-buildpackage; urgency=low
 
   * git doesn't like '~' in tag names so replace this with a dot when tagging

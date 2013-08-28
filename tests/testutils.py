@@ -38,7 +38,7 @@ class DebianGitTestRepo(unittest.TestCase):
         if not os.path.exists(d):
             os.makedirs(d)
 
-        with file(path, 'w+') as f:
+        with open(path, 'w+') as f:
             content == None or f.write(content)
         self.repo.add_files(name, force=True)
         self.repo.commit_files(path, msg or "added %s" % name)

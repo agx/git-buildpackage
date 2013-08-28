@@ -1653,7 +1653,7 @@ class GitRepository(object):
                 raise GitRepositoryError("Error running git init: %s" % stderr)
 
             if description:
-                with file(os.path.join(abspath, git_dir, "description"), 'w') as f:
+                with open(os.path.join(abspath, git_dir, "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
                     f.write(description)
             return klass(abspath)

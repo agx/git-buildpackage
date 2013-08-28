@@ -148,14 +148,14 @@ def patch_write_header(srcname, dstname):
     """
     topic = None
 
-    with file(srcname) as src:
+    with open(srcname) as src:
         header = patch_read_header(src)
         header_len = len(''.join(header))
 
         topic = patch_header_parse_topic(header)
         patch_header_mangle_newline(header)
 
-    with file(dstname, 'w') as dst:
+    with open(dstname, 'w') as dst:
         dst.write(''.join(header[1:]))
 
     return (header_len, topic)
@@ -165,9 +165,9 @@ def patch_write_content(srcname, dstname, header_len):
     """
     Write out the patch body skipping the header
     """
-    with file(srcname) as src:
+    with open(srcname) as src:
         src.seek(header_len, 0)
-        with file(dstname, 'a') as dst:
+        with open(dstname, 'a') as dst:
             dst.write(src.read())
 
 
