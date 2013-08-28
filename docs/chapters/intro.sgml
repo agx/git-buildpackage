@@ -1,7 +1,7 @@
 <chapter id="gbp.intro">
     <title>Introduction</title>
     <para>
-      Welcome to &gbp-buildpackage;, a system that integrates the
+      Welcome to &gbp;, a system that integrates the
       <ulink url="http://www.debian.org/">Debian</ulink> package build
       system with <ulink url="http://git.or.cz/">Git</ulink>. The current version of this manual can be found at
       <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage">here</ulink>.
@@ -29,7 +29,7 @@
 <sect1 id="gbp.repository">
 	<title>Repository Layout and Terminology</title>
 	<para>The only requirement on the repository layout for using
-	&gbp-buildpackage; and friends is, that the branch the debian work is
+	&gbp; is, that the branch the debian work is
 	being done on is different from the branch the upstream sources are
 	being maintained on (this, of course, has no meaning for Debian native
 	packages). This is necessary to be able to build upstream tarballs and
@@ -70,18 +70,21 @@
 
 	<para>You're completely
 	free to pick any repository layout and the branch names above are only
-	&gbp-buildpackage;'s defaults. They can be changed at any point in time
+	&gbp;'s defaults. They can be changed at any point in time
 	and you can work with an arbitrary number of branches.
 	For example branches like  <emphasis>nmu</emphasis>,
-	<emphasis>bpo</emphasis> or <emphasis>stable</emphasis> might
+	<emphasis>backports</emphasis> or <emphasis>stable</emphasis> might
 	(temporarily or permanent) become your <option>debian-branch</option>
-	and branches like <emphasis>dfsg_free</emphasis> or
+	and branches like <emphasis>dfsg</emphasis> or
 	<emphasis>snapshots</emphasis> might become your
 	<option>upstream-branch</option> - it doesn't matter if these branches
 	are maintained with &gbp-import-orig; or not.</para>
+        <para>
+        A recommended branch layout is described in <xref linkend="gbp.branch.naming">.
+        </para>
 
-	<para>Since Git-Buildpackage only works with local &git;-repositories
-	you have to use <command>git-push</command> in order to publish your
+	<para>Since &gbp-buildpackage; only works with local &git;-repositories
+	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
 	url="http://git.debian.org/">git.debian.org</ulink>, this can also be
 	automized with &gbp-buildpackage;'s <option>post-tag</option>
