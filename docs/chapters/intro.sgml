@@ -28,13 +28,13 @@
 
 <sect1 id="gbp.repository">
 	<title>Repository Layout and Terminology</title>
-	<para>The only requirement on the repository layout for using
-	&gbp; is, that the branch the debian work is
-	being done on is different from the branch the upstream sources are
-	being maintained on (this, of course, has no meaning for Debian native
-	packages). This is necessary to be able to build upstream tarballs and
-	to merge in new upstream versions. To distinguish these two branches
-	the following terminology <footnote><para>corresponding to the command
+	<para>It is recommended to have the Debian packaging on a seprate
+	branch than the upstream source <footnote><para>this, of course, has
+	no meaning for Debian native packages</para></footnote>.
+	This is necessary to be able to import
+	and merge in new upstream versions via &gbp-import-orig;.
+	To distinguish these two branches the following terminology
+	<footnote><para>corresponding to the command
 	line and config file options</para></footnote> is used:
 	</para>
 	<itemizedlist>
