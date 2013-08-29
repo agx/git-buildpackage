@@ -112,7 +112,8 @@ class ComponentTestBase(object):
         """Test case teardown"""
         # Restore original working dir
         os.chdir(self._orig_dir)
-        shutil.rmtree(self._tmpdir)
+        if not os.getenv("GBP_TESTS_NOCLEAN"):
+            shutil.rmtree(self._tmpdir)
 
         self._capture_log(False)
 
