@@ -89,7 +89,8 @@ class ComponentTestBase(object):
     def teardown_class(cls):
         """Test class case teardown"""
         # Return original environment
-        os.environ = cls.orig_env
+        os.environ.clear()
+        os.environ.update(cls.orig_env)
 
     def __init__(self):
         """Object initialization"""
