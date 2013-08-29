@@ -286,7 +286,8 @@ class GbpOptionParser(OptionParser):
         @return: list of config files we need to parse
         @rtype: C{list}
 
-        >>> if os.environ.has_key('GBP_CONF_FILES'): del os.environ['GBP_CONF_FILES']
+        >>> conf_backup = os.getenv('GBP_CONF_FILES')
+        >>> if conf_backup is not None: del os.environ['GBP_CONF_FILES']
         >>> files = GbpOptionParser.get_config_files()
 
         # Remove the ~-expanded one
@@ -297,6 +298,8 @@ class GbpOptionParser(OptionParser):
         >>> os.environ['GBP_CONF_FILES'] = 'test1:test2'
         >>> GbpOptionParser.get_config_files()
         ['test1', 'test2']
+        >>> del os.environ['GBP_CONF_FILES']
+        >>> if conf_backup is not None: os.environ['GBP_CONF_FILES'] = conf_backup
         """
         envvar = os.environ.get('GBP_CONF_FILES')
         files = envvar.split(':') if envvar else klass.def_config_files
