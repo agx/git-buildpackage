@@ -63,7 +63,7 @@
         <term><option>--ignore-branch</option>
         </term>
         <listitem>
-	  <para>Don't care if we're on a branch or in detached head state.
+	  <para>Don't care if we're on a branch or in detached head state.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
