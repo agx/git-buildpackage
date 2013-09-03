@@ -24,8 +24,8 @@ import os
 import shutil
 import tempfile
 from StringIO import StringIO
-
 from nose import SkipTest
+from nose.tools import eq_, ok_     # pylint: disable=E0611
 
 import gbp.log
 from  gbp.git import GitRepository, GitRepositoryError
@@ -121,12 +121,12 @@ class ComponentTestBase(object):
     def _check_repo_state(cls, repo, current_branch, branches, files=None):
         """Check that repository is clean and given branches exist"""
         branch = repo.branch
-        assert branch == current_branch
-        assert repo.is_clean()
+        eq_(branch, current_branch)
+        ok_(repo.is_clean())
         local_branches = repo.get_local_branches()
         assert_msg = "Branches: expected %s, found %s" % (branches,
                                                           local_branches)
-        assert set(local_branches) == set(branches), assert_msg
+        eq_(set(local_branches), set(branches), assert_msg)
         if files is not None:
             # Get files of the working copy recursively
             local = set()
@@ -141,9 +141,9 @@ class ComponentTestBase(object):
                     local.add(os.path.relpath(os.path.join(dirpath, dirname),
                                               repo.path) + '/')
             extra = local - set(files)
-            assert not extra, "Unexpected files in repo: %s" % list(extra)
+            ok_(not extra, "Unexpected files in repo: %s" % list(extra))
             missing = set(files) - local
-            assert not missing, "Files missing from repo: %s" % list(missing)
+            ok_(not missing, "Files missing from repo: %s" % list(missing))
 
     def _capture_log(self, capture=True):
         """ Capture log"""
@@ -168,10 +168,10 @@ class ComponentTestBase(object):
     def _check_log(self, linenum, string):
         """Check that the specified line on log matches expectations"""
         if self._log is None:
-            assert False, "BUG in unittests: no log captured!"
+            raise Exception("BUG in unittests: no log captured!")
         output = self._get_log()[linenum].strip()
-        assert output.startswith(string), ("Expected: '%s...' Got: '%s'" %
-                                           (string, output))
+        ok_(output.startswith(string), ("Expected: '%s...' Got: '%s'" %
+                                        (string, output)))
 
     def _clear_log(self):
         """Clear the mock strerr"""
