@@ -155,21 +155,8 @@ def write_patch_file(filename, commit_info, diff):
 
 
 def format_patch(outdir, repo, commit_info, series, numbered=True,
-                 topic_regex=None, path_exclude_regex=None, topic=''):
+                 path_exclude_regex=None, topic=''):
     """Create patch of a single commit"""
-    commit = commit_info['id']
-
-    # Parse and filter commit message body
-    mangled_body = ""
-    for line in commit_info['body'].splitlines():
-        if topic_regex:
-            match = re.match(topic_regex, line, flags=re.I)
-            if match:
-                topic = match.group('topic')
-                gbp.log.debug("Topic %s found for %s" % (topic, commit))
-                continue
-        mangled_body += line + '\n'
-    commit_info['body'] = mangled_body
 
     # Determine filename and path
     outdir = os.path.join(outdir, topic)
@@ -194,8 +181,8 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
     # Finally, create the patch
     patch = None
     if paths:
-        diff = repo.diff('%s^!' % commit, paths=paths, stat=80, summary=True,
-                         text=True)
+        diff = repo.diff('%s^!' % commit_info['id'], paths=paths, stat=80,
+                         summary=True, text=True)
         patch = write_patch_file(filepath, commit_info, diff)
         if patch:
             series.append(patch)
