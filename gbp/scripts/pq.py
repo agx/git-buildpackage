@@ -41,6 +41,27 @@ PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR,"series")
 
 
+def parse_old_style_topic(commit_info):
+    """Parse 'gbp-pq-topic:' line(s) from commit info"""
+
+    commit = commit_info['id']
+    topic_regex = 'gbp-pq-topic:\s*(?P<topic>\S.*)'
+    mangled_body = ''
+    topic = ''
+    # Parse and filter commit message body
+    for line in commit_info['body'].splitlines():
+        match = re.match(topic_regex, line, flags=re.I)
+        if match:
+            topic = match.group('topic')
+            gbp.log.debug("Topic %s found for %s" % (topic, commit))
+            gbp.log.warn("Deprecated 'gbp-pq-topic: <topic>' in %s, please "
+                         "use 'Gbp[-Pq]: Topic <topic>' instead" % commit)
+            continue
+        mangled_body += line + '\n'
+    commit_info['body'] = mangled_body
+    return topic
+
+
 def generate_patches(repo, start, end, outdir, options):
     """
     Generate patch files from git
@@ -53,15 +74,16 @@ def generate_patches(repo, start, end, outdir, options):
 
     # Generate patches
     rev_list = reversed(repo.get_commits(start, end))
-    topic_regex = 'gbp-pq-topic:\s*(?P<topic>\S.*)'
     for commit in rev_list:
         info = repo.get_commit_info(commit)
+        topic = parse_old_style_topic(info)
         cmds = parse_gbp_commands(info, 'gbp', ('ignore'), ('topic'))
         cmds.update(parse_gbp_commands(info, 'gbp-pq', ('ignore'), ('topic')))
         if not 'ignore' in cmds:
-            topic = cmds['topic'] if 'topic' in cmds else ''
+            if 'topic' in cmds:
+                topic = cmds['topic']
             format_patch(outdir, repo, info, patches, options.patch_numbers,
-                         topic_regex=topic_regex, topic=topic)
+                         topic=topic)
         else:
             gbp.log.info('Ignoring commit %s' % info['id'])
 
