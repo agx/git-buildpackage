@@ -104,6 +104,24 @@ def test_branch_master():
     'master'
     """
 
+def test_clean():
+    """
+    Remove untracked files from the working tree
+
+    Methods tested:
+         - L{gbp.git.GitRepository.clean}
+
+    >>> import gbp.git, shutil, os
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), \
+                                 os.path.join(repo.path, "testclean"))
+    >>> repo.clean(dry_run=True)
+    >>> repo.is_clean()[0]
+    False
+    >>> repo.clean(directories=True, force=True)
+    >>> repo.is_clean()[0]
+    True
+    """
 
 def test_create_branch():
     """
