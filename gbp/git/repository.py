@@ -34,6 +34,35 @@ class GitRepositoryError(GitError):
     pass
 
 
+class GitRemote(object):
+    """Class representing a remote repository"""
+    def __init__(self, name, fetch_url, push_urls):
+        self._name = name
+        self._fetch_url = fetch_url
+        if isinstance(push_urls, basestring):
+            self._push_urls = [push_urls]
+        else:
+            self._push_urls = [url for url in push_urls]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
+        """Name of the remote"""
+        return self._name
+
+    @property
+    def fetch_url(self):
+        """Fetch URL"""
+        return self._fetch_url
+
+    @property
+    def push_urls(self):
+        """List of push URLs"""
+        return self._push_urls
+
+
 class GitRepository(object):
     """
     Represents a git repository at I{path}. It's currently assumed that the git
@@ -988,6 +1017,38 @@ class GitRepository(object):
         return GitModifier(name, email)
 
 #{ Remote Repositories
+
+    def get_remotes(self):
+        """
+        Get a list of remote repositories
+
+        @return: remote repositories
+        @rtype: C{dict} of C{GitRemote}
+        """
+        out, err, ret = self._git_inout('remote', [], capture_stderr=True)
+        if ret:
+            raise GitRepositoryError('Failed to get list of remotes: %s' % err)
+
+        # Get information about all remotes
+        remotes = {}
+        for remote in out.splitlines():
+            out, err, _ret = self._git_inout('remote', ['show', '-n', remote],
+                                             capture_stderr=True)
+            if ret:
+                raise GitRepositoryError('Failed to get information for remote '
+                                         '%s: %s' % (remote, err))
+            fetch_url = None
+            push_urls = []
+            for line in out.splitlines():
+                match = re.match('\s*Fetch\s+URL:\s*(\S.*)', line)
+                if match:
+                    fetch_url = match.group(1)
+                match = re.match('\s*Push\s+URL:\s*(\S.*)', line)
+                if match:
+                    push_urls.append(match.group(1))
+            remotes[remote] = GitRemote(remote, fetch_url, push_urls)
+
+        return remotes
 
     def get_remote_repos(self):
         """

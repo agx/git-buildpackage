@@ -568,6 +568,28 @@ def test_clone():
     False
     """
 
+def test_get_remotes():
+    """
+    Merge a branch
+
+    Methods tested:
+         - L{gbp.git.GitRepository.get_remotes}
+
+    >>> import os
+    >>> import gbp.git.repository
+    >>> repo = gbp.git.repository.GitRepository(os.path.join(clone_dir, 'repo'))
+    >>> remotes = repo.get_remotes()
+    >>> len(remotes)
+    1
+    >>> origin = remotes['origin']
+    >>> origin.name
+    'origin'
+    >>> origin.fetch_url == repo_dir
+    True
+    >>> origin.push_urls == [repo_dir]
+    True
+    """
+
 def test_merge():
     """
     Merge a branch
