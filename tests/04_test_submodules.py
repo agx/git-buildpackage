@@ -49,7 +49,7 @@ def teardown():
 
 def test_empty_has_submodules():
     """Test empty repo for submodules"""
-    assert not repo.has_submodules()
+    ok_(not repo.has_submodules())
 
 
 def _add_dummy_data(repo, msg):
@@ -61,7 +61,7 @@ def _add_dummy_data(repo, msg):
 def test_add_files():
     """Add some dummy data"""
     _add_dummy_data(repo, "initial commit")
-    assert True
+    ok_(True)
 
 
 def test_add_submodule_files():
@@ -70,7 +70,7 @@ def test_add_submodule_files():
         os.chdir(submodule.dir)
         _add_dummy_data(submodule.repo, "initial commit in submodule")
         os.chdir(repodir)
-    assert True
+    ok_(True)
 
 
 def test_add_submodule():
@@ -80,23 +80,24 @@ def test_add_submodule():
 
 def test_has_submodules():
     """Check for submodules"""
-    assert repo.has_submodules()
+    ok_(repo.has_submodules())
 
 
 def test_get_submodules():
     """Check for submodules list of  (name, hash)"""
     modules = repo.get_submodules("master")[0]
-    assert modules[0] == 'test_submodule'
-    assert len(modules[1]) == 40
+    eq_(modules[0] , 'test_submodule')
+    eq_(len(modules[1]) , 40)
 
 
 def test_dump_tree():
     """Dump the repository and check if files exist"""
     dumpdir = tmpdir.join("dump")
     os.mkdir(dumpdir)
-    assert buildpackage.dump_tree(repo, dumpdir, "master", True)
-    assert os.path.exists(os.path.join(dumpdir, testfile_name))
-    assert os.path.exists(os.path.join(dumpdir, submodules[0].name, testfile_name))
+    ok_(buildpackage.dump_tree(repo, dumpdir, "master", True))
+    ok_(os.path.exists(os.path.join(dumpdir, testfile_name)))
+    ok_(os.path.exists(os.path.join(dumpdir, submodules[0].name,
+                                    testfile_name)))
 
 
 def test_create_tarballs():
@@ -131,10 +132,10 @@ def test_add_whitespace_submodule():
 def test_get_more_submodules():
     """Check for submodules list of  (name, hash)"""
     module = repo.get_submodules("master")
-    assert(len(module) == len(submodule_names))
+    eq_(len(module), len(submodule_names))
     for module in repo.get_submodules("master"):
-        assert len(module[1]) == 40
-        assert os.path.basename(module[0]) in submodule_names
+        eq_(len(module[1]) , 40)
+        ok_(os.path.basename(module[0]) in submodule_names)
 
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
