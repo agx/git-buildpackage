@@ -25,6 +25,7 @@ tmpdir = None
 testfile_name = "testfile"
 
 class Submodule(object):
+    """Class representing remote repo for Git submodule"""
     def __init__(self, name, tmpdir):
         self.name = name
         self.dir = os.path.join(tmpdir, name)
@@ -32,6 +33,7 @@ class Submodule(object):
 
 
 def setup():
+    """Test module setup"""
     global repo, repodir, submodules, tmpdir
 
     tmpdir = context.new_tmpdir(__name__)
@@ -45,6 +47,7 @@ def setup():
 
 
 def teardown():
+    """Test module teardown"""
     context.teardown()
 
 def test_empty_has_submodules():
@@ -53,6 +56,7 @@ def test_empty_has_submodules():
 
 
 def _add_dummy_data(repo, msg):
+    """Commit dummy data to a Git repository"""
     shutil.copy(".git/HEAD", testfile_name)
     repo.add_files('.', force=True)
     repo.commit_all(msg)
