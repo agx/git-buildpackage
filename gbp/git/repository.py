@@ -1069,7 +1069,7 @@ class GitRepository(object):
         @return: C{True} if the remote repositore is known, C{False} otherwise
         @rtype: C{bool}
         """
-        if name in self.get_remote_repos():
+        if name in self.get_remotes():
             return True
         else:
             return False
