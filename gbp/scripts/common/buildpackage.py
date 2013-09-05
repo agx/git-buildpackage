@@ -23,7 +23,6 @@ import pipes
 import tempfile
 import shutil
 from gbp.command_wrappers import (CatenateTarArchive)
-from gbp.git import GitRepository
 from gbp.errors import GbpError
 import gbp.log
 
