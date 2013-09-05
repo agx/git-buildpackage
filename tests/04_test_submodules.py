@@ -7,7 +7,6 @@ from . import context
 import os
 import shutil
 import tarfile
-import tempfile
 from nose.tools import eq_, ok_
 
 import gbp.log
