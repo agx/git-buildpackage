@@ -800,8 +800,11 @@ def test_make_tree():
     >>> head
     [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
     >>> head.append(['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile2'])
-    >>> repo.make_tree(head)
+    >>> newtree = repo.make_tree(head)
+    >>> newtree
     '745951810c9e22fcc6de9b23f05efd6ab5512123'
+    >>> repo.list_tree(newtree, recurse=False, paths='testfile')
+    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
     """
 
 

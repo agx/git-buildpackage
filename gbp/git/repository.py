@@ -925,7 +925,7 @@ class GitRepository(object):
             raise GitRepositoryError("Not a Git repository object: '%s'" % obj)
         return out[0].strip()
 
-    def list_tree(self, treeish, recurse=False):
+    def list_tree(self, treeish, recurse=False, paths=None):
         """
         Get a trees content. It returns a list of objects that match the
         'ls-tree' output: [ mode, type, sha1, path ].
@@ -940,6 +940,8 @@ class GitRepository(object):
         args = GitArgs('-z')
         args.add_true(recurse, '-r')
         args.add(treeish)
+        args.add("--")
+        args.add_cond(paths, paths)
 
         out, err, ret =  self._git_inout('ls-tree', args.args, capture_stderr=True)
         if ret:
