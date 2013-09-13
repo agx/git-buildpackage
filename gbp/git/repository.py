@@ -295,16 +295,18 @@ class GitRepository(object):
         args = GitArgs("-m", branch, newbranch)
         self._git_command("branch", args.args)
 
-    def create_branch(self, branch, rev=None):
+    def create_branch(self, branch, rev=None, force=False):
         """
         Create a new branch
 
         @param branch: the branch's name
         @param rev: where to start the branch from
+        @param force: reset branch HEAD to start point, if it already exists
 
         If rev is None the branch starts form the current HEAD.
         """
         args = GitArgs(branch)
+        args.add_true(force, '--force')
         args.add_true(rev, rev)
         self._git_command("branch", args.args)
 
