@@ -137,7 +137,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
 
     i = len(commits)
     for commit in commits:
-        if len(commits):
+        if len(commits) > 1:
             gbp.log.info("%d %s left" % (i, 'tries' if i > 1 else 'try'))
         try:
             gbp.log.info("Trying to apply patches at '%s'" % commit)
