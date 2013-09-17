@@ -36,11 +36,6 @@ shell_quote () {
     echo "$1" | sed -e "s/'/'\"'\"'/g" -e "1 s/^/'/" -e "\$ s/\$/'/"
 }
 
-# The URL to the Debian backports repository to add to the chroot
-# configuration when created via this script for a distribution ending in
-# -backports.
-BACKPORTS='http://backports.debian.org/debian-backports'
-
 # Set default BUILDER, DIST, and ARCH based on the name we were invoked as.
 # This allows people to create symlinks like git-pbuilder-squeeze and
 # git-qemubuilder-squeeze-amd64 pointing to git-pbuilder and auto-detecting
@@ -76,6 +71,14 @@ esac
 if expr "$DIST" : '.*-backports$' >/dev/null; then
     DIST=${DIST%-backports}
     EXT="-backports"
+    # The URL to the Debian backports repository to add to the chroot
+    # configuration when created via this script for a distribution ending in
+    # -backports.
+    case $DIST in
+        squeeze|oldstable)
+            BACKPORTS='http://backports.debian.org/debian-backports' ;;
+        *)  BACKPORTS='http://ftp.debian.org/debian' ;;
+    esac
 else
     EXT=
 fi
