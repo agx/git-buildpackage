@@ -22,6 +22,7 @@ SUBMODULES = []
 SUBMODULE_NAMES = ["test_submodule", "sub module"]
 TMPDIR = None
 TESTFILE_NAME = "testfile"
+TESTDIR_NAME = "testdir"
 
 class Submodule(object):
     """Class representing remote repo for Git submodule"""
@@ -57,6 +58,8 @@ def test_empty_has_submodules():
 def _add_dummy_data(repo, msg):
     """Commit dummy data to a Git repository"""
     shutil.copy(".git/HEAD", TESTFILE_NAME)
+    os.mkdir(TESTDIR_NAME)
+    shutil.copy(TESTFILE_NAME, os.path.join(TESTDIR_NAME, TESTFILE_NAME))
     repo.add_files('.', force=True)
     repo.commit_all(msg)
 
@@ -99,8 +102,16 @@ def test_dump_tree():
     os.mkdir(dumpdir)
     ok_(buildpackage.dump_tree(REPO, dumpdir, "master", True))
     ok_(os.path.exists(os.path.join(dumpdir, TESTFILE_NAME)))
+    ok_(os.path.exists(os.path.join(dumpdir, TESTDIR_NAME, TESTFILE_NAME)))
     ok_(os.path.exists(os.path.join(dumpdir, SUBMODULES[0].name,
                                     TESTFILE_NAME)))
+    # No submodules or subdirs if recursive is False
+    dumpdir = TMPDIR.join("dump2")
+    os.mkdir(dumpdir)
+    ok_(buildpackage.dump_tree(REPO, dumpdir, "master", True, False))
+    ok_(os.path.exists(os.path.join(dumpdir, TESTFILE_NAME)))
+    ok_(not os.path.exists(os.path.join(dumpdir, TESTDIR_NAME)))
+    ok_(not os.path.exists(os.path.join(dumpdir, SUBMODULES[0].name)))
 
 
 def test_create_tarballs():
@@ -120,12 +131,12 @@ def test_check_tarfiles():
     tarobj = tarfile.open(TMPDIR.join("test_0.1.orig.tar.bz2"), 'r:*')
     files = tarobj.getmembers()
     ok_("test-0.1/.gitmodules" in [ f.name for f in files ])
-    eq_(len(files) , 6)
+    eq_(len(files) , 10)
     # Check tarball without submodules
     tarobj = tarfile.open(TMPDIR.join("test_0.2.orig.tar.bz2"), 'r:*')
     files = tarobj.getmembers()
     ok_(("test-0.2/%s" % TESTFILE_NAME) in [ f.name for f in files ])
-    eq_(len(files) , 4)
+    eq_(len(files) , 6)
 
 def test_add_whitespace_submodule():
     """Add a second submodule with name containing whitespace"""

@@ -101,13 +101,19 @@ def git_archive_single(treeish, output, prefix, comp_type, comp_level, comp_opts
 
 
 #{ Functions to handle export-dir
-def dump_tree(repo, export_dir, treeish, with_submodules):
+def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
     "dump a tree to output_dir"
     output_dir = os.path.dirname(export_dir)
     prefix = sanitize_prefix(os.path.basename(export_dir))
+    if recursive:
+        paths = []
+    else:
+        paths = ["'%s'" % nam for _mod, typ, _sha, nam in
+                    repo.list_tree(treeish) if typ == 'blob']
 
     pipe = pipes.Template()
-    pipe.prepend('git archive --format=tar --prefix=%s %s' % (prefix, treeish), '.-')
+    pipe.prepend('git archive --format=tar --prefix=%s %s -- %s' %
+                 (prefix, treeish, ' '.join(paths)), '.-')
     pipe.append('tar -C %s -xf -' % output_dir,  '-.')
     top = os.path.abspath(os.path.curdir)
     try:
@@ -115,7 +121,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules):
         if ret:
             raise GbpError("Error in dump_tree archive pipe")
 
-        if with_submodules:
+        if recursive and with_submodules:
             if repo.has_submodules():
                 repo.update_submodules()
             for (subdir, commit) in repo.get_submodules(treeish):
