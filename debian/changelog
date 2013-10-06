@@ -1,3 +1,61 @@
+git-buildpackage (0.6.4) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [0385dc5] docs: having an upstream branch is a recommendation rather than
+    a hard requirement, we can use any treeish to build the upstream tarball
+    from.
+  * [e398469] Remove unused import
+  * [f738be3] Add link to online docs
+  * [ec7bd94] pq: print which patch failed to apply
+  * [820100d] pq: Only print number or tries if we try more than once
+  * [a86ccb7] Update to git-pbuilder 1.29
+  * [b494801] Backports got integrated into the main archive.  From wheezy on
+    we can use the main archive
+
+  [ Markus Lehtonen ]
+  * [4030c19] docs: minor sgml syntax fix
+  * [e72a1e2] config: restore mangled env in doctests.
+  * [0eeafba] GitRepository/diff: add 'stat' and 'summary' options.
+  * [8cdc06f] ComponentTestBase: more verbose output in case of branch mismatch
+  * [af2034c] ComponentTestBase: fix env restore in teardown
+  * [54099f5] import-orig: import readline in the common module.
+  * [6c478a6] ComponentTestBase: keep tmpdir if GBP_TESTS_NOCLEAN is in env
+  * [bc40956] GitRepository: Add clean() method
+  * [e48f0a0] GitRepository.diff: add 'text' option.  for generating textual
+    diffs.
+  * [3c0a022] GitRepository.diff: prevent usage of external diff.  External
+    diff might break patch generation, for example.
+  * [6f3d63a] ComponentTestBase: use eq_() ok_() from nose.tools for better
+    assert messages.
+  * [e54289e] common/buildpackage: fix handling of empty tarball prefix as
+    needed for rpm builds
+  * [39f581e] GitRepository.diff: add 'ignore_submodules' option
+  * [b9b9eea] GitRepository.list_tree: add 'paths' option.
+  * [3eb401d] git: new class and method for remote repositories.
+  * [28fdf4c] GitRepository.has_remote_repo: use get_remotes method.
+  * [b4e5b73] GitRepository: deprecate the get_remote_repos method.
+  * [c222197] tests: add test for archiving without git submodules
+  * [92f29be] tests: use eq_ and ok_ from nose tools in submodule tests.
+    For consistency and better assert error messages.
+  * [f858f87] tests: add some docstrings to git submodule tests.
+  * [1d92bfe] tests: upper case global variables in submodule tests.
+  * [6b8037e] tests: remove unused import in submodule tests.
+
+  [ Lingchaox Xin ]
+  * [07b3054] GitRepository.has_treeish: minor pylint fix
+  * [eca5a33] GitRepository.describe: add 'tags' and 'extra-match' options
+  * [1320de2] GitRepository.fetch: Add 'refspec' option
+  * [171579f] GitRepository.fetch: Add 'all_remotes' option
+  * [68baa9a] GitRepository.push: Add 'force' option
+  * [d28c7cc] GitRepository.push: Add 'tags' option
+  * [db79c5d] GitRepository.pull: Add 'all_remotes' option.
+    Also changes the method to utilize the GitArgs class.
+
+  [ Osamu Aoki ]
+  * [8441bba] typo s/bei/be/ (Closes: #722359)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 06 Oct 2013 17:35:14 +0200
+
 git-buildpackage (0.6.3) unstable; urgency=low
 
   * [60ffe95] --git-hooks doesn't take an argument
