@@ -457,7 +457,7 @@
       Note that the above needs a &cowbuildercmd; chroot already. This can be created using:
     </para>
     <screen>
-      DIST=wheezy DIST=i386 &git-pbuilder; create
+      DIST=wheezy ARCH=i386 &git-pbuilder; create
     </screen>
   </refsect1>
   <refsect1>
