@@ -59,21 +59,23 @@ def main(argv):
 
     (options, args) = parse_args(argv)
 
-    if len(args) != 2:
+    if len(args) < 2:
         gbp.log.err("Need a repository to clone.")
         return 1
     else:
         source = args[1]
 
+    clone_to, auto_name = (os.path.curdir, True) if len(args) < 3 else (args[2], False)
     try:
-        GitRepository(os.path.curdir)
+        GitRepository(clone_to)
         gbp.log.err("Can't run inside a git repository.")
         return 1
     except GitRepositoryError:
         pass
 
     try:
-        repo = DebianGitRepository.clone(os.path.curdir, source, options.depth)
+        repo = DebianGitRepository.clone(clone_to, source, options.depth,
+                                         auto_name=auto_name)
         os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the
