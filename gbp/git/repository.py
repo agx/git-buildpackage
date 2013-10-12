@@ -1851,7 +1851,10 @@ class GitRepository(object):
                 raise GitRepositoryError("Error running git clone: %s" % stderr)
 
             if not name:
-                name = remote.rstrip('/').rsplit('/',1)[1]
+                try:
+                    name = remote.rstrip('/').rsplit('/',1)[1]
+                except IndexError:
+                    name = remote.split(':', 1)[1]
                 if (mirror or bare):
                     if not name.endswith('.git'):
                         name = "%s.git" % name
