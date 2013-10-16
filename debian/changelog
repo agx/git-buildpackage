@@ -1,3 +1,20 @@
+git-buildpackage (0.6.5) unstable; urgency=low
+
+  [ Etienne Millon ]
+  * [ba4f778] doc: Fix git-pbuilder example (Closes: #725875)
+
+  [ Guido Günther ]
+  * [3be2947] Be more robust about git status output changes by using
+    --porcelain. Heavily based on a patch by rian m. carlson
+    (Closes: #726260)
+  * [ae460e1] Bump standards version
+
+  [ Andrew Starr-Bochicchio ]
+  * [4368694] Don't export DEB_VENDOR="Debian"
+    Tests now take Ubuntu versions into consideration. (Closes: #723756)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 16 Oct 2013 10:29:58 +0200
+
 git-buildpackage (0.6.4) unstable; urgency=low
 
   [ Guido Günther ]
