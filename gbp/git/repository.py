@@ -761,6 +761,18 @@ class GitRepository(object):
             args += [ commit, '--' ]
             self._git_command("reset", args)
 
+    def _status(self, porcelain, ignore_untracked):
+        args = GitArgs()
+        args.add_true(ignore_untracked, '-uno')
+        args.add_true(porcelain, '--porcelain')
+
+        out, ret = self._git_getoutput('status',
+                                       args.args,
+                                       extra_env={'LC_ALL': 'C'})
+        if ret:
+            raise GitRepositoryError("Can't get repository status")
+        return out
+
     def is_clean(self, ignore_untracked=False):
         """
         Does the repository contain any uncommitted modifications?
@@ -775,24 +787,15 @@ class GitRepository(object):
         if self.bare:
             return (True, '')
 
-        clean_msg = 'nothing to commit'
-
-        args = GitArgs()
-        args.add_true(ignore_untracked, '-uno')
-
-        out, ret = self._git_getoutput('status',
-                                       args.args,
-                                       extra_env={'LC_ALL': 'C'})
-        if ret:
-            raise GbpError("Can't get repository status")
-        ret = False
-        for line in out:
-            if line.startswith('#'):
-                continue
-            if line.startswith(clean_msg):
-                ret = True
-            break
-        return (ret, "".join(out))
+        out = self._status(porcelain=True,
+                           ignore_untracked=ignore_untracked)
+        if out:
+            # Get a more helpful error message.
+            out = self._status(porcelain=False,
+                                ignore_untracked=ignore_untracked)
+            return (False, "".join(out))
+        else:
+            return (True, '')
 
     def clean(self, directories=False, force=False, dry_run=False):
         """
