@@ -134,11 +134,12 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  other_parents = parents,
                                  author=author,
                                  committer=committer)
-        repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
-                        msg="Debian release %s" % src.version,
-                        commit=commit,
-                        sign=options.sign_tags,
-                        keyid=options.keyid)
+        if not options.skip_debian_tag:
+            repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
+                            msg="Debian release %s" % src.version,
+                            commit=commit,
+                            sign=options.sign_tags,
+                            keyid=options.keyid)
     except (gbpc.CommandExecFailed, GitRepositoryError) as err:
         msg = err.__str__() if len(err.__str__()) else ''
         gbp.log.err("Failed to import Debian package: %s" % msg)
@@ -220,6 +221,10 @@ def parse_args(argv):
                       dest="debian_tag")
     tag_group.add_config_file_option(option_name="upstream-tag",
                       dest="upstream_tag")
+    tag_group.add_option("--skip-debian-tag",dest="skip_debian_tag",
+                         action="store_true", default=False,
+                         help="Don't add a tag after importing the Debian patch")
+
 
     import_group.add_config_file_option(option_name="filter",
                       dest="filters", action="append")
@@ -335,11 +340,12 @@ def main(argv):
                                          author=author,
                                          committer=committer)
 
-                repo.create_tag(name=tag,
-                                msg=msg,
-                                commit=commit,
-                                sign=options.sign_tags,
-                                keyid=options.keyid)
+                if not (src.native and options.skip_debian_tag):
+                    repo.create_tag(name=tag,
+                                    msg=msg,
+                                    commit=commit,
+                                    sign=options.sign_tags,
+                                    keyid=options.keyid)
                 if not src.native:
                     if is_empty:
                         repo.create_branch(options.upstream_branch, commit)

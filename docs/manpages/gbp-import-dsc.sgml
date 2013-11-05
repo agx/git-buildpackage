@@ -28,6 +28,7 @@
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--skip-debian-tag=</option></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--download</option></arg>
@@ -112,6 +113,14 @@
         <listitem>
           <para>use this tag format when tagging upstream versions, 
 	  default is <replaceable>upstream/%(version)s</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--skip-debian-tag</option></term>
+        <listitem>
+          <para>Don't create Debian tag after importing the Debian patch. This can be useful
+          if you already created a package but want to further work on it after importing it
+          into git.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
