@@ -111,7 +111,27 @@ def get_committer_from_author(author, options):
     return committer
 
 
-def apply_debian_patch(repo, unpack_dir, src, options, parents):
+def check_parents(repo, branch, tag):
+    """
+    Check if the upstream tag is already merged, if not, return
+    the additional parent to merge
+    """
+    parents = None
+    rev = None
+
+    try:
+        rev = repo.rev_parse("%s^{commit}" % tag)
+    except GitRepositoryError:
+        pass
+
+    if rev and not repo.branch_contains(branch, rev):
+        gbp.log.debug("Tag '%s' not yet merged into '%s'"
+                      % (tag, branch))
+        parents = [rev]
+
+    return parents
+
+def apply_debian_patch(repo, unpack_dir, src, options, tag):
     """apply the debian patch and tag appropriately"""
     try:
         os.chdir(unpack_dir)
@@ -125,6 +145,10 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
         if os.path.exists('debian/rules'):
             os.chmod('debian/rules', 0755)
         os.chdir(repo.path)
+
+        parents = check_parents(repo,
+                                options.debian_branch,
+                                tag)
 
         author = get_author_from_changelog(unpack_dir)
         committer = get_committer_from_author(author, options)
@@ -351,12 +375,12 @@ def main(argv):
                         repo.create_branch(options.upstream_branch, commit)
                     if options.pristine_tar:
                         repo.pristine_tar.commit(src.tgz, options.upstream_branch)
-                    parents = [ options.upstream_branch ]
                 if is_empty and not repo.has_branch(options.debian_branch):
                     repo.create_branch(options.debian_branch, commit)
             if not src.native:
                 if src.diff or src.deb_tgz:
-                    apply_debian_patch(repo, upstream.unpacked, src, options, parents)
+                    apply_debian_patch(repo, upstream.unpacked, src, options,
+                                       tag)
                 else:
                     gbp.log.warn("Didn't find a diff to apply.")
             if repo.get_branch() == options.debian_branch or is_empty:
