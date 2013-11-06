@@ -1,3 +1,64 @@
+git-buildpackage (0.6.6) unstable; urgency=low
+
+  [ Guan Junchun ]
+  * [284eea5] gbp-clone: support repo URLs like "host:repo.git" Previously,
+    gbp didn't correctly parse this kind of URL and clone failed.
+  * [d52abf3] gbp-clone: support cloning to a specific directory
+    (Closes: #725666)
+
+  [ Guido Günther ]
+  * [3092623] Add missing bash completion for gbp import-dscs
+    (Closes: #727749)
+  * [fc5b485] import-dsc: allow to skip Debian tag creation
+    (Closes: #636368)
+  * [6f0c8f9] Update to git-pbuilder 1.30 that resyncs with what we shipped in
+    gbp.
+  * [3e09958] Disable html coverage generation until python-nose is fixed.
+
+  [ Markus Lehtonen ]
+  * [c661c71] pq: rewrite patch export functionality.
+    Use our own function for constructing the patch files instead of using
+    the format-patch command of git. This way, we get the desired output
+    format directly, without the need for the error-prone "format-patch,
+    parse patch files, mangle and re-write patch files" cycle.
+    Also, fix patch naming in patch generation when '--no-patch-numbers' is
+    used.  Previously, multiple commits with the same subject resulted in
+    multiple patches having the same filename. This lead into broken series
+    with missing patches as patch files were overwritten by the topmost
+    commit.
+  * [017fac3] pq.format_patch: support file path filtering.
+    Implements a filter option that allows filtering out changes to certain
+    files/paths in the patch-generation. A commit is totally ignored if all
+    files would be filtered out. The path filter is given as a Python
+    regexp.
+  * [a0d6eb7] pq: properly generate non-ascii patch files.
+    Encode non-ascii email headers properly. Also, set MIME headers
+    correctly for the message body if the commit message body contains
+    non-ascii characters.
+    The reason for constructing the message in a little bit "clumsy" way is
+    the intention is to match the output of git-format-patch as closely as
+    possible.
+  * [91fbdc1] pq: support patch-export commands.
+    Support giving commands to pq as a meta tag in commit message. The
+    format is "Gbp: <command> [args]".
+    Currently, only one command is supported. namely 'ignore'. That is, one
+    can use 'Gbp: Ignore' in the commit message for ignoring the commit in
+    patch-generation.
+  * [3dccca6] pq: add format_diff() function.
+    For generating a patch file from a diff between two arbitrary commits.
+  * [34e85f7] pq: listen to 'Gbp-Pq:' commands, too
+  * [99c6995] pq: support 'Topic' patch-export command.
+    Topic can be defined with either 'Gbp: Topic <topic>' or 'Gbp-Pq: Topic
+    <topic>' in the commit message.
+    This is to replace the "gbp-pq-topic: <topic>" command.
+  * [0c0086b] docs: update pq manpages regarding pq command meta tags
+
+  [ Felipe Sateler ]
+  * [babbc5e] Add zsh completion.
+    (Closes: #717002)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Nov 2013 08:21:55 +0100
+
 git-buildpackage (0.6.5) unstable; urgency=low
 
   [ Etienne Millon ]
