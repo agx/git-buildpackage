@@ -251,7 +251,7 @@ upstream-tag = v%(version)s
 	  <listitem>
 	    <para>
 	      the Debian packaging for a release <emphasis>jessie</emphasis>,
-	      <emphasis>wheezy</emphasis> or <emphasis>sid</emphasis>, <emphasis>experimental</emphasis>.
+	      <emphasis>wheezy</emphasis>, <emphasis>sid</emphasis> or <emphasis>experimental</emphasis>.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -281,7 +281,7 @@ upstream-tag = v%(version)s
 	  </term>
 	  <listitem>
 	    <para>
-	      security updates for a certain release
+	      backports to a certain release
 	    </para>
 	  </listitem>
 	</varlistentry>
