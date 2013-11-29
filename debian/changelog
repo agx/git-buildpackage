@@ -1,3 +1,16 @@
+git-buildpackage (0.6.7) unstable; urgency=low
+
+  * [ab5a708] import-dsc; Merge upstream version by tag
+    instead of simply using the upstream branch name. THis makes sure
+    we also merge upstream versions that were imported previously with
+    e.g. "gbp import-orig". (Closes: #698222)
+  * [2042144] log: add error and warning aliases since I tend to use them
+    instead of err and warn. (Closes: #728896)
+  * [bc5ce39] Fix description of backports branches
+  * [00d830c] Use --distribution instead of --dist (Closes: #730788)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 29 Nov 2013 20:52:03 +0100
+
 git-buildpackage (0.6.6) unstable; urgency=low
 
   [ Guan Junchun ]
