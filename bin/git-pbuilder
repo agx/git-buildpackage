@@ -224,10 +224,10 @@ update|create|login)
     else
         if [ "$EXT" = '-backports' ] ; then
             OTHERMIRROR="deb $BACKPORTS $DIST$EXT main"
-            sudo "$BUILDER" --"$action" --dist "$DIST" \
+            sudo "$BUILDER" --"$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         else
-            sudo "$BUILDER" --"$action" --dist "$DIST" "${OPTIONS[@]}" "$@"
+            sudo "$BUILDER" --"$action" --distribution "$DIST" "${OPTIONS[@]}" "$@"
         fi
     fi
     exit $?
