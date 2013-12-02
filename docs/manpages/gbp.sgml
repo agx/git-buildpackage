@@ -19,12 +19,10 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp;
-      <arg><option>--verbose</option></arg>
-      <group choice="plain">
-	<arg><option>&lt;command&gt;</option></arg>
+      <group choice='req'>
+	<arg><option>--help</option></arg>
+	<arg><option>command</option><arg choice='opt' rep='repeat'><option>args</option></arg></arg>
       </group>
-
-      <arg><option>&lt;args&gt;</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -37,13 +35,6 @@
     <title>OPTIONS</title>
     <variablelist>
       <varlistentry>
-        <term><option>--verbose</option>
-        </term>
-        <listitem>
-          <para>verbose execution</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>--help</option>
         </term>
         <listitem>
@@ -54,6 +45,10 @@
   </refsect1>
   <refsect1>
     <title>GBP COMMANDS</title>
+    <para>
+      These are the possible commands. For possible arguments to these commands please
+      see the corresponding man pages.
+    </para>
     <variablelist>
       <varlistentry>
         <term>buildpackage
