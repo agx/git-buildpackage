@@ -21,6 +21,7 @@ Module for testing individual command line tools of the git-buildpackage suite
 """
 
 import os
+import re
 import shutil
 import tempfile
 from StringIO import StringIO
@@ -165,13 +166,13 @@ class ComponentTestBase(object):
         self._log.seek(0)
         return self._log.readlines()
 
-    def _check_log(self, linenum, string):
+    def _check_log(self, linenum, regex):
         """Check that the specified line on log matches expectations"""
         if self._log is None:
             raise Exception("BUG in unittests: no log captured!")
         output = self._get_log()[linenum].strip()
-        ok_(output.startswith(string), ("Expected: '%s...' Got: '%s'" %
-                                        (string, output)))
+        ok_(re.match(regex, output),
+            "Log entry '%s' doesn't match '%s'" % (output, regex))
 
     def _clear_log(self):
         """Clear the mock strerr"""
