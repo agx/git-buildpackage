@@ -348,6 +348,23 @@ def disable_hooks(options):
             setattr(options, hook, '')
 
 
+def changes_file_suffix(dpkg_args):
+    """
+    >>> changes_file_suffix(['-A'])
+    'all'
+    >>> changes_file_suffix(['-S'])
+    'source'
+    >>> changes_file_suffix([]) == du.get_arch()
+    True
+    """
+    if '-S' in dpkg_args:
+        return 'source'
+    elif '-A' in dpkg_args:
+        return 'all'
+    else:
+        return os.getenv('ARCH', None) or du.get_arch()
+
+
 def parse_args(argv, prefix):
     args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
     dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
@@ -554,17 +571,12 @@ def main(argv):
             RunAtCommand(options.builder, dpkg_args, shell=True,
                          extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)
             if options.postbuild:
-                arch = os.getenv('ARCH', None) or du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir,
                                            source.sourcepkg,
-                                           source.changelog.noepoch, arch))
+                                           source.changelog.noepoch,
+                                           changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
-                if not os.path.exists(changes):
-                    changes = os.path.abspath("%s/../%s_%s_source.changes" %
-                                  (build_dir,
-                                   source.sourcepkg,
-                                   source.changelog.noepoch))
                 Command(options.postbuild, shell=True,
                         extra_env={'GBP_CHANGES_FILE': changes,
                                    'GBP_BUILD_DIR': build_dir})()
