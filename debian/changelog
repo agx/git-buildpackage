@@ -1,3 +1,16 @@
+git-buildpackage (0.6.8) unstable; urgency=medium
+
+  * [f5718b8] No need to document --verbose.  Properly document --help
+    instead.
+    Thanks to Olivier Berger for pointing this out (Closes: #731149)
+  * [e746d5f] Adjust test cases to newer devscripts (Closes: #732384)
+  * [ca93ccb] Run nosetest on executables too.
+    They're all well behaved and this allows us to use doctests in them
+  * [eec8ce3] Determine changes file name based on dpkg-buildpackage options
+    (Closes: #732678)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 20 Dec 2013 17:21:20 +0100
+
 git-buildpackage (0.6.7) unstable; urgency=low
 
   * [ab5a708] import-dsc; Merge upstream version by tag
