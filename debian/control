@@ -36,7 +36,7 @@ Architecture: all
 Depends: ${python:Depends},
  ${shlibs:Depends},
  ${misc:Depends},
- devscripts (>= 2.10.66~),
+ devscripts (>= 2.13.5~),
  git (>= 1:1.7.9.1-1~),
  man-db,
  python-dateutil,
