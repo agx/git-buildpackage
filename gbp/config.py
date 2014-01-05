@@ -470,7 +470,7 @@ class GbpOptionParserDebian(GbpOptionParser):
     defaults = dict(GbpOptionParser.defaults)
     defaults.update( {
                        'builder'            : 'debuild -i -I',
-                       'cleaner'            : 'debuild -d clean',
+                       'cleaner'            : '/bin/true',
                      } )
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

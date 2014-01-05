@@ -1,3 +1,11 @@
+git-buildpackage (0.6.9~) UNRELEASED; urgency=medium
+
+  This version changes the default of the cleaner options from 'debuild clean'
+  to a noop ('/bin/true'). If you want to retain the old behaviour you can still
+  configure it via gbp.conf. For more details see #670624.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 05 Jan 2014 15:52:39 +0100
+
 git-buildpackage (0.6.0) unstable; urgency=low
 
   In order to provide a more consistent and git like interface a new gbp super
