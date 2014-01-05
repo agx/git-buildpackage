@@ -278,6 +278,8 @@ def main(argv):
     parents = None
 
     options, args = parse_args(argv)
+    if not options:
+        return 1
 
     try:
         if len(args) != 1:

@@ -17,6 +17,7 @@
 #
 """manage patches in a patch queue"""
 
+import ConfigParser
 import errno
 import os
 import shutil
@@ -209,10 +210,9 @@ def switch_pq(repo, current):
         switch_to_pq_branch(repo, current)
 
 
-def main(argv):
-    retval = 0
-
-    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+def parse_args(argv):
+    try:
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                    usage="%prog [options] action - maintain patches on a patch queue branch\n"
         "Actions:\n"
         "  export         export the patch queue associated to the current branch\n"
@@ -224,6 +224,10 @@ def main(argv):
         "  drop           drop (delete) the patch queue associated to the current branch.\n"
         "  apply          apply a patch\n"
         "  switch         switch to patch-queue branch and vice versa")
+    except ConfigParser.ParsingError as err:
+        gbp.log.err(err)
+        return None, None
+
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -234,8 +238,16 @@ def main(argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    return parser.parse_args(argv)
 
-    (options, args) = parser.parse_args(argv)
+
+def main(argv):
+    retval = 0
+
+    (options, args) = parse_args(argv)
+    if not options:
+        return 1
+
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if len(args) < 2:
@@ -294,4 +306,3 @@ def main(argv):
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
-

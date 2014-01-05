@@ -19,6 +19,7 @@
 #
 """clone a repo and set it up for gbp"""
 
+import ConfigParser
 import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
@@ -29,8 +30,13 @@ import gbp.log
 
 
 def parse_args (argv):
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                             usage='%prog [options] repository - clone a remote repository')
+    try:
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                                 usage='%prog [options] repository - clone a remote repository')
+    except ConfigParser.ParsingError as err:
+        gbp.log.err(err)
+        return None, None
+
     branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
     parser.add_option_group(branch_group)
 
@@ -58,6 +64,8 @@ def main(argv):
     retval = 0
 
     (options, args) = parse_args(argv)
+    if not options:
+        return 1
 
     if len(args) < 2:
         gbp.log.err("Need a repository to clone.")

@@ -244,6 +244,9 @@ def main(argv):
     linked = False
 
     (options, args) = parse_args(argv)
+    if not options:
+        return 1
+
     try:
         source = find_source(options, args)
         if not source:
