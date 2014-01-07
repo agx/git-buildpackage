@@ -3,6 +3,7 @@
 from . import context
 
 import os
+import subprocess
 import unittest
 
 import gbp.log
@@ -86,4 +87,21 @@ class MockedChangeLog(ChangeLog):
     def __init__(self, version, changes = "a important change"):
         ChangeLog.__init__(self,
                            contents=self.contents % (version, changes))
+
+
+def get_dch_default_urgency():
+    """Determine the default urgency level used by dch"""
+    try:
+        popen = subprocess.Popen(['dch', '--version'], stdout=subprocess.PIPE)
+        out, _err = popen.communicate()
+    except OSError:
+        urgency='medium'
+    else:
+        verstr = out.splitlines()[0].split()[-1]
+        major, minor = verstr.split('.')[0:2]
+        if int(major) <= 2 and int(minor) <= 12:
+            urgency = 'low'
+        else:
+            urgency = 'medium'
+    return urgency
 
