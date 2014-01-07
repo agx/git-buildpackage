@@ -121,18 +121,32 @@ def detect_name_and_version(repo, source, options):
     return (sourcepackage, version)
 
 
-def find_source(options, args):
+def find_source(use_uscan, args):
     """Find the tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
     @rtype: string
     @raise GbpError: raised on all detected errors
-    """
-    if options.uscan: # uscan mode
-        uscan = Uscan()
 
+    >>> find_source(False, ['too', 'much'])
+    Traceback (most recent call last):
+    ...
+    GbpError: More than one archive specified. Try --help.
+    >>> find_source(False, [])
+    Traceback (most recent call last):
+    ...
+    GbpError: No archive to import specified. Try --help.
+    >>> find_source(True, ['tarball'])
+    Traceback (most recent call last):
+    ...
+    GbpError: you can't pass both --uscan and a filename.
+    >>> find_source(False, ['tarball']).path
+    'tarball'
+    """
+    if use_uscan:
         if args:
             raise GbpError("you can't pass both --uscan and a filename.")
 
+        uscan = Uscan()
         gbp.log.info("Launching uscan...")
         try:
             uscan.scan()
@@ -248,7 +262,7 @@ def main(argv):
         return 1
 
     try:
-        source = find_source(options, args)
+        source = find_source(options.uscan, args)
         if not source:
             return ret
 
