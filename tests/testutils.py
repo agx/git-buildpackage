@@ -91,17 +91,22 @@ class MockedChangeLog(ChangeLog):
 
 def get_dch_default_urgency():
     """Determine the default urgency level used by dch"""
+    urgency='medium'
+    tmp_dch_name = '__test_dch'
     try:
-        popen = subprocess.Popen(['dch', '--version'], stdout=subprocess.PIPE)
-        out, _err = popen.communicate()
+        dch_cmd = ['dch', '--create', '--empty', '--changelog', tmp_dch_name,
+                   '--package=foo', '--newversion=1',
+                   '--distribution=UNRELEASED']
+        ret = subprocess.Popen(dch_cmd).wait()
     except OSError:
-        urgency='medium'
+        pass
     else:
-        verstr = out.splitlines()[0].split()[-1]
-        major, minor = verstr.split('.')[0:2]
-        if int(major) <= 2 and int(minor) <= 12:
-            urgency = 'low'
-        else:
-            urgency = 'medium'
+        if ret == 0:
+            with open(tmp_dch_name) as dchfile:
+                header = dchfile.readline().strip()
+                urgency = header.split()[-1].replace('urgency=', '')
+    finally:
+        if os.path.isfile(tmp_dch_name):
+            os.unlink(tmp_dch_name)
     return urgency
 
