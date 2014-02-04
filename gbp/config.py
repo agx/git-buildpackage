@@ -668,6 +668,10 @@ class GbpOptionParserRpm(GbpOptionParser):
             'mock-root'                 : '',
             'mock-options'              : '',
             'native'                    : 'auto',
+            'changelog-file'            : 'auto',
+            'changelog-revision'        : '',
+            'spawn-editor'              : 'always',
+            'editor-cmd'                : 'vim',
                     })
 
     help = dict(GbpOptionParser.help)
@@ -717,6 +721,17 @@ class GbpOptionParserRpm(GbpOptionParser):
                    "default is '%(mock-options)s'"),
             'native':
                 "Treat this package as native, default is '%(native)s'",
+            'changelog-file':
+                "Changelog file to be used, default is '%(changelog-file)s'",
+            'changelog-revision':
+                "Format string for the revision field in the changelog header. "
+                "If empty or not defined the default from packaging policy is "
+                "used.",
+            'editor-cmd':
+                "Editor command to use",
+            'git-author':
+                "Use name and email from git-config for the changelog header, "
+                "default is '%(git-author)s'",
                  })
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

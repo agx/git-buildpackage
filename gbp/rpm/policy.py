@@ -17,7 +17,9 @@
 """Default packaging policy for RPM"""
 
 import re
+
 from gbp.pkg import PkgPolicy, parse_archive_filename
+from gbp.scripts.common.pq import parse_gbp_commands
 
 class RpmPkgPolicy(PkgPolicy):
     """Packaging policy for RPM"""
@@ -85,4 +87,115 @@ class RpmPkgPolicy(PkgPolicy):
         header_format = "* %(time)s %(name)s <%(email)s> %(revision)s"
         header_time_format = "%a %b %d %Y"
         header_rev_format = "%(version)s"
+
+
+    class ChangelogEntryFormatter(object):
+        """Helper class for generating changelog entries from git commits"""
+
+        # Maximum length for a changelog entry line
+        max_entry_line_length = 76
+        # Bug tracking system related meta tags recognized from git commit msg
+        bts_meta_tags = ("Close", "Closes", "Fixes", "Fix")
+        # Regexp for matching bug tracking system ids (e.g. "bgo#123")
+        bug_id_re = r'[A-Za-z0-9#_\-]+'
+
+        @classmethod
+        def _parse_bts_tags(cls, lines, meta_tags):
+            """
+            Parse and filter out bug tracking system related meta tags from
+            commit message.
+
+            @param lines: commit message
+            @type lines: C{list} of C{str}
+            @param meta_tags: meta tags to look for
+            @type meta_tags: C{tuple} of C{str}
+            @return: bts-ids per meta tag and the non-mathced lines
+            @rtype: (C{dict}, C{list} of C{str})
+            """
+            tags = {}
+            other_lines = []
+            bts_re = re.compile(r'^(?P<tag>%s):\s*(?P<ids>.*)' %
+                                ('|'.join(meta_tags)), re.I)
+            bug_id_re = re.compile(cls.bug_id_re)
+            for line in lines:
+                match = bts_re.match(line)
+                if match:
+                    tag = match.group('tag')
+                    ids_str = match.group('ids')
+                    bug_ids = [bug_id.strip() for bug_id in
+                                bug_id_re.findall(ids_str)]
+                    if tag in tags:
+                        tags[tag] += bug_ids
+                    else:
+                        tags[tag] = bug_ids
+                else:
+                    other_lines.append(line)
+            return (tags, other_lines)
+
+        @classmethod
+        def _extra_filter(cls, lines, ignore_re):
+            """
+            Filter out specific lines from the commit message.
+
+            @param lines: commit message
+            @type lines: C{list} of C{str}
+            @param ignore_re: regexp for matching ignored lines
+            @type ignore_re: C{str}
+            @return: filtered commit message
+            @rtype: C{list} of C{str}
+            """
+            if ignore_re:
+                match = re.compile(ignore_re)
+                return [line for line in lines if not match.match(line)]
+            else:
+                return lines
+
+        @classmethod
+        def compose(cls, commit_info, **kwargs):
+            """
+            Generate a changelog entry from a git commit.
+
+            @param commit_info: info about the commit
+            @type commit_info: C{commit_info} object from
+                L{gbp.git.repository.GitRepository.get_commit_info()}.
+            @param kwargs: additional arguments to the compose() method,
+                currently we recognize 'full', 'id_len' and 'ignore_re'
+            @type kwargs: C{dict}
+            @return: formatted changelog entry
+            @rtype: C{list} of C{str}
+            """
+            # Parse and filter out gbp command meta-tags
+            cmds, body = parse_gbp_commands(commit_info, 'gbp-rpm-ch',
+                                            ('ignore', 'short', 'full'), ())
+            body = body.splitlines()
+            if 'ignore' in cmds:
+                return None
+
+            # Parse and filter out bts-related meta-tags
+            bts_tags, body = cls._parse_bts_tags(body, cls.bts_meta_tags)
+
+            # Additional filtering
+            body = cls._extra_filter(body, kwargs['ignore_re'])
+
+            # Generate changelog entry
+            subject = commit_info['subject']
+            commitid = commit_info['id']
+            if kwargs['id_len']:
+                text = ["- [%s] %s" % (commitid[0:kwargs['id_len']], subject)]
+            else:
+                text = ["- %s" % subject]
+
+            # Add all non-filtered-out lines from commit message, unless 'short'
+            if (kwargs['full'] or 'full' in cmds) and not 'short' in cmds:
+                # Add all non-blank body lines.
+                text.extend(["  " + line for line in body if line.strip()])
+
+            # Add bts tags and ids in the end
+            for tag, ids in bts_tags.iteritems():
+                bts_msg = " (%s: %s)" % (tag, ', '.join(ids))
+                if len(text[-1]) + len(bts_msg) >= cls.max_entry_line_length:
+                    text.append(" ")
+                text[-1] += bts_msg
+
+            return text
 

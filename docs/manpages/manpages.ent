@@ -15,5 +15,6 @@
 <!ENTITY man.gbp.buildpackage.rpm SYSTEM "gbp-buildpackage-rpm.sgml">
 <!ENTITY man.gbp.import.srpm SYSTEM "gbp-import-srpm.sgml">
 <!ENTITY man.gbp.pq.rpm SYSTEM "gbp-pq-rpm.sgml">
+<!ENTITY man.gbp.rpm.ch SYSTEM "gbp-rpm-ch.sgml">
 <!ENTITY % COMMON.OPTIONS SYSTEM "man.common-options.ent">
 %COMMON.OPTIONS;

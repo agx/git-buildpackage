@@ -33,6 +33,7 @@
   <!ENTITY gbp-buildpackage-rpm "<command>gbp&nbsp;buildpackage-rpm</command>">
   <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
   <!ENTITY gbp-pq-rpm           "<command>gbp&nbsp;pq-rpm</command>">
+  <!ENTITY gbp-rpm-ch           "<command>gbp rpm-ch</command>">
   <!ENTITY rpmbuild             "<command>rpmbuild</command>">
   <!ENTITY gbp-builder-mock     "<command>gbp-builder-mock</command>">
   <!ENTITY wget                 "<command>wget</command>">

@@ -1,0 +1,357 @@
+<refentry id="man.gbp.rpm.ch">
+  <refentryinfo>
+    <address>
+      &rpm-email;
+    </address>
+    <author>
+      &rpm-firstname;
+      &rpm-surname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>gbp-rpm-ch</refentrytitle>
+    &rpm-mansection;
+  </refmeta>
+  <refnamediv>
+    <refname>git-rpm-ch;</refname>
+    <refname>gbp-rpm-ch;</refname>
+    <refpurpose>Generate the RPM changelog from git commit messages</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-rpm-ch;
+      &man.common.options.synopsis;
+      <arg><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--vendor</option>=<replaceable>VENDOR</replaceable></arg>
+      <arg><option>--packaging-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
+      <arg><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--ignore-branch</option></arg>
+      <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--changelog-file=</option><replaceable>FILEPATH</replaceable></arg>
+      <arg><option>--spec-file=</option><replaceable>FILEPATH</replaceable></arg>
+      <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
+      <arg><option>--no-release</option></arg>
+      <arg><option>--[no-]git-author</option></arg>
+      <arg><option>--[no-]full</option></arg>
+      <arg><option>--id-length=</option><replaceable>NUMBER</replaceable></arg>
+      <arg><option>--ignore-regex=</option><replaceable>REGEX</replaceable></arg>
+      <arg><option>--changelog-revision=</option><replaceable>REV-FORMAT</replaceable></arg>
+      <arg><option>--git-log=</option><replaceable>GIT-LOG-OPTIONS</replaceable></arg>
+      <arg><option>--spawn-editor=<replaceable>[always|release|no]</replaceable></option></arg>
+      <arg><option>--editor-cmd=</option><replaceable>EDITOR</replaceable></arg>
+      <arg><option>--customizations=</option><replaceable>CUSTOMIZATION-FILE</replaceable></arg>
+      <arg choice="plain"><replaceable>[PATH1 PATH2]</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &gbp-rpm-ch; reads git commit messages up to the current tip of the current
+    branch and updates the RPM changelog from them.
+    </para>
+    <para>
+    By default, &gbp-rpm-ch; tries to guess the last &git; commit documented in
+    the changelog. Alternatively, <option>--since</option> can be used to
+    tell &gbp-rpm-ch; at which point it should start in the &git; history, or,
+    <option>--all</option> to use all commits from the &git; history.
+    </para>
+    <para>
+    The additional path arguments can be used to restrict the repository paths
+    &gbp-rpm-ch; looks at. For even more detailed control, you can use
+    <option>--git-log</option> to restrict the generated changelog entries
+    further. E.g. by using
+    <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+
+      <varlistentry>
+        <term><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Base directory under which temporary directories are created.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--vendor</option>=<replaceable>VENDOR</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Distribution vendor name.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-branch</option>=<replaceable>BRANCH-NAME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          The branch in the Git repository the package is being developed on,
+          default is <replaceable>master</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-branch</option>
+        </term>
+        <listitem>
+          <para>
+          Don't check if the current branch matches
+          <replaceable>PACKAGING-BRANCH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Tag format used, when tagging releases,
+          default is <replaceable>%(vendor)s/%(version)s</replaceable>
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Subdirectory that contains the RPM packaging files.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--changelog-file=</option><replaceable>FILEPATH</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Relative path to the changelog file to use. Special value
+          <replaceable>auto</replaceable> causes &gbp; to guess,
+          <replaceable>SPEC</replaceable> uses the spec file,
+          <replaceable>CHANGES</replaceable> uses a separate changelog file
+          (name derived spec file name with .spec suffix replaced by .changes).
+          Guessing logic is simple: use separate changelog file if it is found,
+          otherwise use the spec file.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--spec-file=</option><replaceable>FILEPATH</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Relative path to the spec file to use. Special value
+          <replaceable>auto</replaceable> causes &gbp; to search and guess.
+          Other values cause the <option>--packaging-dir</option> option to be
+          ignored: the directory of the spec file is used, instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--since=</option><replaceable>COMMITTISH</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Start reading commit messages at
+          <replaceable>COMMITTISH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--no-release</option>
+        </term>
+        <listitem>
+          <para>
+           Do not create a new changelog section, just update the last
+           changelog section.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]full</option>
+        </term>
+        <listitem>
+          <para>
+          Include the full commit message in the changelog output.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-log=</option><replaceable>GIT-LOG-OPTIONS</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Options passed on verbatim to git-log(1).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--id-length=</option><replaceable>N</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Include <replaceable>N</replaceable> digits of the commit id in the
+          changelog entry. Default is to not include any commit ids at all.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-regex=</option><replaceable>REGEX</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Ignore lines in commit message matching
+          <replaceable>REGEX</replaceable> when generating the changelog.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--changelog-revision=</option><replaceable>REV-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Format string to use for revision field in the changelog header.  The
+          following string fields are accepted:
+          <replaceable>%(upstreamversion)s</replaceable> the upstream version;
+          <replaceable>%(release)s</replaceable> the rpm patchlevel, i.e.
+          Release; <replaceable>%(version)s</replaceable> full rpm package
+          version; <replaceable>%(tagname)s</replaceable> tag/commit, i.e.
+          basically what <command>git-describe</command> would give.
+          If empty or not defined the default from packaging policy is used.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-regex=</option><replaceable>REGEX</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Ignore commit lines matching <replaceable>REGEX</replaceable>
+          when generating the changelog.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]git-author</option>
+        </term>
+        <listitem>
+          <para>
+          Use user.name and user.email from
+          <application>git-config</application>(1) for the changelog header.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--spawn-editor=<replaceable>[always|release|no]</replaceable></option>
+        </term>
+        <listitem>
+          <para>
+          Whether to spawn an editor: always, when doing a release or never.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--editor-cmd=<replaceable>EDITOR</replaceable></option>
+        </term>
+        <listitem>
+          <para>
+          The editor to use for editing the changelog.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--customizations=</option><replaceable>CUSTOMIZATION-FILE</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Load Python code from <replaceable>CUSTOMIZATION-FILE</replaceable>.
+          At the moment, the only useful thing the code can do is define a
+          custom ChangelogEntryFormatter class.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>META TAGS</title>
+    <para>
+    Additional to the above options the formatting of the new changelog entries
+    (one-per-commit) in the changelog can be modified by special tags (called
+    Meta Tags) given in the git commit message. The tags must start at the
+    first column of a commit message but can appear on any line.  They are of
+    the form <option>Tagname</option>: <replaceable>VALUE</replaceable>. Valid
+    Meta Tags are:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term><option>Git-Rpm-Ch</option>: <replaceable>ACTION</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Supported actions are: <replaceable>Ignore</replaceable> which will
+          ignore this commit when generating new changelog entries.
+          <replaceable>Short</replaceable> which will only use the description
+          (the first line) of the commit message when generating the changelog
+          entry (useful when <option>--full</option> is given) and
+          <replaceable>Full</replaceable> which will use the full commit
+          message when generating the changelog entry (useful when
+          <option>--full</option> is not given).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>[Close|Closes|...]</option>: <replaceable>BUGNUMBER</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Indicate in the changelog entry that bug
+          <replaceable>BUGNUMBER</replaceable> was addressed in this commit.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+    The following git commit message:
+    </para>
+    <screen>
+      Document meta tags
+
+      so one doesn't have to consult the manual
+
+      Git-Rpm-Ch: Short
+      Closes: #636088
+    </screen>
+    <para>
+    Results in this changelog entry:
+    </para>
+    <screen>
+      - Document meta tags (Closes: #636088)
+    </screen>
+  </refsect1>
+  <refsect1>
+    &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.buildpackage.rpm">,
+      <xref linkend="man.gbp.import.srpm">,
+      <xref linkend="man.gbp.import.orig.rpm">,
+      <xref linkend="man.gbp.conf">,
+      &man.seealso.common;
+      <ulink url="https://honk.sigxcpu.org/cl2vcs">
+      <citetitle>Cl2vcs</citetitle></ulink>,
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+    &rpm-username; &rpm-email;
+    </para>
+  </refsect1>
+</refentry>
