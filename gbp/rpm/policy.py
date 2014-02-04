@@ -70,3 +70,19 @@ class RpmPkgPolicy(PkgPolicy):
             return True
         return False
 
+    class Changelog(object):
+        """Container for changelog related policy settings"""
+
+        # Regexps for splitting/parsing the changelog section (of
+        # Tizen / Fedora style changelogs)
+        section_match_re =  r'^\*'
+        section_split_re = r'^\*\s*(?P<ch_header>\S.*?)$\n(?P<ch_body>.*)'
+        header_split_re = r'(?P<ch_time>\S.*\s[0-9]{4})\s+(?P<ch_name>\S.*$)'
+        header_name_split_re = r'(?P<name>[^<]*)\s+<(?P<email>[^>]+)>((\s*-)?\s+(?P<revision>\S+))?$'
+        body_name_re = r'\[(?P<name>.*)\]'
+
+        # Changelog header format (when writing out changelog)
+        header_format = "* %(time)s %(name)s <%(email)s> %(revision)s"
+        header_time_format = "%a %b %d %Y"
+        header_rev_format = "%(version)s"
+
