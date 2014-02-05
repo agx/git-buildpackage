@@ -1450,8 +1450,10 @@ class GitRepository(object):
 
 #{ Comitting
 
-    def _commit(self, msg, args=[], author_info=None):
-        extra_env = author_info.get_author_env() if author_info else None
+    def _commit(self, msg, args=[], author_info=None, committer_info=None):
+        extra_env = author_info.get_author_env() if author_info else {}
+        if committer_info:
+            extra_env.update(committer_info.get_committer_env())
         self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
 
     def commit_staged(self, msg, author_info=None, edit=False):
@@ -1481,7 +1483,7 @@ class GitRepository(object):
         args.add_true(edit, '--edit')
         self._commit(msg=msg, args=args.args, author_info=author_info)
 
-    def commit_files(self, files, msg, author_info=None):
+    def commit_files(self, files, msg, author_info=None, committer_info=None):
         """
         Commit the given files to the repository
 
@@ -1491,10 +1493,13 @@ class GitRepository(object):
         @type msg: C{str}
         @param author_info: authorship information
         @type author_info: L{GitModifier}
+        @param committer_info: committer information
+        @type committer_info: L{GitModifier}
         """
         if isinstance(files, str):
             files = [files]
-        self._commit(msg=msg, args=files, author_info=author_info)
+        self._commit(msg=msg, args=files, author_info=author_info,
+                     committer_info=committer_info)
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
                    author={}, committer={}, create_missing_branch=False):
