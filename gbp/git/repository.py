@@ -1456,7 +1456,8 @@ class GitRepository(object):
             extra_env.update(committer_info.get_committer_env())
         self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
 
-    def commit_staged(self, msg, author_info=None, edit=False):
+    def commit_staged(self, msg, author_info=None, edit=False,
+                      committer_info=None):
         """
         Commit currently staged files to the repository
 
@@ -1466,10 +1467,13 @@ class GitRepository(object):
         @type author_info: L{GitModifier}
         @param edit: whether to spawn an editor to edit the commit info
         @type edit: C{bool}
+        @param committer_info: committer information
+        @type committer_info: L{GitModifier}
         """
         args = GitArgs()
         args.add_true(edit, '--edit')
-        self._commit(msg=msg, args=args.args, author_info=author_info)
+        self._commit(msg=msg, args=args.args, author_info=author_info,
+                     committer_info=committer_info)
 
     def commit_all(self, msg, author_info=None, edit=False):
         """
