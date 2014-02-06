@@ -40,6 +40,11 @@
       <arg><option>--editor-cmd=</option><replaceable>EDITOR</replaceable></arg>
       <arg><option>--commit</option></arg>
       <arg><option>--commit-msg</option><replaceable>MSG-FORMAT</replaceable></arg>
+      <arg><option>--tag</option></arg>
+      <arg><option>--retag</option></arg>
+      <arg><option>--packaging-tag-msg</option><replaceable>MSG-FORMAT</replaceable></arg>
+      <arg><option>--[no-]sign-tags</option></arg>
+      <arg><option>--keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
       <arg><option>--customizations=</option><replaceable>CUSTOMIZATION-FILE</replaceable></arg>
       <arg choice="plain"><replaceable>[PATH1 PATH2]</replaceable></arg>
     </cmdsynopsis>
@@ -284,6 +289,58 @@
           <para>
           Format string for the commit message when committing changes
           (when <option>--commit</option> is given).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--tag</option>
+        </term>
+        <listitem>
+          <para>
+          Commit the changes and create a packaging (release) tag. Similarly to
+          <option>--commit</option>, all staged changes are committed to git
+          before creating the tag. This option makes it possible to create a
+          release and correctly document the the tag name in the rpm changelog
+          (by using %(tagname)s in the <option>--changelog-revision</option>
+          string).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--retag</option>
+        </term>
+        <listitem>
+          <para>
+          Don't fail tag operations if a tag with the same version already
+          exists, but, overwrite the existing tag, instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-tag-msg=</option><replaceable>MSG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Format string for the tag message
+          (when <option>--tag</option> is given).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]sign-tags</option>
+        </term>
+        <listitem>
+          <para>
+          GPG sign all created tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--keyid=</option><replaceable>GPG-KEYID</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this keyid for gpg signing tags.
           </para>
         </listitem>
       </varlistentry>

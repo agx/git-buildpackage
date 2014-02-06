@@ -288,6 +288,48 @@ class TestRpmCh(RpmRepoTestBase):
         eq_(mock_ch(['--commit', '--since=HEAD^', '--commit-msg=%(foo)s']), 1)
         self._check_log(-1, "gbp:error: Unknown key 'foo' in commit-msg string")
 
+    def test_tagging(self):
+        """Test commiting/tagging"""
+        repo = self.init_test_repo('gbp-test-native')
+
+        # Update and commit+tag
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 0)
+        ok_(repo.has_tag('new-tag'))
+        sha = repo.rev_parse('HEAD')
+        eq_(sha, repo.rev_parse('new-tag^0'))
+
+        # Should fail if the tag already exists
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 1)
+
+        # Update and commit+tag
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^',
+                     '--retag']), 0)
+        ok_(repo.has_tag('new-tag'))
+        sha2 = repo.rev_parse('HEAD')
+        ok_(sha2 != sha)
+        eq_(sha2, repo.rev_parse('new-tag^0'))
+
+    def test_tagging2(self):
+        """Test commiting/tagging spec file"""
+        repo = self.init_test_repo('gbp-test2')
+
+        # Check unclean repo
+        with open('untracked-file', 'w') as fobj:
+            fobj.write('this file is not tracked\n')
+        with open('README', 'a') as fobj:
+            fobj.write('some new content\n')
+
+        # Unstaged file (README) -> failure
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 1)
+        self._check_log(-1, 'gbp:error: Please commit or stage your changes')
+
+        # Add file, update and commit+tag, untracked file should be ignored
+        repo.add_files('README')
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 0)
+        ok_(repo.has_tag('new-tag'))
+        sha = repo.rev_parse('HEAD')
+        eq_(sha, repo.rev_parse('new-tag^0'))
+
     def test_option_editor_cmd(self):
         """Test the --editor-cmd and --spawn-editor cmdline options"""
         repo = self.init_test_repo('gbp-test-native')

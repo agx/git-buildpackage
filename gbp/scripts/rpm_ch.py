@@ -29,11 +29,13 @@ import gbp.command_wrappers as gbpc
 import gbp.log
 from gbp.config import GbpOptionParserRpm, GbpOptionGroup
 from gbp.errors import GbpError
+from gbp.git.modifier import GitModifier
 from gbp.rpm import (guess_spec, NoSpecError, SpecFile, split_version_str,
                      compose_version_str)
 from gbp.rpm.changelog import Changelog, ChangelogParser, ChangelogError
 from gbp.rpm.git import GitRepositoryError, RpmGitRepository
 from gbp.rpm.policy import RpmPkgPolicy
+from gbp.scripts.buildpackage_rpm import packaging_tag_data
 from gbp.scripts.common import ExitCodes
 from gbp.tmpfile import init_tmpdir, del_tmpdir
 
@@ -145,7 +147,7 @@ def check_repo_state(repo, options):
             gbp.log.err("Unstaged changes in:\n    %s" %
                         '\n    '.join(unstaged))
             raise GbpError("Please commit or stage your changes before using "
-                           "the --commit option")
+                           "the --commit or --tag option")
 
 
 def parse_spec_file(repo, options):
@@ -294,11 +296,21 @@ def update_changelog(changelog, entries, repo, spec, options):
     # Get info for section header
     now = datetime.now()
     name, email = get_author(repo, options.git_author)
+    author = None
+    committer = None
     rev_str_fields = dict(spec.version,
                           version=compose_version_str(spec.version),
-                          vendor=options.vendor,
-                          tagname=repo.describe('HEAD', longfmt=True,
-                                                always=True))
+                          vendor=options.vendor)
+    if options.tag:
+        # Get fake information for the to-be-created git commit
+        author = committer = GitModifier(date=now)
+        tag, msg = packaging_tag_data(repo, 'HEAD', spec.name, spec.version,
+                                      options)
+    else:
+        tag = repo.describe('HEAD', longfmt=True, always=True)
+        msg = None
+    rev_str_fields['tagname'] = tag
+
     try:
         revision = options.changelog_revision % rev_str_fields
     except KeyError as err:
@@ -318,6 +330,7 @@ def update_changelog(changelog, entries, repo, spec, options):
     # Add new entries to the topmost section
     for entry in entries:
         top_section.append_entry(entry)
+    return (tag, msg, author, committer)
 
 
 def create_commit_message(spec, options):
@@ -387,6 +400,8 @@ def build_parser(name):
                                       dest="packaging_branch")
     naming_grp.add_config_file_option(option_name="packaging-tag",
                                       dest="packaging_tag")
+    naming_grp.add_config_file_option(option_name="packaging-tag-msg",
+                                      dest="packaging_tag_msg")
     naming_grp.add_config_file_option(option_name="packaging-dir",
                                       dest="packaging_dir")
     naming_grp.add_config_file_option(option_name="changelog-file",
@@ -416,11 +431,19 @@ def build_parser(name):
                                       dest="spawn_editor")
     format_grp.add_config_file_option(option_name="editor-cmd",
                                       dest="editor_cmd")
-    # Commit group options
+    # Commit/tag group options
     commit_grp.add_option("-c", "--commit", action="store_true",
                           help="commit changes")
     commit_grp.add_config_file_option(option_name="commit-msg",
                                       dest="commit_msg")
+    commit_grp.add_option("--tag", action="store_true",
+                          help="commit the changes and create a"
+                          "packaging/release tag")
+    commit_grp.add_option("--retag", action="store_true",
+                          help="Overwrite packaging tag if it already exists")
+    commit_grp.add_boolean_config_file_option(option_name="sign-tags",
+                                              dest="sign_tags")
+    commit_grp.add_config_file_option(option_name="keyid", dest="keyid")
     return parser
 
 
@@ -432,6 +455,8 @@ def parse_args(argv):
 
     options, args = parser.parse_args(argv[1:])
 
+    if options.tag:
+        options.commit = True
     if not options.changelog_revision:
         options.changelog_revision = RpmPkgPolicy.Changelog.header_rev_format
 
@@ -474,7 +499,9 @@ def main(argv):
         # Do the actual update
         entries = entries_from_commits(ch_file.changelog, repo, commits,
                                        options)
-        update_changelog(ch_file.changelog, entries, repo, spec, options)
+        tag, tag_msg, author, committer = update_changelog(ch_file.changelog,
+                                                           entries, repo, spec,
+                                                           options)
         # Write to file
         ch_file.write()
 
@@ -484,7 +511,12 @@ def main(argv):
         if options.commit:
             edit = True if editor_cmd else False
             msg = create_commit_message(spec, options)
-            commit_changelog(repo, ch_file, msg, None, None, edit)
+            commit_changelog(repo, ch_file, msg, author, committer, edit)
+            if options.tag:
+                if options.retag and repo.has_tag(tag):
+                    repo.delete_tag(tag)
+                repo.create_tag(tag, tag_msg, 'HEAD', options.sign_tags,
+                                options.keyid)
 
     except (GbpError, GitRepositoryError, ChangelogError, NoSpecError) as err:
         if len(err.__str__()):
