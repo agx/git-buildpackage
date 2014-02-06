@@ -171,7 +171,7 @@ class GitRepository(object):
         return output, popen.returncode
 
     def _git_inout(self, command, args, input=None, extra_env=None, cwd=None,
-                   capture_stderr=False, config_args=None):
+                   capture_stderr=False, capture_stdout=True, config_args=None):
         """
         Run a git command with input and return output
 
@@ -192,10 +192,12 @@ class GitRepository(object):
         """
         if not cwd:
             cwd = self.path
-        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr, config_args)
+        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr,
+                                capture_stdout, config_args)
 
     @classmethod
-    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr, config_args=None):
+    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr,
+                    capture_stdout, config_args=None):
         """
         As _git_inout but can be used without an instance
         """
@@ -206,13 +208,14 @@ class GitRepository(object):
 
         cmd = ['git'] + config_opts + [command] + args
         env = cls.__build_env(extra_env)
+        stdout_arg = subprocess.PIPE if capture_stdout else None
         stderr_arg = subprocess.PIPE if capture_stderr else None
         stdin_arg = subprocess.PIPE if input is not None else None
 
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
                                  stdin=stdin_arg,
-                                 stdout=subprocess.PIPE,
+                                 stdout=stdout_arg,
                                  stderr=stderr_arg,
                                  env=env,
                                  close_fds=True,
@@ -220,7 +223,7 @@ class GitRepository(object):
         (stdout, stderr) = popen.communicate(input)
         return stdout, stderr, popen.returncode
 
-    def _git_command(self, command, args=[], extra_env=None):
+    def _git_command(self, command, args=[], extra_env=None, interactive=False):
         """
         Execute git command with arguments args and environment env
         at path.
@@ -232,12 +235,14 @@ class GitRepository(object):
         @param extra_env: extra environment variables to set when running command
         @type extra_env: C{dict}
         """
+        capture_stdout = not interactive
         try:
             stdout, stderr, ret = self._git_inout(command=command,
                                                   args=args,
                                                   input=None,
                                                   extra_env=extra_env,
-                                                  capture_stderr=True)
+                                                  capture_stderr=True,
+                                                  capture_stdout=capture_stdout)
         except Exception as excobj:
             raise GitRepositoryError("Error running git %s: %s" % (command, excobj))
         if ret:
@@ -2007,7 +2012,8 @@ class GitRepository(object):
                                                       input=None,
                                                       extra_env=None,
                                                       cwd=abspath,
-                                                      capture_stderr=True)
+                                                      capture_stderr=True,
+                                                      capture_stdout=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git init: %s" % excobj)
             if ret:
@@ -2073,7 +2079,8 @@ class GitRepository(object):
                                                       input=None,
                                                       extra_env=None,
                                                       cwd=abspath,
-                                                      capture_stderr=True)
+                                                      capture_stderr=True,
+                                                      capture_stdout=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git clone: %s" % excobj)
             if ret:
