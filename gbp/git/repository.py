@@ -1455,9 +1455,11 @@ class GitRepository(object):
 
 #{ Comitting
 
-    def _commit(self, msg, args=[], author_info=None):
+    def _commit(self, msg, args=[], author_info=None, edit=False):
         extra_env = author_info.get_author_env() if author_info else None
-        self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
+        default_args = ['-q', '-m', msg] + (['--edit'] if edit else [])
+        self._git_command("commit", default_args + args, extra_env=extra_env,
+                          interactive=edit)
 
     def commit_staged(self, msg, author_info=None, edit=False):
         """
@@ -1470,9 +1472,7 @@ class GitRepository(object):
         @param edit: whether to spawn an editor to edit the commit info
         @type edit: C{bool}
         """
-        args = GitArgs()
-        args.add_true(edit, '--edit')
-        self._commit(msg=msg, args=args.args, author_info=author_info)
+        self._commit(msg=msg, author_info=author_info, edit=edit)
 
     def commit_all(self, msg, author_info=None, edit=False):
         """
@@ -1482,9 +1482,7 @@ class GitRepository(object):
         @param author_info: authorship information
         @type author_info: L{GitModifier}
         """
-        args = GitArgs('-a')
-        args.add_true(edit, '--edit')
-        self._commit(msg=msg, args=args.args, author_info=author_info)
+        self._commit(msg=msg, args=['-a'], author_info=author_info, edit=edit)
 
     def commit_files(self, files, msg, author_info=None):
         """
