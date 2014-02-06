@@ -255,6 +255,28 @@ class TestRpmCh(RpmRepoTestBase):
         header = self.read_file('packaging/gbp-test-native.changes')[0]
         ok_(re.match(r'.+ foobar$', header))
 
+    def test_option_commit(self):
+        """Test the --commit cmdline option"""
+        repo = self.init_test_repo('gbp-test')
+
+        # Check unclean repo
+        with open('untracked-file', 'w') as fobj:
+            fobj.write('this file is not tracked\n')
+        with open('foo.txt', 'a') as fobj:
+            fobj.write('new stuff\n')
+
+        # Unstaged file (foo.txt) -> failure
+        eq_(mock_ch(['--commit', '--since=HEAD^']), 1)
+        self._check_log(-1, 'gbp:error: Please commit or stage your changes')
+
+        # Add file, update and commit, untracked file should be ignored
+        repo.add_files('foo.txt')
+        sha = repo.rev_parse('HEAD')
+        eq_(mock_ch(['--commit', '--since=HEAD^']), 0)
+        eq_(sha, repo.rev_parse('HEAD^'))
+        eq_(repo.get_commit_info('HEAD')['files'],
+            {'M': [b'foo.txt', b'gbp-test.spec']})
+
     def test_option_editor_cmd(self):
         """Test the --editor-cmd and --spawn-editor cmdline options"""
         repo = self.init_test_repo('gbp-test-native')
