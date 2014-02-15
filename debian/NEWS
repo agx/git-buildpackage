@@ -1,4 +1,4 @@
-git-buildpackage (0.6.9~) UNRELEASED; urgency=medium
+git-buildpackage (0.6.9) unstable; urgency=medium
 
   This version changes the default of the cleaner options from 'debuild clean'
   to a noop ('/bin/true'). If you want to retain the old behaviour you can still

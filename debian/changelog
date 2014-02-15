@@ -1,3 +1,36 @@
+git-buildpackage (0.6.9) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [78f3673] Depend on newer devscripts.
+    These contain a uscan that handles repackaging at the right level and
+    won't let us pick up the wrong tarball name.
+    Thanks to gregor herrmann and all others involved (Closes: #635920)
+  * [7c64575] Avoid backtrace on config file parse errors
+    "gbp buildpackage" did this already but others didn't (Closes: #733759)
+  * [7b1eadd] Make parsing config file sections symmetric.
+    Always read the legacy command's config file section prior to the
+    subcommand's config file section.
+    Until now 'gbp <subcommand>' would read '[subcommand]' as well as
+    '[gbp-<subcommand>]' sections while 'gbp-<subcommand>' would only read
+    '[gbp-<subcommand>]' sections. (Closes: #733759)
+  * [49f0e44] Change the default of cleaner to /bin/true.
+    Running a clean command within version control by default nowadays
+    causes more trouble than it helps. It's unnecessary with
+    pbuilder/cowbuilder/sbuild and with export-dir. So change the default
+    from 'debuild clean' to a noop ('/bin/true'). (Closes: #670624)
+  * [d93c89f] import_orig: test error paths of find_source
+  * [daf249f] docs: improve docs on using upstream's git repo.
+    The documentation on using upstream's git directly instead of tarballs
+    was very terse. Add a step by step guide on how to get started and
+    how to update to new upstream versions.
+
+  [ Markus Lehtonen ]
+  * [e876beb] tests: adapt dch tests for older devscripts.
+    Determine the default urgency level by determining the version number of
+    the dch tool from command line.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 15 Feb 2014 11:45:00 +0100
+
 git-buildpackage (0.6.8) unstable; urgency=medium
 
   * [f5718b8] No need to document --verbose.  Properly document --help
