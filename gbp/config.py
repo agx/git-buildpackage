@@ -16,15 +16,18 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """handles command line and config file option parsing for the gbp commands"""
 
+import sys
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
 from ConfigParser import SafeConfigParser, NoSectionError
 from copy import copy
 import os.path
+
 try:
     from gbp.version import gbp_version
 except ImportError:
     gbp_version = "[Unknown version]"
 import gbp.tristate
+import gbp.log
 from gbp.git import GitRepositoryError, GitRepository
 
 no_upstream_branch_msg = """
@@ -385,16 +388,20 @@ class GbpOptionParser(OptionParser):
         # section i.e. read [gbp-pull] prior to [pull]
         if (self.command.startswith('gbp-') or
             self.command.startswith('git-')):
+            cmd = self.command[4:]
             oldcmd = self.command
             if parser.has_section(oldcmd):
                 self.config.update(dict(parser.items(oldcmd, raw=True)))
-            cmd = self.command[4:]
+                gbp.log.warn("Old style config section [%s] found "
+                             "please rename to [%s]" % (oldcmd, cmd))
         else:
+            cmd = self.command
             for prefix in ['gbp', 'git']:
                 oldcmd = '%s-%s' % (prefix, self.command)
                 if parser.has_section(oldcmd):
                     self.config.update(dict(parser.items(oldcmd, raw=True)))
-            cmd = self.command
+                    gbp.log.warn("Old style config section [%s] found "
+                                 "please rename to [%s]" % (oldcmd, cmd))
 
         # Update with command specific settings
         if parser.has_section(cmd):
