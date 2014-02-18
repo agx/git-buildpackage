@@ -330,7 +330,9 @@ class GbpOptionParser(OptionParser):
             for prefix in ['gbp', 'git']:
                 oldcmd = '%s-%s' % (prefix, self.command)
                 if parser.has_section(oldcmd):
-                    self.config.update(dict(parser.items(oldcmd, raw=True)))
+                    # Don't use items() until we got rid of the compat sections
+                    # since this pulls in the defaults again
+                    self.config.update(dict(parser._sections[cmd].items()))
             cmd = self.command
 
         # Update with command specific settings
