@@ -72,7 +72,7 @@ def test_parser_fallback():
     >>> confname = os.path.join(tmpdir, 'gbp.conf')
     >>> parser.config_files = [confname]
     >>> f = open(confname, 'w')
-    >>> f.write('[foo]\\nthere = is\\n[git-foo]\\nno = truth\\n')
+    >>> f.write('[DEFAULT]\\nthere = was\\n[foo]\\nthere = is\\n[git-foo]\\nno = truth\\n')
     >>> f.close()
     >>> parser._parse_config_files()
     >>> parser.config['there']

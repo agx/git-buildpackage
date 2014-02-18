@@ -330,18 +330,19 @@ class GbpOptionParser(OptionParser):
             for prefix in ['gbp', 'git']:
                 oldcmd = '%s-%s' % (prefix, self.command)
                 if parser.has_section(oldcmd):
-                    # Don't use items() until we got rid of the compat sections
-                    # since this pulls in the defaults again
-                    self.config.update(dict(parser._sections[cmd].items()))
+                    self.config.update(dict(parser.items(oldcmd, raw=True)))
             cmd = self.command
 
         # Update with command specific settings
         if parser.has_section(cmd):
             self.config.update(dict(parser.items(cmd, raw=True)))
+            # Don't use items() until we got rid of the compat sections
+            # since this pulls in the defaults again
+            self.config.update(dict(parser._sections[cmd].items()))
 
         for section in self.sections:
             if parser.has_section(section):
-                self.config.update(dict(parser.items(section, raw=True)))
+                self.config.update(dict(parser._sections[section].items()))
             else:
                 raise NoSectionError("Mandatory section [%s] does not exist."
                                      % section)
