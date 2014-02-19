@@ -20,9 +20,15 @@
 
 import re
 import os
-import shutil
 import subprocess
-from gbp.git import GitRepositoryError, GitModifier
+import datetime
+import time
+from email.message import Message
+from email.header import Header
+from email.charset import Charset, QP
+
+from gbp.git import GitRepositoryError
+from gbp.git.modifier import GitModifier, GitTz
 from gbp.errors import GbpError
 import gbp.log
 
@@ -65,146 +71,158 @@ def pq_branch_base(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
 
-def patch_read_header(src):
-    """
-    Read a patches header and split it into single lines. We
-    assume the header ends at the first line starting with
-    "diff ..."
-    """
-    header = []
-
-    for line in src:
-        if line.startswith('diff '):
-            break
-        else:
-            header.append(line)
-    else:
-        raise GbpError("Failed to find patch header in %s" % src.name)
-    return header
-
-
-def patch_header_parse_topic(header):
-    """
-    Parse the topic from the patch header removing the corresponding
-    line. This mangles the header in place.
-
-    @param header: patch header
-    @type header: C{list} of C{str}
-
-    >>> h = ['foo', 'gbp-pq-topic: bar']
-    >>> patch_header_parse_topic(h)
-    'bar'
-    >>> h
-    ['foo']
-    """
-    topic = None
-    index = -1
-
-    for line in header:
-        if line.lower().startswith("gbp-pq-topic: "):
-            index = header.index(line)
-            break
-    if index != -1:
-        topic = header[index].split(" ", 1)[1].strip()
-        del header[index]
-    return topic
-
-
-def patch_header_mangle_newline(header):
-    """
-    Look for the diff stat separator and remove
-    trailing new lines before it. This mangles
-    the header in place.
-
-    @param header: patch header
-    @type header: C{list} of C{str}
-
-    >>> h = ['foo bar\\n', '\\n', 'bar', '\\n', '\\n', '\\n', '---\\n', '\\n']
-    >>> patch_header_mangle_newline(h)
-    >>> h
-    ['foo bar\\n', '\\n', 'bar', '\\n', '---\\n', '\\n']
-    """
-    while True:
-        try:
-            index = header.index('---\n')
-        except ValueError:
-            return
-        try:
-            # Remove trailing newlines until we have at
-            # at most one left
-            if header[index-1] == header[index-2] == '\n':
-                del header[index-2]
+def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds):
+    """Parse gbp commands from commit message"""
+    cmd_re = re.compile(r'^%s:\s*(?P<cmd>[a-z-]+)(\s+(?P<args>\S.*))?' %
+                            cmd_tag, flags=re.I)
+    commands = {}
+    for line in info['body'].splitlines():
+        match = re.match(cmd_re, line)
+        if match:
+            cmd = match.group('cmd').lower()
+            if arg_cmds and cmd in arg_cmds:
+                if match.group('args'):
+                    commands[cmd] = match.group('args')
+                else:
+                    gbp.log.warn("Ignoring gbp-command '%s' in commit %s: "
+                                 "missing cmd arguments" % (line, info['id']))
+            elif noarg_cmds and cmd in noarg_cmds:
+                commands[cmd] = match.group('args')
             else:
-                return
-        except IndexError:
-            return
+                gbp.log.warn("Ignoring unknow gbp-command '%s' in commit %s"
+                                % (line, info['id']))
+    return commands
 
 
-def patch_write_header(srcname, dstname):
+def patch_path_filter(file_status, exclude_regex=None):
     """
-    Write out the patch header doing any necessary processing such
-    as detecting and removing a given topic, dropping trailing
-    new lines and skipping the first line containing the sha1.
+    Create patch include paths, i.e. a "negation" of the exclude paths.
     """
-    topic = None
-
-    with file(srcname) as src:
-        header = patch_read_header(src)
-        header_len = len(''.join(header))
-
-        topic = patch_header_parse_topic(header)
-        patch_header_mangle_newline(header)
-
-    with file(dstname, 'w') as dst:
-        dst.write(''.join(header[1:]))
-
-    return (header_len, topic)
-
-
-def patch_write_content(srcname, dstname, header_len):
-    """
-    Write out the patch body skipping the header
-    """
-    with file(srcname) as src:
-        src.seek(header_len, 0)
-        with file(dstname, 'a') as dst:
-            dst.write(src.read())
-
-
-def write_patch(patch, patch_dir, options):
-    """Write the patch exported by 'git-format-patch' to it's final location
-       (as specified in the commit)"""
-    oldname = os.path.basename(patch)
-    tmpname = patch + ".gbp"
-    topic = None
-
-    header_len, topic = patch_write_header(patch, tmpname)
-    patch_write_content(patch, tmpname, header_len)
-
-    if options.patch_numbers:
-        newname = oldname
+    if exclude_regex:
+        include_paths = []
+        for file_list in file_status.values():
+            for fname in file_list:
+                if not re.match(exclude_regex, fname):
+                    include_paths.append(fname)
     else:
-        patch_re = re.compile("[0-9]+-(?P<name>.+)")
-        m = patch_re.match(oldname)
-        if m:
-            newname = m.group('name')
-        else:
-            raise GbpError("Can't get patch name from '%s'" % oldname)
+        include_paths = ['.']
 
-    if topic:
-        dstdir = os.path.join(patch_dir, topic)
-    else:
-        dstdir = patch_dir
+    return include_paths
 
-    if not os.path.isdir(dstdir):
-        os.makedirs(dstdir, 0755)
 
-    os.unlink(patch)
-    dstname = os.path.join(dstdir, newname)
-    gbp.log.debug("Moving %s to %s" % (tmpname, dstname))
-    shutil.move(tmpname, dstname)
+def write_patch_file(filename, commit_info, diff):
+    """Write patch file"""
+    if not diff:
+        gbp.log.debug("I won't generate empty diff %s" % filename)
+        return None
+    try:
+        with open(filename, 'w') as patch:
+            msg = Message()
+            charset = Charset('utf-8')
+            charset.body_encoding = None
+            charset.header_encoding = QP
 
-    return dstname
+            # Write headers
+            name = commit_info['author']['name']
+            email = commit_info['author']['email']
+            # Git compat: put name in quotes if special characters found
+            if re.search("[,.@()\[\]\\\:;]", name):
+                name = '"%s"' % name
+            from_header = Header(unicode(name, 'utf-8'), charset, 77, 'from')
+            from_header.append(unicode('<%s>' % email))
+            msg['From'] = from_header
+            date = commit_info['author'].datetime
+            datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
+            msg['Date'] = Header(unicode(datestr, 'utf-8'), charset, 77, 'date')
+            msg['Subject'] = Header(unicode(commit_info['subject'], 'utf-8'),
+                                    charset, 77, 'subject')
+            # Write message body
+            if commit_info['body']:
+                # Strip extra linefeeds
+                body = commit_info['body'].rstrip() + '\n'
+                try:
+                    msg.set_payload(body.encode('ascii'))
+                except UnicodeDecodeError:
+                    msg.set_payload(body, charset)
+            patch.write(msg.as_string(unixfrom=False))
+
+            # Write diff
+            patch.write('---\n')
+            patch.write(diff)
+    except IOError as err:
+        raise GbpError('Unable to create patch file: %s' % err)
+    return filename
+
+
+def format_patch(outdir, repo, commit_info, series, numbered=True,
+                 topic_regex=None, path_exclude_regex=None, topic=''):
+    """Create patch of a single commit"""
+    commit = commit_info['id']
+
+    # Parse and filter commit message body
+    mangled_body = ""
+    for line in commit_info['body'].splitlines():
+        if topic_regex:
+            match = re.match(topic_regex, line, flags=re.I)
+            if match:
+                topic = match.group('topic')
+                gbp.log.debug("Topic %s found for %s" % (topic, commit))
+                continue
+        mangled_body += line + '\n'
+    commit_info['body'] = mangled_body
+
+    # Determine filename and path
+    outdir = os.path.join(outdir, topic)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    num_prefix = '%04d-' % (len(series) + 1)
+    suffix = '.patch'
+    base_maxlen = 63 - len(num_prefix) - len(suffix)
+    base = commit_info['patchname'][:base_maxlen]
+    filename = (num_prefix if numbered else '') + base + suffix
+    filepath = os.path.join(outdir, filename)
+    # Make sure that we don't overwrite existing patches in the series
+    if filepath in series:
+        presuffix = '-%d' % len(series)
+        base = base[:base_maxlen-len(presuffix)] + presuffix
+        filename = (num_prefix if numbered else '') + base + suffix
+        filepath = os.path.join(outdir, filename)
+
+    # Determine files to include
+    paths = patch_path_filter(commit_info['files'], path_exclude_regex)
+
+    # Finally, create the patch
+    patch = None
+    if paths:
+        diff = repo.diff('%s^!' % commit, paths=paths, stat=80, summary=True,
+                         text=True)
+        patch = write_patch_file(filepath, commit_info, diff)
+        if patch:
+            series.append(patch)
+    return patch
+
+
+def format_diff(outdir, filename, repo, start, end, path_exclude_regex=None):
+    """Create a patch of diff between two repository objects"""
+
+    info = {'author': repo.get_author_info()}
+    now = datetime.datetime.now().replace(tzinfo=GitTz(-time.timezone))
+    info['author'].set_date(now)
+    info['subject'] = "Raw diff %s..%s" % (start, end)
+    info['body'] = ("Raw diff between %s '%s' and\n%s '%s'\n" %
+                    (repo.get_obj_type(start), start,
+                    repo.get_obj_type(end), end))
+    if not filename:
+        filename = '%s-to-%s.diff' % (start, end)
+    filename = os.path.join(outdir, filename)
+
+    file_status = repo.diff_status(start, end)
+    paths = patch_path_filter(file_status, path_exclude_regex)
+    if paths:
+        diff = repo.diff(start, end, paths=paths, stat=80, summary=True,
+                         text=True)
+        return write_patch_file(filename, info, diff)
+    return None
 
 
 def get_maintainer_from_control(repo):

@@ -71,7 +71,7 @@ def test_parser_fallback():
     >>> tmpdir = str(context.new_tmpdir('foo'))
     >>> confname = os.path.join(tmpdir, 'gbp.conf')
     >>> parser.config_files = [confname]
-    >>> f = file(confname, 'w')
+    >>> f = open(confname, 'w')
     >>> f.write('[foo]\\nthere = is\\n[git-foo]\\nno = truth\\n')
     >>> f.close()
     >>> parser._parse_config_files()
@@ -90,13 +90,13 @@ def test_filter():
     >>> tmpdir = str(context.new_tmpdir('bar'))
     >>> confname = os.path.join(tmpdir, 'gbp.conf')
     >>> parser.config_files = [confname]
-    >>> f = file(confname, 'w')
+    >>> f = open(confname, 'w')
     >>> f.write('[bar]\\nfilter = asdf\\n')
     >>> f.close()
     >>> parser._parse_config_files()
     >>> parser.config['filter']
     ['asdf']
-    >>> f = file(confname, 'w')
+    >>> f = open(confname, 'w')
     >>> f.write("[bar]\\nfilter = ['this', 'is', 'a', 'list']\\n")
     >>> f.close()
     >>> parser._parse_config_files()

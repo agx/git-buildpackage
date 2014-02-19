@@ -167,7 +167,7 @@ class PatchSeries(list):
             return []
 
         try:
-            s = file(seriesfile)
+            s = open(seriesfile)
         except Exception as err:
             raise GbpError("Cannot open series file: %s" % err)
 

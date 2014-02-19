@@ -49,7 +49,7 @@ class DscFile(object):
         self.native = False
         self.dscfile = os.path.abspath(dscfile)
 
-        f = file(self.dscfile)
+        f = open(self.dscfile)
         fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
             m = self.version_re.match(line)

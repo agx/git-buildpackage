@@ -1,3 +1,7 @@
 This is a bunch of scripts to ease the development of Debian packages with git.
 For more documentation see the manual. On Debian systems this can be found in
 /usr/share/doc/git-buildpackage/manual-html.
+
+It can be found online at
+
+    http://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.html

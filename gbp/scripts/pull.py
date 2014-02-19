@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009,2013 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -19,6 +19,7 @@
 #
 """fast forward debian, upstream and pristine-tar branch"""
 
+import ConfigParser
 import sys
 import os, os.path
 from gbp.command_wrappers import (Command, CommandExecFailed)
@@ -67,12 +68,14 @@ def fast_forward_branch(branch, repo, options):
                             msg="gbp: forward %s to %s" % (branch, remote))
     return update
 
-def main(argv):
-    retval = 0
-    current = None
-
-    parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+def parse_args(argv):
+    try:
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                              usage='%prog [options] - safely update a repository from remote')
+    except ConfigParser.ParsingError as err:
+        gbp.log.err(err)
+        return None, None
+
     branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
     parser.add_option_group(branch_group)
     branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
@@ -90,9 +93,17 @@ def main(argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    return parser.parse_args(argv)
 
 
-    (options, args) = parser.parse_args(argv)
+def main(argv):
+    retval = 0
+    current = None
+
+    (options, args) = parse_args(argv)
+    if not options:
+        return 1
+
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     try:

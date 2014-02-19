@@ -38,7 +38,7 @@ def test_add_file():
     fastimport.deleteall()
     testfile = os.path.join(repo.path, '.git', 'description')
     fastimport.add_file('./testfile',
-                        file(testfile),
+                        open(testfile),
                         os.path.getsize(testfile))
 
 def test_add_symlink():

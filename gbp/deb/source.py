@@ -32,7 +32,7 @@ class FileVfs(object):
 
     def open(self, path, flags=None):
         flags = flags or 'r'
-        return file(os.path.join(self._dir, path), flags)
+        return open(os.path.join(self._dir, path), flags)
 
 class DebianSourceError(Exception):
     pass

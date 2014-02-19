@@ -3,11 +3,13 @@
 from . import context
 
 import os
+import subprocess
 import unittest
 
 import gbp.log
 import gbp.deb.git
 import gbp.errors
+from gbp.deb.changelog import ChangeLog
 
 class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single unit test"""
@@ -37,7 +39,7 @@ class DebianGitTestRepo(unittest.TestCase):
         if not os.path.exists(d):
             os.makedirs(d)
 
-        with file(path, 'w+') as f:
+        with open(path, 'w+') as f:
             content == None or f.write(content)
         self.repo.add_files(name, force=True)
         self.repo.commit_files(path, msg or "added %s" % name)
@@ -74,3 +76,32 @@ class OsReleaseFile(object):
 
     def __repr__(self):
         return repr(self._values)
+
+class MockedChangeLog(ChangeLog):
+    contents = """foo (%s) experimental; urgency=low
+
+  %s
+
+ -- Debian Maintainer <maint@debian.org>  Sat, 01 Jan 2012 00:00:00 +0100"""
+
+    def __init__(self, version, changes = "a important change"):
+        ChangeLog.__init__(self,
+                           contents=self.contents % (version, changes))
+
+
+def get_dch_default_urgency():
+    """Determine the default urgency level used by dch"""
+    try:
+        popen = subprocess.Popen(['dch', '--version'], stdout=subprocess.PIPE)
+        out, _err = popen.communicate()
+    except OSError:
+        urgency='medium'
+    else:
+        verstr = out.splitlines()[0].split()[-1]
+        major, minor = verstr.split('.')[0:2]
+        if int(major) <= 2 and int(minor) <= 12:
+            urgency = 'low'
+        else:
+            urgency = 'medium'
+    return urgency
+

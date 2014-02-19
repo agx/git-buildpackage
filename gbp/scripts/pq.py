@@ -17,11 +17,13 @@
 #
 """manage patches in a patch queue"""
 
+import ConfigParser
 import errno
 import os
 import shutil
 import sys
 import tempfile
+import re
 from gbp.config import GbpOptionParserDebian
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.command_wrappers import (GitCommand, CommandExecFailed)
@@ -29,12 +31,40 @@ from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
-                                 write_patch, switch_to_pq_branch,
-                                 apply_single_patch, apply_and_commit_patch,
+                                 parse_gbp_commands, format_patch,
+                                 switch_to_pq_branch, apply_single_patch,
+                                 apply_and_commit_patch,
                                  drop_pq, get_maintainer_from_control)
 
 PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR,"series")
+
+
+def generate_patches(repo, start, end, outdir, options):
+    """
+    Generate patch files from git
+    """
+    gbp.log.info("Generating patches from git (%s..%s)" % (start, end))
+    patches = []
+    for treeish in [start, end]:
+        if not repo.has_treeish(treeish):
+            raise GbpError('%s not a valid tree-ish' % treeish)
+
+    # Generate patches
+    rev_list = reversed(repo.get_commits(start, end))
+    topic_regex = 'gbp-pq-topic:\s*(?P<topic>\S.*)'
+    for commit in rev_list:
+        info = repo.get_commit_info(commit)
+        cmds = parse_gbp_commands(info, 'gbp', ('ignore'), ('topic'))
+        cmds.update(parse_gbp_commands(info, 'gbp-pq', ('ignore'), ('topic')))
+        if not 'ignore' in cmds:
+            topic = cmds['topic'] if 'topic' in cmds else ''
+            format_patch(outdir, repo, info, patches, options.patch_numbers,
+                         topic_regex=topic_regex, topic=topic)
+        else:
+            gbp.log.info('Ignoring commit %s' % info['id'])
+
+    return patches
 
 
 def export_patches(repo, branch, options):
@@ -54,16 +84,12 @@ def export_patches(repo, branch, options):
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
-    patches = repo.format_patches(branch, pq_branch, PATCH_DIR,
-                                  signature=False)
-    if patches:
-        f = file(SERIES_FILE, 'w')
-        gbp.log.info("Regenerating patch queue in '%s'." % PATCH_DIR)
-        for patch in patches:
-            filename = write_patch(patch, PATCH_DIR, options)
-            f.write(filename[len(PATCH_DIR):] + '\n')
+    patches = generate_patches(repo, branch, pq_branch, PATCH_DIR, options)
 
-        f.close()
+    if patches:
+        with open(SERIES_FILE, 'w') as seriesfd:
+            for patch in patches:
+                seriesfd.write(os.path.relpath(patch, PATCH_DIR) + '\n')
         GitCommand('status')(['--', PATCH_DIR])
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
@@ -135,7 +161,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
 
     i = len(commits)
     for commit in commits:
-        if len(commits):
+        if len(commits) > 1:
             gbp.log.info("%d %s left" % (i, 'tries' if i > 1 else 'try'))
         try:
             gbp.log.info("Trying to apply patches at '%s'" % commit)
@@ -149,6 +175,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
             try:
                 apply_and_commit_patch(repo, patch, maintainer, patch.topic)
             except (GbpError, GitRepositoryError):
+                gbp.log.err("Failed to apply '%s'" % patch.path)
                 repo.set_branch(branch)
                 repo.delete_branch(pq_branch)
                 break
@@ -183,10 +210,9 @@ def switch_pq(repo, current):
         switch_to_pq_branch(repo, current)
 
 
-def main(argv):
-    retval = 0
-
-    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+def parse_args(argv):
+    try:
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
                                    usage="%prog [options] action - maintain patches on a patch queue branch\n"
         "Actions:\n"
         "  export         export the patch queue associated to the current branch\n"
@@ -198,6 +224,10 @@ def main(argv):
         "  drop           drop (delete) the patch queue associated to the current branch.\n"
         "  apply          apply a patch\n"
         "  switch         switch to patch-queue branch and vice versa")
+    except ConfigParser.ParsingError as err:
+        gbp.log.err(err)
+        return None, None
+
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -208,8 +238,16 @@ def main(argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    return parser.parse_args(argv)
 
-    (options, args) = parser.parse_args(argv)
+
+def main(argv):
+    retval = 0
+
+    (options, args) = parse_args(argv)
+    if not options:
+        return 1
+
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if len(args) < 2:
@@ -268,4 +306,3 @@ def main(argv):
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
-

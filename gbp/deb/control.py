@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-"""A Debian Control"""
+"""A Debian Control file"""
 
 import email
 import os
@@ -47,7 +47,7 @@ class Control(object):
             if not os.access(filename, os.F_OK):
                 raise NoControlError("Control file %s does not exist" % filename)
 
-            with file(filename) as f:
+            with open(filename) as f:
                 control = email.message_from_file(f)
 
         if not control.items():

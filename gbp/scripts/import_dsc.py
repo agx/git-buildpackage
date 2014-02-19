@@ -111,7 +111,27 @@ def get_committer_from_author(author, options):
     return committer
 
 
-def apply_debian_patch(repo, unpack_dir, src, options, parents):
+def check_parents(repo, branch, tag):
+    """
+    Check if the upstream tag is already merged, if not, return
+    the additional parent to merge
+    """
+    parents = None
+    rev = None
+
+    try:
+        rev = repo.rev_parse("%s^{commit}" % tag)
+    except GitRepositoryError:
+        pass
+
+    if rev and not repo.branch_contains(branch, rev):
+        gbp.log.debug("Tag '%s' not yet merged into '%s'"
+                      % (tag, branch))
+        parents = [rev]
+
+    return parents
+
+def apply_debian_patch(repo, unpack_dir, src, options, tag):
     """apply the debian patch and tag appropriately"""
     try:
         os.chdir(unpack_dir)
@@ -126,6 +146,10 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
             os.chmod('debian/rules', 0755)
         os.chdir(repo.path)
 
+        parents = check_parents(repo,
+                                options.debian_branch,
+                                tag)
+
         author = get_author_from_changelog(unpack_dir)
         committer = get_committer_from_author(author, options)
         commit = repo.commit_dir(unpack_dir,
@@ -134,11 +158,12 @@ def apply_debian_patch(repo, unpack_dir, src, options, parents):
                                  other_parents = parents,
                                  author=author,
                                  committer=committer)
-        repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
-                        msg="Debian release %s" % src.version,
-                        commit=commit,
-                        sign=options.sign_tags,
-                        keyid=options.keyid)
+        if not options.skip_debian_tag:
+            repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
+                            msg="Debian release %s" % src.version,
+                            commit=commit,
+                            sign=options.sign_tags,
+                            keyid=options.keyid)
     except (gbpc.CommandExecFailed, GitRepositoryError) as err:
         msg = err.__str__() if len(err.__str__()) else ''
         gbp.log.err("Failed to import Debian package: %s" % msg)
@@ -220,6 +245,10 @@ def parse_args(argv):
                       dest="debian_tag")
     tag_group.add_config_file_option(option_name="upstream-tag",
                       dest="upstream_tag")
+    tag_group.add_option("--skip-debian-tag",dest="skip_debian_tag",
+                         action="store_true", default=False,
+                         help="Don't add a tag after importing the Debian patch")
+
 
     import_group.add_config_file_option(option_name="filter",
                       dest="filters", action="append")
@@ -249,6 +278,8 @@ def main(argv):
     parents = None
 
     options, args = parse_args(argv)
+    if not options:
+        return 1
 
     try:
         if len(args) != 1:
@@ -335,22 +366,23 @@ def main(argv):
                                          author=author,
                                          committer=committer)
 
-                repo.create_tag(name=tag,
-                                msg=msg,
-                                commit=commit,
-                                sign=options.sign_tags,
-                                keyid=options.keyid)
+                if not (src.native and options.skip_debian_tag):
+                    repo.create_tag(name=tag,
+                                    msg=msg,
+                                    commit=commit,
+                                    sign=options.sign_tags,
+                                    keyid=options.keyid)
                 if not src.native:
                     if is_empty:
                         repo.create_branch(options.upstream_branch, commit)
                     if options.pristine_tar:
                         repo.pristine_tar.commit(src.tgz, options.upstream_branch)
-                    parents = [ options.upstream_branch ]
                 if is_empty and not repo.has_branch(options.debian_branch):
                     repo.create_branch(options.debian_branch, commit)
             if not src.native:
                 if src.diff or src.deb_tgz:
-                    apply_debian_patch(repo, upstream.unpacked, src, options, parents)
+                    apply_debian_patch(repo, upstream.unpacked, src, options,
+                                       tag)
                 else:
                     gbp.log.warn("Didn't find a diff to apply.")
             if repo.get_branch() == options.debian_branch or is_empty:

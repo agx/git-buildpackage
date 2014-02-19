@@ -72,7 +72,7 @@ For backwards compatibility sections starting with <filename>git-</filename> or
 <para>
 
 <option>key=value</option> pairs of the command sections reflect the command line
-options and their settings. For example <xref linkend="man.git.buildpackage">
+options and their settings. For example <xref linkend="man.gbp.buildpackage">
 manualpage contains the <option>--git-export-dir</option>=<parameter>diirectory</parameter>
 option which can be turned into configuration file setting by dropping the
 <option>--git</option> prefix with:
@@ -85,7 +85,7 @@ option which can be turned into configuration file setting by dropping the
 
 <para>
 Notice that some option are actually repeatable, or take Python lists.
-For example the <xref linkend="man.git.import.orig"> commmand has the
+For example the <xref linkend="man.gbp.import.orig"> commmand has the
 <option>--filter</option>=<parameter>pattern</parameter> option which can
 be truned into a configuration file option like this:
 </para>
@@ -106,8 +106,8 @@ An alternative way is to write it using Python list syntax:
 </programlisting>
 
 <para>
-Boolean options can bei either <option>True</option> or <option>False</option>. For example
-<xref linkend="man.git.import.orig">; has the <option>--pristine-tar</option> and
+Boolean options can be either <option>True</option> or <option>False</option>. For example
+<xref linkend="man.gbp.import.orig">; has the <option>--pristine-tar</option> and
 <option>--no-pristine-tar</option> options which translate to:
 </para>
 <programlisting>

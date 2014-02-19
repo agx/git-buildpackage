@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends:
  bash-completion,
- debhelper (>= 7.0.50~),
+ debhelper (>= 9~),
  docbook-utils,
  gtk-doc-tools,
  jade,
@@ -21,13 +21,13 @@ Build-Depends:
  sgml2x,
 # For the testsuite
  bzip2,
- devscripts,
+ devscripts (>= 2.13.8~),
  git (>= 1:1.7.9.1-1~),
  pristine-tar,
  unzip,
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
-Vcs-Browser: http://git.debian.org/?p=users/agx/git-buildpackage.git
+Vcs-Browser: https://honk.sigxcpu.org/gitweb/?p=git-buildpackage.git
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
 X-Python-Version: >= 2.6
 
@@ -36,7 +36,7 @@ Architecture: all
 Depends: ${python:Depends},
  ${shlibs:Depends},
  ${misc:Depends},
- devscripts (>= 2.10.66~),
+ devscripts (>= 2.13.5~),
  git (>= 1:1.7.9.1-1~),
  man-db,
  python-dateutil,

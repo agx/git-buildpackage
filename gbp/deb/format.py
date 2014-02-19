@@ -92,7 +92,7 @@ class DebianSourceFormat(object):
         'quilt'
         >>> os.unlink(t.name)
         """
-        with file(filename) as f:
+        with open(filename) as f:
             return klass(f.read())
 
     @classmethod
@@ -107,7 +107,7 @@ class DebianSourceFormat(object):
             the above parameters
         """
         format_file = format_file or klass.format_file
-        with file(klass.format_file, 'w') as f:
+        with open(klass.format_file, 'w') as f:
             f.write("%s (%s)" % (version, type))
         return klass.parse_file(klass.format_file)
 

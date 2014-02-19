@@ -21,6 +21,7 @@ import os
 import logging
 import unittest
 
+from gbp.scripts.pq import generate_patches
 import gbp.scripts.common.pq as pq
 import gbp.patch_series
 import tests.testutils as testutils
@@ -103,8 +104,8 @@ class TestWritePatch(testutils.DebianGitTestRepo):
     def tearDown(self):
         context.teardown()
 
-    def test_write_patch(self):
-        """Test moving a patch to it's final location"""
+    def test_generate_patches(self):
+        """Test generation of patches"""
 
         class opts: patch_numbers = False
 
@@ -115,13 +116,9 @@ class TestWritePatch(testutils.DebianGitTestRepo):
 
         # Write it out as patch and check it's existence
         d = context.new_tmpdir(__name__)
-        patchfile = self.repo.format_patches('HEAD^', 'HEAD', str(d))[0]
-        expected = os.path.join(str(d), '0001-added-foo.patch')
-        self.assertEqual(expected, patchfile)
-        pq.write_patch(patchfile, self.repo.path, opts)
-        expected = os.path.join(self.repo.path,
-                                'gbptest',
-                                'added-foo.patch')
+        patchfile = generate_patches(self.repo, 'HEAD^', 'HEAD', str(d),
+                                     opts)[0]
+        expected = os.path.join(str(d), 'gbptest', 'added-foo.patch')
 
         self.assertTrue(os.path.exists(expected))
         logging.debug(file(expected).read())

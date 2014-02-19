@@ -172,12 +172,28 @@
     </para>
     <variablelist>
       <varlistentry>
+        <term><option>Gbp[-Pq]: Ignore</option></term>
+        <listitem>
+            <para>Ignores the commit, no patch is generated out of it.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>Gbp[-Pq]: Topic</option> <replaceable>topic</replaceable></term>
+        <listitem>
+            <para>Moves the patch into a subdir called
+                <replaceable>topic</replaceable> when running
+                <screen>&gbp-pq; export</screen>
+                This allows for some structure below
+                <filename>debian/patches</filename>.
+            </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>Gbp-Pq-Topic:</option> <replaceable>topic</replaceable></term>
         <listitem>
-	  <para>Moves the patch into a subdir called
-	  <replaceable>topic</replaceable> when running <screen>&gbp-pq;
-	  export</screen>. This allows for some structure below
-	  <filename>debian/patches</filename>. </para>
+            <para>Deprecated: use <option>Gbp[-Pq]: Topic</option>
+                <replaceable>topic</replaceable> instead.
+            </para>
         </listitem>
       </varlistentry>
     </variablelist>

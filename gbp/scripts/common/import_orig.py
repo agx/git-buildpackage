@@ -23,6 +23,15 @@ import gbp.command_wrappers as gbpc
 from gbp.pkg import UpstreamSource
 import gbp.log
 
+# Try to import readline, since that will cause raw_input to get fancy
+# line editing and history capabilities. However, if readline is not
+# available, raw_input will still work.
+try:
+    import readline
+except ImportError:
+    pass
+
+
 class OrigUpstreamSource(UpstreamSource):
     """Upstream source that will be imported"""
 

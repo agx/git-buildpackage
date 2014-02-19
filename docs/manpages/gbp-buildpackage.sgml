@@ -1,4 +1,4 @@
-<refentry id="man.git.buildpackage">
+<refentry id="man.gbp.buildpackage">
   <refentryinfo>
     <address>
       &dhemail;
@@ -42,7 +42,7 @@
       <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-postexport=</option><replaceable>command</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>command</replaceable></arg>
-      <arg><option>--git-[no-]hooks=</option></arg>
+      <arg><option>--git-[no-]hooks</option></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
@@ -447,6 +447,20 @@
     </variablelist>
   </refsect1>
   <refsect1>
+    <title>EXAMPLES</title>
+    <para>Build a Debian package using &git-pbuilder; which in turn invokes &cowbuildercmd;.
+      Instruct cowbuilder to build within a Wheezy chroot for i386.</para>
+    <screen>
+      &gbp-buildpackage; --git-pbuilder --git-arch=i386 --git-dist=wheezy
+    </screen>
+    <para>
+      Note that the above needs a &cowbuildercmd; chroot already. This can be created using:
+    </para>
+    <screen>
+      DIST=wheezy ARCH=i386 &git-pbuilder; create
+    </screen>
+  </refsect1>
+  <refsect1>
       &man.gbp.config-files;
       <para>All options in the config files are specified without the 'git-' prefix.</para>
   </refsect1>
@@ -472,6 +486,10 @@
       <citerefentry>
         <refentrytitle>git-pbuilder</refentrytitle>
         <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>cowbuilder</refentrytitle>
+        <manvolnum>8</manvolnum>
       </citerefentry>,
       <citerefentry>
         <refentrytitle>gbp.conf</refentrytitle>

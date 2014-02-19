@@ -286,7 +286,8 @@ class GbpOptionParser(OptionParser):
         @return: list of config files we need to parse
         @rtype: C{list}
 
-        >>> if os.environ.has_key('GBP_CONF_FILES'): del os.environ['GBP_CONF_FILES']
+        >>> conf_backup = os.getenv('GBP_CONF_FILES')
+        >>> if conf_backup is not None: del os.environ['GBP_CONF_FILES']
         >>> files = GbpOptionParser.get_config_files()
 
         # Remove the ~-expanded one
@@ -297,6 +298,8 @@ class GbpOptionParser(OptionParser):
         >>> os.environ['GBP_CONF_FILES'] = 'test1:test2'
         >>> GbpOptionParser.get_config_files()
         ['test1', 'test2']
+        >>> del os.environ['GBP_CONF_FILES']
+        >>> if conf_backup is not None: os.environ['GBP_CONF_FILES'] = conf_backup
         """
         envvar = os.environ.get('GBP_CONF_FILES')
         files = envvar.split(':') if envvar else klass.def_config_files
@@ -315,18 +318,24 @@ class GbpOptionParser(OptionParser):
         parser.read(self.config_files)
         self.config.update(dict(parser.defaults()))
 
-        if not (self.command.startswith('gbp-') or
-                self.command.startswith('git-')):
-            # Invoked as gbp <command> syntax, so parse the old sections
-            # of {gbp.git}-<command> for backward compatibility:
+        # Make sure we read any legacy sections prior to the real subcommands
+        # section i.e. read [gbp-pull] prior to [pull]
+        if (self.command.startswith('gbp-') or
+            self.command.startswith('git-')):
+            oldcmd = self.command
+            if parser.has_section(oldcmd):
+                self.config.update(dict(parser.items(oldcmd, raw=True)))
+            cmd = self.command[4:]
+        else:
             for prefix in ['gbp', 'git']:
                 oldcmd = '%s-%s' % (prefix, self.command)
                 if parser.has_section(oldcmd):
                     self.config.update(dict(parser.items(oldcmd, raw=True)))
+            cmd = self.command
 
         # Update with command specific settings
-        if parser.has_section(self.command):
-            self.config.update(dict(parser.items(self.command, raw=True)))
+        if parser.has_section(cmd):
+            self.config.update(dict(parser.items(cmd, raw=True)))
 
         for section in self.sections:
             if parser.has_section(section):
@@ -461,7 +470,7 @@ class GbpOptionParserDebian(GbpOptionParser):
     defaults = dict(GbpOptionParser.defaults)
     defaults.update( {
                        'builder'            : 'debuild -i -I',
-                       'cleaner'            : 'debuild -d clean',
+                       'cleaner'            : '/bin/true',
                      } )
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

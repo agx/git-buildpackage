@@ -104,6 +104,24 @@ def test_branch_master():
     'master'
     """
 
+def test_clean():
+    """
+    Remove untracked files from the working tree
+
+    Methods tested:
+         - L{gbp.git.GitRepository.clean}
+
+    >>> import gbp.git, shutil, os
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), \
+                                 os.path.join(repo.path, "testclean"))
+    >>> repo.clean(dry_run=True)
+    >>> repo.is_clean()[0]
+    False
+    >>> repo.clean(directories=True, force=True)
+    >>> repo.is_clean()[0]
+    True
+    """
 
 def test_create_branch():
     """
@@ -186,6 +204,7 @@ def test_set_upstream_branch():
     >>> os.makedirs(os.path.join(repo.git_dir, 'refs/remotes/origin'))
     >>> shutil.copy(os.path.join(repo.git_dir, 'refs/heads/master'), \
                     os.path.join(repo.git_dir, 'refs/remotes/origin/'))
+    >>> repo.add_remote_repo('origin', 'git://git.example.com/git/origin')
     >>> repo.set_upstream_branch('master', 'origin/master')
     >>> repo.get_upstream_branch('master')
     'origin/master'
@@ -195,7 +214,6 @@ def test_set_upstream_branch():
     >>> repo.set_upstream_branch('foo', 'origin/bla')
     Traceback (most recent call last):
     GitRepositoryError: Branch origin/bla doesn't exist!
-
     """
 
 def test_get_upstream_branch():
@@ -266,6 +284,12 @@ def test_describe():
     >>> repo.describe('HEAD', pattern='foo*', always=True, abbrev=16) == sha[:16]
     True
     >>> tag = repo.describe('HEAD', longfmt=True, abbrev=16) == 'tag2-0-g%s' % sha[:16]
+    >>> repo.delete_tag('tag2')
+    >>> repo.describe('HEAD', tags=True)
+    'tag'
+    >>> repo.describe('HEAD', tags=True, exact_match=True)
+    'tag'
+    >>> repo.create_tag('tag2', msg='foo')
     """
 
 def test_find_tag():
@@ -463,6 +487,8 @@ def test_diff():
     True
     >>> len(repo.diff('HEAD~1', 'HEAD', 'testfile')) > 3
     True
+    >>> len(repo.diff('HEAD~1', 'HEAD', 'testfile', text=True)) > 3
+    True
     >>> len(repo.diff('HEAD~1', 'HEAD', 'filenotexist')) == 0
     True
     """
@@ -542,6 +568,28 @@ def test_clone():
     False
     """
 
+def test_get_remotes():
+    """
+    Merge a branch
+
+    Methods tested:
+         - L{gbp.git.GitRepository.get_remotes}
+
+    >>> import os
+    >>> import gbp.git.repository
+    >>> repo = gbp.git.repository.GitRepository(os.path.join(clone_dir, 'repo'))
+    >>> remotes = repo.get_remotes()
+    >>> len(remotes)
+    1
+    >>> origin = remotes['origin']
+    >>> origin.name
+    'origin'
+    >>> origin.fetch_url == repo_dir
+    True
+    >>> origin.push_urls == [repo_dir]
+    True
+    """
+
 def test_merge():
     """
     Merge a branch
@@ -569,6 +617,8 @@ def test_pull():
     >>> clone = gbp.git.GitRepository(d)
     >>> clone.set_branch('master')
     >>> clone.pull()
+    >>> clone.pull(all_remotes=True)
+    >>> clone.pull('origin', all_remotes=True)
     """
 
 def test_fetch():
@@ -589,11 +639,16 @@ def test_fetch():
     >>> clone.push()
     >>> clone.push('origin')
     >>> clone.push('origin', 'master')
+    >>> clone.push('origin', 'master', force=True)
     >>> clone.create_tag('tag3')
     >>> clone.push_tag('origin', 'tag3')
+    >>> clone.create_tag('tag4')
+    >>> clone.push('origin', 'master', tags=True)
     >>> clone.add_remote_repo('foo', repo_dir)
     >>> clone.fetch('foo')
     >>> clone.fetch('foo', tags=True)
+    >>> clone.fetch('foo', refspec='refs/heads/master')
+    >>> clone.fetch(all_remotes=True)
     >>> clone.remove_remote_repo('foo')
     """
 
@@ -772,8 +827,11 @@ def test_make_tree():
     >>> head
     [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
     >>> head.append(['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile2'])
-    >>> repo.make_tree(head)
+    >>> newtree = repo.make_tree(head)
+    >>> newtree
     '745951810c9e22fcc6de9b23f05efd6ab5512123'
+    >>> repo.list_tree(newtree, recurse=False, paths='testfile')
+    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
     """
 
 

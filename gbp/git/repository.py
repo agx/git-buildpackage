@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2008,2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2008,2011,2013 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -32,6 +32,35 @@ from gbp.git.args import GitArgs
 class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
     pass
+
+
+class GitRemote(object):
+    """Class representing a remote repository"""
+    def __init__(self, name, fetch_url, push_urls):
+        self._name = name
+        self._fetch_url = fetch_url
+        if isinstance(push_urls, basestring):
+            self._push_urls = [push_urls]
+        else:
+            self._push_urls = [url for url in push_urls]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
+        """Name of the remote"""
+        return self._name
+
+    @property
+    def fetch_url(self):
+        """Fetch URL"""
+        return self._fetch_url
+
+    @property
+    def push_urls(self):
+        """List of push URLs"""
+        return self._push_urls
 
 
 class GitRepository(object):
@@ -141,13 +170,15 @@ class GitRepository(object):
         cmd = ['git', command] + args
         env = cls.__build_env(extra_env)
         stderr_arg = subprocess.PIPE if capture_stderr else None
+        stdin_arg = subprocess.PIPE if input else None
 
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
-                                 stdin=subprocess.PIPE,
+                                 stdin=stdin_arg,
                                  stdout=subprocess.PIPE,
                                  stderr=stderr_arg,
                                  env=env,
+                                 close_fds=True,
                                  cwd=cwd)
         (stdout, stderr) = popen.communicate(input)
         return stdout, stderr, popen.returncode
@@ -299,8 +330,10 @@ class GitRepository(object):
         """
         On what branch is the current working copy
 
-        @return: current branch
+        @return: current branch or C{None} in an empty repo
         @rtype: C{str}
+        @raises GitRepositoryError: if HEAD is not a symbolic ref
+          (e.g. when in detached HEAD state)
         """
         out, dummy, ret = self._git_inout('symbolic-ref', [ 'HEAD' ],
                                            capture_stderr=True)
@@ -308,12 +341,16 @@ class GitRepository(object):
             # We don't append stderr since
             # "fatal: ref HEAD is not a symbolic ref" confuses people
             raise GitRepositoryError("Currently not on a branch")
-
         ref = out.split('\n')[0]
+
         # Check if ref really exists
-        failed = self._git_getoutput('show-ref', [ ref ])[1]
-        if not failed:
-            return ref[11:] # strip /refs/heads
+        try:
+            self._git_command('show-ref', [ ref ])
+            branch = ref[11:] # strip /refs/heads
+        except GitRepositoryError:
+            branch = None  # empty repo
+        return branch
+
 
     def has_branch(self, branch, remote=False):
         """
@@ -329,8 +366,9 @@ class GitRepository(object):
             ref = 'refs/remotes/%s' % branch
         else:
             ref = 'refs/heads/%s' % branch
-        failed = self._git_getoutput('show-ref', [ ref ])[1]
-        if failed:
+        try:
+            self._git_command('show-ref', [ ref ])
+        except GitRepositoryError:
             return False
         return True
 
@@ -529,8 +567,18 @@ class GitRepository(object):
             if not self.has_branch(branch, remote=remote):
                 raise GitRepositoryError("Branch %s doesn't exist!" % branch)
 
-            self._git_inout('branch', ["--set-upstream", local_branch, upstream],
-                            capture_stderr=True)
+        if self._cmd_has_feature('branch', 'set-upstream-to'):
+            args = ['--set-upstream-to=%s' % upstream, local_branch]
+        else:
+            args = ["--set-upstream", local_branch, upstream]
+
+        dummy, err, ret = self._git_inout('branch',
+                                          args,
+                                          capture_stderr=True)
+        if ret:
+            raise GitRepositoryError(
+                "Failed to set upstream branch '%s' for '%s': %s" %
+                (upstream, local_branch, err.strip()))
 
     def get_upstream_branch(self, local_branch):
         """
@@ -606,7 +654,7 @@ class GitRepository(object):
         return [ False, True ][len(out)]
 
     def describe(self, commitish, pattern=None, longfmt=False, always=False,
-                 abbrev=None):
+                 abbrev=None, tags=False, exact_match=False):
         """
         Describe commit, relative to the latest tag reachable from it.
 
@@ -620,6 +668,11 @@ class GitRepository(object):
         @type always: C{bool}
         @param abbrev: abbreviate sha1 to given length instead of the default
         @type abbrev: None or C{long}
+        @param tags: enable matching a lightweight (non-annotated) tag
+        @type tags: C{bool}
+        @param exact_match: only output exact matches (a tag directly
+        references the supplied commit)
+        @type exact_match: C{bool}
         @return: tag name plus/or the abbreviated sha1
         @rtype: C{str}
         """
@@ -633,6 +686,8 @@ class GitRepository(object):
         elif abbrev is not None:
             args.add('--abbrev=%s' % abbrev)
         args.add_true(always, '--always')
+        args.add_true(tags, '--tags')
+        args.add_true(exact_match, '--exact-match')
         args.add(commitish)
 
         tag, err, ret = self._git_inout('describe', args.args,
@@ -706,6 +761,18 @@ class GitRepository(object):
             args += [ commit, '--' ]
             self._git_command("reset", args)
 
+    def _status(self, porcelain, ignore_untracked):
+        args = GitArgs()
+        args.add_true(ignore_untracked, '-uno')
+        args.add_true(porcelain, '--porcelain')
+
+        out, ret = self._git_getoutput('status',
+                                       args.args,
+                                       extra_env={'LC_ALL': 'C'})
+        if ret:
+            raise GitRepositoryError("Can't get repository status")
+        return out
+
     def is_clean(self, ignore_untracked=False):
         """
         Does the repository contain any uncommitted modifications?
@@ -720,24 +787,36 @@ class GitRepository(object):
         if self.bare:
             return (True, '')
 
-        clean_msg = 'nothing to commit'
+        out = self._status(porcelain=True,
+                           ignore_untracked=ignore_untracked)
+        if out:
+            # Get a more helpful error message.
+            out = self._status(porcelain=False,
+                                ignore_untracked=ignore_untracked)
+            return (False, "".join(out))
+        else:
+            return (True, '')
 
-        args = GitArgs()
-        args.add_true(ignore_untracked, '-uno')
+    def clean(self, directories=False, force=False, dry_run=False):
+        """
+        Remove untracked files from the working tree.
 
-        out, ret = self._git_getoutput('status',
-                                       args.args,
-                                       extra_env={'LC_ALL': 'C'})
+        @param directories: remove untracked directories, too
+        @type directories: C{bool}
+        @param force: satisfy git configuration variable clean.requireForce
+        @type force: C{bool}
+        @param dry_run: don’t actually remove anything
+        @type dry_run: C{bool}
+        """
+        options = GitArgs()
+        options.add_true(directories, '-d')
+        options.add_true(force, '-f')
+        options.add_true(dry_run, '-n')
+
+        _out, err, ret = self._git_inout('clean', options.args,
+                                         extra_env={'LC_ALL': 'C'})
         if ret:
-            raise GbpError("Can't get repository status")
-        ret = False
-        for line in out:
-            if line.startswith('#'):
-                continue
-            if line.startswith(clean_msg):
-                ret = True
-            break
-        return (ret, "".join(out))
+            raise GitRepositoryError("Can't execute repository clean: %s" % err)
 
     def is_empty(self):
         """
@@ -819,7 +898,7 @@ class GitRepository(object):
         @return: C{True} if the repository has that tree, C{False} otherwise
         @rtype: C{bool}
         """
-        out, dummy, ret =  self._git_inout('ls-tree', [ treeish ],
+        _out, _err, ret =  self._git_inout('ls-tree', [treeish],
                                            capture_stderr=True)
         return [ True, False ][ret != 0]
 
@@ -878,7 +957,7 @@ class GitRepository(object):
             raise GitRepositoryError("Not a Git repository object: '%s'" % obj)
         return out[0].strip()
 
-    def list_tree(self, treeish, recurse=False):
+    def list_tree(self, treeish, recurse=False, paths=None):
         """
         Get a trees content. It returns a list of objects that match the
         'ls-tree' output: [ mode, type, sha1, path ].
@@ -893,6 +972,8 @@ class GitRepository(object):
         args = GitArgs('-z')
         args.add_true(recurse, '-r')
         args.add(treeish)
+        args.add("--")
+        args.add_cond(paths, paths)
 
         out, err, ret =  self._git_inout('ls-tree', args.args, capture_stderr=True)
         if ret:
@@ -940,9 +1021,43 @@ class GitRepository(object):
 
 #{ Remote Repositories
 
+    def get_remotes(self):
+        """
+        Get a list of remote repositories
+
+        @return: remote repositories
+        @rtype: C{dict} of C{GitRemote}
+        """
+        out, err, ret = self._git_inout('remote', [], capture_stderr=True)
+        if ret:
+            raise GitRepositoryError('Failed to get list of remotes: %s' % err)
+
+        # Get information about all remotes
+        remotes = {}
+        for remote in out.splitlines():
+            out, err, _ret = self._git_inout('remote', ['show', '-n', remote],
+                                             capture_stderr=True)
+            if ret:
+                raise GitRepositoryError('Failed to get information for remote '
+                                         '%s: %s' % (remote, err))
+            fetch_url = None
+            push_urls = []
+            for line in out.splitlines():
+                match = re.match('\s*Fetch\s+URL:\s*(\S.*)', line)
+                if match:
+                    fetch_url = match.group(1)
+                match = re.match('\s*Push\s+URL:\s*(\S.*)', line)
+                if match:
+                    push_urls.append(match.group(1))
+            remotes[remote] = GitRemote(remote, fetch_url, push_urls)
+
+        return remotes
+
     def get_remote_repos(self):
         """
         Get all remote repositories
+
+        @deprecated: Use get_remotes() instead
 
         @return: remote repositories
         @rtype: C{list} of C{str}
@@ -959,7 +1074,7 @@ class GitRepository(object):
         @return: C{True} if the remote repositore is known, C{False} otherwise
         @rtype: C{bool}
         """
-        if name in self.get_remote_repos():
+        if name in self.get_remotes():
             return True
         else:
             return False
@@ -987,7 +1102,8 @@ class GitRepository(object):
         args = GitArgs('rm', name)
         self._git_command("remote", args.args)
 
-    def fetch(self, repo=None, tags=False, depth=0):
+    def fetch(self, repo=None, tags=False, depth=0, refspec=None,
+              all_remotes=False):
         """
         Download objects and refs from another repository.
 
@@ -997,15 +1113,23 @@ class GitRepository(object):
         @type tags: C{bool}
         @param depth: deepen the history of (shallow) repository to depth I{depth}
         @type depth: C{int}
+        @param refspec: refspec to use instead of the default from git config
+        @type refspec: C{str}
+        @param all_remotes: fetch all remotes
+        @type all_remotes: C{bool}
         """
         args = GitArgs('--quiet')
         args.add_true(tags, '--tags')
         args.add_cond(depth, '--depth=%s' % depth)
-        args.add_cond(repo, repo)
+        if all_remotes:
+            args.add_true(all_remotes, '--all')
+        else:
+            args.add_cond(repo, repo)
+            args.add_cond(refspec, refspec)
 
         self._git_command("fetch", args.args)
 
-    def pull(self, repo=None, ff_only=False):
+    def pull(self, repo=None, ff_only=False, all_remotes=False):
         """
         Fetch and merge from another repository
 
@@ -1013,13 +1137,19 @@ class GitRepository(object):
         @type repo: C{str}
         @param ff_only: only merge if this results in a fast forward merge
         @type ff_only: C{bool}
+        @param all_remotes: fetch all remotes
+        @type all_remotes: C{bool}
         """
-        args = []
-        args += [ '--ff-only' ] if ff_only else []
-        args += [ repo ] if repo else []
-        self._git_command("pull", args)
+        args = GitArgs()
+        args.add_true(ff_only, '--ff-only')
+        if all_remotes:
+            args.add_true(all_remotes, '--all')
+        else:
+            args.add_true(repo, repo)
+        self._git_command("pull", args.args)
 
-    def push(self, repo=None, src=None, dst=None, ff_only=True):
+    def push(self, repo=None, src=None, dst=None, ff_only=True, force=False,
+             tags=False):
         """
         Push changes to the remote repo
 
@@ -1031,9 +1161,16 @@ class GitRepository(object):
         @type dst: C{str}
         @param ff_only: only push if it's a fast forward update
         @type ff_only: C{bool}
+        @param force: force push, can cause the remote repository to lose
+        commits; use it with care
+        @type force: C{bool}
+        @param tags: push all refs under refs/tags, in addition to other refs
+        @type tags: C{bool}
         """
         args = GitArgs()
         args.add_cond(repo, repo)
+        args.add_true(force, "-f")
+        args.add_true(tags, "--tags")
 
         # Allow for src == '' to delete dst on the remote
         if src != None:
@@ -1043,6 +1180,7 @@ class GitRepository(object):
             if not ff_only:
                 refspec = '+%s' % refspec
             args.add(refspec)
+
         self._git_command("push", args.args)
 
     def push_tag(self, repo, tag):
@@ -1424,14 +1562,27 @@ class GitRepository(object):
                 'files' : files}
 
 #{ Patches
-    def format_patches(self, start, end, output_dir, signature=True, thread=None):
+    def format_patches(self, start, end, output_dir,
+                       signature=True,
+                       thread=None,
+                       symmetric=True):
         """
-        Output the commits between start and end as patches in output_dir
+        Output the commits between start and end as patches in output_dir.
+
+        This outputs the revisions I{start...end} by default. When using
+        I{symmetric} to C{false} it uses I{start..end} instead.
+
+        @param start: the commit on the left side of the revision range
+        @param end: the commit on the right hand side of the revisino range
+        @param output_dir: directory to write the patches to
+        @param signature: whether to output a signature
+        @param thread: whether to include In-Reply-To references
+        @param symmetric: whether to use the symmetric difference (see above)
         """
         options = GitArgs('-N', '-k',
                           '-o', output_dir)
         options.add_cond(not signature, '--no-signature')
-        options.add('%s...%s' % (start, end))
+        options.add('%s%s%s' % (start, '...' if symmetric else '..', end))
         options.add_cond(thread, '--thread=%s' % thread, '--no-thread')
 
         output, ret = self._git_getoutput('format-patch', options.args)
@@ -1449,7 +1600,8 @@ class GitRepository(object):
         args.append(patch)
         self._git_command("apply", args)
 
-    def diff(self, obj1, obj2=None, paths=None):
+    def diff(self, obj1, obj2=None, paths=None, stat=False, summary=False,
+             text=False, ignore_submodules=True):
         """
         Diff two git repository objects
 
@@ -1459,10 +1611,25 @@ class GitRepository(object):
         @type obj2: C{str}
         @param paths: List of paths to diff
         @type paths: C{list}
+        @param stat: Show diffstat
+        @type stat: C{bool} or C{int} or C{str}
+        @param summary: Show diffstat
+        @type summary: C{bool}
+        @param text: Generate textual diffs, treat all files as text
+        @type text: C{bool}
+        @param ignore_submodules: ignore changes to submodules
+        @type ignore_submodules: C{bool}
         @return: diff
         @rtype: C{str}
         """
-        options = GitArgs()
+        options = GitArgs('-p', '--no-ext-diff')
+        if stat is True:
+            options.add('--stat')
+        elif stat:
+            options.add('--stat=%s' % stat)
+        options.add_true(summary, '--summary')
+        options.add_true(text, '--text')
+        options.add_true(ignore_submodules, '--ignore-submodules=all')
         options.add(obj1)
         options.add_true(obj2, obj2)
         if paths:
@@ -1621,7 +1788,7 @@ class GitRepository(object):
                 raise GitRepositoryError("Error running git init: %s" % stderr)
 
             if description:
-                with file(os.path.join(abspath, git_dir, "description"), 'w') as f:
+                with open(os.path.join(abspath, git_dir, "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
                     f.write(description)
             return klass(abspath)
@@ -1684,7 +1851,10 @@ class GitRepository(object):
                 raise GitRepositoryError("Error running git clone: %s" % stderr)
 
             if not name:
-                name = remote.rstrip('/').rsplit('/',1)[1]
+                try:
+                    name = remote.rstrip('/').rsplit('/',1)[1]
+                except IndexError:
+                    name = remote.split(':', 1)[1]
                 if (mirror or bare):
                     if not name.endswith('.git'):
                         name = "%s.git" % name

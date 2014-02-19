@@ -289,9 +289,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
 
     if comp_type != 'auto':
         comp_type = compressor_aliases.get(comp_type, comp_type)
-        try:
-            dummy = compressor_opts[comp_type]
-        except KeyError:
+        if not compressor_opts.has_key(comp_type):
             gbp.log.warn("Unknown compression type - guessing.")
             comp_type = 'auto'
 
@@ -348,6 +346,23 @@ def disable_hooks(options):
         if getattr(options, hook):
             gbp.log.info("Disabling '%s' hook" % hook)
             setattr(options, hook, '')
+
+
+def changes_file_suffix(dpkg_args):
+    """
+    >>> changes_file_suffix(['-A'])
+    'all'
+    >>> changes_file_suffix(['-S'])
+    'source'
+    >>> changes_file_suffix([]) == du.get_arch()
+    True
+    """
+    if '-S' in dpkg_args:
+        return 'source'
+    elif '-A' in dpkg_args:
+        return 'all'
+    else:
+        return os.getenv('ARCH', None) or du.get_arch()
 
 
 def parse_args(argv, prefix):
@@ -556,17 +571,12 @@ def main(argv):
             RunAtCommand(options.builder, dpkg_args, shell=True,
                          extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)
             if options.postbuild:
-                arch = os.getenv('ARCH', None) or du.get_arch()
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir,
                                            source.sourcepkg,
-                                           source.changelog.noepoch, arch))
+                                           source.changelog.noepoch,
+                                           changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
-                if not os.path.exists(changes):
-                    changes = os.path.abspath("%s/../%s_%s_source.changes" %
-                                  (build_dir,
-                                   source.sourcepkg,
-                                   source.changelog.noepoch))
                 Command(options.postbuild, shell=True,
                         extra_env={'GBP_CHANGES_FILE': changes,
                                    'GBP_BUILD_DIR': build_dir})()

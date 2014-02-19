@@ -1,11 +1,16 @@
-#!/bin/sh
-# $Id: git-pbuilder,v 1.27 2012/01/13 04:12:35 eagle Exp $
+#!/bin/bash
+# $Id: git-pbuilder,v 1.30 2013/11/05 18:17:09 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
-# Written by Russ Allbery <rra@stanford.edu>
+# Note that this script requires bash, not a POSIX shell, because it uses bash
+# arrays to handle GIT_PBUILDER_OPTIONS.  It's otherwise quite difficult to
+# get the contents of that environment variable to undergo the correct amount
+# of shell expansion.
+#
+# Written by Russ Allbery <eagle@eyrie.org>
 # Based on the example in the git-buildpackage documentation
-# Copyright 2008, 2009, 2010, 2011, 2012
+# Copyright 2008, 2009, 2010, 2011, 2012, 2013
 #     The Board of Trustees of the Leland Stanford Junior University
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -24,10 +29,12 @@
 
 set -e
 
-# The URL to the Debian backports repository to add to the chroot
-# configuration when created via this script for a distribution ending in
-# -backports.
-BACKPORTS='http://backports.debian.org/debian-backports'
+# Helper function to quote an argument so that it's protected from the shell.
+# This is used when passing arguments through in --debbuildopts, since they'll
+# undergo another round of shell expansion.
+shell_quote () {
+    echo "$1" | sed -e "s/'/'\"'\"'/g" -e "1 s/^/'/" -e "\$ s/\$/'/"
+}
 
 # Set default BUILDER, DIST, and ARCH based on the name we were invoked as.
 # This allows people to create symlinks like git-pbuilder-squeeze and
@@ -64,6 +71,19 @@ esac
 if expr "$DIST" : '.*-backports$' >/dev/null; then
     DIST=${DIST%-backports}
     EXT="-backports"
+
+    # The URL to the Debian backports repository to add to the chroot
+    # configuration when created via this script for a distribution ending in
+    # -backports.  Backports was incorporated into the main mirrors as of
+    # wheezy.
+    case $DIST in
+        squeeze|oldstable)
+            BACKPORTS='http://backports.debian.org/debian-backports'
+            ;;
+        *)
+            BACKPORTS='http://ftp.debian.org/debian'
+            ;;
+    esac
 else
     EXT=
 fi
@@ -74,8 +94,9 @@ if [ ! -x /usr/sbin/"$BUILDER" ]; then
     exit 1
 fi
 
-# Default options come from the environment.
-OPTIONS="$GIT_PBUILDER_OPTIONS"
+# Default options come from the environment.  Use eval to parse
+# GIT_PBUILDER_OPTIONS into an array since some arguments may have quoting.
+eval "OPTIONS=( $GIT_PBUILDER_OPTIONS )"
 OUTPUT_DIR="${GIT_PBUILDER_OUTPUT_DIR:-../}"
 
 # How we handle options depends on what type of builder we're using.  Ignore
@@ -94,7 +115,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             : ${DIST:=sid}
             if [ -n "$ARCH" ] ; then
                 BASE="$PBUILDER_BASE/base-$DIST$EXT-$ARCH.tgz"
-                OPTIONS="$OPTIONS --architecture $ARCH"
+                OPTIONS+=( --architecture "$ARCH" )
             elif [ "$DIST" = 'sid' ] ; then
                 if [ -f "$PBUILDER_BASE/base-sid.tgz" ] ; then
                     BASE="$PBUILDER_BASE/base-sid.tgz"
@@ -104,7 +125,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             else
                 BASE="$PBUILDER_BASE/base-$DIST$EXT.tgz"
             fi
-            OPTIONS="$OPTIONS --basetgz $BASE"
+            OPTIONS+=( --basetgz "$BASE" )
 
             # Make sure the base tarball exists.
             if [ ! -f "$BASE" ] && [ "$1" != "create" ]; then
@@ -115,7 +136,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             # Set --debian-etch-workaround if DIST is etch.  Assume that
             # everything else is new enough that it will be fine.
             if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
-                OPTIONS="$OPTIONS --debian-etch-workaround"
+                OPTIONS+=( --debian-etch-workaround )
             fi
             ;;
     
@@ -131,7 +152,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             : ${DIST:=sid}
             if [ -n "$ARCH" ] ; then
                 BASE="$COWBUILDER_BASE/base-$DIST$EXT-$ARCH.cow"
-                OPTIONS="$OPTIONS --architecture $ARCH"
+                OPTIONS+=( --architecture "$ARCH" )
             elif [ "$DIST" = 'sid' ] ; then
                 if [ -d "$COWBUILDER_BASE/base-sid.cow" ] ; then
                     BASE="$COWBUILDER_BASE/base-sid.cow"
@@ -141,7 +162,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             else
                 BASE="$COWBUILDER_BASE/base-$DIST$EXT.cow"
             fi
-            OPTIONS="$OPTIONS --basepath $BASE"
+            OPTIONS+=( --basepath "$BASE" )
     
             # Make sure the base directory exists.
             if [ ! -d "$BASE" ] && [ "$1" != "create" ]; then
@@ -152,7 +173,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             # Set --debian-etch-workaround if DIST is etch.  Assume that
             # everything else is new enough that it will be fine.
             if [ "$DIST" = 'etch' ] || [ "$DIST" = 'ebo' ] ; then
-                OPTIONS="$OPTIONS --debian-etch-workaround"
+                OPTIONS+=( --debian-etch-workaround )
             fi
             ;;
     
@@ -171,7 +192,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
                 echo "Cannot read configuration file $QEMUCONFIG" >&2
                 exit 1
             fi
-            OPTIONS="$OPTIONS --config $QEMUCONFIG"
+            OPTIONS+=( --config "$QEMUCONFIG" )
             ;;
     
         *)
@@ -194,19 +215,19 @@ update|create|login)
     # it.  Instead, check if the user has a .pbuilderrc and, if so, explicitly
     # add it as a configuration file.
     if [ -f "$HOME/.pbuilderrc" ] ; then
-        OPTIONS="$OPTIONS --configfile $HOME/.pbuilderrc"
+        OPTIONS+=( --configfile "$HOME/.pbuilderrc" )
     fi
 
     # Run the builder.
     if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
-        sudo "$BUILDER" --"$action" $OPTIONS "$@"
+        sudo "$BUILDER" --"$action" "${OPTIONS[@]}" "$@"
     else
         if [ "$EXT" = '-backports' ] ; then
             OTHERMIRROR="deb $BACKPORTS $DIST$EXT main"
-            sudo "$BUILDER" --"$action" --dist "$DIST" \
-                --othermirror "$OTHERMIRROR" $OPTIONS "$@"
+            sudo "$BUILDER" --"$action" --distribution "$DIST" \
+                --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         else
-            sudo "$BUILDER" --"$action" --dist "$DIST" $OPTIONS "$@"
+            sudo "$BUILDER" --"$action" --distribution "$DIST" "${OPTIONS[@]}" "$@"
         fi
     fi
     exit $?
@@ -235,18 +256,26 @@ fi
 # or -I flags unless we're using source format 1.0.
 if [ ! -f debian/source/format ] || grep -qs '^1.0' debian/source/format ; then
     echo 'Source format 1.0 detected, adding exclude flags'
-    DEBBUILDOPTS="-i'(?:^|/)\\.git(attributes)?(?:\$|/.*\$)' -I.git $*"
+    DEBBUILDOPTS="-i'(?:^|/)\\.git(attributes)?(?:\$|/.*\$)' -I.git"
 else
-    DEBBUILDOPTS="$*"
+    DEBBUILDOPTS=''
 fi
+
+# Add all of the additional arguments we got on the command line, but quote
+# them from the shell since they'll undergo another round of shell expansion
+# when the pbuilder runs debbuild.
+for arg in "$@" ; do
+    DEBBUILDOPTS+=" $(shell_quote "$arg")"
+done
 
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
-    pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
+    pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" \
+        -- "${OPTIONS[@]}"
 else
-    pdebuild --buildresult $OUTPUT_DIR --pbuilder "$BUILDER" \
-        --debbuildopts "$DEBBUILDOPTS" -- $OPTIONS
+    pdebuild --buildresult "$OUTPUT_DIR" --pbuilder "$BUILDER" \
+        --debbuildopts "$DEBBUILDOPTS" -- "${OPTIONS[@]}"
 fi
 status="$?"
 if [ -n "`ls ../*_source.changes`" ] ; then
@@ -343,10 +372,14 @@ C<create>, or C<login>.  In this case, it calls B<cowbuilder> (or the
 configured builder as described above) using B<sudo> and passes the
 corresponding command to the builder, using the same logic as above to
 determine the base directory and distribution.  If the distribution (set
-in DIST) ends in C<-backports>, the following will be added as an
+in DIST) ends in C<-backports>, one of the following will be added as an
 B<--othermirror> parameter to the builder:
 
+    deb http://ftp.debian.org/debian $DIST main
     deb http://backports.debian.org/debian-backports $DIST main
+
+The first will be used for most distributions, and the second for
+C<squeeze-backports> or C<oldstable-backports>.
 
 Any additional arguments to B<git-pbuilder> are passed along to the
 builder.  Due to how B<sudo> works, invoking the builder with an action
@@ -388,9 +421,9 @@ If set to C<no>, disable the logic that constructs the base path, tarball,
 or configuration file and all other logic to determine the options to pass
 to the builder.  Instead, just run the configured builder and assume its
 configuration is handled elsewhere (such as in F<.pbuilderrc>).  This also
-suppresses setting C<--buildresult ..>, so the user will need to ensure
-that the configuration still puts packages where B<git-buildpackage>
-expects them.
+suppresses setting B<--buildresult>, so the user will need to ensure that
+the configuration still puts packages where B<git-buildpackage> expects
+them.
 
 =item GIT_PBUILDER_OPTIONS
 
@@ -402,7 +435,9 @@ value of the environment variable.
 
 =item GIT_PBUILDER_OUTPUT_DIR
 
-Where pbuilder puts the build result. Default is '..'.
+Where to put the result of the build.  The default is C<..> (the parent
+directory).  This setting is ignored if GIT_PBUILDER_AUTOCONF is set to
+C<no>.
 
 =item PBUILDER_BASE
 
@@ -467,7 +502,7 @@ L<http://www.eyrie.org/~eagle/software/scripts/>.
 
 =head1 AUTHOR
 
-Russ Allbery <rra@stanford.edu>
+Russ Allbery <eagle@eyrie.org>
 
 =cut
 

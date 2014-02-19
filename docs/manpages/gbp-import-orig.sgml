@@ -1,4 +1,4 @@
-<refentry id="man.git.import.orig">
+<refentry id="man.gbp.import.orig">
   <refentryinfo>
     <address>
       &dhemail;
@@ -195,6 +195,17 @@
         </listitem>
       </varlistentry>
     </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>Download and import a new upstream version using the informantion from <filename>debian/watch</filename></para>
+    <screen>
+      &gbp-import-orig; --uscan
+    </screen>
+    <para>After downloading an upstream tarball by hand import it</para>
+    <screen>
+      &gbp-import-orig; ../upstream-tarball-0.1.tar.gz
+    </screen>
   </refsect1>
   <refsect1>
       &man.gbp.config-files;

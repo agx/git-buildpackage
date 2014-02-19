@@ -1,8 +1,273 @@
+git-buildpackage (0.6.9) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [78f3673] Depend on newer devscripts.
+    These contain a uscan that handles repackaging at the right level and
+    won't let us pick up the wrong tarball name.
+    Thanks to gregor herrmann and all others involved (Closes: #635920)
+  * [7c64575] Avoid backtrace on config file parse errors
+    "gbp buildpackage" did this already but others didn't (Closes: #733759)
+  * [7b1eadd] Make parsing config file sections symmetric.
+    Always read the legacy command's config file section prior to the
+    subcommand's config file section.
+    Until now 'gbp <subcommand>' would read '[subcommand]' as well as
+    '[gbp-<subcommand>]' sections while 'gbp-<subcommand>' would only read
+    '[gbp-<subcommand>]' sections. (Closes: #733759)
+  * [49f0e44] Change the default of cleaner to /bin/true.
+    Running a clean command within version control by default nowadays
+    causes more trouble than it helps. It's unnecessary with
+    pbuilder/cowbuilder/sbuild and with export-dir. So change the default
+    from 'debuild clean' to a noop ('/bin/true'). (Closes: #670624)
+  * [d93c89f] import_orig: test error paths of find_source
+  * [daf249f] docs: improve docs on using upstream's git repo.
+    The documentation on using upstream's git directly instead of tarballs
+    was very terse. Add a step by step guide on how to get started and
+    how to update to new upstream versions.
+
+  [ Markus Lehtonen ]
+  * [e876beb] tests: adapt dch tests for older devscripts.
+    Determine the default urgency level by determining the version number of
+    the dch tool from command line.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 15 Feb 2014 11:45:00 +0100
+
+git-buildpackage (0.6.8) unstable; urgency=medium
+
+  * [f5718b8] No need to document --verbose.  Properly document --help
+    instead.
+    Thanks to Olivier Berger for pointing this out (Closes: #731149)
+  * [e746d5f] Adjust test cases to newer devscripts (Closes: #732384)
+  * [ca93ccb] Run nosetest on executables too.
+    They're all well behaved and this allows us to use doctests in them
+  * [eec8ce3] Determine changes file name based on dpkg-buildpackage options
+    (Closes: #732678)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 20 Dec 2013 17:21:20 +0100
+
+git-buildpackage (0.6.7) unstable; urgency=low
+
+  * [ab5a708] import-dsc; Merge upstream version by tag
+    instead of simply using the upstream branch name. THis makes sure
+    we also merge upstream versions that were imported previously with
+    e.g. "gbp import-orig". (Closes: #698222)
+  * [2042144] log: add error and warning aliases since I tend to use them
+    instead of err and warn. (Closes: #728896)
+  * [bc5ce39] Fix description of backports branches
+  * [00d830c] Use --distribution instead of --dist (Closes: #730788)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 29 Nov 2013 20:52:03 +0100
+
+git-buildpackage (0.6.6) unstable; urgency=low
+
+  [ Guan Junchun ]
+  * [284eea5] gbp-clone: support repo URLs like "host:repo.git" Previously,
+    gbp didn't correctly parse this kind of URL and clone failed.
+  * [d52abf3] gbp-clone: support cloning to a specific directory
+    (Closes: #725666)
+
+  [ Guido Günther ]
+  * [3092623] Add missing bash completion for gbp import-dscs
+    (Closes: #727749)
+  * [fc5b485] import-dsc: allow to skip Debian tag creation
+    (Closes: #636368)
+  * [6f0c8f9] Update to git-pbuilder 1.30 that resyncs with what we shipped in
+    gbp.
+  * [3e09958] Disable html coverage generation until python-nose is fixed.
+
+  [ Markus Lehtonen ]
+  * [c661c71] pq: rewrite patch export functionality.
+    Use our own function for constructing the patch files instead of using
+    the format-patch command of git. This way, we get the desired output
+    format directly, without the need for the error-prone "format-patch,
+    parse patch files, mangle and re-write patch files" cycle.
+    Also, fix patch naming in patch generation when '--no-patch-numbers' is
+    used.  Previously, multiple commits with the same subject resulted in
+    multiple patches having the same filename. This lead into broken series
+    with missing patches as patch files were overwritten by the topmost
+    commit.
+  * [017fac3] pq.format_patch: support file path filtering.
+    Implements a filter option that allows filtering out changes to certain
+    files/paths in the patch-generation. A commit is totally ignored if all
+    files would be filtered out. The path filter is given as a Python
+    regexp.
+  * [a0d6eb7] pq: properly generate non-ascii patch files.
+    Encode non-ascii email headers properly. Also, set MIME headers
+    correctly for the message body if the commit message body contains
+    non-ascii characters.
+    The reason for constructing the message in a little bit "clumsy" way is
+    the intention is to match the output of git-format-patch as closely as
+    possible.
+  * [91fbdc1] pq: support patch-export commands.
+    Support giving commands to pq as a meta tag in commit message. The
+    format is "Gbp: <command> [args]".
+    Currently, only one command is supported. namely 'ignore'. That is, one
+    can use 'Gbp: Ignore' in the commit message for ignoring the commit in
+    patch-generation.
+  * [3dccca6] pq: add format_diff() function.
+    For generating a patch file from a diff between two arbitrary commits.
+  * [34e85f7] pq: listen to 'Gbp-Pq:' commands, too
+  * [99c6995] pq: support 'Topic' patch-export command.
+    Topic can be defined with either 'Gbp: Topic <topic>' or 'Gbp-Pq: Topic
+    <topic>' in the commit message.
+    This is to replace the "gbp-pq-topic: <topic>" command.
+  * [0c0086b] docs: update pq manpages regarding pq command meta tags
+
+  [ Felipe Sateler ]
+  * [babbc5e] Add zsh completion.
+    (Closes: #717002)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Nov 2013 08:21:55 +0100
+
+git-buildpackage (0.6.5) unstable; urgency=low
+
+  [ Etienne Millon ]
+  * [ba4f778] doc: Fix git-pbuilder example (Closes: #725875)
+
+  [ Guido Günther ]
+  * [3be2947] Be more robust about git status output changes by using
+    --porcelain. Heavily based on a patch by rian m. carlson
+    (Closes: #726260)
+  * [ae460e1] Bump standards version
+
+  [ Andrew Starr-Bochicchio ]
+  * [4368694] Don't export DEB_VENDOR="Debian"
+    Tests now take Ubuntu versions into consideration. (Closes: #723756)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 16 Oct 2013 10:29:58 +0200
+
+git-buildpackage (0.6.4) unstable; urgency=low
+
+  [ Guido Günther ]
+  * [0385dc5] docs: having an upstream branch is a recommendation rather than
+    a hard requirement, we can use any treeish to build the upstream tarball
+    from.
+  * [e398469] Remove unused import
+  * [f738be3] Add link to online docs
+  * [ec7bd94] pq: print which patch failed to apply
+  * [820100d] pq: Only print number or tries if we try more than once
+  * [a86ccb7] Update to git-pbuilder 1.29
+  * [b494801] Backports got integrated into the main archive.  From wheezy on
+    we can use the main archive
+
+  [ Markus Lehtonen ]
+  * [4030c19] docs: minor sgml syntax fix
+  * [e72a1e2] config: restore mangled env in doctests.
+  * [0eeafba] GitRepository/diff: add 'stat' and 'summary' options.
+  * [8cdc06f] ComponentTestBase: more verbose output in case of branch mismatch
+  * [af2034c] ComponentTestBase: fix env restore in teardown
+  * [54099f5] import-orig: import readline in the common module.
+  * [6c478a6] ComponentTestBase: keep tmpdir if GBP_TESTS_NOCLEAN is in env
+  * [bc40956] GitRepository: Add clean() method
+  * [e48f0a0] GitRepository.diff: add 'text' option.  for generating textual
+    diffs.
+  * [3c0a022] GitRepository.diff: prevent usage of external diff.  External
+    diff might break patch generation, for example.
+  * [6f3d63a] ComponentTestBase: use eq_() ok_() from nose.tools for better
+    assert messages.
+  * [e54289e] common/buildpackage: fix handling of empty tarball prefix as
+    needed for rpm builds
+  * [39f581e] GitRepository.diff: add 'ignore_submodules' option
+  * [b9b9eea] GitRepository.list_tree: add 'paths' option.
+  * [3eb401d] git: new class and method for remote repositories.
+  * [28fdf4c] GitRepository.has_remote_repo: use get_remotes method.
+  * [b4e5b73] GitRepository: deprecate the get_remote_repos method.
+  * [c222197] tests: add test for archiving without git submodules
+  * [92f29be] tests: use eq_ and ok_ from nose tools in submodule tests.
+    For consistency and better assert error messages.
+  * [f858f87] tests: add some docstrings to git submodule tests.
+  * [1d92bfe] tests: upper case global variables in submodule tests.
+  * [6b8037e] tests: remove unused import in submodule tests.
+
+  [ Lingchaox Xin ]
+  * [07b3054] GitRepository.has_treeish: minor pylint fix
+  * [eca5a33] GitRepository.describe: add 'tags' and 'extra-match' options
+  * [1320de2] GitRepository.fetch: Add 'refspec' option
+  * [171579f] GitRepository.fetch: Add 'all_remotes' option
+  * [68baa9a] GitRepository.push: Add 'force' option
+  * [d28c7cc] GitRepository.push: Add 'tags' option
+  * [db79c5d] GitRepository.pull: Add 'all_remotes' option.
+    Also changes the method to utilize the GitArgs class.
+
+  [ Osamu Aoki ]
+  * [8441bba] typo s/bei/be/ (Closes: #722359)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 06 Oct 2013 17:35:14 +0200
+
+git-buildpackage (0.6.3) unstable; urgency=low
+
+  * [60ffe95] --git-hooks doesn't take an argument
+  * [7a29e42] Move MockedChangelog to testutils and allow to specify the
+    content so we can reuse it for other dch tests.
+  * [938e4cd] dch: make automatic adding of new sections more robust.
+    The code that determined if we found a snapshot header was obfuscated by
+    the code that determines the commits to add. Split those and better
+    document their purpose. Also always return the commit to start from so we
+    don't need to repeat the logic in the upper levels.
+  * [d0fb6d8] Minor docstring updates
+  * [388cfb8] docs: Add recommended branch layout.
+    It'd be nice to have similar branch layouts among packages so recommend
+    one that worked well so far.
+  * [34b2079] GitRepository: allow to use '..' instead of '...'
+    The symmetric difference isn't always useful since it includes changes
+    from both branches. See #680705.
+  * [f793ed0] pq: exclude patches from Debian packaging branch.
+    When regenerating the patch queue including patches from the Debian
+    branch is not useful. Addresses parts of #680705.
+    Thanks to Benjamin Cama for the detailed analysis.
+  * [283c847] docs: Refert to gbp in the introduction since this wraps all
+    commands now.
+    Thanks to Ross Boylan for pointing out that the current wording is
+    confusing.
+  * [8f073eb] docs: remove superfluous at
+  * [c9d3d93] Use open() instead of file() since the later doesn't exist in
+    python3
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 28 Aug 2013 19:35:34 +0200
+
+git-buildpackage (0.6.2) unstable; urgency=low
+
+  * [194d396] Document gbp's help option
+  * [56068e5] Git.Repository.__git_inout: properly set stdin.
+    We should set stdin to subprocess.PIPE when piping input according
+    to the subprocess docs.
+  * [585439e] Git.Repository.__git_inout: Close all other file descriptors.
+    No need to leak fds to the child.
+  * [9af1868] gbp.git.Repository.get_branch(): use _git_command
+    instead of the deprecated _git_inout and clarify the return codes and
+    exceptions raised.
+  * [a2ce387] gbp.git.GitRepository.has_branch(): use _git_command instead of
+    the deprecated _git_getoutput
+  * [2145c58] Test succesful import too and make sure we don't spew to stderr
+    during this test
+  * [8d2ceba] Make sure we keep our test coverage
+  * [00a4162] Switch to debhelper level 9 which is available in Wheezy
+  * [55ba9b8] Update Vcs-Browser URL
+  * [e829dc5] Add symlinks to the manpages for the deprecated commands and
+    make lintian happy (Closes: #714489)
+  * [fc74aa2] Fix broken xrefs
+  * [2a233a7] Add examples for importing upstream sources
+  * [cef5bae] Add gbp buildpackage example showing git-pbuilder invocation
+  * [1b38d90] Remove duplicate config files section in the "gbp buildpackage"
+    man page
+  * [a22eee2] GitRepository.set_upstream_branch: Newer git wants a valid
+    remote repo entry so set one in the tests before trying to set the
+    upstream branch. Found with git 1.8.3.2
+  * [7762b17] GitRepository.set_upstream_branch: don't try to set upstream
+    twice.  Move setting of the upstream branch out of the loop. This worked
+    by accident so far.
+  * [b615db5] GitRepository.set_upstream_branch: Catch errors to set upstream
+    branch
+  * [b8e921e] GitRepository.set_upstream_branch: use --set-upstream-to if
+    available since --set-upstream is deprecated.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 09 Jul 2013 21:46:00 +0200
+
 git-buildpackage (0.6.1~bpo70+1) wheezy-backports; urgency=low
 
   * Rebuild for wheezy-backports.
 
  -- Guido Günther <agx@sigxcpu.org>  Mon, 08 Jul 2013 20:05:18 +0200
+
 
 git-buildpackage (0.6.1) unstable; urgency=low
 

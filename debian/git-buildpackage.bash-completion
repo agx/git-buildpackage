@@ -146,6 +146,18 @@ _gbp_import_dsc ()
 }
 [ "${have:-}" ] && complete -F _gbp_import_dsc -o default git-import-dsc
 
+have git-import-dscs &&
+_gbp_import_dscs ()
+{
+    local options="$(_gbp_options git-import-dscs) $(_gbp_options git-import-dsc)"
+    local branch_opts="--debian-branch\= --upstream-branch\="
+    local tag_opts="--debian-tag\= --upstream-tag\="
+    local tristate_opts="--color\="
+
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts"
+}
+[ "${have:-}" ] && complete -F _gbp_import_dscs -o default git-import-dscs
+
 have gbp-pq &&
 _gbp_pq ()
 {
