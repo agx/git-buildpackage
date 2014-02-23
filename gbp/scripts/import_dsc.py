@@ -377,7 +377,8 @@ def main(argv):
                         repo.create_branch(options.upstream_branch, commit)
                     if options.pristine_tar:
                         repo.pristine_tar.commit(src.tgz, options.upstream_branch)
-                if is_empty and not repo.has_branch(options.debian_branch):
+                if (not repo.has_branch(options.debian_branch)
+                    and (is_empty or options.create_missing_branches)):
                     repo.create_branch(options.debian_branch, commit)
             if not src.native:
                 if src.diff or src.deb_tgz:
