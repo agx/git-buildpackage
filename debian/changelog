@@ -1,3 +1,17 @@
+git-buildpackage (0.6.10) unstable; urgency=medium
+
+  * [f1bc542,1b0b17c] config: Don't pull in config defaults twice.
+    This would otherwise overwrite values set in the legacy config sections.
+    (Closes: #733759)
+  * [7e26f91] Remove cover-min-percentage.  It makes running single tests
+    harder than necessary since it requires the percentage also when using
+    "nose <testname>".
+  * [d533e0f] import_dsc: Create missing debian branch with
+    --create-missing-branches (Closes: #739888)
+  * [df32264] git-import-dsc: Document --create-missing-branches
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 23 Feb 2014 17:56:47 +0100
+
 git-buildpackage (0.6.9) unstable; urgency=medium
 
   [ Guido Günther ]
