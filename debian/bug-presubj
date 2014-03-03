@@ -1,0 +1,3 @@
+When reporting issues regarding git-buildpackage please run the failing command
+with --git-verbose (gbp buildpackage) or --verbose (all other commands) and
+provide the full output.
