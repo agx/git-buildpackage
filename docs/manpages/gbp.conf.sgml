@@ -84,20 +84,10 @@ option which can be turned into configuration file setting by dropping the
 </programlisting>
 
 <para>
-Notice that some option are actually repeatable, or take Python lists.
+Notice that some option can take Python like lists.
 For example the <xref linkend="man.gbp.import.orig"> commmand has the
 <option>--filter</option>=<parameter>pattern</parameter> option which can
 be truned into a configuration file option like this:
-</para>
-
-<programlisting>
-    [import-orig]
-    filter = .svn
-    filter = .hg
-</programlisting>
-
-<para>
-An alternative way is to write it using Python list syntax:
 </para>
 
 <programlisting>
