@@ -160,7 +160,7 @@ An example set up for packaging work:
 </para>
 
 <programlisting>
- # $HOME/gbp.conf
+ # $HOME/.gbp.conf
 
  [DEFAULT]
  pristine-tar = True
