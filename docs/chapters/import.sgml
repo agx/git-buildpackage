@@ -256,6 +256,7 @@ upstream-tag = v%(version)s
 	    gbp buildpackage --git-upstream-tag='v%(version)s' --git-debian-branch=debian/sid
 	  </screen>
 	  If you want to share you're repository with others you can use &gbp-create-remote-repo; and &gbp-pull; as usual.
+	</para>
 	</sect3>
       </sect2>
 

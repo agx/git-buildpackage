@@ -186,7 +186,7 @@
         <term><option>--[no-]create-missing-branches</option>
         </term>
         <listitem>
-          <para>Create missing upstream and debian branch if missing.
+          <para>Create missing upstream and debian branch if missing.</para>
         </listitem>
       </varlistentry>
      </variablelist>
