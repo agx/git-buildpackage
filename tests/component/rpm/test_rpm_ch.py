@@ -343,6 +343,17 @@ class TestRpmCh(RpmRepoTestBase):
         eq_(mock_ch(['--spawn-editor=always', '--editor-cmd=']),
             0)
 
+    def test_option_message(self):
+        """Test the --message cmdline option"""
+        self.init_test_repo('gbp-test-native')
+        orig_content = self.read_file('packaging/gbp-test-native.changes')
+
+        eq_(mock_ch(['--message', 'my entry\nanother entry']), 0)
+        content = self.read_file('packaging/gbp-test-native.changes')
+        # Added header, two entries and a blank line
+        eq_(len(content), len(orig_content) + 4)
+        eq_(content[2], '- another entry\n')
+
     def test_user_customizations(self):
         """Test the user customizations"""
         repo = self.init_test_repo('gbp-test-native')
