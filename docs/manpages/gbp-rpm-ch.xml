@@ -28,7 +28,10 @@
       <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--changelog-file=</option><replaceable>FILEPATH</replaceable></arg>
       <arg><option>--spec-file=</option><replaceable>FILEPATH</replaceable></arg>
-      <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
+      <group>
+        <arg><option>--message=</option><replaceable>MESSAGE</replaceable></arg>
+        <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
+      </group>
       <arg><option>--no-release</option></arg>
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]full</option></arg>
@@ -267,6 +270,17 @@
         <listitem>
           <para>
           The editor to use for editing the changelog.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--message=<replaceable>MESSAGE</replaceable></option>
+        </term>
+        <listitem>
+          <para>
+          Text to use for new changelog entries. Git history and the commit
+          messages, including <option>--since</option> and
+          <option>--all</option> options are ignored in this case.
           </para>
         </listitem>
       </varlistentry>

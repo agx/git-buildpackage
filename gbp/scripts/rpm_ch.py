@@ -291,6 +291,37 @@ def entries_from_commits(changelog, repo, commits, options):
     return entries
 
 
+def entries_from_text(changelog, text, author):
+    """Generate a list of changelog entries from a string"""
+    entries = []
+    # Use current user as the author for all entries
+    for line in text.splitlines():
+        if line.strip():
+            entry_text = "- %s" % line.strip()
+            entries.append(changelog.create_entry(author=author,
+                                                  text=entry_text))
+    return entries
+
+
+def generate_new_entries(changelog, repo, options, args):
+    """Generate new entries to be appended to changelog"""
+    if options.message:
+        author = get_author(repo, options.git_author)[0]
+        entries = entries_from_text(changelog, options.message, author)
+    else:
+        # Get range of commits from where to generate changes
+        since = get_start_commit(changelog, repo, options)
+        if args:
+            gbp.log.info("Only looking for changes in '%s'" % ", ".join(args))
+        commits = repo.get_commits(since=since, until='HEAD', paths=args,
+                                   options=options.git_log.split(" "))
+        commits.reverse()
+        if not commits:
+            gbp.log.info("No changes detected from %s to %s." % (since, 'HEAD'))
+        entries = entries_from_commits(changelog, repo, commits, options)
+    return entries
+
+
 def update_changelog(changelog, entries, repo, spec, options):
     """Update the changelog with a range of commits"""
     # Get info for section header
@@ -431,6 +462,9 @@ def build_parser(name):
                                       dest="spawn_editor")
     format_grp.add_config_file_option(option_name="editor-cmd",
                                       dest="editor_cmd")
+    format_grp.add_option("-m", '--message',
+                          help="text to use as new changelog entries - git commit "
+                          "messages and the --since are ignored in this case")
     # Commit/tag group options
     commit_grp.add_option("-c", "--commit", action="store_true",
                           help="commit changes")
@@ -485,27 +519,18 @@ def main(argv):
 
         # Find and parse changelog file
         ch_file = parse_changelog_file(repo, spec, options)
-        since = get_start_commit(ch_file.changelog, repo, options)
 
-        # Get range of commits from where to generate changes
-        if args:
-            gbp.log.info("Only looking for changes in '%s'" % ", ".join(args))
-        commits = repo.get_commits(since=since, until='HEAD', paths=args,
-                                   options=options.git_log.split(" "))
-        commits.reverse()
-        if not commits:
-            gbp.log.info("No changes detected from %s to %s." % (since, 'HEAD'))
+        # Get new entries
+        entries = generate_new_entries(ch_file.changelog, repo, options, args)
 
         # Do the actual update
-        entries = entries_from_commits(ch_file.changelog, repo, commits,
-                                       options)
         tag, tag_msg, author, committer = update_changelog(ch_file.changelog,
                                                            entries, repo, spec,
                                                            options)
         # Write to file
         ch_file.write()
 
-        if editor_cmd:
+        if editor_cmd and not options.message:
             gbpc.Command(editor_cmd, [ch_file.path])()
 
         if options.commit:
