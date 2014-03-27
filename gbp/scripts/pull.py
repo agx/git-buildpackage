@@ -70,8 +70,7 @@ def fast_forward_branch(branch, repo, options):
 
 def parse_args(argv):
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                             usage='%prog [options] - safely update a repository from remote')
+        parser = GbpOptionParser(usage='%prog [options] - safely update a repository from remote')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None

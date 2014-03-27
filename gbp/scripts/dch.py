@@ -292,8 +292,7 @@ def main(argv):
     branch = None
 
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
-                                       usage='%prog [options] paths')
+        parser = GbpOptionParserDebian(usage='%prog [options] paths')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return 1

@@ -375,7 +375,7 @@ def parse_args(argv, prefix):
             args.append(arg)
 
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix=prefix)
+        parser = GbpOptionParserDebian(prefix=prefix)
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None, None
