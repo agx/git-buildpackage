@@ -3,7 +3,9 @@
 from . import context
 
 import os
+import shutil
 import subprocess
+import tempfile
 import unittest
 
 import gbp.log
@@ -91,8 +93,9 @@ class MockedChangeLog(ChangeLog):
 
 def get_dch_default_urgency():
     """Determine the default urgency level used by dch"""
-    urgency='medium'
-    tmp_dch_name = '__test_dch'
+    urgency = 'medium'
+    tempdir = tempfile.mkdtemp()
+    tmp_dch_name = os.path.join(tempdir, 'changelog')
     try:
         dch_cmd = ['dch', '--create', '--empty', '--changelog', tmp_dch_name,
                    '--package=foo', '--newversion=1',
@@ -106,7 +109,7 @@ def get_dch_default_urgency():
                 header = dchfile.readline().strip()
                 urgency = header.split()[-1].replace('urgency=', '')
     finally:
-        if os.path.isfile(tmp_dch_name):
-            os.unlink(tmp_dch_name)
+        if os.path.isdir(tempdir):
+            shutil.rmtree(tempdir)
     return urgency
 
