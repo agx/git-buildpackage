@@ -1,3 +1,40 @@
+git-buildpackage (0.6.11) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [38cfa6c] Request verbose output on bug reports
+  * [d000b0c] Remove incorrect docs about multiple filter options
+    (Closes: #718536)
+  * [fd440e2] Use a temporary directory.  This avoids file name collisions and
+    weired files in the working copy.
+  * [e1780f0] Fix command output.
+    The first line lacked the subcommand like:
+    $ gbp pull --help
+    Usage: gbp [options] - safely update a repository from remote
+    instead of
+    $ gbp pull --help
+    Usage: gbp pull [options] - safely update a repository from remote
+               ^^^^
+
+  [ Mario Lang ]
+  * [077dc35] Fix config file name
+
+  [ Markus Lehtonen ]
+  * [3808523] docs: add some missing sgml closing tags
+  * [d8f55da] GitRepository/get_commit_info: correctly handle file
+    renames/copies.  Use the '--no-renames' git command line option in order
+    to prevent two filenames per entry.
+  * [5dd598f] GitRepository/add_remote_repo: fix the 'tags' argument.
+    Explicitly use --tags in git arguments - otherwise tags might not be
+    fetched.
+  * [15d87fb] tests: more robust check for the default urgency level of dch.
+    The dch tool might not report it's version if it is incorrectly compiled.
+    Create a dummy changelog and parse it "manually" to determine the default
+    urgency level.
+  * [7774375] pq: minor log message typo fix
+  * [bbf21bf] ComponentTestBase: use regex matching in log checking
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 27 Mar 2014 22:27:38 +0100
+
 git-buildpackage (0.6.10) unstable; urgency=medium
 
   * [f1bc542,1b0b17c] config: Don't pull in config defaults twice.
