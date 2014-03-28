@@ -183,7 +183,8 @@ def set_bare_repo_options(options):
 
 def parse_args(argv):
     try:
-        parser = GbpOptionParserDebian(usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                       usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None

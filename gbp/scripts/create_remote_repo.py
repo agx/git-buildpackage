@@ -245,7 +245,8 @@ def parse_args(argv, sections=[]):
     else:
         sections = []
 
-    parser = GbpOptionParserDebian(usage='%prog [options] - '
+    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                   usage='%prog [options] - '
                                    'create a remote repository',
                                    sections=sections)
     branch_group = GbpOptionGroup(parser,

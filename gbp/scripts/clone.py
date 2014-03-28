@@ -31,7 +31,8 @@ import gbp.log
 
 def parse_args (argv):
     try:
-        parser = GbpOptionParser(usage='%prog [options] repository - clone a remote repository')
+        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+                                 usage='%prog [options] repository - clone a remote repository')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None, None

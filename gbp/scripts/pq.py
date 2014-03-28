@@ -212,7 +212,8 @@ def switch_pq(repo, current):
 
 def parse_args(argv):
     try:
-        parser = GbpOptionParserDebian(usage="%prog [options] action - maintain patches on a patch queue branch\n"
+        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+                                   usage="%prog [options] action - maintain patches on a patch queue branch\n"
         "Actions:\n"
         "  export         export the patch queue associated to the current branch\n"
         "                 into a quilt patch series in debian/patches/ and update the\n"

@@ -20,7 +20,6 @@ from optparse import OptionParser, OptionGroup, Option, OptionValueError
 from ConfigParser import SafeConfigParser, NoSectionError
 from copy import copy
 import os.path
-import sys
 try:
     from gbp.version import gbp_version
 except ImportError:
@@ -357,7 +356,7 @@ class GbpOptionParser(OptionParser):
         else:
             self.config['filter'] = []
 
-    def __init__(self, command=None, prefix='', usage=None, sections=[]):
+    def __init__(self, command, prefix='', usage=None, sections=[]):
         """
         @param command: the command to build the config parser for
         @type command: C{str}
@@ -369,18 +368,19 @@ class GbpOptionParser(OptionParser):
             to parse
         @type sections: C{list} of C{str}
         """
-        if not command:
-            command = os.path.basename(sys.argv[0])
-            if command == 'gbp':
-                command += " " + os.path.basename(sys.argv[1])
         self.command = command
         self.sections = sections
         self.prefix = prefix
         self.config = {}
         self.config_files = self.get_config_files()
         self._parse_config_files()
+
+        if self.command.startswith('git-') or self.command.startswith('gbp-'):
+            prog = self.command
+        else:
+            prog = "gbp %s" % self.command
         OptionParser.__init__(self, option_class=GbpOption,
-                              prog=command,
+                              prog=prog,
                               usage=usage, version='%s %s' % (self.command,
                                                               gbp_version))
 
