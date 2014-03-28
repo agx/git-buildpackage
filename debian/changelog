@@ -1,3 +1,10 @@
+git-buildpackage (0.6.12) unstable; urgency=medium
+
+  * [89f3005] Use a much simpler version to fix the command name in --help
+    mostly reverting e1780f0. (Closes: #742907)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 29 Mar 2014 00:17:59 +0100
+
 git-buildpackage (0.6.11) unstable; urgency=medium
 
   [ Guido Günther ]
