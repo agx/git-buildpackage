@@ -305,7 +305,7 @@ class GbpOptionParser(OptionParser):
         files = envvar.split(':') if envvar else klass.def_config_files
         return [ os.path.expanduser(f) for f in files ]
 
-    def _parse_config_files(self):
+    def parse_config_files(self):
         """
         Parse the possible config files and set appropriate values
         default values
@@ -372,7 +372,7 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.config_files = self.get_config_files()
-        self._parse_config_files()
+        self.parse_config_files()
 
         if self.command.startswith('git-') or self.command.startswith('gbp-'):
             prog = self.command
@@ -446,6 +446,17 @@ class GbpOptionParser(OptionParser):
         self.add_config_file_option(option_name=option_name, dest=dest, action="store_true")
         neg_help = "negates '--%s%s'" % (self.prefix, option_name)
         self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
+
+    def get_config_file_value(self, option_name):
+        """
+        Query a single interpolated config file value.
+
+        @param option_name: the config file option to look up
+        @type option_name: string
+        @returns: The config file option value or C{None} if it doesn't exist
+        @rtype: C{str} or C{None}
+        """
+        return self.config.get(option_name)
 
 
 class GbpOptionGroup(OptionGroup):

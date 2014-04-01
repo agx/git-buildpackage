@@ -74,7 +74,7 @@ def test_parser_fallback():
     >>> f = open(confname, 'w')
     >>> f.write('[DEFAULT]\\nthere = was\\n[foo]\\nthere = is\\n[git-foo]\\nno = truth\\n')
     >>> f.close()
-    >>> parser._parse_config_files()
+    >>> parser.parse_config_files()
     >>> parser.config['there']
     'is'
     >>> parser.config['no']
@@ -93,13 +93,13 @@ def test_filter():
     >>> f = open(confname, 'w')
     >>> f.write('[bar]\\nfilter = asdf\\n')
     >>> f.close()
-    >>> parser._parse_config_files()
+    >>> parser.parse_config_files()
     >>> parser.config['filter']
     ['asdf']
     >>> f = open(confname, 'w')
     >>> f.write("[bar]\\nfilter = ['this', 'is', 'a', 'list']\\n")
     >>> f.close()
-    >>> parser._parse_config_files()
+    >>> parser.parse_config_files()
     >>> parser.config['filter']
     ['this', 'is', 'a', 'list']
     """

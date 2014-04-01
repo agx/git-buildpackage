@@ -8,6 +8,7 @@
   <!ENTITY gbp-import-orig	"<command>gbp import-orig</command>">
   <!ENTITY gbp-import-dsc	"<command>gbp import-dsc</command>">
   <!ENTITY gbp-import-dscs	"<command>gbp import-dscs</command>">
+  <!ENTITY gbp-config		"<command>gbp config</command>">
   <!ENTITY gbp-dch		"<command>gbp dch</command>">
   <!ENTITY gbp		        "<command>gbp</command>">
   <!ENTITY gbp-pull		"<command>gbp pull</command>">

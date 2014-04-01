@@ -62,3 +62,12 @@ class TestConfigParser(unittest.TestCase):
                 actual = parser.config['new_overrides_git_option1']
                 expected = 'new_overrides_git_value1'
                 self.assertEqual(actual, expected, "%s != %s for %s" % (actual, expected, cmd))
+
+    def test_get_config_file_value(self):
+        """
+        Read a single value from the parse config
+        """
+        parser = GbpOptionParser('cmd4')
+        self.assertEqual(parser.get_config_file_value('new_overrides_git_option1'),
+                         'new_overrides_git_value1')
+        self.assertEqual(parser.get_config_file_value('doesnotexist'), None)
