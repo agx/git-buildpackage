@@ -335,7 +335,6 @@ class GbpOptionParser(OptionParser):
 
         # Update with command specific settings
         if parser.has_section(cmd):
-            self.config.update(dict(parser.items(cmd, raw=True)))
             # Don't use items() until we got rid of the compat sections
             # since this pulls in the defaults again
             self.config.update(dict(parser._sections[cmd].items()))
