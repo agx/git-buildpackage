@@ -2,7 +2,7 @@
 
 import os
 import unittest
-from gbp.config import GbpOptionParser
+from gbp.config import GbpOptionParser, GbpOptionGroup
 from . import context
 
 class TestConfigParser(unittest.TestCase):
@@ -71,3 +71,17 @@ class TestConfigParser(unittest.TestCase):
         self.assertEqual(parser.get_config_file_value('new_overrides_git_option1'),
                          'new_overrides_git_value1')
         self.assertEqual(parser.get_config_file_value('doesnotexist'), None)
+
+    def test_param_list(self):
+        parser = GbpOptionParser('cmd4')
+
+        branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
+        parser.add_option_group(branch_group)
+        branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
+        branch_group.add_config_file_option("debian-branch", dest="upstream_branch")
+        parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+
+        params = parser.valid_options
+        self.assertTrue('upstream-branch' in params)
+        self.assertTrue('debian-branch' in params)
+        self.assertTrue('color' in params)

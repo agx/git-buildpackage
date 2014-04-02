@@ -23,7 +23,10 @@
 
       <arg><option>--verbose</option></arg>
       <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
-      <arg choice="plain"><replaceable>command.option</replaceable></arg>
+      <group choice='req'>
+	<arg choice="plain"><replaceable>command.option</replaceable></arg>
+	<arg choice="plain"><replaceable>command</replaceable></arg>
+      </group>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -85,7 +88,14 @@
     would use:</para>
     <screen>
     $ gbp config buildpackage.upstream-branch
-    upstream
+    buildpackage.upstream-branch=upstream
+    </screen>
+    <para>Print the values of all of &gbp-buildpackage;s options</para>
+    <screen>
+    $ gbp config buildpackage
+    buildpackage.upstream-branch=upstream
+    buildpackage.debian-branch=master
+    ...
     </screen>
   </refsect1>
   <refsect1>

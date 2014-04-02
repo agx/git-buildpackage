@@ -283,20 +283,14 @@ def changelog_commit_msg(options, version):
     return options.commit_msg % dict(version=version)
 
 
-def main(argv):
-    ret = 0
-    changelog = 'debian/changelog'
-    until = 'HEAD'
-    found_snapshot_banner = False
-    version_change = {}
-    branch = None
-
+def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+        parser = GbpOptionParserDebian(command=os.path.basename(name),
                                        usage='%prog [options] paths')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return 1
+        return None
+
     range_group = GbpOptionGroup(parser, "commit range options",
                                  "which commits to add to the changelog")
     version_group = GbpOptionGroup(parser, "release & version number options",
@@ -374,10 +368,31 @@ def main(argv):
                                         dest="customization_file",
                                         help=help_msg)
 
+
+    return parser
+
+
+def parse_args(argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
+
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     dch_options = process_options(options, parser)
     editor_cmd = process_editor_option(options)
+    return options, args, dch_options, editor_cmd
+
+def main(argv):
+    ret = 0
+    changelog = 'debian/changelog'
+    until = 'HEAD'
+    found_snapshot_banner = False
+    version_change = {}
+    branch = None
+
+
+    options, args, dch_options, editor_cmd = parse_args(argv)
 
     try:
         try:

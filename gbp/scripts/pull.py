@@ -68,13 +68,14 @@ def fast_forward_branch(branch, repo, options):
                             msg="gbp: forward %s to %s" % (branch, remote))
     return update
 
-def parse_args(argv):
+
+def build_parser(name):
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+        parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                              usage='%prog [options] - safely update a repository from remote')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None
+        return None
 
     branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
     parser.add_option_group(branch_group)
@@ -93,6 +94,13 @@ def parse_args(argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    return parser
+
+
+def parse_args(argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
     return parser.parse_args(argv)
 
 

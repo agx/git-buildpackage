@@ -181,13 +181,13 @@ def set_bare_repo_options(options):
         options.merge = False
 
 
-def parse_args(argv):
+def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
                                        usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None
+        return None
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
@@ -241,6 +241,13 @@ def parse_args(argv):
                       default=False, help="deprecated - don't use.")
     parser.add_option("--uscan", dest='uscan', action="store_true",
                       default=False, help="use uscan(1) to download the new tarball.")
+    return parser
+
+
+def parse_args(argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)

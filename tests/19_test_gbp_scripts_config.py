@@ -21,6 +21,21 @@ import unittest
 import gbp.scripts.config
 
 class TestGbpConfigCommand(unittest.TestCase):
+    class SingleValuePrintStub(object):
+        def __init__(self):
+            self.result = None
+
+        def __call__(self, arg):
+            self.result = arg
+
+    class AllValuesPrintStub(object):
+        def __init__(self, cmd):
+            self.cmd = cmd
+            self.result = {}
+
+        def __call__(self, arg):
+            k, v = arg.split('=', 1)
+            self.result[k] = v
 
     def setUp(self):
         self.conffiles_save = os.environ.get('GBP_CONF_FILES')
@@ -29,28 +44,43 @@ class TestGbpConfigCommand(unittest.TestCase):
         os.environ['GBP_CONF_FILES'] = self.confname
 
     def test_invocation_single_value(self):
-        """Test if we an invoke it without error"""
+        """Can invoke it for a sngle value  without error"""
         ret = gbp.scripts.config.main(['doesnotmatter', 'coolcommand.branchname'])
         self.assertEqual(ret, 0)
 
     def test_invocation_missing_value(self):
-        """Test if we an invoke it without error"""
+        """Can we detect a missing value"""
         ret = gbp.scripts.config.main(['doesnotmatter', 'coolcommand.doesnotexist'])
         self.assertEqual(ret, 1)
 
-    def test_invocation_parse_error(self):
-        """Test if we an invoke it without error"""
-        ret = gbp.scripts.config.main(['doesnotmatter', 'mustcontaindot'])
-        self.assertEqual(ret, 2)
-
-    def test_print_single_value(self):
-        class Printstub(object):
-            result = None
-            def __call__(self, arg):
-                self.result = arg
-
-        printstub = Printstub()
-        ret = gbp.scripts.config.print_single_value('coolcommand.branchname', printstub)
-        self.assertEqual(printstub.result, 'abranch')
+    def test_print_cmd_single_value(self):
+        """Can we fetch a single configuration value"""
+        printstub = self.SingleValuePrintStub()
+        query = 'coolcommand.branchname'
+        ret = gbp.scripts.config.print_cmd_single_value(query, printstub)
+        self.assertEqual(printstub.result, '%s=abranch' % query)
         self.assertEqual(ret, 0)
+
+    def test_print_cmd_all_values(self):
+        """Can we fetch the configuration for all commands"""
+        for cmd in [ 'buildpackage',
+                     'clone',
+                     'config',
+                     'create_remote_repo',
+                     'dch',
+                     'import_dsc',
+                     'import_orig',
+                     'pq',
+                     'pull' ]:
+            printstub = self.AllValuesPrintStub(cmd)
+            ret = gbp.scripts.config.print_cmd_all_values(cmd, printstub)
+            self.assertTrue('%s.color' % cmd in printstub.result.keys())
+            self.assertEqual(ret, 0)
+
+    def test_invalid_cms(self):
+        """Invalid commands or those not using the config should rerturn an error code"""
+        for cmd in [ "import_dscs", "supercommand" ]:
+            printstub = self.AllValuesPrintStub(cmd)
+            ret = gbp.scripts.config.print_cmd_all_values(cmd, printstub)
+            self.assertEqual(ret, 2)
 

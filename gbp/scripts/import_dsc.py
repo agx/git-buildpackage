@@ -204,14 +204,13 @@ def set_bare_repo_options(options):
                       % (["", " '--no-pristine-tar'"][options.pristine_tar], ))
         options.pristine_tar = False
 
-
-def parse_args(argv):
+def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
                                        usage='%prog [options] /path/to/package.dsc')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None
+        return None
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
@@ -263,9 +262,15 @@ def parse_args(argv):
                       dest="author_committer_date")
     import_group.add_boolean_config_file_option(option_name="allow-unauthenticated",
                       dest="allow_unauthenticated")
+    return parser
+
+
+def parse_args(argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
 
     (options, args) = parser.parse_args(argv[1:])
-    gbp.log.setup(options.color, options.verbose)
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     return options, args
 
