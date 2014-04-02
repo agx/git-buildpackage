@@ -1093,7 +1093,7 @@ class GitRepository(object):
         @type fetch: C{bool}
         """
         args = GitArgs('add')
-        args.add_cond(tags, '--tags', '--no-tags')
+        args.add_false(tags, '--no-tags')
         args.add_true(fetch, '--fetch')
         args.add(name, url)
         self._git_command("remote", args.args)
