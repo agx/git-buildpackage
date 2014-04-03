@@ -2,6 +2,7 @@
 
 MAN1S = \
         gbp               \
+        gbp-buildpackage  \
         gbp-clone         \
         gbp-config        \
         gbp-create-remote-repo \
