@@ -1,3 +1,26 @@
+git-buildpackage (0.6.13) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [14f6ded] Test option parser fallbacks more thoroughly
+    revealing another bug where we overwrote parsed values with defaults
+    (Closes: #733759)
+  * [03ada72] .gitignore: ignore editor backup files
+  * [4c6b067] Add minimal 'config' command.  This only allows to print single
+    config values so far. (Closes: #733470)
+  * [b393080] Import command not module. This matches the function name.
+  * [459d9bf] config: add decorator to add_option_* functions.
+    This allows us to build an internal list of valid options and print
+    these.
+
+  [ Markus Lehtonen ]
+  * [a8cfd88] Revert "GitRepository/add_remote_repo: fix the 'tags' argument"
+    Which caused an unwanted behavior of not fetching refs/heads at all --
+    only tags were fetched.
+    This reverts commit 5dd598fb8f2a9109189fad6cf631811f12ce2130
+  * [4131b90] docs: re-enable missing manpage
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 03 Apr 2014 21:31:38 +0200
+
 git-buildpackage (0.6.12) unstable; urgency=medium
 
   * [89f3005] Use a much simpler version to fix the command name in --help
