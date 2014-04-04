@@ -21,7 +21,7 @@ Build-Depends:
  sgml2x,
 # For the testsuite
  bzip2,
- devscripts (>= 2.13.8~),
+ devscripts,
  git (>= 1:1.7.9.1-1~),
  pristine-tar,
  unzip,
