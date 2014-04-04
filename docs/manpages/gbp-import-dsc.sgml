@@ -21,20 +21,21 @@
     <cmdsynopsis>
       &gbp-import-dsc;
 
-      <arg><option>--verbose</option></arg>
-      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--[no-]sign-tags</option></arg>
-      <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
-      <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--skip-debian-tag=</option></arg>
-      <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
-      <arg><option>--[no-]pristine-tar</option></arg>
-      <arg><option>--download</option></arg>
       <arg><option>--allow-same-versions</option></arg>
-      <arg><option>--author-is-committer</option></arg>
       <arg><option>--author-date-is-committer-date</option></arg>
+      <arg><option>--author-is-committer</option></arg>
+      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--download</option></arg>
+      <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
+      <arg><option>--[no-]create-missing-branches</option></arg>
+      <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--[no-]sign-tags</option></arg>
+      <arg><option>--skip-debian-tag=</option></arg>
+      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--verbose</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
@@ -179,6 +180,13 @@
           comitter date. <warning><para>Git will subtly misbehave if the
           committer date of a commit is not later than or equal to all
           its parents.</para></warning></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]create-missing-branches</option>
+        </term>
+        <listitem>
+          <para>Create missing upstream and debian branch if missing.</para>
         </listitem>
       </varlistentry>
      </variablelist>

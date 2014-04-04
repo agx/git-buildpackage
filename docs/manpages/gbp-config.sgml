@@ -1,0 +1,119 @@
+<refentry id="man.gbp.config">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+   <refentrytitle>gbp-config</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-config</refname>
+
+    <refpurpose>Query configuration values</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-config;
+
+      <arg><option>--verbose</option></arg>
+      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <group choice='req'>
+	<arg choice="plain"><replaceable>command.option</replaceable></arg>
+	<arg choice="plain"><replaceable>command</replaceable></arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &gbp-config; prints values from the configuration files. It interpolates the
+    value for <replaceable>option</replaceable> of
+    <replaceable>command</replaceable>.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>--verbose</option></term>
+	<term><option>-v</option></term>
+        <listitem>
+          <para>verbose execution</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
+        </term>
+        <listitem>
+          <para>Whether to use colored output.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXIT CODES</title>
+    <para>
+    When &gbp-config finishes it indicates success or failure with its exit code:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term><option>0</option></term>
+        <listitem>
+	  <para>Success.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>1</option></term>
+        <listitem>
+	  <para>Failed to parse command line</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>2</option></term>
+        <listitem>
+	  <para>The value did not exist</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>Print the value <option>upstream-branch</option> that &gbp-buildpackage;
+    would use:</para>
+    <screen>
+    $ gbp config buildpackage.upstream-branch
+    buildpackage.upstream-branch=upstream
+    </screen>
+    <para>Print the values of all of &gbp-buildpackage;s options</para>
+    <screen>
+    $ gbp config buildpackage
+    buildpackage.upstream-branch=upstream
+    buildpackage.debian-branch=master
+    ...
+    </screen>
+  </refsect1>
+  <refsect1>
+      &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry>
+        <refentrytitle>gbp.conf</refentrytitle>
+	&dhconfsection;
+      </citerefentry>
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>

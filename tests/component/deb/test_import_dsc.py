@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2013 Guido Günther <agx@sigxcpu.org>
+# (C) 2013,2014 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
+from nose.tools import ok_
+
 from gbp.scripts.import_dsc import main as import_dsc
 
 class TestImportDsc(ComponentTestBase):
-    """Test importing of src.rpm files"""
+    """Test importing of debian source packages"""
 
     def test_debian_import(self):
         """Test that importing of debian native packages works"""
@@ -50,3 +52,31 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 3
+
+    def test_create_branches(self):
+        """Test if creating missing branches works"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-3.0',
+                                'hello-debhelper_%s.dsc' % version)
+
+        dsc = _dsc('2.6-2')
+        assert import_dsc(['arg0',
+                           '--pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           dsc]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        os.chdir('hello-debhelper')
+        assert len(repo.get_commits()) == 2
+        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        dsc = _dsc('2.8-1')
+        assert import_dsc(['arg0',
+                           '--pristine-tar',
+                           '--debian-branch=foo',
+                           '--upstream-branch=bar',
+                           '--create-missing-branches',
+                           dsc]) == 0
+        self._check_repo_state(repo, 'master', ['bar', 'foo', 'master', 'pristine-tar', 'upstream'])
+        commits, expected = len(repo.get_commits()), 2
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))

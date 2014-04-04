@@ -89,7 +89,7 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds):
             elif noarg_cmds and cmd in noarg_cmds:
                 commands[cmd] = match.group('args')
             else:
-                gbp.log.warn("Ignoring unknow gbp-command '%s' in commit %s"
+                gbp.log.warn("Ignoring unknown gbp-command '%s' in commit %s"
                                 % (line, info['id']))
     return commands
 

@@ -60,27 +60,6 @@ def test_tristate():
     auto
     """
 
-def test_parser_fallback():
-    """
-    Make sure we also parse git-<subcommands> sections if
-    gbp <subcommand> was used.
-
-    >>> import os
-    >>> from gbp.config import GbpOptionParser
-    >>> parser = GbpOptionParser('foo')
-    >>> tmpdir = str(context.new_tmpdir('foo'))
-    >>> confname = os.path.join(tmpdir, 'gbp.conf')
-    >>> parser.config_files = [confname]
-    >>> f = open(confname, 'w')
-    >>> f.write('[foo]\\nthere = is\\n[git-foo]\\nno = truth\\n')
-    >>> f.close()
-    >>> parser._parse_config_files()
-    >>> parser.config['there']
-    'is'
-    >>> parser.config['no']
-    'truth'
-    """
-
 def test_filter():
     """
     The filter option should always parse as a list
@@ -93,13 +72,13 @@ def test_filter():
     >>> f = open(confname, 'w')
     >>> f.write('[bar]\\nfilter = asdf\\n')
     >>> f.close()
-    >>> parser._parse_config_files()
+    >>> parser.parse_config_files()
     >>> parser.config['filter']
     ['asdf']
     >>> f = open(confname, 'w')
     >>> f.write("[bar]\\nfilter = ['this', 'is', 'a', 'list']\\n")
     >>> f.close()
-    >>> parser._parse_config_files()
+    >>> parser.parse_config_files()
     >>> parser.config['filter']
     ['this', 'is', 'a', 'list']
     """

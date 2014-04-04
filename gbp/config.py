@@ -45,6 +45,27 @@ def check_tristate(option, opt, value):
     else:
         return val
 
+
+def safe_option(f):
+    def _decorator(self, *args, **kwargs):
+        obj = self
+        option_name = kwargs.get('option_name')
+        if not option_name and len(args):
+            option_name = args[0]
+
+        # We're decorating GbpOption not GbpOptionParser
+        if not hasattr(obj, 'valid_options'):
+            if not hasattr(obj, 'parser'):
+                raise ValueError("Can only decorete GbpOptionParser and GbpOptionGroup not %s" % obj)
+            else:
+                obj = obj.parser
+
+        if option_name and not option_name.startswith('no-'):
+            obj.valid_options.append(option_name)
+        return f(self, *args, **kwargs)
+    return _decorator
+
+
 class GbpOption(Option):
     TYPES = Option.TYPES + ('path', 'tristate')
     TYPE_CHECKER = copy(Option.TYPE_CHECKER)
@@ -305,7 +326,7 @@ class GbpOptionParser(OptionParser):
         files = envvar.split(':') if envvar else klass.def_config_files
         return [ os.path.expanduser(f) for f in files ]
 
-    def _parse_config_files(self):
+    def parse_config_files(self):
         """
         Parse the possible config files and set appropriate values
         default values
@@ -335,11 +356,13 @@ class GbpOptionParser(OptionParser):
 
         # Update with command specific settings
         if parser.has_section(cmd):
-            self.config.update(dict(parser.items(cmd, raw=True)))
+            # Don't use items() until we got rid of the compat sections
+            # since this pulls in the defaults again
+            self.config.update(dict(parser._sections[cmd].items()))
 
         for section in self.sections:
             if parser.has_section(section):
-                self.config.update(dict(parser.items(section, raw=True)))
+                self.config.update(dict(parser._sections[section].items()))
             else:
                 raise NoSectionError("Mandatory section [%s] does not exist."
                                      % section)
@@ -370,8 +393,15 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.config_files = self.get_config_files()
-        self._parse_config_files()
+        self.parse_config_files()
+        self.valid_options = []
+
+        if self.command.startswith('git-') or self.command.startswith('gbp-'):
+            prog = self.command
+        else:
+            prog = "gbp %s" % self.command
         OptionParser.__init__(self, option_class=GbpOption,
+                              prog=prog,
                               usage=usage, version='%s %s' % (self.command,
                                                               gbp_version))
 
@@ -418,15 +448,16 @@ class GbpOptionParser(OptionParser):
             default = self.config[option_name]
         return default
 
+    @safe_option
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
-        @param option_name: name of the option
-        @type option_name: string
-        @param dest: where to store this option
-        @type dest: string
-        @param help: help text
-        @type help: string
+        param option_name: name of the option
+        type option_name: string
+        param dest: where to store this option
+        type dest: string
+        param help: help text
+        type help: string
         """
         if not help:
             help = self.help[option_name]
@@ -439,17 +470,29 @@ class GbpOptionParser(OptionParser):
         neg_help = "negates '--%s%s'" % (self.prefix, option_name)
         self.add_config_file_option(option_name="no-%s" % option_name, dest=dest, help=neg_help, action="store_false")
 
+    def get_config_file_value(self, option_name):
+        """
+        Query a single interpolated config file value.
+
+        @param option_name: the config file option to look up
+        @type option_name: string
+        @returns: The config file option value or C{None} if it doesn't exist
+        @rtype: C{str} or C{None}
+        """
+        return self.config.get(option_name)
+
 
 class GbpOptionGroup(OptionGroup):
+    @safe_option
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
-        @param option_name: name of the option
-        @type option_name: string
-        @param dest: where to store this option
-        @type dest: string
-        @param help: help text
-        @type help: string
+        param option_name: name of the option
+        type option_name: string
+        param dest: where to store this option
+        type dest: string
+        param help: help text
+        type help: string
         """
         if not help:
             help = self.parser.help[option_name]

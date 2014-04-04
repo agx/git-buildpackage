@@ -365,20 +365,12 @@ def changes_file_suffix(dpkg_args):
         return os.getenv('ARCH', None) or du.get_arch()
 
 
-def parse_args(argv, prefix):
-    args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
-    dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
-
-    # We handle these although they don't have a --git- prefix
-    for arg in [ "--help", "-h", "--version" ]:
-        if arg in dpkg_args:
-            args.append(arg)
-
+def build_parser(name, prefix=None):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix=prefix)
+        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None, None
+        return None
 
     tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
@@ -453,6 +445,21 @@ def parse_args(argv, prefix):
     export_group.add_option("--git-dont-purge", action="store_true", dest="dont_purge", default=False,
                             help="deprecated, use --git-no-purge instead")
     export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
+    return parser
+
+
+def parse_args(argv, prefix):
+    args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
+    dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
+
+    # We handle these although they don't have a --git- prefix
+    for arg in [ "--help", "-h", "--version" ]:
+        if arg in dpkg_args:
+            args.append(arg)
+
+    parser = build_parser(argv[0], prefix=prefix)
+    if not parser:
+        return None, None, None
     options, args = parser.parse_args(args)
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)

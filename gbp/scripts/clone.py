@@ -29,13 +29,13 @@ from gbp.errors import GbpError
 import gbp.log
 
 
-def parse_args (argv):
+def build_parser(name):
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
+        parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                                  usage='%prog [options] repository - clone a remote repository')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None
+        return None
 
     branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
     parser.add_option_group(branch_group)
@@ -53,10 +53,16 @@ def parse_args (argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    return parser
+
+
+def parse_args (argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
 
     (options, args) = parser.parse_args(argv)
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
-
     return (options, args)
 
 

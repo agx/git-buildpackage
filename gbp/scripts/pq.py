@@ -210,9 +210,9 @@ def switch_pq(repo, current):
         switch_to_pq_branch(repo, current)
 
 
-def parse_args(argv):
+def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
+        parser = GbpOptionParserDebian(command=os.path.basename(name),
                                    usage="%prog [options] action - maintain patches on a patch queue branch\n"
         "Actions:\n"
         "  export         export the patch queue associated to the current branch\n"
@@ -226,7 +226,7 @@ def parse_args(argv):
         "  switch         switch to patch-queue branch and vice versa")
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None
+        return None
 
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -238,6 +238,13 @@ def parse_args(argv):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    return parser
+
+
+def parse_args(argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
     return parser.parse_args(argv)
 
 

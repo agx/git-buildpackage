@@ -12,6 +12,7 @@ class TestHelp(unittest.TestCase):
     def testHelp(self):
         for script in ['buildpackage',
                       'clone',
+                      'config',
                       'create_remote_repo',
                       'dch',
                       'import_orig',

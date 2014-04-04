@@ -18,6 +18,7 @@
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
 """Create a remote repo based on the current one"""
 
+import ConfigParser
 import sys
 import os, os.path
 import urlparse
@@ -225,30 +226,16 @@ def push_branches(remote, branches):
     gitPush([remote['url'], '--tags'])
 
 
-def parse_args(argv, sections=[]):
-    """
-    Parse the command line arguments and config files.
+def build_parser(name, sections=[]):
+    try:
+        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
+                                       usage='%prog [options] - '
+                                       'create a remote repository',
+                                       sections=sections)
+    except ConfigParser.ParsingError as err:
+        gbp.log.err(err)
+        return None
 
-    @param argv: the command line arguments
-    @type argv: C{list} of C{str}
-    @param sections: additional sections to add to the config file parser
-        besides the command name
-    @type sections: C{list} of C{str}
-    """
-
-    # We simpley handle the template section as an additional config file
-    # section to parse, this makes e.g. --help work as expected:
-    for arg in argv:
-        if arg.startswith('--remote-config='):
-            sections = ['remote-config %s' % arg.split('=',1)[1]]
-            break
-    else:
-        sections = []
-
-    parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
-                                   usage='%prog [options] - '
-                                   'create a remote repository',
-                                   sections=sections)
     branch_group = GbpOptionGroup(parser,
                                   "branch options",
                                   "branch layout and tracking options")
@@ -281,10 +268,34 @@ def parse_args(argv, sections=[]):
                                   dest="template_dir")
     parser.add_config_file_option(option_name="remote-config",
                                   dest="remote_config")
+    return parser
 
-    (options, args) = parser.parse_args(argv)
 
-    return options, args
+def parse_args(argv, sections=[]):
+    """
+    Parse the command line arguments and config files.
+
+    @param argv: the command line arguments
+    @type argv: C{list} of C{str}
+    @param sections: additional sections to add to the config file parser
+        besides the command name
+    @type sections: C{list} of C{str}
+    """
+
+    # We simpley handle the template section as an additional config file
+    # section to parse, this makes e.g. --help work as expected:
+    for arg in argv:
+        if arg.startswith('--remote-config='):
+            sections = ['remote-config %s' % arg.split('=',1)[1]]
+            break
+    else:
+        sections = []
+
+    parser = build_parser(argv[0], sections)
+    if not parser:
+        return None, None
+
+    return parser.parse_args(argv)
 
 
 def main(argv):

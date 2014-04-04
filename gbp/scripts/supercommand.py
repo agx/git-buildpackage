@@ -44,10 +44,11 @@ The most commonly used commands are:
     import-dscs  - import multiple Debian source packages
 """
 
-def import_command(modulename):
+def import_command(cmd):
     """
     Import the module that implements the given command
     """
+    modulename = sanitize(cmd)
     if (not re.match(r'[a-z][a-z0-9_]', modulename) or
         modulename in invalid_modules):
         raise ImportError('Illegal module name %s' % modulename)
@@ -69,9 +70,8 @@ def supercommand(argv=None):
         usage()
         return 0
 
-    modulename = sanitize(cmd)
     try:
-        module = import_command(modulename)
+        module = import_command(cmd)
     except ImportError as e:
         print >>sys.stderr, "'%s' is not a valid command." % cmd
         usage()

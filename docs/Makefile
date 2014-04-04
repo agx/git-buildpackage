@@ -1,15 +1,19 @@
 #!/usr/bin/make
 
-MAN1S = gbp-buildpackage  \
+MAN1S = \
+        gbp               \
+        gbp-buildpackage  \
+        gbp-clone         \
+        gbp-config        \
+        gbp-create-remote-repo \
+        gbp-dch           \
         gbp-import-dsc    \
         gbp-import-dscs   \
         gbp-import-orig   \
-        gbp-dch           \
-        gbp               \
-        gbp-pull          \
-        gbp-clone         \
         gbp-pq            \
-        gbp-create-remote-repo
+        gbp-pull          \
+        $(NULL)
+
 MAN5S = gbp.conf
 
 MANUAL=manual-html

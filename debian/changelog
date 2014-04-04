@@ -1,3 +1,84 @@
+git-buildpackage (0.6.13) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [14f6ded] Test option parser fallbacks more thoroughly
+    revealing another bug where we overwrote parsed values with defaults
+    (Closes: #733759)
+  * [03ada72] .gitignore: ignore editor backup files
+  * [4c6b067] Add minimal 'config' command.  This only allows to print single
+    config values so far. (Closes: #733470)
+  * [b393080] Import command not module. This matches the function name.
+  * [459d9bf] config: add decorator to add_option_* functions.
+    This allows us to build an internal list of valid options and print
+    these.
+
+  [ Markus Lehtonen ]
+  * [a8cfd88] Revert "GitRepository/add_remote_repo: fix the 'tags' argument"
+    Which caused an unwanted behavior of not fetching refs/heads at all --
+    only tags were fetched.
+    This reverts commit 5dd598fb8f2a9109189fad6cf631811f12ce2130
+  * [4131b90] docs: re-enable missing manpage
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 03 Apr 2014 21:31:38 +0200
+
+git-buildpackage (0.6.12) unstable; urgency=medium
+
+  * [89f3005] Use a much simpler version to fix the command name in --help
+    mostly reverting e1780f0. (Closes: #742907)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 29 Mar 2014 00:17:59 +0100
+
+git-buildpackage (0.6.11) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [38cfa6c] Request verbose output on bug reports
+  * [d000b0c] Remove incorrect docs about multiple filter options
+    (Closes: #718536)
+  * [fd440e2] Use a temporary directory.  This avoids file name collisions and
+    weired files in the working copy.
+  * [e1780f0] Fix command output.
+    The first line lacked the subcommand like:
+    $ gbp pull --help
+    Usage: gbp [options] - safely update a repository from remote
+    instead of
+    $ gbp pull --help
+    Usage: gbp pull [options] - safely update a repository from remote
+               ^^^^
+
+  [ Mario Lang ]
+  * [077dc35] Fix config file name
+
+  [ Markus Lehtonen ]
+  * [3808523] docs: add some missing sgml closing tags
+  * [d8f55da] GitRepository/get_commit_info: correctly handle file
+    renames/copies.  Use the '--no-renames' git command line option in order
+    to prevent two filenames per entry.
+  * [5dd598f] GitRepository/add_remote_repo: fix the 'tags' argument.
+    Explicitly use --tags in git arguments - otherwise tags might not be
+    fetched.
+  * [15d87fb] tests: more robust check for the default urgency level of dch.
+    The dch tool might not report it's version if it is incorrectly compiled.
+    Create a dummy changelog and parse it "manually" to determine the default
+    urgency level.
+  * [7774375] pq: minor log message typo fix
+  * [bbf21bf] ComponentTestBase: use regex matching in log checking
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 27 Mar 2014 22:27:38 +0100
+
+git-buildpackage (0.6.10) unstable; urgency=medium
+
+  * [f1bc542,1b0b17c] config: Don't pull in config defaults twice.
+    This would otherwise overwrite values set in the legacy config sections.
+    (Closes: #733759)
+  * [7e26f91] Remove cover-min-percentage.  It makes running single tests
+    harder than necessary since it requires the percentage also when using
+    "nose <testname>".
+  * [d533e0f] import_dsc: Create missing debian branch with
+    --create-missing-branches (Closes: #739888)
+  * [df32264] git-import-dsc: Document --create-missing-branches
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 23 Feb 2014 17:56:47 +0100
+
 git-buildpackage (0.6.9) unstable; urgency=medium
 
   [ Guido Günther ]
