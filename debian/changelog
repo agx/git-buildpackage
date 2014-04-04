@@ -1,3 +1,13 @@
+git-buildpackage (0.6.13~bpo70+1) wheezy-backports; urgency=medium
+
+  * Rebuild for wheezy-backports.
+  * [f6f3e6c] Remove versioned devscipts build-dep. The tests now detect the
+    dch defaults
+  * [37a26b0] Lower devscripts dependency. This reopens #635920
+  * [da2a78e] Add gbp.conf for wheezy backports
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 04 Apr 2014 11:29:15 +0200
+
 git-buildpackage (0.6.13) unstable; urgency=medium
 
   [ Guido Günther ]
