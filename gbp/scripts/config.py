@@ -29,7 +29,7 @@ import gbp.log
 def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
-                             usage='%prog [options] - display configuration settings')
+                             usage='%prog [options] command[.optionname] - display configuration settings')
     except ConfigParser.ParsingError as err:
         gbp.log.err(err)
         return None
@@ -112,7 +112,7 @@ def main(argv):
         gbp.log.error("No command given")
         return 2
     elif len(args) != 2:
-        gbp.log.error("Can only take a single argument")
+        gbp.log.error("Can only take a command or command.optionname, check --help")
         return 2
     else:
         query = args[1]
