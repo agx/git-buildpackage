@@ -138,10 +138,12 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
+      <xref linkend="man.gbp.buildpackage">,
       <xref linkend="man.gbp.import.dsc">,
       <xref linkend="man.gbp.import.dscs">,
       <xref linkend="man.gbp.import.orig">,
       <xref linkend="man.gbp.dch">,
+      <xref linkend="man.gbp.pq">,
       <xref linkend="man.gbp.create.remote.repo">,
       <xref linkend="man.gbp.pull">,
       <xref linkend="man.gbp.clone">,
