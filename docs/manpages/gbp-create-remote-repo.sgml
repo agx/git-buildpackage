@@ -141,18 +141,9 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-pull</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.pull">,
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>

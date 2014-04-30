@@ -407,26 +407,11 @@
     <title>SEE ALSO</title>
 
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-dsc</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-dscs</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-orig</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>,
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.import.dsc">,
+      <xref linkend="man.gbp.import.dscs">,
+      <xref linkend="man.gbp.import.orig">,
+      <xref linkend="man.gbp.conf">,
       &man.seealso.common;
       <ulink url="https://honk.sigxcpu.org/cl2vcs">
       <citetitle>Cl2vcs</citetitle></ulink>,

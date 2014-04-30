@@ -104,10 +104,7 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>

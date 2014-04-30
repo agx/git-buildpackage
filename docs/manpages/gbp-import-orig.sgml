@@ -214,26 +214,11 @@
     <title>SEE ALSO</title>
 
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-dsc</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-dscs</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-dch</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>,
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.import.dsc">,
+      <xref linkend="man.gbp.import.dscs">,
+      <xref linkend="man.gbp.dch">,
+      <xref linkend="man.gbp.conf">,
       &man.seealso.common;
     </para>
 

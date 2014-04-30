@@ -138,42 +138,18 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-import-dsc</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-dscs</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-orig</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-dch</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-create-remote-repo</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-pull</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-clone</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
+      <xref linkend="man.gbp.import.dsc">,
+      <xref linkend="man.gbp.import.dscs">,
+      <xref linkend="man.gbp.import.orig">,
+      <xref linkend="man.gbp.dch">,
+      <xref linkend="man.gbp.create.remote.repo">,
+      <xref linkend="man.gbp.pull">,
+      <xref linkend="man.gbp.clone">,
       <citerefentry>
         <refentrytitle>git-pbuilder</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>,
+      <xref linkend="man.gbp.conf">,
       &man.seealso.common;
     </para>
   </refsect1>

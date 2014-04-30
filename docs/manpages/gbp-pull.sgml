@@ -137,22 +137,10 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-clone</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-pq</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.clone">,
+      <xref linkend="man.gbp.pq">,
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>
