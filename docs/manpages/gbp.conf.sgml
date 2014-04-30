@@ -226,7 +226,7 @@ the above list of configuration files.</para></listitem>
     <citerefentry>
       <refentrytitle>gbp-pq</refentrytitle>
       <manvolnum>1</manvolnum>
-    </citerefentry>
+    </citerefentry>,
     <citerefentry>
       <refentrytitle>gbp-pull</refentrytitle>
       <manvolnum>1</manvolnum>

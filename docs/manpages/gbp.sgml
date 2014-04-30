@@ -173,7 +173,7 @@
       <citerefentry>
         <refentrytitle>gbp.conf</refentrytitle>
 	&dhconfsection;
-      </citerefentry>
+      </citerefentry>,
       &man.seealso.common;
     </para>
   </refsect1>
