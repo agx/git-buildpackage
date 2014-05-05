@@ -59,7 +59,7 @@
   <refsect1>
     <title>EXIT CODES</title>
     <para>
-    When &gbp-config finishes it indicates success or failure with its exit code:
+    When &gbp-config; finishes it indicates success or failure with its exit code:
     </para>
     <variablelist>
       <varlistentry>

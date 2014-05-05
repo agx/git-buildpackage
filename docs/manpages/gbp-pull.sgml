@@ -108,7 +108,7 @@
   <refsect1>
     <title>EXIT CODES</title>
     <para>
-    When &gbp-pull finishes it indicates success or failure with it's exit code:
+    When &gbp-pull; finishes it indicates success or failure with it's exit code:
     </para>
     <variablelist>
       <varlistentry>
