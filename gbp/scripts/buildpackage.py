@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2013 Guido Günther <agx@sigxcpu.org>
+# (C) 2006-2014 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -241,6 +241,8 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
 def get_upstream_tree(repo, cp, options):
     """Determine the upstream tree from the given options"""
     if options.upstream_tree.upper() == 'TAG':
+        if cp['Upstream-Version'] is None:
+            raise GitRepositoryError("Can't determine upstream version from changelog")
         upstream_tree = repo.version_to_tag(options.upstream_tag,
                                             cp['Upstream-Version'])
     elif options.upstream_tree.upper() == 'BRANCH':
