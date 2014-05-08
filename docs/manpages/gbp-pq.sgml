@@ -22,6 +22,7 @@
       &gbp-pq;
       <arg><option>--verbose</option></arg>
       <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--color-scheme</option>=<replaceable>COLOR_SCHEME</replaceable></arg>
       <arg><option>--[no-]patch-numbers</option></arg>
       <arg><option>--topic=</option><replaceable>topic</replaceable></arg>
       <arg><option>--time-machine=</option><replaceable>num</replaceable></arg>
@@ -135,6 +136,20 @@
         </term>
         <listitem>
           <para>Whether to use colored output.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--color-scheme</option>=<replaceable>COLOR_SCHEME</replaceable></term>
+        <listitem>
+          <para>
+          Colors to use in output (when color is enabled). The format for
+          COLOR_SCHEME is
+          '&lt;debug&gt;:&lt;info&gt;:&lt;warning&gt;:&lt;error&gt;'.
+          Numerical values and color names are accepted, empty fields imply
+          the default color. For example --git-color-scheme='cyan:34::' would
+          show debug messages in cyan, info messages in blue and other messages
+          in default (i.e. warning and error messages in red).
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
