@@ -29,6 +29,7 @@
       <arg><option>--git-upstream-branch=</option><replaceable>treeish</replaceable></arg>
       <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--git-ignore-branch</option></arg>
+      <arg><option>--git-[no-]submodules</option></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
       <arg><option>--git-[no-]pbuilder</option></arg>
@@ -252,6 +253,15 @@
         </term>
         <listitem>
 	  <para>GPG sign all created tags</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-[no-]submodules</option>
+        </term>
+        <listitem>
+          <para>
+          Include git submodules in the orig tarball.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
