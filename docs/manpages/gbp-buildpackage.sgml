@@ -25,8 +25,8 @@
       <arg><option>--git-color=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--git-color-scheme</option>=<replaceable>COLOR_SCHEME</replaceable></arg>
       <arg><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable></arg>
-      <arg><option>--git-upstream-branch=</option><replaceable>treeish</replaceable></arg>
-      <arg><option>--git-debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--git-upstream-branch=</option><replaceable>TREEISH</replaceable></arg>
+      <arg><option>--git-debian-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
       <arg><option>--git-ignore-branch</option></arg>
       <arg><option>--git-[no-]submodules</option></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
@@ -38,22 +38,22 @@
       <arg><option>--git-[no-]pbuilder-autoconf</option></arg>
       <arg><option>--git-pbuilder-options</option></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
-      <arg><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable></arg>
-      <arg><option>--git-posttag=</option><replaceable>command</replaceable></arg>
-      <arg><option>--git-postbuild=</option><replaceable>command</replaceable></arg>
-      <arg><option>--git-postexport=</option><replaceable>command</replaceable></arg>
-      <arg><option>--git-prebuild=</option><replaceable>command</replaceable></arg>
+      <arg><option>--git-keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
+      <arg><option>--git-posttag=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-postbuild=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-postexport=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-prebuild=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-[no-]hooks</option></arg>
-      <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--git-debian-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--git-upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
-      <arg><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|treeish]</replaceable></arg>
-      <arg><option>--git-tarball-dir=</option><replaceable>directory</replaceable></arg>
-      <arg><option>--git-compression=</option><replaceable>type</replaceable></arg>
-      <arg><option>--git-compression-level=</option><replaceable>level</replaceable></arg>
-      <arg><option>--git-export-dir=</option><replaceable>directory</replaceable></arg>
-      <arg><option>--git-export=</option><replaceable>treeish</replaceable></arg>
+      <arg><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable></arg>
+      <arg><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-compression=</option><replaceable>TYPE</replaceable></arg>
+      <arg><option>--git-compression-level=</option><replaceable>LEVEL</replaceable></arg>
+      <arg><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-export=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
       <arg><option>--git-[no-]pristine-tar-commit</option></arg>
       <arg><option>--git-[no-]-purge</option></arg>
@@ -134,7 +134,7 @@
           <para>
           Don't abort if there are uncommitted changes in the source tree or
           the current branch doesn't match the
-          <replaceable>debian-branch</replaceable>.
+          <replaceable>DEBIAN-BRANCH</replaceable>.
           </para>
         </listitem>
       </varlistentry>
@@ -275,7 +275,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-upstream-branch</option>=<replaceable>branch_name</replaceable>
+        <term><option>--git-upstream-branch</option>=<replaceable>BRANCH_NAME</replaceable>
         </term>
         <listitem>
           <para>
@@ -287,7 +287,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-debian-branch</option>=<replaceable>branch_name</replaceable>
+        <term><option>--git-debian-branch</option>=<replaceable>BRANCH_NAME</replaceable>
         </term>
         <listitem>
           <para>
@@ -305,7 +305,7 @@
         <listitem>
           <para>
           Don't check if the current branch matches
-          <replaceable>debian-branch</replaceable>.
+          <replaceable>DEBIAN-BRANCH</replaceable>.
           </para>
         </listitem>
       </varlistentry>
@@ -328,7 +328,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-keyid=</option><replaceable>gpg-keyid</replaceable>
+        <term><option>--git-keyid=</option><replaceable>GPG-KEYID</replaceable>
         </term>
         <listitem>
           <para>
@@ -337,11 +337,11 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-posttag=</option><replaceable>command</replaceable>
+        <term><option>--git-posttag=</option><replaceable>COMMAND</replaceable>
         </term>
         <listitem>
           <para>
-          excecute <replaceable>command</replaceable> after tagging a new
+          excecute <replaceable>COMMAND</replaceable> after tagging a new
           version.
           </para>
           <para>
@@ -353,11 +353,11 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-postbuild=</option><replaceable>command</replaceable>
+        <term><option>--git-postbuild=</option><replaceable>COMMAND</replaceable>
         </term>
         <listitem>
           <para>
-          execute <replaceable>command</replaceable> after successful
+          execute <replaceable>COMMAND</replaceable> after successful
           build.
           </para>
           <para>
@@ -368,11 +368,11 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-postexport=</option><replaceable>command</replaceable>
+        <term><option>--git-postexport=</option><replaceable>COMMAND</replaceable>
         </term>
         <listitem>
           <para>
-          execute <replaceable>command</replaceable> after exporting the source
+          execute <replaceable>COMMAND</replaceable> after exporting the source
           tree - valid only if --git-export-dir has been specified.
           </para>
           <para>
@@ -384,11 +384,11 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-prebuild=</option><replaceable>command</replaceable>
+        <term><option>--git-prebuild=</option><replaceable>COMMAND</replaceable>
         </term>
         <listitem>
           <para>
-          execute <replaceable>command</replaceable> from the build directory
+          execute <replaceable>COMMAND</replaceable> from the build directory
           before calling <application>debuild</application> or the application
           specified via <option>--git-builder</option>.
           </para>
@@ -411,7 +411,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-debian-tag=</option><replaceable>tag-format</replaceable>
+        <term><option>--git-debian-tag=</option><replaceable>TAG-FORMAT</replaceable>
         </term>
         <listitem>
           <para>
@@ -421,7 +421,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable>
+        <term><option>--git-upstream-tag=</option><replaceable>TAG-FORMAT</replaceable>
         </term>
         <listitem>
           <para>
@@ -460,23 +460,23 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-export-dir=</option><replaceable>directory</replaceable>
+        <term><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable>
         </term>
         <listitem>
           <para>
           Export the current branch head (or the treeish object given via
-          <option>--git-export</option> to <replaceable>directory</replaceable>
+          <option>--git-export</option> to <replaceable>DIRECTORY</replaceable>
           before building.
           </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-export=</option><replaceable>treeish</replaceable>
+        <term><option>--git-export=</option><replaceable>TREEISH</replaceable>
         </term>
         <listitem>
           <para>
           Instead of exporting the current branch head, export the treeish
-          object <replaceable>treeish</replaceable>. The special name
+          object <replaceable>TREEISH</replaceable>. The special name
           <replaceable>INDEX</replaceable> exports the current index whereas
           the special name <replaceable>WC</replaceable> exports the current
           working copy as is.
@@ -484,7 +484,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-upstream-tree=</option><replaceable>[tag|branch]</replaceable>
+        <term><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable>
         </term>
         <listitem>
           <para>
@@ -502,17 +502,17 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-tarball-dir=</option><replaceable>directory</replaceable>
+        <term><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable>
         </term>
         <listitem>
           <para>
-          Search for original tarballs in <replaceable>directory</replaceable>
+          Search for original tarballs in <replaceable>DIRECTORY</replaceable>
           instead of generating them
           </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-compression=</option><replaceable>type</replaceable>
+        <term><option>--git-compression=</option><replaceable>TYPE</replaceable>
         </term>
         <listitem>
           <para>
@@ -527,7 +527,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-compression-level=</option><replaceable>level</replaceable>
+        <term><option>--git-compression-level=</option><replaceable>LEVEL</replaceable>
         </term>
         <listitem>
           <para>
