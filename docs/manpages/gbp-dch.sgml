@@ -9,7 +9,7 @@
     </author>
   </refentryinfo>
   <refmeta>
-   <refentrytitle>gbp-dch</refentrytitle>
+    <refentrytitle>gbp-dch</refentrytitle>
     &dhsection;
   </refmeta>
   <refnamediv>
@@ -20,7 +20,6 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-dch;
-
       <arg><option>--verbose</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -28,18 +27,18 @@
       <arg><option>--ignore-branch</option></arg>
       <group>
         <arg><option>--snapshot</option></arg>
-	<arg><option>--release</option></arg>
+        <arg><option>--release</option></arg>
       </group>
       <group>
-	<arg><option>--auto</option></arg>
-	<arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+        <arg><option>--auto</option></arg>
+        <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
       </group>
       <arg><option>--new-version=</option><replaceable>version</replaceable></arg>
       <group>
-	<arg><option>--bpo</option></arg>
-	<arg><option>--nmu</option></arg>
-	<arg><option>--qa</option></arg>
-	<arg><option>--team</option></arg>
+        <arg><option>--bpo</option></arg>
+        <arg><option>--nmu</option></arg>
+        <arg><option>--qa</option></arg>
+        <arg><option>--team</option></arg>
       </group>
       <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
       <arg><option>--force-distribution</option></arg>
@@ -69,11 +68,14 @@
     distribution of the topmost section in
     <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>
     the changelog entries will be inserted into this section. Otherwise a new
-    section will be created.</para>
-    <para>If <option>--auto</option> is given &gbp-dch; tries to guess the
+    section will be created.
+    </para>
+    <para>
+    If <option>--auto</option> is given &gbp-dch; tries to guess the
     last &git; commit documented in the changelog - this only works in snapshot
     mode. Otherwise <option>--since</option> can be used to tell &gbp-dch;
-    at which point it should start in the &git; history.</para>
+    at which point it should start in the &git; history.
+    </para>
     <para>
     The additional path arguments can be used to restrict the repository paths
     &gbp-dch; looks at. Setting <replaceable>path</replaceable> to
@@ -81,106 +83,131 @@
     all Debian packaging changes are restricted to the
     <replaceable>debian/</replaceable> subdir. In more sophisticated cases
     (like backports) you can use <option>--git-log</option> to restrict the
-    generated changelog entries further. E.g. by using 
-    <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.</para>
+    generated changelog entries further. E.g. by using
+    <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.
+    </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
-
     <variablelist>
       <varlistentry>
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the Debian package is being
-	  developed on, default is <replaceable>master</replaceable>.</para>
+          <para>
+          The branch in the Git repository the Debian package is being
+          developed on, default is <replaceable>master</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--ignore-branch</option>
         </term>
         <listitem>
-            <para>Don't check if the current branch matches
-            <replaceable>debian-branch</replaceable>.</para>
+          <para>
+          Don't check if the current branch matches
+          <replaceable>debian-branch</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option></term> 
-	<term><option>-v</option></term>
+        <term><option>--verbose</option></term>
+        <term><option>-v</option></term>
         <listitem>
-          <para>verbose execution</para>
+          <para>
+          verbose execution
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--debian-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>tag format used, when tagging debian versions,
-  	  default is <replaceable>debian/%(version)s</replaceable></para>
+          <para>
+          tag format used, when tagging debian versions,
+          default is <replaceable>debian/%(version)s</replaceable>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--since=</option><replaceable>committish</replaceable>
         </term>
         <listitem>
-          <para>Start reading commit messages at <replaceable>committish</replaceable>.</para>
+          <para>
+          Start reading commit messages at
+          <replaceable>committish</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--auto</option>,
-	      <option>-a</option></term>
+          <option>-a</option></term>
         <listitem>
-	  <para>Guess the last commit documented in the changelog from the
-	  snapshot banner (or from the last tag if no snapshot banner exists).
-	  </para>
+          <para>
+          Guess the last commit documented in the changelog from the
+          snapshot banner (or from the last tag if no snapshot banner exists).
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]meta</option></term>
         <listitem>
-	  <para>Parse meta tags like <option>Closes:</option>,
-	  <option>Thanks:</option> and <option>Git-Dch:</option>. See META TAGS below.</para>
+          <para>
+          Parse meta tags like <option>Closes:</option>,
+          <option>Thanks:</option> and <option>Git-Dch:</option>. See META TAGS
+          below.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--meta-closes=</option><replaceable>bug-close-tags</replaceable>
         </term>
         <listitem>
-	  <para>What meta tags to look for to generate bug-closing changelog
-	  entries.  The default is 'Closes|LP' to support Debian and
-	  Launchpad.</para>
+          <para>
+          What meta tags to look for to generate bug-closing changelog entries.
+          The default is 'Closes|LP' to support Debian and Launchpad.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--[no-]full</option></term>
+        <term><option>--[no-]full</option>
+        </term>
         <listitem>
-	  <para>Include the full commit message in the changelog output.</para>
+          <para>
+          Include the full commit message in the changelog output.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--snapshot</option>,
               <option>-S</option></term>
         <listitem>
-	  <para>Create a snapshot release entry. This adds a snapshot release
-	  number and a warning banner to the changelog entry. The release
-	  version number is being auto incremented with every new snapshot
-	  release to avoid packages downgrades during snapshot testing.</para>
+          <para>
+          Create a snapshot release entry. This adds a snapshot release
+          number and a warning banner to the changelog entry. The release
+          version number is being auto incremented with every new snapshot
+          release to avoid packages downgrades during snapshot testing.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--snapshot-number=</option><replaceable>expression</replaceable>
         </term>
         <listitem>
-          <para>Python expression that gets eval()ed to the new snapshot number.</para>
+          <para>
+          Python expression that gets eval()ed to the new snapshot number.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--release</option>,
               <option>-R</option></term>
         <listitem>
-	  <para>Remove any snapshot release banners and version suffixes, set
-	  the current distribution to <replaceable>unstable</replaceable> and
-	  open the changelog for final tweaking.</para>
+          <para>
+          Remove any snapshot release banners and version suffixes, set
+          the current distribution to <replaceable>unstable</replaceable> and
+          open the changelog for final tweaking.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -188,129 +215,157 @@
               <option>-N</option> <replaceable>version</replaceable>
         </term>
         <listitem>
-	  <para>Add a new changelog section with version
-	  <replaceable>newversion</replaceable>. Together with
-	  <option>--snapshot</option> the snapshot number will be appended to
-	  <replaceable>newversion</replaceable>.</para>
+          <para>
+          Add a new changelog section with version
+          <replaceable>newversion</replaceable>. Together with
+          <option>--snapshot</option> the snapshot number will be appended to
+          <replaceable>newversion</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--team</option></term>
+        <term><option>--team</option>
+        </term>
         <listitem>
-          <para>Create a Team upload changelog entry.</para>
+          <para>
+          Create a Team upload changelog entry.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--bpo</option>
         </term>
         <listitem>
-	  <para>Increment the Debian release number for an upload to
-          backports, and add a backport upload changelog comment.</para>
+          <para>
+          Increment the Debian release number for an upload to backports, and
+          add a backport upload changelog comment.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--nmu</option>
         </term>
         <listitem>
-	  <para>Increment  the  Debian  release  number  for a non-maintainer upload.</para>
+          <para>
+          Increment  the  Debian  release  number  for a non-maintainer upload.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--qa</option>
         </term>
         <listitem>
-	  <para>Increment the Debian release number for a Debian QA Team
-          upload, and add a QA upload changelog comment.</para>
+          <para>
+          Increment the Debian release number for a Debian QA Team upload, and
+          add a QA upload changelog comment.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-	<term><option>--distribution=</option><replaceable>name</replaceable>
-	</term>
-	<listitem>
-	  <para>Set the distribution field
-	  to <replaceable>name</replaceable>.</para>
-	</listitem>
+        <term><option>--distribution=</option><replaceable>name</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Set the distribution field to <replaceable>name</replaceable>.
+          </para>
+        </listitem>
       </varlistentry>
       <varlistentry>
-	<term><option>--force-distribution</option>
-	</term>
-	<listitem>
-	  <para>Force the distribution specified
-	  with <option>--distribution</option> to be used, even if it
-	  doesn't match the list of known distributions.</para>
-	</listitem>
+        <term><option>--force-distribution</option>
+        </term>
+        <listitem>
+          <para>
+          Force the distribution specified with <option>--distribution</option>
+          to be used, even if it doesn't match the list of known distributions.
+          </para>
+        </listitem>
       </varlistentry>
       <varlistentry>
-	<term><option>--urgency=</option><replaceable>level</replaceable>
-	</term>
-	<listitem>
-	  <para>Set the urgency field
-	  to <replaceable>level</replaceable>.</para>
-	</listitem>
+        <term><option>--urgency=</option><replaceable>level</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Set the urgency field to <replaceable>level</replaceable>.
+          </para>
+        </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-log=</option><replaceable>git-log-options</replaceable>
         </term>
         <listitem>
-          <para>Options passed on verbatim to git-log(1).</para>
+          <para>
+          Options passed on verbatim to git-log(1).
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--id-length=</option><replaceable>N</replaceable>
         </term>
         <listitem>
-	  <para>Include <replaceable>N</replaceable> digits of the commit id in
-	  the changelog entry. Default is to not include any commit ids at
-	  all.</para>
+          <para>
+          Include <replaceable>N</replaceable> digits of the commit id in the
+          changelog entry. Default is to not include any commit ids at all.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--ignore-regex=</option><replaceable>regex</replaceable>
         </term>
         <listitem>
-	  <para>Ignore commit lines matching <replaceable>regex</replaceable>
-	  when generating the changelog.
-	  </para>
+          <para>
+          Ignore commit lines matching <replaceable>regex</replaceable>
+          when generating the changelog.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--git-author</option>
         </term>
         <listitem>
-          <para>Use user.name and user.email from <application>git-config</application>(1) for changelog trailer.</para>
+          <para>
+          Use user.name and user.email from
+          <application>git-config</application>(1) for changelog trailer.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]multimaint-merge</option>
         </term>
         <listitem>
-          <para>Merge commits by maintainer.</para>
+          <para>
+          Merge commits by maintainer.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--spawn-editor=<replaceable>[always|snapshot|release]</replaceable></option>
         </term>
         <listitem>
-	  <para>Whether to spawn an editor: always, when doing snapshots or
-	  when doing a release.</para>
+          <para>
+          Whether to spawn an editor: always, when doing snapshots or when
+          doing a release.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--commit-msg=</option><replaceable>msg-format</replaceable>
         </term>
         <listitem>
-	  <para>use this format string for the commit message when
-	  committing the generated changelog file (when
-	  <option>--commit</option> is given). Default is
-	  <replaceable>Update changelog for %(version)s
-	  release</replaceable></para>
+          <para>
+          use this format string for the commit message when committing the
+          generated changelog file (when <option>--commit</option> is given).
+          Default is
+          <replaceable>Update changelog for %(version)s release</replaceable>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--commit</option>
         </term>
         <listitem>
-	  <para>Commit the generated changelog.</para>
+          <para>
+          Commit the generated changelog.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -327,27 +382,29 @@
     </variablelist>
   </refsect1>
   <refsect1>
-      <title>Snapshot mode</title>
-      <para>
-      Snapshot mode can be used for quick test and install cycles without
-      having to worry about version numbers or changelog entries.
-      </para><para>
-      When using <option>--snapshot</option> or <option>-S</option> &gbp-dch;
-      uses a pseudo header in the Debian changelog to remember the last git
-      commit it added a changelog entry for. It also sets a version number
-      ending in
-      <replaceable>~&lt;snaspshotnumber&gt;.gbp&lt;commitid&gt;</replaceable>.
-      It automatically increments the snapshot number on subsequent invocations
-      of &gbp-dch; <option>-S</option> so that later snapshots automatically
-      have a higher version number. To leave snapshot mode invoke &gbp-dch;
-      with the <option>--release</option> option. This removes the pseudo
-      header and unmangles the version number so the released version has a
-      higher version number than the snapshots.
-      </para>
+    <title>Snapshot mode</title>
+    <para>
+    Snapshot mode can be used for quick test and install cycles without
+    having to worry about version numbers or changelog entries.
+    </para>
+    <para>
+    When using <option>--snapshot</option> or <option>-S</option> &gbp-dch;
+    uses a pseudo header in the Debian changelog to remember the last git
+    commit it added a changelog entry for. It also sets a version number
+    ending in
+    <replaceable>~&lt;snaspshotnumber&gt;.gbp&lt;commitid&gt;</replaceable>.
+    It automatically increments the snapshot number on subsequent invocations
+    of &gbp-dch; <option>-S</option> so that later snapshots automatically
+    have a higher version number. To leave snapshot mode invoke &gbp-dch;
+    with the <option>--release</option> option. This removes the pseudo
+    header and unmangles the version number so the released version has a
+    higher version number than the snapshots.
+    </para>
   </refsect1>
   <refsect1>
     <title>META TAGS</title>
-    <para>Additional to the above options the formatting of the commit message
+    <para>
+    Additional to the above options the formatting of the commit message
     in <filename>debian/changelog</filename> can be modified by special tags
     (called Meta Tags)
     given in the git commit message. Meta Tag processing can be activated via
@@ -360,40 +417,44 @@
       <varlistentry>
         <term><option>Git-Dch</option>: <replaceable>action</replaceable>
         </term>
-        <listitem><para>
-	Supported actions are: <replaceable>Ignore</replaceable> which will ignore
-	this commit when generating <filename>debian/changelog</filename>,
-	<replaceable>Short</replaceable> which will only use the
-	description (the first line) of the commit message when
-	generating the changelog entry (useful when
-	<option>--full</option> is given) and
-	<replaceable>Full</replaceable> which will use the full commit
-	message when generating the changelog entry (useful when
-	<option>--full</option> is not given).
-        </para></listitem>
+        <listitem>
+          <para>
+          Supported actions are: <replaceable>Ignore</replaceable> which will
+          ignore this commit when generating
+          <filename>debian/changelog</filename>,
+          <replaceable>Short</replaceable> which will only use the description
+          (the first line) of the commit message when generating the changelog
+          entry (useful when <option>--full</option> is given) and
+          <replaceable>Full</replaceable> which will use the full commit
+          message when generating the changelog entry (useful when
+          <option>--full</option> is not given).
+          </para>
+        </listitem>
       </varlistentry>
       <varlistentry>
-      	<term><option>Thanks</option>: <replaceable>msg</replaceable>
-      	</term>
-          <listitem>
-	    <para>
-	      Add a thanks message after the commit message.
-	    </para>
-	  </listitem>
+        <term><option>Thanks</option>: <replaceable>msg</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Add a thanks message after the commit message.
+          </para>
+        </listitem>
       </varlistentry>
       <varlistentry>
-      	<term><option>Closes</option>: <replaceable>bugnumber</replaceable>
-      	</term>
-          <listitem>
-	    <para>
-	      Indicate in the <filename>debian/changelog</filename> that the bug was 
-	      closed by this commit. See the <option>--meta-closes</option>
-	      on how to extend this for other bugtrackers.
-	    </para>
-	  </listitem>
+        <term><option>Closes</option>: <replaceable>bugnumber</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Indicate in the <filename>debian/changelog</filename> that the bug
+          was closed by this commit. See the <option>--meta-closes</option> on
+          how to extend this for other bugtrackers.
+          </para>
+        </listitem>
       </varlistentry>
     </variablelist>
-    <para>The following git commit message:</para>
+    <para>
+    The following git commit message:
+    </para>
     <screen>
       Document meta tags
 
@@ -404,7 +465,7 @@
       Thanks: Raphaël Hertzog for the suggestion
     </screen>
     <para>
-      Results in this <filename>debian/changelog</filename> entry:
+    Results in this <filename>debian/changelog</filename> entry:
     </para>
     <screen>
       * Document meta tags.
@@ -412,11 +473,10 @@
     </screen>
   </refsect1>
   <refsect1>
-      &man.gbp.config-files;
+    &man.gbp.config-files;
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
-
     <para>
       <xref linkend="man.gbp.buildpackage">,
       <xref linkend="man.gbp.import.dsc">,
@@ -430,8 +490,8 @@
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
-
-    <para>&dhusername; &dhemail;</para>
-
+    <para>
+    &dhusername; &dhemail;
+    </para>
   </refsect1>
 </refentry>
