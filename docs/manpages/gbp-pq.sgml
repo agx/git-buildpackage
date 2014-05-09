@@ -14,7 +14,6 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-pq</refname>
-
     <refpurpose>Manage quilt patches on patch queue branches in git</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
@@ -28,27 +27,28 @@
       <arg><option>--time-machine=</option><replaceable>num</replaceable></arg>
       <arg><option>--force</option></arg>
       <group choice="plain">
-	<arg><option>drop</option></arg>
-	<arg><option>export</option></arg>
-	<arg><option>import</option></arg>
-	<arg><option>rebase</option></arg>
-	<arg><option>switch</option></arg>
+        <arg><option>drop</option></arg>
+        <arg><option>export</option></arg>
+        <arg><option>import</option></arg>
+        <arg><option>rebase</option></arg>
+        <arg><option>switch</option></arg>
       </group>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-  &gbp-pq; helps one to manage quilt patches in Debian packages that are maintained
-  with &gbp;. This is especially useful with packages using the
-  3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
-  that should be applied to a package on a separate branch called patch-queue
-  branch. So if your Debian package lives on <replaceable>master</replaceable>
-  the associated patch-queue branch will be called
-  <replaceable>patch-queue/master</replaceable>.
+    &gbp-pq; helps one to manage quilt patches in Debian packages that are
+    maintained with &gbp;. This is especially useful with packages using the
+    3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
+    that should be applied to a package on a separate branch called patch-queue
+    branch. So if your Debian package lives on
+    <replaceable>master</replaceable> the associated patch-queue branch will be
+    called <replaceable>patch-queue/master</replaceable>.
     </para>
     <para>
-   See <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink> for example workflows.
+    See <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink>
+    for example workflows.
     </para>
   </refsect1>
   <refsect1>
@@ -58,65 +58,66 @@
         <term><option>import</option>
         </term>
         <listitem>
-	  <para>
-	Create a patch queue branch from quilt patches in
-	debian/patches/ that are listed in debian/patches/series. The
-	patches must apply without fuzz.
-	  </para>
+          <para>
+          Create a patch queue branch from quilt patches in debian/patches/
+          that are listed in debian/patches/series. The patches must apply
+          without fuzz.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>export</option>
         </term>
         <listitem>
-	  <para>
-	Export the patches on the patch-queue branch associated to the current
-	branch into a quilt patch series in debian/patches/ and update the
-	series file.
-	  </para>
+          <para>
+          Export the patches on the patch-queue branch associated to the
+          current branch into a quilt patch series in debian/patches/ and
+          update the series file.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>rebase</option>
         </term>
         <listitem>
-	  <para>
-	Switch to the patch-queue branch associated to the current branch and
-	rebase it against the current branch.
-	  </para>
+          <para>
+          Switch to the patch-queue branch associated to the current branch and
+          rebase it against the current branch.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>drop</option>
         </term>
         <listitem>
-	  <para>
-	Drop (delete) the patch queue associated to the current branch. So if
-	you're on branch <replaceable>foo</replaceable> this would drop branch
-	<replaceable>patch-queue/foo</replaceable>.
-	  </para>
+          <para>
+          Drop (delete) the patch queue associated to the current branch. So if
+          you're on branch <replaceable>foo</replaceable> this would drop
+          branch <replaceable>patch-queue/foo</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>apply</option>
         </term>
         <listitem>
-	  <para>
-	Add a single patch to the patch-queue similar to using
-	<command>git-am</command>. Use <option>--topic</option> if you want
-	the patch to appear in a separate subdir when exporting the patch queue
-	using <option>export</option>. This can be used to separate upstream
-	pathes from debian specific patches.</para>
+          <para>
+          Add a single patch to the patch-queue similar to using
+          <command>git-am</command>. Use <option>--topic</option> if you want
+          the patch to appear in a separate subdir when exporting the patch queue
+          using <option>export</option>. This can be used to separate upstream
+          pathes from debian specific patches.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>switch</option>
         </term>
         <listitem>
-	  <para>
-	    Switch to the patch-queue branch if on the base branch and switch
-	    to base branch if on patch-queue branch.
-	  </para>
+          <para>
+          Switch to the patch-queue branch if on the base branch and switch
+          to base branch if on patch-queue branch.
+          </para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -126,16 +127,20 @@
     <variablelist>
       <varlistentry>
         <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
+        <term><option>-v</option></term>
         <listitem>
-          <para>verbose execution</para>
+          <para>
+          verbose execution
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
         </term>
         <listitem>
-          <para>Whether to use colored output.</para>
+          <para>
+          Whether to use colored output.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -156,26 +161,31 @@
         <term><option>--[no-]patch-numbers</option>
         </term>
         <listitem>
-          <para>Whether the patch files should start with a number or not.</para>
+          <para>
+          Whether the patch files should start with a number or not.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--topic=</option><replaceable>topic</replaceable>
         </term>
         <listitem>
-          <para>Topic to use when importing a single patch</para>
+          <para>
+          Topic to use when importing a single patch
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--time-machine=</option><replaceable>NUM</replaceable>
         </term>
         <listitem>
-	  <para>When importing a patch queue fails, go back commit by
-	  commit on the current branch to check if the patch-queue applies
-	  there. Do this at most <replaceable>NUM</replaceable> times. This can
-	  be useful if the patch-queue doesn't apply to the current branch HEAD
-	  anymore, e.g.  after importing a new upstream version.
-	  </para>
+          <para>
+          When importing a patch queue fails, go back commit by commit on the
+          current branch to check if the patch-queue applies there. Do this at
+          most <replaceable>NUM</replaceable> times. This can be useful if the
+          patch-queue doesn't apply to the current branch HEAD anymore, e.g.
+          after importing a new upstream version.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -196,28 +206,33 @@
     </para>
     <variablelist>
       <varlistentry>
-        <term><option>Gbp[-Pq]: Ignore</option></term>
+        <term><option>Gbp[-Pq]: Ignore</option>
+        </term>
         <listitem>
-            <para>Ignores the commit, no patch is generated out of it.</para>
+          <para>
+          Ignores the commit, no patch is generated out of it.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>Gbp[-Pq]: Topic</option> <replaceable>topic</replaceable></term>
+        <term><option>Gbp[-Pq]: Topic</option> <replaceable>topic</replaceable>
+        </term>
         <listitem>
-            <para>Moves the patch into a subdir called
-                <replaceable>topic</replaceable> when running
-                <screen>&gbp-pq; export</screen>
-                This allows for some structure below
-                <filename>debian/patches</filename>.
-            </para>
+          <para>
+          Moves the patch into a subdir called <replaceable>topic</replaceable>
+          when running <screen>&gbp-pq; export</screen> This allows for some
+          structure below <filename>debian/patches</filename>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>Gbp-Pq-Topic:</option> <replaceable>topic</replaceable></term>
+        <term><option>Gbp-Pq-Topic:</option> <replaceable>topic</replaceable>
+        </term>
         <listitem>
-            <para>Deprecated: use <option>Gbp[-Pq]: Topic</option>
-                <replaceable>topic</replaceable> instead.
-            </para>
+          <para>
+          Deprecated: use <option>Gbp[-Pq]: Topic</option>
+          <replaceable>topic</replaceable> instead.
+          </para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -239,8 +254,8 @@
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
-
-    <para>&dhusername; &dhemail;</para>
-
+    <para>
+      &dhusername; &dhemail;
+    </para>
   </refsect1>
 </refentry>
