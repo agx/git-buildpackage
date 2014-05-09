@@ -20,7 +20,6 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-import-dsc;
-
       <arg><option>--allow-same-versions</option></arg>
       <arg><option>--author-date-is-committer-date</option></arg>
       <arg><option>--author-is-committer</option></arg>
@@ -40,13 +39,12 @@
     </cmdsynopsis>
     <cmdsynopsis>
       &gbp-import-dsc;
-
       <arg><option>options</option></arg>
       <arg choice="req"><option>--download</option></arg>
       <arg><option>--[no-]allow-unauthenticated</option></arg>
       <group choice="plain">
-      <arg><replaceable>URL</replaceable></arg>
-      <arg><replaceable>source-package</replaceable></arg>
+        <arg><replaceable>URL</replaceable></arg>
+        <arg><replaceable>source-package</replaceable></arg>
       </group>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -61,135 +59,170 @@
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
-
     <variablelist>
       <varlistentry>
         <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the &git; repository the upstream sources are put
-	  onto. Default is <replaceable>upstream</replaceable>.</para>
+          <para>
+          The branch in the &git; repository the upstream sources are put
+          onto. Default is <replaceable>upstream</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the &git; repository the debian sources are put
-	  onto. Default is <replaceable>master</replaceable>.</para>
+          <para>
+          The branch in the &git; repository the debian sources are put
+          onto. Default is <replaceable>master</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
+        <term><option>-v</option></term>
         <listitem>
-          <para>verbose execution</para>
+          <para>
+          verbose execution
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]sign-tags</option>
         </term>
         <listitem>
-          <para>GPG sign all created tags</para>
+          <para>
+          GPG sign all created tags
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--keyid=</option><replaceable>gpg-keyid</replaceable>
         </term>
         <listitem>
-          <para>use this keyid for gpg signing tags</para>
+          <para>
+          use this keyid for gpg signing tags
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--debian-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging Debian versions,
-	  default is <replaceable>debian/%(version)s</replaceable></para>
+          <para>
+          use this tag format when tagging Debian versions,
+          default is <replaceable>debian/%(version)s</replaceable>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging upstream versions, 
-	  default is <replaceable>upstream/%(version)s</replaceable></para>
+          <para>
+          use this tag format when tagging upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--skip-debian-tag</option></term>
+        <term><option>--skip-debian-tag</option>
+        </term>
         <listitem>
-          <para>Don't create Debian tag after importing the Debian patch. This can be useful
-          if you already created a package but want to further work on it after importing it
-          into git.</para>
+          <para>
+          Don't create Debian tag after importing the Debian patch. This can be
+          useful if you already created a package but want to further work on
+          it after importing it into git.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--filter=</option><replaceable>pattern</replaceable>
         </term>
         <listitem>
-          <para>filter out files glob-matching pattern. Can be given multiple times.</para>
+          <para>
+          filter out files glob-matching pattern. Can be given multiple times.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--pristine-tar</option>
         </term>
         <listitem>
-          <para>generate pristine-tar delta file</para>
+          <para>
+          generate pristine-tar delta file
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--download</option>
         </term>
         <listitem>
-	  <para>Download the source package instead of looking for it in the local
-	  file system. The argument can either be a
-	  <replaceable>source-package</replaceable> name or an
-	  <replaceable>URL</replaceable>. The former uses &apt-get; to download
-	  the source while the later uses &dget;.
-	  </para>
+          <para>
+          Download the source package instead of looking for it in the local
+          file system. The argument can either be a
+          <replaceable>source-package</replaceable> name or an
+          <replaceable>URL</replaceable>. The former uses &apt-get; to download
+          the source while the later uses &dget;.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--allow-unauthenticated</option>
         </term>
         <listitem>
-	  <para>Whether to skip signature verification on downloads.</para>
+          <para>
+          Whether to skip signature verification on downloads.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--allow-same-version</option>
         </term>
         <listitem>
-	  <para>Allow to import a package with the same debian version.</para>
+          <para>
+          Allow to import a package with the same debian version.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--author-is-committer</option>
         </term>
         <listitem>
-          <para>When importing the Debian patch, use the author identity as
-          committer identity.</para>
+          <para>
+          When importing the Debian patch, use the author identity as
+          committer identity.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--author-date-is-committer-date</option>
         </term>
         <listitem>
-          <para>When importing the Debian patch, use the author date as
-          committer date. <warning><para>Git will subtly misbehave if the
-          committer date of a commit is not later than or equal to all
-          its parents.</para></warning></para>
+          <para>
+          When importing the Debian patch, use the author date as
+          committer date.
+          <warning>
+            <para>
+            Git will subtly misbehave if the committer date of a commit is not
+            later than or equal to all its parents.
+            </para>
+          </warning>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]create-missing-branches</option>
         </term>
         <listitem>
-          <para>Create missing upstream and debian branch if missing.</para>
+          <para>
+          Create missing upstream and debian branch if missing.
+          </para>
         </listitem>
       </varlistentry>
-     </variablelist>
+    </variablelist>
   </refsect1>
   <refsect1>
     &man.gbp.config-files;
@@ -216,8 +249,8 @@
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
-
-    <para>&dhusername; &dhemail;</para>
-
+    <para>
+    &dhusername; &dhemail;
+    </para>
   </refsect1>
 </refentry>
