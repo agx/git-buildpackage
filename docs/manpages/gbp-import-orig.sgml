@@ -9,7 +9,7 @@
     </author>
   </refentryinfo>
   <refmeta>
-   <refentrytitle>gbp-import-orig</refentrytitle>
+    <refentrytitle>gbp-import-orig</refentrytitle>
     &dhsection;
   </refmeta>
   <refnamediv>
@@ -37,8 +37,8 @@
       <arg><option>--postimport=cmd</option></arg>
       <arg><option>--[no-]interactive</option></arg>
       <group choice="plain">
-      <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
-      <arg><option>--uscan</option></arg>
+        <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
+        <arg><option>--uscan</option></arg>
       </group>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -50,148 +50,174 @@
     be a gzip, bzip2, lzma or xz compressed tar archive, a zip archive or an
     already unpacked source tree. If it is already of the form
     <replaceable>package-name_version.orig.tar.gz</replaceable>, the version
-    information is read from the tarball's filename otherwise it can be
-    given on the command line via <option>--upstream-version</option>.
-    If the source package name or version can't be determined
-    &gbp-import-orig; will prompt for it unless <option>--no-interactive</option>
-    is given.</para>
-
-    <para>The sources are placed on the upstream branch (default:
+    information is read from the tarball's filename otherwise it can be given
+    on the command line via <option>--upstream-version</option>.  If the source
+    package name or version can't be determined &gbp-import-orig; will prompt
+    for it unless <option>--no-interactive</option> is given.
+    </para>
+    <para>
+    The sources are placed on the upstream branch (default:
     <replaceable>upstream</replaceable>), tagged and merged onto the debian
     branch (default: <replaceable>master</replaceable>).
     </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
-
     <variablelist>
       <varlistentry>
         <term><option>--upstream-version</option>=<replaceable>version</replaceable></term>
         <term><option>-u</option><replaceable>version</replaceable></term>
         <listitem>
-	  <para>The upstream version number</para>
+          <para>
+          The upstream version number
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--merge</option></term>
         <listitem>
-	  <para>Merge the upstream branch to the debian branch after import</para>
+          <para>
+          Merge the upstream branch to the debian branch after import
+          </para>
         </listitem>
       </varlistentry>
-
       <varlistentry>
         <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the upstream sources are put
-	  onto. Default is <replaceable>upstream</replaceable>.</para>
+          <para>
+          The branch in the Git repository the upstream sources are put
+          onto. Default is <replaceable>upstream</replaceable>.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the Debian package is being
-	  developed on, default is <replaceable>master</replaceable>. After
-	  importing the new sources on the upstream branch, &gbp-import-orig;
-	  will try to merge the new version onto this branch.</para>
+          <para>
+          The branch in the Git repository the Debian package is being
+          developed on, default is <replaceable>master</replaceable>. After
+          importing the new sources on the upstream branch, &gbp-import-orig;
+          will try to merge the new version onto this branch.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--upstream-vcs-tag</option>=<replaceable>tag_name</replaceable>
         </term>
         <listitem>
-	  <para>
-	    Add <replaceable>tag_name</replaceable> as additional parent to the commit
-	    of the upstream tarball. Useful when upstream uses git and you want to
-	    link to it's revision history.
-	  </para>
+          <para>
+          Add <replaceable>tag_name</replaceable> as additional parent to the
+          commit of the upstream tarball. Useful when upstream uses git and you
+          want to link to it's revision history.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
+        <term><option>-v</option></term>
         <listitem>
-          <para>verbose execution</para>
+          <para>
+          verbose execution
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]sign-tags</option>
         </term>
         <listitem>
-          <para>GPG sign all created tags</para>
+          <para>
+          GPG sign all created tags
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--keyid=</option><replaceable>gpg-keyid</replaceable>
         </term>
         <listitem>
-          <para>use this keyid for gpg signing tags</para>
+          <para>
+          use this keyid for gpg signing tags
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag format when tagging upstream versions,
-	  default is <replaceable>upstream/%(version)s</replaceable></para>
+          <para>
+          use this tag format when tagging upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--import-msg=</option><replaceable>msg-format</replaceable>
         </term>
         <listitem>
-	  <para>use this format string for the commit message when
-	  importing upstream versions, default is <replaceable>Imported
-	  Upstream version %(version)s</replaceable></para>
+          <para>
+          use this format string for the commit message when importing upstream
+          versions, default is
+          <replaceable>Imported Upstream version %(version)s</replaceable>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--filter=</option><replaceable>pattern</replaceable>
         </term>
         <listitem>
-          <para>filter out files glob-matching pattern. Can be given multiple times.</para>
+          <para>
+          filter out files glob-matching pattern. Can be given multiple times.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]pristine-tar</option>
         </term>
         <listitem>
-          <para>generate <command>pristine-tar</command> delta file</para>
+          <para>
+          generate <command>pristine-tar</command> delta file
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]filter-pristine-tar</option>
         </term>
         <listitem>
-	  <para>if using a filter also filter the files out of the tarball
-	  passed to <command>pristine-tar</command></para>
+          <para>
+          if using a filter also filter the files out of the tarball
+          passed to <command>pristine-tar</command>
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--[no-]symlink-orig</option></term>
         <listitem>
-	  <para>
-	    Whether to create and keep a symlink from the upstream tarball
-            to a Debian policy conformant upstream tarball name located in
-	    <filename class='directory'>../</filename>.
-	  </para>
-	  <para>
-	    This is a good idea if not using <command>pristine-tar</command>
-	    since it avoids creating a new tarball with a different md5sum.
-	  </para>
+          <para>
+          Whether to create and keep a symlink from the upstream tarball
+          to a Debian policy conformant upstream tarball name located in
+          <filename class="directory">../</filename>.
+          </para>
+          <para>
+          This is a good idea if not using <command>pristine-tar</command>
+          since it avoids creating a new tarball with a different md5sum.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--postimport=<replaceable>cmd</replaceable></option></term>
         <listitem>
-	  <para>run <replaceable>cmd</replaceable> after the import.</para>
+          <para>
+          run <replaceable>cmd</replaceable> after the import.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--uscan</option></term>
         <listitem>
-          <para>Use uscan to fetch new upstream version.</para>
+          <para>
+          Use uscan to fetch new upstream version.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -207,21 +233,24 @@
   </refsect1>
   <refsect1>
     <title>EXAMPLES</title>
-    <para>Download and import a new upstream version using the informantion from <filename>debian/watch</filename></para>
+    <para>
+    Download and import a new upstream version using the informantion from <filename>debian/watch</filename>
+    </para>
     <screen>
       &gbp-import-orig; --uscan
     </screen>
-    <para>After downloading an upstream tarball by hand import it</para>
+    <para>
+    After downloading an upstream tarball by hand import it
+    </para>
     <screen>
       &gbp-import-orig; ../upstream-tarball-0.1.tar.gz
     </screen>
   </refsect1>
   <refsect1>
-      &man.gbp.config-files;
+    &man.gbp.config-files;
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
-
     <para>
       <xref linkend="man.gbp.buildpackage">,
       <xref linkend="man.gbp.import.dsc">,
@@ -230,15 +259,13 @@
       <xref linkend="man.gbp.conf">,
       &man.seealso.common;
     </para>
-
   </refsect1>
   <refsect1>
     <title>AUTHOR</title>
-
-    <para>&dhusername; &dhemail;</para>
-
+    <para>
+    &dhusername; &dhemail;
+    </para>
   </refsect1>
 </refentry>
-
 <!--  LocalWords:  xz lzma bzip gzip tarball
  -->
