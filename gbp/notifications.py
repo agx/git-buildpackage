@@ -53,7 +53,7 @@ def send_notification(summary, msg):
     return True
 
 
-def notify(cp, success, notify_opt):
+def notify(summary, message, notify_opt):
     """
     Send a notifications
     @return: False on error
@@ -66,6 +66,5 @@ def notify(cp, success, notify_opt):
     if not enable:
         return [True, False][notify_opt.is_on()]
 
-    summary, msg = build_msg(cp, success)
-    return notify_opt.do(send_notification, summary, msg)
+    return notify_opt.do(send_notification, summary, message)
 
