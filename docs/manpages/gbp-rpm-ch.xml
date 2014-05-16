@@ -29,6 +29,7 @@
       <arg><option>--changelog-file=</option><replaceable>FILEPATH</replaceable></arg>
       <arg><option>--spec-file=</option><replaceable>FILEPATH</replaceable></arg>
       <group>
+        <arg><option>--all</option></arg>
         <arg><option>--message=</option><replaceable>MESSAGE</replaceable></arg>
         <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
       </group>
@@ -158,6 +159,16 @@
           <replaceable>auto</replaceable> causes &gbp; to search and guess.
           Other values cause the <option>--packaging-dir</option> option to be
           ignored: the directory of the spec file is used, instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--all</option>
+        </term>
+        <listitem>
+          <para>
+          Use all commits from the Git history, overrides
+          <option>--since</option>.
           </para>
         </listitem>
       </varlistentry>

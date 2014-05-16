@@ -109,6 +109,16 @@ class TestRpmCh(RpmRepoTestBase):
         # Should contain 3 lines (header, 1 entry and an empty line)
         eq_(len(content), 3)
 
+    def test_option_all(self):
+        """Test the --all cmdline option"""
+        repo = self.init_test_repo('gbp-test2')
+
+        eq_(mock_ch(['--changelog-file=CHANGES', '--all']), 0)
+        content = self.read_file('packaging/gbp-test2.changes')
+        # Should contain N+2 lines (header, N commits and an empty line)
+        commit_cnt = len(repo.get_commits(since=None, until='master'))
+        eq_(len(content), commit_cnt + 2)
+
     def test_option_changelog_file(self):
         """Test the --changelog-file cmdline option"""
         repo = self.init_test_repo('gbp-test-native')
