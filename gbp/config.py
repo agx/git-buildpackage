@@ -249,10 +249,10 @@ class GbpOptionParser(OptionParser):
                   ("Set up tracking for remote branches, "
                    "default is '%(track)s'"),
              'author-is-committer':
-                  ("Use the authors's name also as the comitter's name, "
+                  ("Use the authors's name also as the committer's name, "
                    "default is '%(author-is-committer)s'"),
              'author-date-is-committer-date':
-                  ("Use the authors's date as the comitter's date, "
+                  ("Use the authors's date as the committer's date, "
                    "default is '%(author-date-is-committer-date)s'"),
              'create-missing-branches':
                   ("Create missing branches automatically, "

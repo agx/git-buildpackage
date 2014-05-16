@@ -26,7 +26,7 @@ def test_author():
     >>> modifier._get_env('foo')
     Traceback (most recent call last):
     ...
-    GitModifierError: Neither comitter nor author
+    GitModifierError: Neither committer nor author
     >>> modifier['name']
     'foo'
     >>> modifier['email']

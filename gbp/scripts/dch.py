@@ -66,7 +66,7 @@ def get_author_email(repo, use_git_config):
 
 def fixup_section(repo, git_author, options, dch_options):
     """
-    Fixup the changelog header and trailer's comitter and email address
+    Fixup the changelog header and trailer's committer and email address
 
     It might otherwise point to the last git committer instead of the person
     creating the changelog

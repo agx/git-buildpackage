@@ -1408,7 +1408,7 @@ class GitRepository(object):
         @param parents: parents of this commit
         @param author: authorship information
         @type author: C{dict} with keys 'name' and 'email' or L{GitModifier}
-        @param committer: comitter information
+        @param committer: committer information
         @type committer: C{dict} with keys 'name' and 'email'
         """
         extra_env = {}

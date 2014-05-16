@@ -169,7 +169,7 @@
         </term>
         <listitem>
           <para>When importing the Debian patch, use the author identity as
-          comitter identity.</para>
+          committer identity.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -177,7 +177,7 @@
         </term>
         <listitem>
           <para>When importing the Debian patch, use the author date as
-          comitter date. <warning><para>Git will subtly misbehave if the
+          committer date. <warning><para>Git will subtly misbehave if the
           committer date of a commit is not later than or equal to all
           its parents.</para></warning></para>
         </listitem>
