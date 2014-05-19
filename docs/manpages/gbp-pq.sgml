@@ -58,8 +58,9 @@
         </term>
         <listitem>
 	  <para>
-	Create a patch queue branch from quilt patches in debian/patches/ that
-	are listed in debian/patches/series.
+	Create a patch queue branch from quilt patches in
+	debian/patches/ that are listed in debian/patches/series. The
+	patches must apply without fuzz.
 	  </para>
         </listitem>
       </varlistentry>
