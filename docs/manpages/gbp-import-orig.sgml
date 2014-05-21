@@ -21,7 +21,7 @@
     <cmdsynopsis>
       &gbp-import-orig;
 
-      <arg><option>--verbose</option></arg>
+      &man.common.options.synopsis;
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--[no-]merge</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -64,6 +64,8 @@
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--upstream-version</option>=<replaceable>version</replaceable></term>
         <term><option>-u</option><replaceable>version</replaceable></term>
@@ -111,15 +113,6 @@
           Add <replaceable>tag_name</replaceable> as additional parent to the
           commit of the upstream tarball. Useful when upstream uses git and you
           want to link to it's revision history.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--verbose</option></term>
-        <term><option>-v</option></term>
-        <listitem>
-          <para>
-          verbose execution
           </para>
         </listitem>
       </varlistentry>

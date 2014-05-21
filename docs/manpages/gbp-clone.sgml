@@ -21,7 +21,7 @@
     <cmdsynopsis>
       &gbp-clone;
 
-      <arg><option>--verbose</option></arg>
+      &man.common.options.synopsis;
       <arg><option>--all</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -43,6 +43,8 @@
     <title>OPTIONS</title>
 
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--all</option>
         </term>
@@ -72,13 +74,6 @@
         </term>
         <listitem>
           <para>Git history depth, for creating shallow git clones.</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
-        <listitem>
-          <para>verbose execution</para>
         </listitem>
       </varlistentry>
       <varlistentry>

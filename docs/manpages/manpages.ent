@@ -12,3 +12,5 @@
 <!ENTITY man.gbp.conf SYSTEM "gbp.conf.sgml">
 <!ENTITY man.gbp.config-files SYSTEM "man.conffiles.sgml">
 <!ENTITY man.seealso.common SYSTEM "man.seealso.sgml">
+<!ENTITY % COMMON.OPTIONS SYSTEM "man.common-options.ent">
+%COMMON.OPTIONS;

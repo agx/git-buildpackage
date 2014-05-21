@@ -20,6 +20,7 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-import-dsc;
+      &man.common.options.synopsis;
       <arg><option>--allow-same-versions</option></arg>
       <arg><option>--author-date-is-committer-date</option></arg>
       <arg><option>--author-is-committer</option></arg>
@@ -34,7 +35,6 @@
       <arg><option>--skip-debian-tag=</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--verbose</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
@@ -60,6 +60,8 @@
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
         </term>
@@ -77,15 +79,6 @@
           <para>
           The branch in the &git; repository the debian sources are put
           onto. Default is <replaceable>master</replaceable>.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--verbose</option></term>
-        <term><option>-v</option></term>
-        <listitem>
-          <para>
-          verbose execution
           </para>
         </listitem>
       </varlistentry>

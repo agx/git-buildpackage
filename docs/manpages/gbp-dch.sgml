@@ -20,7 +20,7 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-dch;
-      <arg><option>--verbose</option></arg>
+      &man.common.options.synopsis;
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -90,6 +90,8 @@
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
@@ -107,15 +109,6 @@
           <para>
           Don't check if the current branch matches
           <replaceable>debian-branch</replaceable>.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--verbose</option></term>
-        <term><option>-v</option></term>
-        <listitem>
-          <para>
-          verbose execution
           </para>
         </listitem>
       </varlistentry>
