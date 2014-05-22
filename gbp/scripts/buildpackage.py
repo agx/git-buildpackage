@@ -484,6 +484,13 @@ def parse_args(argv, prefix):
     return options, args, dpkg_args
 
 
+class Hook(RunAtCommand):
+    "A hook run during the build"
+    def __init__(self, name, *args, **kwargs):
+        RunAtCommand.__init__(self, *args, **kwargs)
+        self.run_error = '%s-hook %s' % (name, self.run_error)
+
+
 def main(argv):
     retval = 0
     prefix = "git-"
@@ -550,9 +557,9 @@ def main(argv):
 
                 # Run postexport hook
                 if options.postexport:
-                    RunAtCommand(options.postexport, shell=True,
-                                 extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                            'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
+                    Hook('Postexport', options.postexport, shell=True,
+                         extra_env={'GBP_GIT_DIR': repo.git_dir,
+                                    'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
 
                 major = (source.changelog.debian_version if source.is_native()
                          else source.changelog.upstream_version)
@@ -567,9 +574,9 @@ def main(argv):
                                              output_dir)
 
             if options.prebuild:
-                RunAtCommand(options.prebuild, shell=True,
-                             extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                        'GBP_BUILD_DIR': build_dir})(dir=build_dir)
+                Hook('Prebuild', options.prebuild, shell=True,
+                     extra_env={'GBP_GIT_DIR': repo.git_dir,
+                                'GBP_BUILD_DIR': build_dir})(dir=build_dir)
 
             setup_pbuilder(options)
             # Finally build the package:
@@ -582,9 +589,9 @@ def main(argv):
                                            source.changelog.noepoch,
                                            changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
-                Command(options.postbuild, shell=True,
-                        extra_env={'GBP_CHANGES_FILE': changes,
-                                   'GBP_BUILD_DIR': build_dir})()
+                Hook('Postbuild', options.postbuild, shell=True,
+                     extra_env={'GBP_CHANGES_FILE': changes,
+                                'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
             gbp.log.info("Tagging %s" % source.changelog.version)
             tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
@@ -596,10 +603,10 @@ def main(argv):
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
-                Command(options.posttag, shell=True,
-                        extra_env={'GBP_TAG': tag,
-                                   'GBP_BRANCH': branch or '(no branch)',
-                                   'GBP_SHA1': sha})()
+                Hook('Posttag', options.posttag, shell=True,
+                     extra_env={'GBP_TAG': tag,
+                                'GBP_BRANCH': branch or '(no branch)',
+                                'GBP_SHA1': sha})()
     except CommandExecFailed:
         retval = 1
     except (GbpError, GitRepositoryError) as err:
