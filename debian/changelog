@@ -1,3 +1,21 @@
+git-buildpackage (0.6.14) unstable; urgency=medium
+
+  * [949ce84] Slightly improve usage output
+  * [045e607] gbp pq: document --force
+  * [817976e] Handle version format errors more gracefully.
+  * [b0390d1] Fix comitter vs committer typos.
+    Thanks to Sandro Tosi (Closes: #748339)
+  * [dc231f2] Document that the patches must apply without fuzz
+  * [de77df7] pq: Print proper error message if we fail to apply the tree
+  * [54e4542] pq: Try harder to cleanup after a failed patch.
+    Thanks to Marco d'Itri for the repo to debug this
+  * [b2549fa] Determine build_dir upfront
+  * [a050942] Improve error reporting on failed commands.
+    (Closes: #748248)
+  * [030ff96] Improve error reporting on hooks.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 22 May 2014 22:47:37 +0200
+
 git-buildpackage (0.6.13) unstable; urgency=medium
 
   [ Guido Günther ]
