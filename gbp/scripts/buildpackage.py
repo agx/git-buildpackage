@@ -526,6 +526,7 @@ def main(argv):
 
         tree = write_tree(repo, options)
         source = source_vfs(repo, options, tree)
+        build_dir = export_dir if options.export_dir else repo_dir
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
             tarball_dir = options.tarball_dir or output_dir
@@ -564,11 +565,6 @@ def main(argv):
                 if not source.is_native() and options.postexport:
                     prepare_upstream_tarball(repo, source.changelog, options, tarball_dir,
                                              output_dir)
-
-            if options.export_dir:
-                build_dir = export_dir
-            else:
-                build_dir = repo_dir
 
             if options.prebuild:
                 RunAtCommand(options.prebuild, shell=True,
