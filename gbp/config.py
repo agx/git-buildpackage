@@ -311,6 +311,10 @@ class GbpOptionParser(OptionParser):
         parser.read(self.config_files)
         self.config = dict(parser.defaults())
 
+        if '-' in self.command:
+            main_command = self.command.split('-')[-1]
+            self.config.update(dict(parser.items(main_command, raw=True)))
+
         if parser.has_section(self.command):
             self.config.update(dict(parser.items(self.command, raw=True)))
 
