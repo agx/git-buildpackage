@@ -56,7 +56,7 @@
       <arg><option>--spawn-editor=[always|snapshot|release]</option></arg>
       <arg><option>--commit-msg=</option><replaceable>msg-format</replaceable></arg>
       <arg><option>--commit</option></arg>
-      <arg><option>--customization=</option><replaceable>customization-file</replaceable></arg>
+      <arg><option>--customizations=</option><replaceable>customization-file</replaceable></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -311,6 +311,17 @@
         </term>
         <listitem>
 	  <para>Commit the generated changelog.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--customizations=</option><replaceable>customization-file</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Load Python code from <replaceable>customization-file</replaceable>.
+          At the moment, the only useful thing the code can do is define a
+          custom format_changelog_entry() function.
+          </para>
         </listitem>
       </varlistentry>
     </variablelist>
