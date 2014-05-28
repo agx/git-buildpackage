@@ -29,10 +29,6 @@ def test_option_parser_debian():
 
     >>> import gbp.config
     >>> c = gbp.config.GbpConfArgParserDebian.create_parser(prog='debian')
-    >>> c.add_conf_file_arg('--builder', dest='builder')
-    Traceback (most recent call last):
-    ...
-    KeyError: 'builder'
     >>> c.add_conf_file_arg('--builder', dest='builder', help='foo')
     """
 
