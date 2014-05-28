@@ -708,10 +708,10 @@ class GbpConfArgParser(object):
         @returns: The config file option value or C{None} if it doesn't exist
         @rtype: C{str} or C{None}
         """
-        try:
+        if option_name in self.conf_file_args:
             return self.config.get_value(option_name)
-        except KeyError:
-            return None
+        else:
+            raise KeyError("Invalid option: %s" % option_name)
 
 
 class GbpConfigDebian(GbpConfig):

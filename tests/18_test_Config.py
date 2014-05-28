@@ -95,9 +95,11 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         Read a single value from the parsed config
         """
         parser = GbpConfArgParser.create_parser(prog='cmd4')
+        parser.add_conf_file_arg('--new_overrides_git_option1')
         self.assertEqual(parser.get_conf_file_value('new_overrides_git_option1'),
                          'new_overrides_git_value1')
-        self.assertEqual(parser.get_conf_file_value('doesnotexist'), None)
+        with self.assertRaises(KeyError):
+            parser.get_conf_file_value('doesnotexist')
 
     def test_param_list(self):
         parser = GbpConfArgParser.create_parser(prog='cmd4')
