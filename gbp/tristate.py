@@ -66,6 +66,17 @@ class Tristate(object):
         else:
             return 'off'
 
+    def __nonzero__(self):
+        """
+        >>> Tristate('on').__nonzero__()
+        True
+        >>> Tristate('auto').__nonzero__()
+        True
+        >>> Tristate('off').__nonzero__()
+        False
+        """
+        return self._state is not self.OFF
+
     @property
     def state(self):
         """Get current state"""
