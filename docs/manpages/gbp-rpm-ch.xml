@@ -33,6 +33,7 @@
         <arg><option>--message=</option><replaceable>MESSAGE</replaceable></arg>
         <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
       </group>
+      <arg><option>--meta-bts=</option><replaceable>META_TAGS</replaceable></arg>
       <arg><option>--no-release</option></arg>
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]full</option></arg>
@@ -179,6 +180,19 @@
           <para>
           Start reading commit messages at
           <replaceable>COMMITTISH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--meta-bts=</option><replaceable>META_TAGS</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Meta tags in the commit messages that are interpreted as bug tracking
+          system related references. The recognized bts references are added in
+          the generated changelog entries. See the META TAGS section below for
+          more information. The bts meta tag tracking feature can be disabled
+          by defining an empty string.
           </para>
         </listitem>
       </varlistentry>
@@ -416,6 +430,8 @@
           <para>
           Indicate in the changelog entry that bug
           <replaceable>BUGNUMBER</replaceable> was addressed in this commit.
+          The bts meta tags recognized by &gbp-rpm-ch; is actually defined by
+          the <option>--meta-bts</option> option.
           </para>
         </listitem>
       </varlistentry>
