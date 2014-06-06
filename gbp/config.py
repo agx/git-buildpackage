@@ -787,6 +787,7 @@ class GbpOptionParserRpm(GbpOptionParser):
         'changelog-revision': '',
         'spawn-editor': 'always',
         'editor-cmd': 'vim',
+        'meta-bts': '(Close|Closes|Fixes|Fix)',
         'spec-vcs-tag': '',
     })
 
@@ -849,6 +850,8 @@ class GbpOptionParserRpm(GbpOptionParser):
             'git-author':
                 "Use name and email from git-config for the changelog header, "
                 "default is '%(git-author)s'",
+            'meta-bts':
+                "Meta tags for the bts commands, default is '%(meta-bts)s'",
             'spec-vcs-tag':
                 "Set/update the 'VCS:' tag in the spec file, empty value "
                 "removes the tag entirely, default is '%(spec-vcs-tag)s'",

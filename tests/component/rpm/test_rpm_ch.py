@@ -173,6 +173,26 @@ class TestRpmCh(RpmRepoTestBase):
 
         eq_(mock_ch(['--packaging-branch=foo', '--ignore-branch']), 0)
 
+    def test_option_meta_bts(self):
+        """Test parsing of the bts meta tags"""
+        repo = self.init_test_repo('gbp-test-native')
+
+        # Create a dummy commit that references bts
+        with open('new-file', 'w') as fobj:
+            fobj.write('foobar\n')
+        repo.add_files('new-file')
+        repo.commit_all('Fix\n\nCloses: #123\nFixes: #456\n Fixes: #789')
+
+        eq_(mock_ch(['--since=HEAD^']), 0)
+        content = self.read_file('packaging/gbp-test-native.changes')
+        # rpm-ch shouldn't have picked the ref with leading whitespace
+        eq_(content[1], '- Fix (Closes: #123) (Fixes: #456)\n')
+
+        # Check the --meta-bts option
+        eq_(mock_ch(['--since=HEAD^', '--meta-bts=Fixes']), 0)
+        content = self.read_file('packaging/gbp-test-native.changes')
+        eq_(content[1], '- Fix (Fixes: #456)\n')
+
     def test_option_no_release(self):
         """Test the --no-release cmdline option"""
         self.init_test_repo('gbp-test-native')
