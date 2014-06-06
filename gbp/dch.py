@@ -115,8 +115,11 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     if options.idlen:
         entry[0] = '[%s] ' % commitid[0:options.idlen] + entry[0]
 
-    (bts_cmds, body) = extract_bts_cmds(body, options)
-    (thanks, body) = extract_thanks_info(body, options)
+    bts_cmds = {}
+    thanks  = []
+    if options.meta:
+        (bts_cmds, body) = extract_bts_cmds(body, options)
+        (thanks, body) = extract_thanks_info(body, options)
     body = filter_ignore_rx_matches(body, options)
 
     if 'full' in git_dch_cmds or (options.full and not 'short' in git_dch_cmds):
