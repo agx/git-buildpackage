@@ -28,7 +28,7 @@ def enable_notifications():
         try:
             import pynotify
             notify_module = pynotify
-        except ImportError:
+        except (ImportError, RuntimeError):
             return False
 
     return notify_module.init("git-buildpackage")
