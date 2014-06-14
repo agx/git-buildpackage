@@ -597,8 +597,8 @@ def main(argv):
                      extra_env={'GBP_CHANGES_FILE': changes,
                                 'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
-            gbp.log.info("Tagging %s" % source.changelog.version)
             tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
+            gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
             repo.create_tag(name=tag,
