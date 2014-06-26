@@ -125,6 +125,15 @@ class ComponentTestBase(object):
 
         self._capture_log(False)
 
+    @staticmethod
+    def check_files(reference, filelist):
+        """Compare two file lists"""
+        extra = set(filelist) - set(reference)
+        missing = set(reference) - set(filelist)
+        assert_msg = "Unexpected files: %s, Missing files: %s" % \
+                        (list(extra), list(missing))
+        assert not extra and not missing, assert_msg
+
     @classmethod
     def _check_repo_state(cls, repo, current_branch, branches, files=None):
         """Check that repository is clean and given branches exist"""
@@ -148,10 +157,7 @@ class ComponentTestBase(object):
                 for dirname in dirnames:
                     local.add(os.path.relpath(os.path.join(dirpath, dirname),
                                               repo.path) + '/')
-            extra = local - set(files)
-            ok_(not extra, "Unexpected files in repo: %s" % list(extra))
-            missing = set(files) - local
-            ok_(not missing, "Files missing from repo: %s" % list(missing))
+            cls.check_files(files, local)
 
     def _capture_log(self, capture=True):
         """ Capture log"""
