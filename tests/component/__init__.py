@@ -73,6 +73,12 @@ class ComponentTestGitRepository(GitRepository):
             raise SkipTest("Skipping '%s', testdata directory not initialized. "
                            "Consider doing 'git submodule update'" % __name__)
 
+    def ls_tree(self, treeish):
+        """List contents (blobs) in a git treeish"""
+        objs = self.list_tree(treeish, True)
+        blobs = [obj[3] for obj in objs if obj[1] == 'blob']
+        return set(blobs)
+
 
 class ComponentTestBase(GbpLogTester):
     """Base class for testing cmdline tools of git-buildpackage"""
