@@ -87,6 +87,8 @@ def test_add_submodule():
 def test_has_submodules():
     """Check for submodules"""
     ok_(REPO.has_submodules())
+    ok_(REPO.has_submodules('HEAD'))
+    ok_(not REPO.has_submodules('HEAD^'))
 
 
 def test_get_submodules():

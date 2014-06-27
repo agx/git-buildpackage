@@ -1736,18 +1736,23 @@ class GitRepository(object):
 
 #{ Submodules
 
-    def has_submodules(self):
+    def has_submodules(self, treeish=None):
         """
         Does the repo have any submodules?
 
+        @param treeish: look into treeish
+        @type treeish: C{str}
         @return: C{True} if the repository has any submodules, C{False}
             otherwise
         @rtype: C{bool}
         """
-        if os.path.exists(os.path.join(self.path, '.gitmodules')):
+        if treeish:
+            try:
+                self.show('%s:.gitmodules' % treeish)
+            except GitRepositoryError:
+                return False
             return True
-        else:
-            return False
+        return os.path.exists(os.path.join(self.path, '.gitmodules'))
 
 
     def add_submodule(self, repo_path):
