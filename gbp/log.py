@@ -75,7 +75,7 @@ class GbpStreamHandler(logging.StreamHandler):
         """Check if to print in color or not"""
         if self._color.is_on():
             return True
-        elif self._color.is_auto():
+        elif self._color.is_auto() and hasattr(self.stream, 'isatty'):
             in_emacs = (os.getenv("EMACS") and
                         os.getenv("INSIDE_EMACS", "").endswith(",comint"))
             return self.stream.isatty() and not in_emacs
