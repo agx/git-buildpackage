@@ -135,7 +135,8 @@ class ComponentTestBase(object):
         assert not extra and not missing, assert_msg
 
     @classmethod
-    def _check_repo_state(cls, repo, current_branch, branches, files=None):
+    def _check_repo_state(cls, repo, current_branch, branches, files=None,
+                          dirs=None):
         """Check that repository is clean and given branches exist"""
         branch = repo.branch
         eq_(branch, current_branch)
@@ -144,20 +145,24 @@ class ComponentTestBase(object):
         assert_msg = "Branches: expected %s, found %s" % (branches,
                                                           local_branches)
         eq_(set(local_branches), set(branches), assert_msg)
-        if files is not None:
+        if files is not None or dirs is not None:
             # Get files of the working copy recursively
-            local = set()
+            local_f = set()
+            local_d = set()
             for dirpath, dirnames, filenames in os.walk(repo.path):
                 # Skip git dir(s)
                 if '.git' in dirnames:
                     dirnames.remove('.git')
                 for filename in filenames:
-                    local.add(os.path.relpath(os.path.join(dirpath, filename),
-                                              repo.path))
+                    local_f.add(os.path.relpath(os.path.join(dirpath, filename),
+                                                repo.path))
                 for dirname in dirnames:
-                    local.add(os.path.relpath(os.path.join(dirpath, dirname),
-                                              repo.path) + '/')
-            cls.check_files(files, local)
+                    local_d.add(os.path.relpath(os.path.join(dirpath, dirname),
+                                                repo.path) + '/')
+            if files is not None:
+                cls.check_files(files, local_f)
+            if dirs is not None:
+                cls.check_files(dirs, local_d)
 
     def _capture_log(self, capture=True):
         """ Capture log"""

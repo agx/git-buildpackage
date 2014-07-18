@@ -94,7 +94,7 @@ class TestImportPacked(ComponentTestBase):
         srpm = os.path.join(DATA_DIR, 'gbp-test-native-1.0-1.src.rpm')
         eq_(mock_import(['--native', srpm]), 0)
         # Check repository state
-        files = {'.gbp.conf', 'Makefile', 'README', 'dummy.sh', 'packaging/',
+        files = {'.gbp.conf', 'Makefile', 'README', 'dummy.sh',
                  'packaging/gbp-test-native.spec'}
         repo = GitRepository('gbp-test-native')
         self._check_repo_state(repo, 'master', ['master'], files)
@@ -195,11 +195,10 @@ class TestImportPacked(ComponentTestBase):
                     srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test2')
-        files = {'Makefile', 'README', 'dummy.sh', 'packaging/',
-                 'packaging/bar.tar.gz', 'packaging/foo.txt',
-                 'packaging/gbp-test2.spec', 'packaging/gbp-test2-alt.spec',
-                 'packaging/my.patch', 'packaging/my2.patch',
-                 'packaging/my3.patch'}
+        files = {'Makefile', 'README', 'dummy.sh', 'packaging/bar.tar.gz',
+                 'packaging/foo.txt', 'packaging/gbp-test2.spec',
+                 'packaging/gbp-test2-alt.spec', 'packaging/my.patch',
+                 'packaging/my2.patch', 'packaging/my3.patch'}
         self._check_repo_state(repo, 'pack', ['pack', 'orig'], files)
         eq_(len(repo.get_commits()), 2)
         # Check packaging dir
