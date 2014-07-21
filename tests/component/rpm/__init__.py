@@ -25,6 +25,7 @@ from gbp.git import GitRepository, GitRepositoryError
 
 from tests.component import ComponentTestBase, ComponentTestGitRepository
 
+
 RPM_TEST_DATA_SUBMODULE = os.path.join('tests', 'component', 'rpm', 'data')
 RPM_TEST_DATA_DIR = os.path.abspath(RPM_TEST_DATA_SUBMODULE)
 
@@ -34,8 +35,11 @@ class RepoManifest(object):
         self._doc = minidom.Document()
         if filename:
             self._doc = minidom.parse(filename)
+            # Disable "Instance of 'Document' has no 'firstChild' member"
+            # pylint: disable=E1103
             if self._doc.firstChild.nodeName != 'gbp-test-manifest':
                 raise Exception('%s is not a test repo manifest' % filename)
+            # pylint: enable=E1103
         else:
             self._doc.appendChild(self._doc.createElement("gbp-test-manifest"))
 
