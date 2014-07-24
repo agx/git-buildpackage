@@ -51,7 +51,7 @@ class TestImportPacked(ComponentTestBase):
     def test_basic_import(self):
         """Test importing of non-native src.rpm"""
         srpm = os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm')
-        eq_(mock_import([srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
         files =  {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
@@ -63,7 +63,7 @@ class TestImportPacked(ComponentTestBase):
     def test_basic_import2(self):
         """Import package with multiple spec files and full url patch"""
         srpm = os.path.join(DATA_DIR, 'gbp-test2-2.0-0.src.rpm')
-        eq_(mock_import([srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test2')
         files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
@@ -80,7 +80,7 @@ class TestImportPacked(ComponentTestBase):
         development branches
         """
         srpm = os.path.join(DATA_DIR, 'gbp-test2-2.0-0.src.rpm')
-        eq_(mock_import(['--orphan-packaging', srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', '--orphan-packaging', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test2')
         files = {'bar.tar.gz', 'foo.txt', 'gbp-test2.spec',
@@ -116,7 +116,7 @@ class TestImportPacked(ComponentTestBase):
         srpms = [ os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm'),
                   os.path.join(DATA_DIR, 'gbp-test-1.0-1.other.src.rpm'),
                   os.path.join(DATA_DIR, 'gbp-test-1.1-1.src.rpm') ]
-        eq_(mock_import([srpms[0]]), 0)
+        eq_(mock_import(['--no-pristine-tar', srpms[0]]), 0)
         repo = GitRepository('gbp-test')
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
         eq_(len(repo.get_commits()), 2)
@@ -124,12 +124,12 @@ class TestImportPacked(ComponentTestBase):
         eq_(mock_import([srpms[1]]), 0)
         eq_(len(repo.get_commits()), 2)
         eq_(len(repo.get_commits(until='upstream')), 1)
-        eq_(mock_import(['--allow-same-version', srpms[1]]), 0)
+        eq_(mock_import(['--no-pristine-tar', '--allow-same-version', srpms[1]]), 0)
         # Added new version of packaging
         eq_(len(repo.get_commits()), 3)
         eq_(len(repo.get_commits(until='upstream')), 1)
         # Import new version
-        eq_(mock_import([srpms[2]]), 0)
+        eq_(mock_import(['--no-pristine-tar', srpms[2]]), 0)
         files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
                  'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'}
         self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
@@ -160,7 +160,7 @@ class TestImportPacked(ComponentTestBase):
         # The first import should fail because upstream branch is missing
         eq_(mock_import([srpm]), 1)
         self._check_log(-1, 'Also check the --create-missing-branches')
-        eq_(mock_import(['--create-missing', srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', '--create-missing', srpm]), 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
         # Four commits: our initial, upstream and packaging files
         eq_(len(repo.get_commits()), 3)
@@ -174,7 +174,7 @@ class TestImportPacked(ComponentTestBase):
     def test_filter(self):
         """Test filter option"""
         srpm = os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm')
-        eq_(mock_import(['--filter=README', '--filter=mydir', srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', '--filter=README', '--filter=mydir', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
         files = set(['Makefile', 'dummy.sh', 'bar.tar.gz', 'foo.txt',
@@ -185,7 +185,7 @@ class TestImportPacked(ComponentTestBase):
         """Test various options of git-import-srpm"""
         srpm = os.path.join(DATA_DIR, 'gbp-test2-2.0-0.src.rpm')
 
-        eq_(mock_import([
+        eq_(mock_import(['--no-pristine-tar',
                     '--packaging-branch=pack',
                     '--upstream-branch=orig',
                     '--packaging-dir=packaging',
@@ -231,7 +231,7 @@ class TestImportUnPacked(ComponentTestBase):
 
     def test_import_dir(self):
         """Test importing of directories"""
-        eq_(mock_import(['gbp-test-1.0-1-unpack']), 0)
+        eq_(mock_import(['--no-pristine-tar', 'gbp-test-1.0-1-unpack']), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
@@ -269,7 +269,7 @@ class TestDownloadImport(ComponentTestBase):
         urllib2.urlopen = Mock()
         urllib2.urlopen.return_value = open(local_fn, 'r')
 
-        eq_(mock_import(['--download', srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', '--download', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
