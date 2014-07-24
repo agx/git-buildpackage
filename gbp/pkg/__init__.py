@@ -131,8 +131,8 @@ class PkgPolicy(object):
             raise NotImplementedError("Class needs to provide upstreamversion_re")
         return True if cls.upstreamversion_re.match(version) else False
 
-    @classmethod
-    def guess_upstream_src_version(cls, filename, extra_regex=r''):
+    @staticmethod
+    def guess_upstream_src_version(filename, extra_regex=r''):
         """
         Guess the package name and version from the filename of an upstream
         archive.
