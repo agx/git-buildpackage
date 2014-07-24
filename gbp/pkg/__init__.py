@@ -35,9 +35,9 @@ compressor_aliases = { 'bz2' : 'bzip2',
                        'gz'  : 'gzip', }
 
 # Supported archive formats
-arhive_formats = [ 'tar', 'zip' ]
+archive_formats = [ 'tar', 'zip' ]
 
-# Map combined file extensions to arhive and compression format
+# Map combined file extensions to archive and compression format
 archive_ext_aliases = { 'tgz'   : ('tar', 'gzip'),
                         'tbz2'  : ('tar', 'bzip2'),
                         'tlz'   : ('tar', 'lzma'),
@@ -79,7 +79,7 @@ def parse_archive_filename(filename):
         if split[-1] in archive_ext_aliases:
             base_name = ".".join(split[:-1])
             (archive_fmt, compression) = archive_ext_aliases[split[-1]]
-        elif split[-1] in arhive_formats:
+        elif split[-1] in archive_formats:
             base_name = ".".join(split[:-1])
             (archive_fmt, compression) = (split[-1], None)
         else:
@@ -87,7 +87,7 @@ def parse_archive_filename(filename):
                 if o[1] == split[-1]:
                     base_name = ".".join(split[:-1])
                     compression = c
-                    if len(split) > 2 and split[-2] in arhive_formats:
+                    if len(split) > 2 and split[-2] in archive_formats:
                         base_name = ".".join(split[:-2])
                         archive_fmt = split[-2]
 
