@@ -1,3 +1,23 @@
+git-buildpackage (0.6.16) experimental; urgency=medium
+
+  [ Markus Lehtonen ]
+  * Doc cleanups and reformatting
+  * [736b9d8] Introduce git-import-srpm tool.
+  * [ed228a2] import-srpm: add 'vendor' config option.
+    Intended to represent the distribution vendor (e.g. 'Debian').
+    Currently, this can be used in tag format strings.
+
+  [ Guido Günther ]
+  * [0b1fc0d] buildpackage: Also print tag name when tagging the Debian
+    release.  Based on a patch by Kamal Mostafa
+  * [2bf944f] Pass --no-pristine-tar to SRPM compnent tests
+    to avoid pristine-tar showing up in the matched branches
+  * [23090c9] Introduce git-buildpackage-rpm. Currently only including "gbp
+    import-srpm".
+  * Remove newly introducted spurious log outputs from tests
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 28 Jul 2014 15:57:49 +0200
+
 git-buildpackage (0.6.15) unstable; urgency=medium
 
   * [5cde49a] Revert "Determine build_dir upfront"
