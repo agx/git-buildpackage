@@ -36,7 +36,7 @@ class LinkedListNode(object):
     def data(self):
         """Get data stored into node"""
         if self._data is None:
-            gbp.log.err("BUG: referencing a deleted node!")
+            gbp.log.debug("BUG: referencing a deleted node!")
             return("")
         return self._data
 
@@ -55,7 +55,7 @@ class LinkedListNode(object):
         ''
         """
         if data is None:
-            gbp.log.err("BUG: trying to store 'None', not allowed")
+            gbp.log.debug("BUG: trying to store 'None', not allowed")
             data = ""
         self._data = data
 
