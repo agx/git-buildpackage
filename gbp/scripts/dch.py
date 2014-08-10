@@ -76,7 +76,7 @@ def fixup_section(repo, git_author, options, dch_options):
     author, email = get_author_email(repo, git_author)
     used_options = ['distribution', 'urgency']
     opts = []
-    maintrailer_opts = [ '--nomainttrailer', '--mainttrailer', '-t' ]
+    mainttrailer_opts = [ '--nomainttrailer', '--mainttrailer', '-t' ]
 
     # This must not be done for snapshots or snapshots changelog entries
     # will not be concatenated
@@ -93,7 +93,7 @@ def fixup_section(repo, git_author, options, dch_options):
         if opt in dch_options:
             break
     else:
-        opts.append(maintrailer_opts[0])
+        opts.append(mainttrailer_opts[0])
     ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+opts)
 
 
