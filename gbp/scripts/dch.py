@@ -70,11 +70,13 @@ def fixup_section(repo, git_author, options, dch_options):
 
     It might otherwise point to the last git committer instead of the person
     creating the changelog
-    This apply --distribution and --urgency options passed to git-dch
+
+    This also applies --distribution and --urgency options passed to gbp dch
     """
     author, email = get_author_email(repo, git_author)
     used_options = ['distribution', 'urgency']
-    header_opts = []
+    opts = []
+    maintrailer_opts = [ '--nomainttrailer', '--mainttrailer', '-t' ]
 
     # This must not be done for snapshots or snapshots changelog entries
     # will not be concatenated
@@ -83,11 +85,16 @@ def fixup_section(repo, git_author, options, dch_options):
             val = getattr(options, opt)
             if val:
                 gbp.log.debug("Set header option '%s' to '%s'" % (opt, val))
-                header_opts.append("--%s=%s" % (opt, val))
+                opts.append("--%s=%s" % (opt, val))
     else:
         gbp.log.debug("Snapshot enabled: do not fixup options in header")
 
-    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+header_opts)
+    for opt in mainttrailer_opts:
+        if opt in dch_options:
+            break
+    else:
+        opts.append(maintrailer_opts[0])
+    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+opts)
 
 
 def snapshot_version(version):
