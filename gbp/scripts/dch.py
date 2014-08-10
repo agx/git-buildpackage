@@ -469,6 +469,15 @@ def main(argv):
             if v:
                 version_change['version'] = v
 
+        if add_section and options.git_author:
+            git_author, git_email = get_author_email(repo, True)
+            cp.add_section(distribution="UNRELEASED", msg='',
+                           version=version_change,
+                           author=git_author,
+                           email=git_email,
+                           dch_options=dch_options)
+            add_section = False
+
         i = 0
         for c in commits:
             i += 1
