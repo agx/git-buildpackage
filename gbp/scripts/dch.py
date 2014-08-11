@@ -64,7 +64,7 @@ def get_author_email(repo, use_git_config):
     return author, email
 
 
-def fixup_section(repo, git_author, options, dch_options):
+def fixup_section(repo, use_git_author, options, dch_options):
     """
     Fixup the changelog header and trailer's committer and email address
 
@@ -73,7 +73,7 @@ def fixup_section(repo, git_author, options, dch_options):
 
     This also applies --distribution and --urgency options passed to gbp dch
     """
-    author, email = get_author_email(repo, git_author)
+    author, email = get_author_email(repo, use_git_author)
     used_options = ['distribution', 'urgency']
     opts = []
     mainttrailer_opts = [ '--nomainttrailer', '--mainttrailer', '-t' ]
@@ -160,9 +160,9 @@ def mangle_changelog(changelog, cp, snapshot=''):
         raise GbpError("Error mangling changelog %s" % e)
 
 
-def do_release(changelog, repo, cp, git_author, dch_options):
+def do_release(changelog, repo, cp, use_git_author, dch_options):
     """Remove the snapshot header and set the distribution"""
-    author, email = get_author_email(repo, git_author)
+    author, email = get_author_email(repo, use_git_author)
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
         cp['MangledVersion'] = release
@@ -350,7 +350,7 @@ def build_parser(name):
                       help="Increment the Debian release number for a Debian Team upload, and add a Team upload changelog comment.")
     version_group.add_option("--security", dest="security", action="store_true", default=False,
                       help="Increment the Debian release number for a security upload and add a security upload changelog comment.")
-    version_group.add_boolean_config_file_option(option_name="git-author", dest="git_author")
+    version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
                       help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
@@ -512,11 +512,11 @@ def main(argv):
                            version=version_change,
                            dch_options=dch_options)
 
-        fixup_section(repo, git_author=options.git_author, options=options,
+        fixup_section(repo, use_git_author=options.use_git_author, options=options,
                       dch_options=dch_options)
 
         if options.release:
-            do_release(changelog, repo, cp, git_author=options.git_author,
+            do_release(changelog, repo, cp, use_git_author=options.use_git_author,
                        dch_options=dch_options)
         elif options.snapshot:
             (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
