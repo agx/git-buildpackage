@@ -89,11 +89,12 @@ def fixup_section(repo, use_git_author, options, dch_options):
     else:
         gbp.log.debug("Snapshot enabled: do not fixup options in header")
 
-    for opt in mainttrailer_opts:
-        if opt in dch_options:
-            break
-    else:
-        opts.append(mainttrailer_opts[0])
+    if use_git_author:
+        for opt in mainttrailer_opts:
+            if opt in dch_options:
+                break
+        else:
+            opts.append(mainttrailer_opts[0])
     ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+opts)
 
 
