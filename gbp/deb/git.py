@@ -19,6 +19,7 @@
 import re
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
+from gbp.format import format_msg
 
 class DebianGitRepository(GitRepository):
     """A git repository that holds the source of a Debian package"""
@@ -104,7 +105,7 @@ class DebianGitRepository(GitRepository):
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
         'debian/0%0_0'
         """
-        return format % dict(version=DebianGitRepository._sanitize_version(version))
+        return format_msg(format, dict(version=DebianGitRepository._sanitize_version(version)))
 
     @staticmethod
     def _sanitize_version(version):

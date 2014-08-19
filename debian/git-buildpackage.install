@@ -5,6 +5,7 @@ usr/lib/python2.?/dist-packages/gbp/config.py
 usr/lib/python2.?/dist-packages/gbp/dch.py
 usr/lib/python2.?/dist-packages/gbp/deb/
 usr/lib/python2.?/dist-packages/gbp/errors.py
+usr/lib/python2.?/dist-packages/gbp/format.py
 usr/lib/python2.?/dist-packages/gbp/git/
 usr/lib/python2.?/dist-packages/gbp/__init__.py
 usr/lib/python2.?/dist-packages/gbp/log.py
