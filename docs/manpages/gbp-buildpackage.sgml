@@ -44,8 +44,9 @@
       <arg><option>--git-postexport=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-[no-]hooks</option></arg>
-      <arg><option>--git-debian-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
-      <arg><option>--git-upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--git-debian-tag-msg=</option><replaceable>tag-msg-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
       <arg><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable></arg>
@@ -428,6 +429,14 @@
           use this tag format when looking for tags of upstream versions,
           default is <replaceable>upstream/%(version)s</replaceable>.
           </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-debian-tag-msg=</option><replaceable>tag-msg-format</replaceable>
+        </term>
+        <listitem>
+          <para>use this tag message format when signing Debian versions,
+	  default is <replaceable>%(pkg)s Debian release %(version)s</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>

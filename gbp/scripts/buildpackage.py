@@ -402,6 +402,7 @@ def build_parser(name, prefix=None):
     tag_group.add_boolean_config_file_option(option_name="sign-tags", dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid", dest="keyid")
     tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
+    tag_group.add_config_file_option(option_name="debian-tag-msg", dest="debian_tag_msg")
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
@@ -602,9 +603,11 @@ def main(argv):
             gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
+            tag_msg=options.debian_tag_msg % dict(
+                            pkg=source.sourcepkg,
+                            version=source.changelog.version)
             repo.create_tag(name=tag,
-                            msg="%s Debian release %s" % (source.sourcepkg,
-                                                          source.changelog.version),
+                            msg=tag_msg,
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)

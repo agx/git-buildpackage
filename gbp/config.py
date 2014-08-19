@@ -106,6 +106,7 @@ class GbpOptionParser(OptionParser):
                  'postimport'      : '',
                  'hooks'           : 'True',
                  'debian-tag'      : 'debian/%(version)s',
+                 'debian-tag-msg'  : '%(pkg)s Debian release %(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
                  'import-msg'      : 'Imported Upstream version %(version)s',
                  'commit-msg'      : 'Update changelog for %(version)s release',
@@ -167,6 +168,9 @@ class GbpOptionParser(OptionParser):
              'debian-tag':
                   ("Format string for debian tags, "
                    "default is '%(debian-tag)s'"),
+             'debian-tag-msg':
+                  ("Format string for signed debian-tag messages, "
+                   "default is '%(debian-tag-msg)s'"),
              'upstream-tag':
                   ("Format string for upstream tags, "
                    "default is '%(upstream-tag)s'"),
