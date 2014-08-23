@@ -17,6 +17,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Supercommand for all gbp commands"""
 
+import glob
 import os
 import re
 import sys
@@ -43,6 +44,8 @@ The most commonly used commands are:
     import-orig  - import a new upstream tarball
     import-dsc   - import a single Debian source package
     import-dscs  - import multiple Debian source packages
+
+Use '--list-cmds' to list all available commands.
 """
 
 def version(prog):
@@ -51,6 +54,7 @@ def version(prog):
     except ImportError:
         gbp_version = '[Unknown version]'
     print("%s %s" % (os.path.basename(prog), gbp_version))
+
 
 def import_command(cmd):
     """
@@ -64,6 +68,40 @@ def import_command(cmd):
     return __import__('gbp.scripts.%s' % modulename, fromlist='main', level=0)
 
 
+def pymod_to_cmd(mod):
+    """
+    >>> pymod_to_cmd('/x/y/z/a_cmd.py')
+    'a-cmd'
+    """
+    return os.path.basename(mod.rsplit('.', 1)[0]).replace('_','-')
+
+
+def get_available_commands(path):
+    cmds = []
+    for f in glob.glob(os.path.join(path, '*.py')):
+        if os.path.basename(f) in ['__init__.py', 'supercommand.py']:
+            continue
+        cmds.append((pymod_to_cmd(f), f))
+    return cmds
+
+
+def list_available_commands():
+    mod = __import__('gbp.scripts', fromlist='main', level=0)
+    path = os.path.dirname(mod.__file__)
+    maxlen = 0
+
+    print("Available commands in %s\n" % path)
+    cmds = sorted(get_available_commands(path))
+    for cmd in cmds:
+        if len(cmd[0]) > maxlen:
+            maxlen = len(cmd[0])
+    for cmd in cmds:
+        mod = import_command(cmd[0])
+        doc = mod.__doc__
+        print("    %s - %s" % (cmd[0].rjust(maxlen), doc))
+    print('')
+
+
 def supercommand(argv=None):
     argv = argv or sys.argv
 
@@ -74,11 +112,14 @@ def supercommand(argv=None):
     prg, cmd = argv[0:2]
     args = argv[1:]
 
-    if cmd in ['--help', '-h']:
+    if cmd in ['--help', '-h', 'help' ]:
         usage()
         return 0
     elif cmd in [ '--version', 'version' ]:
         version(argv[0])
+        return 0
+    elif cmd in [ '--list-cmds', 'list-cmds' ]:
+        list_available_commands()
         return 0
 
     try:

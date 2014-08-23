@@ -21,6 +21,8 @@
       &gbp;
       <group choice='req'>
 	<arg><option>--help</option></arg>
+	<arg><option>--version</option></arg>
+	<arg><option>--list-cmds</option></arg>
 	<arg><option>command</option><arg choice='opt' rep='repeat'><option>args</option></arg></arg>
       </group>
     </cmdsynopsis>
@@ -39,6 +41,20 @@
         </term>
         <listitem>
           <para>Print help</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--version</option>
+        </term>
+        <listitem>
+          <para>Print the programs version</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--list-cmds</option>
+        </term>
+        <listitem>
+          <para>List all available commands</para>
         </listitem>
       </varlistentry>
     </variablelist>
