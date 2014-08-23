@@ -15,7 +15,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-"""Import a new upstream version into a git repository"""
+"""Import a new upstream version into a GIT repository"""
 
 import ConfigParser
 import os

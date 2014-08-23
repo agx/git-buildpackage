@@ -16,7 +16,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
-"""Create a remote repo based on the current one"""
+"""Create a remote GIT repository based on the current one"""
 
 import ConfigParser
 import sys

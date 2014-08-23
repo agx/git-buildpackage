@@ -15,7 +15,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-"""run commands to build a debian package out of a git repository"""
+"""Build a debian package out of a GIT repository"""
 
 import ConfigParser
 import errno

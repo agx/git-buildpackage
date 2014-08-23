@@ -15,7 +15,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-"""manage patches in a patch queue"""
+"""Manage Debian patches on a patch queue branch"""
 
 import ConfigParser
 import errno

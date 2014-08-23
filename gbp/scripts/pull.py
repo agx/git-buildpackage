@@ -17,7 +17,7 @@
 #
 # heavily inspired by dom-safe-pull which is © 2009 Stéphane Glondu <steph@glondu.net>
 #
-"""fast forward debian, upstream and pristine-tar branch"""
+"""Pull remote changes and fast forward debian, upstream and pristine-tar branch"""
 
 import ConfigParser
 import sys
