@@ -17,6 +17,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Supercommand for all gbp commands"""
 
+import os
 import re
 import sys
 
@@ -44,6 +45,13 @@ The most commonly used commands are:
     import-dscs  - import multiple Debian source packages
 """
 
+def version(prog):
+    try:
+        from gbp.version import gbp_version
+    except ImportError:
+        gbp_version = '[Unknown version]'
+    print("%s %s" % (os.path.basename(prog), gbp_version))
+
 def import_command(cmd):
     """
     Import the module that implements the given command
@@ -63,11 +71,14 @@ def supercommand(argv=None):
         usage()
         return 1
 
-    cmd = argv[1]
+    prg, cmd = argv[0:2]
     args = argv[1:]
 
     if cmd in ['--help', '-h']:
         usage()
+        return 0
+    elif cmd in [ '--version', 'version' ]:
+        version(argv[0])
         return 0
 
     try:
@@ -80,5 +91,8 @@ def supercommand(argv=None):
         return 2
 
     return module.main(args)
+
+if __name__ == '__main__':
+    sys.exit(supercommand())
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
