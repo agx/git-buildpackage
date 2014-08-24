@@ -27,6 +27,12 @@ _gbp_options ()
 }
 
 
+_gbp_commands ()
+{
+    gbp --list-cmds | sed -ne  's/^ \+\([a-z\-]\+\) \-.*/\1/p'
+}
+
+
 _gbp_comp ()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"
@@ -208,15 +214,7 @@ have gbp &&
 _gbp ()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"
-    local commands="buildpackage       \
-                    clone              \
-                    create-remote-repo \
-                    dch                \
-                    import-dsc         \
-                    import-dscs        \
-                    import-orig        \
-                    pq                 \
-                    pull"
+    local commands=$(_gbp_commands)
     local func
 
     command=$(_gbp_find_cmd_on_cmdline "$commands")
