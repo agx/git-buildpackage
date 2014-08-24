@@ -1,3 +1,25 @@
+git-buildpackage (0.6.17) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [692e5da] Make sure we fixup the changelog trailer with newer devscripts.
+    We don't change any mainttrailer options already given.
+    Thanks to James McCoy for the detailed explanation (Closes: #740566)
+  * [ae5805e] Improve error messages on formatting errors to
+    make it easier for the user to detect misformated replacement strings in
+    config files and command line options.
+  * [5f82f44] gbp: add --version option (Closes: #758909)
+  * [04aa92f] Allow to list all available gbp subcommands
+  * [68c053f] Unify doc strings a bit since they now show up with --list-cmds
+  * [6d510ce] bash completion: make command list dynamic.
+    Use "gbp --list-cmds" so we don't have to hardcode the available
+    commands and get support for the RPM ones as they show up.
+
+  [ Kamal Mostafa ]
+  * [6823e51] buildpackage: Make debian-tag message configurable via
+    --git-debian-tag-msg.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 24 Aug 2014 11:31:28 +0200
+
 git-buildpackage (0.6.16) experimental; urgency=medium
 
   [ Markus Lehtonen ]
