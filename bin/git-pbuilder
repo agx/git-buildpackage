@@ -265,6 +265,7 @@ fi
 # them from the shell since they'll undergo another round of shell expansion
 # when the pbuilder runs debbuild.
 for arg in "$@" ; do
+    [ "$arg" != "-S" ] || source_only=true
     DEBBUILDOPTS+=" $(shell_quote "$arg")"
 done
 
@@ -278,7 +279,7 @@ else
         --debbuildopts "$DEBBUILDOPTS" -- "${OPTIONS[@]}"
 fi
 status="$?"
-if [ -n "`ls ../*_source.changes`" ] ; then
+if [ -n "`ls ../*_source.changes`" -a $source_only != 'true' ] ; then
     rm ../*_source.changes
 fi
 exit "$status"
