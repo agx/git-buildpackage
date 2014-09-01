@@ -76,7 +76,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--merge</option></term>
+        <term><option>--[no-]merge</option></term>
         <listitem>
           <para>
           Merge the upstream branch to the debian branch after import
