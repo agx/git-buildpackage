@@ -1,3 +1,12 @@
+git-buildpackage (0.6.18) unstable; urgency=medium
+
+  * Upload to unstable
+  * [6edd836] Don't delete *_source.changes on source only builds
+    (Closes: #758726)
+  * [a37832e] Mention --no-merge (Closes: #760091)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 06 Sep 2014 13:41:05 +0200
+
 git-buildpackage (0.6.17) experimental; urgency=medium
 
   [ Guido Günther ]
