@@ -156,6 +156,7 @@ class GbpOptionParser(OptionParser):
                  'symlink-orig': 'True',
                  'purge': 'True',
                  'drop': 'False',
+                 'commit': 'False',
              }
     help = {
              'debian-branch':
@@ -300,6 +301,8 @@ class GbpOptionParser(OptionParser):
               'drop':
                   ("In case of 'export' drop the patch-queue branch "
                    "after export. Default is '%(drop)s'"),
+              'commit':
+                  "commit changes after export, Default is '%(commit)s'",
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',

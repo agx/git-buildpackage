@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011 Guido Günther <agx@sigxcpu.org>
+# (C) 2011,2014 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -35,6 +35,7 @@ from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                  switch_to_pq_branch, apply_single_patch,
                                  apply_and_commit_patch,
                                  drop_pq, get_maintainer_from_control)
+from gbp.dch import extract_bts_cmds
 
 PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR,"series")
@@ -67,6 +68,66 @@ def generate_patches(repo, start, end, outdir, options):
     return patches
 
 
+def compare_series(old, new):
+    """
+    Compare new pathes to lists of patches already exported
+
+    >>> compare_series(['a', 'b'], ['b', 'c'])
+    (['c'], ['a'])
+    >>> compare_series([], [])
+    ([], [])
+    """
+    added = set(new).difference(old)
+    removed = set(old).difference(new)
+    return (list(added), list(removed))
+
+
+def format_series_diff(added, removed, options):
+    """
+    Format the patch differences into a suitable commit message
+
+    >>> format_series_diff(['a'], ['b'], None)
+    'Rediff patches\\n\\nAdded a: <REASON>\\nDropped b: <REASON>\\n'
+    """
+    if len(added) == 1 and not removed:
+        # Single patch added, create a more thorough commit message
+        patch = Patch(os.path.join('debian', 'patches', added[0]))
+        msg = patch.subject
+        bugs, dummy = extract_bts_cmds(patch.long_desc.split('\n'), options)
+        if bugs:
+            msg += '\n'
+            for k, v in bugs.items():
+                msg += '\n%s: %s' % (k, ', '.join(v))
+    else:
+        msg = "Rediff patches\n\n"
+        for p in added:
+            msg += 'Added %s: <REASON>\n' % p
+        for p in removed:
+            msg += 'Dropped %s: <REASON>\n' % p
+    return msg
+
+
+def commit_patches(repo, branch, patches, options):
+    """
+    Commit chanages exported from patch queue
+    """
+    clean, dummy = repo.is_clean()
+    if clean:
+        return ([], [])
+
+    vfs = gbp.git.vfs.GitVfs(repo, branch)
+    oldseries = vfs.open('debian/patches/series')
+    oldpatches = [ p.strip() for p in oldseries.readlines() ]
+    newpatches = [ p[len(PATCH_DIR):] for p in patches ]
+
+    # FIXME: handle case were only the contents of the patches changed
+    added, removed = compare_series(oldpatches, newpatches)
+    msg = format_series_diff(added, removed, options)
+    repo.add_files(PATCH_DIR)
+    repo.commit_staged(msg=msg)
+    return added, removed
+
+
 def export_patches(repo, branch, options):
     """Export patches from the pq branch into a patch series"""
     if is_pq_branch(branch):
@@ -90,7 +151,14 @@ def export_patches(repo, branch, options):
         with open(SERIES_FILE, 'w') as seriesfd:
             for patch in patches:
                 seriesfd.write(os.path.relpath(patch, PATCH_DIR) + '\n')
-        GitCommand('status')(['--', PATCH_DIR])
+        if options.commit:
+            added, removed = commit_patches(repo, branch, patches, options)
+            if added:
+                gbp.log.info("Added %s" % ', '.join(added))
+            if removed:
+                gbp.log.info("Removed %s" % ', '.join(removed))
+        else:
+            GitCommand('status')(['--', PATCH_DIR])
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
 
@@ -238,11 +306,13 @@ def build_parser(name):
     parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
     parser.add_config_file_option(option_name="time-machine", dest="time_machine", type="int")
     parser.add_boolean_config_file_option("drop", dest='drop')
+    parser.add_boolean_config_file_option(option_name="commit", dest="commit")
     parser.add_option("--force", dest="force", action="store_true", default=False,
                       help="in case of import even import if the branch already exists")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    parser.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     return parser
 
 
