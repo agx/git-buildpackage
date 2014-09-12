@@ -155,6 +155,7 @@ class GbpOptionParser(OptionParser):
                  'allow-unauthenticated': 'False',
                  'symlink-orig': 'True',
                  'purge': 'True',
+                 'drop': 'False',
              }
     help = {
              'debian-branch':
@@ -294,6 +295,9 @@ class GbpOptionParser(OptionParser):
                    "'%(symlink-orig)s'"),
               'purge':
                   "Purge exported package build directory. Default is '%(purge)s'",
+              'drop':
+                  ("In case of 'export' drop the patch-queue branch "
+                   "after export. Default is '%(drop)s'"),
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',

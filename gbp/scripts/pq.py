@@ -94,6 +94,9 @@ def export_patches(repo, branch, options):
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
 
+    if options.drop:
+        drop_pq(repo, branch)
+
 
 def safe_patches(series):
     """
@@ -234,6 +237,7 @@ def build_parser(name):
                       help="verbose command execution")
     parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
     parser.add_config_file_option(option_name="time-machine", dest="time_machine", type="int")
+    parser.add_boolean_config_file_option("drop", dest='drop')
     parser.add_option("--force", dest="force", action="store_true", default=False,
                       help="in case of import even import if the branch already exists")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
