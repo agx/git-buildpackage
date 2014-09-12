@@ -33,7 +33,7 @@ from gbp.format import format_msg
 import gbp.log
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
-                                            repack_source, is_link_target)
+                                            repack_source, is_link_target, download_orig)
 
 
 def prepare_pristine_tar(archive, pkg, version):
@@ -243,10 +243,23 @@ def build_parser(name):
                       default=False, help="deprecated - don't use.")
     parser.add_option("--uscan", dest='uscan', action="store_true",
                       default=False, help="use uscan(1) to download the new tarball.")
+    parser.add_option("--download", dest='download', action="store_true",
+                      default=False, help="Download from URL via http(s).")
     return parser
 
 
 def parse_args(argv):
+    """Parse the command line arguments
+    @return: options and arguments
+
+    # Silence error output
+    >>> gbp.log.error = lambda x: None
+    >>> parse_args(['arg0', '--download', '--uscan'])
+    (None, None)
+    >>> parse_args(['arg0', '--download', 'first', 'second'])
+    (None, None)
+    """
+
     parser = build_parser(argv[0])
     if not parser:
         return None, None
@@ -256,6 +269,14 @@ def parse_args(argv):
 
     if options.no_dch:
         gbp.log.warn("'--no-dch' passed. This is now the default, please remove this option.")
+
+    if options.uscan and options.download:
+        gbp.log.error("Either uscan or --download can be used, not both.")
+        return None, None
+
+    if options.download and len(args) != 1:
+        gbp.log.error("Need exactly one URL to download not %s" % args)
+        return None, None
 
     return options, args
 
@@ -271,7 +292,10 @@ def main(argv):
         return 1
 
     try:
-        source = find_source(options.uscan, args)
+        if options.download:
+            source = download_orig(args[0])
+        else:
+            source = find_source(options.uscan, args)
         if not source:
             return ret
 

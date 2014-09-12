@@ -44,7 +44,7 @@ Depends: ${python:Depends},
  man-db,
  python-dateutil,
  python-pkg-resources,
-Recommends: pristine-tar (>= 0.5), cowbuilder
+Recommends: pristine-tar (>= 0.5), cowbuilder, python-requests
 Suggests: python-notify, unzip
 Description: Suite to help with Debian packages in Git repositories
  This package contains the following tools:

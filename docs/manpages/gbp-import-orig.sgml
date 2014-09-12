@@ -36,6 +36,7 @@
       <arg><option>--[no-]symlink-orig</option></arg>
       <arg><option>--postimport=cmd</option></arg>
       <arg><option>--[no-]interactive</option></arg>
+      <arg><option>--download</option></arg>
       <group choice="plain">
         <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
         <arg><option>--uscan</option></arg>
@@ -210,6 +211,15 @@
         <listitem>
           <para>
           Use uscan to fetch new upstream version.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--uscan</option></term>
+        <listitem>
+          <para>
+            Download the tarball from the given HTTP URL. This needs
+            python-request installed.
           </para>
         </listitem>
       </varlistentry>

@@ -17,11 +17,15 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 """Common functionality for import-orig scripts"""
+import contextlib
 import os
 import tempfile
 import gbp.command_wrappers as gbpc
-from gbp.pkg import UpstreamSource
 import gbp.log
+
+from gbp.pkg import UpstreamSource
+from gbp.errors import GbpError
+from gbp.deb.upstreamsource import DebianUpstreamSource
 
 # Try to import readline, since that will cause raw_input to get fancy
 # line editing and history capabilities. However, if readline is not
@@ -31,6 +35,10 @@ try:
 except ImportError:
     pass
 
+try:
+    import requests
+except ImportError:
+    requests = None
 
 def orig_needs_repack(upstream_source, options):
     """
@@ -136,3 +144,35 @@ def repack_source(source, name, version, tmpdir, filters):
         repacked.unpack(tmpdir, filters)
     return (repacked, tmpdir)
 
+
+def download_orig(url):
+    """
+    Download orig tarball from given URL
+    @param url: the download URL
+    @type url: C{str}
+    @returns: The upstream source tarball
+    @rtype: DebianUpstreamSource
+    @raises GbpError: on all errors
+    """
+    CHUNK_SIZE=4096
+
+    if requests is None:
+        raise GbpError("python-requests not installed")
+
+    tarball = os.path.basename(url)
+    target = os.path.join('..', tarball)
+
+    if os.path.exists(target):
+        raise GbpError("Failed to download %s: %s already exists" % (url, target))
+
+    try:
+        with contextlib.closing(requests.get(url, verify=True, stream=True)) as r:
+            with contextlib.closing(open(target, 'w', CHUNK_SIZE)) as target_fd:
+                for d in r.iter_content(CHUNK_SIZE):
+                    target_fd.write(d)
+    except Exception as e:
+        raise GbpError("Failed to download %s: %s" % (url, e))
+        if os.path.exists(target):
+            os.unlink(target)
+
+    return DebianUpstreamSource(target)
