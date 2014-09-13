@@ -23,6 +23,7 @@
       <arg><option>--[no-]patch-numbers</option></arg>
       <arg><option>--topic=</option><replaceable>topic</replaceable></arg>
       <arg><option>--time-machine=</option><replaceable>num</replaceable></arg>
+      <arg><option>--[no-]drop</option></arg>
       <arg><option>--force</option></arg>
       <group choice="plain">
         <arg><option>drop</option></arg>
@@ -154,6 +155,13 @@
           patch-queue doesn't apply to the current branch HEAD anymore, e.g.
           after importing a new upstream version.
           </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]drop</option></term>
+        <listitem>
+          <para>Whether to drop (delete) the patch queue branch after
+          a succesful export</para>
         </listitem>
       </varlistentry>
       <varlistentry>
