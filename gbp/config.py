@@ -201,6 +201,8 @@ class GbpOptionParser(OptionParser):
                   "Include the full commit message instead of only the first line, default is '%(full)s'",
              'meta':
                   "Parse meta tags in commit messages, default is '%(meta)s'",
+             'meta-closes':
+                  "Meta tags for the bts close commands, default is '%(meta-closes)s'",
              'ignore-new':
                   "Build with uncommited changes in the source tree, default is '%(ignore-new)s'",
              'ignore-branch':

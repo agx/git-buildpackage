@@ -353,8 +353,7 @@ def build_parser(name):
                       help="Increment the Debian release number for a security upload and add a security upload changelog comment.")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
-    commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
-                      help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
+    commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     commit_group.add_boolean_config_file_option(option_name="full", dest="full")
     commit_group.add_config_file_option(option_name="id-length", dest="idlen",
                       help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
