@@ -1,3 +1,14 @@
+git-buildpackage (0.6.20) unstable; urgency=medium
+
+  * [ee44479] Allow to always drop pq branch after export (Closes: #761160)
+  * [51ac0a5] pq: document --drop
+  * [90b283f] meta-closes: Move help text to GbpOptionParser.help
+  * [0afcd3d] pq: Add "pq export --commit" option.  This commits the changes
+    in the pq right away. This options is currently experimental and subject
+    to change.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 12 Oct 2014 11:42:27 +0200
+
 git-buildpackage (0.6.19) unstable; urgency=medium
 
   * [5d4cb92] Update to git-pbuilder 1.33
