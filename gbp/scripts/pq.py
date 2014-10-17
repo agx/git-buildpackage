@@ -159,9 +159,11 @@ def export_patches(repo, branch, options):
         if options.commit:
             added, removed = commit_patches(repo, branch, patches, options)
             if added:
-                gbp.log.info("Added %s" % ', '.join(added))
+                what = 'patches' if len(added) > 1 else 'patch'
+                gbp.log.info("Added %s %s to patch series" % (what, ', '.join(added)))
             if removed:
-                gbp.log.info("Removed %s" % ', '.join(removed))
+                what = 'patches' if len(removed) > 1 else 'patch'
+                gbp.log.info("Removed %s %s from patch series" % (what, ', '.join(removed)))
         else:
             GitCommand('status')(['--', PATCH_DIR])
     else:
