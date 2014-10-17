@@ -1,3 +1,13 @@
+git-buildpackage (0.6.21) unstable; urgency=medium
+
+  * [81dab4b] pq: Don't fail commit if the series file is empty on the source
+    branch
+  * [740e431] man: fix option argument for --git-pbuilder-options
+  * [22a6987] Improve change reporting a bit
+  * [e08d64d] Complete setup.py for pypi
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 17 Oct 2014 18:41:14 +0200
+
 git-buildpackage (0.6.20) unstable; urgency=medium
 
   * [ee44479] Allow to always drop pq branch after export (Closes: #761160)
