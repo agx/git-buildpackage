@@ -36,7 +36,7 @@
       <arg><option>--git-dist=</option><replaceable>DIST</replaceable></arg>
       <arg><option>--git-arch=</option><replaceable>ARCH</replaceable></arg>
       <arg><option>--git-[no-]pbuilder-autoconf</option></arg>
-      <arg><option>--git-pbuilder-options</option></arg>
+      <arg><option>--git-pbuilder-options</option>=<replaceable>PBUILDER_OPTIONS</replaceable></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
       <arg><option>--git-posttag=</option><replaceable>COMMAND</replaceable></arg>
