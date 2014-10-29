@@ -1,3 +1,10 @@
+git-buildpackage (0.6.22) unstable; urgency=medium
+
+  * [3d8939d] git.vfs: fix close method. Preventing a infinite recursion
+    which can be triggered by gbp pq export --commit.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 29 Oct 2014 07:47:21 +0100
+
 git-buildpackage (0.6.21) unstable; urgency=medium
 
   * [81dab4b] pq: Don't fail commit if the series file is empty on the source
