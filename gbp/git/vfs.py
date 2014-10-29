@@ -41,7 +41,7 @@ class GitVfs(object):
             return self._data.read(size)
 
         def close(self):
-            return self.close()
+            return self._data.close()
 
     def __init__(self, repo, committish=None):
         """
