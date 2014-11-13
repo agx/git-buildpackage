@@ -20,11 +20,11 @@ import filecmp
 import os
 import shutil
 import tempfile
-from nose.tools import assert_raises, eq_ # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
 
 from gbp.errors import GbpError
-from gbp.rpm import (SpecFile, NoSpecError, guess_spec, guess_spec_repo,
-                     spec_from_repo)
+from gbp.rpm import (SpecFile, SrcRpmFile, NoSpecError, guess_spec,
+                     guess_spec_repo, spec_from_repo)
 from gbp.git.repository import GitRepository
 
 # Disable "Method could be a function"
@@ -57,6 +57,33 @@ class RpmTestBase(object):
     def teardown(self):
         """Test case teardown"""
         shutil.rmtree(self.tmpdir)
+
+class TestSrcRpmFile(RpmTestBase):
+    """Test L{gbp.rpm.SrcRpmFile}"""
+
+    def test_srpm(self):
+        """Test parsing of a source rpm"""
+        srpm = SrcRpmFile(os.path.join(SRPM_DIR, 'gbp-test-1.0-1.src.rpm'))
+        eq_(srpm.version, {'release': '1', 'upstreamversion': '1.0'})
+        eq_(srpm.name, 'gbp-test')
+        eq_(srpm.upstreamversion, '1.0')
+        eq_(srpm.packager, None)
+
+    def test_srpm_2(self):
+        """Test parsing of another source rpm"""
+        srpm = SrcRpmFile(os.path.join(SRPM_DIR, 'gbp-test2-3.0-0.src.rpm'))
+        eq_(srpm.version, {'release': '0', 'upstreamversion': '3.0',
+                           'epoch': '2'})
+        eq_(srpm.packager, 'Markus Lehtonen <markus.lehtonen@linux.intel.com>')
+
+    def test_unpack_srpm(self):
+        """Test unpacking of a source rpm"""
+        srpm = SrcRpmFile(os.path.join(SRPM_DIR, 'gbp-test-1.0-1.src.rpm'))
+        srpm.unpack(self.tmpdir)
+        for fn in ['gbp-test-1.0.tar.bz2', 'foo.txt', 'bar.tar.gz', 'my.patch',
+                   'my2.patch', 'my3.patch']:
+            ok_(os.path.exists(os.path.join(self.tmpdir, fn)),
+                    "%s not found" % fn)
 
 class TestSpecFile(RpmTestBase):
     """Test L{gbp.rpm.SpecFile}"""
