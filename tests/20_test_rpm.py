@@ -20,7 +20,7 @@ import filecmp
 import os
 import shutil
 import tempfile
-from nose.tools import assert_raises, eq_   # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_   # pylint: disable=E0611
 
 from gbp.errors import GbpError
 from gbp.rpm import (SrcRpmFile, SpecFile, parse_srpm, NoSpecError, guess_spec,
@@ -67,25 +67,25 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFileTester(spec_filepath)
 
         # Test basic properties
-        assert spec.specfile == os.path.basename(spec_filepath)
-        assert spec.specdir == os.path.dirname(spec_filepath)
-        assert spec.specpath == spec_filepath
+        eq_(spec.specfile, os.path.basename(spec_filepath))
+        eq_(spec.specdir, os.path.dirname(spec_filepath))
+        eq_(spec.specpath, spec_filepath)
 
-        assert spec.name == 'gbp-test'
-        assert spec.packager is None
+        eq_(spec.name, 'gbp-test')
+        eq_(spec.packager, None)
 
-        assert spec.upstreamversion == '1.0'
-        assert spec.release == '1'
-        assert spec.epoch is None
-        assert spec.version == {'release': '1', 'upstreamversion': '1.0'}
+        eq_(spec.upstreamversion, '1.0')
+        eq_(spec.release, '1')
+        eq_(spec.epoch, None)
+        eq_(spec.version, {'release': '1', 'upstreamversion': '1.0'})
 
         orig = spec.orig_src
-        assert orig['filename'] == 'gbp-test-1.0.tar.bz2'
-        assert orig['uri'] == 'gbp-test-1.0.tar.bz2'
-        assert orig['filename_base'] == 'gbp-test-1.0'
-        assert orig['archive_fmt'] == 'tar'
-        assert orig['compression'] == 'bzip2'
-        assert orig['prefix'] == 'gbp-test/'
+        eq_(orig['filename'], 'gbp-test-1.0.tar.bz2')
+        eq_(orig['uri'], 'gbp-test-1.0.tar.bz2')
+        eq_(orig['filename_base'], 'gbp-test-1.0')
+        eq_(orig['archive_fmt'], 'tar')
+        eq_(orig['compression'], 'bzip2')
+        eq_(orig['prefix'], 'gbp-test/')
 
     def test_spec_2(self):
         """Test parsing of another valid spec file"""
@@ -93,20 +93,19 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFile(spec_filepath)
 
         # Test basic properties
-        assert spec.name == 'gbp-test2'
-        assert spec.packager == 'Markus Lehtonen ' \
-                                '<markus.lehtonen@linux.intel.com>'
+        eq_(spec.name, 'gbp-test2')
+        eq_(spec.packager, 'Markus Lehtonen <markus.lehtonen@linux.intel.com>')
 
-        assert spec.epoch == '2'
-        assert spec.version == {'release': '0', 'upstreamversion': '3.0',
-                                'epoch': '2'}
+        eq_(spec.epoch, '2')
+        eq_(spec.version, {'release': '0', 'upstreamversion': '3.0',
+                           'epoch': '2'})
 
         orig = spec.orig_src
-        assert orig['filename'] == 'gbp-test2-3.0.tar.gz'
-        assert orig['uri'] == 'ftp://ftp.host.com/gbp-test2-3.0.tar.gz'
-        assert orig['archive_fmt'] == 'tar'
-        assert orig['compression'] == 'gzip'
-        assert orig['prefix'] == ''
+        eq_(orig['filename'], 'gbp-test2-3.0.tar.gz')
+        eq_(orig['uri'], 'ftp://ftp.host.com/gbp-test2-3.0.tar.gz')
+        eq_(orig['archive_fmt'], 'tar')
+        eq_(orig['compression'], 'gzip')
+        eq_(orig['prefix'], '')
 
     def test_spec_3(self):
         """Test parsing of yet another valid spec file"""
@@ -114,12 +113,12 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFile(spec_filepath)
 
         # Test basic properties
-        assert spec.name == 'gbp-test-native'
+        eq_(spec.name, 'gbp-test-native')
         orig = spec.orig_src
-        assert orig['filename'] == 'gbp-test-native-1.0.zip'
-        assert orig['archive_fmt'] == 'zip'
-        assert orig['compression'] == None
-        assert orig['prefix'] == 'gbp-test-native-1.0/'
+        eq_(orig['filename'], 'gbp-test-native-1.0.zip')
+        eq_(orig['archive_fmt'], 'zip')
+        eq_(orig['compression'], None)
+        eq_(orig['prefix'], 'gbp-test-native-1.0/')
 
     def test_spec_4(self):
         """Test parsing of spec without orig tarball"""
@@ -127,8 +126,8 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFile(spec_filepath)
 
         # Test basic properties
-        assert spec.name == 'gbp-test-native2'
-        assert spec.orig_src is None
+        eq_(spec.name, 'gbp-test-native2')
+        eq_(spec.orig_src, None)
 
     def test_parse_raw(self):
         """Test parsing of a valid spec file"""
@@ -143,9 +142,9 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFile(filedata=spec_data)
 
         # Test basic properties
-        assert spec.specfile == None
-        assert spec.specdir == None
-        assert spec.name == 'gbp-test'
+        eq_(spec.specfile, None)
+        eq_(spec.specdir, None)
+        eq_(spec.name, 'gbp-test')
 
     def test_update_spec(self):
         """Test spec autoupdate functionality"""
@@ -157,14 +156,14 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFile(tmp_spec)
         spec.update_patches(['new.patch'], {})
         spec.write_spec_file()
-        assert filecmp.cmp(tmp_spec, reference_spec) is True
+        eq_(filecmp.cmp(tmp_spec, reference_spec), True)
 
         # Test adding the VCS tag and adding changelog
         reference_spec = os.path.join(SPEC_DIR, 'gbp-test-reference2.spec')
         spec.set_tag('VCS', None, 'myvcstag')
         spec.set_changelog("* Wed Feb 05 2014 Name <email> 1\n- New entry\n")
         spec.write_spec_file()
-        assert filecmp.cmp(tmp_spec, reference_spec) is True
+        eq_(filecmp.cmp(tmp_spec, reference_spec), True)
 
     def test_update_spec2(self):
         """Another test for spec autoupdate functionality"""
@@ -178,7 +177,7 @@ class TestSpecFile(RpmTestBase):
                              '2.patch': {'ifarch': '%ix86'}})
         spec.set_tag('VCS', None, 'myvcstag')
         spec.write_spec_file()
-        assert filecmp.cmp(tmp_spec, reference_spec) is True
+        eq_(filecmp.cmp(tmp_spec, reference_spec), True)
 
         # Test updating patches again, removing the VCS tag and re-writing
         # changelog
@@ -187,7 +186,7 @@ class TestSpecFile(RpmTestBase):
         spec.set_tag('VCS', None, '')
         spec.set_changelog("* Wed Feb 05 2014 Name <email> 2\n- New entry\n\n")
         spec.write_spec_file()
-        assert filecmp.cmp(tmp_spec, reference_spec) is True
+        eq_(filecmp.cmp(tmp_spec, reference_spec), True)
 
     def test_modifying(self):
         """Test updating/deleting of tags and macros"""
@@ -201,10 +200,10 @@ class TestSpecFile(RpmTestBase):
         prev = spec.protected('_delete_tag')('Vendor', None)
         spec.protected('_set_tag')('License', None, 'new license', prev)
         spec.protected('_delete_tag')('source', 0)
-        assert spec.sources() == {}
+        eq_(spec.sources(), {})
         spec.protected('_delete_tag')('patch', 0)
         spec.protected('_delete_tag')('patch', -1)
-        assert spec.protected('_patches')() == {}
+        eq_(spec.protected('_patches')(), {})
         prev = spec.protected('_delete_tag')('invalidtag', None)
 
         with assert_raises(GbpError):
@@ -226,7 +225,7 @@ class TestSpecFile(RpmTestBase):
 
         # Check resulting spec file
         spec.write_spec_file()
-        assert filecmp.cmp(tmp_spec, reference_spec) is True
+        eq_(filecmp.cmp(tmp_spec, reference_spec), True)
 
     def test_modifying_err(self):
         """Test error conditions of modification methods"""
@@ -261,7 +260,7 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFile(spec_filepath)
 
         # Check that we quess orig source and prefix correctly
-        assert spec.orig_src['prefix'] == 'foobar/'
+        eq_(spec.orig_src['prefix'], 'foobar/')
 
     def test_tags(self):
         """Test parsing of all the different tags of spec file"""
@@ -278,33 +277,33 @@ class TestSpecFile(RpmTestBase):
             elif name not in spec.protected('_listtags'):
                 rval = 'my_%s' % name
             if rval:
-                assert val['value'] == rval, ("'%s:' is '%s', expecting '%s'" %
-                                              (name, val['value'], rval))
-            assert spec.ignorepatches == []
+                eq_(val['value'], rval, ("'%s:' is '%s', expecting '%s'" %
+                                              (name, val['value'], rval)))
+            eq_(spec.ignorepatches, [])
             # Check patch numbers and patch filenames
             patches = {}
             for patch in spec.protected('_tags')['patch']['lines']:
                 patches[patch['num']] = patch['linevalue']
 
-            assert patches == {0: 'my_patch0', -1: 'my_patch'}
+            eq_(patches, {0: 'my_patch0', -1: 'my_patch'})
 
     def test_patch_series(self):
         """Test the getting the patches as a patchseries"""
         spec_filepath = os.path.join(SPEC_DIR, 'gbp-test-native.spec')
         spec = SpecFileTester(spec_filepath)
 
-        assert len(spec.patchseries()) == 0
+        eq_(len(spec.patchseries()), 0)
         spec.update_patches(['1.patch', '2.patch', '3.patch'], {})
-        assert len(spec.patchseries()) == 3
+        eq_(len(spec.patchseries()), 3)
         spec.protected('_gbp_tags')['ignore-patches'].append({'args': "0"})
         spec.update_patches(['4.patch'], {})
-        assert len(spec.patchseries()) == 1
-        assert len(spec.patchseries(ignored=True)) == 2
+        eq_(len(spec.patchseries()), 1)
+        eq_(len(spec.patchseries(ignored=True)), 2)
         spec.protected('_delete_special_macro')('patch', 0)
-        assert len(spec.patchseries(ignored=True)) == 1
+        eq_(len(spec.patchseries(ignored=True)), 1)
         series = spec.patchseries(unapplied=True, ignored=True)
-        assert len(series) == 2
-        assert os.path.basename(series[-1].path) == '1.patch'
+        eq_(len(series), 2)
+        eq_(os.path.basename(series[-1].path), '1.patch')
 
     def test_patch_series_quirks(self):
         """Patches are applied in order different from the patch numbering"""
@@ -313,20 +312,19 @@ class TestSpecFile(RpmTestBase):
 
         # Check series is returned in the order the patches are applied
         files = [os.path.basename(patch.path) for patch in spec.patchseries()]
-        assert files == ['05.patch', '01.patch']
+        eq_(files, ['05.patch', '01.patch'])
         # Also ignored patches are returned in the correct order
         files = [os.path.basename(patch.path) for patch in
                     spec.patchseries(ignored=True)]
-        assert files == ['05.patch', '02.patch', '01.patch']
+        eq_(files, ['05.patch', '02.patch', '01.patch'])
         # Unapplied patches are added to the end of the series
         files = [os.path.basename(patch.path) for patch in
                     spec.patchseries(unapplied=True)]
-        assert files == ['05.patch', '01.patch', '03.patch']
+        eq_(files, ['05.patch', '01.patch', '03.patch'])
         # Return all patches (for which tag is found)
         files = [os.path.basename(patch.path) for patch in
                     spec.patchseries(unapplied=True, ignored=True)]
-        assert files == ['05.patch', '02.patch', '01.patch', '03.patch',
-                         '04.patch']
+        eq_(files, ['05.patch', '02.patch', '01.patch', '03.patch', '04.patch'])
 
 
 class TestUtilityFunctions(RpmTestBase):
@@ -345,8 +343,8 @@ class TestUtilityFunctions(RpmTestBase):
         # Spec found
         spec = guess_spec(SPEC_DIR, recursive=False,
                              preferred_name = 'gbp-test2.spec')
-        assert spec.specfile == 'gbp-test2.spec'
-        assert spec.specdir == SPEC_DIR
+        eq_(spec.specfile, 'gbp-test2.spec')
+        eq_(spec.specdir, SPEC_DIR)
 
     def test_guess_spec_repo(self):
         """Test guess_spec_repo() and spec_from_repo() functions"""
@@ -370,14 +368,14 @@ class TestUtilityFunctions(RpmTestBase):
         # Spec found
         spec = guess_spec_repo(repo, 'HEAD', 'packaging', recursive=False)
         spec = guess_spec_repo(repo, 'HEAD', recursive=True)
-        assert spec.specfile == 'gbp-test.spec'
-        assert spec.specdir == 'packaging'
-        assert spec.specpath == 'packaging/gbp-test.spec'
+        eq_(spec.specfile, 'gbp-test.spec')
+        eq_(spec.specdir, 'packaging')
+        eq_(spec.specpath, 'packaging/gbp-test.spec')
 
         # Test spec_from_repo()
         with assert_raises(NoSpecError):
             spec_from_repo(repo, 'HEAD~1', 'packaging/gbp-test.spec')
         spec = spec_from_repo(repo, 'HEAD', 'packaging/gbp-test.spec')
-        assert spec.specfile == 'gbp-test.spec'
+        eq_(spec.specfile, 'gbp-test.spec')
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
