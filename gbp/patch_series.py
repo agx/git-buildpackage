@@ -95,6 +95,12 @@ class Patch(object):
         >>> p = Patch('debian/patches/foo')
         >>> p._get_subject_from_filename()
         'foo'
+        >>> Patch('0123-foo.patch')._get_subject_from_filename()
+        'foo'
+        >>> Patch('0123.patch')._get_subject_from_filename()
+        '0123'
+        >>> Patch('0123-foo-0123.patch')._get_subject_from_filename()
+        'foo-0123'
 
         @return: the patch's subject
         @rtype: C{str}
@@ -107,7 +113,7 @@ class Patch(object):
                 subject = base
         except ValueError:
                 pass # No ext so keep subject as is
-        return subject
+        return subject.lstrip('0123456789-') or subject
 
     def _get_info_field(self, key, get_val=None):
         """
