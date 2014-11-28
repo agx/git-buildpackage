@@ -115,16 +115,16 @@ def force_to_branch_head(repo, branch):
     repo.set_branch(branch)
 
 
-def parse_args(argv):
-    """Parse commandline arguments"""
+def build_parser(name):
+    """Construct command line parser"""
     try:
-        parser = GbpOptionParserRpm(command=os.path.basename(argv[0]),
+        parser = GbpOptionParserRpm(command=os.path.basename(name),
                                     prefix='',
                                     usage='%prog [options] /path/to/package'
                                           '.src.rpm')
-    except ConfigParser.ParsingError, err:
+    except ConfigParser.ParsingError as err:
         gbp.log.err(err)
-        return None, None
+        return None
 
     import_group = GbpOptionGroup(parser, "import options",
                       "pristine-tar and filtering")
@@ -183,6 +183,14 @@ def parse_args(argv):
                       dest="author_is_committer")
     import_group.add_config_file_option(option_name="packaging-dir",
                       dest="packaging_dir")
+    return parser
+
+def parse_args(argv):
+    """Parse commandline arguments"""
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
+
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     return options, args
