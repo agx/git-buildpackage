@@ -21,7 +21,7 @@ import os
 import logging
 import unittest
 
-from gbp.scripts.pq import generate_patches, switch_pq, export_patches
+from gbp.scripts.pq import generate_patches, export_patches
 import gbp.scripts.common.pq as pq
 import gbp.patch_series
 import tests.testutils as testutils
@@ -145,12 +145,12 @@ class TestExport(testutils.DebianGitTestRepo):
         """Test if we drop the patch-queue branch with --drop"""
         repo = self.repo
         start = repo.get_branch()
-        pq = os.path.join('patch-queue', start)
-        switch_pq(repo, start)
-        self.assertEqual(repo.get_branch(), pq)
-        export_patches(repo, pq, TestExport.Options)
+        pq_branch = os.path.join('patch-queue', start)
+        pq.switch_pq(repo, start)
+        self.assertEqual(repo.get_branch(), pq_branch)
+        export_patches(repo, pq_branch, TestExport.Options)
         self.assertEqual(repo.get_branch(), start)
-        self.assertFalse(repo.has_branch(pq))
+        self.assertFalse(repo.has_branch(pq_branch))
 
 
 def _patch_path(name):

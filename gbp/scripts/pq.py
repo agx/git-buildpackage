@@ -33,7 +33,7 @@ from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                  parse_gbp_commands, format_patch,
                                  switch_to_pq_branch, apply_single_patch,
-                                 apply_and_commit_patch,
+                                 apply_and_commit_patch, switch_pq,
                                  drop_pq, get_maintainer_from_control)
 from gbp.dch import extract_bts_cmds
 
@@ -277,16 +277,6 @@ def rebase_pq(repo, branch):
         switch_to_pq_branch(repo, branch)
         base = branch
     GitCommand("rebase")([base])
-
-
-def switch_pq(repo, current):
-    """Switch to patch-queue branch if on base branch and vice versa"""
-    if is_pq_branch(current):
-        base = pq_branch_base(current)
-        gbp.log.info("Switching to %s" % base)
-        repo.checkout(base)
-    else:
-        switch_to_pq_branch(repo, current)
 
 
 def build_parser(name):
