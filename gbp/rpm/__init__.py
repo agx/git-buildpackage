@@ -100,7 +100,7 @@ class SrcRpmFile(object):
         """
         gbpc.RunAtCommand('rpm2cpio',
                           [self.srpmfile, '|', 'cpio', '-id'],
-                          shell=True)(dir=dest_dir)
+                          shell=True, capture_stderr=True)(dir=dest_dir)
 
 
 class SpecFile(object):
