@@ -265,6 +265,7 @@ def switch_to_pq_branch(repo, branch):
 def apply_single_patch(repo, branch, patch, fallback_author, topic=None):
     switch_to_pq_branch(repo, branch)
     apply_and_commit_patch(repo, patch, fallback_author, topic)
+    gbp.log.info("Applied %s" % os.path.basename(patch.path))
 
 
 def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
