@@ -319,7 +319,7 @@ class GbpOptionParser(OptionParser):
         variable.
 
         @param no_local: don't return the per-repo configuration files
-        @type no_local: C{str}
+        @type no_local: C{bool}
         @return: list of config files we need to parse
         @rtype: C{list}
 
