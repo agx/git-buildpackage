@@ -1,3 +1,61 @@
+git-buildpackage (0.6.23) experimental; urgency=medium
+
+  [ Markus Lehtonen ]
+  * [7a503e9] pq: move switch_pq() to common.
+  * [cb9271f] GitRepository: add diff_status method.
+    This is a method of getting the filename and status information of a
+    diff. That is, a list of files that changed and their status, "added",
+    "modified" etc.
+  * [410e613] GitRepository.create_branch: add 'force' option
+  * [a84f6c1] ComponentTestBase: add a per-class toplevel temp dir
+  * [0e7cb0d] ComponentTestBase: add check_files() method
+  * [194b6b8] ComponentTestBase: add dirs argument to _check_repo_state()
+    Make difference between regular files and directories, eliminating the
+    requirement of listing directories in the file list.
+  * [01470e1] gbp-dch: fix handling of the '--meta' option.
+    Make it effective again - previously it was totally ignored. Also,
+    change it's default value to True to match the current behavior.
+  * [f48f0ff] notify: catch RuntimeError when importing pynotify.
+    Work around a problem in some distros (e.g. Fedora) where "import
+    pynotify" crashes in RuntimeError in some cases, e.g. when DISPLAY env
+    variable is not set.
+  * [7df4d8c] log: fix auto colorizing for custom streams.
+    Check for existence of isatty() method in the stream object. Some custom
+    streams (e.g. in nose) do not necessarily have this.
+  * [4cd6627] buildpackage/dump_tree: add 'recursive' option.
+    For selecting whether to dump all the files recursively or just the top
+    level directory of the tree.
+  * [ff4cc8b] config: read the right config if run from subdir.
+    A step towards being able to run GBP tools from subdirectories.
+    Now expands '%(top_dir)s' and '%(git_dir)s' in config file path to root
+    of the working directory and git metadata directory, respectively.
+    Also, adds a new method _read_config_file() in preparation for
+    supporting per-tree config files.
+    Fixes tests.test_Config: currently the only correct way to define the
+    config file(s) to be parsed is by using the GBP_CONF_FILES environment
+    variable.
+  * [60479af] Introduce gbp-pq-rpm.
+    Initial version of gbp-pq-rpm - a tool for managing patch queues for rpm
+    packages. The functionality more or less corresponds to that of the
+    (Debian) gbp-pq. The only major difference probably being (in addition
+    to the obvious of working with .spec files instead of debian/) is that
+    patches are always imported on top of the upstream version, not on top
+    of the packaging branch (which might not even contain any source code).
+    (Closes: #771215)
+
+  [ Ed Bartosh ]
+  * [76739f8] GitRepository: Implement status method.  Simple wrapper to the
+    git-status command.
+
+  [ Guido Günther ]
+  * [578e394] pq: print which patch got just applied
+  * [e098857] test data: Add .git for bare repository
+  * [813d01d] Fix argument type
+  * [15663e7] import-orig: Add --download option to download tarballs via HTTP
+    (Closes: #747101)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 18 Jan 2015 15:29:57 +0100
+
 git-buildpackage (0.6.22) unstable; urgency=medium
 
   * [3d8939d] git.vfs: fix close method. Preventing a infinite recursion
