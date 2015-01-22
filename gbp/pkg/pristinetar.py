@@ -31,8 +31,7 @@ class PristineTar(Command):
 
     def has_commit(self, archive_regexp):
         """
-        Do we have a pristine-tar commit for package I{package} at version
-        {version} with compression type I{comp_type}?
+        Do we have a pristine-tar commit for a package matching I{archive_regexp}.
 
         @param archive_regexp: archive name to look for (regexp wildcards allowed)
         @type archive_regexp: C{str}
@@ -41,8 +40,7 @@ class PristineTar(Command):
 
     def get_commit(self, archive_regexp):
         """
-        Get the pristine-tar commit of package I{package} in version I{version}
-        and compression type I{comp_type}
+        Get the pristine-tar commit of a package matching I{archive_regexp}.
 
         @param archive_regexp: archive name to look for (regexp wildcards allowed)
         @type archive_regexp: C{str}
