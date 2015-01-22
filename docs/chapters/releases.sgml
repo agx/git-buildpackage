@@ -106,7 +106,7 @@ included into the changelog:
 To exclude a commit from the generated changelog use:
 </para><para>
 <screen>
-Git-Dch: Ignore
+Gbp-Dch: Ignore
 </screen>
 This is e.g. useful if you're just fixing up a previous commit and couldn't
 ammend it or for other janitorial commits that really don't need to end up in
@@ -114,20 +114,20 @@ the changelog. For example, the following git commit message
 <screen>
 Set correct branchnames in debian/gbp.conf
 
-Git-Dch: Ignore
+Gbp-Dch: Ignore
 </screen>
 will not show up in the generated changelog in any way.
 </para>
 <para>
 To include the full commit message in the changelog use:
 <screen>
-Git-Dch: Full
+Gbp-Dch: Full
 </screen>
 </para>
 <para>
 To only include the short description in the changelog and skip the body use:
 <screen>
-Git-Dch: Short
+Gbp-Dch: Short
 </screen>
 The latter only takes effect when running &gbp-dch; with the
 <option>--full</option> option, since including only the short

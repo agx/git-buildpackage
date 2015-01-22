@@ -13,8 +13,8 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>git-dch;</refname>
-    <refname>gbp-dch;</refname>
+    <refname>git-dch</refname>
+    <refname>gbp-dch</refname>
     <refpurpose>Generate the &debian; changelog from git commit messages</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
@@ -147,7 +147,7 @@
         <listitem>
           <para>
           Parse meta tags like <option>Closes:</option>,
-          <option>Thanks:</option> and <option>Git-Dch:</option>. See META TAGS
+          <option>Thanks:</option> and <option>Gbp-Dch:</option>. See META TAGS
           below.
           </para>
         </listitem>
@@ -408,19 +408,25 @@
     </para>
     <variablelist>
       <varlistentry>
-        <term><option>Git-Dch</option>: <replaceable>action</replaceable>
-        </term>
+        <term>
+	  <option>Gbp-Dch</option>: <replaceable>action</replaceable>
+	</term>
         <listitem>
           <para>
-          Supported actions are: <replaceable>Ignore</replaceable> which will
-          ignore this commit when generating
-          <filename>debian/changelog</filename>,
-          <replaceable>Short</replaceable> which will only use the description
-          (the first line) of the commit message when generating the changelog
-          entry (useful when <option>--full</option> is given) and
-          <replaceable>Full</replaceable> which will use the full commit
-          message when generating the changelog entry (useful when
-          <option>--full</option> is not given).
+            Supported actions are: <replaceable>Ignore</replaceable>
+            which will ignore this commit when
+            generating <filename>debian/changelog</filename>,
+            <replaceable>Short</replaceable> which will only use the
+            description (the first line) of the commit message when
+            generating the changelog entry (useful
+            when <option>--full</option> is given) and
+            <replaceable>Full</replaceable> which will use the full
+            commit message when generating the changelog entry (useful
+            when <option>--full</option> is not given).
+	  </para>
+	  <para>
+	    Insteaad of <option>Gbp-Dch</option> the
+	    deprecated <option>Git-Dch</option> is still supported.
           </para>
         </listitem>
       </varlistentry>
@@ -453,7 +459,7 @@
 
       so one doesn't have to consult the manual
 
-      Git-Dch: Short
+      Gbp-Dch: Short
       Closes: #636088
       Thanks: Raphaël Hertzog for the suggestion
     </screen>
