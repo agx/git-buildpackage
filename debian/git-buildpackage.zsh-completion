@@ -1,5 +1,5 @@
 #compdef gbp
-#description build debian packages from a git repository
+#description build Debian packages from a Git repository
 
 __gbp_common_options() {
 	local prefix="$1"

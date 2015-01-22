@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>&gbp;</refname>
-    <refpurpose>Maintain Debian packages in Git</refpurpose>
+    <refpurpose>Maintain &debian; packages in &git;</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -30,7 +30,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp; is used to maintain Debian source packages in the &git; version control system.
+    &gbp; is used to maintain &debian; source packages in the &git; version control system.
     </para>
   </refsect1>
   <refsect1>
@@ -88,7 +88,7 @@
         <term>import-dsc
         </term>
         <listitem>
-          <para>Import a Debian source package into a &git; repository</para>
+          <para>Import a &debian; source package into a &git; repository</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -97,7 +97,7 @@
         <term>import-dscs
         </term>
         <listitem>
-          <para>Import several Debian source packages into a &git; repository, sorted
+          <para>Import several &debian; source packages into a &git; repository, sorted
 	  by version number</para>
         </listitem>
       </varlistentry>

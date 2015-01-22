@@ -28,7 +28,7 @@
 <screen>
 &gbp-buildpackage; <option>--git-tag</option>
 </screen>
-    <para>This will again build the debian package and tag the final result after
+    <para>This will again build the &debian; package and tag the final result after
     extracting the current version from the changelog. If you want &gpg; signed
     tags you can use the <option>--git-sign</option> and
     <option>--git-keyid</option> options. To save typing these option can be
@@ -146,7 +146,7 @@ echo "done."
 <option>posttag</option>=<replaceable>"gbp-posttag-push"</replaceable>
 </programlisting>
 	to your <filename>.gbp.conf</filename> and make sure <filename>gbp-push</filename>
-	is somewhere in your <envar>$PATH</envar>. On Debian
+	is somewhere in your <envar>$PATH</envar>. On &debian;
 	systems a more complete example can be found in
 	<filename>/usr/share/doc/examples/git-buildpackage/examples/gbp-posttag-push</filename>.
     </para>
@@ -159,7 +159,7 @@ echo "done."
 	for the postexport action is to allow further adjustment of
 	the sources prior to building the package. A typical use case
 	scenario is to allow creating multiple source and binary
-	packages from one Debian branch - e.g. the bootstrap gcc and
+	packages from one &debian; branch - e.g. the bootstrap gcc and
 	in the next stage the full gcc.
     </para>
     <para> The postexport action, postpones the creation of the
@@ -179,7 +179,7 @@ echo "done."
 export-dir = ../build-area
 # disable the since the sources are being exported first
 cleaner =
-# post export script that handles expansion of Debian specific files
+# post export script that handles expansion of &debian; specific files
 postexport = crosstoolchain-expand.sh
 </programlisting>
 

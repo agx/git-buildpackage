@@ -28,9 +28,9 @@
 
 <sect1 id="gbp.repository">
 	<title>Repository Layout and Terminology</title>
-	<para>It is recommended to have the Debian packaging on a seprate
+	<para>It is recommended to have the &debian; packaging on a seprate
 	branch than the upstream source <footnote><para>this, of course, has
-	no meaning for Debian native packages</para></footnote>.
+	no meaning for &debian; native packages</para></footnote>.
 	This is necessary to be able to import
 	and merge in new upstream versions via &gbp-import-orig;.
 	To distinguish these two branches the following terminology
@@ -62,7 +62,7 @@
 	<option>debian-branch</option>. If the <option>debian-branch</option> is called
 	<emphasis>master</emphasis> the corresponding patch-queue branch is
 	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is 
-	the debian branch plus the contents of
+	the &debian; branch plus the contents of
 	<emphasis>debian/patches</emphasis> applied. These branches are managed
 	with &gbp-pq;.
 	</para></listitem>
@@ -97,14 +97,14 @@
     	A typical, simple workflow consists of the following steps:
     </para>
     <orderedlist>
-	<listitem><para>Import a new Debian package via &gbp-import-dsc;. This
+	<listitem><para>Import a new &debian; package via &gbp-import-dsc;. This
 	imports the &debian; Package on the <option>debian-branch</option>
 	and the upstream sources on the <option>upstream-branch</option>.</para></listitem>
 	<listitem><para>Develop, test, commit changes. During this time you can
 	always build the package with &gbp-buildpackage;. In case you have
 	uncommitted changes in your source tree you can use the
 	<option>--git-ignore-new</option> option.</para></listitem>
-	<listitem><para>Optionally you can create the Debian changelog entries
+	<listitem><para>Optionally you can create the &debian; changelog entries
 	using &gbp-dch; and create snapshot releases for testing using its
 	<option>--snapshot</option> option.</para></listitem>
 	<listitem><para>Once satisfied you can build the final package with

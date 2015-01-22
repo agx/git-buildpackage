@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2010,2012 Guido Günther <agx@sigxcpu.org>
+# (C) 2010, 2012, 2015 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
-"""Create a remote GIT repository based on the current one"""
+"""Create a remote Git repository based on the current one"""
 
 import ConfigParser
 import sys

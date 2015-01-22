@@ -3,13 +3,13 @@
 
     <sect1 id="gbp.import.existing">
     <title>Importing already existing &debian; packages</title>
-    <para>Importing an already exsting debian package into a git repository is as easy as:
+    <para>Importing an already exsting &debian; package into a &git; repository is as easy as:
     <screen>
 &gbp-import-dsc; package_0.1-1.dsc
     </screen>
-    This will create a new git repository named after the imported package, put
+    This will create a new &git; repository named after the imported package, put
     the upstream sources onto the <option>upstream-branch</option> and the
-    debian patch on the <option>debian-branch</option>. In case of a debian
+    &debian; patch on the <option>debian-branch</option>. In case of a debian
     native package only the <option>debian-branch</option> is being used.
     You can specify alternative branch names via the
     <option>--upstream-branch</option> and <option>--debian-branch</option>
@@ -43,7 +43,7 @@ by version number.
 
     <sect1 id="gbp.import.new.upstream">
     <title>Importing a new upstream version</title>
-    <para>Change into your git repository (which can be empty), make sure it
+    <para>Change into your &git; repository (which can be empty), make sure it
     has all local modifications committed and run either of:
     <screen>
 &gbp-import-orig; <filename>/path/to/package_0.2.orig.tar.gz</filename>
@@ -117,7 +117,7 @@ EOF
     <title>Upstream sources not on a branch</title>
     <para>
     If you don't have an upstream branch but started your repository with only
-    the upstream sources (not the debian patch) you can simply branch from that
+    the upstream sources (not the &debian; patch) you can simply branch from that
     point. So use &gitkcmd; or &gitcmd;-log to locate the commit-id of that commit
     and create the upstream branch from there, e.g.:
 <screen>
@@ -126,7 +126,7 @@ EOF
 </screen>
     The important thing here is that the <envar>COMMIT_ID</envar> specifies a
     point on the master branch that carried <emphasis>only</emphasis> the
-    upstream sources and not the debian modifications. The above example
+    upstream sources and not the &debian; modifications. The above example
     assumes that this was the first commit to that repository.
     </para>
     <warning><para>There's currently no <emphasis>easy</emphasis> way to create the
@@ -160,7 +160,7 @@ EOF
     </sect1>
 
     <sect1 id="gbp.import.fromscratch">
-    <title>Starting a Debian package from scratch</title>
+    <title>Starting a &debian; package from scratch</title>
     <para>
     So far we assumed you already have a &debian; package to start with but
     what if you want to start a new package? First create an empty repository:
@@ -171,7 +171,7 @@ EOF
 <command>git init</command>
     </screen>
     <para>Then you import the upstream sources, branch off the
-    <option>upstream-branch</option> branch and add the debian files (e.g. via dh_make):
+    <option>upstream-branch</option> branch and add the &debian; files (e.g. via dh_make):
     <screen>
 &gbp-import-orig; <option>-u</option> <replaceable>0.1</replaceable> <filename>../package-0.1.tar.gz</filename>
 <command>dh_make</command>
@@ -181,7 +181,7 @@ EOF
     </sect1>
 
     <sect1 id="gbp.import.upstream-git">
-    <title>When upstream uses GIT</title>
+    <title>When upstream uses Git</title>
     <para>
       If upstream already uses git for packaging there are several ways to handle packaging. Two of them will
       be described in a bit detail here:
@@ -213,7 +213,7 @@ upstream-tag = v%(version)s
 	</para>
 	<para>If you're using &pristine-tar; you can make &gbp-buildpackage commit the generated tarball back to the
 	  pristine-tar branch by using the <option>--git-pristine-tar-commit</option> option. This will make sure
-	  others building your package can regenerate the tarball you generated for building the Debian pacakge.
+	  others building your package can regenerate the tarball you generated for building the &debian; package.
 	</para>
 
 	<sect3>
@@ -223,7 +223,7 @@ upstream-tag = v%(version)s
 	  to &gbp.conf; to save lots of typing.
 	</para>
 
-	<para>First we clone the upstream repository. To avoid any dis ambiguities between the Debian packaging repository
+	<para>First we clone the upstream repository. To avoid any dis ambiguities between the &debian; packaging repository
 	  and the upstream repository we name the upstream repository <replaceable>ustream</replaceable> instead of the
 	  default <replaceable>origin</replaceable>.
 	  <screen>
@@ -231,9 +231,9 @@ upstream-tag = v%(version)s
 	    cd libgbp
 	    git checkout -b debian/sid v1.0
 	  </screen>
-	  The above makes sure we have <replaceable>debian/sid</replaceable> for the Debian packaging. We didn't create
+	  The above makes sure we have <replaceable>debian/sid</replaceable> for the &debian; packaging. We didn't create
 	  any <replaceable>upstream/*</replaceable> branches, they're not needed for the packaging and only need to be
-	  kept up to date. After adding the Debian packaging we build the package. This assumes you're using &pristine-tar;
+	  kept up to date. After adding the &debian; packaging we build the package. This assumes you're using &pristine-tar;
 	  and upstream uses a version number format as described above:
 	  <screen>
 	    gbp buildpackage --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s' --git-debian-branch=debian/sid
@@ -262,7 +262,7 @@ upstream-tag = v%(version)s
 
       <sect2 id="gbp.import.upstream.git.tarball">
 	<title>Upstream tarballs</title>
-	<para>If you want to track upstream's git but continue to import the upstream tarballs,
+	<para>If you want to track upstream's &git; but continue to import the upstream tarballs,
 	  e.g. to make sure the tarball uploaded
 	  to &debian; has the same checksum as upstream's you can use the <option>--upstream-vcs-tag</option> option
 	  when importing new tarballs with &gbp-import-orig;. Assuming you have the upstream source in your
@@ -279,7 +279,7 @@ upstream-tag = v%(version)s
     <sect1 id="gbp.branch.naming">
       <title>Branch layout</title>
       <para>
-	By default &gbp; uses one branch to keep the Debian packaging called <emphasis>master</emphasis>
+	By default &gbp; uses one branch to keep the &debian; packaging called <emphasis>master</emphasis>
 	and a branch to keep the upstream packaging called <emphasis>upstream</emphasis>.
       </para>
       <para>
@@ -294,7 +294,7 @@ upstream-tag = v%(version)s
 	  </term>
 	  <listitem>
 	    <para>
-	      the Debian packaging for a release <emphasis>jessie</emphasis>,
+	      the &debian; packaging for a release <emphasis>jessie</emphasis>,
 	      <emphasis>wheezy</emphasis>, <emphasis>sid</emphasis> or <emphasis>experimental</emphasis>.
 	    </para>
 	  </listitem>

@@ -15,7 +15,7 @@
   <refnamediv>
     <refname>git-dch;</refname>
     <refname>gbp-dch;</refname>
-    <refpurpose>Generate the Debian changelog from git commit messages</refpurpose>
+    <refpurpose>Generate the &debian; changelog from git commit messages</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -62,7 +62,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-dch; reads git commit messages and generates the Debian changelog from
+    &gbp-dch; reads git commit messages and generates the &debian; changelog from
     it. If no arguments are given &gbp-dch; starts from the last tagged Debian
     package version up to the current tip of the current branch. If the
     distribution of the topmost section in

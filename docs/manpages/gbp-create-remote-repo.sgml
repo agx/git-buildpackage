@@ -93,7 +93,7 @@
         <term><option>--debian-branch</option>=<replaceable>branch_name</replaceable>
         </term>
         <listitem>
-	  <para>The branch in the Git repository the Debian package is being
+	  <para>The branch in the &git; repository the &debian; package is being
 	  developed on, default is <replaceable>master</replaceable>.</para>
         </listitem>
       </varlistentry>

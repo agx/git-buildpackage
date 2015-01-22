@@ -80,7 +80,7 @@
         <term><option>--[no-]merge</option></term>
         <listitem>
           <para>
-          Merge the upstream branch to the debian branch after import
+          Merge the upstream branch to the &debian; branch after import
           </para>
         </listitem>
       </varlistentry>
@@ -89,7 +89,7 @@
         </term>
         <listitem>
           <para>
-          The branch in the Git repository the upstream sources are put
+          The branch in the &git; repository the upstream sources are put
           onto. Default is <replaceable>upstream</replaceable>.
           </para>
         </listitem>
@@ -99,7 +99,7 @@
         </term>
         <listitem>
           <para>
-          The branch in the Git repository the Debian package is being
+          The branch in the &git; repository the &debian; package is being
           developed on, default is <replaceable>master</replaceable>. After
           importing the new sources on the upstream branch, &gbp-import-orig;
           will try to merge the new version onto this branch.
@@ -189,7 +189,7 @@
         <listitem>
           <para>
           Whether to create and keep a symlink from the upstream tarball
-          to a Debian policy conformant upstream tarball name located in
+          to a &debian; policy conformant upstream tarball name located in
           <filename class="directory">../</filename>.
           </para>
           <para>

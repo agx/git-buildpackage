@@ -14,7 +14,7 @@
   <refnamediv>
     <refname>git-buildpackage</refname>
     <refname>gbp-buildpackage</refname>
-    <refpurpose>Build Debian packages from a Git repository</refpurpose>
+    <refpurpose>Build &debian; packages from a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -66,7 +66,7 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-buildpackage; is used to build Debian source and .deb packages from
+    &gbp-buildpackage; is used to build &debian; source and .deb packages from
     a &git; repository.
     </para>
     <para>
@@ -416,7 +416,7 @@
         </term>
         <listitem>
           <para>
-          use this tag format when tagging Debian versions, default is
+          use this tag format when tagging &debian; versions, default is
           <replaceable>debian/%(version)s</replaceable>
           </para>
         </listitem>
@@ -435,7 +435,7 @@
         <term><option>--git-debian-tag-msg=</option><replaceable>tag-msg-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag message format when signing Debian versions,
+          <para>use this tag message format when signing &debian; versions,
 	  default is <replaceable>%(pkg)s Debian release %(version)s</replaceable></para>
         </listitem>
       </varlistentry>
@@ -607,7 +607,7 @@
   <refsect1>
     <title>EXAMPLES</title>
     <para>
-    Build a Debian package using &git-pbuilder; which in turn invokes
+    Build a &debian; package using &git-pbuilder; which in turn invokes
     &cowbuildercmd;.  Instruct cowbuilder to build within a Wheezy chroot for
     i386.
     </para>

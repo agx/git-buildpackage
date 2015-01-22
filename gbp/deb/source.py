@@ -58,7 +58,7 @@ class DebianSource(object):
 
     def is_native(self):
         """
-        Whether this is a native debian package
+        Whether this is a native Debian package
         """
         try:
             ff = self._vfs.open('debian/source/format')

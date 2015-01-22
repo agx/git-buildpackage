@@ -115,7 +115,7 @@ builder = /usr/bin/git-pbuilder
     <sect1 id="gbp.special.hacking">
     <title>Working on random packages</title>
     <para>
-    Whenever you need to work on an arbitrary Debian package you can check it
+    Whenever you need to work on an arbitrary &debian; package you can check it
     right into &git; with one command:
 <programlisting>
 git-import-dsc --download <filename>package</filename>
@@ -126,7 +126,7 @@ git-branch debian
     <para>
     This uses <command>apt-get</command> to download the source package,
     puts the orig tarball on the <option>upstream-branch</option> and the
-    Debian changes on the <option>debian-branch</option> (by default
+    &debian; changes on the <option>debian-branch</option> (by default
     <emphasis>master</emphasis>). The second command
     creates a branch called <emphasis>debian</emphasis>. Now you can easily
     modify the package, revert changes you made, create other branches for
@@ -137,7 +137,7 @@ git-diff debian --
 </programlisting>
     <para>
 
-    to get a nice patch that can be submitted to the Debian BTS. You can also
+    to get a nice patch that can be submitted to the &debian; BTS. You can also
     fetch the source package from an URL:
 
 <programlisting>

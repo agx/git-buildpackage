@@ -1,6 +1,6 @@
 <chapter id="gbp.releases">
     <title>Releases and Snapshots</title>
-    <para>When branching and merging frequently, the different Debian changelog
+    <para>When branching and merging frequently, the different &debian; changelog
     entries on the different branches tend to get into the way of the automatic
     merge and the the merge fails - leaving the (pathological) merge to the
     committer. In order to avoid this &gbp-dch; offers a way for creating
@@ -137,7 +137,7 @@ description is the default.
 Usually changelog entries should correspond to a single &git; commit. In this case it's
 convenient to include the commit id in the changelog entry. 
 This has the advantage that it's easy for people to identify changes without
-having to write very extensive changelog messages - the link back to Git can be
+having to write very extensive changelog messages - the link back to &git; can be
 automated via the <option>Vcs-Browser</option> and <option>Vcs-Git</option>
 fields in <filename>debian/control</filename>. See <ulink url="https://honk.sigxcpu.org/cl2vcs">
 Cl2vcs</ulink> for how this looks.

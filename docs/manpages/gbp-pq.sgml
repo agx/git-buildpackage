@@ -37,11 +37,11 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-pq; helps one to manage quilt patches in Debian packages that are
+    &gbp-pq; helps one to manage quilt patches in &debian; packages that are
     maintained with &gbp;. This is especially useful with packages using the
     3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
     that should be applied to a package on a separate branch called patch-queue
-    branch. So if your Debian package lives on
+    branch. So if your &debian; package lives on
     <replaceable>master</replaceable> the associated patch-queue branch will be
     called <replaceable>patch-queue/master</replaceable>.
     </para>
@@ -105,7 +105,7 @@
           <command>git-am</command>. Use <option>--topic</option> if you want
           the patch to appear in a separate subdir when exporting the patch queue
           using <option>export</option>. This can be used to separate upstream
-          pathes from debian specific patches.
+          pathes from &debian; specific patches.
           </para>
         </listitem>
       </varlistentry>

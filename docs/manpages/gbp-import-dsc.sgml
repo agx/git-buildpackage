@@ -15,7 +15,7 @@
   <refnamediv>
     <refname>git-import-dsc</refname>
     <refname>gbp-import-dsc</refname>
-    <refpurpose>Import Debian packages into a Git repository</refpurpose>
+    <refpurpose>Import &debian; packages into a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -51,9 +51,9 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-import-dsc; imports a Debian source package into a &git; repository,
+    &gbp-import-dsc; imports a &debian; source package into a &git; repository,
     notes the package version in the commit logs, and commits the change. All
-    information, including package name, version, Debian  diffs, and upstream
+    information, including package name, version, &debian;  diffs, and upstream
     source is automatically detected from the source package.
     </para>
   </refsect1>
@@ -105,7 +105,7 @@
         </term>
         <listitem>
           <para>
-          use this tag format when tagging Debian versions,
+          use this tag format when tagging &debian; versions,
           default is <replaceable>debian/%(version)s</replaceable>
           </para>
         </listitem>
@@ -125,7 +125,7 @@
         </term>
         <listitem>
           <para>
-          Don't create Debian tag after importing the Debian patch. This can be
+          Don't create &debian; tag after importing the &debian; patch. This can be
           useful if you already created a package but want to further work on
           it after importing it into git.
           </para>
@@ -185,7 +185,7 @@
         </term>
         <listitem>
           <para>
-          When importing the Debian patch, use the author identity as
+          When importing the &debian; patch, use the author identity as
           committer identity.
           </para>
         </listitem>
@@ -195,11 +195,11 @@
         </term>
         <listitem>
           <para>
-          When importing the Debian patch, use the author date as
+          When importing the &debian; patch, use the author date as
           committer date.
           <warning>
             <para>
-            Git will subtly misbehave if the committer date of a commit is not
+            &git; will subtly misbehave if the committer date of a commit is not
             later than or equal to all its parents.
             </para>
           </warning>
