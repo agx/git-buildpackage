@@ -45,8 +45,6 @@ class GitVfs(object):
 
     def __init__(self, repo, committish=None):
         """
-        Access files in a unpaced Debian source package.
-
         @param repo: the git repository to act on
         @param committish: the committish to act on
         """
