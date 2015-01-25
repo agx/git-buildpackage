@@ -13,6 +13,8 @@ import gbp.deb.git
 import gbp.errors
 from gbp.deb.changelog import ChangeLog
 
+from gbplogtester import GbpLogTester
+
 class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single unit test"""
 
