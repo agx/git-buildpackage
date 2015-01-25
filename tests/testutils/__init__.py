@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 
-from . import context
+from .. import context
 
 import os
 import shutil
