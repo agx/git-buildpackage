@@ -534,6 +534,7 @@ def main(argv):
                 gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
                 raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
 
+        head = repo.head
         tree = write_tree(repo, options)
         source = source_vfs(repo, options, tree)
         if not options.tag_only:
@@ -609,7 +610,9 @@ def main(argv):
                                       version=source.changelog.version))
             repo.create_tag(name=tag,
                             msg=tag_msg,
-                            sign=options.sign_tags, keyid=options.keyid)
+                            sign=options.sign_tags,
+                            commit=head,
+                            keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
                 Hook('Posttag', options.posttag, shell=True,
