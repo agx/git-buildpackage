@@ -275,7 +275,7 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
     tree = repo.write_tree()
     msg = "%s\n\n%s" % (patch.subject, patch.long_desc)
     if topic:
-        msg += "\nGbp-Pq-Topic: %s" % topic
+        msg += "\nGbp-Pq: Topic %s" % topic
     commit = repo.commit_tree(tree, msg, [repo.head], author=author)
     repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch.path)
 

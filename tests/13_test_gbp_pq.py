@@ -47,7 +47,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
         pq.apply_and_commit_patch(self.repo, patch, None, topic='foobar')
         info = self.repo.get_commit_info('HEAD')
-        self.assertIn('Gbp-Pq-Topic: foobar', info['body'])
+        self.assertIn('Gbp-Pq: Topic foobar', info['body'])
 
     @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
     def test_debian_missing_author(self):
@@ -111,7 +111,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
 
         # Add test file with topic:
         msg = ("added foo\n\n"
-               "Gbp-Pq-Topic: gbptest")
+               "Gbp-Pq: Topic gbptest")
         self.add_file('foo', 'foo', msg)
 
         # Write it out as patch and check it's existence
