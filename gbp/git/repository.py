@@ -281,7 +281,7 @@ class GitRepository(object):
 
     @property
     def head(self):
-        """return the SHA1 of the current HEAD"""
+        """SHA1 of the current HEAD"""
         return self.rev_parse('HEAD')
 
 #{ Branches and Merging
