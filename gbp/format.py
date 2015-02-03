@@ -20,7 +20,7 @@ from gbp.errors import GbpError
 
 def format_msg(msg, args):
     """
-    Format a strin with the given dict. Be a bit more verbose than
+    Format a string with the given dict. Be a bit more verbose than
     default python about the error cause.
 
     >>> format_msg("%(foo)", {})
@@ -39,6 +39,7 @@ def format_msg(msg, args):
     except ValueError as e:
         raise GbpError("Failed to format %s with %s: %s" % (msg, args, e))
     except KeyError as e:
-            raise GbpError("Failed to format %s: Missing value %s in %s" % (msg, e, args))
+        raise GbpError("Failed to format %s: Missing value %s in %s" %
+                       (msg, e, args))
 
 
