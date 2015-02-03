@@ -18,20 +18,20 @@
 
 from gbp.errors import GbpError
 
-def format_msg(msg, args):
+def format_str(msg, args):
     """
     Format a string with the given dict. Be a bit more verbose than
     default python about the error cause.
 
-    >>> format_msg("%(foo)", {})
+    >>> format_str("%(foo)", {})
     Traceback (most recent call last):
     ...
     GbpError: Failed to format %(foo): Missing value 'foo' in {}
-    >>> format_msg("%(foo)", {'foo': 'bar'})
+    >>> format_str("%(foo)", {'foo': 'bar'})
     Traceback (most recent call last):
     ...
     GbpError: Failed to format %(foo) with {'foo': 'bar'}: incomplete format
-    >>> format_msg("A %(foo)s is a %(bar)s", {'foo': 'dog', 'bar': 'mamal'})
+    >>> format_str("A %(foo)s is a %(bar)s", {'foo': 'dog', 'bar': 'mamal'})
     'A dog is a mamal'
     """
     try:

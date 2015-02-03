@@ -29,7 +29,7 @@ from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
-from gbp.format import format_msg
+from gbp.format import format_str
 import gbp.log
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
@@ -400,7 +400,7 @@ def main(argv):
                             epoch = '%s:' % cp.epoch
                     info = { 'version': "%s%s-1" % (epoch, version) }
                     env = { 'GBP_BRANCH': options.debian_branch }
-                    gbpc.Command(format_msg(options.postimport, info), extra_env=env, shell=True)()
+                    gbpc.Command(format_str(options.postimport, info), extra_env=env, shell=True)()
             # Update working copy and index if we've possibly updated the
             # checked out branch
             current_branch = repo.get_branch()

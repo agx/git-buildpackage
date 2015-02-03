@@ -29,7 +29,7 @@ from gbp.command_wrappers import (Command,
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError
-from gbp.format import format_msg
+from gbp.format import format_str
 from gbp.git.vfs import GitVfs
 from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.errors import GbpError
@@ -605,7 +605,7 @@ def main(argv):
             gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
-            tag_msg = format_msg(options.debian_tag_msg,
+            tag_msg = format_str(options.debian_tag_msg,
                                  dict(pkg=source.sourcepkg,
                                       version=source.changelog.version))
             repo.create_tag(name=tag,
