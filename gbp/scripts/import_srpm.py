@@ -28,8 +28,8 @@ import errno
 from six.moves.urllib.request import urlopen
 from six.moves import urllib
 
-import gbp.tmpfile as tempfile
 import gbp.command_wrappers as gbpc
+from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile
 from gbp.rpm import (parse_srpm, guess_spec, SpecFile, NoSpecError,
                      RpmUpstreamSource, compose_version_str)
 from gbp.rpm.git import (RpmGitRepository, GitRepositoryError)
@@ -64,14 +64,14 @@ def download_file(target_dir, url):
         raise GbpError("Download failed: %s" % err.reason)
     return local_fn
 
-def download_source(pkg, dirs):
+def download_source(pkg):
     """Download package from a remote location"""
     if re.match(r'[a-z]{1,5}://', pkg):
         mode = 'python urllib'
     else:
         mode = 'yumdownloader'
 
-    tmpdir = tempfile.mkdtemp(dir=dirs['tmp_base'], prefix='download_')
+    tmpdir = tempfile.mkdtemp(prefix='download_')
     gbp.log.info("Trying to download '%s' using '%s'..." % (pkg, mode))
     if mode == 'yumdownloader':
         gbpc.RunAtCommand('yumdownloader',
@@ -210,23 +210,21 @@ def main(argv):
         gbp.log.err("Need to give exactly one package to import. Try --help.")
         return 1
     try:
-        dirs['tmp_base'] = tempfile.mkdtemp(dir=options.tmp_dir,
-                                            prefix='import-srpm')
+        dirs['tmp_base'] = init_tmpdir(options.tmp_dir, 'import-srpm_')
     except GbpError as err:
         gbp.log.err(err)
         return 1
     try:
         srpm = args[0]
         if options.download:
-            srpm = download_source(srpm, dirs)
+            srpm = download_source(srpm)
 
         # Real srpm, we need to unpack, first
         true_srcrpm = False
         if not os.path.isdir(srpm) and not srpm.endswith(".spec"):
             src = parse_srpm(srpm)
             true_srcrpm = True
-            dirs['pkgextract'] = tempfile.mkdtemp(dir=dirs['tmp_base'],
-                                                  prefix='pkgextract_')
+            dirs['pkgextract'] = tempfile.mkdtemp(prefix='pkgextract_')
             gbp.log.info("Extracting src rpm to '%s'" % dirs['pkgextract'])
             src.unpack(dirs['pkgextract'])
             preferred_spec = src.name + '.spec'
@@ -268,10 +266,8 @@ def main(argv):
             set_bare_repo_options(options)
 
         # Create more tempdirs
-        dirs['origsrc'] = tempfile.mkdtemp(dir=dirs['tmp_base'],
-                                           prefix='origsrc_')
-        dirs['packaging_base'] = tempfile.mkdtemp(dir=dirs['tmp_base'],
-                                                  prefix='packaging_')
+        dirs['origsrc'] = tempfile.mkdtemp(prefix='origsrc_')
+        dirs['packaging_base'] = tempfile.mkdtemp(prefix='packaging_')
         dirs['packaging'] = os.path.join(dirs['packaging_base'],
                                          options.packaging_dir)
         try:
@@ -459,7 +455,7 @@ def main(argv):
         skipped = True
     finally:
         os.chdir(dirs['top'])
-        gbpc.RemoveTree(dirs['tmp_base'])()
+        del_tmpdir()
 
     if not ret and not skipped:
         gbp.log.info("Version '%s' imported under '%s'" % (ver_str, spec.name))

@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
+# (C) 2012, 2015 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -17,22 +17,37 @@
 """Temporary directory handling"""
 
 import os
+import shutil
 import tempfile
 
 from gbp.errors import GbpError
 
-def mkdtemp(dir, **kwargs):
-    """Create temporary directory"""
-    try:
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-    except OSError as (dummy_e, msg):
-        raise GbpError, "Unable to create dir %s (%s)" % (dir, msg)
 
+_old_tempdirs = []
+
+def init_tmpdir(path, prefix):
+    """Initialize a temporary directory structure"""
     try:
-        return os.path.abspath(tempfile.mkdtemp(dir=dir, **kwargs))
-    except OSError as (dummy_e, msg):
-        raise GbpError, "Unable to create tmpdir under %s (%s)" % (dir, msg)
+        if not os.path.exists(path):
+            os.makedirs(path)
+    except OSError as err:
+        raise GbpError("Unable to create tmpdir %s (%s)" % (path, err))
+
+    tmpdir = tempfile.mkdtemp(dir=path, prefix=prefix)
+
+    # Set newly created dir as the default value for all further tempfile
+    # calls
+    _old_tempdirs.append(tempfile.tempdir)
+    tempfile.tempdir = tmpdir
+    return tmpdir
+
+def del_tmpdir():
+    """Remove tempdir and restore tempfile module"""
+    if _old_tempdirs:
+        if os.path.exists(tempfile.tempdir) and \
+                not os.getenv('GBP_TMPFILE_NOCLEAN'):
+            shutil.rmtree(tempfile.tempdir)
+        tempfile.tempdir = _old_tempdirs.pop()
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
 
