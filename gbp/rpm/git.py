@@ -17,6 +17,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import re
 
+from gbp.format import format_str
+from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.pkg.pristinetar import PristineTar
 from gbp.rpm import compose_version_str
@@ -42,7 +44,7 @@ class RpmGitRepository(GitRepository):
         """
         try:
             tag = self.version_to_tag(format, str_fields)
-        except KeyError:
+        except GbpError:
             return None
         if self.has_tag(tag): # new tags are injective
             # dereference to a commit object
@@ -65,8 +67,9 @@ class RpmGitRepository(GitRepository):
         >>> RpmGitRepository.version_to_tag("%(vendor)s/v%(version)s", dict(upstreamversion='1.0', release='2', vendor="myvendor"))
         'myvendor/v1.0-2'
         """
-        version_tag = format % dict(str_fields,
-                                    version=compose_version_str(str_fields))
+        version_tag = format_str(format,
+                                 dict(str_fields,
+                                      version=compose_version_str(str_fields)))
         return RpmGitRepository._sanitize_tag(version_tag)
 
     @staticmethod
