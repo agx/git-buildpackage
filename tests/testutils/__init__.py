@@ -5,7 +5,9 @@ from .. import context
 import os
 import shutil
 import subprocess
+import tarfile
 import tempfile
+import zipfile
 
 import gbp.log
 import gbp.errors
@@ -16,7 +18,8 @@ from . debiangittestrepo import DebianGitTestRepo
 from . capture import capture_stderr
 
 __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
-           'MockedChangeLog', 'get_dch_default_urgency', 'capture_stderr' ]
+           'MockedChangeLog', 'get_dch_default_urgency', 'capture_stderr',
+           'ls_dir', 'ls_tar', 'ls_zip']
 
 class OsReleaseFile(object):
     """Repesents a simple file with key-value pairs"""
@@ -84,4 +87,37 @@ def get_dch_default_urgency():
         if os.path.isdir(tempdir):
             shutil.rmtree(tempdir)
     return urgency
+
+
+def ls_dir(directory, directories=True):
+    """List the contents of directory, recurse to subdirectories"""
+    contents = set()
+    for root, dirs, files in os.walk(directory):
+        prefix = ''
+        if root != directory:
+            prefix = os.path.relpath(root, directory) + '/'
+        contents.update(['%s%s' % (prefix, fname) for fname in files])
+        if directories:
+            contents.update(['%s%s' % (prefix, dname) for dname in dirs])
+    return contents
+
+def ls_tar(tarball, directories=True):
+    """List the contents of tar archive"""
+    tmpdir = tempfile.mkdtemp()
+    try:
+        tarobj = tarfile.open(tarball, 'r')
+        tarobj.extractall(tmpdir)
+        return ls_dir(tmpdir, directories)
+    finally:
+        shutil.rmtree(tmpdir)
+
+def ls_zip(archive, directories=True):
+    """List the contents of zip file"""
+    tmpdir = tempfile.mkdtemp()
+    try:
+        zipobj = zipfile.ZipFile(archive, 'r')
+        zipobj.extractall(tmpdir)
+        return ls_dir(tmpdir, directories)
+    finally:
+        shutil.rmtree(tmpdir)
 
