@@ -245,8 +245,10 @@ class ChangeLog(object):
             args.extend(["--release", "--no-force-save-on-release"])
             msg = None
 
-        if author and email:
-            env = {'DEBFULLNAME': author, 'DEBEMAIL': email}
+        if author:
+            env['DEBFULLNAME'] = author
+        if email:
+            env['DEBEMAIL'] = email
 
         if distribution:
             args.append("--distribution=%s" % distribution)
