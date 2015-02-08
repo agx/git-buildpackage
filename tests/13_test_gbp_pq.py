@@ -1,5 +1,5 @@
 # vim: set fileencoding=utf-8 :
-# (C) 2012 Guido Günther <agx@sigxcpu.org>
+# (C) 2012,2015 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -151,6 +151,31 @@ class TestExport(testutils.DebianGitTestRepo):
         export_patches(repo, pq_branch, TestExport.Options)
         self.assertEqual(repo.get_branch(), start)
         self.assertFalse(repo.has_branch(pq_branch))
+
+
+class TestParseGbpCommand(unittest.TestCase):
+    def test_empty_body(self):
+        """Test command filtering with an empty body"""
+        info = { 'body': '' }
+        (cmds, body) = pq.parse_gbp_commands(info, ['tag'], ['cmd1'], ['cmd2'])
+        self.assertEquals(cmds, {})
+        self.assertEquals(body, '')
+
+    def test_noarg_cmd(self):
+        orig_body = '\n'.join(["Foo",
+                          "tag: cmd1"])
+        info = { 'body': orig_body }
+        (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'])
+        self.assertEquals(cmds, {'cmd': None})
+        self.assertEquals(body, orig_body)
+
+    def test_filter_cmd(self):
+        orig_body = '\n'.join(["Foo",
+                               "tag: cmd1"])
+        info = { 'body': orig_body }
+        (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'], ['cmd'])
+        self.assertEquals(cmds, {'cmd': None})
+        self.assertEquals(body, 'Foo')
 
 
 def _patch_path(name):

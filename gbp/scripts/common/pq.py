@@ -71,8 +71,23 @@ def pq_branch_base(pq_branch):
         return pq_branch[len(PQ_BRANCH_PREFIX):]
 
 
-def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds):
-    """Parse gbp commands from commit message"""
+def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
+    """
+    Parses gbp commands from commit message. Args with and wthout
+    arguments are supported as is filtering out of commands from the
+    commit body.
+
+    @param info: the commit into to parse for commands
+    @param cmd_tag: the command tag
+    @param noarg_cmds: commands without an argument
+    @type  noarg_cmds: C{list} of C{str}
+    @param arg_cmds: command with an argumnt
+    @type  arg_cmds: C{list} of C{str}
+    @param filter_cmds: commands to filter out of the passed in info
+    @type  filter_cmds: C{list} of C{str}
+    @returns: the parsed commands and the filtered commit body.
+    """
+    body = []
     cmd_re = re.compile(r'^%s:\s*(?P<cmd>[a-z-]+)(\s+(?P<args>\S.*))?' %
                             cmd_tag, flags=re.I)
     commands = {}
@@ -91,7 +106,14 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds):
             else:
                 gbp.log.warn("Ignoring unknown gbp-command '%s' in commit %s"
                                 % (line, info['id']))
-    return commands
+            if filter_cmds is None or cmd not in filter_cmds:
+                body.append(line)
+        else:
+            body.append(line)
+    msg = '\n'.join(body)
+    # Add trailing newline if the originial body hat one
+    #msg += '\n' if info['body'] and info['body'][-1] == '\n' else ''
+    return (commands, msg)
 
 
 def patch_path_filter(file_status, exclude_regex=None):
