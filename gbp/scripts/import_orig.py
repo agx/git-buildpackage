@@ -253,11 +253,13 @@ def parse_args(argv):
     @return: options and arguments
 
     # Silence error output
+    >>> _gbp_log_error_bak = gbp.log.error
     >>> gbp.log.error = lambda x: None
     >>> parse_args(['arg0', '--download', '--uscan'])
     (None, None)
     >>> parse_args(['arg0', '--download', 'first', 'second'])
     (None, None)
+    >>> gbp.log.error = _gbp_log_error_bak
     """
 
     parser = build_parser(argv[0])
