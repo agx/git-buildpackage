@@ -5,9 +5,7 @@
 from . import context
 
 import os
-import shutil
 import tarfile
-import tempfile
 import unittest
 
 import gbp.pkg

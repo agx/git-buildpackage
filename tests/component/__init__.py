@@ -21,15 +21,12 @@ Module for testing individual command line tools of the git-buildpackage suite
 """
 
 import os
-import re
 import shutil
 import tempfile
-from StringIO import StringIO
 from nose import SkipTest
 from nose.tools import eq_, ok_     # pylint: disable=E0611
 from .. testutils import GbpLogTester
 
-import gbp.log
 from  gbp.git import GitRepository, GitRepositoryError
 
 class ComponentTestGitRepository(GitRepository):

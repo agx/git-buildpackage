@@ -17,13 +17,9 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """provides some rpm source package related helpers"""
 
-import commands
-import sys
 import os
 import re
 import tempfile
-import glob
-import shutil as shutil
 from optparse import OptionParser
 from collections import defaultdict
 
@@ -32,7 +28,7 @@ from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.patch_series import (PatchSeries, Patch)
 import gbp.log
-from gbp.pkg import (UpstreamSource, compressor_opts, parse_archive_filename)
+from gbp.pkg import (UpstreamSource, parse_archive_filename)
 from gbp.rpm.policy import RpmPkgPolicy
 from gbp.rpm.linkedlist import LinkedList
 from gbp.rpm.lib_rpm import librpm, get_librpm_log
