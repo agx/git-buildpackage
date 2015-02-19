@@ -20,7 +20,7 @@ class TestHelp(unittest.TestCase):
                       'pull',
                       'pq']:
             module = 'gbp.scripts.%s' % script
-            m = __import__(module, globals(), locals(), ['main'], -1)
+            m = __import__(module, globals(), locals(), ['main'], 0)
             self.assertRaises(SystemExit,
                               m.main,
                               ['doesnotmatter', '--help'])
@@ -29,7 +29,7 @@ class TestHelp(unittest.TestCase):
     def testHelpRpm(self):
         for script in ['import_srpm']:
             module = 'gbp.scripts.%s' % script
-            m = __import__(module, globals(), locals(), ['main'], -1)
+            m = __import__(module, globals(), locals(), ['main'], 0)
             self.assertRaises(SystemExit,
                               m.main,
                               ['doesnotmatter', '--help'])
