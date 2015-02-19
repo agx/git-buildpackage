@@ -3,14 +3,12 @@
 """Test L{gbp.scripts.dch} main"""
 
 from . import context
-
-import unittest
-
-from tests.testutils import (DebianGitTestRepo, OsReleaseFile,
-                             get_dch_default_urgency)
+from .testutils import (DebianGitTestRepo, OsReleaseFile,
+                        get_dch_default_urgency)
 
 from gbp.scripts import dch
 
+import unittest
 import os
 import re
 

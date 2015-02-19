@@ -3,8 +3,7 @@
 """Test  L{buildpackage}'s get_upstream_tree method"""
 
 from . import context
-
-import tests.testutils as testutils
+from . import testutils
 
 import gbp.errors
 import gbp.scripts.buildpackage as buildpackage

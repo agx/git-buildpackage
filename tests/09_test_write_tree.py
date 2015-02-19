@@ -5,10 +5,9 @@
 from __future__ import print_function
 
 from . import context
+from . import testutils
 
 import os
-
-import tests.testutils as testutils
 
 import gbp.log
 import gbp.git

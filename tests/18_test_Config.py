@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 from gbp.config import GbpOptionParser, GbpOptionGroup
-from . testutils import GbpLogTester
+from .testutils import GbpLogTester
 
 class TestConfigParser(unittest.TestCase, GbpLogTester):
     def __init__(self, methodName='runTest'):

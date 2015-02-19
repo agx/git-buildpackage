@@ -16,9 +16,10 @@
 """Test L{gbp.pq}"""
 
 from . import context
+from . import testutils
 
 import os
-import testutils
+
 from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.deb.format import DebianSourceFormat
 from gbp.git.vfs import GitVfs

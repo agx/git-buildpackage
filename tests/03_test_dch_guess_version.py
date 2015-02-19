@@ -4,7 +4,7 @@
 
 from . import context
 
-import testutils
+from . import testutils
 
 from gbp.scripts import dch
 

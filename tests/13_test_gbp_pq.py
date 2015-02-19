@@ -16,6 +16,7 @@
 """Test L{gbp.pq}"""
 
 from . import context
+from . import testutils
 
 import os
 import logging
@@ -24,7 +25,6 @@ import unittest
 from gbp.scripts.pq import generate_patches, export_patches
 import gbp.scripts.common.pq as pq
 import gbp.patch_series
-import tests.testutils as testutils
 
 class TestApplyAndCommit(testutils.DebianGitTestRepo):
     """Test L{gbp.pq}'s apply_and_commit"""

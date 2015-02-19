@@ -229,7 +229,7 @@ def test_add_section():
     >>> import tempfile
     >>> import shutil
     >>> import gbp.deb.changelog
-    >>> from tests.testutils import OsReleaseFile
+    >>> from .testutils import OsReleaseFile
     >>> os_release = OsReleaseFile('/etc/lsb-release')
     >>> olddir = os.path.abspath(os.path.curdir)
     >>> testdir = tempfile.mkdtemp(prefix='gbp-test-changelog-')
@@ -275,7 +275,7 @@ def test_add_entry():
     >>> import tempfile
     >>> import shutil
     >>> import gbp.deb.changelog
-    >>> from tests.testutils import OsReleaseFile
+    >>> from .testutils import OsReleaseFile
     >>> os_release = OsReleaseFile('/etc/lsb-release')
     >>> olddir = os.path.abspath(os.path.curdir)
     >>> testdir = tempfile.mkdtemp(prefix='gbp-test-changelog-')

@@ -16,8 +16,8 @@
 """Test L{gbp.pq}"""
 
 from . import context
+from . import testutils
 
-import testutils
 import gbp.log
 import gbp.scripts.import_dscs as import_dscs
 
