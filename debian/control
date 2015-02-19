@@ -19,6 +19,7 @@ Build-Depends:
  python-nosexcover,
  python-pkg-resources,
  python-rpm,
+ python-six,
  python-setuptools,
  rpm,
  sgml2x,
@@ -44,6 +45,7 @@ Depends: ${python:Depends},
  man-db,
  python-dateutil,
  python-pkg-resources,
+ python-six,
 Recommends: pristine-tar (>= 0.5), cowbuilder, python-requests
 Suggests: python-notify, unzip
 Description: Suite to help with Debian packages in Git repositories
