@@ -21,6 +21,8 @@ import os
 import re
 import glob
 
+import six
+
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 
@@ -83,7 +85,7 @@ def parse_archive_filename(filename):
             base_name = ".".join(split[:-1])
             (archive_fmt, compression) = (split[-1], None)
         else:
-            for (c, o) in compressor_opts.iteritems():
+            for (c, o) in six.iteritems(compressor_opts):
                 if o[1] == split[-1]:
                     base_name = ".".join(split[:-1])
                     compression = c

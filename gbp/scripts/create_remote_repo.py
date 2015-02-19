@@ -27,6 +27,9 @@ import urlparse
 import subprocess
 import tty, termios
 import re
+
+import six
+
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
@@ -68,7 +71,7 @@ def print_config(remote, branches):
 def sort_dict(d):
     """Return a sorted list of (key, value) tuples"""
     s = []
-    for key in sorted(d.iterkeys()):
+    for key in sorted(six.iterkeys(d)):
         s.append((key, d[key]))
     return s
 
