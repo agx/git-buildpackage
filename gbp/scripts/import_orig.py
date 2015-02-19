@@ -17,7 +17,7 @@
 #
 """Import a new upstream version into a Git repository"""
 
-import ConfigParser
+from six.moves import configparser
 import os
 import sys
 import tempfile
@@ -187,7 +187,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
                                        usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

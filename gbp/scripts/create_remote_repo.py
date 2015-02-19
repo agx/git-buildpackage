@@ -20,7 +20,7 @@
 
 from __future__ import print_function
 
-import ConfigParser
+from six.moves import configparser
 import sys
 import os, os.path
 import urlparse
@@ -234,7 +234,7 @@ def build_parser(name, sections=[]):
                                        usage='%prog [options] - '
                                        'create a remote repository',
                                        sections=sections)
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

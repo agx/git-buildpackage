@@ -18,7 +18,7 @@
 #
 """manage patches in a patch queue"""
 
-import ConfigParser
+from six.moves import configparser
 import bz2
 import errno
 import gzip
@@ -363,7 +363,7 @@ drop           Drop (delete) the patch queue /devel branch associated to
 apply          Apply a patch
 switch         Switch to patch-queue branch and vice versa.""")
 
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err('Invalid config file: %s' % err)
         return None
 

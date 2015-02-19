@@ -19,7 +19,7 @@
 #
 """Clone a Git repository and set it up for gbp"""
 
-import ConfigParser
+from six.moves import configparser
 import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
@@ -33,7 +33,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                                  usage='%prog [options] repository - clone a remote repository')
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

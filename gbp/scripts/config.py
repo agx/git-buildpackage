@@ -17,11 +17,10 @@
 #
 """Query and display config file values"""
 
-import ConfigParser
+from six.moves import configparser
 import sys
 import os, os.path
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
-from gbp.errors import GbpError
+from gbp.config import GbpOptionParser
 from gbp.scripts.supercommand import import_command
 import gbp.log
 
@@ -30,7 +29,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                              usage='%prog [options] command[.optionname] - display configuration settings')
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

@@ -19,7 +19,7 @@
 #
 """Pull remote changes and fast forward debian, upstream and pristine-tar branch"""
 
-import ConfigParser
+from six.moves import configparser
 import sys
 import os, os.path
 from gbp.command_wrappers import (Command, CommandExecFailed)
@@ -73,7 +73,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                              usage='%prog [options] - safely update a repository from remote')
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

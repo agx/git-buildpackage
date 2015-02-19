@@ -17,7 +17,7 @@
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
-from ConfigParser import SafeConfigParser, NoSectionError
+from six.moves.configparser import SafeConfigParser, NoSectionError
 from copy import copy
 import os.path
 

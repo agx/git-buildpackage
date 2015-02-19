@@ -17,7 +17,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Import an RPM source package into a Git repository"""
 
-import ConfigParser
+from six.moves import configparser
 import sys
 import re
 import os
@@ -122,7 +122,7 @@ def build_parser(name):
                                     prefix='',
                                     usage='%prog [options] /path/to/package'
                                           '.src.rpm')
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

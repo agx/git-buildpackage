@@ -17,7 +17,7 @@
 #
 """Build a Debian package out of a Git repository"""
 
-import ConfigParser
+from six.moves import configparser
 import errno
 import os, os.path
 import sys
@@ -372,7 +372,7 @@ def changes_file_suffix(dpkg_args):
 def build_parser(name, prefix=None):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

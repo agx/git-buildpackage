@@ -17,7 +17,7 @@
 #
 """Manage Debian patches on a patch queue branch"""
 
-import ConfigParser
+from six.moves import configparser
 import errno
 import os
 import shutil
@@ -328,7 +328,7 @@ def build_parser(name):
         "  drop           drop (delete) the patch queue associated to the current branch.\n"
         "  apply          apply a patch\n"
         "  switch         switch to patch-queue branch and vice versa")
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 

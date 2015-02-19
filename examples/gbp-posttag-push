@@ -20,7 +20,7 @@
 # --verbose: verbose command output
 
 
-import ConfigParser
+from six.moves import configparser
 import os
 import subprocess
 import sys
@@ -83,7 +83,7 @@ def main(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] paths')
-    except ConfigParser.ParsingError as err:
+    except configparser.ParsingError as err:
         gbp.log.error(err)
         return 1
 
