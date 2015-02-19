@@ -468,8 +468,8 @@ def test_get_commit_info():
     True
     >>> info['patchname']
     'foo'
-    >>> info['files']
-    defaultdict(<type 'list'>, {'M': ['testfile']})
+    >>> info['files']                               # doctest:+ELLIPSIS
+    defaultdict(<... 'list'>, {'M': ['testfile']})
     >>> repo.get_subject('HEAD')
     'foo'
     """
@@ -500,10 +500,10 @@ def test_diff_status():
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
-    >>> repo.diff_status("HEAD", "HEAD")
-    defaultdict(<type 'list'>, {})
-    >>> repo.diff_status("HEAD~1", "HEAD")
-    defaultdict(<type 'list'>, {'M': ['testfile']})
+    >>> repo.diff_status("HEAD", "HEAD")            # doctest:+ELLIPSIS
+    defaultdict(<... 'list'>, {})
+    >>> repo.diff_status("HEAD~1", "HEAD")          # doctest:+ELLIPSIS
+    defaultdict(<... 'list'>, {'M': ['testfile']})
     """
 
 def test_mirror_clone():
