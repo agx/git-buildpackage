@@ -82,9 +82,10 @@ class DebianSourceFormat(object):
         @returns: a debisn/source/format object
         @rtype: L{DebianSourceFormat}
 
+        >>> from six import b
         >>> import tempfile, os
         >>> with tempfile.NamedTemporaryFile(delete=False) as t:
-        ...    ret = t.write("3.0 (quilt)")
+        ...    ret = t.write(b("3.0 (quilt)"))
         >>> d = DebianSourceFormat.parse_file(t.name)
         >>> d.version
         '3.0'
