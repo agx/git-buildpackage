@@ -2,7 +2,7 @@
 
 import sys
 from contextlib import contextmanager
-from StringIO import StringIO
+from six import StringIO
 
 
 class StderrCapture(StringIO):
