@@ -890,16 +890,16 @@ def test_status():
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> fname = os.path.join(repo.path, "test_status")
     >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"), fname)
-    >>> repo.status().items()
+    >>> list(repo.status().items())
     [('??', ['test_status'])]
-    >>> repo.status(['bla*']).items()
+    >>> list(repo.status(['bla*']).items())
     []
-    >>> repo.status(['te*']).items()
+    >>> list(repo.status(['te*']).items())
     [('??', ['test_status'])]
     >>> repo.add_files(repo.path, force=True)
     >>> repo.commit_all(msg='added %s' % fname)
     >>> _ = repo._git_inout('mv', [fname, fname + 'new'])
-    >>> repo.status().items()
+    >>> list(repo.status().items())
     [('R ', ['test_status\x00test_statusnew'])]
     """
 
