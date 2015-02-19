@@ -11,8 +11,8 @@ import gbp.log
 import gbp.errors
 from gbp.deb.changelog import ChangeLog
 
-from gbplogtester import GbpLogTester
-from debiangittestrepo import DebianGitTestRepo
+from . gbplogtester import GbpLogTester
+from . debiangittestrepo import DebianGitTestRepo
 
 __all__ = ['GbpLogTester, DebianGitTestRepo', 'OsReleaseFile',
            'MockedChangeLog', 'get_dch_default_urgency' ]
