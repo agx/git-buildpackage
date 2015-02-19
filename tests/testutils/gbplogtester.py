@@ -1,7 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
 import re
-from StringIO import StringIO
+from six import StringIO
 from nose.tools import eq_, ok_     # pylint: disable=E0611
 
 import gbp.log

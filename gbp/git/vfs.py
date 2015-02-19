@@ -16,7 +16,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Make blobs in a git repository accessible as file like objects"""
 
-import StringIO
+from six import StringIO
 from  gbp.git.repository import GitRepositoryError
 
 class GitVfs(object):
@@ -29,7 +29,7 @@ class GitVfs(object):
         """
         def __init__(self, content):
             self._iter = iter
-            self._data = StringIO.StringIO(content)
+            self._data = StringIO(content)
 
         def readline(self):
             return self._data.readline()
