@@ -159,7 +159,7 @@ def main(argv):
             gbp.log.err(err)
         ret = 1
     finally:
-        if dirs.has_key('tmp'):
+        if 'tmp' in dirs:
             gbpc.RemoveTree(dirs['tmp'])()
         os.chdir(dirs['top'])
 

@@ -412,7 +412,7 @@ def main(argv):
         os.chdir(dirs['top'])
 
     for d in [ 'tmp', 'download' ]:
-        if dirs.has_key(d):
+        if d in dirs:
             gbpc.RemoveTree(dirs[d])()
 
     if not ret and not skipped:

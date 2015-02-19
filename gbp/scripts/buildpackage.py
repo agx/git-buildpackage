@@ -293,7 +293,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
 
     if comp_type != 'auto':
         comp_type = compressor_aliases.get(comp_type, comp_type)
-        if not compressor_opts.has_key(comp_type):
+        if comp_type not in compressor_opts:
             gbp.log.warn("Unknown compression type - guessing.")
             comp_type = 'auto'
 

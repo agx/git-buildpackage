@@ -130,7 +130,7 @@ class Patch(object):
         if self.info == None:
             self._read_info()
 
-        if self.info.has_key(key):
+        if key in self.info:
             return self.info[key]
         else:
             return get_val() if get_val else None

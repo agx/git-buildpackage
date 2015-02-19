@@ -168,7 +168,7 @@ class ChangeLog(object):
         @return: C{True} if the version has an epoch, C{False} otherwise
         @rtype: C{bool}
         """
-        return self._cp.has_key('Epoch')
+        return 'Epoch' in self._cp
 
     @property
     def author(self):
