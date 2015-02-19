@@ -16,6 +16,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """A Debian Changelog"""
 
+from __future__ import print_function
+
 import email
 import os
 import subprocess
@@ -266,11 +268,11 @@ class ChangeLog(object):
             new_cl = open("debian/changelog.bak", "w")
             for line in old_cl:
                 if line == "  * [[[insert-git-dch-commit-message-here]]]\n":
-                    print >> new_cl, "  * " + msg[0]
+                    print("  * " + msg[0], file=new_cl)
                     for line in msg[1:]:
-                        print >> new_cl, "    " + line
+                        print("    " + line, file=new_cl)
                 else:
-                    print >> new_cl, line,
+                    print(line, file=new_cl)
             os.rename("debian/changelog.bak", "debian/changelog")
 
     def add_entry(self, msg, author=None, email=None, dch_options=[]):

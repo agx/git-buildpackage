@@ -2,6 +2,8 @@
 
 """Test  L{GitRepository}'s write_tree method"""
 
+from __future__ import print_function
+
 from . import context
 
 import os
@@ -20,7 +22,7 @@ class TestWriteTree(testutils.DebianGitTestRepo):
         for i in range(4):
             path = os.path.join(self.repo.path, 'testfile%d' % i)
             with open(path, 'w') as f:
-                print >>f, "testdata %d" % i
+                print("testdata %d" % i, file=f)
             paths.append(path)
         return paths
 

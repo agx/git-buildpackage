@@ -17,6 +17,8 @@
 #
 """Generate Debian changelog entries from Git commit messages"""
 
+from __future__ import print_function
+
 import ConfigParser
 import os.path
 import re
@@ -137,8 +139,8 @@ def mangle_changelog(changelog, cp, snapshot=''):
         cw = open(tmpfile, 'w')
         cr = open(changelog, 'r')
 
-        print >>cw, ("%(Source)s (%(MangledVersion)s) "
-                     "%(Distribution)s; urgency=%(urgency)s\n" % cp)
+        print("%(Source)s (%(MangledVersion)s) "
+                    "%(Distribution)s; urgency=%(urgency)s\n" % cp, file=cw)
 
         cr.readline() # skip version and empty line
         cr.readline()
@@ -148,10 +150,10 @@ def mangle_changelog(changelog, cp, snapshot=''):
             line = ''
 
         if snapshot:
-            print >>cw, "  ** SNAPSHOT build @%s **\n" % snapshot
+            print("  ** SNAPSHOT build @%s **\n" % snapshot, file=cw)
 
         if line:
-            print >>cw, line.rstrip()
+            print(line.rstrip(), file=cw)
         shutil.copyfileobj(cr, cw)
         cw.close()
         cr.close()

@@ -17,6 +17,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """Supercommand for all gbp commands"""
 
+from __future__ import print_function
+
 import glob
 import os
 import re
@@ -34,7 +36,7 @@ def sanitize(cmd):
     return cmd.replace('-', '_')
 
 def usage():
-    print """
+    print("""
 Usage:
     gbp <command> [<args>]
 
@@ -46,7 +48,7 @@ The most commonly used commands are:
     import-dscs  - import multiple Debian source packages
 
 Use '--list-cmds' to list all available commands.
-"""
+""")
 
 def version(prog):
     try:
@@ -125,10 +127,10 @@ def supercommand(argv=None):
     try:
         module = import_command(cmd)
     except ImportError as e:
-        print >>sys.stderr, "'%s' is not a valid command." % cmd
+        print("'%s' is not a valid command." % cmd, file=sys.stderr)
         usage()
         if '--verbose' in args:
-            print >>sys.stderr, e
+            print(e, file=sys.stderr)
         return 2
 
     return module.main(args)

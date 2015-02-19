@@ -18,6 +18,8 @@
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
 """Create a remote Git repository based on the current one"""
 
+from __future__ import print_function
+
 import ConfigParser
 import sys
 import os, os.path
@@ -51,17 +53,17 @@ def print_config(remote, branches):
             merge = refs/heads/bar
     """
 
-    print """[remote "%(name)s"]
+    print("""[remote "%(name)s"]
         url = %(url)s
-        fetch = +refs/heads/*:refs/remotes/%(name)s/*""" % remote
+        fetch = +refs/heads/*:refs/remotes/%(name)s/*""" % remote)
 
     for branch in branches:
-        print "        push = %s" % branch
+        print("        push = %s" % branch)
 
     for branch in branches:
-        print """[branch "%s"]
+        print("""[branch "%s"]
         remote = %s
-        merge = refs/heads/%s""" % (branch, remote['name'], branch)
+        merge = refs/heads/%s""" % (branch, remote['name'], branch))
 
 def sort_dict(d):
     """Return a sorted list of (key, value) tuples"""
@@ -306,7 +308,7 @@ def main(argv):
     try:
         options, args = parse_args(argv)
     except Exception as e:
-        print >>sys.stderr, "%s" % e
+        print("%s" % e, file=sys.stderr)
         return 1
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
@@ -350,11 +352,11 @@ def main(argv):
 
         remote_script = build_remote_script(remote, branches[0])
         if options.verbose:
-            print remote_script
+            print(remote_script)
 
         cmd = build_cmd(remote)
         if options.verbose:
-            print cmd
+            print(cmd)
 
         proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         proc.communicate(remote_script)

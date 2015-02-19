@@ -79,13 +79,13 @@ def set_gbp_conf_files():
     gbp.log.debug("Setting GBP_CONF_FILES to '%s'" % gbp_conf_files)
 
 def print_help():
-    print """Usage: gbp import-dscs [options] [gbp-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
+    print("""Usage: gbp import-dscs [options] [gbp-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
        gbp import-dscs --debsnap [options] [gbp-import-dsc options] package
 
 Options:
 
     --ignore-repo-config: ignore gbp.conf in git repo
-"""
+""")
 
 
 def main(argv):
