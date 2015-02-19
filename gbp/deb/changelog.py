@@ -175,14 +175,14 @@ class ChangeLog(object):
         """
         The author of the last modification
         """
-        return email.Utils.parseaddr(self._cp['Maintainer'])[0]
+        return email.utils.parseaddr(self._cp['Maintainer'])[0]
 
     @property
     def email(self):
         """
         The author's email
         """
-        return email.Utils.parseaddr(self._cp['Maintainer'])[1]
+        return email.utils.parseaddr(self._cp['Maintainer'])[1]
 
     @property
     def date(self):
