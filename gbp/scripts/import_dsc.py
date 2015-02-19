@@ -143,7 +143,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag):
             raise GbpError
 
         if os.path.exists('debian/rules'):
-            os.chmod('debian/rules', 0755)
+            os.chmod('debian/rules', 0o755)
         os.chdir(repo.path)
 
         parents = check_parents(repo,
