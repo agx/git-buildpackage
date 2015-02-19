@@ -17,9 +17,9 @@ import gbp.log
 
 gbp.log.setup(color=False, verbose=True)
 
-repo_dir, bare_dir, clone_dir, mirror_clone_dir = map(
+repo_dir, bare_dir, clone_dir, mirror_clone_dir = list(map(
     lambda x, tmpdir=context.new_tmpdir(__name__): tmpdir.join(x),
-    ['repo', 'bare', 'clone', 'mirror_clone'])
+    ['repo', 'bare', 'clone', 'mirror_clone']))
 
 def test_create():
     """

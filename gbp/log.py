@@ -24,8 +24,8 @@ from logging import (DEBUG, INFO, WARNING, ERROR, CRITICAL, getLogger)
 import gbp.tristate
 
 
-COLORS = dict([('none', 0)] + zip(['black', 'red', 'green', 'yellow', 'blue',
-                                   'magenta', 'cyan', 'white'], range(30, 38)))
+COLORS = dict([('none', 0)] + list(zip(['black', 'red', 'green', 'yellow', 'blue',
+                                        'magenta', 'cyan', 'white'], range(30, 38))))
 DEFAULT_COLOR_SCHEME = {DEBUG: COLORS['green'],
                         INFO: COLORS['green'],
                         WARNING: COLORS['red'],
