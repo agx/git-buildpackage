@@ -170,12 +170,12 @@ class Command(object):
         >>> c = Command("/bin/true", capture_stdout=True)
         >>> c.call(["--version"])
         0
-        >>> c.stdout.startswith('true')
+        >>> c.stdout.decode('utf-8').startswith('true')
         True
         >>> c = Command("/bin/false", capture_stdout=True)
         >>> c.call(["--help"])
         1
-        >>> c.stdout.startswith('Usage:')
+        >>> c.stdout.decode('utf-8').startswith('Usage:')
         True
         """
         try:
