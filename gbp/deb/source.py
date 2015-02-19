@@ -20,6 +20,8 @@ import os
 from gbp.deb.format import DebianSourceFormat
 from gbp.deb.changelog import ChangeLog
 
+import six
+
 class FileVfs(object):
     def __init__(self, dir):
         """
@@ -51,7 +53,7 @@ class DebianSource(object):
         """
         self._changelog = None
 
-        if isinstance(vfs, basestring):
+        if isinstance(vfs, six.string_types):
             self._vfs = FileVfs(vfs)
         else:
             self._vfs = vfs

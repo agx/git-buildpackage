@@ -16,6 +16,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """A Git repository"""
 
+import six
 import subprocess
 import os.path
 import re
@@ -39,7 +40,7 @@ class GitRemote(object):
     def __init__(self, name, fetch_url, push_urls):
         self._name = name
         self._fetch_url = fetch_url
-        if isinstance(push_urls, basestring):
+        if isinstance(push_urls, six.string_types):
             self._push_urls = [push_urls]
         else:
             self._push_urls = [url for url in push_urls]
@@ -1245,7 +1246,7 @@ class GitRepository(object):
         """
         extra_env = {}
 
-        if isinstance(paths, basestring):
+        if isinstance(paths, six.string_types):
             paths = [ paths ]
 
         args = [ '-f' ] if force else []
@@ -1267,7 +1268,7 @@ class GitRepository(object):
         @param verbose: be verbose
         @type verbose: C{bool}
         """
-        if isinstance(paths, basestring):
+        if isinstance(paths, six.string_types):
             paths = [ paths ]
 
         args =  [] if verbose else ['--quiet']
@@ -1368,7 +1369,7 @@ class GitRepository(object):
         @param author_info: authorship information
         @type author_info: L{GitModifier}
         """
-        if isinstance(files, basestring):
+        if isinstance(files, six.string_types):
             files = [ files ]
         self._commit(msg=msg, args=files, author_info=author_info)
 
@@ -1497,7 +1498,7 @@ class GitRepository(object):
             args.add(until)
         args.add_cond(options, options)
         args.add("--")
-        if isinstance(paths, basestring):
+        if isinstance(paths, six.string_types):
             paths = [ paths ]
         args.add_cond(paths, paths)
 

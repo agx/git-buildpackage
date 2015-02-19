@@ -18,6 +18,7 @@
 Git command argument handling helpers
 """
 
+import six
 import collections
 
 class GitArgs(object):
@@ -55,7 +56,7 @@ class GitArgs(object):
         Add arguments to argument list
         """
         for arg in args:
-            if isinstance(arg, basestring):
+            if isinstance(arg, six.string_types):
                 self._args.append(arg)
             elif isinstance(arg, collections.Iterable):
                 for i in iter(arg):
