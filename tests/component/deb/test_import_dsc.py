@@ -62,6 +62,7 @@ class TestImportDsc(ComponentTestBase):
 
         dsc = _dsc('2.6-2')
         assert import_dsc(['arg0',
+                           '--verbose',
                            '--pristine-tar',
                            '--debian-branch=master',
                            '--upstream-branch=upstream',
@@ -72,6 +73,7 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         dsc = _dsc('2.8-1')
         assert import_dsc(['arg0',
+                           '--verbose',
                            '--pristine-tar',
                            '--debian-branch=foo',
                            '--upstream-branch=bar',
