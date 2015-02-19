@@ -68,14 +68,14 @@ def test_filter():
     >>> tmpdir = str(context.new_tmpdir('bar'))
     >>> confname = os.path.join(tmpdir, 'gbp.conf')
     >>> f = open(confname, 'w')
-    >>> f.write('[bar]\\nfilter = asdf\\n')
+    >>> ret = f.write('[bar]\\nfilter = asdf\\n')
     >>> f.close()
     >>> os.environ['GBP_CONF_FILES'] = confname
     >>> parser = GbpOptionParser('bar')
     >>> parser.config['filter']
     ['asdf']
     >>> f = open(confname, 'w')
-    >>> f.write("[bar]\\nfilter = ['this', 'is', 'a', 'list']\\n")
+    >>> ret = f.write("[bar]\\nfilter = ['this', 'is', 'a', 'list']\\n")
     >>> f.close()
     >>> parser = GbpOptionParser('bar')
     >>> parser.config['filter']

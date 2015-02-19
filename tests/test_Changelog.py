@@ -237,7 +237,7 @@ def test_add_section():
     >>> testclname = os.path.join(testdebdir, "changelog")
     >>> os.mkdir(testdebdir)
     >>> clh = open(os.path.join(testdebdir, "changelog"), "w")
-    >>> clh.write(cl_debian)
+    >>> ret = clh.write(cl_debian)
     >>> clh.close()
     >>> os.chdir(testdir)
     >>> os.path.abspath(os.path.curdir) == testdir
@@ -283,7 +283,7 @@ def test_add_entry():
     >>> testclname = os.path.join(testdebdir, "changelog")
     >>> os.mkdir(testdebdir)
     >>> clh = open(os.path.join(testdebdir, "changelog"), "w")
-    >>> clh.write(cl_debian)
+    >>> ret = clh.write(cl_debian)
     >>> clh.close()
     >>> os.chdir(testdir)
     >>> os.path.abspath(os.path.curdir) == testdir

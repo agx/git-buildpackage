@@ -28,7 +28,7 @@ def test_read():
     >>> repo = gbp.git.GitRepository.create(str(repo_dir))
     >>> f = open(os.path.join(repo.path, 'foo.txt'), 'w')
     >>> content = 'al pha\\na\\nb\\nc'
-    >>> f.write('al pha\\na\\nb\\nc')
+    >>> ret = f.write('al pha\\na\\nb\\nc')
     >>> f.close()
     >>> repo.add_files(repo.path, force=True)
     >>> repo.commit_all(msg="foo")

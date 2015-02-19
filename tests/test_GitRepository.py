@@ -74,8 +74,8 @@ def test_add_files():
 
     >>> import gbp.git, shutil, os
     >>> repo = gbp.git.GitRepository(repo_dir)
-    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), \
-                                 os.path.join(repo.path, "testfile"))
+    >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"),
+    ...                                os.path.join(repo.path, "testfile"))
     >>> repo.is_clean()[0]
     False
     >>> repo.is_clean(ignore_untracked=True)[0]
@@ -113,8 +113,8 @@ def test_clean():
 
     >>> import gbp.git, shutil, os
     >>> repo = gbp.git.GitRepository(repo_dir)
-    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), \
-                                 os.path.join(repo.path, "testclean"))
+    >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"),
+    ...                                os.path.join(repo.path, "testclean"))
     >>> repo.clean(dry_run=True)
     >>> repo.is_clean()[0]
     False
@@ -202,7 +202,7 @@ def test_set_upstream_branch():
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> os.makedirs(os.path.join(repo.git_dir, 'refs/remotes/origin'))
-    >>> shutil.copy(os.path.join(repo.git_dir, 'refs/heads/master'), \
+    >>> ret = shutil.copy(os.path.join(repo.git_dir, 'refs/heads/master'), \
                     os.path.join(repo.git_dir, 'refs/remotes/origin/'))
     >>> repo.add_remote_repo('origin', 'git://git.example.com/git/origin')
     >>> repo.set_upstream_branch('master', 'origin/master')
@@ -387,7 +387,7 @@ def test_list_files():
     []
     >>> repo.list_files(['modified', 'deleted', 'cached'])
     ['testfile']
-    >>> shutil.copy(src, dst)
+    >>> ret = shutil.copy(src, dst)
     >>> repo.list_files(['modified'])
     ['testfile']
     >>> repo.add_files(dst)
@@ -401,7 +401,7 @@ def test_list_files():
     >>> repo.force_head('HEAD^', hard=True)
     >>> repo.list_files(['modified'])
     []
-    >>> shutil.copy(src, dst)
+    >>> ret = shutil.copy(src, dst)
     >>> repo.list_files(['modified'])
     ['testfile']
     >>> repo.commit_files(dst, msg="foo")
@@ -889,7 +889,7 @@ def test_status():
     >>> import gbp.git, os, shutil
     >>> repo = gbp.git.GitRepository(repo_dir)
     >>> fname = os.path.join(repo.path, "test_status")
-    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"), fname)
+    >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"), fname)
     >>> repo.status().items()
     [('??', ['test_status'])]
     >>> repo.status(['bla*']).items()
