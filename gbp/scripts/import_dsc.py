@@ -280,7 +280,6 @@ def main(argv):
     needs_repo = False
     ret = 0
     skipped = False
-    parents = None
 
     options, args = parse_args(argv)
     if not options:
