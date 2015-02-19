@@ -119,9 +119,11 @@ class GitModifier(object):
         """
         Get env vars for authorship information
 
-        >>> g = GitModifier("foo", "bar")
-        >>> g.get_author_env()
-        {'GIT_AUTHOR_EMAIL': 'bar', 'GIT_AUTHOR_NAME': 'foo'}
+        >>> g = GitModifier("Joey Ramone", "joey@example.com")
+        >>> g.get_author_env()['GIT_AUTHOR_EMAIL']
+        'joey@example.com'
+        >>> g.get_author_env()['GIT_AUTHOR_NAME']
+        'Joey Ramone'
 
         @return: Author information suitable to use as environment variables
         @rtype: C{dict}
@@ -132,9 +134,11 @@ class GitModifier(object):
         """
         Get env vars for committer information
 
-        >>> g = GitModifier("foo", "bar")
-        >>> g.get_committer_env()
-        {'GIT_COMMITTER_NAME': 'foo', 'GIT_COMMITTER_EMAIL': 'bar'}
+        >>> g = GitModifier("Joey Ramone", "joey@example.com")
+        >>> g.get_committer_env()['GIT_COMMITTER_EMAIL']
+        'joey@example.com'
+        >>> g.get_committer_env()['GIT_COMMITTER_NAME']
+        'Joey Ramone'
 
         @return: Commiter information suitable to use as environment variables
         @rtype: C{dict}
