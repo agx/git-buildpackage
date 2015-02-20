@@ -302,6 +302,8 @@ def test_add_entry():
     True
     >>> 'Test add entry' in cl['Changes']
     True
+    >>> cl['Changes'].split('*',1)[1]
+    ' Test add section\\n   * Test add entry'
     >>> os.chdir(olddir)
     >>> os.path.abspath(os.path.curdir) == olddir
     True

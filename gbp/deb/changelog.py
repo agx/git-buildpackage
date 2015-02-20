@@ -272,7 +272,7 @@ class ChangeLog(object):
                     for line in msg[1:]:
                         print("    " + line, file=new_cl)
                 else:
-                    print(line, file=new_cl)
+                    print(line, end='', file=new_cl)
             os.rename("debian/changelog.bak", "debian/changelog")
 
     def add_entry(self, msg, author=None, email=None, dch_options=[]):
