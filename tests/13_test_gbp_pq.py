@@ -121,7 +121,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         expected = os.path.join(str(d), 'gbptest', 'added-foo.patch')
 
         self.assertTrue(os.path.exists(expected))
-        logging.debug(file(expected).read())
+        logging.debug(open(expected).read())
 
         # Reapply the patch to a new branch
         self.repo.create_branch('testapply', 'HEAD^')
