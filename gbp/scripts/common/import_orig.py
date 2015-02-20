@@ -35,11 +35,6 @@ try:
 except ImportError:
     pass
 
-try:
-    import requests
-except ImportError:
-    requests = None
-
 def orig_needs_repack(upstream_source, options):
     """
     Determine if the upstream sources needs to be repacked
@@ -155,6 +150,11 @@ def download_orig(url):
     @raises GbpError: on all errors
     """
     CHUNK_SIZE=4096
+
+    try:
+        import requests
+    except ImportError:
+        requests = None
 
     if requests is None:
         raise GbpError("python-requests not installed")
