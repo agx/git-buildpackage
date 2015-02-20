@@ -1,3 +1,55 @@
+git-buildpackage (0.6.24) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [1d6c4c7] Deprecate legacy config sections.
+    We deprecate sections starting with git- and gbp- to reduce the confusion
+    about what gets parsed first.  Output a warning if the old format is in use.
+    Jessies gbp already supports both formats as does the one in
+    wheezy-backports.
+  * [e3a8666] Drop all gbp-* and git-* commands as announced in the
+    deprecation notice from June 2013. From now on only "gbp <command>" is
+    supported.
+  * [229f259] buildpackage: Tag currently checked out head.
+    Tag the head checked out at command invocation. The build can
+    take some time and the repo might have changed underneath us.
+    (Closes: #776506)
+  * [428e895] Make Debian and Git spelling consistent
+  * [644c97f] dch: Support Gbp-Dch: besides Git-Dch: as meta tag
+  * [64be54d] pq: Generate new style Gbp-Pq: Topic <topic> entries.
+  * [ff40c5d] Move requests import to downloads.
+    The requests import takes ages and therefore considerably slows
+    down program start up.
+    This is very much noticeably during bash completion. Before:
+    $ time gbp --list-cmds >/dev/null
+    real	0m0.559s
+    user	0m0.528s
+    sys	0m0.028s
+    After:
+    $ time gbp --list-cmds >/dev/null
+    real	0m0.092s
+    user	0m0.088s
+    sys	0m0.000s
+  * [d86c624] bash-completion: Avoid a pointless fork
+  * [0881bfc] Bump standards version
+  * Many fixes towards Python3 compatibility
+
+  [ Markus Lehtonen ]
+  * [7ce15d2] pq: deprecate the usage of 'gbp-pq-topic:'
+    Replaced by the "Gbp[-Pq]: Topic <topic>" command.
+  * [aa22e22] import-srpm: support gbp-config command.
+  * [1c6df3e] ComponentTestBase: ignore system and user config.
+    User might have a system and/or user specific gbp config files. Disable
+    these config files so that they don't affect the component tests.
+  * [55d5422] patchseries: strip numbering when guessing subject from filename
+  * [600d5d7] rpm: suppress stderr when unpacking src.rpm
+
+  [ Dmitrij Tejblum ]
+  * [296796f] git-dch --git-author: separate author and email.
+    Allow --git-author to work if either author or email is not specified
+    in the git config, taking the other config option into account.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 20 Feb 2015 19:19:30 +0100
+
 git-buildpackage (0.6.23) experimental; urgency=medium
 
   [ Markus Lehtonen ]
