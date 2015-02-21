@@ -1,7 +1,7 @@
 #!/usr/bin/python -u
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2010,2015 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -31,6 +31,7 @@ commits debian/patches/0010-bla-fasel with this changelog message:
     Closes: <bugs>
     Thanks: <author>
 """
+from __future__ import print_function
 
 import re
 import sys
@@ -85,7 +86,8 @@ def main(argv):
     try:
         repo = GitRepository(os.path.curdir)
     except GitRepositoryError:
-        print >>sys.stderr, "%s is not a git repository" % (os.path.abspath('.'))
+        print("%s is not a git repository" % os.path.abspath('.'),
+              file=sys.stderr)
         return 1
 
     try:
@@ -106,7 +108,7 @@ def main(argv):
         retval = 1
     except GbpError as err:
         if str(err):
-            print >>sys.stderr, err
+            print(err, file=sys.stderr)
         retval = 1
 
     return retval

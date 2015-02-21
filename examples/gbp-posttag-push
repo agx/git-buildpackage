@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009,2012 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009,2012,2015 Guido Guenther <agx@sigxcpu.org>
 #
 # gbp-posttag-push: post tag hook to be called by git-buildpackage to push out
 # the newly created tag and to forward the remote branch to that position
@@ -19,6 +19,7 @@
 # -u: push upstream branch too, if not on remote already
 # --verbose: verbose command output
 
+from __future__ import print_function
 
 from six.moves import configparser
 import os
@@ -62,7 +63,7 @@ def get_pull(env):
 
 
 def git_push_sim(*args):
-    print "git push %s" % " ".join(args)
+    print("git push %s" % " ".join(args))
 
 
 def get_upstream_tag(repo, tag, tag_format):
@@ -106,7 +107,7 @@ def main(argv):
     repo = DebianGitRepository('.')
 
     if options.dryrun:
-        print "Dry run mode. Not pushing."
+        print("Dry run mode. Not pushing.")
         repo.push = git_push_sim
         repo.push_tag = git_push_sim
 
@@ -115,7 +116,7 @@ def main(argv):
         if var:
             env.__dict__.setdefault( "%s" % envvar.split("_")[1].lower(), var)
         else:
-            print >>sys.stderr, "%s not set." % envvar
+            print("%s not set." % envvar, file=sys.stderr)
             return 1
 
     dests = get_push_targets(env)
@@ -127,11 +128,11 @@ def main(argv):
         upstream_sha1 = repo.rev_parse("%s^{}" % upstream_tag)
 
     if not repo.verify_tag(env.tag):
-        print >>sys.stderr, "Not pushing unsigned tag $GBP_TAG."
+        print("Not pushing unsigned tag $GBP_TAG.", file=sys.stderr)
         return 0
 
     for dest in dests:
-        print "Pushing %s to %s" % (env.sha1, dest)
+        print("Pushing %s to %s" % (env.sha1, dest))
         repo.push_tag(dest, env.tag)
         repo.push(dest, env.sha1, dests[dest])
         if options.push_upstream and upstream_tag:
@@ -139,7 +140,7 @@ def main(argv):
             if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
                                         upstream_sha1, remote=True):
                 repo.push(dest, upstream_sha1, options.upstream_branch)
-        print "done."
+        print("done.")
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

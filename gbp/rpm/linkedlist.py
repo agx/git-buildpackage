@@ -193,7 +193,7 @@ class LinkedList(collections.Iterable):
         'foo'
         >>> [str(data) for data in list]
         ['foo', 'bar']
-        >>> print "%s" % node3
+        >>> print("%s" % node3)
         <BLANKLINE>
         >>> str(list.delete(node1))
         'bar'
