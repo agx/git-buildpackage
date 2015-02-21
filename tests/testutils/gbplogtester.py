@@ -2,7 +2,7 @@
 
 import re
 from six import StringIO
-from nose.tools import eq_, ok_     # pylint: disable=E0611
+from nose.tools import ok_
 
 import gbp.log
 
