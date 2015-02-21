@@ -1,0 +1,29 @@
+Running the Tests
+-----------------
+The tests are run via
+
+    python setup.py nosetests
+
+To also run the component tests you need to initialize the git submodules once
+via:
+
+    git submodule update --init --recursive
+
+This will fetch the necessary binary data for the DEB and RPM component tests
+and the tests are from now on included within each regular test run.
+
+
+Building the API Docs
+---------------------
+You can build the API docs using
+
+    epydoc -v --config=setup.cfg
+
+
+Contributing Patches
+--------------------
+Make sure the tests pass before sending in patch. You can either send it to the
+mailing list or add it to a bug report against git-buildpackage on
+
+    http://bugs.debian.org/src:git-buildpackage
+
