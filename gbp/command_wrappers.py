@@ -37,13 +37,16 @@ class Command(object):
     """
 
     def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None,
-                 capture_stderr=False):
+                 capture_stderr=False,
+                 capture_stdout=False):
         self.cmd = cmd
         self.args = args
         self.run_error = "'%s' failed" % (" ".join([self.cmd] + self.args))
         self.shell = shell
         self.retcode = 1
+        self.stdout = ''
         self.stderr = ''
+        self.capture_stdout = capture_stdout
         self.capture_stderr = capture_stderr
         self.cwd = cwd
         if extra_env is not None:
@@ -62,7 +65,8 @@ class Command(object):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
         log.debug("%s %s %s" % (self.cmd, self.args, args))
-        self.stderr = ''
+        self.stdout, self.stderr = ('', '')
+        stdout_arg = subprocess.PIPE if self.capture_stdout else None
         stderr_arg = subprocess.PIPE if self.capture_stderr else None
         cmd = [ self.cmd ] + self.args + args
         if self.shell:
@@ -73,9 +77,9 @@ class Command(object):
                                  shell=self.shell,
                                  env=self.env,
                                  preexec_fn=default_sigpipe,
+                                 stdout=stdout_arg,
                                  stderr=stderr_arg)
-        (dummy, stderr) = popen.communicate()
-        self.stderr = stderr
+        (self.stdout, self.stderr) = popen.communicate()
         return popen.returncode
 
     def __run(self, args, quiet=False):
@@ -131,6 +135,11 @@ class Command(object):
         Traceback (most recent call last):
         ...
         CommandExecFailed: Execution failed: ...
+        >>> c = Command("/bin/true", capture_stdout=True)
+        >>> c.call(["--version"])
+        0
+        >>> c.stdout.startswith('true')
+        True
         """
         try:
             ret = self.__call(args)
