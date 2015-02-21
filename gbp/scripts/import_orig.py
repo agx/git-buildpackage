@@ -408,10 +408,10 @@ def main(argv):
                                    repo.pristine_tar_branch]:
                 repo.force_head(current_branch, hard=True)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
-            msg = err.__str__() if len(err.__str__()) else ''
+            msg = str(err) or 'Unknown error, please report a bug'
             raise GbpError("Import of %s failed: %s" % (source.path, msg))
     except GbpError as err:
-        if len(err.__str__()):
+        if str(err):
             gbp.log.err(err)
         ret = 1
 

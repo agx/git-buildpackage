@@ -542,7 +542,7 @@ def main(argv):
             GitRepositoryError,
             DebianSourceError,
             NoChangeLogError) as err:
-        if len(err.__str__()):
+        if str(err):
             gbp.log.err(err)
         ret = 1
     return ret

@@ -121,7 +121,7 @@ def main(argv):
         gbp.log.err("Git command failed: %s" % err)
         retval = 1
     except GbpError as err:
-        if len(err.__str__()):
+        if str(err):
             gbp.log.err(err)
         retval = 1
 

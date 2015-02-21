@@ -105,7 +105,7 @@ def main(argv):
     except GitRepositoryError:
         retval = 1
     except GbpError as err:
-        if len(err.__str__()):
+        if str(err):
             print >>sys.stderr, err
         retval = 1
 

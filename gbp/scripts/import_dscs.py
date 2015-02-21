@@ -155,7 +155,7 @@ def main(argv):
                 raise GbpError("Failed to import '%s'" % dscs[0].dscfile)
 
     except (GbpError, gbpc.CommandExecFailed, GitRepositoryError) as err:
-        if len(err.__str__()):
+        if str(err):
             gbp.log.err(err)
         ret = 1
     finally:

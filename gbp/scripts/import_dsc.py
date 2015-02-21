@@ -165,7 +165,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag):
                             sign=options.sign_tags,
                             keyid=options.keyid)
     except (gbpc.CommandExecFailed, GitRepositoryError) as err:
-        msg = err.__str__() if len(err.__str__()) else ''
+        msg = str(err) or 'Unknown error, please report a bug'
         gbp.log.err("Failed to import Debian package: %s" % msg)
         raise GbpError
     finally:
@@ -402,7 +402,7 @@ def main(argv):
         gbp.log.err("Git command failed: %s" % msg)
         ret = 1
     except GbpError as err:
-        if len(err.__str__()):
+        if str(err):
             gbp.log.err(err)
         ret = 1
     except SkipImport:

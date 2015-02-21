@@ -622,7 +622,7 @@ def main(argv):
     except CommandExecFailed:
         retval = 1
     except (GbpError, GitRepositoryError) as err:
-        if len(err.__str__()):
+        if str(err):
             gbp.log.err(err)
         retval = 1
     except DebianSourceError as err:
