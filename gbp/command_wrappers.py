@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007,2009 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007,2009,2015 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -35,7 +35,6 @@ class Command(object):
     Wraps a shell command, so we don't have to store any kind of command
     line options in one of the git-buildpackage commands
     """
-
     def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None,
                  capture_stderr=False,
                  capture_stdout=False):
@@ -43,9 +42,6 @@ class Command(object):
         self.args = args
         self.run_error = "'%s' failed" % (" ".join([self.cmd] + self.args))
         self.shell = shell
-        self.retcode = 1
-        self.stdout = ''
-        self.stderr = ''
         self.capture_stdout = capture_stdout
         self.capture_stderr = capture_stderr
         self.cwd = cwd
@@ -54,10 +50,15 @@ class Command(object):
             self.env.update(extra_env)
         else:
             self.env = None
+        self._reset_state()
+
+    def _reset_state(self):
+        self.retcode = 1
+        self.stdout, self.stderr, self.err_reason = [''] * 3
 
     def __call(self, args):
         """
-        Wraps subprocess.call so we can be verbose and fix python's
+        Wraps subprocess.call so we can be verbose and fix Python's
         SIGPIPE handling
         """
         def default_sigpipe():
@@ -65,52 +66,57 @@ class Command(object):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
         log.debug("%s %s %s" % (self.cmd, self.args, args))
-        self.stdout, self.stderr = ('', '')
+        self._reset_state()
         stdout_arg = subprocess.PIPE if self.capture_stdout else None
         stderr_arg = subprocess.PIPE if self.capture_stderr else None
         cmd = [ self.cmd ] + self.args + args
         if self.shell:
             # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-        popen = subprocess.Popen(cmd,
-                                 cwd=self.cwd,
-                                 shell=self.shell,
-                                 env=self.env,
-                                 preexec_fn=default_sigpipe,
-                                 stdout=stdout_arg,
-                                 stderr=stderr_arg)
-        (self.stdout, self.stderr) = popen.communicate()
-        return popen.returncode
 
-    def __run(self, args, quiet=False):
-        """
-        run self.cmd adding args as additional arguments
-
-        @param quiet: don't log errors to stderr Mostly useful during unit testing.
-
-        Be verbose about errors and encode them in the return value, don't pass
-        on exceptions.
-        """
         try:
-            retcode = self.__call(args)
-            if retcode < 0:
-                err_detail = "it was terminated by signal %d" % -retcode
-            elif retcode > 0:
-                err_detail = "it exited with %d" % retcode
+            popen = subprocess.Popen(cmd,
+                                     cwd=self.cwd,
+                                     shell=self.shell,
+                                     env=self.env,
+                                     preexec_fn=default_sigpipe,
+                                     stdout=stdout_arg,
+                                     stderr=stderr_arg)
+            (self.stdout, self.stderr) = popen.communicate()
         except OSError as err:
-            err_detail = "execution failed: %s" % err
-            retcode = 1
-        if retcode and not quiet:
-            log.err("%s: %s" % (self.run_error, err_detail))
-        self.retcode = retcode
-        return retcode
+            self.err_reason = "execution failed: %s" % str(err)
+            self.retcode = 1
+            raise
+
+        self.retcode = popen.returncode
+        if self.retcode < 0:
+            self.err_reason = "it was terminated by signal %d" % -self.retcode
+        elif self.retcode > 0:
+            self.err_reason = "it exited with %d" % self.retcode
+        return self.retcode
+
+    def _log_err(self):
+        """
+        Log an error message allowing to use the captured stout/stderr
+        """
+        log.err("%s: %s" % (self.run_error,
+                            self.err_reason)
 
     def __call__(self, args=[], quiet=False):
-        """
-        Run the command and convert all errors into CommandExecFailed. Assumes
-        that the lower levels printed an error message (the command itself and
-        also via our logging api) - only useful if you only expect 0 as result.
+        """Run the command and raise exception on errors
 
+        If run quietly it will not print an error message via the
+        L{gbp.log} logging API.
+
+        Wether the command prints anything to stdout/stderr depends on
+        the I{capture_stderr}, I{capture_stdout} instance variables.
+
+        All errors will be reported as subclass of the
+        L{CommandExecFailed} exception including a non zero exit
+        status of the run command.
+
+        @param args: additional command line arguments
+        @type  args: C{list} of C{strings}
         @param quiet: don't log failed execution to stderr. Mostly useful during
             unit testing
         @type quiet: C{bool}
@@ -119,32 +125,60 @@ class Command(object):
         >>> Command("/foo/bar")(quiet=True)
         Traceback (most recent call last):
         ...
-        CommandExecFailed
+        CommandExecFailed: execution failed: [Errno 2] No such file or directory
         """
-        if self.__run(args, quiet):
-            raise CommandExecFailed
+        try:
+            ret = self.__call(args)
+        except OSError:
+            ret = 1
+        if ret:
+            if not quiet:
+              self._log_err()
+            raise CommandExecFailed(self.err_reason)
 
-    def call(self, args):
-        """
-        Like __call__ but let the caller handle the return status and don't
-        use the logging api for errors.
+
+    def call(self, args, quiet=True):
+        """Like L{__call__} but let the caller handle the return status.
+
+        Only raise L{CommandExecFailed} if we failed to launch the command
+        at all (i.e. if it does not exist) not if the command returned
+        nonzero.
+
+        Logs errors using L{gbp.log} by default.
+
+        @param args: additional command line arguments
+        @type  args: C{list} of C{strings}
+        @param quiet: don't log failed execution to stderr. Mostly useful during
+            unit testing
+        @type quiet: C{bool}
+        @returns: the exit status of the run command
+        @rtype: C{int}
 
         >>> Command("/bin/true").call(["foo", "bar"])
         0
         >>> Command("/foo/bar").call(["foo", "bar"]) # doctest:+ELLIPSIS
         Traceback (most recent call last):
         ...
-        CommandExecFailed: Execution failed: ...
+        CommandExecFailed: execution failed: ...
         >>> c = Command("/bin/true", capture_stdout=True)
         >>> c.call(["--version"])
         0
         >>> c.stdout.startswith('true')
         True
+        >>> c = Command("/bin/false", capture_stdout=True)
+        >>> c.call(["--help"])
+        1
+        >>> c.stdout.startswith('Usage:')
+        True
         """
         try:
             ret = self.__call(args)
-        except OSError as err:
-            raise CommandExecFailed("Execution failed: %s" % err)
+        except OSError:
+            ret = 1
+            raise CommandExecFailed(self.err_reason)
+        finally:
+            if ret and not quiet:
+                self._log_err()
         return ret
 
 
