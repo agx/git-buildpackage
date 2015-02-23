@@ -17,7 +17,7 @@
 """handles command line and config file option parsing for the gbp commands"""
 
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
-from six.moves.configparser import SafeConfigParser, NoSectionError
+from six.moves import configparser
 from copy import copy
 import os.path
 
@@ -368,7 +368,7 @@ class GbpOptionParser(OptionParser):
         Parse the possible config files and set appropriate values
         default values
         """
-        parser = SafeConfigParser()
+        parser = configparser.SafeConfigParser()
         # Fill in the built in values
         self.config = dict(self.__class__.defaults)
         # Update with the values from the defaults section. This is needed
@@ -412,8 +412,8 @@ class GbpOptionParser(OptionParser):
             if parser.has_section(section):
                 self.config.update(dict(parser._sections[section].items()))
             else:
-                raise NoSectionError("Mandatory section [%s] does not exist."
-                                     % section)
+                raise configparser.NoSectionError(
+                        "Mandatory section [%s] does not exist." % section)
 
         # filter can be either a list or a string, always build a list:
         if self.config['filter']:
