@@ -491,6 +491,8 @@ def test_diff():
     True
     >>> len(repo.diff('HEAD~1', 'HEAD', 'filenotexist')) == 0
     True
+    >>> repo.diff('HEAD~1', 'HEAD') == repo.diff('HEAD~1')
+    True
     """
 
 def test_diff_status():
