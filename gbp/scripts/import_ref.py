@@ -22,7 +22,7 @@ import os
 import sys
 import gbp.command_wrappers as gbpc
 from gbp.deb.git import GitRepositoryError
-from gbp.config import GbpOptionParserDebian, GbpOptionGroup
+from gbp.config import GbpConfArgParserDebian
 from gbp.errors import GbpError
 import gbp.log
 from gbp.scripts.common import ExitCodes
@@ -58,53 +58,50 @@ def get_commit_and_version_to_merge(repo, options):
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    import_group = GbpOptionGroup(parser, "import options",
-                                  "import related options")
-    tag_group = GbpOptionGroup(parser, "tag options",
-                               "tag related options ")
-    branch_group = GbpOptionGroup(parser, "version and branch naming options",
-                                  "version number and branch layout options")
-    cmd_group = GbpOptionGroup(parser, "external command options",
-                               "how and when to invoke external commands and hooks")
-    for group in [import_group, branch_group, tag_group, cmd_group]:
-        parser.add_option_group(group)
+    import_group = parser.add_argument_group("import options",
+                                             "import related options")
+    tag_group = parser.add_argument_group("tag options",
+                                          "tag related options ")
+    branch_group = parser.add_argument_group("version and branch naming options",
+                                             "version number and branch layout options")
+    cmd_group = parser.add_argument_group("external command options",
+                                          "how and when to invoke external commands and hooks")
 
-    branch_group.add_option("-u", "--upstream-version", dest="version",
-                            help="The version number to use for the new version, "
-                            "default is ''", default='')
-    branch_group.add_config_file_option(option_name="debian-branch",
-                                        dest="debian_branch")
-    branch_group.add_config_file_option(option_name="upstream-branch",
-                                        dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="upstream-tree",
-                                        dest="upstream_tree",
-                                        help="Where to merge the upstream changes from.",
-                                        default="VERSION")
-    branch_group.add_config_file_option(option_name="merge-mode", dest="merge_mode")
+    branch_group.add_arg("-u", "--upstream-version", dest="version",
+                         help="The version number to use for the new version, "
+                         "default is ''", default='')
+    branch_group.add_conf_file_arg("--debian-branch",
+                                   dest="debian_branch")
+    branch_group.add_conf_file_arg("--upstream-branch",
+                                   dest="upstream_branch")
+    branch_group.add_conf_file_arg("--upstream-tree",
+                                   dest="upstream_tree",
+                                   help="Where to merge the upstream changes from.",
+                                   default="VERSION")
+    branch_group.add_conf_file_arg("--merge-mode", dest="merge_mode")
 
-    tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                                             dest="sign_tags")
-    tag_group.add_config_file_option(option_name="keyid",
-                                     dest="keyid")
-    tag_group.add_config_file_option(option_name="upstream-tag",
-                                     dest="upstream_tag")
-    import_group.add_config_file_option(option_name="import-msg",
-                                        dest="import_msg")
-    cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
+    tag_group.add_bool_conf_file_arg("--sign-tags",
+                                     dest="sign_tags")
+    tag_group.add_conf_file_arg("--keyid",
+                                dest="keyid")
+    tag_group.add_conf_file_arg("--upstream-tag",
+                                dest="upstream_tag")
+    import_group.add_conf_file_arg("--import-msg",
+                                   dest="import_msg")
+    cmd_group.add_conf_file_arg("--postimport", dest="postimport")
 
-    parser.add_boolean_config_file_option(option_name="rollback",
-                                          dest="rollback")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
+    parser.add_bool_conf_file_arg("--rollback",
+                                  dest="rollback")
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", dest="color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme",
+                             dest="color_scheme")
     return parser
 
 
@@ -113,21 +110,21 @@ def parse_args(argv):
     @return: options and arguments
     """
 
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
+        return None
 
-    (options, args) = parser.parse_args(argv[1:])
+    options = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
-    return options, args
+    return options
 
 
 def main(argv):
     ret = 0
     repo = None
 
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 

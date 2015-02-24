@@ -23,7 +23,7 @@ import sys
 import os
 import os.path
 from gbp.command_wrappers import (Command, CommandExecFailed)
-from gbp.config import (GbpOptionParser, GbpOptionGroup)
+from gbp.config import GbpConfArgParserDebian
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.git import DebianGitRepository
@@ -79,46 +79,46 @@ def fast_forward_branch(rem_repo, branch, repo, options):
 
 
 def build_parser(name):
+    description = 'safely update a repository from remote'
     try:
-        parser = GbpOptionParser(command=os.path.basename(name), prefix='',
-                                 usage='%prog [options] [repo] - safely update a repository from remote')
+        parser = GbpConfArgParserDebian.create_parser(prog=name,
+                                                      description=description)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
-    parser.add_option_group(branch_group)
-    branch_group.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
-    branch_group.add_option("--force", action="store_true", dest="force", default=False,
-                            help="force a branch update even if it can't be fast forwarded")
-    branch_group.add_option("--all", action="store_true", default=False,
-                            help="update all remote-tracking branches that "
-                                 "have identical name in the remote")
-    branch_group.add_option("--redo-pq", action="store_true", dest="redo_pq", default=False,
-                            help="redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
-    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
-    branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
-    branch_group.add_boolean_config_file_option(option_name="track-missing", dest="track_missing")
-    branch_group.add_option("--depth", action="store", dest="depth", default=0,
-                            help="git history depth (for deepening shallow clones)")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
+    branch_group = parser.add_argument_group("branch options", "branch update and layout options")
+
+    branch_group.add_bool_conf_file_arg("--ignore-branch")
+    branch_group.add_arg("--force", action="store_true",
+                         help="force a branch update even if it can't be fast "
+                              "forwarded")
+    branch_group.add_arg("--all", action="store_true",
+                         help="update all remote-tracking branches that "
+                         "have identical name in the remote")
+    branch_group.add_arg("--redo-pq", action="store_true",
+                         help="redo the patch queue branch after a pull. Warning: "
+                         "this drops the old patch-queue branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_bool_conf_file_arg("--pristine-tar")
+    branch_group.add_bool_conf_file_arg("--track-missing", dest="track_missing")
+    branch_group.add_arg("--depth", action="store", default=0,
+                         help="git history depth (for deepening shallow clones)")
+    parser.add_arg("-v", "--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_argument("remote", metavar="REMOTE", nargs="?",
+                        help="remote from which to pull")
     return parser
 
 
 def parse_args(argv):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
-    options, args = parser.parse_args(argv)
-    if len(args) > 2:
-        parser.print_help(file=sys.stderr)
-        return None, None
-    return options, args
+        return None
+    return parser.parse_args(argv[1:])
 
 
 def get_remote(repo, current):
@@ -144,17 +144,15 @@ def track_missing(repo, remote, branch, options):
 def main(argv):
     retval = 0
     current = None
-    rem_repo = None
 
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
-    if len(args) == 2:
-        rem_repo = args[1]
-        gbp.log.info("Fetching from '%s'" % rem_repo)
+    if options.remote:
+        gbp.log.info("Fetching from '%s'" % options.remote)
     else:
         gbp.log.info("Fetching from default remote for each branch")
 
@@ -182,8 +180,8 @@ def main(argv):
             gbp.log.err(out)
             raise GbpError
 
-        repo.fetch(rem_repo, depth=options.depth)
-        repo.fetch(rem_repo, depth=options.depth, tags=True)
+        repo.fetch(options.remote, depth=options.depth)
+        repo.fetch(options.remote, depth=options.depth, tags=True)
 
         fetch_remote = get_remote(repo, current)
         for branch in [options.debian_branch, options.upstream_branch]:
@@ -212,7 +210,7 @@ def main(argv):
                         branches.add(branch)
 
         for branch in branches:
-            if not fast_forward_branch(rem_repo, branch, repo, options):
+            if not fast_forward_branch(options.remote, branch, repo, options):
                 retval = 2
 
         if options.redo_pq:

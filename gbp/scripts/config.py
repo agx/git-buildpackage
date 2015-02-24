@@ -18,8 +18,7 @@
 """Query and display config file values"""
 
 import sys
-import os
-from gbp.config import GbpOptionParser
+from gbp.config import GbpConfArgParser
 from gbp.errors import GbpError
 from gbp.scripts.supercommand import import_command
 from gbp.scripts.common import ExitCodes
@@ -27,26 +26,28 @@ import gbp.log
 
 
 def build_parser(name):
+    description = 'display configuration settings'
     try:
-        parser = GbpOptionParser(command=os.path.basename(name), prefix='',
-                                 usage='%prog [options] command[.optionname] - display configuration settings')
+        parser = GbpConfArgParser.create_parser(prog=name,
+                                                description=description)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
+    parser.add_arg("-v", "--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_argument("query", metavar="QUERY",
+                        help="command[.optionname] to show")
     return parser
 
 
 def parse_args(argv):
     parser = build_parser(argv[0])
     if not parser:
-        return None, None
-    return parser.parse_args(argv)
+        return None
+    return parser.parse_args(argv[1:])
 
 
 def build_cmd_parser(section):
@@ -61,25 +62,24 @@ def build_cmd_parser(section):
     except (AttributeError, ImportError):
         # Use the default parser for section that don't
         # map to a command
-        parser = GbpOptionParser(section)
-        parser.parse_config_files()
+        parser = GbpConfArgParser.create_parser(prog=section)
     return parser
 
 
 def print_single_option(parser, option, printer):
-    value = parser.get_config_file_value(option)
-    if value is not None:
+    try:
+        value = parser.get_conf_file_value(option)
         printer("%s" % value)
-    else:
+        return 0
+    except KeyError:
         return 2
-    return 0
 
 
 def print_all_options(parser, printer):
-    if not parser.valid_options:
+    if not parser.conf_file_args:
         return 2
-    for opt in parser.valid_options:
-        value = parser.get_config_file_value(opt)
+    for opt in parser.conf_file_args:
+        value = parser.get_conf_file_value(opt)
         printer("%s.%s=%s" % (parser.command, opt, value))
     return 0
 
@@ -114,26 +114,14 @@ def value_printer(output):
 
 
 def main(argv):
-    retval = 1
-
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
 
     if options is None:
         return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
-    if not args:
-        gbp.log.err("No command given")
-        return 2
-    elif len(args) != 2:
-        gbp.log.err("Can only take a command or command.optionname, check --help")
-        return 2
-    else:
-        query = args[1]
-
-    retval = print_cmd_values(query, value_printer)
-    return retval
+    return print_cmd_values(options.query, value_printer)
 
 
 if __name__ == '__main__':

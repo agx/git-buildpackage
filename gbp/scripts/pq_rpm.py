@@ -24,10 +24,11 @@ import gzip
 import os
 import re
 import sys
+from argparse import ArgumentDefaultsHelpFormatter, RawDescriptionHelpFormatter
 
 import gbp.log
 from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile
-from gbp.config import GbpOptionParserRpm
+from gbp.config import GbpConfArgParserRpm
 from gbp.rpm.git import GitRepositoryError, RpmGitRepository
 from gbp.git.modifier import GitModifier
 from gbp.command_wrappers import GitCommand, CommandExecFailed
@@ -362,9 +363,14 @@ def switch_pq(repo, current):
         switch_to_pq_branch(repo, current)
 
 
-def usage_msg():
-    return """%prog [options] action - maintain patches on a patch queue branch
-Ations:
+class GbpPqRpmHelpFormatter(RawDescriptionHelpFormatter,
+                            ArgumentDefaultsHelpFormatter):
+    pass
+
+
+def descr_msg():
+    return """Maintain patches on a patch queue branch
+Actions:
 export         Export the patch queue / devel branch associated to the
                current branch into a patch series in and update the spec file
 import         Create a patch queue / devel branch from spec file
@@ -379,42 +385,44 @@ switch         Switch to patch-queue branch and vice versa."""
 
 def build_parser(name):
     """Construct command line parser"""
+    usage = "%(prog)s [options] action"
     try:
-        parser = GbpOptionParserRpm(command=os.path.basename(name),
-                                    prefix='', usage=usage_msg())
-
+        parser = GbpConfArgParserRpm.create_parser(prog=name,
+                                                   usage=usage,
+                                                   description=descr_msg(),
+                                                   formatter_class=GbpPqRpmHelpFormatter)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    parser.add_boolean_config_file_option(option_name="patch-numbers",
-                                          dest="patch_numbers")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
-                      default=False, help="Verbose command execution")
-    parser.add_option("--force", dest="force", action="store_true",
-                      default=False,
-                      help="In case of import even import if the branch already exists")
-    parser.add_boolean_config_file_option("drop", dest='drop')
-    parser.add_config_file_option(option_name="color", dest="color",
-                                  type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
-    parser.add_config_file_option(option_name="abbrev", dest="abbrev", type="int")
-    parser.add_config_file_option(option_name="upstream-tag",
-                                  dest="upstream_tag")
-    parser.add_config_file_option(option_name="spec-file", dest="spec_file")
-    parser.add_config_file_option(option_name="packaging-dir",
-                                  dest="packaging_dir")
+    parser.add_bool_conf_file_arg("--patch-numbers",
+                                  dest="patch_numbers")
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+                   default=False, help="Verbose command execution")
+    parser.add_arg("--force", dest="force", action="store_true",
+                   default=False,
+                   help="In case of import even import if the branch already exists")
+    parser.add_bool_conf_file_arg("--drop", dest="drop")
+    parser.add_conf_file_arg("--color", dest="color",
+                             type='tristate')
+    parser.add_conf_file_arg("--color-scheme",
+                             dest="color_scheme")
+    parser.add_conf_file_arg("--tmp-dir", dest="tmp_dir")
+    parser.add_conf_file_arg("--abbrev", dest="abbrev", type=int)
+    parser.add_conf_file_arg("--upstream-tag",
+                             dest="upstream_tag")
+    parser.add_conf_file_arg("--spec-file", dest="spec_file")
+    parser.add_conf_file_arg("--packaging-dir",
+                             dest="packaging_dir")
     return parser
 
 
 def parse_args(argv):
     """Parse command line arguments"""
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
         return None, None
-    return parser.parse_args(argv)
+    return parser.parse_known_args(argv[1:])
 
 
 def main(argv):
@@ -427,22 +435,24 @@ def main(argv):
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
-    if len(args) < 2:
+    if len(args) < 1:
         gbp.log.err("No action given.")
         return 1
     else:
-        action = args[1]
+        action = args[0]
 
-    if args[1] in ["export", "import", "rebase", "drop", "switch", "convert"]:
-        pass
-    elif args[1] in ["apply"]:
-        if len(args) != 3:
+    if action in ["export", "import", "rebase", "drop", "switch", "convert"]:
+        if len(args) != 1:
+            gbp.log.err("Invalid options: %s" % ", ".join(args[1:]))
+            return 1
+    elif action in ["apply"]:
+        if len(args) != 2:
             gbp.log.err("No patch name given.")
             return 1
         else:
-            patchfile = args[2]
+            patchfile = args[1]
     else:
-        gbp.log.err("Unknown action '%s'." % args[1])
+        gbp.log.err("Unknown action '%s'." % action)
         return 1
 
     try:

@@ -25,11 +25,12 @@ import subprocess
 import tty
 import termios
 import re
+from argparse import ArgumentDefaultsHelpFormatter, RawDescriptionHelpFormatter
 import configparser
 
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)
-from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+from gbp.config import GbpConfArgParserDebian, GbpConfig
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.git import DebianGitRepository
@@ -202,8 +203,13 @@ def push_branches(remote, branches):
     gitPush([remote['url'], '--tags'])
 
 
-def usage_msg():
-    return """%prog [options] - create a remote git repository
+class GbpHelpFormatter(RawDescriptionHelpFormatter,
+                       ArgumentDefaultsHelpFormatter):
+    pass
+
+
+def descr_msg():
+    return """create a remote git repository
 Actions:
   create         create the repository. This is the default when no action is
                  given.
@@ -212,47 +218,51 @@ Actions:
 
 def build_parser(name, sections=[]):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage=usage_msg(),
-                                       sections=sections)
+        config = GbpConfig(name, extra_sections=sections)
     except (GbpError, configparser.NoSectionError) as err:
         gbp.log.err(err)
         return None
 
-    branch_group = GbpOptionGroup(parser,
-                                  "branch options",
-                                  "branch layout and tracking options")
-    branch_group.add_config_file_option(option_name="remote-url-pattern",
-                                        dest="remote_url")
-    parser.add_option_group(branch_group)
-    branch_group.add_config_file_option(option_name="upstream-branch",
-                                        dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="debian-branch",
-                                        dest="debian_branch")
-    branch_group.add_boolean_config_file_option(option_name="pristine-tar",
-                                                dest="pristine_tar")
-    branch_group.add_boolean_config_file_option(option_name="track",
-                                                dest='track')
-    branch_group.add_boolean_config_file_option(option_name="bare",
-                                                dest='bare')
-    parser.add_option("-v", "--verbose",
-                      action="store_true",
-                      dest="verbose",
-                      default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color",
-                                  dest="color",
-                                  type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_option("--remote-name",
-                      dest="name",
-                      default="origin",
-                      help="The name of the remote, default is 'origin'")
-    parser.add_config_file_option(option_name="template-dir",
-                                  dest="template_dir")
-    parser.add_config_file_option(option_name="remote-config",
-                                  dest="remote_config")
+    parser = GbpConfArgParserDebian.create_parser(prog=name,
+                                                  description=descr_msg(),
+                                                  config=config,
+                                                  formatter_class=GbpHelpFormatter)
+
+    branch_group = parser.add_argument_group("branch options",
+                                             "branch layout and tracking options")
+    branch_group.add_conf_file_arg("--remote-url-pattern",
+                                   dest="remote_url")
+    branch_group.add_conf_file_arg("--upstream-branch",
+                                   dest="upstream_branch")
+    branch_group.add_conf_file_arg("--debian-branch",
+                                   dest="debian_branch")
+    branch_group.add_bool_conf_file_arg("--pristine-tar",
+                                        dest="pristine_tar")
+    branch_group.add_bool_conf_file_arg("--track",
+                                        dest='track')
+    branch_group.add_bool_conf_file_arg("--bare",
+                                        dest='bare')
+    parser.add_arg("-v", "--verbose",
+                   action="store_true",
+                   dest="verbose",
+                   default=False,
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color",
+                             dest="color",
+                             type='tristate')
+    parser.add_conf_file_arg("--color-scheme",
+                             dest="color_scheme")
+    parser.add_arg("--remote-name",
+                   dest="name",
+                   default="origin",
+                   help="The name of the remote, default is 'origin'")
+    parser.add_conf_file_arg("--template-dir",
+                             dest="template_dir")
+    parser.add_conf_file_arg("--remote-config",
+                             dest="remote_config")
+    parser.add_argument("action", metavar="ACTION", nargs="?",
+                        default="create", choices=('create', 'list'),
+                        help="action to take")
     return parser
 
 
@@ -271,11 +281,11 @@ def parse_args(argv):
             sections = ['remote-config %s' % arg.split('=', 1)[1]]
             break
 
-    parser = build_parser(argv[0], sections)
+    parser = build_parser(os.path.basename(argv[0]), sections)
     if not parser:
-        return None, None, None
+        return None, None
 
-    return list(parser.parse_args(argv)) + [parser.config_file_sections]
+    return parser.parse_args(argv[1:]), parser.config.config_file_sections
 
 
 def do_create(options):
@@ -378,25 +388,18 @@ def do_list(sections):
 def main(argv):
     retval = 1
 
-    options, args, sections = parse_args(argv)
+    options, sections = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
-    if len(args) == 1:
-        args.append('create')  # the default
-    elif len(args) > 2:
-        gbp.log.err("Only one action allowed")
-        return 1
-
-    action = args[1]
-    if action == 'create':
+    if options.action == 'create':
         retval = do_create(options)
-    elif action == 'list':
+    elif options.action == 'list':
         retval = do_list(sections)
     else:
-        gbp.log.err("Unknown action '%s'" % action)
+        gbp.log.err("Unknown action '%s'" % options.action)
     return retval
 
 

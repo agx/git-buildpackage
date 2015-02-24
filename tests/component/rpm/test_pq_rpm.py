@@ -18,7 +18,7 @@
 
 import os
 import tempfile
-from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
+from nose.tools import eq_, ok_  # pylint: disable=E0611
 
 from gbp.scripts.pq_rpm import main as pq
 from gbp.git import GitRepository
@@ -60,9 +60,9 @@ class TestPqRpm(RpmRepoTestBase):
         self._clear_log()
 
         # Test invalid cmdline options
-        with assert_raises(SystemExit):
-            with capture_stderr():
-                mock_pq(['--invalid-arg=123'])
+        with capture_stderr():
+            eq_(mock_pq(['export', '--invalid-arg=123']), 1)
+        self._check_log(0, "gbp:error: Invalid options: --invalid-arg=123")
 
     def test_import_outside_repo(self):
         """Run pq-rpm when not in a git repository"""

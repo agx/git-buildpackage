@@ -32,8 +32,7 @@ from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
 from gbp.git.modifier import GitModifier
 from gbp.git.vfs import GitVfs
-from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
-                        no_upstream_branch_msg)
+from gbp.config import GbpConfArgParserDebian, no_upstream_branch_msg
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common import repo_setup
@@ -309,80 +308,85 @@ def disable_pristine_tar(options, reason):
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] /path/to/package.dsc [target]')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    import_group = GbpOptionGroup(parser, "import options",
-                                  "pristine-tar and filtering")
-    tag_group = GbpOptionGroup(parser, "tag options",
-                               "options related to git tag creation")
-    branch_group = GbpOptionGroup(parser, "version and branch naming options",
-                                  "version number and branch layout options")
-    for group in [import_group, branch_group, tag_group]:
-        parser.add_option_group(group)
+    import_group = parser.add_argument_group("import options",
+                                             "pristine-tar and filtering")
+    tag_group = parser.add_argument_group("tag options",
+                                          "options related to git tag creation")
+    branch_group = parser.add_argument_group("version and branch naming options",
+                                             "version number and branch layout options")
 
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    branch_group.add_config_file_option(option_name="debian-branch",
-                                        dest="debian_branch")
-    branch_group.add_config_file_option(option_name="upstream-branch",
-                                        dest="upstream_branch")
-    branch_group.add_boolean_config_file_option(option_name="create-missing-branches",
-                                                dest="create_missing_branches")
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", dest="color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme",
+                             dest="color_scheme")
+    branch_group.add_conf_file_arg("--debian-branch",
+                                   dest="debian_branch")
+    branch_group.add_conf_file_arg("--upstream-branch",
+                                   dest="upstream_branch")
+    branch_group.add_bool_conf_file_arg("--create-missing-branches",
+                                        dest="create_missing_branches")
 
-    tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                                             dest="sign_tags")
-    tag_group.add_config_file_option(option_name="keyid",
-                                     dest="keyid")
-    tag_group.add_config_file_option(option_name="debian-tag",
-                                     dest="debian_tag")
-    tag_group.add_config_file_option(option_name="upstream-tag",
-                                     dest="upstream_tag")
-    tag_group.add_option("--skip-debian-tag", dest="skip_debian_tag",
-                         action="store_true", default=False,
-                         help="Don't add a tag after importing the Debian patch")
+    tag_group.add_bool_conf_file_arg("--sign-tags",
+                                     dest="sign_tags")
+    tag_group.add_conf_file_arg("--keyid",
+                                dest="keyid")
+    tag_group.add_conf_file_arg("--debian-tag",
+                                dest="debian_tag")
+    tag_group.add_conf_file_arg("--upstream-tag",
+                                dest="upstream_tag")
+    tag_group.add_arg("--skip-debian-tag", dest="skip_debian_tag",
+                      action="store_true", default=False,
+                      help="Don't add a tag after importing the Debian patch")
 
-    import_group.add_config_file_option(option_name="filter",
-                                        dest="filters", action="append")
-    import_group.add_boolean_config_file_option(option_name="pristine-tar",
-                                                dest="pristine_tar")
-    import_group.add_option("--allow-same-version", action="store_true",
-                            dest="allow_same_version", default=False,
-                            help="allow import of already imported version")
-    import_group.add_boolean_config_file_option(option_name="author-is-committer",
-                                                dest="author_committer")
-    import_group.add_boolean_config_file_option(option_name="author-date-is-committer-date",
-                                                dest="author_committer_date")
-    import_group.add_boolean_config_file_option(option_name="allow-unauthenticated",
-                                                dest="allow_unauthenticated")
+    import_group.add_conf_file_arg("--filter",
+                                   dest="filters", action="append")
+    import_group.add_bool_conf_file_arg("--pristine-tar",
+                                        dest="pristine_tar")
+    import_group.add_arg("--allow-same-version", action="store_true",
+                         dest="allow_same_version", default=False,
+                         help="allow import of already imported version")
+    import_group.add_bool_conf_file_arg("--author-is-committer",
+                                        dest="author_committer")
+    import_group.add_bool_conf_file_arg("--author-date-is-committer-date",
+                                        dest="author_committer_date")
+    import_group.add_bool_conf_file_arg("--allow-unauthenticated",
+                                        dest="allow_unauthenticated")
 
-    parser.add_config_file_option(option_name="repo-user", dest="repo_user",
-                                  choices=['DEBIAN', 'GIT'])
-    parser.add_config_file_option(option_name="repo-email", dest="repo_email",
-                                  choices=['DEBIAN', 'GIT'])
-    parser.add_option("--download", dest='download', action="store_true",
-                      default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-dsc(1).")
+    parser.add_conf_file_arg("--repo-user", dest="repo_user",
+                             choices=['DEBIAN', 'GIT'])
+    parser.add_conf_file_arg("--repo-email", dest="repo_email",
+                             choices=['DEBIAN', 'GIT'])
+    parser.add_arg("--download", dest='download', action="store_true",
+                   default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-dsc(1).")
+    parser.add_argument("package", metavar="PACKAGE",
+                        help="package to import")
+    parser.add_argument("target_dir", metavar="TARGET_DIR", nargs="?",
+                        help="target directory where to import")
     return parser
 
 
 def parse_args(argv):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
+        return None
 
-    (options, args) = parser.parse_args(argv[1:])
+    options = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if options.download:
         gbp.log.warn("Passing --download explicitly is deprecated.")
 
-    return options, args
+    download, pkg = is_download(options.package)
+    # honor options.download until removed
+    options.download = download or options.download
+
+    return options
 
 
 def is_download(pkg):
@@ -409,34 +413,13 @@ def is_download(pkg):
     return (False, pkg)
 
 
-def parse_all(argv):
-    options, args = parse_args(argv)
-    if not options:
-        return None, None, None
-
-    if len(args) == 1:
-        pkg = args[0]
-        target = None
-    elif len(args) == 2:
-        pkg = args[0]
-        target = args[1]
-    else:
-        gbp.log.err("Need to give exactly one package to import. Try --help.")
-        return None, None, None
-
-    download, pkg = is_download(pkg)
-    # honor options.download until removed
-    options.download = download or options.download
-    return options, pkg, target
-
-
 def main(argv):
     dirs = dict(top=os.path.abspath(os.curdir))
     needs_repo = False
     ret = 1
     skipped = False
 
-    options, pkg, target = parse_all(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 
@@ -454,11 +437,11 @@ def main(argv):
             needs_repo = True
 
         if options.download:
-            dscfile = download_source(pkg,
+            dscfile = download_source(options.package,
                                       dirs=dirs,
                                       unauth=options.allow_unauthenticated)
         else:
-            dscfile = pkg
+            dscfile = options.package
 
         dsc = DscFile.parse(dscfile)
         if dsc.pkgformat not in ['1.0', '3.0']:
@@ -467,7 +450,7 @@ def main(argv):
             print_dsc(dsc)
 
         if needs_repo:
-            target = target or dsc.pkg
+            target = options.target_dir or dsc.pkg
             if os.path.exists(target):
                 raise GbpError("Directory '%s' already exists. If you want to import into it, "
                                "please change into this directory otherwise move it away first."

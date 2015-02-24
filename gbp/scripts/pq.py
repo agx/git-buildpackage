@@ -23,7 +23,8 @@ import shutil
 import sys
 import tempfile
 import re
-from gbp.config import GbpOptionParserDebian
+from argparse import ArgumentDefaultsHelpFormatter, RawDescriptionHelpFormatter
+from gbp.config import GbpConfArgParserDebian
 from gbp.deb.source import DebianSource
 from gbp.deb.git import DebianGitRepository
 from gbp.git import GitRepositoryError
@@ -396,8 +397,13 @@ def switch_pq(repo, branch, options):
         switch_to_pq_branch(repo, branch)
 
 
-def usage_msg():
-    return """%prog [options] action - maintain patches on a patch queue branch
+class GbpPqHelpFormatter(RawDescriptionHelpFormatter,
+                         ArgumentDefaultsHelpFormatter):
+    pass
+
+
+def descr_msg():
+    return """Maintain patches on a patch queue branch
 Actions:
   export         export the patch queue associated to the current branch
                  into a quilt patch series in debian/patches/ and update the
@@ -411,40 +417,43 @@ Actions:
 
 
 def build_parser(name):
+    usage = "%(prog)s [options] action"
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name),
-                                       usage=usage_msg())
+        parser = GbpConfArgParserDebian.create_parser(prog=name,
+                                                      usage=usage,
+                                                      description=descr_msg(),
+                                                      formatter_class=GbpPqHelpFormatter)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
-    parser.add_config_file_option(option_name="patch-num-format", dest="patch_num_format")
-    parser.add_boolean_config_file_option(option_name="renumber", dest="renumber")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
-    parser.add_config_file_option(option_name="time-machine", dest="time_machine", type="int")
-    parser.add_boolean_config_file_option("drop", dest='drop')
-    parser.add_boolean_config_file_option(option_name="commit", dest="commit")
-    parser.add_config_file_option(option_name="abbrev", dest="abbrev", type="int")
-    parser.add_option("--force", dest="force", action="store_true", default=False,
-                      help="in case of import even import if the branch already exists")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_config_file_option(option_name="meta-closes", dest="meta_closes")
-    parser.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
-    parser.add_config_file_option(option_name="pq-from", dest="pq_from", choices=['DEBIAN', 'TAG'])
-    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    parser.add_bool_conf_file_arg("--patch-numbers", dest="patch_numbers")
+    parser.add_conf_file_arg("--patch-num-format", dest="patch_num_format")
+    parser.add_bool_conf_file_arg("--renumber", dest="renumber")
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+                   help="verbose command execution")
+    parser.add_arg("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
+    parser.add_conf_file_arg("--time-machine", dest="time_machine", type=int)
+    parser.add_bool_conf_file_arg("--drop", dest='drop')
+    parser.add_bool_conf_file_arg("--commit", dest="commit")
+    parser.add_conf_file_arg("--abbrev", dest="abbrev", type=int)
+    parser.add_arg("--force", dest="force", action="store_true", default=False,
+                   help="in case of import even import if the branch already exists")
+    parser.add_conf_file_arg("--color", dest="color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme",
+                             dest="color_scheme")
+    parser.add_conf_file_arg("--meta-closes", dest="meta_closes")
+    parser.add_conf_file_arg("--meta-closes-bugnum", dest="meta_closes_bugnum")
+    parser.add_conf_file_arg("--pq-from", dest="pq_from", choices=['DEBIAN', 'TAG'])
+    parser.add_conf_file_arg("--upstream-tag", dest="upstream_tag")
     return parser
 
 
 def parse_args(argv):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
         return None, None
-    return parser.parse_args(argv)
+    return parser.parse_known_args(argv[1:])
 
 
 def main(argv):
@@ -456,22 +465,24 @@ def main(argv):
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
-    if len(args) < 2:
+    if len(args) < 1:
         gbp.log.err("No action given.")
         return 1
     else:
-        action = args[1]
+        action = args[0]
 
-    if args[1] in ["export", "import", "rebase", "drop", "switch"]:
-        pass
-    elif args[1] in ["apply"]:
-        if len(args) != 3:
+    if action in ["export", "import", "rebase", "drop", "switch"]:
+        if len(args) != 1:
+            gbp.log.err("Invalid options: %s" % ", ".join(args[1:]))
+            return 1
+    elif action in ["apply"]:
+        if len(args) != 2:
             gbp.log.err("No patch name given.")
             return 1
         else:
-            patchfile = args[2]
+            patchfile = args[1]
     else:
-        gbp.log.err("Unknown action '%s'." % args[1])
+        gbp.log.err("Unknown action '%s'." % action)
         return 1
 
     try:

@@ -20,13 +20,14 @@ import os
 import shutil
 import sys
 import subprocess
-from nose.tools import eq_
+from nose.tools import assert_raises, eq_
 from io import StringIO
 
 from gbp.scripts.import_orig import main as import_orig
 
 from tests.component import ComponentTestBase, ComponentTestGitRepository
 from tests.component.rpm import RPM_TEST_DATA_DIR
+from tests.testutils import capture_stderr
 
 # Disable "Method could be a function warning"
 # pylint: disable=R0201
@@ -90,13 +91,16 @@ class TestImportOrig(ImportOrigTestBase):
         origs = [os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2'),
                  os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')]
         # Test empty args
-        eq_(mock_import([]), 1)
-        self._clear_log()
+        with capture_stderr():
+            with assert_raises(SystemExit) as err:
+                eq_(mock_import([]), 1)
+                eq_(err.code, 2)
 
         # Test multiple archives
-        eq_(mock_import([] + origs), 1)
-        self._check_log(0, 'gbp:error: More than one archive specified')
-        self._clear_log()
+        with capture_stderr():
+            with assert_raises(SystemExit) as err:
+                eq_(mock_import([] + origs), 1)
+                eq_(err.code, 2)
 
         # Check that nothing is in the repo
         self._check_repo_state(repo, None, [])

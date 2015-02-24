@@ -21,7 +21,7 @@ import os
 import sys
 
 import gbp.log
-from gbp.config import GbpOptionParserDebian
+from gbp.config import GbpConfArgParserDebian
 from gbp.deb.git import DebianGitRepository, GitRepositoryError
 from gbp.deb.source import DebianSourceError
 from gbp.deb.source import DebianSource
@@ -31,38 +31,39 @@ from gbp.scripts.common import ExitCodes
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name),
-                                       usage='%prog [options]')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
-                      action="store_true", help="dry run, don't push.")
-    parser.add_config_file_option(option_name="upstream-branch",
-                                  dest="upstream_branch")
-    parser.add_config_file_option(option_name="upstream-tag",
-                                  dest="upstream_tag")
-    parser.add_config_file_option(option_name="debian-branch",
-                                  dest="debian_branch")
-    parser.add_config_file_option(option_name="debian-tag",
-                                  dest="debian_tag")
-    parser.add_boolean_config_file_option(option_name="pristine-tar",
-                                          dest="pristine_tar")
-    parser.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_option("--verbose", action="store_true", dest="verbose",
-                      default=False, help="verbose command execution")
+    parser.add_arg("-d", "--dry-run", dest="dryrun", default=False,
+                   action="store_true", help="dry run, don't push.")
+    parser.add_conf_file_arg("--upstream-branch",
+                             dest="upstream_branch")
+    parser.add_conf_file_arg("--upstream-tag",
+                             dest="upstream_tag")
+    parser.add_conf_file_arg("--debian-branch",
+                             dest="debian_branch")
+    parser.add_conf_file_arg("--debian-tag",
+                             dest="debian_tag")
+    parser.add_bool_conf_file_arg("--pristine-tar",
+                                  dest="pristine_tar")
+    parser.add_bool_conf_file_arg("--ignore-branch", dest="ignore_branch")
+    parser.add_conf_file_arg("--color", dest="color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme",
+                             dest="color_scheme")
+    parser.add_arg("--verbose", action="store_true", dest="verbose",
+                   default=False, help="verbose command execution")
+    parser.add_argument("remote", metavar="REMOTE", nargs="?",
+                        help="remote where to push")
     return parser
 
 
 def parse_args(argv):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
-    return parser.parse_args(argv)
+        return None
+    return parser.parse_args(argv[1:])
 
 
 def do_push(repo, dests, to_push, dry_run):
@@ -108,20 +109,14 @@ def get_remote(repo, branch):
 def main(argv):
     retval = 1
     branch = None
-    dest = None
     to_push = {
         'refs': {},
         'tags': [],
     }
 
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
-
-    if len(args) > 2:
-        gbp.log.err("Only a single remote repository can be given")
-    elif len(args) == 2:
-        dest = args[1]
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     try:
@@ -140,8 +135,7 @@ def main(argv):
                              "on '%s'" % branch if branch else 'in detached HEAD state'))
                 raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
 
-        if not dest:
-            dest = get_remote(repo, branch)
+        dest = options.remote or get_remote(repo, branch)
 
         if options.debian_tag != '':
             dtag = repo.version_to_tag(options.debian_tag, source.version)
