@@ -39,6 +39,7 @@
       <arg><option>--spawn-editor=<replaceable>[always|release|no]</replaceable></option></arg>
       <arg><option>--editor-cmd=</option><replaceable>EDITOR</replaceable></arg>
       <arg><option>--commit</option></arg>
+      <arg><option>--commit-msg</option><replaceable>MSG-FORMAT</replaceable></arg>
       <arg><option>--customizations=</option><replaceable>CUSTOMIZATION-FILE</replaceable></arg>
       <arg choice="plain"><replaceable>[PATH1 PATH2]</replaceable></arg>
     </cmdsynopsis>
@@ -273,6 +274,16 @@
           addition to the changelog modifications all other staged changes are
           committed, too, making it possible to update other files in the same
           commit.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--commit-msg=</option><replaceable>MSG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Format string for the commit message when committing changes
+          (when <option>--commit</option> is given).
           </para>
         </listitem>
       </varlistentry>
