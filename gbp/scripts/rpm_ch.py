@@ -320,11 +320,24 @@ def update_changelog(changelog, entries, repo, spec, options):
         top_section.append_entry(entry)
 
 
-def commit_changelog(repo, changelog, author, committer, edit):
+def create_commit_message(spec, options):
+    """Generate commit message"""
+    fields = spec.version
+    fields['version'] = compose_version_str(spec.version)
+    fields['vendor'] = options.vendor
+    fields['pkg'] = spec.name
+    try:
+        return options.commit_msg % fields
+    except KeyError as err:
+        raise GbpError("Unknown key %s in commit-msg string, "
+                       "only %s are accepted" % (err, fields.keys()))
+
+
+def commit_changelog(repo, changelog, message, author, committer, edit):
     """Commit changelog to Git"""
     repo.add_files(changelog.path)
-    repo.commit_staged("Update changelog", author_info=author,
-                       committer_info=committer, edit=edit)
+    repo.commit_staged(message, author_info=author, committer_info=committer,
+                       edit=edit)
 
 
 def build_parser(name):
@@ -406,6 +419,8 @@ def build_parser(name):
     # Commit group options
     commit_grp.add_option("-c", "--commit", action="store_true",
                           help="commit changes")
+    commit_grp.add_config_file_option(option_name="commit-msg",
+                                      dest="commit_msg")
     return parser
 
 
@@ -468,7 +483,8 @@ def main(argv):
 
         if options.commit:
             edit = True if editor_cmd else False
-            commit_changelog(repo, ch_file, None, None, edit)
+            msg = create_commit_message(spec, options)
+            commit_changelog(repo, ch_file, msg, None, None, edit)
 
     except (GbpError, GitRepositoryError, ChangelogError, NoSpecError) as err:
         if len(err.__str__()):

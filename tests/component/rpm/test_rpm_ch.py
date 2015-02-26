@@ -277,6 +277,17 @@ class TestRpmCh(RpmRepoTestBase):
         eq_(repo.get_commit_info('HEAD')['files'],
             {'M': [b'foo.txt', b'gbp-test.spec']})
 
+    def test_option_commit_msg(self):
+        """Test the --commit-msg cmdline option"""
+        repo = self.init_test_repo('gbp-test2')
+
+        eq_(mock_ch(['--commit', '--since=HEAD^', '--commit-msg=Foo']), 0)
+        eq_(repo.get_commit_info('HEAD')['subject'], 'Foo')
+
+        # Unknown key in format string causes failure
+        eq_(mock_ch(['--commit', '--since=HEAD^', '--commit-msg=%(foo)s']), 1)
+        self._check_log(-1, "gbp:error: Unknown key 'foo' in commit-msg string")
+
     def test_option_editor_cmd(self):
         """Test the --editor-cmd and --spawn-editor cmdline options"""
         repo = self.init_test_repo('gbp-test-native')
