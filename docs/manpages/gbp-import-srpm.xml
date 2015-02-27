@@ -25,6 +25,7 @@
       <arg><option>--author-is-committer</option></arg>
       <arg><option>--packaging-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
       <arg><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--skip-packaging-tag</option></arg>
       <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--filter=</option><replaceable>PATTERN</replaceable></arg>
       <arg><option>--keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
@@ -123,6 +124,15 @@
           <para>
           Use this tag format when tagging released versions,
           default is <replaceable>%(vendor)s/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--skip-packaging-tag</option>
+        </term>
+        <listitem>
+          <para>
+          Do not create &packaging; tag after importing the packaging files.
           </para>
         </listitem>
       </varlistentry>

@@ -174,6 +174,9 @@ def build_parser(name):
                                      dest="packaging_tag")
     tag_group.add_config_file_option(option_name="upstream-tag",
                                      dest="upstream_tag")
+    tag_group.add_option("--skip-packaging-tag", dest="skip_packaging_tag",
+                         action="store_true",
+                         help="Don't add a tag after importing packaging files")
 
     import_group.add_config_file_option(option_name="filter",
                                         dest="filters", action="append")
@@ -390,11 +393,12 @@ def main(argv):
                                                   author=author,
                                                   committer=committer,
                                                   create_missing_branch=options.create_missing_branches)
-                repo.create_tag(name=upstream_tag,
-                                msg=msg,
-                                commit=upstream_commit,
-                                sign=options.sign_tags,
-                                keyid=options.keyid)
+                if not (options.native and options.skip_packaging_tag):
+                    repo.create_tag(name=upstream_tag,
+                                    msg=msg,
+                                    commit=upstream_commit,
+                                    sign=options.sign_tags,
+                                    keyid=options.keyid)
 
                 if not options.native:
                     if options.pristine_tar:
@@ -423,7 +427,6 @@ def main(argv):
                                 "option.")
                     raise GbpError
 
-            tag = repo.version_to_tag(options.packaging_tag, tag_str_fields)
             msg = "%s release %s" % (options.vendor, full_version)
 
             if options.orphan_packaging or not sources:
@@ -457,11 +460,13 @@ def main(argv):
                 force_to_branch_head(repo, options.packaging_branch)
 
             # Create packaging tag
-            repo.create_tag(name=tag,
-                            msg=msg,
-                            commit=commit,
-                            sign=options.sign_tags,
-                            keyid=options.keyid)
+            if not options.skip_packaging_tag:
+                tag = repo.version_to_tag(options.packaging_tag, tag_str_fields)
+                repo.create_tag(name=tag,
+                                msg=msg,
+                                commit=commit,
+                                sign=options.sign_tags,
+                                keyid=options.keyid)
 
         force_to_branch_head(repo, options.packaging_branch)
 

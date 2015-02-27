@@ -214,12 +214,20 @@ class TestImportPacked(ComponentTestBase):
             1)
         self._check_log(-1, ".*Missing value 'foo' in.*")
 
-        # Try with good keywords
+        # Try with good keywords, with --skip-packaging-tag
+        eq_(mock_import(['--no-pristine-tar', '--vendor=foo',
+                         '--skip-packaging-tag',
+                         '--packaging-tag=%(vendor)s/%(version)s',
+                         '--upstream-tag=upst/%(version)s', srpm]), 0)
+        eq_(repo.describe('upstream'), 'upst/1.0')
+        eq_(len(repo.get_tags()), 1)
+
+        # Re-import, creating packaging tag
         eq_(mock_import(['--no-pristine-tar', '--vendor=foo',
                          '--packaging-tag=%(vendor)s/%(version)s',
                          '--upstream-tag=upst/%(version)s', srpm]), 0)
         eq_(repo.describe('HEAD'), 'foo/1.0-1')
-        eq_(repo.describe('upstream'), 'upst/1.0')
+        eq_(len(repo.get_tags()), 2)
 
     def test_tagging_native(self):
         """Test tagging of native packages with import-srpm"""
@@ -230,11 +238,19 @@ class TestImportPacked(ComponentTestBase):
                          srpm, '--native']), 1)
         self._check_log(-1, ".*Missing value 'foo' in {.*")
 
-        # Try with good keywords, upstream tag format should not matter
+        # Try with good keywords, with --skip-packaging-tag.
+        # Upstream tag format should not matter
         eq_(mock_import(['--no-pristine-tar', '--vendor=foo', '--native',
+                         '--skip-packaging-tag',
                          '--packaging-tag=%(vendor)s/%(version)s',
                          '--upstream-tag=%(foo)s', srpm]), 0)
         repo = GitRepository('gbp-test-native')
+        eq_(len(repo.get_tags()), 0)
+
+        # Run again, now creating packaging tag
+        eq_(mock_import(['--no-pristine-tar', '--vendor=foo', '--native',
+                         '--packaging-tag=%(vendor)s/%(version)s',
+                         '--upstream-tag=%(foo)s', srpm]), 0)
         eq_(repo.describe('HEAD'), 'foo/1.0-1')
 
     def test_misc_options(self):
