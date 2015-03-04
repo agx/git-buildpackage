@@ -76,8 +76,6 @@ class PristineTar(Command):
         @param upstream: the upstream branch to diff against
         @type upstream: C{str}
         """
-        ref = 'refs/heads/%s' % upstream
-
         self.run_error = ("Couldn't commit to '%s' with upstream '%s'" %
                           (self.branch, upstream))
         self.__call__(['commit', archive, upstream])
