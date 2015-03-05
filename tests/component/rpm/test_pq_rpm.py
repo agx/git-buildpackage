@@ -113,9 +113,11 @@ class TestPqRpm(RpmRepoTestBase):
         self._check_repo_state(repo, 'patch-queue/master-orphan', branches,
                                files)
 
-        # Test export
-        eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s',
-                     '--spec-file', 'packaging/gbp-test2.spec']), 0)
+        # Test export with --drop
+        branches.remove('patch-queue/master-orphan')
+        eq_(mock_pq(['export', '--drop', '--upstream-tag',
+                     'upstream/%(version)s', '--spec-file',
+                     'packaging/gbp-test2.spec']), 0)
         self._check_repo_state(repo, 'master-orphan', branches, clean=False)
         eq_(repo.status()[' M'], [b'packaging/gbp-test2.spec'])
         self._has_patches('packaging/gbp-test2.spec', patches)

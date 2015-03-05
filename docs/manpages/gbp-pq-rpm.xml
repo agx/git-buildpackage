@@ -25,6 +25,7 @@
       <arg><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
       <arg><option>--abbrev=</option><replaceable>num</replaceable></arg>
       <arg><option>--force</option></arg>
+      <arg><option>--[no-]drop</option></arg>
       <arg><option>--[no-]patch-numbers</option></arg>
       <group choice="plain">
         <arg><option>drop</option></arg>
@@ -176,6 +177,15 @@
           <para>
           Import even if the development (patch-queue) branch already exists.
           Only valid for the import action.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]drop</option></term>
+        <listitem>
+          <para>
+          Whether to drop (delete) the patch queue branch after a succesful
+          export.
           </para>
         </listitem>
       </varlistentry>
