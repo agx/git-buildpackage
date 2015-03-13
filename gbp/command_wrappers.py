@@ -40,8 +40,7 @@ class Command(object):
                  capture_stderr=False):
         self.cmd = cmd
         self.args = args
-        self.run_error = "Couldn't run '%s'" % (" ".join([self.cmd] +
-                                                         self.args))
+        self.run_error = "'%s' failed" % (" ".join([self.cmd] + self.args))
         self.shell = shell
         self.retcode = 1
         self.stderr = ''
@@ -91,12 +90,11 @@ class Command(object):
         try:
             retcode = self.__call(args)
             if retcode < 0:
-                err_detail = "%s was terminated by signal %d" % (self.cmd,
-                                                                 -retcode)
+                err_detail = "it was terminated by signal %d" % -retcode
             elif retcode > 0:
-                err_detail = "%s returned %d" % (self.cmd, retcode)
+                err_detail = "it exited with %d" % retcode
         except OSError as err:
-            err_detail = "Execution failed: %s" % err
+            err_detail = "execution failed: %s" % err
             retcode = 1
         if retcode and not quiet:
             log.err("%s: %s" % (self.run_error, err_detail))

@@ -18,10 +18,10 @@ docs/manpage.links
 docs/manpage.refs
 docs/version.ent
 
-debian/git-buildpackage.*.debhelper
-debian/git-buildpackage.debhelper.*
+debian/git-buildpackage*.debhelper*
 debian/python-module-stampdir/
 debian/files
-debian/git-buildpackage.substvars
+debian/git-buildpackage*.substvars
 debian/git-buildpackage/
-
+debian/git-buildpackage-rpm/
+debian/tmp/

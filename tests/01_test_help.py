@@ -25,4 +25,13 @@ class TestHelp(unittest.TestCase):
                               m.main,
                               ['doesnotmatter', '--help'])
 
+    """Test help output of RPM-specific commands"""
+    def testHelpRpm(self):
+        for script in ['import_srpm']:
+            module = 'gbp.scripts.%s' % script
+            m = __import__(module, globals(), locals(), ['main'], -1)
+            self.assertRaises(SystemExit,
+                              m.main,
+                              ['doesnotmatter', '--help'])
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

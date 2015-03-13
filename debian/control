@@ -14,10 +14,13 @@ Build-Depends:
  python-coverage,
  python-dateutil,
  python-epydoc,
+ python-mock,
  python-nose,
  python-nosexcover,
  python-pkg-resources,
+ python-rpm,
  python-setuptools,
+ rpm,
  sgml2x,
 # For the testsuite
  bzip2,
@@ -54,3 +57,17 @@ Description: Suite to help with Debian packages in Git repositories
   * gbp {pull,clone}: clone and pull from remote repos
   * gbp pq: manage debian/patches easily
   * gbp create-remote-repo: create remote repositories
+
+Package: git-buildpackage-rpm
+Architecture: all
+Depends: ${python:Depends},
+ ${misc:Depends},
+ git-buildpackage (= ${binary:Version}),
+ python-rpm,
+ rpm,
+Recommends: pristine-tar (>= 0.5)
+Suggests: python-notify, unzip
+Description: Suite to help with RPM packages in Git repositories
+ This package contains the following tools:
+  * gbp import-srpm: import existing RPM source packages into a git
+    repository

@@ -21,8 +21,7 @@
     <cmdsynopsis>
       &gbp-config;
 
-      <arg><option>--verbose</option></arg>
-      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      &man.common.options.synopsis;
       <group choice='req'>
 	<arg choice="plain"><replaceable>command.option</replaceable></arg>
 	<arg choice="plain"><replaceable>command</replaceable></arg>
@@ -40,26 +39,13 @@
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
-      <varlistentry>
-        <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
-        <listitem>
-          <para>verbose execution</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
-        </term>
-        <listitem>
-          <para>Whether to use colored output.</para>
-        </listitem>
-      </varlistentry>
+      &man.common.options.description;
     </variablelist>
   </refsect1>
   <refsect1>
     <title>EXIT CODES</title>
     <para>
-    When &gbp-config finishes it indicates success or failure with its exit code:
+    When &gbp-config; finishes it indicates success or failure with its exit code:
     </para>
     <variablelist>
       <varlistentry>
@@ -104,10 +90,7 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>

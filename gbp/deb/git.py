@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011 Guido Günther <agx@sigxcpu.org>
+# (C) 2011,2014 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -19,6 +19,7 @@
 import re
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
+from gbp.format import format_msg
 
 class DebianGitRepository(GitRepository):
     """A git repository that holds the source of a Debian package"""
@@ -104,7 +105,7 @@ class DebianGitRepository(GitRepository):
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
         'debian/0%0_0'
         """
-        return format % dict(version=DebianGitRepository._sanitize_version(version))
+        return format_msg(format, dict(version=DebianGitRepository._sanitize_version(version)))
 
     @staticmethod
     def _sanitize_version(version):

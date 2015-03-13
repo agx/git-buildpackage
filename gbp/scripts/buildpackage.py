@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2013 Guido Günther <agx@sigxcpu.org>
+# (C) 2006-2014 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-"""run commands to build a debian package out of a git repository"""
+"""Build a debian package out of a GIT repository"""
 
 import ConfigParser
 import errno
@@ -29,7 +29,9 @@ from gbp.command_wrappers import (Command,
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError
+from gbp.format import format_msg
 from gbp.git.vfs import GitVfs
+from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
@@ -37,7 +39,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              git_archive_submodules,
                                              git_archive_single, dump_tree,
                                              write_wc, drop_index)
-from gbp.pkg import (UpstreamSource, compressor_opts, compressor_aliases)
+from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
 def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules):
     "create a compressed orig tarball in output_dir using git_archive"
@@ -171,7 +173,7 @@ def extract_orig(orig_tarball, dest_dir):
     gbp.log.info("Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir))
 
     move_old_export(dest_dir)
-    upstream = UpstreamSource(orig_tarball)
+    upstream = DebianUpstreamSource(orig_tarball)
     upstream.unpack(dest_dir)
 
     # Check if tarball extracts into a single folder or not:
@@ -241,6 +243,8 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
 def get_upstream_tree(repo, cp, options):
     """Determine the upstream tree from the given options"""
     if options.upstream_tree.upper() == 'TAG':
+        if cp['Upstream-Version'] is None:
+            raise GitRepositoryError("Can't determine upstream version from changelog")
         upstream_tree = repo.version_to_tag(options.upstream_tag,
                                             cp['Upstream-Version'])
     elif options.upstream_tree.upper() == 'BRANCH':
@@ -316,7 +320,7 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
             else:
                 commit = repo.pristine_tar_branch
             tarball = repo.get_commit_info(commit)['subject']
-            comp_type = du.DebianPkgPolicy.get_compression(tarball)
+            (base_name, archive_fmt, comp_type) = parse_archive_filename(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:
                 comp_type = 'gzip'
@@ -399,6 +403,7 @@ def build_parser(name, prefix=None):
     tag_group.add_boolean_config_file_option(option_name="sign-tags", dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid", dest="keyid")
     tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
+    tag_group.add_config_file_option(option_name="debian-tag-msg", dest="debian_tag_msg")
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
@@ -482,6 +487,13 @@ def parse_args(argv, prefix):
     return options, args, dpkg_args
 
 
+class Hook(RunAtCommand):
+    "A hook run during the build"
+    def __init__(self, name, *args, **kwargs):
+        RunAtCommand.__init__(self, *args, **kwargs)
+        self.run_error = '%s-hook %s' % (name, self.run_error)
+
+
 def main(argv):
     retval = 0
     prefix = "git-"
@@ -547,9 +559,9 @@ def main(argv):
 
                 # Run postexport hook
                 if options.postexport:
-                    RunAtCommand(options.postexport, shell=True,
-                                 extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                            'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
+                    Hook('Postexport', options.postexport, shell=True,
+                         extra_env={'GBP_GIT_DIR': repo.git_dir,
+                                    'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
 
                 major = (source.changelog.debian_version if source.is_native()
                          else source.changelog.upstream_version)
@@ -569,9 +581,9 @@ def main(argv):
                 build_dir = repo_dir
 
             if options.prebuild:
-                RunAtCommand(options.prebuild, shell=True,
-                             extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                        'GBP_BUILD_DIR': build_dir})(dir=build_dir)
+                Hook('Prebuild', options.prebuild, shell=True,
+                     extra_env={'GBP_GIT_DIR': repo.git_dir,
+                                'GBP_BUILD_DIR': build_dir})(dir=build_dir)
 
             setup_pbuilder(options)
             # Finally build the package:
@@ -584,24 +596,26 @@ def main(argv):
                                            source.changelog.noepoch,
                                            changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
-                Command(options.postbuild, shell=True,
-                        extra_env={'GBP_CHANGES_FILE': changes,
-                                   'GBP_BUILD_DIR': build_dir})()
+                Hook('Postbuild', options.postbuild, shell=True,
+                     extra_env={'GBP_CHANGES_FILE': changes,
+                                'GBP_BUILD_DIR': build_dir})()
         if options.tag or options.tag_only:
-            gbp.log.info("Tagging %s" % source.changelog.version)
             tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
+            gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
+            tag_msg = format_msg(options.debian_tag_msg,
+                                 dict(pkg=source.sourcepkg,
+                                      version=source.changelog.version))
             repo.create_tag(name=tag,
-                            msg="%s Debian release %s" % (source.sourcepkg,
-                                                          source.changelog.version),
+                            msg=tag_msg,
                             sign=options.sign_tags, keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
-                Command(options.posttag, shell=True,
-                        extra_env={'GBP_TAG': tag,
-                                   'GBP_BRANCH': branch or '(no branch)',
-                                   'GBP_SHA1': sha})()
+                Hook('Posttag', options.posttag, shell=True,
+                     extra_env={'GBP_TAG': tag,
+                                'GBP_BRANCH': branch or '(no branch)',
+                                'GBP_SHA1': sha})()
     except CommandExecFailed:
         retval = 1
     except (GbpError, GitRepositoryError) as err:

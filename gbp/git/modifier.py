@@ -41,7 +41,7 @@ class GitTz(datetime.tzinfo):
         return datetime.timedelta(0)
 
 class GitModifier(object):
-    """Stores authorship/comitter information"""
+    """Stores authorship/committer information"""
     def __init__(self, name=None, email=None, date=None):
         """
         @param name: the modifier's name
@@ -77,10 +77,10 @@ class GitModifier(object):
                              "datetime object or git raw date" % date)
 
     def _get_env(self, who):
-        """Get author or comitter information as env var dictionary"""
+        """Get author or committer information as env var dictionary"""
         who = who.upper()
         if who not in ['AUTHOR', 'COMMITTER']:
-            raise GitModifierError("Neither comitter nor author")
+            raise GitModifierError("Neither committer nor author")
 
         extra_env = {}
         if self.name:
@@ -130,7 +130,7 @@ class GitModifier(object):
 
     def get_committer_env(self):
         """
-        Get env vars for comitter information
+        Get env vars for committer information
 
         >>> g = GitModifier("foo", "bar")
         >>> g.get_committer_env()

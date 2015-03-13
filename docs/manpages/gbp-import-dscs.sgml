@@ -80,26 +80,11 @@ options shipped in the package source.</para>
     <title>SEE ALSO</title>
 
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-import-dsc</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-import-orig</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-dch</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>,
+      <xref linkend="man.gbp.import.dsc">,
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.import.orig">,
+      <xref linkend="man.gbp.dch">,
+      <xref linkend="man.gbp.conf">,
       &man.seealso.common;
     </para>
   </refsect1>

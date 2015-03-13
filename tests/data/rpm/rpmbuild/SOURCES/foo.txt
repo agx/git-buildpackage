@@ -1,0 +1,3 @@
+FOO:
+
+file for testing rpm support of git-buildpackage.

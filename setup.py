@@ -42,10 +42,25 @@ def fetch_version():
 
     return version
 
+
+def readme():
+    with open('README') as file:
+        return file.read()
+
 setup(name = "gbp",
       version = fetch_version(),
       author = u'Guido Günther',
       author_email = 'agx@sigxcpu.org',
+      url = 'https://honk.sigxcpu.org/piki/projects/git-buildpackage/',
+      description = 'Suite to help with Debian packages in Git repositories',
+      license = 'GPLv2+',
+      long_description = readme(),
+      classifiers = [
+          'Environment :: Console',
+          'Programming Language :: Python :: 2',
+          'Topic :: Software Development :: Version Control :: Git',
+          'Operating System :: POSIX :: Linux',
+      ],
       scripts = [ 'bin/git-buildpackage',
                   'bin/git-import-dsc',
                   'bin/git-import-orig',
