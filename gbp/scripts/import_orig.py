@@ -208,7 +208,7 @@ def build_parser(name):
                       dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                       dest="upstream_branch")
-    branch_group.add_option("--upstream-vcs-tag", dest="vcs_tag",
+    branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag",
                             help="Upstream VCS tag add to the merge commit")
     branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
 
@@ -357,7 +357,7 @@ def main(argv):
             msg = upstream_import_commit_msg(options, version)
 
             if options.vcs_tag:
-                parents = [repo.rev_parse("%s^{}" % options.vcs_tag)]
+                parents = [repo.rev_parse("%s^{}" % repo.version_to_tag(options.vcs_tag, version))]
             else:
                 parents = None
 

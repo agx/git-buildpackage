@@ -160,6 +160,7 @@ class GbpOptionParser(OptionParser):
                  'purge': 'True',
                  'drop': 'False',
                  'commit': 'False',
+                 'upstream-vcs-tag': '',
              }
     help = {
              'debian-branch':
