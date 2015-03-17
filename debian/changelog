@@ -1,3 +1,15 @@
+git-buildpackage (0.6.22~bpo70+1) wheezy-backports; urgency=medium
+
+  * Rebuild for wheezy-backports. Thanks to Dan Lipsitt for beating me to this
+    via GHPR#8
+  * Remaining changes:
+      * [f6f3e6c] Remove versioned devscipts build-dep. The tests now detect
+        the dch defaults
+      * [37a26b0] Lower devscripts dependency. This reopens #635920
+  * [da2a78e] Add gbp.conf for wheezy backports
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 17 Mar 2015 09:16:13 +0100
+
 git-buildpackage (0.6.22) unstable; urgency=medium
 
   * [3d8939d] git.vfs: fix close method. Preventing a infinite recursion
