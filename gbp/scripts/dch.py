@@ -38,18 +38,19 @@ user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 
 
-def guess_version_from_upstream(repo, upstream_tag_format, cp):
+def guess_version_from_upstream(repo, upstream_tag_format, upstream_branch, cp):
     """
     Guess the version based on the latest version on the upstream branch
     """
     try:
         version = repo.debian_version_from_upstream(upstream_tag_format,
+                                                    upstream_branch,
                                                     epoch=cp.epoch)
         gbp.log.debug("Found upstream version %s." % version)
         if compare_versions(version, cp.version) > 0:
             return version
-    except GitRepositoryError:
-        gbp.log.debug("No upstream tag found")
+    except GitRepositoryError as e:
+        gbp.log.debug("No upstream tag found: %s" % e)
     return None
 
 
@@ -318,6 +319,7 @@ def build_parser(name):
     parser.add_option_group(custom_group)
 
     parser.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
+    naming_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     naming_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
@@ -474,7 +476,8 @@ def main(argv):
 
         if add_section and not version_change and not source.is_native():
             # Get version from upstream if none provided
-            v = guess_version_from_upstream(repo, options.upstream_tag, cp)
+            v = guess_version_from_upstream(repo, options.upstream_tag,
+                                            options.upstream_branch, cp)
             if v:
                 version_change['version'] = v
 

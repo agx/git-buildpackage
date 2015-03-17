@@ -713,6 +713,21 @@ class GitRepository(object):
         """
         return self.describe(commit, pattern, abbrev=0)
 
+    def find_branch_tag(self, commit, branch, pattern=None):
+        """
+        Find the closest tag on a certain branch to a given commit
+
+        @param commit: the commit to describe
+        @type commit: C{str}
+        @type branch: C{str}
+        @param pattern: only look for tags matching I{pattern}
+        @type pattern: C{str}
+        @return: the found tag
+        @rtype: C{str}
+        """
+        base_commit = self.get_merge_base(commit, branch)
+        return self.describe(base_commit, pattern, abbrev=0)
+
     def get_tags(self, pattern=None):
         """
         List tags
