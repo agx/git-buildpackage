@@ -309,6 +309,23 @@ def test_find_tag():
     GitRepositoryError: Can't describe HEAD. Git error: fatal: No names found, cannot describe anything.
     """
 
+def test_find_branch_tag():
+    """
+    Find the closest tags on a certain branch to a given commit
+
+    Methods tested:
+         - L{gbp.git.GitRepository.find_branch_tag}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(repo_dir)
+    >>> repo.find_branch_tag('HEAD', 'master', 'tag*')
+    'tag2'
+    >>> repo.find_branch_tag('HEAD', 'master', 'v*')   # doctest:+ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Can't describe .... Git error: fatal: No names found, cannot describe anything.
+    """
+
 def test_move_tag():
     """
     Move a tag
