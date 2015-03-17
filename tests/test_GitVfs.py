@@ -46,6 +46,7 @@ def test_read():
     ''
     >>> gf.readline()
     ''
+    >>> gf.close()
     >>> gbp.git.vfs.GitVfs(repo, 'HEAD').open('foo.txt').read() == content
     True
     >>> gf = vfs.open('doesnotexist')

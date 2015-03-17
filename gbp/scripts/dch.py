@@ -15,7 +15,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-"""Generate Debian changelog entries from git commit messages"""
+"""Generate Debian changelog entries from GIT commit messages"""
 
 import ConfigParser
 import os.path
@@ -64,17 +64,19 @@ def get_author_email(repo, use_git_config):
     return author, email
 
 
-def fixup_section(repo, git_author, options, dch_options):
+def fixup_section(repo, use_git_author, options, dch_options):
     """
-    Fixup the changelog header and trailer's comitter and email address
+    Fixup the changelog header and trailer's committer and email address
 
     It might otherwise point to the last git committer instead of the person
     creating the changelog
-    This apply --distribution and --urgency options passed to git-dch
+
+    This also applies --distribution and --urgency options passed to gbp dch
     """
-    author, email = get_author_email(repo, git_author)
+    author, email = get_author_email(repo, use_git_author)
     used_options = ['distribution', 'urgency']
-    header_opts = []
+    opts = []
+    mainttrailer_opts = [ '--nomainttrailer', '--mainttrailer', '-t' ]
 
     # This must not be done for snapshots or snapshots changelog entries
     # will not be concatenated
@@ -83,11 +85,17 @@ def fixup_section(repo, git_author, options, dch_options):
             val = getattr(options, opt)
             if val:
                 gbp.log.debug("Set header option '%s' to '%s'" % (opt, val))
-                header_opts.append("--%s=%s" % (opt, val))
+                opts.append("--%s=%s" % (opt, val))
     else:
         gbp.log.debug("Snapshot enabled: do not fixup options in header")
 
-    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+header_opts)
+    if use_git_author:
+        for opt in mainttrailer_opts:
+            if opt in dch_options:
+                break
+        else:
+            opts.append(mainttrailer_opts[0])
+    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+opts)
 
 
 def snapshot_version(version):
@@ -153,9 +161,9 @@ def mangle_changelog(changelog, cp, snapshot=''):
         raise GbpError("Error mangling changelog %s" % e)
 
 
-def do_release(changelog, repo, cp, git_author, dch_options):
+def do_release(changelog, repo, cp, use_git_author, dch_options):
     """Remove the snapshot header and set the distribution"""
-    author, email = get_author_email(repo, git_author)
+    author, email = get_author_email(repo, use_git_author)
     (release, snapshot) = snapshot_version(cp['Version'])
     if snapshot:
         cp['MangledVersion'] = release
@@ -343,10 +351,9 @@ def build_parser(name):
                       help="Increment the Debian release number for a Debian Team upload, and add a Team upload changelog comment.")
     version_group.add_option("--security", dest="security", action="store_true", default=False,
                       help="Increment the Debian release number for a security upload and add a security upload changelog comment.")
-    version_group.add_boolean_config_file_option(option_name="git-author", dest="git_author")
+    version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
-    commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes",
-                      help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
+    commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     commit_group.add_boolean_config_file_option(option_name="full", dest="full")
     commit_group.add_config_file_option(option_name="id-length", dest="idlen",
                       help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
@@ -505,11 +512,11 @@ def main(argv):
                            version=version_change,
                            dch_options=dch_options)
 
-        fixup_section(repo, git_author=options.git_author, options=options,
+        fixup_section(repo, use_git_author=options.use_git_author, options=options,
                       dch_options=dch_options)
 
         if options.release:
-            do_release(changelog, repo, cp, git_author=options.git_author,
+            do_release(changelog, repo, cp, use_git_author=options.use_git_author,
                        dch_options=dch_options)
         elif options.snapshot:
             (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)

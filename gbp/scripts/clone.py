@@ -17,7 +17,7 @@
 #
 # inspired by dom-git-checkout
 #
-"""clone a repo and set it up for gbp"""
+"""Clone a GIT repository and set it up for gbp"""
 
 import ConfigParser
 import sys

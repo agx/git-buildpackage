@@ -1,0 +1,7 @@
+diff --git a/README b/README
+index a1311cb..a59f1b9 100644
+--- a/README
++++ b/README
+@@ -1 +1 @@
+-Just for testing git-buildpackage.
++Just for testing GBP.

@@ -1,0 +1,65 @@
+<!ENTITY man.common.options.synopsis
+"
+      <arg><option>--version</option></arg>
+      <arg><option>--help</option></arg>
+      <arg><option>--verbose</option></arg>
+      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--color-scheme=</option><replaceable>COLOR_SCHEME</replaceable></arg>
+"
+>
+<!ENTITY man.common.options.description
+"
+      <varlistentry>
+        <term><option>--version</option></term>
+        <listitem>
+          <para>
+          Print version of the program, i.e. version of the git-buildpackage
+          suite
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-v</option></term>
+        <term><option>--verbose</option></term>
+        <listitem>
+          <para>
+          Verbose execution
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-h</option></term>
+        <term><option>--help</option></term>
+        <listitem>
+          <para>
+          Print help and exit
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Whether to use colored output.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--color-scheme=</option><replaceable>COLOR_SCHEME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Colors to use in output (when color is enabled). The format for
+          COLOR_SCHEME is
+          '&lt;debug&gt;:&lt;info&gt;:&lt;warning&gt;:&lt;error&gt;'.
+          Numerical values and color names are accepted, empty fields imply
+          the default color. For example --git-color-scheme='cyan:34::' would
+          show debug messages in cyan, info messages in blue and other messages
+          in default (i.e. warning and error messages in red).
+          </para>
+        </listitem>
+      </varlistentry>
+"
+>
+

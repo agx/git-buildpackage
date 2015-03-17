@@ -34,6 +34,66 @@ compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
 compressor_aliases = { 'bz2' : 'bzip2',
                        'gz'  : 'gzip', }
 
+# Supported archive formats
+archive_formats = [ 'tar', 'zip' ]
+
+# Map combined file extensions to archive and compression format
+archive_ext_aliases = { 'tgz'   : ('tar', 'gzip'),
+                        'tbz2'  : ('tar', 'bzip2'),
+                        'tlz'   : ('tar', 'lzma'),
+                        'txz'   : ('tar', 'xz')}
+
+def parse_archive_filename(filename):
+    """
+    Given an filename return the basename (i.e. filename without the
+    archive and compression extensions), archive format and compression
+    method used.
+
+    @param filename: the name of the file
+    @type filename: string
+    @return: tuple containing basename, archive format and compression method
+    @rtype: C{tuple} of C{str}
+
+    >>> parse_archive_filename("abc.tar.gz")
+    ('abc', 'tar', 'gzip')
+    >>> parse_archive_filename("abc.tar.bz2")
+    ('abc', 'tar', 'bzip2')
+    >>> parse_archive_filename("abc.def.tbz2")
+    ('abc.def', 'tar', 'bzip2')
+    >>> parse_archive_filename("abc.def.tar.xz")
+    ('abc.def', 'tar', 'xz')
+    >>> parse_archive_filename("abc.zip")
+    ('abc', 'zip', None)
+    >>> parse_archive_filename("abc.lzma")
+    ('abc', None, 'lzma')
+    >>> parse_archive_filename("abc.tar.foo")
+    ('abc.tar.foo', None, None)
+    >>> parse_archive_filename("abc")
+    ('abc', None, None)
+    """
+    (base_name, archive_fmt, compression) = (filename, None, None)
+
+    # Split filename to pieces
+    split = filename.split(".")
+    if len(split) > 1:
+        if split[-1] in archive_ext_aliases:
+            base_name = ".".join(split[:-1])
+            (archive_fmt, compression) = archive_ext_aliases[split[-1]]
+        elif split[-1] in archive_formats:
+            base_name = ".".join(split[:-1])
+            (archive_fmt, compression) = (split[-1], None)
+        else:
+            for (c, o) in compressor_opts.iteritems():
+                if o[1] == split[-1]:
+                    base_name = ".".join(split[:-1])
+                    compression = c
+                    if len(split) > 2 and split[-2] in archive_formats:
+                        base_name = ".".join(split[:-2])
+                        archive_fmt = split[-2]
+
+    return (base_name, archive_fmt, compression)
+
+
 class PkgPolicy(object):
     """
     Common helpers for packaging policy.
@@ -72,25 +132,63 @@ class PkgPolicy(object):
         return True if cls.upstreamversion_re.match(version) else False
 
     @staticmethod
-    def get_compression(orig_file):
+    def guess_upstream_src_version(filename, extra_regex=r''):
         """
-        Given an orig file return the compression used
+        Guess the package name and version from the filename of an upstream
+        archive.
 
-        >>> PkgPolicy.get_compression("abc.tar.gz")
-        'gzip'
-        >>> PkgPolicy.get_compression("abc.tar.bz2")
-        'bzip2'
-        >>> PkgPolicy.get_compression("abc.tar.foo")
-        >>> PkgPolicy.get_compression("abc")
+        @param filename: filename (archive or directory) from which to guess
+        @type filename: C{string}
+        @param extra_regex: additional regex to apply, needs a 'package' and a
+                            'version' group
+        @return: (package name, version) or ('', '')
+        @rtype: tuple
+
+        >>> PkgPolicy.guess_upstream_src_version('foo-bar_0.2.orig.tar.gz')
+        ('foo-bar', '0.2')
+        >>> PkgPolicy.guess_upstream_src_version('foo-Bar_0.2.orig.tar.gz')
+        ('', '')
+        >>> PkgPolicy.guess_upstream_src_version('git-bar-0.2.tar.gz')
+        ('git-bar', '0.2')
+        >>> PkgPolicy.guess_upstream_src_version('git-bar-0.2-rc1.tar.gz')
+        ('git-bar', '0.2-rc1')
+        >>> PkgPolicy.guess_upstream_src_version('git-bar-0.2:~-rc1.tar.gz')
+        ('git-bar', '0.2:~-rc1')
+        >>> PkgPolicy.guess_upstream_src_version('git-Bar-0A2d:rc1.tar.bz2')
+        ('git-Bar', '0A2d:rc1')
+        >>> PkgPolicy.guess_upstream_src_version('git-1.tar.bz2')
+        ('git', '1')
+        >>> PkgPolicy.guess_upstream_src_version('kvm_87+dfsg.orig.tar.gz')
+        ('kvm', '87+dfsg')
+        >>> PkgPolicy.guess_upstream_src_version('foo-Bar-a.b.tar.gz')
+        ('', '')
+        >>> PkgPolicy.guess_upstream_src_version('foo-bar_0.2.orig.tar.xz')
+        ('foo-bar', '0.2')
+        >>> PkgPolicy.guess_upstream_src_version('foo-bar_0.2.orig.tar.lzma')
+        ('foo-bar', '0.2')
+        >>> PkgPolicy.guess_upstream_src_version('foo-bar-0.2.zip')
+        ('foo-bar', '0.2')
+        >>> PkgPolicy.guess_upstream_src_version('foo-bar-0.2.tlz')
+        ('foo-bar', '0.2')
         """
-        try:
-            ext = orig_file.rsplit('.',1)[1]
-        except IndexError:
-            return None
-        for (c, o) in compressor_opts.iteritems():
-            if o[1] == ext:
-                return c
-        return None
+        version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
+        basename = parse_archive_filename(os.path.basename(filename))[0]
+
+        version_filters = map ( lambda x: x % version_chars,
+                           ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
+                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
+                             # Upstream 'package-<version>.tar.gz'
+                             # or Debian native 'package_<version>.tar.gz'
+                             # or directory 'package-<version>':
+                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)'))
+        if extra_regex:
+            version_filters = extra_regex + version_filters
+
+        for filter in version_filters:
+            m = re.match(filter, basename)
+            if m:
+                return (m.group('package'), m.group('version'))
+        return ('', '')
 
     @staticmethod
     def has_orig(orig_file, dir):
@@ -140,8 +238,9 @@ class UpstreamSource(object):
     @cvar _unpacked: path to the unpacked source tree
     @type _unpacked: string
     """
-    def __init__(self, name, unpacked=None):
+    def __init__(self, name, unpacked=None, pkg_policy=PkgPolicy):
         self._orig = False
+        self._pkg_policy = pkg_policy
         self._path = name
         self.unpacked = unpacked
 
@@ -278,63 +377,12 @@ class UpstreamSource(object):
         except gbpc.CommandExecFailed:
             # repackArchive already printed an error
             raise GbpError
-        return UpstreamSource(newarchive)
+        return type(self)(newarchive)
 
     @staticmethod
     def known_compressions():
         return [ args[1][-1] for args in compressor_opts.items() ]
 
     def guess_version(self, extra_regex=r''):
-        """
-        Guess the package name and version from the filename of an upstream
-        archive.
-
-        @param extra_regex: extra regular expression to check
-        @type extra_regex: raw C{string}
-
-        >>> UpstreamSource('foo-bar_0.2.orig.tar.gz').guess_version()
-        ('foo-bar', '0.2')
-        >>> UpstreamSource('foo-Bar_0.2.orig.tar.gz').guess_version()
-        >>> UpstreamSource('git-bar-0.2.tar.gz').guess_version()
-        ('git-bar', '0.2')
-        >>> UpstreamSource('git-bar-0.2-rc1.tar.gz').guess_version()
-        ('git-bar', '0.2-rc1')
-        >>> UpstreamSource('git-bar-0.2:~-rc1.tar.gz').guess_version()
-        ('git-bar', '0.2:~-rc1')
-        >>> UpstreamSource('git-Bar-0A2d:rc1.tar.bz2').guess_version()
-        ('git-Bar', '0A2d:rc1')
-        >>> UpstreamSource('git-1.tar.bz2').guess_version()
-        ('git', '1')
-        >>> UpstreamSource('kvm_87+dfsg.orig.tar.gz').guess_version()
-        ('kvm', '87+dfsg')
-        >>> UpstreamSource('foo-Bar_0.2.orig.tar.gz').guess_version()
-        >>> UpstreamSource('foo-Bar-a.b.tar.gz').guess_version()
-        >>> UpstreamSource('foo-bar_0.2.orig.tar.xz').guess_version()
-        ('foo-bar', '0.2')
-        >>> UpstreamSource('foo-bar_0.2.orig.tar.lzma').guess_version()
-        ('foo-bar', '0.2')
-
-        @param extra_regex: additional regex to apply, needs a 'package' and a
-                            'version' group
-        @return: (package name, version) or None.
-        @rtype: tuple
-        """
-        version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
-        if self.is_dir():
-            extensions = ''
-        else:
-            extensions = r'\.tar\.(%s)' % "|".join(self.known_compressions())
-
-        version_filters = map ( lambda x: x % (version_chars, extensions),
-                           ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
-                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig%s',
-                             # Upstream 'package-<version>.tar.gz'
-                             # or directory 'package-<version>':
-                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)-(?P<version>[0-9]%s*)%s'))
-        if extra_regex:
-            version_filters = extra_regex + version_filters
-
-        for filter in version_filters:
-            m = re.match(filter, os.path.basename(self.path))
-            if m:
-                return (m.group('package'), m.group('version'))
+        return self._pkg_policy.guess_upstream_src_version(self.path,
+                                                           extra_regex)

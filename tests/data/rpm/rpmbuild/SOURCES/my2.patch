@@ -1,0 +1,7 @@
+diff --git a/mydir/myfile.txt b/mydir/myfile.txt
+new file mode 100644
+index 0000000..2cdad29
+--- /dev/null
++++ b/mydir/myfile.txt
+@@ -0,0 +1 @@
++Dummy

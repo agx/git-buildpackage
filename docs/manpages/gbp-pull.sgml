@@ -21,7 +21,7 @@
     <cmdsynopsis>
       &gbp-pull;
 
-      <arg><option>--verbose</option></arg>
+      &man.common.options.synopsis;
       <arg><option>--force</option></arg>
       <arg><option>--redo-pq</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
@@ -44,6 +44,8 @@
     <title>OPTIONS</title>
 
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--force</option></term>
         <listitem>
@@ -90,13 +92,6 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
-        <listitem>
-          <para>verbose execution</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>--pristine-tar</option>
         </term>
         <listitem>
@@ -108,7 +103,7 @@
   <refsect1>
     <title>EXIT CODES</title>
     <para>
-    When &gbp-pull finishes it indicates success or failure with it's exit code:
+    When &gbp-pull; finishes it indicates success or failure with it's exit code:
     </para>
     <variablelist>
       <varlistentry>
@@ -137,22 +132,10 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-clone</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-pq</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.clone">,
+      <xref linkend="man.gbp.pq">,
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>

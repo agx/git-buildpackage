@@ -20,12 +20,12 @@ import os
 import re
 
 from gbp.errors import GbpError
-from gbp.pkg import UpstreamSource
+from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.deb.policy import DebianPkgPolicy
 
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
-    compressions = r"(%s)" % '|'.join(UpstreamSource.known_compressions())
+    compressions = r"(%s)" % '|'.join(DebianUpstreamSource.known_compressions())
     pkg_re = re.compile(r'Source:\s+(?P<pkg>.+)\s*')
     version_re = re.compile(r'Version:\s((?P<epoch>\d+)\:)?'
                              '(?P<version>[%s]+)\s*$'

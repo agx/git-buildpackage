@@ -106,6 +106,7 @@ class GbpOptionParser(OptionParser):
                  'postimport'      : '',
                  'hooks'           : 'True',
                  'debian-tag'      : 'debian/%(version)s',
+                 'debian-tag-msg'  : '%(pkg)s Debian release %(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
                  'import-msg'      : 'Imported Upstream version %(version)s',
                  'commit-msg'      : 'Update changelog for %(version)s release',
@@ -154,6 +155,8 @@ class GbpOptionParser(OptionParser):
                  'allow-unauthenticated': 'False',
                  'symlink-orig': 'True',
                  'purge': 'True',
+                 'drop': 'False',
+                 'commit': 'False',
              }
     help = {
              'debian-branch':
@@ -167,6 +170,9 @@ class GbpOptionParser(OptionParser):
              'debian-tag':
                   ("Format string for debian tags, "
                    "default is '%(debian-tag)s'"),
+             'debian-tag-msg':
+                  ("Format string for signed debian-tag messages, "
+                   "default is '%(debian-tag-msg)s'"),
              'upstream-tag':
                   ("Format string for upstream tags, "
                    "default is '%(upstream-tag)s'"),
@@ -196,6 +202,8 @@ class GbpOptionParser(OptionParser):
                   "Include the full commit message instead of only the first line, default is '%(full)s'",
              'meta':
                   "Parse meta tags in commit messages, default is '%(meta)s'",
+             'meta-closes':
+                  "Meta tags for the bts close commands, default is '%(meta-closes)s'",
              'ignore-new':
                   "Build with uncommited changes in the source tree, default is '%(ignore-new)s'",
              'ignore-branch':
@@ -249,10 +257,10 @@ class GbpOptionParser(OptionParser):
                   ("Set up tracking for remote branches, "
                    "default is '%(track)s'"),
              'author-is-committer':
-                  ("Use the authors's name also as the comitter's name, "
+                  ("Use the authors's name also as the committer's name, "
                    "default is '%(author-is-committer)s'"),
              'author-date-is-committer-date':
-                  ("Use the authors's date as the comitter's date, "
+                  ("Use the authors's date as the committer's date, "
                    "default is '%(author-date-is-committer-date)s'"),
              'create-missing-branches':
                   ("Create missing branches automatically, "
@@ -290,6 +298,11 @@ class GbpOptionParser(OptionParser):
                    "'%(symlink-orig)s'"),
               'purge':
                   "Purge exported package build directory. Default is '%(purge)s'",
+              'drop':
+                  ("In case of 'export' drop the patch-queue branch "
+                   "after export. Default is '%(drop)s'"),
+              'commit':
+                  "commit changes after export, Default is '%(commit)s'",
            }
 
     def_config_files = [ '/etc/git-buildpackage/gbp.conf',
@@ -515,5 +528,38 @@ class GbpOptionParserDebian(GbpOptionParser):
                        'builder'            : 'debuild -i -I',
                        'cleaner'            : '/bin/true',
                      } )
+
+
+class GbpOptionParserRpm(GbpOptionParser):
+    """
+    Handles commandline options and parsing of config files for rpm tools
+    """
+    defaults = dict(GbpOptionParser.defaults)
+    defaults.update({
+            'tmp-dir'                   : '/var/tmp/gbp/',
+            'vendor'                    : 'Downstream',
+            'packaging-branch'          : 'master',
+            'packaging-dir'             : '',
+            'packaging-tag'             : 'packaging/%(version)s',
+                    })
+
+    help = dict(GbpOptionParser.help)
+    help.update({
+            'tmp-dir':
+                "Base directory under which temporary directories are "
+                "created, default is '%(tmp-dir)s'",
+            'vendor':
+                "Distribution vendor name, default is '%(vendor)s'",
+            'packaging-branch':
+                "Branch the packaging is being maintained on, rpm counterpart "
+                "of the 'debian-branch' option, default is "
+                "'%(packaging-branch)s'",
+            'packaging-dir':
+                "Subdir for RPM packaging files, default is "
+                "'%(packaging-dir)s'",
+            'packaging-tag':
+                "Format string for packaging tags, RPM counterpart of the "
+                "'debian-tag' option, default is '%(packaging-tag)s'",
+                 })
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

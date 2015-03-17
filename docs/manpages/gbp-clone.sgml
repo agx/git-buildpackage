@@ -21,7 +21,7 @@
     <cmdsynopsis>
       &gbp-clone;
 
-      <arg><option>--verbose</option></arg>
+      &man.common.options.synopsis;
       <arg><option>--all</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -43,6 +43,8 @@
     <title>OPTIONS</title>
 
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--all</option>
         </term>
@@ -75,13 +77,6 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
-        <listitem>
-          <para>verbose execution</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>--pristine-tar</option>
         </term>
         <listitem>
@@ -96,18 +91,9 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-pull</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.pull">,
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>

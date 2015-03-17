@@ -20,8 +20,7 @@
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-create-remote-repo;
-      <arg><option>--verbose</option></arg>
-      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      &man.common.options.synopsis;
       <arg><option>--remote-url-pattern=</option><replaceable>url-pattern</replaceable></arg>
       <arg><option>--remote-name=</option><replaceable>name</replaceable></arg>
       <arg><option>--template-dir=</option><replaceable>directory</replaceable></arg>
@@ -52,6 +51,8 @@
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
+      &man.common.options.description;
+
       <varlistentry>
         <term><option>--remote-url-pattern</option>=<replaceable>pattern</replaceable>
         </term>
@@ -112,20 +113,6 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--verbose</option></term>
-	<term><option>-v</option></term>
-        <listitem>
-          <para>verbose execution</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
-        </term>
-        <listitem>
-          <para>Whether to use colored output.</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>--[no-]track</option>
         </term>
         <listitem>
@@ -141,18 +128,9 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <citerefentry>
-        <refentrytitle>gbp-buildpackage</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp-pull</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry>,
-      <citerefentry>
-        <refentrytitle>gbp.conf</refentrytitle>
-	&dhconfsection;
-      </citerefentry>
+      <xref linkend="man.gbp.buildpackage">,
+      <xref linkend="man.gbp.pull">,
+      <xref linkend="man.gbp.conf">
     </para>
   </refsect1>
   <refsect1>
