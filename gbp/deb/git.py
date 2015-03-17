@@ -102,10 +102,20 @@ class DebianGitRepository(GitRepository):
     def version_to_tag(format, version):
         """Generate a tag from a given format and a version
 
+        %(version)s provides a clean version that works as a git tag.
+
+        %(hversion)s provides the same thing, but with '.' replaced
+         with '-'.  hversion is useful for upstreams with tagging
+         policies that prohibit . characters.
+
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
         'debian/0%0_0'
+        >>> DebianGitRepository.version_to_tag("libfoo-%(hversion)s", "1.8.1")
+        'libfoo-1-8-1'
+
         """
-        return format_msg(format, dict(version=DebianGitRepository._sanitize_version(version)))
+        return format_msg(format, dict(version=DebianGitRepository._sanitize_version(version),
+                                       hversion=DebianGitRepository._sanitize_version(version).replace('.','-')))
 
     @staticmethod
     def _sanitize_version(version):
