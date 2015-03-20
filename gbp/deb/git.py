@@ -104,9 +104,9 @@ class DebianGitRepository(GitRepository):
 
         %(version)s provides a clean version that works as a git tag.
 
-        %(hversion)s provides the same thing, but with '.' replaced
-         with '-'.  hversion is useful for upstreams with tagging
-         policies that prohibit . characters.
+        %(hversion)s provides the same thing, but with '.' replaced with '-'.
+        hversion is useful for upstreams with tagging policies that prohibit .
+        characters.
 
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
         'debian/0%0_0'
