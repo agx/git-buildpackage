@@ -37,6 +37,11 @@ class GbpLogTester(object):
         self._log.seek(0)
         return self._log.readlines()
 
+    def _check_log_empty(self):
+        """Check that nothig was logged"""
+        output = self._get_log()
+        ok_(output == [], "Log is not empty: %s" % output)
+
     def _check_log(self, linenum, regex):
         """Check that the specified line on log matches expectations"""
         if self._log is None:

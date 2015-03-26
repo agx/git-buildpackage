@@ -38,8 +38,8 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         for prefix in [ '', 'git-', 'gbp-' ]:
             parser = GbpOptionParser('%scmd1' % prefix)
             self.assertEqual(parser.config['single_override_option1'], 'single_override_value1')
-        # No deprecation warning since we test1.conf section is [cmd1]
-        self.assertEqual(self._get_log(), [])
+        # No deprecation warning since the test1.conf section is [cmd1]
+        self._check_log_empty()
 
     def test_single_git_override(self):
         """
