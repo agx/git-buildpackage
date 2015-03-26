@@ -27,7 +27,7 @@ class PristineTar(Command):
 
     def __init__(self, repo):
         self.repo = repo
-        super(PristineTar, self).__init__(self.cmd, cwd=repo.path)
+        super(PristineTar, self).__init__(self.cmd, cwd=repo.path, capture_stderr=True)
 
     def has_commit(self, archive_regexp):
         """
@@ -63,7 +63,7 @@ class PristineTar(Command):
         @param archive: the name of the orig archive
         @type archive: C{str}
         """
-        self.run_error = 'Couldn\'t checkout "%s": {err_reason}' % os.path.basename(archive)
+        self.run_error = 'Pristine-tar couldn\'t checkout "%s": {stderr}' % os.path.basename(archive)
         self.__call__(['checkout', archive])
 
     def commit(self, archive, upstream):
@@ -76,7 +76,7 @@ class PristineTar(Command):
         @param upstream: the upstream branch to diff against
         @type upstream: C{str}
         """
-        self.run_error = ("Couldn't commit to '%s' with upstream '%s': {err_reason}" %
+        self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr}" %
                           (self.branch, upstream))
         self.__call__(['commit', archive, upstream])
 
