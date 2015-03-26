@@ -28,7 +28,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         """
         for n in range(1,5):
             for prefix in [ '', 'git-', 'gbp-' ]:
-                parser = GbpOptionParser('cmd%d' % n)
+                parser = GbpOptionParser('%scmd%d' % (prefix, n))
                 self.assertEqual(parser.config['default_option'], 'default_default1')
 
     def test_single_override(self):
