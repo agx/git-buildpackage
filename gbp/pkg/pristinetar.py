@@ -63,7 +63,7 @@ class PristineTar(Command):
         @param archive: the name of the orig archive
         @type archive: C{str}
         """
-        self.run_error = 'Couldn\'t checkout "%s"' % os.path.basename(archive)
+        self.run_error = 'Couldn\'t checkout "%s": {err_reason}' % os.path.basename(archive)
         self.__call__(['checkout', archive])
 
     def commit(self, archive, upstream):
@@ -76,7 +76,7 @@ class PristineTar(Command):
         @param upstream: the upstream branch to diff against
         @type upstream: C{str}
         """
-        self.run_error = ("Couldn't commit to '%s' with upstream '%s'" %
+        self.run_error = ("Couldn't commit to '%s' with upstream '%s': {err_reason}" %
                           (self.branch, upstream))
         self.__call__(['commit', archive, upstream])
 

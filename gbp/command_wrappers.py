@@ -40,7 +40,7 @@ class Command(object):
                  capture_stdout=False):
         self.cmd = cmd
         self.args = args
-        self.run_error = "'%s' failed" % (" ".join([self.cmd] + self.args))
+        self.run_error = "'%s' failed: {err_reason}" % (" ".join([self.cmd] + self.args))
         self.shell = shell
         self.capture_stdout = capture_stdout
         self.capture_stderr = capture_stderr
@@ -96,11 +96,18 @@ class Command(object):
         return self.retcode
 
     def _log_err(self):
+        "Log an error message"
+        log.err(self._format_err())
+
+    def _format_err(self):
+        """Log an error message
+
+        This allows to replace stdout, stderr and err_reason in
+        the self.run_error.
         """
-        Log an error message allowing to use the captured stout/stderr
-        """
-        log.err("%s: %s" % (self.run_error,
-                            self.err_reason)
+        return self.run_error.format(stdout=self.stdout,
+                                     stderr=self.stderr,
+                                     err_reason=self.err_reason)
 
     def __call__(self, args=[], quiet=False):
         """Run the command and raise exception on errors
@@ -125,7 +132,7 @@ class Command(object):
         >>> Command("/foo/bar")(quiet=True)
         Traceback (most recent call last):
         ...
-        CommandExecFailed: execution failed: [Errno 2] No such file or directory
+        CommandExecFailed: '/foo/bar' failed: execution failed: [Errno 2] No such file or directory
         """
         try:
             ret = self.__call(args)
@@ -134,7 +141,7 @@ class Command(object):
         if ret:
             if not quiet:
               self._log_err()
-            raise CommandExecFailed(self.err_reason)
+            raise CommandExecFailed(self._format_err())
 
 
     def call(self, args, quiet=True):
@@ -207,7 +214,7 @@ class UnpackTarArchive(Command):
 
         Command.__init__(self, 'tar', exclude +
                          ['-C', dir, compression, '-xf', archive ])
-        self.run_error = 'Couldn\'t unpack "%s"' % self.archive
+        self.run_error = 'Couldn\'t unpack "%s": {err_reason}' % self.archive
 
 
 class PackTarArchive(Command):
@@ -222,7 +229,7 @@ class PackTarArchive(Command):
 
         Command.__init__(self, 'tar', exclude +
                          ['-C', dir, compression, '-cf', archive, dest])
-        self.run_error = 'Couldn\'t repack "%s"' % self.archive
+        self.run_error = 'Couldn\'t repack "%s": {err_reason}' % self.archive
 
 
 class CatenateTarArchive(Command):
@@ -240,7 +247,7 @@ class RemoveTree(Command):
     def __init__(self, tree):
         self.tree = tree
         Command.__init__(self, 'rm', [ '-rf', tree ])
-        self.run_error = 'Couldn\'t remove "%s"' % self.tree
+        self.run_error = 'Couldn\'t remove "%s": {err_reason}' % self.tree
 
 
 class Dch(Command):
@@ -250,7 +257,7 @@ class Dch(Command):
         if msg:
             args.append(msg)
         Command.__init__(self, 'dch', args)
-        self.run_error = "Dch failed."
+        self.run_error = "Dch failed: {err_reason}"
 
 
 class DpkgSourceExtract(Command):
@@ -262,7 +269,7 @@ class DpkgSourceExtract(Command):
         Command.__init__(self, 'dpkg-source', ['-x'])
 
     def __call__(self, dsc, output_dir):
-        self.run_error = 'Couldn\'t extract "%s"' % dsc
+        self.run_error = 'Couldn\'t extract "%s": {err_reason}' % dsc
         Command.__call__(self, [dsc, output_dir])
 
 
@@ -273,14 +280,14 @@ class UnpackZipArchive(Command):
         self.dir = dir
 
         Command.__init__(self, 'unzip', [ "-q", archive, '-d', dir ])
-        self.run_error = 'Couldn\'t unpack "%s"' % self.archive
+        self.run_error = 'Couldn\'t unpack "%s": {err_reason}' % self.archive
 
 
 class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[], **kwargs):
         Command.__init__(self, 'git', [cmd] + args, **kwargs)
-        self.run_error = "Couldn't run git %s" % cmd
+        self.run_error = "Couldn't run git %s: {err_reason}" % cmd
 
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
