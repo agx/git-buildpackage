@@ -17,7 +17,8 @@ class GbpLogTester(object):
 
     def _capture_log(self, capture=True):
         """ Capture log"""
-        if capture and self._log is None:
+        if capture:
+            assert self._log is None, "Log capture already started"
             self._log = StringIO()
             self._loghandler = gbp.log.GbpStreamHandler(self._log, False)
             self._loghandler.addFilter(gbp.log.GbpFilter([gbp.log.WARNING,
@@ -25,7 +26,8 @@ class GbpLogTester(object):
             for hdl in gbp.log.LOGGER.handlers:
                 gbp.log.LOGGER.removeHandler(hdl)
             gbp.log.LOGGER.addHandler(self._loghandler)
-        elif self._log is not None:
+        else:
+            assert self._log is not None, "Log capture not started"
             gbp.log.LOGGER.removeHandler(self._loghandler)
             self._loghandler.close()
             self._loghandler = None
