@@ -1,7 +1,6 @@
 # vim: set fileencoding=utf-8 :
 
 import os
-import sys
 import unittest
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from .testutils import GbpLogTester

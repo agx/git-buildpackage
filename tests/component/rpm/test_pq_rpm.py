@@ -147,7 +147,6 @@ class TestPqRpm(RpmRepoTestBase):
     def test_switch(self):
         """Basic test for switch action"""
         repo = self.init_test_repo('gbp-test')
-        pkg_files = repo.list_files()
         branches = repo.get_local_branches() + ['patch-queue/master']
         # Switch to non-existent pq-branch should create one
         eq_(mock_pq(['switch']), 0)

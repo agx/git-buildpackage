@@ -120,6 +120,8 @@ class TestWritePatch(testutils.DebianGitTestRepo):
                                      opts)[0]
         expected = os.path.join(str(d), 'gbptest', 'added-foo.patch')
 
+        self.assertEqual(os.path.basename(patchfile),
+                                          'added-foo.patch')
         self.assertTrue(os.path.exists(expected))
         logging.debug(open(expected).read())
 

@@ -5,8 +5,6 @@
 from . import context
 
 import os
-import shutil
-import tempfile
 
 import gbp.log
 import gbp.git

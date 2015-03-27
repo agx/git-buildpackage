@@ -20,11 +20,11 @@ import filecmp
 import os
 import shutil
 import tempfile
-from nose.tools import assert_raises, eq_, ok_   # pylint: disable=E0611
+from nose.tools import assert_raises, eq_ # pylint: disable=E0611
 
 from gbp.errors import GbpError
-from gbp.rpm import (SrcRpmFile, SpecFile, parse_srpm, NoSpecError, guess_spec,
-                     guess_spec_repo, spec_from_repo)
+from gbp.rpm import (SpecFile, NoSpecError, guess_spec, guess_spec_repo,
+                     spec_from_repo)
 from gbp.git.repository import GitRepository
 
 # Disable "Method could be a function"

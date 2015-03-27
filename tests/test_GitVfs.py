@@ -9,8 +9,6 @@ import gbp.log
 from . import context
 
 gbp.log.setup(color=False, verbose=True)
-import gbp.git
-
 
 def test_read():
     """
