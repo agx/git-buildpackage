@@ -13,9 +13,10 @@ from gbp.deb.changelog import ChangeLog
 
 from . gbplogtester import GbpLogTester
 from . debiangittestrepo import DebianGitTestRepo
+from . capture import capture_stderr
 
 __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
-           'MockedChangeLog', 'get_dch_default_urgency' ]
+           'MockedChangeLog', 'get_dch_default_urgency', 'capture_stderr' ]
 
 class OsReleaseFile(object):
     """Repesents a simple file with key-value pairs"""

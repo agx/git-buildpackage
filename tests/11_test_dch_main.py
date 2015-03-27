@@ -4,7 +4,7 @@
 
 from . import context
 from .testutils import (DebianGitTestRepo, OsReleaseFile,
-                        get_dch_default_urgency)
+                        get_dch_default_urgency, capture_stderr)
 
 from gbp.scripts import dch
 
@@ -191,7 +191,9 @@ class TestScriptDch(DebianGitTestRepo):
     def test_dch_main_new_upstream_version_with_snapshot_release(self):
         """Test dch.py like gbp dch script does: new upstream version - snapshot - release"""
         options = ["--snapshot", "--release"]
-        self.assertRaises(SystemExit, self.run_dch, options)
+        with capture_stderr() as c:
+            self.assertRaises(SystemExit, self.run_dch, options)
+        self.assertTrue("'--snapshot' and '--release' are incompatible options" in c.output())
 
 
     def test_dch_main_new_upstream_version_with_distribution(self):
