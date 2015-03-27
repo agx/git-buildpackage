@@ -14,7 +14,7 @@ from gbp.deb.changelog import ChangeLog
 from . gbplogtester import GbpLogTester
 from . debiangittestrepo import DebianGitTestRepo
 
-__all__ = ['GbpLogTester, DebianGitTestRepo', 'OsReleaseFile',
+__all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
            'MockedChangeLog', 'get_dch_default_urgency' ]
 
 class OsReleaseFile(object):
