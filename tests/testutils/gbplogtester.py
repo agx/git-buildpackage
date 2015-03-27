@@ -23,7 +23,8 @@ class GbpLogTester(object):
             self._loghandler = gbp.log.GbpStreamHandler(self._log, False)
             self._loghandler.addFilter(gbp.log.GbpFilter([gbp.log.WARNING,
                                                           gbp.log.ERROR]))
-            for hdl in gbp.log.LOGGER.handlers:
+            handlers = list(gbp.log.LOGGER.handlers)
+            for hdl in handlers:
                 gbp.log.LOGGER.removeHandler(hdl)
             gbp.log.LOGGER.addHandler(self._loghandler)
         else:
