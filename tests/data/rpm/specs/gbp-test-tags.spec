@@ -5,6 +5,9 @@
 %define suse_release %(test -e /etc/SuSE-release && head -n1 /etc/SuSE-release | cut -d ' ' -f2 | cut --output-delimiter=0 -d. -f1,2 || echo 0)
 %if "%{suse_release}" >= "1201"
 %define test_weak_dep_tags 1
+%if "%{suse_release}" < "1302"
+%define test_weak_dep_tags_2 1
+%endif
 %endif
 
 %define test_arch_os_tags %(test -n "$GBP_SKIP_ARCH_OS_TAGS" && echo 0 || echo 1)
@@ -54,10 +57,12 @@ Recommends:     my_recommends
 Suggests:       my_suggests
 Supplements:    my_supplements
 Enhances:       my_enhances
+%if 0%{?test_weak_dep_tags_2}
 BuildRecommends:my_buildrecommends
 BuildSuggests:  my_buildsuggests
 BuildSupplements:my_buildsupplements
 BuildEnhances:  my_buildenhances
+%endif
 %endif
 
 # These should be filtered out by GBP
