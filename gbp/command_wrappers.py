@@ -105,8 +105,10 @@ class Command(object):
         This allows to replace stdout, stderr and err_reason in
         the self.run_error.
         """
-        return self.run_error.format(stdout=self.stdout,
-                                     stderr=self.stderr,
+        stdout = self.stdout.rstrip() if self.stdout else self.stdout
+        stderr = self.stderr.rstrip() if self.stderr else self.stderr
+        return self.run_error.format(stdout=stdout,
+                                     stderr=stderr,
                                      err_reason=self.err_reason)
 
     def __call__(self, args=[], quiet=False):

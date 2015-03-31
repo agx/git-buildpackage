@@ -136,7 +136,6 @@ def test_pristine_tar_checkout_nonexistent():
     ...
     CommandExecFailed: Pristine-tar couldn't checkout "upstream_1.1.orig.tar.gz": fatal: Path 'upstream_1.1.orig.tar.gz.delta' does not exist in 'refs/heads/pristine-tar'
     pristine-tar: git show refs/heads/pristine-tar:upstream_1.1.orig.tar.gz.delta failed
-    <BLANKLINE>
     """
 
 def test_teardown():
