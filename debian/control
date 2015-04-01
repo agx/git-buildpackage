@@ -65,6 +65,7 @@ Package: git-buildpackage-rpm
 Architecture: all
 Depends: ${python:Depends},
  ${misc:Depends},
+ cpio,
  git-buildpackage (= ${binary:Version}),
  python-rpm,
  rpm,
