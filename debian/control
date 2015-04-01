@@ -21,13 +21,14 @@ Build-Depends:
  python-rpm,
  python-six,
  python-setuptools,
- rpm,
  sgml2x,
 # For the testsuite
  bzip2,
+ cpio,
  devscripts (>= 2.13.8~),
  git (>= 1:1.7.9.1-1~),
  pristine-tar,
+ rpm,
  unzip,
 Standards-Version: 3.9.6
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
