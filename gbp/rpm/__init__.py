@@ -94,9 +94,11 @@ class SrcRpmFile(object):
         Unpack the source rpm to tmpdir.
         Leave the cleanup to the caller in case of an error.
         """
-        gbpc.RunAtCommand('rpm2cpio',
-                          [self.srpmfile, '|', 'cpio', '-id'],
-                          shell=True, capture_stderr=True)(dir=dest_dir)
+        c = gbpc.RunAtCommand('rpm2cpio',
+                              [self.srpmfile, '|', 'cpio', '-id'],
+                              shell=True, capture_stderr=True)
+        c.run_error = "'%s' failed: {stderr}" % (" ".join([c.cmd] + c.args))
+        c(dir=dest_dir)
 
 
 class SpecFile(object):
