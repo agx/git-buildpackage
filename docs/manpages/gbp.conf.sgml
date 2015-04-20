@@ -73,7 +73,7 @@ For backwards compatibility sections starting with <filename>git-</filename> or
 
 <option>key=value</option> pairs of the command sections reflect the command line
 options and their settings. For example <xref linkend="man.gbp.buildpackage">
-manualpage contains the <option>--git-export-dir</option>=<parameter>diirectory</parameter>
+manualpage contains the <option>--git-export-dir</option>=<parameter>directory</parameter>
 option which can be turned into configuration file setting by dropping the
 <option>--git</option> prefix with:
 </para>
