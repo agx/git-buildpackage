@@ -13,7 +13,6 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>git-dch</refname>
     <refname>gbp-dch</refname>
     <refpurpose>Generate the &debian; changelog from git commit messages</refpurpose>
   </refnamediv>

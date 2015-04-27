@@ -13,7 +13,6 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>git-import-orig</refname>
     <refname>gbp-import-orig</refname>
     <refpurpose>Import an upstream source into a git repository</refpurpose>
   </refnamediv>

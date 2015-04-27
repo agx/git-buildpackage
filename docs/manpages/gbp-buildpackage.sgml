@@ -12,7 +12,6 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>git-buildpackage</refname>
     <refname>gbp-buildpackage</refname>
     <refpurpose>Build &debian; packages from a &git; repository</refpurpose>
   </refnamediv>

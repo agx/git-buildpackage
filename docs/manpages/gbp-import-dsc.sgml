@@ -13,7 +13,6 @@
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>git-import-dsc</refname>
     <refname>gbp-import-dsc</refname>
     <refpurpose>Import &debian; packages into a &git; repository</refpurpose>
   </refnamediv>
