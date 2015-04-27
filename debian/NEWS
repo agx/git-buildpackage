@@ -1,3 +1,11 @@
+git-buildpackage (0.6.26) unstable; urgency=medium
+
+  All gbp-* and git-* commands are now gone as as announced in the
+  deprecation notice from June 2013. From now on only "gbp <command>" is
+  supported.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 27 Apr 2015 21:55:23 +0200
+
 git-buildpackage (0.6.9) unstable; urgency=medium
 
   This version changes the default of the cleaner options from 'debuild clean'
