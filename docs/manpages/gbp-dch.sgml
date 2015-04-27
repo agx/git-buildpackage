@@ -23,6 +23,7 @@
       &man.common.options.synopsis;
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--ignore-branch</option></arg>
       <group>
@@ -99,6 +100,16 @@
           <para>
           The branch in the Git repository the Debian package is being
           developed on, default is <replaceable>master</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Branch to determine the upstream version from.
+          Default is <replaceable>upstream</replaceable>.
           </para>
         </listitem>
       </varlistentry>
