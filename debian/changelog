@@ -1,3 +1,11 @@
+git-buildpackage (0.6.26) unstable; urgency=medium
+
+  * [72e129b] Drop git-* commands from manpages too.
+    Thanks to Michael Biebl (Closes: #783537)
+  * [ee2d421] Add a note to NEWS.Debian about the removal of the git-* symlinks
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 28 Apr 2015 00:19:03 +0200
+
 git-buildpackage (0.6.25) unstable; urgency=medium
 
   [ Markus Lehtonen ]
