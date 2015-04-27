@@ -1,3 +1,67 @@
+git-buildpackage (0.6.25) unstable; urgency=medium
+
+  [ Markus Lehtonen ]
+  * [f10d67f] UpstreamSource.guess_version: recognise debian native tarballs
+  * [3ef3304] tests: add tests for UpstreamSource.guess_version()
+  * [60ad28f] rpm tests: use eq_ and ok_ from nose tools.
+    Provides better error messages as is more consistent as eq_ was already
+    used in some test cases.
+  * [f089021] tristate: implement __nonzero__() method.
+    Returns False if tristate is 'off', otherwise True ('on' or 'auto').
+  * [e07aaba] config: support for older six
+  * [e4f767f] GitRepository/has_submodules: add treeish argument.  For
+    defining a Git treeish which to look into, instead of the current working
+    copy.
+  * [5a74d4e] tests: add unit tests for gbp.rpm.SrcRpmFile
+  * [1e347cc] rpm tests: disable one anomalous pylint error
+  * [bd72c30] rpm tests: unbreak spec parsing test for openSUSE 13.2.
+    Some SUSE-specific RPM tags are not supported anymore.
+
+  [ Guido Günther ]
+  * Upload to unstable
+  * Some Python3 compat including using six.
+  * [74008c7] Turn off coverage output by default.  It's much simpler to spot
+    the cause of test failures this way.
+  * [19d9280] Update docs on component tests and mailing list
+  * [0b98c48,49f0e44,7ebf843] gbplogtester: robustness so we can finally
+    silence the test suite.
+  * [b1b7761] config test: fix missing prefix. We want to test no prefix,
+    'gbp-' and 'git-'.
+  * [335dfdb] command_wrapper: Make error reporting more flexible.
+    We allow to substitute stderr, stdout and error_reason in run_error now.
+    These changes the API for derived classses slightly so fix them up as
+    well.
+  * [89574a0] Don't let pristine-tar spew on stderr.
+    Capture its output and only dump it on failure. This makes "gbp
+    import-orig" and test runs less verbose.
+  * [430be38] testutils: Fix __all__. The values weren't correctly seperated
+  * [36b90e9] SrcRpmFile: Add stderr to error messages
+    so we can better debug failures like
+        http://honk.sigxcpu.org:8001/job/git-buildpackage/230/changes
+  * [53fbee6] Depend on cpio needed by gbp import-srpm
+
+  [ Daniel Kahn Gillmor ]
+  * [83c5cc5] Allow to set upstream-vcs-tag via gbp.conf.
+    Also pass it through version_to_tag so
+        upstream-vcs-tag = libgpg-error-%(version)s
+    properly expands the version replacement. (Closes: #780602)
+  * [cb03293] Add %(hversion)s to version_to_tag to support some upstreams
+    enigmail upstream uses tags named enigmail-1-8 for 1.8.  Other
+    upstreams have used similar conventions, likely as holdovers from CVS
+    (e.g. gnupg 1.4.2 was tagged with V1-4-2).  This patch helps packagers
+    work with these upstreams. (Closes: #780679)
+
+  [ Martin Erik Werner ]
+  * [4a53c0f] docs: Fix diirectory->directory typo in gbp.conf manpage
+    (Closes: #783013)
+
+  [ Daniel Gollub ]
+  * [aa8548d,e0f8b5b] gbp-dch: Guess upstream-tag based on merge-base to not
+    accidentally pick up tags from the Debian branch.
+    (Closes: #gh:7)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 27 Apr 2015 09:05:16 +0200
+
 git-buildpackage (0.6.24) experimental; urgency=medium
 
   [ Guido Günther ]
