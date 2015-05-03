@@ -364,6 +364,10 @@ class GbpOptionParser(OptionParser):
             return
         parser.read(filename)
 
+    def _warn_old_config(self, oldcmd, cmd):
+        gbp.log.warn("Old style config section [%s] found "
+                     "please rename to [%s]" % (oldcmd, cmd))
+
     def parse_config_files(self):
         """
         Parse the possible config files and set appropriate values
@@ -392,16 +396,14 @@ class GbpOptionParser(OptionParser):
             oldcmd = self.command
             if parser.has_section(oldcmd):
                 self.config.update(dict(parser.items(oldcmd, raw=True)))
-                gbp.log.warn("Old style config section [%s] found "
-                             "please rename to [%s]" % (oldcmd, cmd))
+                self._warn_old_config_section(oldcmd, cmd)
         else:
             cmd = self.command
             for prefix in ['gbp', 'git']:
                 oldcmd = '%s-%s' % (prefix, self.command)
                 if parser.has_section(oldcmd):
                     self.config.update(dict(parser.items(oldcmd, raw=True)))
-                    gbp.log.warn("Old style config section [%s] found "
-                                 "please rename to [%s]" % (oldcmd, cmd))
+                    self._warn_old_config_section(oldcmd, cmd)
 
         # Update with command specific settings
         if parser.has_section(cmd):
