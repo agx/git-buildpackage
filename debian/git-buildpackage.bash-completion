@@ -23,7 +23,7 @@ _gbp_tags ()
 
 _gbp_options ()
 {
-    gbp $1 --help | sed -ne  's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
+    gbp "${1}" --help | sed -ne  's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
 }
 
 
@@ -197,8 +197,8 @@ _gbp ()
     local func
 
     command=$(_gbp_find_cmd_on_cmdline "$commands")
-    if [ -z $command ]; then
-	COMPREPLY=( $(compgen -W "$commands" -- $cur ) )
+    if [ -z "${command}" ]; then
+	COMPREPLY=( $(compgen -W "$commands" -- "${cur}" ) )
     else
 	func=_gbp-"${command}"
 	$func
