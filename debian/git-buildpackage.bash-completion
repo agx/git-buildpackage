@@ -200,7 +200,7 @@ _gbp ()
     if [ -z $command ]; then
 	COMPREPLY=( $(compgen -W "$commands" -- $cur ) )
     else
-	func=_gbp-$(echo $command)
+	func=_gbp-"${command}"
 	$func
     fi
 }
