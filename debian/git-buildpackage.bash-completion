@@ -111,54 +111,13 @@ _gbp-buildpackage()
               "$cbdist_opts"
 }
 
-_gbp-dch ()
+
+_gbp-generic-cmd()
 {
-    local options=$(_gbp_options dch)
+    local options=$(_gbp_options "${1}")
     _gbp_comp "$options"
 }
 
-_gbp-import-orig ()
-{
-    local options=$(_gbp_options import-orig)
-    _gbp_comp "$options"
-}
-
-_gbp-import-dsc ()
-{
-    local options=$(_gbp_options import-dsc)
-    _gbp_comp "$options"
-}
-
-_gbp-import-dscs ()
-{
-    local options="$(_gbp_options import-dscs) $(_gbp_options import-dsc)"
-    _gbp_comp "$options"
-}
-
-_gbp-pq ()
-{
-    local options=$(_gbp_options pq)
-    options="$options export import rebase drop apply switch"
-    _gbp_comp "$options"
-}
-
-_gbp-pull ()
-{
-    local options=$(_gbp_options pull)
-    _gbp_comp "$options"
-}
-
-_gbp-clone ()
-{
-    local options=$(_gbp_options clone)
-    _gbp_comp "$options"
-}
-
-_gbp-create-remote-repo ()
-{
-    local options=$(_gbp_options create-remote-repo)
-    _gbp_comp "$options"
-}
 
 have gbp &&
 _gbp ()
@@ -171,8 +130,11 @@ _gbp ()
     if [ -z "${command}" ]; then
 	COMPREPLY=( $(compgen -W "$commands" -- "${cur}" ) )
     else
-	func=_gbp-"${command}"
-	$func
+        if type _gbp-"${command}" >& /dev/null; then
+            _gbp-"${command}"
+        else
+            _gbp-generic-cmd "${command}"
+        fi
     fi
 }
 [ "${have:-}" ] && complete -F _gbp -o default gbp
