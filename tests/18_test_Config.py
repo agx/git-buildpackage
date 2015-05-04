@@ -5,6 +5,7 @@ import unittest
 from gbp.config import GbpOptionParser, GbpOptionGroup
 from .testutils import GbpLogTester
 
+
 class TestConfigParser(unittest.TestCase, GbpLogTester):
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
@@ -26,8 +27,8 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         """
         A value only in the default section should be available in all commands
         """
-        for n in range(1,5):
-            for prefix in [ '', 'git-', 'gbp-' ]:
+        for n in range(1, 5):
+            for prefix in ['', 'git-', 'gbp-']:
                 parser = GbpOptionParser('%scmd%d' % (prefix, n))
                 self.assertEqual(parser.config['default_option'], 'default_default1')
 
@@ -35,7 +36,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         """
         A value in any command section should override the default
         """
-        for prefix in [ '', 'git-', 'gbp-' ]:
+        for prefix in ['', 'git-', 'gbp-']:
             parser = GbpOptionParser('%scmd1' % prefix)
             self.assertEqual(parser.config['single_override_option1'], 'single_override_value1')
         # No deprecation warning since the test1.conf section is [cmd1]
@@ -45,20 +46,20 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         """
         A value in any git-command section should override the default
         """
-        for prefix in [ '', 'git-' ]:
+        for prefix in ['', 'git-']:
             parser = GbpOptionParser('%scmd2' % prefix)
             self.assertEqual(parser.config['single_git_override_option1'], 'single_git_override_value1')
-        for line in range(0,2):
+        for line in range(0, 2):
             self._check_log(line, ".*Old style config section \[git-cmd2\] found please rename to \[cmd2\]")
 
     def test_single_gbp_override(self):
         """
         A value in any gbp-command section should override the default
         """
-        for prefix in [ '', 'gbp-' ]:
+        for prefix in ['', 'gbp-']:
             parser = GbpOptionParser('%scmd3' % prefix)
             self.assertEqual(parser.config['single_gbp_override_option1'], 'single_gbp_override_value1')
-        for line in range(0,2):
+        for line in range(0, 2):
             self._check_log(line, ".*Old style config section \[gbp-cmd3\] found please rename to \[cmd3\]")
 
 
@@ -68,7 +69,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         how we're invoked
         """
         for n in range(4, 6):
-            for prefix in [ '', 'git-']:
+            for prefix in ['', 'git-']:
                 cmd = '%scmd%d' % (prefix, n)
                 parser = GbpOptionParser(cmd)
                 actual = parser.config['new_overrides_git_option1']
