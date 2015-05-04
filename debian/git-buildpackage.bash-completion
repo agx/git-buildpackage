@@ -3,33 +3,33 @@
 # Bash tab auto-completion rules for git-buildpackage.
 #
 # Copyright (C) 2010  Siegfried-Angel Gevatter Pujals <siegfried@gevatter.com>
-# Copyright (C) 2010,2013  Guido Guenther <agx@sigxcpu.org>
+# Copyright (C) 2010,2013,2015  Guido Guenther <agx@sigxcpu.org>
 #
 # Distributed under the GNU General Public License, version 2.0.
 
 _gbp_branches ()
 {
      [ -d .git ] || return 0
-     git  for-each-ref --format="%(refname:short)" refs/heads
+     git for-each-ref --format="%(refname:short)" refs/heads
 }
 
 
 _gbp_tags ()
 {
      [ -d .git ] || return 0
-     git  for-each-ref --format="%(refname:short)" refs/tags
+     git for-each-ref --format="%(refname:short)" refs/tags
 }
 
 
 _gbp_options ()
 {
-    gbp "${1}" --help | sed -ne  's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
+    gbp "${1}" --help | sed -ne 's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
 }
 
 
 _gbp_commands ()
 {
-    gbp --list-cmds | sed -ne  's/^ \+\([a-z\-]\+\) \-.*/\1/p'
+    gbp --list-cmds | sed -ne 's/^ \+\([a-z\-]\+\) \-.*/\1/p'
 }
 
 
