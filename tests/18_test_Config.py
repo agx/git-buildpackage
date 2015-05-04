@@ -62,6 +62,17 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         for line in range(0, 2):
             self._check_log(line, ".*Old style config section \[gbp-cmd3\] found please rename to \[cmd3\]")
 
+    def test_single_git_override_disabled_deprecations(self):
+        """
+        With disabled deprecations we shouldn't see a log line
+        """
+        for prefix in ['', 'git-']:
+            os.environ['GBP_DISABLE_SECTION_DEPRECTATION'] = 'true'
+            parser = GbpOptionParser('%scmd2' % prefix)
+            self.assertEqual(parser.config['single_git_override_option1'], 'single_git_override_value1')
+        for line in range(0, 2):
+            self._check_log_empty()
+        os.environ.pop('GBP_DISABLE_SECTION_DEPRECTATION')
 
     def test_new_overrides_git(self):
         """

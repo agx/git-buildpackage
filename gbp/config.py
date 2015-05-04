@@ -364,9 +364,10 @@ class GbpOptionParser(OptionParser):
             return
         parser.read(filename)
 
-    def _warn_old_config(self, oldcmd, cmd):
-        gbp.log.warn("Old style config section [%s] found "
-                     "please rename to [%s]" % (oldcmd, cmd))
+    def _warn_old_config_section(self, oldcmd, cmd):
+        if not os.getenv("GBP_DISABLE_SECTION_DEPRECTATION"):
+            gbp.log.warn("Old style config section [%s] found "
+                         "please rename to [%s]" % (oldcmd, cmd))
 
     def parse_config_files(self):
         """
