@@ -1,3 +1,20 @@
+git-buildpackage (0.6.27) unstable; urgency=medium
+
+  * [15187ba,270f41b] bash-completion: Simplify the code. This additionally
+    avoids warnings on unknown commands and gives us basic completion for
+    the RPM commands for free.
+  * [f22785b] Allow to disable config section deprecations. Sections named
+    [gbp-<command>] or [git-<command>] in gbp.conf cause a warning. In order
+    to make it simpler to be compatible with ancient gbp versions these
+    can be disabled by setting
+        GBP_DISABLE_SECTION_DEPRECTATION=true
+    in the environment.
+  * [3585fdb] bash-completion: Disable config section deprecation warnings.
+    It's of no use if we get these warnings on bash completion, it only
+    confuses users. They're still shown when running the actual command.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 05 May 2015 08:55:11 +0200
+
 git-buildpackage (0.6.26) unstable; urgency=medium
 
   * [72e129b] Drop git-* commands from manpages too.
