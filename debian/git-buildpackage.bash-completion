@@ -113,6 +113,14 @@ _gbp-buildpackage()
 }
 
 
+_gbp-pq ()
+{
+    local options=$(_gbp_options pq)
+    options="$options export import rebase drop apply switch"
+    _gbp_comp "$options"
+}
+
+
 _gbp-generic-cmd()
 {
     local options=$(_gbp_options "${1}")
