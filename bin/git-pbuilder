@@ -85,6 +85,14 @@ if expr "$DIST" : '.*-backports$' >/dev/null; then
             BACKPORTS='http://ftp.debian.org/debian'
             ;;
     esac
+elif expr "$DIST" : '.*-lts$' >/dev/null; then
+    DIST=${DIST%-lts}
+    EXT="-lts"
+
+    # The URL to the Debian LTS repository to add to the chroot
+    # configuration when created via this script for a distribution ending in
+    # -lts.
+    LTS='http://ftp.debian.org/debian'
 else
     EXT=
 fi
@@ -225,6 +233,10 @@ update|create|login)
     else
         if [ "$EXT" = '-backports' ] ; then
             OTHERMIRROR="deb $BACKPORTS $DIST$EXT main"
+            sudo "$BUILDER" --"$action" --distribution "$DIST" \
+                --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
+        elif [ "$EXT" = '-lts' ] ; then
+            OTHERMIRROR="deb $LTS $DIST$EXT main"
             sudo "$BUILDER" --"$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         else
@@ -385,7 +397,13 @@ B<--othermirror> parameter to the builder:
     deb http://backports.debian.org/debian-backports $DIST main
 
 The first will be used for most distributions, and the second for
-C<squeeze-backports> or C<oldstable-backports>.
+C<squeeze-backports> or C<oldstable-backports>. If the distribution ends in
+C<-lts>, the following will be added as an B<--othermirror> parameter to the
+builder:
+
+    deb http://ftp.debian.org/debian $DIST main
+
+to support building for Long Term Support releases.
 
 Any additional arguments to B<git-pbuilder> are passed along to the
 builder.  Due to how B<sudo> works, invoking the builder with an action
