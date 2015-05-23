@@ -1,3 +1,11 @@
+git-buildpackage (0.6.28) unstable; urgency=medium
+
+  * [7a0b9df] git-pbuilder: Support creation of chroots for LTS
+  * [c11a4d3] Add back completion for pq subcommands. This got lost in
+    270f41.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 23 May 2015 12:43:44 +0200
+
 git-buildpackage (0.6.27) unstable; urgency=medium
 
   * [15187ba,270f41b] bash-completion: Simplify the code. This additionally
