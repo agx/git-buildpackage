@@ -50,7 +50,6 @@ AutoReq:        No
 AutoProv:       No
 DistTag:        my_disttag
 BugUrl:         my_bugurl
-Collections:    my_collections
 
 %if 0%{?test_weak_dep_tags}
 Recommends:     my_recommends

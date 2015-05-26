@@ -33,7 +33,6 @@ AutoReq:        No
 AutoProv:       No
 DistTag:        my_disttag
 BugUrl:         my_bugurl
-Collections:    my_collections
 
 %description
 Package for testing GBP.
