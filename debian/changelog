@@ -1,3 +1,10 @@
+git-buildpackage (0.6.29) unstable; urgency=medium
+
+  * [14c4f41] Drop my_collections from spec files.  It trips up recent librpm
+    and we don't need the data for the tests anyway.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 26 May 2015 22:33:06 +0200
+
 git-buildpackage (0.6.28) unstable; urgency=medium
 
   * [7a0b9df] git-pbuilder: Support creation of chroots for LTS
