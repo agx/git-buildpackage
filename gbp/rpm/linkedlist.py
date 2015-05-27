@@ -75,13 +75,16 @@ class LinkedListIterator(collections.Iterator):
     def __init__(self, obj):
         self._next = obj.first
 
-    def next(self):
+    def __next__(self):
         ret = self._next
         if ret:
             self._next = ret.next
         else:
             raise StopIteration
         return ret
+
+    def next(self):
+        return self.__next__()
 
 
 class LinkedList(collections.Iterable):
