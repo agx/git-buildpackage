@@ -422,7 +422,7 @@ class GitRepository(object):
         args.add(commit2)
         sha1, stderr, ret = self._git_inout('merge-base', args.args, capture_stderr=True)
         if not ret:
-            return self.strip_sha1(sha1)
+            return self.strip_sha1(sha1).decode('utf-8')
         else:
             raise GitRepositoryError("Failed to get common ancestor: %s" % stderr.strip())
 
