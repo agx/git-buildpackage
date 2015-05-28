@@ -452,7 +452,7 @@ def main(argv):
     except GitRepositoryError as err:
         gbp.log.err("Git command failed: %s" % err)
         retval = 1
-    except GbpError, err:
+    except GbpError as err:
         if str(err):
             gbp.log.err(err)
         retval = 1
