@@ -902,14 +902,14 @@ def split_version_str(version):
     @return: individual version components
     @rtype: C{dict}
 
-    >>> split_version_str("1")
-    {'release': None, 'epoch': None, 'upstreamversion': '1'}
-    >>> split_version_str("1.2.3-5.3")
-    {'release': '5.3', 'epoch': None, 'upstreamversion': '1.2.3'}
-    >>> split_version_str("3:1.2.3")
-    {'release': None, 'epoch': '3', 'upstreamversion': '1.2.3'}
-    >>> split_version_str("3:1-0")
-    {'release': '0', 'epoch': '3', 'upstreamversion': '1'}
+    >>> sorted(split_version_str("1").items())
+    [('epoch', None), ('release', None), ('upstreamversion', '1')]
+    >>> sorted(split_version_str("1.2.3-5.3").items())
+    [('epoch', None), ('release', '5.3'), ('upstreamversion', '1.2.3')]
+    >>> sorted(split_version_str("3:1.2.3").items())
+    [('epoch', '3'), ('release', None), ('upstreamversion', '1.2.3')]
+    >>> sorted(split_version_str("3:1-0").items())
+    [('epoch', '3'), ('release', '0'), ('upstreamversion', '1')]
     """
     ret = {'epoch': None, 'upstreamversion': None, 'release': None}
 
