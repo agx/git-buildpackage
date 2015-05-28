@@ -25,7 +25,7 @@ import glob
 import time
 import shutil
 import errno
-import urllib2
+from six.moves import urllib
 
 import gbp.tmpfile as tempfile
 import gbp.command_wrappers as gbpc
@@ -53,20 +53,20 @@ def download_file(target_dir, url):
     """Download a remote file"""
     gbp.log.info("Downloading '%s'..." % url)
     try:
-        urlobj = urllib2.urlopen(url)
+        urlobj = urllib.urlopen(url)
         local_fn = os.path.join(target_dir, os.path.basename(url))
         with open(local_fn, "wb") as local_file:
             local_file.write(urlobj.read())
-    except urllib2.HTTPError as err:
+    except urllib.error.HTTPError as err:
         raise GbpError("Download failed: %s" % err)
-    except urllib2.URLError as err:
+    except urllib.error.URLError as err:
         raise GbpError("Download failed: %s" % err.reason)
     return local_fn
 
 def download_source(pkg, dirs):
     """Download package from a remote location"""
     if re.match(r'[a-z]{1,5}://', pkg):
-        mode = 'python urllib2'
+        mode = 'python urllib'
     else:
         mode = 'yumdownloader'
 
