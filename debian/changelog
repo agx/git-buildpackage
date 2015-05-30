@@ -1,3 +1,13 @@
+git-buildpackage (0.6.30) unstable; urgency=medium
+
+  * [474acd9] Allow to automatically determine the dist to build for.
+    Setting --git-dist=DEP14 will follow the DEP14 proposal to determine the
+    suite to build for via vendor/suite. The exception is sid where DIST is
+    just set to be empty as well as native packages.
+  * [18d83d5,3894520,c4f82d3] Python3 compatibility
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 30 May 2015 19:41:25 +0200
+
 git-buildpackage (0.6.29) unstable; urgency=medium
 
   * [14c4f41] Drop my_collections from spec files.  It trips up recent librpm
