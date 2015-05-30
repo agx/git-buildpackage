@@ -197,7 +197,14 @@
           <para>
           Build for distribution <replaceable>DIST</replaceable> when using
           <command>--git-pbuilder</command>. If unset build for the unstable
-          distribution.
+          distribution. The special value <option>DEP14</option> will set
+	  the distribution to build for from the branch name. I.e. if you're
+	  starting the build from a branch named
+	  <replaceable>debian/wheezy-backports</replaceable> the
+	  distribution is set
+	  to <replaceable>wheezy-backports</replaceable>. If the branch is
+	  named <replaceable>downstream/sid</replaceable> the distribution
+	  would be set to <replaceable>downstream_sid</replaceable>.
           </para>
         </listitem>
       </varlistentry>

@@ -328,12 +328,39 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
     return comp_type
 
 
-def setup_pbuilder(options):
+def get_pbuilder_dist(options, repo, native=False):
+    """
+    Determin the dist to build for with pbuilder/cowbuilder
+    """
+    if options.pbuilder_dist == 'DEP14':
+        branch = repo.branch
+        if not branch:
+            raise GbpError("Failed to setup DIST for %s. "
+                           "Can't determine current branch." % options.builder)
+        else:
+            parts = branch.rsplit('/')
+            if len(parts) == 2:
+                vendor = du.get_vendor().lower()
+                suite = parts[1]
+                if vendor == parts[0]:
+                    dist = '' if suite == 'sid' else suite
+                else:
+                    dist = '%s_%s' % (parts[0], suite)
+            elif len(parts) == 1 and native and branch in ['master', 'sid']:
+                dist = ''
+            else:
+                raise GbpError("DEP14 DIST setup needs branch name to be vendor/suite")
+    else:
+        dist = options.pbuilder_dist
+    return dist
+
+
+def setup_pbuilder(options, repo, native):
     """setup everything to use git-pbuilder"""
     if options.use_pbuilder or options.use_qemubuilder:
         options.builder = 'git-pbuilder'
         options.cleaner = '/bin/true'
-        os.environ['DIST'] = options.pbuilder_dist
+        os.environ['DIST'] = get_pbuilder_dist(options, repo, native)
         if options.pbuilder_arch:
             os.environ['ARCH'] = options.pbuilder_arch
         if options.use_qemubuilder:
@@ -342,6 +369,8 @@ def setup_pbuilder(options):
             os.environ['GIT_PBUILDER_AUTOCONF'] = "no"
         if options.pbuilder_options:
             os.environ['GIT_PBUILDER_OPTIONS'] = options.pbuilder_options
+        gbp.log.info("Building with %s for %s" % (os.getenv('BUILDER') or '(cowbuilder)',
+                                                  os.getenv('DIST') or '(sid)'))
 
 
 def disable_hooks(options):
@@ -586,7 +615,7 @@ def main(argv):
                      extra_env={'GBP_GIT_DIR': repo.git_dir,
                                 'GBP_BUILD_DIR': build_dir})(dir=build_dir)
 
-            setup_pbuilder(options)
+            setup_pbuilder(options, repo, source.is_native())
             # Finally build the package:
             RunAtCommand(options.builder, dpkg_args, shell=True,
                          extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)

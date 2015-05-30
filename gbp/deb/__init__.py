@@ -103,4 +103,9 @@ def compare_versions(version1, version2):
     return DpkgCompareVersions()(version1, version2)
 
 
+def get_vendor():
+    pipe = subprocess.Popen(["dpkg-vendor", "--query", "Vendor"], shell=False, stdout=subprocess.PIPE)
+    return pipe.stdout.readline().strip()
+
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
