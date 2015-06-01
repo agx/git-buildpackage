@@ -179,9 +179,9 @@ def export_patches(repo, branch, options):
     pq_branch = pq_branch_name(branch)
     try:
         shutil.rmtree(PATCH_DIR)
-    except OSError as (e, msg):
-        if e != errno.ENOENT:
-            raise GbpError("Failed to remove patch dir: %s" % msg)
+    except OSError as e:
+        if e.errno != errno.ENOENT:
+            raise GbpError("Failed to remove patch dir: %s" % e.strerror)
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
