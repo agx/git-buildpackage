@@ -19,7 +19,6 @@ from . import context
 from . import testutils
 
 import os
-import logging
 import unittest
 
 from gbp.scripts.pq import generate_patches, export_patches
@@ -48,6 +47,14 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         pq.apply_and_commit_patch(self.repo, patch, None, topic='foobar')
         info = self.repo.get_commit_info('HEAD')
         self.assertIn('Gbp-Pq: Topic foobar', info['body'])
+
+    def test_name(self):
+        """Test if setting a name works"""
+        patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
+
+        pq.apply_and_commit_patch(self.repo, patch, None, name='foobar')
+        info = self.repo.get_commit_info('HEAD')
+        self.assertIn('Gbp-Pq: Name foobar', info['body'])
 
     @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
     def test_debian_missing_author(self):
@@ -112,26 +119,30 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         class opts:
             patch_numbers = False
 
+        d = context.new_tmpdir(__name__)
+        expected_paths = [os.path.join(str(d), 'gbptest', n) for n in
+                          ['added-foo.patch', 'patchname.diff']]
         # Add test file with topic:
         msg = ("added foo\n\n"
                "Gbp-Pq: Topic gbptest")
         self.add_file('foo', 'foo', msg)
+        msg = ("added bar\n\n"
+               "Gbp-Pq: Topic gbptest\n"
+               "Gbp-Pq: Name patchname.diff")
+        self.add_file('baz', 'baz', msg)
 
         # Write it out as patch and check it's existence
-        d = context.new_tmpdir(__name__)
-        patchfile = generate_patches(self.repo, 'HEAD^', 'HEAD', str(d),
-                                     opts)[0]
-        expected = os.path.join(str(d), 'gbptest', 'added-foo.patch')
-
-        self.assertEqual(os.path.basename(patchfile),
-                         'added-foo.patch')
-        self.assertTrue(os.path.exists(expected))
-        logging.debug(open(expected).read())
+        patchfiles = generate_patches(self.repo, 'HEAD^^', 'HEAD', str(d),
+                                      opts)
+        for expected in expected_paths:
+            self.assertIn(expected, patchfiles)
+            self.assertTrue(os.path.exists(expected))
 
         # Reapply the patch to a new branch
-        self.repo.create_branch('testapply', 'HEAD^')
+        self.repo.create_branch('testapply', 'HEAD^^')
         self.repo.set_branch('testapply')
-        self.repo.apply_patch(expected)
+        for expected in expected_paths:
+            self.repo.apply_patch(expected)
         self.repo.commit_all("foo")
         diff = self.repo.diff('master', 'testapply')
         # Branches must be identical afterwards

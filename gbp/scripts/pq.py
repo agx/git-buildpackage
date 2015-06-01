@@ -77,26 +77,27 @@ def generate_patches(repo, start, end, outdir, options):
     for commit in rev_list:
         info = repo.get_commit_info(commit)
         # Parse 'gbp-pq-topic:'
-        topic  = parse_old_style_topic(info)
-        cmds ={'topic': topic } if topic else {}
+        topic = parse_old_style_topic(info)
+        cmds = {'topic': topic} if topic else {}
         # Parse 'Gbp: ' style commands
         (cmds_gbp, info['body']) = parse_gbp_commands(info, 'gbp',
                                                       ('ignore'),
-                                                      ('topic'),
-                                                      ('topic'))
+                                                      ('topic', 'name'),
+                                                      ('topic', 'name'))
         cmds.update(cmds)
         # Parse 'Gbp-Pq: ' style commands
         (cmds_gbp_pq, info['body']) = parse_gbp_commands(info,
                                                          'gbp-pq',
                                                          ('ignore'),
-                                                         ('topic'),
-                                                         ('topic'))
+                                                         ('topic', 'name'),
+                                                         ('topic', 'name'))
         cmds.update(cmds_gbp_pq)
-        if not 'ignore' in cmds:
+        if 'ignore' not in cmds:
             if 'topic' in cmds:
                 topic = cmds['topic']
+            name = cmds.get('name', None)
             format_patch(outdir, repo, info, patches, options.patch_numbers,
-                         topic=topic)
+                         topic=topic, name=name)
         else:
             gbp.log.info('Ignoring commit %s' % info['id'])
 
@@ -286,7 +287,8 @@ def import_quilt_patches(repo, branch, series, tries, force):
         for patch in queue:
             gbp.log.debug("Applying %s" % patch.path)
             try:
-                apply_and_commit_patch(repo, patch, maintainer, patch.topic)
+                name = os.path.basename(patch.path)
+                apply_and_commit_patch(repo, patch, maintainer, patch.topic, name)
             except (GbpError, GitRepositoryError) as e:
                 gbp.log.err("Failed to apply '%s': %s" % (patch.path, e))
                 repo.force_head('HEAD', hard=True)

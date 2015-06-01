@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011 Guido Günther <agx@sigxcpu.org>
+# (C) 2011,2015 Guido Günther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ def write_patch_file(filename, commit_info, diff):
 
 
 def format_patch(outdir, repo, commit_info, series, numbered=True,
-                 path_exclude_regex=None, topic=''):
+                 path_exclude_regex=None, topic='', name=None):
     """Create patch of a single commit"""
 
     # Determine filename and path
@@ -186,7 +186,10 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
     suffix = '.patch'
     base_maxlen = 63 - len(num_prefix) - len(suffix)
     base = commit_info['patchname'][:base_maxlen]
-    filename = (num_prefix if numbered else '') + base + suffix
+    if name is not None:
+        filename = name
+    else:
+        filename = (num_prefix if numbered else '') + base + suffix
     filepath = os.path.join(outdir, filename)
     # Make sure that we don't overwrite existing patches in the series
     if filepath in series:
@@ -275,7 +278,7 @@ def apply_single_patch(repo, branch, patch, fallback_author, topic=None):
     gbp.log.info("Applied %s" % os.path.basename(patch.path))
 
 
-def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
+def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
     author = {'name': patch.author,
               'email': patch.email,
@@ -296,6 +299,8 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
     msg = "%s\n\n%s" % (patch.subject, patch.long_desc)
     if topic:
         msg += "\nGbp-Pq: Topic %s" % topic
+    if name:
+        msg += "\nGbp-Pq: Name %s" % name
     commit = repo.commit_tree(tree, msg, [repo.head], author=author)
     repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch.path)
 
