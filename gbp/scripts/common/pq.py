@@ -89,7 +89,7 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
     """
     body = []
     cmd_re = re.compile(r'^%s:\s*(?P<cmd>[a-z-]+)(\s+(?P<args>\S.*))?' %
-                            cmd_tag, flags=re.I)
+                        cmd_tag, flags=re.I)
     commands = {}
     for line in info['body'].splitlines():
         match = re.match(cmd_re, line)
@@ -105,14 +105,12 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
                 commands[cmd] = match.group('args')
             else:
                 gbp.log.warn("Ignoring unknown gbp-command '%s' in commit %s"
-                                % (line, info['id']))
+                             % (line, info['id']))
             if filter_cmds is None or cmd not in filter_cmds:
                 body.append(line)
         else:
             body.append(line)
     msg = '\n'.join(body)
-    # Add trailing newline if the originial body hat one
-    #msg += '\n' if info['body'] and info['body'][-1] == '\n' else ''
     return (commands, msg)
 
 
@@ -193,7 +191,7 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
     # Make sure that we don't overwrite existing patches in the series
     if filepath in series:
         presuffix = '-%d' % len(series)
-        base = base[:base_maxlen-len(presuffix)] + presuffix
+        base = base[:base_maxlen - len(presuffix)] + presuffix
         filename = (num_prefix if numbered else '') + base + suffix
         filepath = os.path.join(outdir, filename)
 
@@ -220,7 +218,7 @@ def format_diff(outdir, filename, repo, start, end, path_exclude_regex=None):
     info['subject'] = "Raw diff %s..%s" % (start, end)
     info['body'] = ("Raw diff between %s '%s' and\n%s '%s'\n" %
                     (repo.get_obj_type(start), start,
-                    repo.get_obj_type(end), end))
+                     repo.get_obj_type(end), end))
     if not filename:
         filename = '%s-to-%s.diff' % (start, end)
     filename = os.path.join(outdir, filename)
@@ -281,7 +279,7 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
     author = {'name': patch.author,
               'email': patch.email,
-              'date': patch.date }
+              'date': patch.date}
 
     patch_fn = os.path.basename(patch.path)
     if not (author['name'] and author['email']):

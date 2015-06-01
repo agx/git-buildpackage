@@ -26,6 +26,7 @@ from gbp.scripts.pq import generate_patches, export_patches
 import gbp.scripts.common.pq as pq
 import gbp.patch_series
 
+
 class TestApplyAndCommit(testutils.DebianGitTestRepo):
     """Test L{gbp.pq}'s apply_and_commit"""
 
@@ -39,7 +40,6 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
         pq.apply_and_commit_patch(self.repo, patch, None)
         self.assertIn('foo', self.repo.list_files())
-
 
     def test_topic(self):
         """Test if setting a topic works"""
@@ -57,7 +57,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         """
         def _check_log(msg):
             self.assertEqual(msg, "Patch 'foo.patch' has no authorship "
-                         "information, using 'Guido Günther <gg@godiug.net>'")
+                             "information, using 'Guido Günther <gg@godiug.net>'")
 
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
@@ -79,6 +79,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         self.assertEqual(info['author'].email, 'gg@godiug.net')
         self.assertIn('foo', self.repo.list_files())
 
+
 class TestApplySinglePatch(testutils.DebianGitTestRepo):
     """Test L{gbp.pq}'s apply_single_patch"""
 
@@ -94,6 +95,7 @@ class TestApplySinglePatch(testutils.DebianGitTestRepo):
         pq.apply_single_patch(self.repo, 'master', patch, None)
         self.assertIn('foo', self.repo.list_files())
 
+
 class TestWritePatch(testutils.DebianGitTestRepo):
     """Test L{gbp.pq}'s write_patch """
 
@@ -107,7 +109,8 @@ class TestWritePatch(testutils.DebianGitTestRepo):
     def test_generate_patches(self):
         """Test generation of patches"""
 
-        class opts: patch_numbers = False
+        class opts:
+            patch_numbers = False
 
         # Add test file with topic:
         msg = ("added foo\n\n"
@@ -121,7 +124,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         expected = os.path.join(str(d), 'gbptest', 'added-foo.patch')
 
         self.assertEqual(os.path.basename(patchfile),
-                                          'added-foo.patch')
+                         'added-foo.patch')
         self.assertTrue(os.path.exists(expected))
         logging.debug(open(expected).read())
 
@@ -133,6 +136,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         diff = self.repo.diff('master', 'testapply')
         # Branches must be identical afterwards
         self.assertEqual('', diff)
+
 
 class TestExport(testutils.DebianGitTestRepo):
     class Options(object):
@@ -158,15 +162,15 @@ class TestExport(testutils.DebianGitTestRepo):
 class TestParseGbpCommand(unittest.TestCase):
     def test_empty_body(self):
         """Test command filtering with an empty body"""
-        info = { 'body': '' }
+        info = {'body': ''}
         (cmds, body) = pq.parse_gbp_commands(info, ['tag'], ['cmd1'], ['cmd2'])
         self.assertEquals(cmds, {})
         self.assertEquals(body, '')
 
     def test_noarg_cmd(self):
         orig_body = '\n'.join(["Foo",
-                          "tag: cmd1"])
-        info = { 'body': orig_body }
+                               "tag: cmd1"])
+        info = {'body': orig_body}
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'])
         self.assertEquals(cmds, {'cmd': None})
         self.assertEquals(body, orig_body)
@@ -174,7 +178,7 @@ class TestParseGbpCommand(unittest.TestCase):
     def test_filter_cmd(self):
         orig_body = '\n'.join(["Foo",
                                "tag: cmd1"])
-        info = { 'body': orig_body }
+        info = {'body': orig_body}
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'], ['cmd'])
         self.assertEquals(cmds, {'cmd': None})
         self.assertEquals(body, 'Foo')

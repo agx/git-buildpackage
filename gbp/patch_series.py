@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2011,2015 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -21,6 +21,7 @@ import re
 import subprocess
 import tempfile
 from gbp.errors import GbpError
+
 
 class Patch(object):
     """
@@ -49,7 +50,7 @@ class Patch(object):
         repr = "<gbp.patch_series.Patch path='%s' " % self.path
         if self.topic:
             repr += "topic='%s' " % self.topic
-        if self.strip != None:
+        if self.strip is not None:
             repr += "strip=%d " % self.strip
         repr += ">"
         return repr
@@ -72,7 +73,7 @@ class Patch(object):
                 header = rfc_header[:-1].lower()
                 self.info[header] = value.strip()
         try:
-            self.long_desc = "".join([ line for line in body ])
+            self.long_desc = "".join([line for line in body])
             body.close()
         except IOError as msg:
             raise GbpError("Failed to read patch header of '%s': %s" %
@@ -112,7 +113,7 @@ class Patch(object):
             if ext in self.patch_exts:
                 subject = base
         except ValueError:
-                pass # No ext so keep subject as is
+                pass  # No ext so keep subject as is
         return subject.lstrip('0123456789-') or subject
 
     def _get_info_field(self, key, get_val=None):
@@ -127,14 +128,13 @@ class Patch(object):
         @param get_val: alternate value if key is not in info dict
         @type get_val: C{str}
         """
-        if self.info == None:
+        if self.info is None:
             self._read_info()
 
         if key in self.info:
             return self.info[key]
         else:
             return get_val() if get_val else None
-
 
     @property
     def subject(self):
@@ -205,10 +205,10 @@ class PatchSeries(list):
         queue = PatchSeries()
         for line in series:
             try:
-                if line[0] in [ '\n', '#' ]:
+                if line[0] in ['\n', '#']:
                     continue
             except IndexError:
-                continue # ignore empty lines
+                continue  # ignore empty lines
             queue.append(klass._parse_line(line, patch_dir))
         return queue
 
@@ -223,7 +223,7 @@ class PatchSeries(list):
         >>> PatchSeries._get_topic("/asdf")
         """
         topic = os.path.dirname(line)
-        if topic in [ '', '/' ]:
+        if topic in ['', '/']:
             topic = None
         return topic
 
@@ -265,5 +265,3 @@ class PatchSeries(list):
         topic = klass._get_topic(line)
         (patch, split) = klass._split_strip(line)
         return Patch(os.path.join(patch_dir, patch), topic, split)
-
-
