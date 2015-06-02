@@ -1,3 +1,11 @@
+git-buildpackage (0.6.31) unstable; urgency=medium
+
+  * [8241459] pq: Allow to preserve the patch name on import/export
+    (Closes: #761161)
+  * [32c52b7,58ea067] pylint and python3 cleanups
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 02 Jun 2015 20:00:47 +0200
+
 git-buildpackage (0.6.30) unstable; urgency=medium
 
   * [474acd9] Allow to automatically determine the dist to build for.
