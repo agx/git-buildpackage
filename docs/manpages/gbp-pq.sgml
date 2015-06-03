@@ -195,9 +195,10 @@
         </term>
         <listitem>
           <para>
-	  The name to use for the patch when running <screen>&gbp-pq;
-          export</screen>. If unset it will be formatted
-          like <command>git am</command> would format it.
+	    The name to use for the patch when running
+	    <screen>&gbp-pq; export</screen>
+	    If unset it will be formatted like
+	    <command>git am</command> would format it.
           </para>
         </listitem>
       </varlistentry>
