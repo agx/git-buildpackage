@@ -25,7 +25,7 @@
       <arg><option>--[no-]merge</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
-      <arg><option>--upstream-vcs-tag=</option><replaceable>tag_name</replaceable></arg>
+      <arg><option>--upstream-vcs-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--[no-]sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -106,13 +106,15 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--upstream-vcs-tag</option>=<replaceable>tag_name</replaceable>
+        <term><option>--upstream-vcs-tag</option>=<replaceable>tag-format</replaceable>
         </term>
         <listitem>
           <para>
-          Add <replaceable>tag_name</replaceable> as additional parent to the
+          Add <replaceable>tag-format</replaceable> as additional parent to the
           commit of the upstream tarball. Useful when upstream uses git and you
-          want to link to it's revision history.
+          want to link to it's revision history. The
+          <replaceable>tag-format</replaceable> can be a pattern similar to
+          what <option>--upstream-tag</option> supports.
           </para>
         </listitem>
       </varlistentry>
