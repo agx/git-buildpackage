@@ -55,6 +55,11 @@
     information, including package name, version, &debian;  diffs, and upstream
     source is automatically detected from the source package.
     </para>
+    <para>
+    If the command is run from within an existing repository it will import
+    into this, if not a new repository named as the Debian source package is
+    created.
+    </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
