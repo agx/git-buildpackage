@@ -420,7 +420,10 @@ class GitRepository(object):
         args = GitArgs()
         args.add(commit1)
         args.add(commit2)
-        sha1, stderr, ret = self._git_inout('merge-base', args.args, capture_stderr=True)
+        sha1, stderr, ret = self._git_inout('merge-base',
+                                            args.args,
+                                            extra_env={'LC_ALL': 'C'},
+                                            capture_stderr=True)
         if not ret:
             return self.strip_sha1(sha1).decode('utf-8')
         else:
@@ -577,6 +580,7 @@ class GitRepository(object):
 
         dummy, err, ret = self._git_inout('branch',
                                           args,
+                                          extra_env={'LC_ALL': 'C'},
                                           capture_stderr=True)
         if ret:
             raise GitRepositoryError(
@@ -694,10 +698,11 @@ class GitRepository(object):
         args.add(commitish)
 
         tag, err, ret = self._git_inout('describe', args.args,
+                                        extra_env={'LC_ALL': 'C'},
                                         capture_stderr=True)
         if ret:
-            raise GitRepositoryError("Can't describe %s. Git error: %s" % \
-                                         (commitish, err.strip()))
+            raise GitRepositoryError("Can't describe %s. Git error: %s" %
+                                     (commitish, err.strip()))
         return tag.strip()
 
     def find_tag(self, commit, pattern=None):
