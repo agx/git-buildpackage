@@ -1084,7 +1084,9 @@ class GitRepository(object):
         @return: remote repositories
         @rtype: C{dict} of C{GitRemote}
         """
-        out, err, ret = self._git_inout('remote', [], capture_stderr=True)
+        out, err, ret = self._git_inout('remote', [],
+                                        extra_env={'LC_ALL': 'C'},
+                                        capture_stderr=True)
         if ret:
             raise GitRepositoryError('Failed to get list of remotes: %s' % err)
 
@@ -1092,6 +1094,7 @@ class GitRepository(object):
         remotes = {}
         for remote in out.splitlines():
             out, err, _ret = self._git_inout('remote', ['show', '-n', remote],
+                                             extra_env={'LC_ALL': 'C'},
                                              capture_stderr=True)
             if ret:
                 raise GitRepositoryError('Failed to get information for remote '
