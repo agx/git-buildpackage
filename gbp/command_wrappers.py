@@ -169,12 +169,14 @@ class Command(object):
         Traceback (most recent call last):
         ...
         CommandExecFailed: execution failed: ...
-        >>> c = Command("/bin/true", capture_stdout=True)
+        >>> c = Command("/bin/true", capture_stdout=True,
+        ...             extra_env={'LC_ALL': 'C'})
         >>> c.call(["--version"])
         0
         >>> c.stdout.decode('utf-8').startswith('true')
         True
-        >>> c = Command("/bin/false", capture_stdout=True)
+        >>> c = Command("/bin/false", capture_stdout=True,
+        ...             extra_env={'LC_ALL': 'C'})
         >>> c.call(["--help"])
         1
         >>> c.stdout.decode('utf-8').startswith('Usage:')
