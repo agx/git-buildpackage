@@ -69,7 +69,7 @@ def get_dch_default_urgency():
     tempdir = tempfile.mkdtemp()
     tmp_dch_name = os.path.join(tempdir, 'changelog')
     try:
-        dch_cmd = ['dch', '--create', '--empty', '--changelog', tmp_dch_name,
+        dch_cmd = ['debchange', '--create', '--empty', '--changelog', tmp_dch_name,
                    '--package=foo', '--newversion=1',
                    '--distribution=UNRELEASED']
         ret = subprocess.Popen(dch_cmd).wait()

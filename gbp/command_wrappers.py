@@ -260,7 +260,7 @@ class Dch(Command):
         args = ['-v', version]
         if msg:
             args.append(msg)
-        Command.__init__(self, 'dch', args)
+        Command.__init__(self, 'debchange', args)
         self.run_error = "Dch failed: {err_reason}"
 
 

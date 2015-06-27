@@ -261,7 +261,7 @@ class ChangeLog(object):
             args.append('[[[insert-git-dch-commit-message-here]]]')
         else:
             args.append('')
-        dch = Command('dch', args, extra_env=env)
+        dch = Command('debchange', args, extra_env=env)
         dch.call([])
         if msg:
             old_cl = open("debian/changelog", "r")

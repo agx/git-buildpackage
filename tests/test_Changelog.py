@@ -47,8 +47,8 @@ cl_epoch="""xserver-xorg-video-nv (1:1.2.0-3) unstable; urgency=low
 
 def setup():
     """Setup test module"""
-    if not os.path.exists('/usr/bin/dch'):
-        raise nose.SkipTest('dch tool not present')
+    if not os.path.exists('/usr/bin/debchange'):
+        raise nose.SkipTest('debchange tool not present')
 
 def test_parse_debian_only():
     """

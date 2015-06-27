@@ -46,7 +46,7 @@ cl_debian = """test-package (0.9-1) unstable; urgency=%s
 """ % default_urgency
 
 
-@unittest.skipIf(not os.path.exists('/usr/bin/dch'), "Dch not found")
+@unittest.skipIf(not os.path.exists('/usr/bin/debchange'), "Dch not found")
 class TestScriptDch(DebianGitTestRepo):
     """Test git-dch"""
 
