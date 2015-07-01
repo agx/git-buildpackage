@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2010-2012 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010-2012,2015 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -101,6 +101,7 @@ class GbpOptionParser(OptionParser):
                  'sign-tags'       : 'False',
                  'force-create'    : 'False',
                  'no-create-orig'  : 'False',
+                 'cleaner'         : '/bin/true',
                  'keyid'           : '',
                  'posttag'         : '',
                  'postbuild'       : '',
@@ -577,7 +578,6 @@ class GbpOptionParserDebian(GbpOptionParser):
     defaults = dict(GbpOptionParser.defaults)
     defaults.update( {
                        'builder'            : 'debuild -i -I',
-                       'cleaner'            : '/bin/true',
                      } )
 
 
@@ -591,7 +591,13 @@ class GbpOptionParserRpm(GbpOptionParser):
             'vendor'                    : 'Downstream',
             'packaging-branch'          : 'master',
             'packaging-dir'             : '',
+            'packaging-tag-msg'         : ('%(pkg)s (vendor)s release '
+                                                         '%(version)s'),
             'packaging-tag'             : 'packaging/%(version)s',
+            'export-sourcedir'          : 'SOURCES',
+            'export-specdir'            : 'SPECS',
+            'export-dir'                : '../rpmbuild',
+            'builder'                   : 'rpmbuild',
             'spec-file'                 : '',
                     })
 
@@ -612,9 +618,19 @@ class GbpOptionParserRpm(GbpOptionParser):
             'packaging-tag':
                 "Format string for packaging tags, RPM counterpart of the "
                 "'debian-tag' option, default is '%(packaging-tag)s'",
+            'packaging-tag-msg':
+               ("Format string for packaging tag messages, "
+                "default is '%(packaging-tag-msg)s'"),
             'spec-file':
                 "Spec file to use, causes the packaging-dir option to be "
                 "ignored, default is '%(spec-file)s'",
+            'export-sourcedir':
+                "Subdir (under EXPORT_DIR) where packaging sources (other than "
+                "the spec file) are exported, default is "
+                "'%(export-sourcedir)s'",
+            'export-specdir':
+                "Subdir (under EXPORT_DIR) where package spec file is "
+                "exported default is '%(export-specdir)s'",
                  })
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

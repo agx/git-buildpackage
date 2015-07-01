@@ -12,6 +12,7 @@ MAN1S = \
         gbp-import-orig   \
         gbp-pq            \
         gbp-pull          \
+        gbp-buildpackage-rpm \
         $(NULL)
 
 MAN5S = gbp.conf

@@ -1,0 +1,544 @@
+<refentry id="man.gbp.buildpackage.rpm">
+  <refentryinfo>
+    <address>
+      &rpm-email;
+    </address>
+    <author>
+      &rpm-firstname;
+      &rpm-surname;
+    </author>
+  </refentryinfo>
+  <refmeta><refentrytitle>gbp-buildpackage-rpm</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-buildpackage-rpm</refname>
+    <refpurpose>Build RPM packages from a Git repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-buildpackage-rpm;
+      <arg><option>--git-[no-]ignore-new</option></arg>
+      <arg><option>--git-tag</option></arg>
+      <arg><option>--git-verbose</option></arg>
+      <arg><option>--git-color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--git-color-scheme=</option><replaceable>COLOR_SCHEME</replaceable></arg>
+      <arg><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-upstream-branch=</option><replaceable>TREEISH</replaceable></arg>
+      <arg><option>--git-packaging-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
+      <arg><option>--git-ignore-branch</option></arg>
+      <arg><option>--git-[no-]submodules</option></arg>
+      <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
+      <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
+      <arg><option>--git-[no-]sign-tags</option></arg>
+      <arg><option>--git-keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
+      <arg><option>--git-posttag=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-postbuild=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-postexport=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-prebuild=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-[no-]build</option></arg>
+      <arg><option>--git-[no-]hooks</option></arg>
+      <arg><option>--git-packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--git-upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--git-force-create</option></arg>
+      <arg><option>--git-no-create-orig</option></arg>
+      <arg><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable></arg>
+      <arg><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-compression-level=</option><replaceable>LEVEL</replaceable></arg>
+      <arg><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-export=</option><replaceable>TREEISH</replaceable></arg>
+      <arg><option>--git-export-only</option></arg>
+      <arg><option>--git-packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-[no-]pristine-tar</option></arg>
+      <arg><option>--git-[no-]pristine-tar-commit</option></arg>
+      <arg><option>--git-tag-only</option></arg>
+      <arg><option>--git-retag</option></arg>
+      <arg><option>--git-[no-]patch-export</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &gbp-buildpackage-rpm; is used to build RPM packages from a &git;
+    repository. It is an RPM counterpart for the &gbp-buildpackage; tool that
+    is designed for building Debian packages.
+    </para>
+    <para>
+    &gbp-buildpackage-rpm; will, in order:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+        Verify that it is being executed from the proper location.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Verify that the repository doesn't contain any uncommitted source
+        changes.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Verify that it is being executed from the correct branch.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Export packaging files to a separate build area.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Create an orig source tarball if it doesn't exist.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        Call <application>rpmbuild</application>(1) (or the application
+        specified via <option>--git-builder</option>), passing along all
+        command line arguments that don't start with --git-.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        (Optionally) tag the tree after a successful build.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        (Optionally) call a post build hook - e.g. to run
+        <productname>rpmlint</productname>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        (Optionally) call a post tag hook - e.g. to push the results to a
+        remote repository after creating the tag.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>--git-[no-]ignore-new</option>
+        </term>
+        <listitem>
+          <para>
+          Don't abort if there are uncommitted changes in the source tree or
+          the current branch doesn't match the
+          <replaceable>PACKAGING-BRANCH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tag</option>
+        </term>
+        <listitem>
+          <para>
+          Add a git tag after a successful build.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-builder=<replaceable>BUILD_CMD</replaceable></option>
+        </term>
+        <listitem>
+          <para>
+          Use <replaceable>BUILD_CMD</replaceable> instead of
+          <command>rpmbuild -ba</command>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-cleaner=<replaceable>CLEAN_CMD</replaceable></option>
+        </term>
+        <listitem>
+          <para>
+          Use <replaceable>CLEAN_CMD</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-verbose</option>
+        </term>
+        <listitem>
+          <para>
+          Verbose execution
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-color=</option><replaceable>[auto|on|off]</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Whether to use colored output.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-color-scheme=</option><replaceable>COLOR_SCHEME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Colors to use in output (when color is enabled). The format for
+          COLOR_SCHEME is
+          '&lt;debug&gt;:&lt;info&gt;:&lt;warning&gt;:&lt;error&gt;'.
+          Numerical values and color names are accepted, empty fields imply
+          the default color. For example --git-color-scheme='cyan:34::' would
+          show debug messages in cyan, info messages in blue and other messages
+          in default (i.e. warning and error messages in red).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Whether to send a desktop notification after the build.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-upstream-branch</option>=<replaceable>BRANCH_NAME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Branch to build the orig tarball from if
+          <option>--git-upstream-tree</option> is set to
+          <replaceable>BRANCH</replaceable>. Default is
+          <replaceable>upstream</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-packaging-branch</option>=<replaceable>BRANCH_NAME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          If you're not on this branch when invoking &gbp-buildpackage-rpm; it
+          will fail. Default is <replaceable>master</replaceable>. This is done
+          to make sure you don't accidentally release from a topic branch.  Not
+          being on this branch will be ignored when using
+          <option>--git-ignore-new</option>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-ignore-branch</option>
+        </term>
+        <listitem>
+          <para>
+          Don't check if the current branch matches
+          <replaceable>PACKAGING-BRANCH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-[no-]submodules</option>
+        </term>
+        <listitem>
+          <para>
+          Include git submodules in the orig tarball.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-[no-]sign-tags</option>
+        </term>
+        <listitem>
+          <para>
+          GPG sign all created tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-keyid=</option><replaceable>GPG-KEYID</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this keyid for gpg signing tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-posttag=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Excecute <replaceable>COMMAND</replaceable> after tagging a new
+          version.
+          </para>
+          <para>
+          Exported environment variables are: <envar>GBP_TAG</envar> (the name
+          of the generated tag), <envar>GBP_BRANCH</envar> (the branch the
+          package was build from) and <envar>GBP_SHA1</envar> (the sha1 of the
+          commit the tag was created at).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-postbuild=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Execute <replaceable>COMMAND</replaceable> after successful
+          build.
+          </para>
+          <para>
+          Exported environment variables are: <envar>GBP_CHANGES_FILE</envar>
+          (the name of the generated changes file),
+          <envar>GBP_BUILD_DIR</envar> (the build dir).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-postexport=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Execute <replaceable>COMMAND</replaceable> after exporting the source
+          tree.
+          </para>
+          <para>
+          Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
+          repository the package is being built from),
+          <envar>GBP_TMP_DIR</envar> (the temporary directory where the sources
+          have been initially exported).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-prebuild=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Execute <replaceable>COMMAND</replaceable> from the build directory
+          before calling <application>rpmbuild</application> or the application
+          specified via <option>--git-builder</option>.
+          </para>
+          <para>
+          Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
+          repository the package is being built from),
+          <envar>GBP_BUILD_DIR</envar> (the build dir).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-[no-]build</option>
+        </term>
+        <listitem>
+          <para>
+          Enable builder. Note: <option>--git-no-build</option> causes the
+          postbuild hook to be disabled, too.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-[no-]hooks</option>
+        </term>
+        <listitem>
+          <para>
+          Enable running all (cleaner, postexport, prebuild, postbuild, and
+          posttag) hooks. Note: the <option>--git-builder</option> command is
+          not affected by this option.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-packaging-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this tag format when tagging released versions of the package.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-upstream-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this tag format when looking for tags of upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-force-create</option>
+        </term>
+        <listitem>
+          <para>
+          Force creation of an orig tarball (overwriting a pre-existing one if
+          present).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-no-create-orig</option>
+        </term>
+        <listitem>
+          <para>
+          Don't try to create any orig tarball.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Export the packaging files from  the current branch head (or the
+          treeish object given via <option>--git-export</option> to
+          <replaceable>DIRECTORY</replaceable> before building.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-export=</option><replaceable>TREEISH</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Instead of exporting the current branch head, export the treeish
+          object <replaceable>TREEISH</replaceable>. The special name
+          <replaceable>INDEX</replaceable> exports the current index,
+          <replaceable>WC</replaceable>) exports all files in the
+          current working directory.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-packaging-dir=</option><replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Subdirectory that contains the RPM packaging files.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable>
+        </term>
+        <listitem>
+          <para>
+          How to find the upstream sources used to generate the tarball.
+          <replaceable>TAG</replaceable> looks at a tag corresponding to the
+          version in the changelog. <replaceable>BRANCH</replaceable> looks at
+          the upstream branch given via the
+          <option>--git-upstream-branch</option> option. Other values are
+          interpreted as treeishs.
+          </para>
+          <para>
+          This doesn't have any effect if <option>--git-pristine-tar</option>
+          is being used.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Search for original tarballs in <replaceable>DIRECTORY</replaceable>
+          instead of generating them.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-compression-level=</option><replaceable>LEVEL</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Specifies the upstream tarball compression level if an upstream
+          tarball needs to be built.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tag-only</option>
+        </term>
+        <listitem>
+          <para>
+          Don't build, only tag and run post-tag hooks.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-retag</option>
+        </term>
+        <listitem>
+          <para>
+          Don't fail tag operations if a tag with the same version already
+          exists, but, overwrite the existing tag, instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pristine-tar</option>
+        </term>
+        <listitem>
+          <para>
+          Use pristine-tar when generating the upstream tarball if it doesn't
+          exist.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-pristine-tar-commit</option>
+        </term>
+        <listitem>
+          <para>
+          Commit the pristine-tar delta to the pristine-tar branch if a new
+          tarball was generated and the pristine-tar data isn't already there.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+    Only build a source RPM with &rpmbuild;
+    </para>
+    <screen>
+      &gbp-buildpackage-rpm; -bs
+    </screen>
+    <para>
+    Build an RPM package with &rpmbuild; on a custom branch with the uncommitted
+    changes included.
+    </para>
+    <screen>
+      &gbp-buildpackage-rpm; --git-ignore-branch --git-export=WC
+    </screen>
+  </refsect1>
+  <refsect1>
+      &man.gbp.config-files;
+      <para>
+      All options in the config files are specified without the 'git-' prefix.
+      </para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+    <xref linkend="man.gbp.import.srpm">,
+    <xref linkend="man.gbp.pq.rpm">,
+    <citerefentry>
+      <refentrytitle>rpmbuild</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <xref linkend="man.gbp.conf">,
+    &man.seealso.common;
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+    &rpm-username; &rpm-email;
+    </para>
+  </refsect1>
+</refentry>

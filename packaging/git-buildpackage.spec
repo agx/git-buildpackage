@@ -247,6 +247,7 @@ done
 %{python_sitelib}/gbp/scripts/*rpm*.py*
 %{python_sitelib}/gbp/rpm/*py*
 %if %{with docs}
+%{_mandir}/man1/gbp-buildpackage-rpm.1*
 %endif
 
 
