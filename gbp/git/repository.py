@@ -1891,7 +1891,7 @@ class GitRepository(object):
 
     @classmethod
     def clone(klass, path, remote, depth=0, recursive=False, mirror=False,
-              bare=False, auto_name=True):
+              bare=False, auto_name=True, reference=None):
         """
         Clone a git repository at I{remote} to I{path}.
 
@@ -1910,6 +1910,8 @@ class GitRepository(object):
         @param auto_name: If I{True} create a directory below I{path} based on
             the I{remote}s name. Otherwise create the repo directly at I{path}.
         @type auto_name: C{bool}
+        @param reference: create a clone using local objects from I{reference} repository
+        @type reference: C{str}
         @return: git repository object
         @rtype: L{GitRepository}
         """
@@ -1924,6 +1926,7 @@ class GitRepository(object):
         args.add_true(recursive, '--recursive')
         args.add_true(mirror, '--mirror')
         args.add_true(bare, '--bare')
+        args.add_true(reference, '--reference', reference)
         args.add(remote)
         args.add_true(name, name)
         try:

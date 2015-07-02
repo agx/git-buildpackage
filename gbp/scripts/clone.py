@@ -47,6 +47,8 @@ def build_parser(name):
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     branch_group.add_option("--depth", action="store", dest="depth", default=0,
                             help="git history depth (for creating shallow clones)")
+    branch_group.add_option("--reference", action="store", dest="reference", default=None,
+                            help="git reference repository (use local copies where possible)")
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -89,7 +91,7 @@ def main(argv):
 
     try:
         repo = DebianGitRepository.clone(clone_to, source, options.depth,
-                                         auto_name=auto_name)
+                                         auto_name=auto_name,reference=options.reference)
         os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the

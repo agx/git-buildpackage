@@ -27,6 +27,7 @@
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--depth=</option><replaceable>depth</replaceable></arg>
+      <arg><option>--reference=</option><replaceable>repository</replaceable></arg>
       <arg choice="plain"><replaceable>remote_uri</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -74,6 +75,13 @@
         </term>
         <listitem>
           <para>Git history depth, for creating shallow git clones.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--reference</option>=<replaceable>repository</replaceable>
+        </term>
+        <listitem>
+          <para>Local repository to use as alternate instead of re-copying data from remote repository.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
