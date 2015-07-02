@@ -113,33 +113,25 @@ class TestWritePatch(testutils.DebianGitTestRepo):
     def tearDown(self):
         context.teardown()
 
-    def test_generate_patches(self):
-        """Test generation of patches"""
-
-        class opts:
-            patch_numbers = False
+    def _test_generate_patches(self, changes, expected_patches, opts):
+        self.assertEqual(len(changes), len(expected_patches))
 
         d = context.new_tmpdir(__name__)
-        expected_paths = [os.path.join(str(d), 'gbptest', n) for n in
-                          ['added-foo.patch', 'patchname.diff']]
-        # Add test file with topic:
-        msg = ("added foo\n\n"
-               "Gbp-Pq: Topic gbptest")
-        self.add_file('foo', 'foo', msg)
-        msg = ("added bar\n\n"
-               "Gbp-Pq: Topic gbptest\n"
-               "Gbp-Pq: Name patchname.diff")
-        self.add_file('baz', 'baz', msg)
+        expected_paths = [os.path.join(str(d), n) for n in expected_patches ]
+
+        # Commit changes
+        for c in changes:
+            self.add_file(c[0], c[1], c[2])
 
         # Write it out as patch and check it's existence
-        patchfiles = generate_patches(self.repo, 'HEAD^^', 'HEAD', str(d),
-                                      opts)
+        origin = 'HEAD~%d' % len(changes)
+        patchfiles = generate_patches(self.repo, origin, 'HEAD', str(d), opts)
         for expected in expected_paths:
             self.assertIn(expected, patchfiles)
             self.assertTrue(os.path.exists(expected))
 
         # Reapply the patch to a new branch
-        self.repo.create_branch('testapply', 'HEAD^^')
+        self.repo.create_branch('testapply', origin)
         self.repo.set_branch('testapply')
         for expected in expected_paths:
             self.repo.apply_patch(expected)
@@ -147,6 +139,71 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         diff = self.repo.diff('master', 'testapply')
         # Branches must be identical afterwards
         self.assertEqual('', diff)
+
+    def test_generate_patches(self):
+        """Test generation of patches"""
+
+        class opts:
+            patch_numbers = False
+            renumber = False
+            patch_num_format = '%04d-'
+
+        expected_patches = [ 'gbptest/added-foo.patch',
+                             'gbptest/patchname.diff' ]
+
+        changes = [ ('foo', 'foo', ("added foo\n\n"
+                                    "Gbp-Pq: Topic gbptest")),
+                    ('baz', 'baz', ("added bar\n\n"
+                                    "Gbp-Pq: Topic gbptest\n"
+                                    "Gbp-Pq: Name patchname.diff")) ]
+
+        self._test_generate_patches(changes, expected_patches, opts)
+
+    def test_generate_renumbered_patches(self):
+        """Test generation of renumbered patches"""
+
+        class opts:
+            patch_numbers = True
+            renumber = True
+            patch_num_format = '%02d_'
+
+        expected_patches = [ 'gbptest/01_added-foo.patch',
+                             'gbptest/02_patchname.diff' ]
+
+        changes = [ ('foo', 'foo', ("added foo\n\n"
+                                    "Gbp-Pq: Topic gbptest")),
+                    ('baz', 'baz', ("added bar\n\n"
+                                    "Gbp-Pq: Topic gbptest\n"
+                                    "Gbp-Pq: Name 099-patchname.diff")) ]
+
+        self._test_generate_patches(changes, expected_patches, opts)
+
+    def test_generate_patches_with_name_clashes(self):
+        """Test generation of patches which have name clashes"""
+
+        class opts:
+            patch_numbers = False
+            renumber = True
+            patch_num_format = '%02d_'
+
+        expected_patches = [ 'gbptest/added-foo.patch',
+                             'gbptest/patchname.diff',
+                             'gbptest/patchname-1.diff',
+                             'gbptest/patchname-2.diff' ]
+
+        changes = [ ('foo', 'foo', ("added foo\n\n"
+                                    "Gbp-Pq: Topic gbptest")),
+                    ('baz', 'baz', ("added bar\n\n"
+                                    "Gbp-Pq: Topic gbptest\n"
+                                    "Gbp-Pq: Name 099-patchname.diff")),
+                    ('qux', 'qux', ("added qux\n\n"
+                                    "Gbp-Pq: Topic gbptest\n"
+                                    "Gbp-Pq: Name 100-patchname.diff")),
+                    ('norf', 'norf', ("added norf\n\n"
+                                      "Gbp-Pq: Topic gbptest\n"
+                                      "Gbp-Pq: Name 101-patchname.diff")) ]
+
+        self._test_generate_patches(changes, expected_patches, opts)
 
 
 class TestExport(testutils.DebianGitTestRepo):

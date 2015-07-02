@@ -143,6 +143,8 @@ class GbpOptionParser(OptionParser):
                  'customizations'  : '',
                  'spawn-editor'    : 'release',
                  'patch-numbers'   : 'True',
+                 'patch-num-format': '%04d-',
+                 'renumber'        : 'False',
                  'notify'          : 'auto',
                  'merge'           : 'True',
                  'track'           : 'True',
@@ -251,6 +253,13 @@ class GbpOptionParser(OptionParser):
              'patch-numbers':
                   ("Whether to number patch files, "
                    "default is %(patch-numbers)s"),
+             'patch-num-format':
+                  ("The format specifier for patch number prefixes, "
+                   "default is %(patch-num-format)s"),
+             'renumber':
+                  ("Whether to renumber patches exported from patch queues, "
+                   "instead of preserving the number specified in "
+                   "'Gbp-Pq: Name' tags, default is %(renumber)s"),
              'notify':
                   ("Whether to send a desktop notification after the build, "
                    "default is '%(notify)s'"),

@@ -21,6 +21,8 @@
       &gbp-pq;
       &man.common.options.synopsis;
       <arg><option>--[no-]patch-numbers</option></arg>
+      <arg><option>--patch-num-format=</option><replaceable>format</replaceable></arg>
+      <arg><option>--[no-]renumber</option></arg>
       <arg><option>--topic=</option><replaceable>topic</replaceable></arg>
       <arg><option>--time-machine=</option><replaceable>num</replaceable></arg>
       <arg><option>--[no-]drop</option></arg>
@@ -131,7 +133,37 @@
         </term>
         <listitem>
           <para>
-          Whether the patch files should start with a number or not.
+          Whether or not the patch files should be prefixed with a number.
+          The default is to export patches with patch numbers. Note,
+          however, that this normally affects patches whose names are
+          automatically generated, and has no effect on exporting patches
+          which have a <option>Gbp[-Pq]: Name</option> tag, since the
+          name specified is preserved unless the <option>--renumber</option>
+          option is used.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--patch-num-format=</option><replaceable>format</replaceable>
+        </term>
+        <listitem>
+          <para>
+          The format specifier for patch number prefixes. The default format is '%04d-'.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]renumber</option>
+        </term>
+        <listitem>
+          <para>
+          Whether or not to renumber patches exported from the patch queue,
+          instead of preserving numbers specified in
+          <option>Gbp-Pq: Name</option> tags. The default is not to renumber
+          patches. Useful when patches need to be renamed for the sake of
+          uniformity. For example, using <option>--renumber</option> with
+          <option>--no-patch-num</option> will strip all numeric prefixes from
+          exported patches.
           </para>
         </listitem>
       </varlistentry>

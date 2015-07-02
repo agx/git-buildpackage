@@ -97,7 +97,9 @@ def generate_patches(repo, start, end, outdir, options):
                 topic = cmds['topic']
             name = cmds.get('name', None)
             format_patch(outdir, repo, info, patches, options.patch_numbers,
-                         topic=topic, name=name)
+                         topic=topic, name=name,
+                         renumber=options.renumber,
+                         patch_num_prefix_format=options.patch_num_format)
         else:
             gbp.log.info('Ignoring commit %s' % info['id'])
 
@@ -335,6 +337,8 @@ def build_parser(name):
         return None
 
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
+    parser.add_config_file_option(option_name="patch-num-format", dest="patch_num_format")
+    parser.add_boolean_config_file_option(option_name="renumber", dest="renumber")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")

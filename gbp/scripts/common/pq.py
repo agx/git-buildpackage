@@ -174,28 +174,50 @@ def write_patch_file(filename, commit_info, diff):
     return filename
 
 
+DEFAULT_PATCH_NUM_PREFIX_FORMAT = "%04d-"
+
 def format_patch(outdir, repo, commit_info, series, numbered=True,
-                 path_exclude_regex=None, topic='', name=None):
+                 path_exclude_regex=None, topic='', name=None, renumber=False,
+                 patch_num_prefix_format=DEFAULT_PATCH_NUM_PREFIX_FORMAT):
     """Create patch of a single commit"""
 
     # Determine filename and path
     outdir = os.path.join(outdir, topic)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    num_prefix = '%04d-' % (len(series) + 1)
-    suffix = '.patch'
-    base_maxlen = 63 - len(num_prefix) - len(suffix)
-    base = commit_info['patchname'][:base_maxlen]
+
+    try:
+        num_prefix = str(patch_num_prefix_format) % (len(series) + 1) \
+                     if numbered else ''
+    except Exception:
+        gbp.log.warn("Bad format format string '%s', " \
+                     "falling back to default '%s'" % \
+                     (str(patch_num_prefix_format),
+                      DEFAULT_PATCH_NUM_PREFIX_FORMAT))
+        num_prefix = DEFAULT_PATCH_NUM_PREFIX_FORMAT % (len(series) + 1)
+
     if name is not None:
-        filename = name
+        if renumber:
+            # Remove any existing numeric prefix if the patch
+            # should be renumbered
+            name =  re.sub('^\d+[-_]*', '', name)
+        else:
+            # Otherwise, clear proposed prefix
+            num_prefix = ''
+        (base, suffix) = os.path.splitext(name)
     else:
-        filename = (num_prefix if numbered else '') + base + suffix
+        suffix = '.patch'
+        base_maxlen = 63 - len(num_prefix) - len(suffix)
+        base = commit_info['patchname'][:base_maxlen]
+
+    filename = num_prefix + base + suffix
     filepath = os.path.join(outdir, filename)
     # Make sure that we don't overwrite existing patches in the series
     if filepath in series:
-        presuffix = '-%d' % len(series)
-        base = base[:base_maxlen - len(presuffix)] + presuffix
-        filename = (num_prefix if numbered else '') + base + suffix
+        presuffix = '-%d' % \
+                    len([p for p in series \
+                         if p.startswith(os.path.splitext(filepath)[0])])
+        filename = num_prefix + base + presuffix + suffix
         filepath = os.path.join(outdir, filename)
 
     # Determine files to include
