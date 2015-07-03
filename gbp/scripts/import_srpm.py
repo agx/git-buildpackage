@@ -25,6 +25,7 @@ import glob
 import time
 import shutil
 import errno
+from six.moves.urllib.request import urlopen
 from six.moves import urllib
 
 import gbp.tmpfile as tempfile
@@ -53,7 +54,7 @@ def download_file(target_dir, url):
     """Download a remote file"""
     gbp.log.info("Downloading '%s'..." % url)
     try:
-        urlobj = urllib.urlopen(url)
+        urlobj = urlopen(url)
         local_fn = os.path.join(target_dir, os.path.basename(url))
         with open(local_fn, "wb") as local_file:
             local_file.write(urlobj.read())
