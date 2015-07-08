@@ -220,9 +220,9 @@ def read_yn():
 
 def setup_branch_tracking(repo, remote, branches):
     repo.add_remote_repo(name=remote['name'], url=remote['url'], fetch=True)
-    gitTrackRemote = GitCommand('branch', ['--set-upstream'])
+    gitTrackRemote = GitCommand('branch', ['--set-upstream-to'])
     for branch in branches:
-        gitTrackRemote(['%s' % branch, '%s/%s' % (remote['name'], branch)])
+        gitTrackRemote(['%s/%s' % (remote['name'], branch), branch])
 
 
 def push_branches(remote, branches):
