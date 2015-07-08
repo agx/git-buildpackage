@@ -1,3 +1,37 @@
+git-buildpackage (0.6.32) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [82a3971] import-dsc: mention that we create new repos if none found
+    (Closes: #748340)
+  * [dff628b] Don't insist on cowbuilder that much.
+    Allow for pbuilder or sbuild either. Since the integration with
+    cowbuilder is currenty best let's see how this turns out. It would be
+    nice if somebody would provide some code to detect which builder is
+    there and automatically adjust configuration for that one.
+    Closes: #695280
+  * [eff79b1] Add symlink for git-buildpackage.1.
+    Make sure "man git-buildpackage" at least gives enough information where
+    to look further.
+  * [6a5675c,901581b,64e6fff,5f9e72a] Non C Locale related fixes
+  * [a331b7f] Add spec file taken from git-buildpackage-rpm.
+  * [46eacf2] Use --set-upstream-to instead of deprecated --set-upstream
+    (Closes: #791798)
+  * [cf67fc5] Fix urllib.urlopen import six.moves.urllib.urlopen does not
+    exist
+
+  [ Felipe Sateler ]
+  * [3b99a6d] import-orig: Document pattern replacing in upstream-vcs-tag
+    (Closes: #787832)
+
+  [ Evgeni Golov ]
+  * [b3341e5] Fix FSF address - thanks rpmlint
+    use gnu.org/licences instead of a postal address, as suggested by Guido
+  * [df215f3] call debchange instead of dch.
+    Call the tool by its actual name instead of the abbriviation.
+    dch is a symlink to debchange, which is not present on Fedora
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 08 Jul 2015 20:07:15 +0200
+
 git-buildpackage (0.6.31) unstable; urgency=medium
 
   * [8241459] pq: Allow to preserve the patch name on import/export
