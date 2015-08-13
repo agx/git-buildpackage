@@ -21,13 +21,15 @@
 
 from six.moves import configparser
 import sys
-import os, os.path
+import os
+import os.path
 from gbp.command_wrappers import (Command, CommandExecFailed)
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.git import DebianGitRepository
 import gbp.log
+
 
 def fast_forward_branch(branch, repo, options):
     """
@@ -45,7 +47,7 @@ def fast_forward_branch(branch, repo, options):
 
     can_fast_forward, up_to_date = repo.is_fast_forward(branch, remote)
 
-    if up_to_date: # Great, we're done
+    if up_to_date:  # Great, we're done
         gbp.log.info("Branch '%s' is already up to date." % branch)
         return True
 
@@ -72,18 +74,18 @@ def fast_forward_branch(branch, repo, options):
 def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
-                             usage='%prog [options] - safely update a repository from remote')
+                                 usage='%prog [options] - safely update a repository from remote')
     except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
 
     branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
     parser.add_option_group(branch_group)
-    branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
+    branch_group.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
     branch_group.add_option("--force", action="store_true", dest="force", default=False,
-                      help="force a branch update even if it can't be fast forwarded")
+                            help="force a branch update even if it can't be fast forwarded")
     branch_group.add_option("--redo-pq", action="store_true", dest="redo_pq", default=False,
-                      help="redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
+                            help="redo the patch queue branch after a pull. Warning: this drops the old patch-queue branch")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
@@ -126,18 +128,18 @@ def main(argv):
             current = repo.get_branch()
         except GitRepositoryError:
             # Not being on any branch is o.k. with --git-ignore-branch
-            if  options.ignore_branch:
+            if options.ignore_branch:
                 current = repo.head
                 gbp.log.info("Found detached head at '%s'" % current)
             else:
                 raise
 
-        for branch in [ options.debian_branch, options.upstream_branch ]:
+        for branch in [options.debian_branch, options.upstream_branch]:
             if repo.has_branch(branch):
-                branches += [ branch ]
+                branches += [branch]
 
         if repo.has_pristine_tar_branch() and options.pristine_tar:
-            branches += [ repo.pristine_tar_branch ]
+            branches += [repo.pristine_tar_branch]
 
         (ret, out) = repo.is_clean()
         if not ret:
