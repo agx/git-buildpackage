@@ -23,6 +23,7 @@
       &man.common.options.synopsis;
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--[no-]merge</option></arg>
+      <arg><option>--merge-mode=</option><replaceable>[merge|replace]</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-vcs-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -80,6 +81,31 @@
         <listitem>
           <para>
           Merge the upstream branch to the &debian; branch after import
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--merge-mode=</option><replaceable>[merge|replace]</replaceable></term>
+        <listitem>
+          <para>
+            How to fold the newly imported upstream source to the
+            &debian; packaging branch after import.
+	  </para>
+	  <para>
+	    The default mode
+	    <replaceable>merge</replaceable> does a
+	    &git; <command>merge</command> leaving you on your own in
+	    case of merge conflict resolution.
+	  </para>
+	  <para>
+	    <replaceable>replace</replaceable> mode on the
+	    other hand makes the head of the &debian; packaging branch
+	    identical to the newly imported tree but preserves the
+	    content of the <filename>debian/</filename> directory
+	    while keeping the current head as well as the newly
+	    iportant trees as parents of the generated commit. This is
+	    similar to a <option>theirs</option> merge strategy while
+	    preserving <filename>debian/</filename>.
           </para>
         </listitem>
       </varlistentry>

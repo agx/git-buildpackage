@@ -174,12 +174,11 @@ def find_source(use_uscan, args):
 
 
 def debian_branch_merge(repo, tag, version, options):
-    gbp.log.info("Merging to '%s'" % options.debian_branch)
-    repo.set_branch(options.debian_branch)
     try:
-        repo.merge(tag)
-    except GitRepositoryError:
-        raise GbpError("Merge failed, please resolve.")
+        func = globals()["debian_branch_merge_by_%s" % options.merge_mode]
+    except KeyError:
+        raise GbpError("%s is not a valid merge mode" % options.merge_mode)
+    func(repo, tag, version, options)
     if options.postimport:
         epoch = ''
         if os.access('debian/changelog', os.R_OK):
@@ -193,6 +192,39 @@ def debian_branch_merge(repo, tag, version, options):
         env = {'GBP_BRANCH': options.debian_branch}
         gbpc.Command(format_str(options.postimport, info), extra_env=env, shell=True)()
 
+
+def debian_branch_merge_by_replace(repo, tag, version, options):
+    gbp.log.info("Replacing upstream source on '%s'" % options.debian_branch)
+
+    tree = [x for x in repo.list_tree("%s^{tree}" % tag)
+            if x[-1] != 'debian']
+    msg = "Updated version %s from '%s'" % (version, tag)
+
+    # Get the current debian/ tree on the debian branch
+    try:
+        deb_sha = [x for x in repo.list_tree("%s^{tree}" % options.debian_branch)
+                   if x[-1] == 'debian' and x[1] == 'tree'][0][2]
+        tree.append(['040000', 'tree', deb_sha, 'debian'])
+        msg += "\n\nwith Debian dir %s" % deb_sha
+    except IndexError:
+        pass  # no debian/ dir is fine
+
+    sha = repo.make_tree(tree)
+    commit = repo.commit_tree(sha, msg, ["%s^{commit}" % options.debian_branch,
+                                         "%s^{commit}" % tag])
+    repo.update_ref("refs/heads/%s" % options.debian_branch, commit,
+                    msg="gbp: Updating %s after import of %s" % (options.debian_branch,
+                                                                 tag))
+    repo.force_head(commit, hard=True)
+
+
+def debian_branch_merge_by_merge(repo, tag, version, options):
+    gbp.log.info("Merging to '%s'" % options.debian_branch)
+    try:
+        repo.merge(tag)
+    except GitRepositoryError:
+        raise GbpError("Merge failed, please resolve.")
+    repo.set_branch(options.debian_branch)
 
 
 def set_bare_repo_options(options):
@@ -233,6 +265,7 @@ def build_parser(name):
     branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag",
                             help="Upstream VCS tag add to the merge commit")
     branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
+    branch_group.add_config_file_option(option_name="merge-mode", dest="merge_mode")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
                       dest="sign_tags")

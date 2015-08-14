@@ -147,6 +147,7 @@ class GbpOptionParser(OptionParser):
                  'renumber'        : 'False',
                  'notify'          : 'auto',
                  'merge'           : 'True',
+                 'merge-mode'      : 'merge',
                  'track'           : 'True',
                  'author-is-committer': 'False',
                  'author-date-is-committer-date': 'False',
@@ -266,6 +267,9 @@ class GbpOptionParser(OptionParser):
              'merge':
                   ("After the import merge the result to the debian branch, "
                    "default is '%(merge)s'"),
+             'merge-mode':
+                  ("Howto merge the new upstream sources onto the debian branch"
+                   "default is '%(merge-mode)s'"),
              'track':
                   ("Set up tracking for remote branches, "
                    "default is '%(track)s'"),
