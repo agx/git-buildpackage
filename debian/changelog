@@ -1,3 +1,25 @@
+git-buildpackage (0.6.33) experimental; urgency=medium
+
+  [ Carlos Maddela ]
+  * [da4d469] Add support for referencing existing local repositories when
+    cloning repositories. (Closes: #790889)
+  * [97c7a32] Allow exported patches to be renumbered and the patch number
+    prefix format to be specified as an option. (Closes: #790890)
+  * [279e946] import-orig: Honour --debian-branch option when importing into
+    an empty repo. (Closes: #791473)
+
+  [ Guido Günther ]
+  * [035b179] import-orig: Add new --merge-mode=replace.
+    This allows one to not merge upstream versions into the debian branch
+    but rather replace the content of the debian branch and only preserve
+    the debian/ dirs content. (Closes: #778594)
+  * [3d86432] buildpackage: in overlay mode remove debian/ from unpacked
+    tarball.  We don't have a way to influence the upstream tarball in overlay
+    mode so remove debian/ after unpack if the source format expects this.
+    (Closes: #792692)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 14 Aug 2015 18:29:53 +0200
+
 git-buildpackage (0.6.32) unstable; urgency=medium
 
   [ Guido Günther ]
