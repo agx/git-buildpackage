@@ -173,6 +173,28 @@ def find_source(use_uscan, args):
         return archive
 
 
+def debian_branch_merge(repo, tag, version, options):
+    gbp.log.info("Merging to '%s'" % options.debian_branch)
+    repo.set_branch(options.debian_branch)
+    try:
+        repo.merge(tag)
+    except GitRepositoryError:
+        raise GbpError("Merge failed, please resolve.")
+    if options.postimport:
+        epoch = ''
+        if os.access('debian/changelog', os.R_OK):
+            # No need to check the changelog file from the
+            # repository, since we're certain that we're on
+            # the debian-branch
+            cp = ChangeLog(filename='debian/changelog')
+            if cp.has_epoch():
+                epoch = '%s:' % cp.epoch
+        info = {'version': "%s%s-1" % (epoch, version)}
+        env = {'GBP_BRANCH': options.debian_branch}
+        gbpc.Command(format_str(options.postimport, info), extra_env=env, shell=True)()
+
+
+
 def set_bare_repo_options(options):
     """Modify options for import into a bare repository"""
     if options.pristine_tar or options.merge:
@@ -385,24 +407,8 @@ def main(argv):
                 if options.debian_branch != 'master':
                     repo.rename_branch('master', options.debian_branch)
             elif options.merge:
-                gbp.log.info("Merging to '%s'" % options.debian_branch)
-                repo.set_branch(options.debian_branch)
-                try:
-                    repo.merge(tag)
-                except GitRepositoryError:
-                    raise GbpError("Merge failed, please resolve.")
-                if options.postimport:
-                    epoch = ''
-                    if os.access('debian/changelog', os.R_OK):
-                        # No need to check the changelog file from the
-                        # repository, since we're certain that we're on
-                        # the debian-branch
-                        cp = ChangeLog(filename='debian/changelog')
-                        if cp.has_epoch():
-                            epoch = '%s:' % cp.epoch
-                    info = { 'version': "%s%s-1" % (epoch, version) }
-                    env = { 'GBP_BRANCH': options.debian_branch }
-                    gbpc.Command(format_str(options.postimport, info), extra_env=env, shell=True)()
+                debian_branch_merge(repo, tag, version, options)
+
             # Update working copy and index if we've possibly updated the
             # checked out branch
             current_branch = repo.get_branch()
