@@ -382,6 +382,8 @@ def main(argv):
             if is_empty:
                 repo.create_branch(options.upstream_branch, rev=commit)
                 repo.force_head(options.upstream_branch, hard=True)
+                if options.debian_branch != 'master':
+                    repo.rename_branch('master', options.debian_branch)
             elif options.merge:
                 gbp.log.info("Merging to '%s'" % options.debian_branch)
                 repo.set_branch(options.debian_branch)
