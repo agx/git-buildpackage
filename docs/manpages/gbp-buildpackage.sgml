@@ -469,8 +469,11 @@
         </term>
         <listitem>
           <para>
-          Extract orig tarball when using export-dir option (analog to
-          mergeWithUpstream in svn-bp)
+            Extract orig tarball from <option>tarball-dir</option> when
+            using the <option>export-dir</option> option (in analogy to
+            mergeWithUpstream in svn-bp). Also remove debian/ if
+            contained in the upstream tarball in case of 2.0 and 3.0
+            source formats.
           </para>
         </listitem>
       </varlistentry>

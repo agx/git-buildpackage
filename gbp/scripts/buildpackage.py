@@ -20,6 +20,7 @@
 from six.moves import configparser
 import errno
 import os, os.path
+import shutil
 import sys
 import time
 import gbp.deb as du
@@ -29,6 +30,7 @@ from gbp.command_wrappers import (Command,
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError
+from gbp.deb.format import DebianSourceFormat
 from gbp.format import format_str
 from gbp.git.vfs import GitVfs
 from gbp.deb.upstreamsource import DebianUpstreamSource
@@ -176,7 +178,7 @@ def extract_orig(orig_tarball, dest_dir):
     upstream = DebianUpstreamSource(orig_tarball)
     upstream.unpack(dest_dir)
 
-    # Check if tarball extracts into a single folder or not:
+    # Check if tarball extracts into a single folder:
     if upstream.unpacked != dest_dir:
         # If it extracts a single folder, move its contents to dest_dir:
         gbp.log.debug("Moving %s to %s" % (upstream.unpacked, dest_dir))
@@ -184,6 +186,15 @@ def extract_orig(orig_tarball, dest_dir):
         os.rename(upstream.unpacked, tmpdir)
         os.rmdir(dest_dir)
         os.rename(tmpdir, dest_dir)
+
+    # Remove debian/ from unpacked upstream tarball in case of non 1.0 format
+    underlay_debian_dir = os.path.join(dest_dir, 'debian')
+    format_file = os.path.join('debian', 'source', 'format')
+    if os.path.exists(underlay_debian_dir) and os.path.exists(format_file):
+        format = DebianSourceFormat.parse_file(format_file)
+        if format.version in ['2.0', '3.0']:
+            gbp.log.info("Removing debian/ from unpacked upstream source at %s" % underlay_debian_dir)
+            shutil.rmtree(underlay_debian_dir)
 
 #}
 
