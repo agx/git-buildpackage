@@ -39,6 +39,12 @@ Or you can import all versions at once using &gbp-import-dscs;:
 This will create a &git; repository if necessary and import all versions sorted
 by version number.
     </para>
+    <para>You can also import all versions of a package known from the
+    <ulink url="http://snapshot.debian.org/">snapshot.debian.org</ulink> service
+    using the <option>--debsnap</option> option of &gbp-import-dscs;:
+    <screen>
+&gbp-import-dscs; --debsnap package
+    </screen>
     </sect1>
 
     <sect1 id="gbp.import.new.upstream">
