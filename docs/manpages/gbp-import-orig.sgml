@@ -103,7 +103,7 @@
 	    identical to the newly imported tree but preserves the
 	    content of the <filename>debian/</filename> directory
 	    while keeping the current head as well as the newly
-	    iportant trees as parents of the generated commit. This is
+	    important trees as parents of the generated commit. This is
 	    similar to a <option>theirs</option> merge strategy while
 	    preserving <filename>debian/</filename>.
           </para>
@@ -264,7 +264,7 @@
   <refsect1>
     <title>EXAMPLES</title>
     <para>
-    Download and import a new upstream version using the informantion from <filename>debian/watch</filename>
+    Download and import a new upstream version using the information from <filename>debian/watch</filename>
     </para>
     <screen>
       &gbp-import-orig; --uscan

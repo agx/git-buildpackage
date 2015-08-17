@@ -348,7 +348,7 @@
         </term>
         <listitem>
           <para>
-          excecute <replaceable>COMMAND</replaceable> after tagging a new
+          execute <replaceable>COMMAND</replaceable> after tagging a new
           version.
           </para>
           <para>

@@ -115,7 +115,7 @@
       <varlistentry>
         <term><option>1</option></term>
         <listitem>
-	  <para>An error occured during the pull, see the printed error message for details.</para>
+	  <para>An error occurred during the pull, see the printed error message for details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

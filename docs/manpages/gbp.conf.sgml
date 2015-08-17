@@ -87,7 +87,7 @@ option which can be turned into configuration file setting by dropping the
 Notice that some option can take Python like lists.
 For example the <xref linkend="man.gbp.import.orig"> commmand has the
 <option>--filter</option>=<parameter>pattern</parameter> option which can
-be truned into a configuration file option like this:
+be turned into a configuration file option like this:
 </para>
 
 <programlisting>
@@ -128,7 +128,7 @@ can't be configured via gbp.conf.
 
 <para>
 <xref linkend="man.gbp.create.remote.repo"> can additionally parse remote site
-configurations from <filename>gbp.conf</filename>. For example a configration like:
+configurations from <filename>gbp.conf</filename>. For example a configuration like:
 </para>
 
 <programlisting>
@@ -148,7 +148,7 @@ gbp-create-remote-repo --remote-config=pkg-libvirt
 </programlisting>
 
 <para>
-This can be useful if you're often creating new remote repositores for
+This can be useful if you're often creating new remote repositories for
 different projects.
 </para>
 

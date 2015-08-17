@@ -107,7 +107,7 @@
           <command>git-am</command>. Use <option>--topic</option> if you want
           the patch to appear in a separate subdir when exporting the patch queue
           using <option>export</option>. This can be used to separate upstream
-          pathes from &debian; specific patches.
+          patches from &debian; specific patches.
           </para>
         </listitem>
       </varlistentry>
@@ -193,7 +193,7 @@
         <term><option>--[no-]drop</option></term>
         <listitem>
           <para>Whether to drop (delete) the patch queue branch after
-          a succesful export</para>
+          a successful export</para>
         </listitem>
       </varlistentry>
       <varlistentry>

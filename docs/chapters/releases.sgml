@@ -26,7 +26,7 @@
 &gbp-dch; <option>--snapshot</option>
 </screen>
    <para>will generate a snapshot release with a specially crafted version number
-   and a warning in the changelog that this is a snapshort release:
+   and a warning in the changelog that this is a snapshot release:
    </para>
 <programlisting>
 git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
@@ -56,7 +56,7 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
 </screen>
    <para>
    This will add no further entries but simply remove the specially crafted
-   version number and the snapshort header. Again you can use any commit id
+   version number and the snapshot header. Again you can use any commit id
    or tag instead of <option>HEAD</option> if you want to add further changelog
    entries - or you can (of course) use <option>--auto</option> again.
    </para>
@@ -109,7 +109,7 @@ To exclude a commit from the generated changelog use:
 Gbp-Dch: Ignore
 </screen>
 This is e.g. useful if you're just fixing up a previous commit and couldn't
-ammend it or for other janitorial commits that really don't need to end up in
+amend it or for other janitorial commits that really don't need to end up in
 the changelog. For example, the following git commit message
 <screen>
 Set correct branchnames in debian/gbp.conf

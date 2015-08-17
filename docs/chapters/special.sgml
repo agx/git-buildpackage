@@ -29,7 +29,7 @@
 &gitcmd; <option>checkout</option> dfsg_clean
 &gitcmd; <option>pull</option> <filename>.</filename> upstream
     </screen>
-    <para>Now make this checkout dfsg clean (preverably by a cleanup script), commit
+    <para>Now make this checkout dfsg clean (preferably by a cleanup script), commit
     your changes and merge to your <option>debian-branch</option>:</para>
     <screen>
 cleanup-script.sh

@@ -66,7 +66,7 @@
         <term><option>--remote-name</option>=<replaceable>name</replaceable>
         </term>
         <listitem>
-	  <para>What name git will use when refering to that repository, e.g.
+	  <para>What name git will use when referring to that repository, e.g.
 	  'origin'.</para>
         </listitem>
       </varlistentry>
@@ -84,7 +84,7 @@
         </term>
         <listitem>
 	  <para>Name of a config file section in <filename>gbp.conf</filename>
-          that specifies the above paramters. See <xref linkend="man.gbp.conf">
+          that specifies the above parameters. See <xref linkend="man.gbp.conf">
           manpage for details.
 	  </para>
         </listitem>

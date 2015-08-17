@@ -32,7 +32,7 @@
     extracting the current version from the changelog. If you want &gpg; signed
     tags you can use the <option>--git-sign</option> and
     <option>--git-keyid</option> options. To save typing these option can be
-    specified via the configuration files. You can futhermore change the tag
+    specified via the configuration files. You can furthermore change the tag
     format used when creating tags with the <option>debian-tag</option>
     option, the default is <replaceable>debian/&lt;version&gt;</replaceable>.</para>
     <sect1 id="gbp.building.export">
@@ -42,7 +42,7 @@
 <screen>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area/</replaceable>
 </screen>
-    <para>This will export the head of the ecurrent branch to
+    <para>This will export the head of the current branch to
     <replaceable>../build-area/package-version</replaceable>, build the
     package. If you don't want to export the current branch head you can use
     <option>--git-export</option> to export any treeish object, here are some

@@ -3,7 +3,7 @@
 
     <sect1 id="gbp.import.existing">
     <title>Importing already existing &debian; packages</title>
-    <para>Importing an already exsting &debian; package into a &git; repository is as easy as:
+    <para>Importing an already existing &debian; package into a &git; repository is as easy as:
     <screen>
 &gbp-import-dsc; package_0.1-1.dsc
     </screen>
@@ -56,7 +56,7 @@ by version number.
 &gbp-import-orig; <filename>/path/to/package_0.2.tar.bz2</filename>
 &gbp-import-orig; <filename>/path/to/package-0.2/</filename>
     </screen>
-    This puts the upstream souces onto the <option>upstream-branch</option> and
+    This puts the upstream sources onto the <option>upstream-branch</option> and
     tags them accordingly (the default tag format is
     <replaceable>upstream/%(version)s</replaceable>).
     The result is then merged onto the <option>debian-branch</option>
@@ -208,7 +208,7 @@ EOF
 
 	<para>
 	  In order to help &gbp-buildpackage; to find upstream tags you need to specify the format
-	  using the <option>--git-upstream-tag</option> comand line option or the the <option>upstream-tag</option>
+	  using the <option>--git-upstream-tag</option> command line option or the the <option>upstream-tag</option>
 	  configuration variable.
 	</para>
 
@@ -237,7 +237,7 @@ upstream-tag = v%(version)s
 	</para>
 
 	<para>First we clone the upstream repository. To avoid any dis ambiguities between the &debian; packaging repository
-	  and the upstream repository we name the upstream repository <replaceable>ustream</replaceable> instead of the
+	  and the upstream repository we name the upstream repository <replaceable>upstream</replaceable> instead of the
 	  default <replaceable>origin</replaceable>.
 	  <screen>
 	    git clone --no-checkout -o upstream git://git.example.com/libgbp.git

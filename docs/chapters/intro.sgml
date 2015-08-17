@@ -28,7 +28,7 @@
 
 <sect1 id="gbp.repository">
 	<title>Repository Layout and Terminology</title>
-	<para>It is recommended to have the &debian; packaging on a seprate
+	<para>It is recommended to have the &debian; packaging on a separate
 	branch than the upstream source <footnote><para>this, of course, has
 	no meaning for &debian; native packages</para></footnote>.
 	This is necessary to be able to import
@@ -87,7 +87,7 @@
 	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
 	url="http://git.debian.org/">git.debian.org</ulink>, this can also be
-	automized with &gbp-buildpackage;'s <option>post-tag</option>
+	automatized with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
 </sect1>
 
@@ -120,7 +120,7 @@
 	<option>--no-merge</option>.  After resolving any potential conflicts
 	go back to the second step.  </para></listitem>
     </orderedlist>
-    <para>These steps will be explaind in more details in the following sections.</para>
+    <para>These steps will be explained in more details in the following sections.</para>
 </sect1>
 
 </chapter>

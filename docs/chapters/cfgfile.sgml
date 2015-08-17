@@ -4,7 +4,7 @@
     <variablelist>
       <varlistentry>
       <term>/etc/git-buildpackage/gbp.conf</term>
-      <listitem><para>system wide configuraton</para></listitem>
+      <listitem><para>system wide configuration</para></listitem>
       </varlistentry>
       <varlistentry>
       <term>~/.gbp.conf</term>
