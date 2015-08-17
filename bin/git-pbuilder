@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: git-pbuilder,v 1.33 2014/08/28 21:39:15 eagle Exp $
+# $Id: git-pbuilder,v 1.35 2015/08/16 23:44:08 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
@@ -10,7 +10,7 @@
 #
 # Written by Russ Allbery <eagle@eyrie.org>
 # Based on the example in the git-buildpackage documentation
-# Copyright 2014 Russ Allbery <eagle@eyrie.org>
+# Copyright 2014, 2015 Russ Allbery <eagle@eyrie.org>
 # Copyright 2008, 2009, 2010, 2011, 2012, 2013
 #     The Board of Trustees of the Leland Stanford Junior University
 #
@@ -211,13 +211,25 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
     esac
 fi
 
-# If the first argument to the script is update, create, or login, run the
-# builder with the corresponding option under sudo rather than proceeding.
+# If the first argument to the script is update, create, or login (or
+# --update, --create, or --login), set the $action.
 case $1 in
 update|create|login)
+    action="--$1"
+    shift
+    ;;
+--update|--create|--login)
     action="$1"
     shift
+    ;;
+*)
+    action=""
+    ;;
+esac
 
+# If $action is set, run the builder for $action under sudo rather than
+# proceeding.
+if [ -n "$action" ]; then
     # Since we're running the builder under sudo, $HOME will change to root's
     # home directory and the user's .pbuilderrc won't be run.  sudo -E would
     # fix this, but that requires special configuration in sudoers to allow
@@ -229,29 +241,28 @@ update|create|login)
 
     # Run the builder.
     if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
-        sudo "$BUILDER" --"$action" "${OPTIONS[@]}" "$@"
+        sudo "$BUILDER" "$action" "${OPTIONS[@]}" "$@"
     else
         if [ "$EXT" = '-backports' ] ; then
             OTHERMIRROR="deb $BACKPORTS $DIST$EXT main"
-            sudo "$BUILDER" --"$action" --distribution "$DIST" \
+            sudo "$BUILDER" "$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         elif [ "$EXT" = '-lts' ] ; then
             OTHERMIRROR="deb $LTS $DIST$EXT main"
-            sudo "$BUILDER" --"$action" --distribution "$DIST" \
+            sudo "$BUILDER" "$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         else
-            sudo "$BUILDER" --"$action" --distribution "$DIST" \
+            sudo "$BUILDER" "$action" --distribution "$DIST" \
                 "${OPTIONS[@]}" "$@"
         fi
     fi
     exit $?
-    ;;
-*)
-    if [ -z "$GBP_BUILD_DIR" ]; then
-        echo "Warning: git-pbuilder should be run via git-buildpackage" >&2
-    fi
-    ;;
-esac
+fi
+
+# Build package: not (update | create | login)
+if [ -z "$GBP_BUILD_DIR" ]; then
+    echo "Warning: git-pbuilder should be run via git-buildpackage" >&2
+fi
 
 # Print out some information about what we're doing.
 building="Building with $BUILDER"
