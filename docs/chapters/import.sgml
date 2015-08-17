@@ -62,7 +62,14 @@ by version number.
     The result is then merged onto the <option>debian-branch</option>
     and a new &debian; changelog entry is created. You can again specify
     different branch names via the <option>--upstream-branch</option> and
-    <option>--debian-branch</option> options. You can also filter out content
+    <option>--debian-branch</option> options.
+    </para>
+    <para>If you are using <filename>debian/watch</filename> to keep track of how to retrieve upstream sources, you can also simply use the <option>--uscan</option> option:
+    <screen>
+&gbp-import-orig; --uscan
+    </screen>
+    </para>
+    <para> You can also filter out content
     you don't want imported:
     <screen>
 &gbp-import-orig; <option>--filter</option>=<replaceable>'CVS/*'</replaceable> <filename>/path/to/package_0.2.orig.tar.gz</filename>
