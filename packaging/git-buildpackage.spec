@@ -90,6 +90,8 @@ Requires:   git-core
 Requires:   python-six
 Requires:   %{man_pkg_name}
 Requires:   %{python_pkg_name}
+Requires:   python-setuptools
+Requires:   python-dateutil
 %if 0%{?suse_version} || 0%{?tizen_version:1}
 Recommends:     unzip
 Recommends:     libzip
