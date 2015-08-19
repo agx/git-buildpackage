@@ -1,0 +1,13 @@
+docs/gbp.1
+docs/gbp-buildpackage.1
+docs/gbp-clone.1
+docs/gbp.conf.5
+docs/gbp-config.1
+docs/gbp-create-remote-repo.1
+docs/gbp-dch.1
+docs/gbp-import-dsc.1
+docs/gbp-import-dscs.1
+docs/gbp-import-orig.1
+docs/gbp-pq.1
+docs/gbp-pull.1
+docs/git-pbuilder.1
