@@ -69,7 +69,6 @@ BuildRequires:  %{man_pkg_name}
 BuildRequires:  %{dpkg_pkg_name}
 BuildRequires:  rpm-build
 BuildRequires:  %{rpm_python_pkg_name}
-BuildRequires:  pristine-tar
 BuildRequires:  unzip
 BuildRequires:  libzip
 BuildRequires:  gnupg
@@ -92,14 +91,13 @@ Requires:   python-six
 Requires:   %{man_pkg_name}
 Requires:   %{python_pkg_name}
 %if 0%{?suse_version} || 0%{?tizen_version:1}
-Recommends:     pristine-tar
 Recommends:     unzip
 Recommends:     libzip
 %else
-Requires:       pristine-tar
 Requires:       unzip
 Requires:       libzip
 %endif
+Recommends:     pristine-tar
 
 %description common
 Common files and documentation, used by both git-buildpackage debian and rpm tools
