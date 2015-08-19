@@ -34,10 +34,10 @@ Source0:    %{name}_%{version}.tar.gz
 %define man_pkg_name man
 %endif
 
-%if 0%{?fedora} || 0%{?centos_version} || 0%{?centos_ver} || 0%{?tizen_version:1}
-%define python_pkg_name python
-%else
+%if 0%{?suse_version}
 %define python_pkg_name python-base
+%else
+%define python_pkg_name python
 %endif
 
 %if 0%{?tizen_version:1}
