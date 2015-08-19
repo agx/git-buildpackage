@@ -3,7 +3,7 @@
 
 Name:       git-buildpackage
 Summary:    Build packages from git
-Version:    0.6.31
+Version:    0.6.34
 Release:    0
 Group:      Development/Tools/Building
 License:    GPLv2
@@ -248,6 +248,8 @@ done
 %{python_sitelib}/gbp/rpm/*py*
 %if %{with docs}
 %{_mandir}/man1/gbp-buildpackage-rpm.1*
+%{_mandir}/man1/gbp-pq-rpm.1*
+%{_mandir}/man1/gbp-import-srpm.1*
 %endif
 
 
