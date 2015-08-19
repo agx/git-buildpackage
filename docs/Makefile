@@ -13,6 +13,8 @@ MAN1S = \
         gbp-pq            \
         gbp-pull          \
         gbp-buildpackage-rpm \
+        gbp-import-srpm \
+        gbp-pq-rpm \
         $(NULL)
 
 MAN5S = gbp.conf

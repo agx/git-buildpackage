@@ -1,0 +1,245 @@
+<refentry id="man.gbp.import.srpm">
+  <refentryinfo>
+    <address>
+      &rpm-email;
+    </address>
+    <author>
+      &rpm-firstname;
+      &rpm-surname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>gbp-import-srpm</refentrytitle>
+    &rpm-mansection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-import-srpm</refname>
+    <refpurpose>Import source RPM packages into a Git repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-import-srpm;
+      &man.common.options.synopsis;
+      <arg><option>--vendor</option>=<replaceable>VENDOR</replaceable></arg>
+      <arg><option>--allow-same-versions</option></arg>
+      <arg><option>--author-is-committer</option></arg>
+      <arg><option>--packaging-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
+      <arg><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--download</option></arg>
+      <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--filter=</option><replaceable>PATTERN</replaceable></arg>
+      <arg><option>--keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
+      <arg><option>--[no-]create-missing-branches</option></arg>
+      <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--[no-]sign-tags</option></arg>
+      <arg><option>--upstream-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--native</option></arg>
+      <arg choice="plain"><replaceable>SRPM</replaceable></arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      &gbp-import-srpm;
+      <arg><option>options</option></arg>
+      <arg choice="req"><option>--download</option></arg>
+      <group choice="plain">
+        <arg><replaceable>URL</replaceable></arg>
+        <arg><replaceable>SRC.RPM</replaceable></arg>
+        <arg><replaceable>DIRECTORY</replaceable></arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &gbp-import-srpm; imports an RPM source package into a &git; repository,
+    notes the package version in the commit logs, and commits the change. All
+    information, including package name, version and upstream source is
+    automatically detected from the source package. The tool supports importing
+    both archived (src.rpm files) or unpacked (directory) source RPMs.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+
+      <varlistentry>
+        <term><option>--vendor</option>=<replaceable>VENDOR</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Distribution vendor name.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-branch</option>=<replaceable>BRANCH-NAME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          The branch in the &git; repository the upstream sources are put
+          onto. Default is <replaceable>upstream</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-branch</option>=<replaceable>BRANCH-NAME</replaceable>
+        </term>
+        <listitem>
+          <para>
+          The branch in the &git; repository the packaging files are put
+          onto. Default is <replaceable>master</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]sign-tags</option>
+        </term>
+        <listitem>
+          <para>
+          GPG sign all created tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--keyid=</option><replaceable>GPG-KEYID</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this keyid for gpg signing tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this tag format when tagging released versions,
+          default is <replaceable>%(vendor)s/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this tag format when tagging upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-packaging-dir=</option><replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Subdirectory where to put the RPM packaging files.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--filter=</option><replaceable>PATTERN</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Filter out files glob-matching pattern. Can be given multiple times.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-tar</option>
+        </term>
+        <listitem>
+          <para>
+          Generate pristine-tar delta file.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--download</option>
+        </term>
+        <listitem>
+          <para>
+          Download the source package instead of looking for it in the local
+          file system.  The argument can either be a plain package name or an
+          URI. The former uses <command>yumdownloader</command> to download the
+          source while the later uses &wget;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--allow-same-version</option>
+        </term>
+        <listitem>
+          <para>
+          Allow to re-import a package with an already existing version. This
+          will not re-import the upstream sources - only packaging files will
+          be re-imported.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--author-is-committer</option>
+        </term>
+        <listitem>
+          <para>
+          Use the author identity as the comitter when importing upstream
+          sources and packaging files.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]create-missing-branches</option>
+        </term>
+        <listitem>
+          <para>
+          Create missing upstream and/or packaging branch if missing.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--orphan-packaging</option>
+        </term>
+        <listitem>
+          <para>
+          Import packaging files into an orphan branch that will not be based
+          on the upstream branch. Useful if you want to maintain (non-native)
+          package using the 'orphan-packaging' model. This option have no
+          effect if <option>--native</option> is used.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--native</option>
+        </term>
+        <listitem>
+          <para>
+          Treat the package as native package. No separate upstream branch or
+          upstream tags will be created.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+      <xref linkend="man.gbp.buildpackage.rpm">,
+      <xref linkend="man.gbp.pq.rpm">,
+      <xref linkend="man.gbp.conf">,
+      &man.seealso.common;
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+    &rpm-username; &rpm-email;
+    </para>
+  </refsect1>
+</refentry>

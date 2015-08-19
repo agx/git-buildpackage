@@ -13,5 +13,7 @@
 <!ENTITY man.gbp.config-files SYSTEM "man.conffiles.sgml">
 <!ENTITY man.seealso.common SYSTEM "man.seealso.sgml">
 <!ENTITY man.gbp.buildpackage.rpm SYSTEM "gbp-buildpackage-rpm.sgml">
+<!ENTITY man.gbp.import.srpm SYSTEM "gbp-import-srpm.sgml">
+<!ENTITY man.gbp.pq.rpm SYSTEM "gbp-pq-rpm.sgml">
 <!ENTITY % COMMON.OPTIONS SYSTEM "man.common-options.ent">
 %COMMON.OPTIONS;

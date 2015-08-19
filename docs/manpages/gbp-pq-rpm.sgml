@@ -1,0 +1,213 @@
+<refentry id="man.gbp.pq.rpm">
+  <refentryinfo>
+    <address>
+      &rpm-email;
+    </address>
+    <author>
+      &rpm-firstname;
+      &rpm-surname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+   <refentrytitle>gbp-pq-rpm</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-pq-rpm</refname>
+    <refpurpose>Manage patches and development branches in Git</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-pq-rpm;
+      &man.common.options.synopsis;
+      <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--spec-file=</option><replaceable>FILEPATH</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
+      <arg><option>--force</option></arg>
+      <arg><option>--[no-]patch-numbers</option></arg>
+      <group choice="plain">
+        <arg><option>drop</option></arg>
+        <arg><option>export</option></arg>
+        <arg><option>import</option></arg>
+        <arg><option>rebase</option></arg>
+        <arg><option>switch</option></arg>
+	<arg><option>apply</option></arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    &gbp-pq-rpm; helps in managing patches and development branch(es) for
+    packages that are maintained with &gbp;. It designed to be used for
+    packages that are maintained using the "orphan-packaging" model.
+    &gbp-pq-rpm; has multiple subcommands, or actions, for working with the
+    branches and patches.
+    </para>
+    <para>
+    &gbp-pq-rpm; makes it easy to do source code development on a separate
+    development branch (patch-queue branch in Debian git-buildpackage terms).
+    For example, if the packaging files would be stored in
+    <replaceable>master</replaceable> the associated development branch would
+    be <replaceable>development/master</replaceable>.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>ACTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>import</option>
+        </term>
+        <listitem>
+          <para>
+          Create a development (patch-queue) branch by applying all patches
+          from the packaging branch on top of the upstream version. The patches
+          must apply without fuzz.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>export</option>
+        </term>
+        <listitem>
+          <para>
+          Export patches from the development branch into the packaging branch.
+          It generates patches (one-per-commit) from the development branch and
+          updates the spec file accordingly. It doesn't automatically commit
+          the changes though - they need to verified and committed manually.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>rebase</option>
+        </term>
+        <listitem>
+          <para>
+          Switch to the development branch and rebase it against the current
+          upstream version (indicated in the spec file of the associated
+          packaging branch).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>drop</option>
+        </term>
+        <listitem>
+          <para>
+          Drop (delete) the development branch associated to the current
+          branch. For example, you're on branch <replaceable>foo</replaceable>
+          this would drop branch <replaceable>development/foo</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>apply</option>
+        </term>
+        <listitem>
+          <para>
+          Add a single patch to the development branch - similar to using
+          <command>git-am</command>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>switch</option>
+        </term>
+        <listitem>
+          <para>
+          Switch between the development branch and the associated packaging
+          branch.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+      <varlistentry>
+        <term><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Subdirectory that contains the RPM packaging files.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--spec-file=</option><replaceable>FILEPATH</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Relative path to the spec file to use. Special value
+          <replaceable>auto</replaceable> causes &gbp; to search and guess.
+          Other values cause the <option>--packaging-dir</option> option to be
+          ignored: the directory of the spec file is used, instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this tag format when looking for tags of upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--force</option></term>
+        <listitem>
+          <para>
+          Import even if the development (patch-queue) branch already exists.
+          Only valid for the import action.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]patch-numbers</option>
+        </term>
+        <listitem>
+          <para>
+          Whether the patch files should start with a number or not.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>META TAGS</title>
+    <para>
+    When exporting patches from a patch-queue branch &gbp-pq-rpm; will look at
+    the commit message for special tags it recognizes. All tags need to start
+    at the first column and require at least one whitespace after the colon.
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term><option>Gbp-Rpm: Ignore</option>
+        </term>
+        <listitem>
+          <para>
+          Ignores the commit, no patch is generated out of it.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.buildpackage.rpm">,
+      <xref linkend="man.gbp.import.srpm">,
+      <xref linkend="man.gbp.conf">
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+      &rpm-username; &rpm-email;
+    </para>
+  </refsect1>
+</refentry>
