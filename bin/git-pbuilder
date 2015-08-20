@@ -239,6 +239,12 @@ if [ -n "$action" ]; then
         OPTIONS+=( --configfile "$HOME/.pbuilderrc" )
     fi
 
+    if ! which sudo >/dev/null 2>&1; then
+        echo 'sudo not found in $PATH; you need to install the sudo package'
+        echo 'and allow the current user to invoke the builder via sudo' >&2
+        exit 1
+    fi
+
     # Run the builder.
     if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
         sudo "$BUILDER" "$action" "${OPTIONS[@]}" "$@"
