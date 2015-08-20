@@ -275,7 +275,7 @@ class TestDownloadImport(ComponentTestBase):
 
     def test_nonexistent_url(self):
         """Test graceful failure when trying download from nonexistent url"""
-        srpm = 'http://url.does.not.exist.com/foo.src.rpm'
+        srpm = 'http://honk.sigxcpu.org/does/not/exist'
         # Do not connect to remote, mock failure
         urllib2.urlopen = Mock()
         urllib2.urlopen.side_effect = urllib2.HTTPError(srpm, 404, "Not found",
