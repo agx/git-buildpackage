@@ -82,7 +82,7 @@ def print_cmd_all_values(cmd, printer):
     if not cmd:
         return 2
     try:
-        # Populae the parset to get a list of
+        # Populate the parser to get a list of
         # valid options
         module = import_command(cmd)
         parser = module.build_parser(cmd)
