@@ -339,6 +339,14 @@ def guess_comp_type(repo, comp_type, cp, tarball_dir):
     return comp_type
 
 
+def check_tag(options, repo, source):
+    """Perform specified consistency checks on git history"""
+    tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
+    if (options.tag or options.tag_only) and not options.retag:
+        if repo.has_tag(tag):
+            raise GbpError("Tag '%s' already exists" % tag)
+
+
 def get_pbuilder_dist(options, repo, native=False):
     """
     Determin the dist to build for with pbuilder/cowbuilder
@@ -577,6 +585,9 @@ def main(argv):
         head = repo.head
         tree = write_tree(repo, options)
         source = source_vfs(repo, options, tree)
+
+        check_tag(options, repo, source)
+
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
             tarball_dir = options.tarball_dir or output_dir
