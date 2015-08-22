@@ -93,8 +93,7 @@ def print_cmd_all_values(cmd, printer):
 
     for option in parser.valid_options:
         value = parser.get_config_file_value(option)
-        if value != '':
-            printer("%s.%s=%s" % (cmd, option, value))
+        printer("%s.%s=%s" % (cmd, option, value))
     return 0
 
 
