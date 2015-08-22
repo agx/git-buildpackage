@@ -68,6 +68,8 @@ def print_cmd_single_value(query, printer):
 
     parser = parse_cmd_config(cmd)
     value = parser.get_config_file_value(option)
+    if value is None:
+        value = ''
     printer("%s=%s" % (query, value))
     return 0 if value else 1
 
