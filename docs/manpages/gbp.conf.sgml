@@ -45,37 +45,51 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-      The <filename>gbp.conf</filename> provides default global options and specific options
-      for &gbp; commands. All have the same format and are parsed in the above order. The
-      file consists of several sections, one for each command. Comments start with a hash sign
-      (<option>#</option>). The generic file syntax is:
+      The <filename>gbp.conf</filename> configuration files provide
+      default global options and specific options for individual &gbp;
+      commands.  All files have the same format as described below and
+      are parsed in the above order from top to bottom with increasing
+      precedence.
+    </para>
+    <para>
+      Each file consists of either zero or one default section and
+      zero or one sections for each &gbp; command. Additionally there
+      can be an arbitrary number of
+      <option>remote-config</option> sections.  Comments start with a
+      hash sign (<option>#</option>). The syntax is:
     </para>
 <programlisting>
     [DEFAULT]
-    # This is section for global settings. Affects all commands
+    # This section is for global settings. Affects all commands
     key = value
 
     [&lt;command&gt;]
-    # Specific sections for each command, like &gbp-buildpackage;
+    # Specific sections for each command, like <command>buildpackage</command>
     key = value
 
     [remote-config &lt;name&gt;]
     # Specific sections for a remote configuration. This can be used several
-    # times to set up remote configuration for gbp-create-remote-repo
+    # times to set up remote configuration for <command>gbp create-remote-repo</command>
     key = value
 </programlisting>
 <para>
-For backwards compatibility sections starting with <filename>git-</filename> or
-<filename>gbp-</filename> are still supported.
+  The sections for each command are named like the command (without &gbp;) surrounded
+  by square brackets (e.g. <option>[buildpackage]</option>).
+  For backwards compatibility command sections starting with <filename>git-</filename> or
+  <filename>gbp-</filename> are also supported but will provoke a warning when parsed by
+  &gbp;.
 </para>
 
 <para>
-
-<option>key=value</option> pairs of the command sections reflect the command line
-options and their settings. For example <xref linkend="man.gbp.buildpackage">
-manualpage contains the <option>--git-export-dir</option>=<parameter>directory</parameter>
-option which can be turned into configuration file setting by dropping the
-<option>--git</option> prefix with:
+  The <option>key=value</option> pairs of the command sections are
+  named like the command line options of the corresponding command
+  with the '--' stripped off and can hold the same values (but see
+  below for details). For example
+  the <xref linkend="man.gbp.buildpackage"> manual page documents
+  the <option>--git-export-dir</option>=<parameter>directory</parameter>
+  option which can be turned into configuration file setting by
+  dropping the
+  <option>--git</option> prefix:
 </para>
 
 <programlisting>
@@ -84,10 +98,11 @@ option which can be turned into configuration file setting by dropping the
 </programlisting>
 
 <para>
-Notice that some option can take Python like lists.
-For example the <xref linkend="man.gbp.import.orig"> commmand has the
-<option>--filter</option>=<parameter>pattern</parameter> option which can
-be turned into a configuration file option like this:
+  Options that can be repeated on the command line take Python like
+  lists in the config file. For example
+  the <xref linkend="man.gbp.import.orig"> commmand has the
+  <option>--filter</option>=<parameter>pattern</parameter> option
+  which can be turned into a configuration file option like this:
 </para>
 
 <programlisting>
@@ -114,9 +129,8 @@ Boolean options can be either <option>True</option> or <option>False</option>. F
 <para>respectively.</para>
 <note>
 <para>
-To see the current set of values that would be applied after parsing the
-configuration files run the command with <option>--help</option> and check it's
-output.
+  To see the current set of values that would be applied after parsing the
+  configuration files use <xref linkend="man.gbp.config">.
 </para>
 </note>
 <note>
@@ -208,7 +222,7 @@ the above list of configuration files.</para></listitem>
 <refsect1>
   <title>FILES</title>
   <para>
-    See See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
+    See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
   </para>
 </refsect1>
 
