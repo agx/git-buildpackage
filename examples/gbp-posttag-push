@@ -132,13 +132,16 @@ def main(argv):
         return 0
 
     for dest in dests:
-        print("Pushing %s to %s" % (env.sha1, dest))
+        print("Pushing %s to %s" % (env.tag, dest))
         repo.push_tag(dest, env.tag)
+        print("Pushing %s to %s" % (env.sha1, dest))
         repo.push(dest, env.sha1, dests[dest])
         if options.push_upstream and upstream_tag:
+            print("Pushing %s to %s" % (upstream_tag, dest))
             repo.push_tag(dest, upstream_tag)
             if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
                                         upstream_sha1, remote=True):
+                print("Pushing %s to %s" % (upstream_sha1, dest))
                 repo.push(dest, upstream_sha1, options.upstream_branch)
         print("done.")
 
