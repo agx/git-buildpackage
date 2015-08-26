@@ -135,8 +135,15 @@ class ComponentTestBase(GbpLogTester):
         assert not extra and not missing, assert_msg
 
     @classmethod
+    def check_tags(cls, repo, tags):
+        local_tags = repo.tags
+        assert_msg = "Tags: expected %s, found %s" % (tags,
+                                                      local_tags)
+        eq_(set(local_tags), set(tags), assert_msg)
+
+    @classmethod
     def _check_repo_state(cls, repo, current_branch, branches, files=None,
-                          dirs=None):
+                          dirs=None, tags=None):
         """Check that repository is clean and given branches exist"""
         branch = repo.branch
         eq_(branch, current_branch)
@@ -145,6 +152,7 @@ class ComponentTestBase(GbpLogTester):
         assert_msg = "Branches: expected %s, found %s" % (branches,
                                                           local_branches)
         eq_(set(local_branches), set(branches), assert_msg)
+
         if files is not None or dirs is not None:
             # Get files of the working copy recursively
             local_f = set()
@@ -163,3 +171,5 @@ class ComponentTestBase(GbpLogTester):
                 cls.check_files(files, local_f)
             if dirs is not None:
                 cls.check_files(dirs, local_d)
+        if tags is not None:
+            cls.check_tags(repo, tags)
