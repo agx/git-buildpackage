@@ -143,7 +143,8 @@
         </term>
         <listitem>
           <para>
-          Add a git tag after a successful build.
+            Add a git tag after a successful build. This is a command line only option
+            that cannot be specified via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -568,7 +569,8 @@
         </term>
         <listitem>
           <para>
-          Deprecated, use --git-no-purge instead.
+	    Deprecated, use --git-no-purge instead. This is a command line only option
+	    that cannot be specified via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -577,7 +579,9 @@
         </term>
         <listitem>
           <para>
-          don't build, only tag and run post-tag hooks
+            Don't build, only tag and run post-tag hooks. This is a
+            command line only option that cannot be specified via
+            &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -586,8 +590,9 @@
         </term>
         <listitem>
           <para>
-          don't fail tag operations if a tag with the same version already
-          exists
+            Don't fail tag operations if a tag with the same version
+            already exists. This is a command line only option that
+            cannot be specified via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
