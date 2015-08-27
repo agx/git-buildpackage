@@ -125,6 +125,7 @@ class GbpOptionParser(OptionParser):
                  'ignore-branch'   : 'False',
                  'meta'            : 'True',
                  'meta-closes'     : 'Closes|LP',
+                 'meta-closes-bugnum'  : r'(?:bug|issue)?\#?\s?\d+',
                  'full'            : 'False',
                  'id-length'       : '0',
                  'git-author'      : 'False',
@@ -212,6 +213,8 @@ class GbpOptionParser(OptionParser):
                   "Parse meta tags in commit messages, default is '%(meta)s'",
              'meta-closes':
                   "Meta tags for the bts close commands, default is '%(meta-closes)s'",
+             'meta-closes-bugnum':
+                  "Meta bug number format, default is '%(meta-closes-bugnum)s'",
              'ignore-new':
                   "Build with uncommited changes in the source tree, default is '%(ignore-new)s'",
              'ignore-branch':

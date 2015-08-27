@@ -364,3 +364,38 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
+
+
+    def test_dch_main_closes_default(self):
+        options = ["--meta"]
+        self.add_file("closes", "test file",
+                      msg="""test debian closes commit\n\nCloses: #123456""")
+        lines = self.run_dch(options)
+        self.assertIn("""  * test debian closes commit (Closes: #123456)\n""",
+                      lines)
+
+
+    def test_dch_main_closes_non_debian_bug_numbers(self):
+        self.add_file("closes", "test file",
+                      msg="""test non-debian closes 1\n\nCloses: EX-123""")
+        self.add_file("closes1", "test file",
+                      msg="""test non-debian closes 2\n\nCloses: EX-5678""")
+        options = ["--meta", '--meta-closes-bugnum=ex-\d+']
+        lines = self.run_dch(options)
+        self.assertIn("""  * test non-debian closes 1 (Closes: EX-123)\n""",
+                      lines)
+        self.assertIn("""  * test non-debian closes 2 (Closes: EX-5678)\n""",
+                      lines)
+
+    def test_dch_main_meta_closes_and_bug_numbers(self):
+        self.add_file("closes", "test file",
+                      msg="""test non-debian closes 1\n\nExample: EX-123""")
+        self.add_file("closes1", "test file",
+                      msg="""test non-debian closes 2\n\nExample: EX-5678""")
+        options = ["--meta", '--meta-closes-bugnum=ex-\d+',
+                   '--meta-closes=Example']
+        lines = self.run_dch(options)
+        self.assertIn("""  * test non-debian closes 1 (Example: EX-123)\n""",
+                      lines)
+        self.assertIn("""  * test non-debian closes 2 (Example: EX-5678)\n""",
+                      lines)

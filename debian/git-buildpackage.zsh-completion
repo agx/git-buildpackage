@@ -137,6 +137,7 @@ _gbp-dch () {
 		'(--meta --no-meta)--meta[Parse meta tags]' \
 		'(--meta --no-meta)--no-meta[Do not parse meta tags]' \
 		'--meta-closes=-[What meta tags to look for  to  generate  bug-closing  changelog entries]' \
+		'--meta-closes-bugnum=-[What bug number format to look for to generate bug-closing changelog entries]' \
 		'(--full --no-full)--full[Include the full commit message]' \
 		'(--full --no-full)--no-full[Do not include the full commit message]' \
 		'(--snapshot -S)'{-S,--snapshot}'[Create a snapshot release entry]' \
@@ -381,6 +382,7 @@ _gbp-dch () {
 		'(--meta --no-meta)--meta[Parse meta tags]' \
 		'(--meta --no-meta)--no-meta[Do not parse meta tags]' \
 		'--meta-closes=-[What meta tags to look for  to  generate  bug-closing  changelog entries]' \
+		'--meta-closes-bugnum=-[What bug number format to look for to generate bug-closing changelog entries]' \
 		'(--full --no-full)--full[Include the full commit message]' \
 		'(--full --no-full)--no-full[Do not include the full commit message]' \
 		'(--snapshot -S)'{-S,--snapshot}'[Create a snapshot release entry]' \

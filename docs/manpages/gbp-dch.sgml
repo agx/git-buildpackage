@@ -46,6 +46,7 @@
       <arg><option>--[no-]full</option></arg>
       <arg><option>--[no-]meta</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
+      <arg><option>--meta-closes-bugnum=bug-number-format</option></arg>
       <arg><option>--snapshot-number=</option><replaceable>expression</replaceable></arg>
       <arg><option>--id-length=</option><replaceable>number</replaceable></arg>
       <arg><option>--git-log=</option><replaceable>git-log-options</replaceable></arg>
@@ -179,6 +180,28 @@
           <para>
           What meta tags to look for to generate bug-closing changelog entries.
           The default is 'Closes|LP' to support Debian and Launchpad.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--meta-closes-bugnum=</option><replaceable>bug-number-format</replaceable>
+        </term>
+        <listitem>
+          <para>
+          What regular expression should be used to parse out the bug number.
+          The default is '(?:bug|issue)?\#?\s?\d+'. Note: the regex should
+          suppress all portions of the bug number that are not wanted using
+          "(?:)", see pyhton regex manual for details.
+          Example:
+              --meta-closes-bugnum="(?:bug)?\s*ex-\d+"
+
+              would match all of the following:
+                 Possible Txt  Match?    Result
+                 ------------  ------    ------
+                 bug EX-12345    Y       EX-12345
+                 ex-01273        Y       ex-01273
+                 bug ex-1ab      Y       ex-1
+                 EX--12345       N
           </para>
         </listitem>
       </varlistentry>

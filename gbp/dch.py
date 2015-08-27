@@ -45,17 +45,14 @@ def filter_ignore_rx_matches(lines, options):
     else:
         return lines
 
-
-_bug_r = r'(?:bug|issue)?\#?\s?\d+'
-_bug_re = re.compile(_bug_r, re.I)
-
 def extract_bts_cmds(lines, opts):
     """Return a dictionary of the bug tracking system commands
     contained in the the given lines.  i.e. {'closed' : [1], 'fixed':
     [3, 4]}.  Right now, this will only notice a single directive
     clause on a line.  Also return all of the lines that do not
     contain bug tracking system commands."""
-    bts_rx = re.compile(r'(?P<bts>%s):\s+%s' % (opts.meta_closes, _bug_r), re.I)
+    _bug_re = re.compile(opts.meta_closes_bugnum, re.I)
+    bts_rx = re.compile(r'(?P<bts>%s):\s+%s' % (opts.meta_closes, opts.meta_closes_bugnum), re.I)
     commands = {}
     other_lines = []
     for line in lines:
