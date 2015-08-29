@@ -468,7 +468,7 @@
             when <option>--full</option> is not given).
 	  </para>
 	  <para>
-	    Instead of <option>Gbp-Dch</option> the
+	    In addition to <option>Gbp-Dch</option>, the
 	    deprecated <option>Git-Dch</option> is still supported.
           </para>
         </listitem>
