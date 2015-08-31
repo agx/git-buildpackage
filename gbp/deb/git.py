@@ -65,7 +65,7 @@ class DebianGitRepository(GitRepository):
 
     def debian_version_from_upstream(self, upstream_tag_format,
                                      upstream_branch, commit='HEAD',
-                                     epoch=None):
+                                     epoch=None, debian_release=True):
         """
         Build the Debian version that a package based on upstream commit
         I{commit} would carry taking into account a possible epoch.
@@ -76,6 +76,7 @@ class DebianGitRepository(GitRepository):
         @type upstream_branch: C{str}
         @param commit: the commit to search for the latest upstream version
         @param epoch: an epoch to use
+        @param debian_release: set True if this a debian package release
         @returns: a new debian version
         @raises GitRepositoryError: if no upstream tag was found
         """
@@ -83,7 +84,9 @@ class DebianGitRepository(GitRepository):
         tag = self.find_branch_tag(commit, upstream_branch, pattern=pattern)
         version = self.tag_to_version(tag, upstream_tag_format)
 
-        version += "-1"
+        if debian_release:
+            version += "-1"
+
         if epoch:
             version = "%s:%s" % (epoch, version)
         return version

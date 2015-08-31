@@ -40,15 +40,17 @@ snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
 
 def guess_version_from_upstream(repo, upstream_tag_format, upstream_branch, cp):
     """
-    Guess the version based on the latest version on the upstream branch
+    Guess the version based on the latest version on the upstream branch.
+    If the version in dch is already higher this function returns None.
     """
     try:
         version = repo.debian_version_from_upstream(upstream_tag_format,
                                                     upstream_branch,
-                                                    epoch=cp.epoch)
+                                                    epoch=cp.epoch,
+                                                    debian_release=False)
         gbp.log.debug("Found upstream version %s." % version)
         if compare_versions(version, cp.version) > 0:
-            return version
+            return "%s-1" % version
     except GitRepositoryError as e:
         gbp.log.debug("No upstream tag found: %s" % e)
     return None
