@@ -635,7 +635,11 @@ def main(argv):
             if options.prebuild:
                 Hook('Prebuild', options.prebuild, shell=True,
                      extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                'GBP_BUILD_DIR': build_dir})(dir=build_dir)
+                                'GBP_BUILD_DIR': build_dir,
+                                'GBP_PBUILDER_DIST': get_pbuilder_dist(options,
+                                                                       repo,
+                                                                       source.is_native()),
+                                })(dir=build_dir)
 
             setup_pbuilder(options, repo, source.is_native())
             # Finally build the package:
