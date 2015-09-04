@@ -476,9 +476,9 @@ def build_parser(name, prefix=None):
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
                       help="command to clean the working copy, default is '%(cleaner)s'")
     cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
-                      help="command to run before a build, default is '%(prebuild)s'")
+                      help="hook to run before a build, default is '%(prebuild)s'")
     cmd_group.add_config_file_option(option_name="postexport", dest="postexport",
-                      help="command to run after exporting the source tree, default is '%(postexport)s'")
+                      help="hook to run after exporting the source tree, default is '%(postexport)s'")
     cmd_group.add_config_file_option(option_name="postbuild", dest="postbuild",
                       help="hook run after a successful build, default is '%(postbuild)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
