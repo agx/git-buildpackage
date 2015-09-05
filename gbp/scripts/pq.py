@@ -351,6 +351,7 @@ def build_parser(name):
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes")
+    parser.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
     return parser
 
 

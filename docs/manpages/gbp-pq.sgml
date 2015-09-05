@@ -27,6 +27,8 @@
       <arg><option>--time-machine=</option><replaceable>num</replaceable></arg>
       <arg><option>--[no-]drop</option></arg>
       <arg><option>--force</option></arg>
+      <arg><option>--meta-closes=bug-close-tags</option></arg>
+      <arg><option>--meta-closes-bugnum=bug-number-format</option></arg>
       <group choice="plain">
         <arg><option>drop</option></arg>
         <arg><option>export</option></arg>
@@ -203,7 +205,31 @@
             exists</para>
         </listitem>
       </varlistentry>
-    </variablelist>
+      <varlistentry>
+        <term><option>--meta-closes=</option><replaceable>bug-close-tags</replaceable>
+        </term>
+        <listitem>
+          <para>
+          What meta tags to look for to generate a commit message when
+          using <option>export</option> <option>--commit</option>.
+          The default is 'Closes|LP' to support Debian and Launchpad.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--meta-closes-bugnum=</option><replaceable>bug-number-format</replaceable>
+        </term>
+        <listitem>
+          <para>
+            What regular expression should be used to parse out the
+            bug number when using
+	    <option>export</option> <option>--commit</option>.  The
+            default is '(?:bug|issue)?\#?\s?\d+'. For details see
+	    <xref linkend="man.gbp.dch">.
+          </para>
+        </listitem>
+      </varlistentry>
+     </variablelist>
   </refsect1>
   <refsect1>
     <title>TAGS</title>
