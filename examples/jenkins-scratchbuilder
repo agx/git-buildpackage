@@ -33,9 +33,9 @@ git clean -dfx
 git checkout -f debian/changelog
 
 # Create a monitonically increasing changelog by including the build number
-git-dch -S -a --ignore-branch --snapshot-number=${BUILD_NUMBER}
+gbp dch -S -a --ignore-branch --snapshot-number=${BUILD_NUMBER}
 
 # Build the package
 [ -z ARCH ] || GBP_OPTS="$GBP_OPTS --git-arch=$ARCH"
 [ -z DIST ] || GBP_OPTS="$GBP_OPTS --git-dist=$DIST"
-git-buildpackage ${GBP_OPTS} --git-ignore-branch --git-pbuilder --git-cleaner=/bin/true --git-ignore-new --git-pristine-tar -b
+gbp buildpackage ${GBP_OPTS} --git-ignore-branch --git-pbuilder --git-cleaner=/bin/true --git-ignore-new --git-pristine-tar -b
