@@ -5,6 +5,7 @@ Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends:
  bash-completion,
  debhelper (>= 9~),
+ dh-python,
  docbook-utils,
  gtk-doc-tools,
  jade,
