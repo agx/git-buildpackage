@@ -174,9 +174,9 @@
         </term>
         <listitem>
           <para>
-          Allow to re-import a package with an already existing version. This
-          will not re-import the upstream sources - only packaging files will
-          be re-imported.
+          Allow one to re-import a package with an already existing version.
+          This will not re-import the upstream sources - only packaging files
+          will be re-imported.
           </para>
         </listitem>
       </varlistentry>

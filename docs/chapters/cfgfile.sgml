@@ -62,7 +62,7 @@
 <option>upstream-branch</option>=<replaceable>dfsgfree</replaceable>
 </screen>
 <para>
-    in the config file. In the special case of &gbp-buildpackage; the stripped
+    in the config file. In the special case of &gbp-buildpackage;, the stripped
     prefix is not '--' but '--git-'. Here's a more complete example:
 </para>
 <programlisting>
@@ -91,6 +91,6 @@ upstream-branch=notdfsgclean
 git-log=--no-merges
 </programlisting>
 <para>
-For more details see the <xref linkend="man.gbp.conf"> manual page.
+For more details, see the <xref linkend="man.gbp.conf"> manual page.
 </para>
 </chapter>

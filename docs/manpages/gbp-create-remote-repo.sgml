@@ -39,11 +39,11 @@
     tracking so you can use &gbp-pull; to update your repository from there.
     </para>
     <para>
-      Before performing any action on the remote location it will print the 
+      Before performing any action on the remote location, it will print the
       remote URL and ask for confirmation.
     </para>
     <para>
-    Note: By default the remote repositories are created in the <systemitem
+    Note: By default, the remote repositories are created in the <systemitem
     class="groupname">collab-maint</systemitem> repository on <systemitem
     class="systemname">git.debian.org</systemitem>.
     </para>

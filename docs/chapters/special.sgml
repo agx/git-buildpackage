@@ -2,7 +2,7 @@
     <title>Special use cases</title>
     <sect1 id="gbp.special.dfsgfree">
     <title>Handling non-DFSG clean upstream sources</title>
-    <para>If you have to handle non DFSG clean upstream sources you can use a
+    <para>If you have to handle non-DFSG clean upstream sources, you can use a
     different branch which you have to create once:
     </para>
     <screen>
@@ -22,7 +22,7 @@
 &gitcmd; <option>tag</option> 10.4
     </screen>
     <para>
-    After the import you can switch to the <emphasis>dfsg_clean</emphasis>
+    After the import, you can switch to the <emphasis>dfsg_clean</emphasis>
     branch and get the newly imported changes from the upstream branch:
     </para>
     <screen>
@@ -43,14 +43,14 @@ cleanup-script.sh
     <sect1 id="gbp.special.nmus">
     <title>Importing NMUs</title>
     <para>
-    First create a branch that holds the NMUs from the tip of your
+    First, create a branch that holds the NMUs from the tip of your
     <option>debian-branch</option> (default is <emphasis>master</emphasis>) once:
     </para>
     <screen>
 &gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>master</replaceable>
     </screen>
     <para>
-    To import an NMU change into the git repository and use &gbp-import-dsc;:
+    To import an NMU, change into the git repository and use &gbp-import-dsc;:
     </para>
     <screen>
 &gitcmd; checkout <replaceable>master</replaceable>
@@ -68,7 +68,7 @@ cleanup-script.sh
     <title>Using &pbuilder;</title>
     <para>
     Since &pbuilder; uses different command line arguments than
-    &debuild; and &dpkg-buildpackage; we can't simply pass the options on the
+    &debuild; and &dpkg-buildpackage;, we can't simply pass the options on the
     command line but have to wrap them in the <option>--git-builder</option>
     option instead. <command>git-pbuilder</command> helps you with that:
 
@@ -76,7 +76,7 @@ cleanup-script.sh
 <command>git-buildpackage</command> <option>--git-builder="git-pbuilder"</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
 </programlisting>
 
-    Note that we also used a different clean command since since &pdebuildcmd;
+    Note that we also used a different clean command since &pdebuildcmd;
     <option>clean</option> means something different than &debuildcmd;
     <option>clean</option>.
     
@@ -94,19 +94,19 @@ builder = /usr/bin/git-pbuilder
 
 	<command>git-pbuilder</command> defaults to building a package for the
 	<envar>sid</envar> distribution. If you want to build for another
-	distribution pass this in the <envar>DIST</envar> environment variable.
+	distribution, pass this in the <envar>DIST</envar> environment variable.
 
 	Invoking &gbp-buildpackage; will now invoke &pdebuildcmd; by
-	default and all additional command line arguments are passed to
+	default, and all additional command line arguments are passed to
 	<command>dpkg-buildpackage</command>. If you want to use
 	<command>debuild</command> again (without modifying
-	<filename>~/.gbp.conf</filename>) you can use:
+	<filename>~/.gbp.conf</filename>), you can use:
 <programlisting>
 <command>git-buildpackage</command> --git-builder=debuild
 </programlisting>
 
 	Furthermore, if you don't want this for all your invocations of
-	&gbp-buildpackage; you can use <filename>.git/gbp.conf</filename> in
+	&gbp-buildpackage;, you can use <filename>.git/gbp.conf</filename> in
 	one of your &git; repositories instead of
 	<filename>~/.gbp.conf</filename>.
     </para>
@@ -115,7 +115,7 @@ builder = /usr/bin/git-pbuilder
     <sect1 id="gbp.special.hacking">
     <title>Working on random packages</title>
     <para>
-    Whenever you need to work on an arbitrary &debian; package you can check it
+    Whenever you need to work on an arbitrary &debian; package, you can check it
     right into &git; with one command:
 <programlisting>
 git-import-dsc --download <filename>package</filename>
@@ -130,7 +130,7 @@ git-branch debian
     <emphasis>master</emphasis>). The second command
     creates a branch called <emphasis>debian</emphasis>. Now you can easily
     modify the package, revert changes you made, create other branches for
-    testing, see what changes you made, etc..  When finished just do</para>
+    testing, see what changes you made, etc.  When finished, just do</para>
 <programlisting>
 git-commit -a
 git-diff debian --
@@ -138,13 +138,13 @@ git-diff debian --
     <para>
 
     to get a nice patch that can be submitted to the &debian; BTS. You can also
-    fetch the source package from an URL:
+    fetch the source package from a URL:
 
 <programlisting>
 git-import-dsc --download <filename>http://mentors.debian.net/debian/pool/main/i/ipsec-tools/ipsec-tools_0.7.3-9.dsc</filename>
 </programlisting>
 
-   The import works incrementally, you can import new versions on top of
+   The import works incrementally; you can import new versions on top of
    already imported ones for e.g. easy review of changes.
     </para>
     </sect1>
