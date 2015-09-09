@@ -40,12 +40,12 @@
     <title>DESCRIPTION</title>
     <para>
     &gbp-import-dscs; imports several versions of a Debian source package into
-    a &git; repository. To do so it sorts the packages by their versions first
+    a &git; repository. To do so, it sorts the packages by their versions first,
     and then imports them via calling &gbp-import-dsc; on each package. 
     </para> 
 
     <para>
-    If the current directory isn't a &git; repository already the repository is
+    If the current directory isn't a &git; repository already, the repository is
     created in a subdir of the current working directory, named after the first
     imported package, otherwise the &git; repository in the current working
     directory is being used. This allows for incremental imports.
@@ -66,7 +66,7 @@
         </term>
         <listitem>
 	  <para>Ignore <filename>gbp.conf</filename> files stored in the git
-repository itself. This can be useful to ignore branch informations and other
+repository itself. This can be useful to ignore branch information and other
 options shipped in the package source.</para>
         </listitem>
       </varlistentry>

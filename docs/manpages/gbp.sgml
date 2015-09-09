@@ -62,7 +62,7 @@
   <refsect1>
     <title>GBP COMMANDS</title>
     <para>
-      These are the possible commands. For possible arguments to these commands please
+      These are the possible commands. For possible arguments to these commands, please
       see the corresponding man pages.
     </para>
     <variablelist>

@@ -33,7 +33,7 @@
 	no meaning for &debian; native packages</para></footnote>.
 	This is necessary to be able to import
 	and merge in new upstream versions via &gbp-import-orig;.
-	To distinguish these two branches the following terminology
+	To distinguish these two branches, the following terminology
 	<footnote><para>corresponding to the command
 	line and config file options</para></footnote> is used:
 	</para>
@@ -54,13 +54,13 @@
 	branch name used in the &git; repository is
 	<emphasis>pristine-tar</emphasis>) holds the necessary additional
 	information to recreate the original tarball from the
-	<option>upstream-branch</option>. In order to use this feature you need
+	<option>upstream-branch</option>. In order to use this feature, you need
 	to install the &pristine-tar; package.</para></listitem>
 
 	<listitem><para> There can be one or more <option>patch-queue
 	branches</option>. Every patch-queue branch is related to a
 	<option>debian-branch</option>. If the <option>debian-branch</option> is called
-	<emphasis>master</emphasis> the corresponding patch-queue branch is
+	<emphasis>master</emphasis>, the corresponding patch-queue branch is
 	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is 
 	the &debian; branch plus the contents of
 	<emphasis>debian/patches</emphasis> applied. These branches are managed
@@ -69,24 +69,24 @@
 	</itemizedlist>
 
 	<para>You're completely
-	free to pick any repository layout and the branch names above are only
-	&gbp;'s defaults. They can be changed at any point in time
+	free to pick any repository layout; the branch names above are only
+	&gbp;'s defaults. They can be changed at any point in time,
 	and you can work with an arbitrary number of branches.
-	For example branches like  <emphasis>nmu</emphasis>,
+	For example, branches like <emphasis>nmu</emphasis>,
 	<emphasis>backports</emphasis> or <emphasis>stable</emphasis> might
-	(temporarily or permanent) become your <option>debian-branch</option>
+	(temporarily or permanently) become your <option>debian-branch</option>,
 	and branches like <emphasis>dfsg</emphasis> or
 	<emphasis>snapshots</emphasis> might become your
-	<option>upstream-branch</option> - it doesn't matter if these branches
+	<option>upstream-branch</option>&mdash;it doesn't matter if these branches
 	are maintained with &gbp-import-orig; or not.</para>
         <para>
         A recommended branch layout is described in <xref linkend="gbp.branch.naming">.
         </para>
 
-	<para>Since &gbp-buildpackage; only works with local &git;-repositories
+	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
 	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
-	url="http://git.debian.org/">git.debian.org</ulink>, this can also be
+	url="http://git.debian.org/">git.debian.org</ulink>; this can also be
 	automatized with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
 </sect1>
@@ -100,25 +100,25 @@
 	<listitem><para>Import a new &debian; package via &gbp-import-dsc;. This
 	imports the &debian; Package on the <option>debian-branch</option>
 	and the upstream sources on the <option>upstream-branch</option>.</para></listitem>
-	<listitem><para>Develop, test, commit changes. During this time you can
+	<listitem><para>Develop, test, commit changes. During this time, you can
 	always build the package with &gbp-buildpackage;. In case you have
-	uncommitted changes in your source tree you can use the
+	uncommitted changes in your source tree, you can use the
 	<option>--git-ignore-new</option> option.</para></listitem>
 	<listitem><para>Optionally you can create the &debian; changelog entries
 	using &gbp-dch; and create snapshot releases for testing using its
 	<option>--snapshot</option> option.</para></listitem>
-	<listitem><para>Once satisfied you can build the final package with
+	<listitem><para>Once satisfied, you can build the final package with
 	&gbp-buildpackage; <option>--git-tag</option>. This additionally
 	creates a tag within &git; so you can switch back to that version later
-	at any time. The format of the tags can be specified, tags can
+	at any time. The format of the tags can be specified; tags can
 	be &gpg; signed.</para></listitem>
 	<listitem><para>When a new upstream version is released and upstream
-	isn't using &git; you can import the new version via &gbp-import-orig;
+	isn't using &git;, you can import the new version via &gbp-import-orig;
 	onto the <option>upstream-branch</option>.  &gbp-import-orig; will
 	by default try to merge the new upstream version onto the
 	<option>debian-branch</option>. You can skip the merge with
-	<option>--no-merge</option>.  After resolving any potential conflicts
-	go back to the second step.  </para></listitem>
+	<option>--no-merge</option>.  After resolving any potential conflicts,
+	go back to the second step.</para></listitem>
     </orderedlist>
     <para>These steps will be explained in more details in the following sections.</para>
 </sect1>

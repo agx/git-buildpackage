@@ -43,10 +43,10 @@
     <para>
     &gbp-pq; helps one to manage quilt patches in &debian; packages that are
     maintained with &gbp;. This is especially useful with packages using the
-    3.0 (quilt) source format. With &gbp-pq; you can maintain the quilt patches
+    3.0 (quilt) source format. With &gbp-pq;, you can maintain the quilt patches
     that should be applied to a package on a separate branch called patch-queue
     branch. So if your &debian; package lives on
-    <replaceable>master</replaceable> the associated patch-queue branch will be
+    <replaceable>master</replaceable>, the associated patch-queue branch will be
     called <replaceable>patch-queue/master</replaceable>.
     </para>
     <para>
@@ -95,7 +95,7 @@
         <listitem>
           <para>
           Drop (delete) the patch queue associated to the current branch. So if
-          you're on branch <replaceable>foo</replaceable> this would drop
+          you're on branch <replaceable>foo</replaceable>, this would drop
           branch <replaceable>patch-queue/foo</replaceable>.
           </para>
         </listitem>
@@ -183,7 +183,7 @@
         </term>
         <listitem>
           <para>
-          When importing a patch queue fails, go back commit by commit on the
+          When importing a patch queue fails, go back commit-by-commit on the
           current branch to check if the patch-queue applies there. Do this at
           most <replaceable>NUM</replaceable> times. This can be useful if the
           patch-queue doesn't apply to the current branch HEAD anymore, e.g.
@@ -201,7 +201,7 @@
       <varlistentry>
         <term><option>--force</option></term>
         <listitem>
-          <para>In case of import even import if the branch already
+          <para>In case of <option>import</option>, import even if the branch already
             exists</para>
         </listitem>
       </varlistentry>
@@ -212,7 +212,7 @@
           <para>
           What meta tags to look for to generate a commit message when
           using <option>export</option> <option>--commit</option>.
-          The default is 'Closes|LP' to support Debian and Launchpad.
+          The default is <literal>'Closes|LP'</literal> to support Debian and Launchpad.
           </para>
         </listitem>
       </varlistentry>
@@ -224,8 +224,8 @@
             What regular expression should be used to parse out the
             bug number when using
 	    <option>export</option> <option>--commit</option>.  The
-            default is '(?:bug|issue)?\#?\s?\d+'. For details see
-	    <xref linkend="man.gbp.dch">.
+            default is <literal>'(?:bug|issue)?\#?\s?\d+'</literal>.
+            See <xref linkend="man.gbp.dch"> for details.
           </para>
         </listitem>
       </varlistentry>
@@ -234,7 +234,7 @@
   <refsect1>
     <title>TAGS</title>
     <para>
-    When exporting patches from a patch-queue branch &gbp-pq; will look at the
+    When exporting patches from a patch-queue branch, &gbp-pq; will look at the
     patch header for special tags it recognizes. All tags need to start at the
     first column and require at least one whitespace after the colon.
     </para>
@@ -255,7 +255,7 @@
           <para>
 	    The name to use for the patch when running
 	    <screen>&gbp-pq; export</screen>
-	    If unset it will be formatted like
+	    If unset, it will be formatted like
 	    <command>git am</command> would format it.
           </para>
         </listitem>

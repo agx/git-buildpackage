@@ -64,17 +64,17 @@
     <title>DESCRIPTION</title>
     <para>
     &gbp-dch; reads git commit messages and generates the &debian; changelog from
-    it. If no arguments are given &gbp-dch; starts from the last tagged Debian
+    it. If no arguments are given, &gbp-dch; starts from the last tagged Debian
     package version up to the current tip of the current branch. If the
     distribution of the topmost section in
-    <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>
-    the changelog entries will be inserted into this section. Otherwise a new
+    <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>,
+    the changelog entries will be inserted into this section. Otherwise, a new
     section will be created.
     </para>
     <para>
-    If <option>--auto</option> is given &gbp-dch; tries to guess the
+    If <option>--auto</option> is given &gbp-dch;, tries to guess the
     last &git; commit documented in the changelog - this only works in snapshot
-    mode. Otherwise <option>--since</option> can be used to tell &gbp-dch;
+    mode. Otherwise, <option>--since</option> can be used to tell &gbp-dch;
     at which point it should start in the &git; history.
     </para>
     <para>
@@ -83,8 +83,8 @@
     <emphasis>debian/</emphasis> is a good choice if upstream uses &git; and
     all Debian packaging changes are restricted to the
     <replaceable>debian/</replaceable> subdir. In more sophisticated cases
-    (like backports) you can use <option>--git-log</option> to restrict the
-    generated changelog entries further. E.g. by using
+    (like backports), you can use <option>--git-log</option> to restrict the
+    generated changelog entries further, e.g. by using
     <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.
     </para>
   </refsect1>
@@ -179,7 +179,7 @@
         <listitem>
           <para>
           What meta tags to look for to generate bug-closing changelog entries.
-          The default is 'Closes|LP' to support Debian and Launchpad.
+          The default is <literal>'Closes|LP'</literal> to support Debian and Launchpad.
           </para>
         </listitem>
       </varlistentry>
@@ -189,19 +189,22 @@
         <listitem>
           <para>
           What regular expression should be used to parse out the bug number.
-          The default is '(?:bug|issue)?\#?\s?\d+'. Note: the regex should
+          The default is <literal>'(?:bug|issue)?\#?\s?\d+'</literal>. Note: the regex should
           suppress all portions of the bug number that are not wanted using
-          "(?:)", see pyhton regex manual for details.
+          <literal>"(?:)"</literal>, see Python regex manual for details.
+          </para>
+          <para>
           Example:
-              --meta-closes-bugnum="(?:bug)?\s*ex-\d+"
+              <option>--meta-closes-bugnum=</option><literal>"(?:bug)?\s*ex-\d+"</literal>
 
               would match all of the following:
+          <screen>
                  Possible Txt  Match?    Result
                  ------------  ------    ------
                  bug EX-12345    Y       EX-12345
                  ex-01273        Y       ex-01273
                  bug ex-1ab      Y       ex-1
-                 EX--12345       N
+                 EX--12345       N</screen>
           </para>
         </listitem>
       </varlistentry>
@@ -241,7 +244,7 @@
         <listitem>
           <para>
           Remove any snapshot release banners and version suffixes, set
-          the current distribution to <replaceable>unstable</replaceable> and
+          the current distribution to <replaceable>unstable</replaceable>, and
           open the changelog for final tweaking.
           </para>
         </listitem>
@@ -254,7 +257,7 @@
           <para>
           Add a new changelog section with version
           <replaceable>newversion</replaceable>. Together with
-          <option>--snapshot</option> the snapshot number will be appended to
+          <option>--snapshot</option>, the snapshot number will be appended to
           <replaceable>newversion</replaceable>.
           </para>
         </listitem>
@@ -424,14 +427,14 @@
     having to worry about version numbers or changelog entries.
     </para>
     <para>
-    When using <option>--snapshot</option> or <option>-S</option> &gbp-dch;
+    When using <option>--snapshot</option> or <option>-S</option>, &gbp-dch;
     uses a pseudo header in the Debian changelog to remember the last git
     commit it added a changelog entry for. It also sets a version number
     ending in
     <replaceable>~&lt;snaspshotnumber&gt;.gbp&lt;commitid&gt;</replaceable>.
     It automatically increments the snapshot number on subsequent invocations
     of &gbp-dch; <option>-S</option> so that later snapshots automatically
-    have a higher version number. To leave snapshot mode invoke &gbp-dch;
+    have a higher version number. To leave snapshot mode, invoke &gbp-dch;
     with the <option>--release</option> option. This removes the pseudo
     header and unmangles the version number so the released version has a
     higher version number than the snapshots.
@@ -440,7 +443,7 @@
   <refsect1>
     <title>META TAGS</title>
     <para>
-    Additional to the above options the formatting of the commit message
+    Additional to the above options, the formatting of the commit message
     in <filename>debian/changelog</filename> can be modified by special tags
     (called Meta Tags)
     given in the git commit message. Meta Tag processing can be activated via
@@ -462,7 +465,7 @@
             <replaceable>Short</replaceable> which will only use the
             description (the first line) of the commit message when
             generating the changelog entry (useful
-            when <option>--full</option> is given) and
+            when <option>--full</option> is given), and
             <replaceable>Full</replaceable> which will use the full
             commit message when generating the changelog entry (useful
             when <option>--full</option> is not given).

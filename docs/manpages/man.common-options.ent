@@ -54,7 +54,8 @@
           COLOR_SCHEME is
           '&lt;debug&gt;:&lt;info&gt;:&lt;warning&gt;:&lt;error&gt;'.
           Numerical values and color names are accepted, empty fields imply
-          the default color. For example --git-color-scheme='cyan:34::' would
+          the default color. For example,
+          <option>--git-color-scheme=</option><literal>'cyan:34::'</literal> would
           show debug messages in cyan, info messages in blue and other messages
           in default (i.e. warning and error messages in red).
           </para>

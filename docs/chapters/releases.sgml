@@ -2,8 +2,8 @@
     <title>Releases and Snapshots</title>
     <para>When branching and merging frequently, the different &debian; changelog
     entries on the different branches tend to get into the way of the automatic
-    merge and the the merge fails - leaving the (pathological) merge to the
-    committer. In order to avoid this &gbp-dch; offers a way for creating
+    merge and the the merge fails&mdash;leaving the (pathological) merge to the
+    committer. In order to avoid this, &gbp-dch; offers a way for creating
     changelog entries from &git; commits before doing a
     release or anytime between releases.</para> 
     <para>
@@ -14,9 +14,9 @@
 <screen>
 &gbp-dch; <option>--release</option>
 </screen>
-    <para> This will look up the latest released version in the changelog,
+    <para>This will look up the latest released version in the changelog,
     increment the version in the &debian; changelog, generate changelog
-    messages from the corresponding &git; commit id up to the branch head and
+    messages from the corresponding &git; commit id up to the branch head, and
     finally spawns an editor for final changelog file editing by invoking &dch;
     <option>--release</option>.</para>
     <para>
@@ -35,7 +35,7 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
 
   * add support for automatic snapshot 
 </programlisting>
-   <para>During subsequent calls with <option>--snapshot</option> this version
+   <para>During subsequent calls with <option>--snapshot</option>, this version
    number will continue to increase. Since the snapshot banners contains the
    commit id of the current branch head, &gbp-dch; can figure out what to
    append to the changelog by itself:
@@ -43,13 +43,13 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
 &gbp-dch; <option>--snapshot</option> <option>--auto</option>
 </screen>
    will fetch the commit id and add changelog entries from that point to the
-   current HEAD - again auto incrementing the version number. If you don't want
+   current HEAD&mdash;again auto incrementing the version number. If you don't want
    to start at that commit id, you can specify any id or tag with:</para>
 <screen>
 &gbp-dch; <option>--since</option>=<replaceable>e76a6a180a57701ae4ae381f74523cacb3152780</replaceable> <option>--snapshot</option>
 </screen>
    <para>
-   After testing you can remove the snapshot header by a final &gbp-dch; call:
+   After testing, you can remove the snapshot header by a final &gbp-dch; call:
    </para>
 <screen>
 &gbp-dch; <option>--since</option>=<replaceable>HEAD</replaceable> <option>--release</option>
@@ -58,12 +58,12 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
    This will add no further entries but simply remove the specially crafted
    version number and the snapshot header. Again you can use any commit id
    or tag instead of <option>HEAD</option> if you want to add further changelog
-   entries - or you can (of course) use <option>--auto</option> again.
+   entries&mdash;or you can (of course) use <option>--auto</option> again.
    </para>
 <sect1 id="gbp.release.numbers">
     <title>Customizing snapshot numbers</title>
-    <para>If the auto incrementing of the snapshot number doesn't suite you needs you
-    can give any python expression that evaluates to a positive integer to
+    <para>If the auto incrementing of the snapshot number doesn't suite your needs, you
+    can give any Python expression that evaluates to a positive integer to
     calculate the new snapshot number:</para>
 <screen>
 &gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>1</replaceable>
@@ -82,11 +82,11 @@ snapshot-number = os.popen("git-log --pretty=oneline | wc -l").readlines()[0]
 <sect1 id="gbp.release.commit">
     <title>More on commit messages</title>
     <para>You can use <option>--full</option> to include the full commit
-    message in the changelog, note that you will lose the formatting though,
+    message in the changelog; note that you will lose the formatting though,
     since &dch; wraps lines by itself.</para>
-    <para>Additionally there are tags <option>Closes:</option> and
+    <para>Additionally, there are tags <option>Closes:</option> and
 <option>Thanks:</option> available to customize the commit message. Each tag
-has to start at the beginning of a single line. For example the git commit message
+has to start at the beginning of a single line. For example, the git commit message
 <screen>
 New upstream version
 
@@ -103,13 +103,13 @@ You can use the <option>Closes:</option> tag multiple times.
 There are several tags to further customize what (and how) commit messages get
 included into the changelog:
 </para><para>
-To exclude a commit from the generated changelog use:
+To exclude a commit from the generated changelog, use:
 </para><para>
 <screen>
 Gbp-Dch: Ignore
 </screen>
 This is e.g. useful if you're just fixing up a previous commit and couldn't
-amend it or for other janitorial commits that really don't need to end up in
+amend it, or for other janitorial commits that really don't need to end up in
 the changelog. For example, the following git commit message
 <screen>
 Set correct branchnames in debian/gbp.conf
@@ -119,25 +119,25 @@ Gbp-Dch: Ignore
 will not show up in the generated changelog in any way.
 </para>
 <para>
-To include the full commit message in the changelog use:
+To include the full commit message in the changelog, use:
 <screen>
 Gbp-Dch: Full
 </screen>
 </para>
 <para>
-To only include the short description in the changelog and skip the body use:
+To only include the short description in the changelog and skip the body, use:
 <screen>
 Gbp-Dch: Short
 </screen>
 The latter only takes effect when running &gbp-dch; with the
-<option>--full</option> option, since including only the short
+<option>--full</option> option since including only the short
 description is the default.
 </para>
 <para>
-Usually changelog entries should correspond to a single &git; commit. In this case it's
+Usually, changelog entries should correspond to a single &git; commit. In this case, it's
 convenient to include the commit id in the changelog entry. 
 This has the advantage that it's easy for people to identify changes without
-having to write very extensive changelog messages - the link back to &git; can be
+having to write very extensive changelog messages&mdash;the link back to &git; can be
 automated via the <option>Vcs-Browser</option> and <option>Vcs-Git</option>
 fields in <filename>debian/control</filename>. See <ulink url="https://honk.sigxcpu.org/cl2vcs">
 Cl2vcs</ulink> for how this looks.

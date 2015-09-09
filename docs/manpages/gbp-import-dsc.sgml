@@ -53,11 +53,11 @@
     &gbp-import-dsc; imports a &debian; source package into a &git; repository,
     notes the package version in the commit logs, and commits the change. All
     information, including package name, version, &debian;  diffs, and upstream
-    source is automatically detected from the source package.
+    source, is automatically detected from the source package.
     </para>
     <para>
-    If the command is run from within an existing repository it will import
-    into this, if not a new repository named as the Debian source package is
+    If the command is run from within an existing repository, it will import
+    into this; if not, a new repository named as the Debian source package is
     created.
     </para>
   </refsect1>
@@ -160,7 +160,7 @@
           <para>
           Download the source package instead of looking for it in the local
           file system. The argument can either be a
-          <replaceable>source-package</replaceable> name or an
+          <replaceable>source-package</replaceable> name or a
           <replaceable>URL</replaceable>. The former uses &apt-get; to download
           the source while the later uses &dget;.
           </para>
@@ -180,7 +180,7 @@
         </term>
         <listitem>
           <para>
-          Allow to import a package with the same debian version.
+          Allow one to import a package with the same debian version.
           </para>
         </listitem>
       </varlistentry>

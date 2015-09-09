@@ -52,8 +52,8 @@
       precedence.
     </para>
     <para>
-      Each file consists of either zero or one default section and
-      zero or one sections for each &gbp; command. Additionally there
+      Each file consists of either zero or one default section, and
+      zero or one sections for each &gbp; command. Additionally, there
       can be an arbitrary number of
       <option>remote-config</option> sections.  Comments start with a
       hash sign (<option>#</option>). The syntax is:
@@ -75,16 +75,16 @@
 <para>
   The sections for each command are named like the command (without &gbp;) surrounded
   by square brackets (e.g. <option>[buildpackage]</option>).
-  For backwards compatibility command sections starting with <filename>git-</filename> or
+  For backwards compatibility, command sections starting with <filename>git-</filename> or
   <filename>gbp-</filename> are also supported but will provoke a warning when parsed by
   &gbp;.
 </para>
 
 <para>
   The <option>key=value</option> pairs of the command sections are
-  named like the command line options of the corresponding command
+  named like the command-line options of the corresponding command
   with the '--' stripped off and can hold the same values (but see
-  below for details). For example
+  below for details). For example,
   the <xref linkend="man.gbp.buildpackage"> manual page documents
   the <option>--git-export-dir</option>=<parameter>directory</parameter>
   option which can be turned into configuration file setting by
@@ -98,8 +98,8 @@
 </programlisting>
 
 <para>
-  Options that can be repeated on the command line take Python like
-  lists in the config file. For example
+  Options that can be repeated on the command line take Python-like
+  lists in the config file. For example,
   the <xref linkend="man.gbp.import.orig"> commmand has the
   <option>--filter</option>=<parameter>pattern</parameter> option
   which can be turned into a configuration file option like this:
@@ -111,8 +111,8 @@
 </programlisting>
 
 <para>
-Boolean options can be either <option>True</option> or <option>False</option>. For example
-<xref linkend="man.gbp.import.orig">; has the <option>--pristine-tar</option> and
+Boolean options can be either <option>True</option> or <option>False</option>. For example,
+<xref linkend="man.gbp.import.orig"> has the <option>--pristine-tar</option> and
 <option>--no-pristine-tar</option> options which translate to:
 </para>
 <programlisting>
@@ -130,19 +130,19 @@ Boolean options can be either <option>True</option> or <option>False</option>. F
 <note>
 <para>
   To see the current set of values that would be applied after parsing the
-  configuration files use <xref linkend="man.gbp.config">.
+  configuration files, use <xref linkend="man.gbp.config">.
 </para>
 </note>
 <note>
 <para>
  <command>gbp import-dscs</command> and <command>git-pbuilder</command>
-can't be configured via gbp.conf.
+can't be configured via <filename>gbp.conf</filename>.
 </para>
 </note>
 
 <para>
 <xref linkend="man.gbp.create.remote.repo"> can additionally parse remote site
-configurations from <filename>gbp.conf</filename>. For example a configuration like:
+configurations from <filename>gbp.conf</filename>. For example, a configuration like:
 </para>
 
 <programlisting>
@@ -154,7 +154,7 @@ template-dir = /srv/alioth.debian.org/chroot/home/groups/pkg-libvirt/git-templat
 </programlisting>
 
 <para>
-Can be used to create remote repositories for the pkg-libvirt project using:
+can be used to create remote repositories for the pkg-libvirt project using:
 </para>
 
 <programlisting>
@@ -212,7 +212,7 @@ An example set up for packaging work:
   <title>ENVIRONMENT</title>
    <variablelist>
       <varlistentry>
-      <term>GBP_CONF_FILES</term>
+      <term><envar>GBP_CONF_FILES</envar></term>
       <listitem><para>Colon separated list of files to parse. The default is
 the above list of configuration files.</para></listitem>
       </varlistentry>
