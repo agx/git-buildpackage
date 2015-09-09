@@ -48,12 +48,12 @@
     <para>
     &gbp-import-orig; imports <replaceable>upstream-source</replaceable> into
     the &git; repository. <replaceable>upstream-source</replaceable> can either
-    be a gzip, bzip2, lzma or xz compressed tar archive, a zip archive or an
+    be a gzip, bzip2, lzma or xz compressed tar archive, a zip archive, or an
     already unpacked source tree. If it is already of the form
     <replaceable>package-name_version.orig.tar.gz</replaceable>, the version
-    information is read from the tarball's filename otherwise it can be given
+    information is read from the tarball's filename, otherwise it can be given
     on the command line via <option>--upstream-version</option>.  If the source
-    package name or version can't be determined &gbp-import-orig; will prompt
+    package name or version can't be determined, &gbp-import-orig; will prompt
     for it unless <option>--no-interactive</option> is given.
     </para>
     <para>
@@ -138,7 +138,7 @@
           <para>
           Add <replaceable>tag-format</replaceable> as additional parent to the
           commit of the upstream tarball. Useful when upstream uses git and you
-          want to link to it's revision history. The
+          want to link to its revision history. The
           <replaceable>tag-format</replaceable> can be a pattern similar to
           what <option>--upstream-tag</option> supports.
           </para>
@@ -206,7 +206,7 @@
         </term>
         <listitem>
           <para>
-          if using a filter also filter the files out of the tarball
+          if using a filter, also filter the files out of the tarball
           passed to <command>pristine-tar</command>
           </para>
         </listitem>
@@ -270,7 +270,7 @@
       &gbp-import-orig; --uscan
     </screen>
     <para>
-    After downloading an upstream tarball by hand import it
+    After downloading an upstream tarball by hand, import it
     </para>
     <screen>
       &gbp-import-orig; ../upstream-tarball-0.1.tar.gz

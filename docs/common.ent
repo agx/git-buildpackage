@@ -5,17 +5,17 @@
   <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhusername  		"Guido Guenther">
 
-  <!ENTITY gbp-buildpackage 	"<command>gbp buildpackage</command>">
-  <!ENTITY gbp-import-orig	"<command>gbp import-orig</command>">
-  <!ENTITY gbp-import-dsc	"<command>gbp import-dsc</command>">
-  <!ENTITY gbp-import-dscs	"<command>gbp import-dscs</command>">
-  <!ENTITY gbp-config		"<command>gbp config</command>">
-  <!ENTITY gbp-dch		"<command>gbp dch</command>">
+  <!ENTITY gbp-buildpackage 	"<command>gbp&nbsp;buildpackage</command>">
+  <!ENTITY gbp-import-orig	"<command>gbp&nbsp;import-orig</command>">
+  <!ENTITY gbp-import-dsc	"<command>gbp&nbsp;import-dsc</command>">
+  <!ENTITY gbp-import-dscs	"<command>gbp&nbsp;import-dscs</command>">
+  <!ENTITY gbp-config		"<command>gbp&nbsp;config</command>">
+  <!ENTITY gbp-dch		"<command>gbp&nbsp;dch</command>">
   <!ENTITY gbp		        "<command>gbp</command>">
-  <!ENTITY gbp-pull		"<command>gbp pull</command>">
-  <!ENTITY gbp-clone		"<command>gbp clone</command>">
-  <!ENTITY gbp-pq		"<command>gbp pq</command>">
-  <!ENTITY gbp-create-remote-repo "<command>gbp create-remote-repo</command>">
+  <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
+  <!ENTITY gbp-clone		"<command>gbp&nbsp;clone</command>">
+  <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
+  <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
   <!ENTITY git-pbuilder		"<command>git pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
@@ -30,9 +30,9 @@
   <!ENTITY rpm-email            "<email>markus.lehtonen@linux.intel.com</email>">
   <!ENTITY rpm-username         "Markus Lehtonen">
   <!ENTITY rpm-mansection       "<manvolnum>1</manvolnum>">
-  <!ENTITY gbp-buildpackage-rpm "<command>gbp buildpackage-rpm</command>">
-  <!ENTITY gbp-import-srpm      "<command>gbp import-srpm</command>">
-  <!ENTITY gbp-pq-rpm           "<command>gbp pq-rpm</command>">
+  <!ENTITY gbp-buildpackage-rpm "<command>gbp&nbsp;buildpackage-rpm</command>">
+  <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
+  <!ENTITY gbp-pq-rpm           "<command>gbp&nbsp;pq-rpm</command>">
   <!ENTITY rpmbuild             "<command>rpmbuild</command>">
   <!ENTITY wget                 "<command>wget</command>">
 

@@ -1,51 +1,51 @@
 <chapter id="gbp.building">
     <title>Building packages from the &git; repository</title>
     <para>
-    In order to build a &debian; package from the &git; repository you use:
-    &gbp-buildpackage;. This builds the upstream tarball as will be described below and
-    invokes &debuild; to build the package. To use another build command you
-    can use the <option>--git-builder</option> option as described later in the manual
+    In order to build a &debian; package from the &git; repository, you use:
+    &gbp-buildpackage;. This builds the upstream tarball (as will be described below) and
+    invokes &debuild; to build the package. To use another build command, you
+    can use the <option>--git-builder</option> option as described later in the manual,
     but &debuild; is nice since it can invoke <productname>lintian</productname>.
     During the development phase (when you're either not on the
     <emphasis>debian-branch</emphasis> or when you have uncommitted changes in
-    your repository) you'll usually use:
+    your repository), you'll usually use:
     </para>
 <screen>
 &gbp-buildpackage; <option>--git-ignore-new</option>
 </screen>
-    <para>If &gbp-buildpackage; doesn't find a valid upstream tarball it will
+    <para>If &gbp-buildpackage; doesn't find a valid upstream tarball, it will
     create one by looking at the tag matching the upstream version. To change
-    this behaviour see the <option>--git-upstream-tree</option> option.
+    this behaviour, see the <option>--git-upstream-tree</option> option.
     </para><para>
     If you want to recreate the original tarball using the additional
-    information from the <option>pristine-tar branch</option> you have to
+    information from the <option>pristine-tar branch</option>, you have to
     specify the <option>--git-pristine-tar</option> option. This will make sure
     the upstream tarball matches exactly the one imported. Using this option is
     the recommended way of recreating the upstream tarball.
     </para>
-    <para>Once you're satisfied with the build and want to do a release you commit all
+    <para>Once you're satisfied with the build and want to do a release, you commit all
     your changes and issue:</para>
 <screen>
 &gbp-buildpackage; <option>--git-tag</option>
 </screen>
     <para>This will again build the &debian; package and tag the final result after
-    extracting the current version from the changelog. If you want &gpg; signed
-    tags you can use the <option>--git-sign</option> and
-    <option>--git-keyid</option> options. To save typing these option can be
+    extracting the current version from the changelog. If you want &gpg;-signed
+    tags, you can use the <option>--git-sign</option> and
+    <option>--git-keyid</option> options. To save typing, these option can be
     specified via the configuration files. You can furthermore change the tag
     format used when creating tags with the <option>debian-tag</option>
-    option, the default is <replaceable>debian/&lt;version&gt;</replaceable>.</para>
+    option; the default is <replaceable>debian/&lt;version&gt;</replaceable>.</para>
     <sect1 id="gbp.building.export">
     <title>Using a separate build dir</title>
     <para>Tools like &svn-buildpackage; use a separate build-area. To achieve a similar behaviour
-    with &gbp-buildpackage; use the <option>--git-export-dir</option> option:</para>
+    with &gbp-buildpackage;, use the <option>--git-export-dir</option> option:</para>
 <screen>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area/</replaceable>
 </screen>
     <para>This will export the head of the current branch to
-    <replaceable>../build-area/package-version</replaceable>, build the
-    package. If you don't want to export the current branch head you can use
-    <option>--git-export</option> to export any treeish object, here are some
+    <replaceable>../build-area/package-version</replaceable> and build the
+    package. If you don't want to export the current branch head, you can use
+    <option>--git-export</option> to export any treeish object.  Here are some
     examples:</para>
 <screen>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>debian/0.4.3</replaceable>
@@ -55,11 +55,11 @@
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>WC</replaceable>
 </screen>
     <para>The special argument <replaceable>INDEX</replaceable> exports the
-    state of the current index which can be used to include staged but uncommitted
+    state of the current index, which can be used to include staged but uncommitted
     changes in the build. Whereas the special argument
     <replaceable>WC</replaceable> exports the current working copy as is.</para>
-    <para>If you want to default to build in a separate build area you can
-    specify the directory to use in the gbp.conf.
+    <para>If you want to default to build in a separate build area, you can
+    specify the directory to use in the <filename>gbp.conf</filename> file.
 <programlisting>
 [git-buildpackage]
 # use a build area relative to the git repository
@@ -68,7 +68,7 @@ export-dir=../build-area
 #export-dir=/home/debian-packages/build-area
 </programlisting>
     &gbp-buildpackage; will cleanup the build-area after a successful build. If
-    you want to keep the build tree use <replaceable>--git-no-purge</replaceable>.
+    you want to keep the build tree, use <replaceable>--git-no-purge</replaceable>.
     </para>
     </sect1>
     <sect1 id="gbp.building.hooks">
@@ -76,9 +76,9 @@ export-dir=../build-area
     <para>
     Besides the commands for cleaning the package build dir
     (<option>cleaner</option>) and building the package
-    (<option>builder</option>) you can also invoke hooks during the package
+    (<option>builder</option>), you can also invoke hooks during the package
     build: immediately before a build (<option>prebuild</option>),
-    after a successful build (<option>postbuild</option>) and after
+    after a successful build (<option>postbuild</option>), and after
     creating a tag (<option>posttag</option>). Typical applications are running
     <productname>lintian</productname> or pushing changes into a remote
     repository.
@@ -88,11 +88,11 @@ export-dir=../build-area
 	<para>&gbp-buildpackage; exports several variables into the
 	<option>posttag</option>'s environment (for details see the <xref
 	linkend="man.gbp.buildpackage">).
-	To invoke &lintian; we need to tell it where to find the changes file:
+	To invoke &lintian;, we need to tell it where to find the changes file:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-postbuild</option>=<replaceable>'lintian $GBP_CHANGES_FILE'</replaceable>
 </programlisting>
-        To call &lintian; automatically after each successful build add:
+        To call &lintian; automatically after each successful build, add:
 <programlisting>
 <option>postbuild</option>=<replaceable>lintian $GBP_CHANGES_FILE</replaceable>
 </programlisting>
@@ -101,7 +101,7 @@ export-dir=../build-area
     </sect2>
     <sect2 id="gbp.building.push">
     <title>Pushing into a remote repository</title>
-	<para>If you want to push your changes automatically after a successful build and tag
+	<para>If you want to push your changes automatically after a successful build and tag,
 	you can use &gbp-buildpackage;'s posttag hook. A very simple invocation would look like this:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>
@@ -109,7 +109,7 @@ export-dir=../build-area
 	This assumes you have set up a remote repository to push to in
         <filename>.git/config</filename>.</para>
 
-	<para>Usually you want to make sure you don't push out any
+	<para>Usually, you want to make sure you don't push out any
         unrelated changes into the remote repository. This is handled by the
         following hook which only pushes out the created tag to where you pulled
         from and also forwards the corresponding remote branch to that position:
@@ -141,13 +141,13 @@ echo "done."
 </programlisting>
 	<envar>GBP_TAG</envar>, <envar>GBP_SHA1</envar>
         and <envar>GBP_BRANCH</envar> are passed to the hook via the
-        environment. To call this hook automatically upon tag creation add:
+        environment. To call this hook automatically upon tag creation, add:
 <programlisting>
 <option>posttag</option>=<replaceable>"gbp-posttag-push"</replaceable>
 </programlisting>
 	to your <filename>.gbp.conf</filename> and make sure <filename>gbp-push</filename>
 	is somewhere in your <envar>$PATH</envar>. On &debian;
-	systems a more complete example can be found in
+	systems, a more complete example can be found in
 	<filename>/usr/share/doc/examples/git-buildpackage/examples/gbp-posttag-push</filename>.
     </para>
     </sect2>
@@ -159,19 +159,19 @@ echo "done."
 	for the postexport action is to allow further adjustment of
 	the sources prior to building the package. A typical use case
 	scenario is to allow creating multiple source and binary
-	packages from one &debian; branch - e.g. the bootstrap gcc and
+	packages from one &debian; branch, e.g. the bootstrap gcc and
 	in the next stage the full gcc.
     </para>
-    <para> The postexport action, postpones the creation of the
+    <para>The postexport action postpones the creation of the
       upstream tarball, so that the metadata for creating it is
       already present in the exported source tree. The example
-      postexport script below (crosstoolchain-expand.sh) expands
-      changelog, lintian override files, rules and control files
-      according to an environment variable 'PKG_FLAVOR'.
+      postexport script below (<filename>crosstoolchain-expand.sh</filename>)
+      expands changelog, lintian override files, rules and control files
+      according to an environment variable <envar>PKG_FLAVOR</envar>.
     </para>
 
-    <para>Sample gbp.conf - enables source tree export by specifying
-    the export directory:
+    <para>Sample <filename>gbp.conf</filename> - enables source tree export
+    by specifying the export directory:
     </para>
 <programlisting>
 [git-buildpackage]
@@ -184,7 +184,7 @@ postexport = crosstoolchain-expand.sh
 </programlisting>
 
 
-<para>Sample postexport script: crosstoolchain-expand.sh</para>
+<para>Sample postexport script: <filename>crosstoolchain-expand.sh</filename></para>
 <programlisting>
 #!/bin/sh
 #
@@ -276,7 +276,7 @@ exit 0
     for an example workflow.
     </para>
     <para>
-    In order to avoid a patched (unclean) source tree after the build you
+    In order to avoid a patched (unclean) source tree after the build, you
     can use &dpkg-source;'s <option>unapply-patches</option> option and
     tell &git; to ignore the <filename>.pc</filename> directory.
     <filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>

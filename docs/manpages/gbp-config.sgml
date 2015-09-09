@@ -45,7 +45,7 @@
   <refsect1>
     <title>EXIT CODES</title>
     <para>
-    When &gbp-config; finishes it indicates success or failure with its exit code:
+    When &gbp-config; finishes, it indicates success or failure with its exit code:
     </para>
     <variablelist>
       <varlistentry>
@@ -76,7 +76,7 @@
     $ gbp config buildpackage.upstream-branch
     buildpackage.upstream-branch=upstream
     </screen>
-    <para>Print the values of all of &gbp-buildpackage;s options</para>
+    <para>Print the values of all of &gbp-buildpackage; options</para>
     <screen>
     $ gbp config buildpackage
     buildpackage.upstream-branch=upstream
