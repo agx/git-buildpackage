@@ -84,7 +84,7 @@ class Patch(object):
 
     def _get_subject_from_filename(self):
         """
-        Determine the patch's subject based on the it's filename
+        Determine the patch's subject based on the its filename
 
         >>> p = Patch('debian/patches/foo.patch')
         >>> p._get_subject_from_filename()

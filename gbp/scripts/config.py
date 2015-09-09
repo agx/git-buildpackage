@@ -49,7 +49,7 @@ def parse_args(argv):
 
 
 def parse_cmd_config(command):
-    """Make a command parse it's config files"""
+    """Make a command parse its config files"""
     parser = GbpOptionParser(command)
     parser.parse_config_files()
     return parser

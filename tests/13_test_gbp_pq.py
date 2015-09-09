@@ -123,7 +123,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         for c in changes:
             self.add_file(c[0], c[1], c[2])
 
-        # Write it out as patch and check it's existence
+        # Write it out as patch and check its existence
         origin = 'HEAD~%d' % len(changes)
         patchfiles = generate_patches(self.repo, origin, 'HEAD', str(d), opts)
         for expected in expected_paths:

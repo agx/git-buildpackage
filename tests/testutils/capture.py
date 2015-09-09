@@ -22,7 +22,7 @@ class StderrCapture(StringIO):
 
 @contextmanager
 def capture_stderr():
-    """Capture an output and return it's content"""
+    """Capture an output and return its content"""
     c = StderrCapture()
     c.save()
     yield c
