@@ -87,7 +87,7 @@ export-dir=../build-area
     <title>Running lintian</title>
 	<para>&gbp-buildpackage; exports several variables into the
 	<option>posttag</option>'s environment (for details see the <xref
-	linkend="man.gbp.buildpackage">).
+	linkend="man.gbp.buildpackage"/>).
 	To invoke &lintian;, we need to tell it where to find the changes file:
 <programlisting>
 <command>git-buildpackage</command> <option>--git-postbuild</option>=<replaceable>'lintian $GBP_CHANGES_FILE'</replaceable>
@@ -104,7 +104,7 @@ export-dir=../build-area
 	<para>If you want to push your changes automatically after a successful build and tag,
 	you can use &gbp-buildpackage;'s posttag hook. A very simple invocation would look like this:
 <programlisting>
-<command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push && git push --tags"</replaceable>
+<command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push &amp;&amp; git push --tags"</replaceable>
 </programlisting>
 	This assumes you have set up a remote repository to push to in
         <filename>.git/config</filename>.</para>
@@ -131,7 +131,7 @@ else
      exit 1
 fi
 
-if [ "$GBP_SHA1" ] && [ "$GBP_BRANCH" ]; then
+if [ "$GBP_SHA1" ] &amp;&amp; [ "$GBP_BRANCH" ]; then
     git push "$REMOTE" "$GBP_SHA1":"$GBP_BRANCH"
 else
     echo "GBP_SHA1 or GBP_BRANCH not set."
@@ -155,7 +155,7 @@ echo "done."
     <title>Running postexport hook</title>
     <para>&gbp-buildpackage; exports several variables into the
 	<option>postexport</option>'s environment (for details see
-	the <xref linkend="man.gbp.buildpackage">). The motivation
+	the <xref linkend="man.gbp.buildpackage"/>). The motivation
 	for the postexport action is to allow further adjustment of
 	the sources prior to building the package. A typical use case
 	scenario is to allow creating multiple source and binary
@@ -260,8 +260,8 @@ cat $source_lintian | sed -e "$REPLACE_EXPR" > ${source_lintian%.tmpl}
 rm $source_lintian
 
 # rules and control file are package flavor specific
-[ -f rules.$PKG_FLAVOR ] && mv rules.$PKG_FLAVOR rules
-[ -f control.$PKG_FLAVOR ] && mv control.$PKG_FLAVOR control
+[ -f rules.$PKG_FLAVOR ] &amp;&amp; mv rules.$PKG_FLAVOR rules
+[ -f control.$PKG_FLAVOR ] &amp;&amp; mv control.$PKG_FLAVOR control
 rm -f rules.* control.*
 
 exit 0
