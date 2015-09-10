@@ -85,7 +85,7 @@
   named like the command-line options of the corresponding command
   with the '--' stripped off and can hold the same values (but see
   below for details). For example,
-  the <xref linkend="man.gbp.buildpackage"> manual page documents
+  the <xref linkend="man.gbp.buildpackage"/> manual page documents
   the <option>--git-export-dir</option>=<parameter>directory</parameter>
   option which can be turned into configuration file setting by
   dropping the
@@ -100,7 +100,7 @@
 <para>
   Options that can be repeated on the command line take Python-like
   lists in the config file. For example,
-  the <xref linkend="man.gbp.import.orig"> commmand has the
+  the <xref linkend="man.gbp.import.orig"/> commmand has the
   <option>--filter</option>=<parameter>pattern</parameter> option
   which can be turned into a configuration file option like this:
 </para>
@@ -112,7 +112,7 @@
 
 <para>
 Boolean options can be either <option>True</option> or <option>False</option>. For example,
-<xref linkend="man.gbp.import.orig"> has the <option>--pristine-tar</option> and
+<xref linkend="man.gbp.import.orig"/> has the <option>--pristine-tar</option> and
 <option>--no-pristine-tar</option> options which translate to:
 </para>
 <programlisting>
@@ -130,7 +130,7 @@ Boolean options can be either <option>True</option> or <option>False</option>. F
 <note>
 <para>
   To see the current set of values that would be applied after parsing the
-  configuration files, use <xref linkend="man.gbp.config">.
+  configuration files, use <xref linkend="man.gbp.config"/>.
 </para>
 </note>
 <note>
@@ -141,7 +141,7 @@ can't be configured via <filename>gbp.conf</filename>.
 </note>
 
 <para>
-<xref linkend="man.gbp.create.remote.repo"> can additionally parse remote site
+<xref linkend="man.gbp.create.remote.repo"/> can additionally parse remote site
 configurations from <filename>gbp.conf</filename>. For example, a configuration like:
 </para>
 
@@ -229,14 +229,14 @@ the above list of configuration files.</para></listitem>
 <refsect1>
   <title>SEE ALSO</title>
   <para>
-    <xref linkend="man.gbp.clone">,
-    <xref linkend="man.gbp.create.remote.repo">,
-    <xref linkend="man.gbp.pq">,
-    <xref linkend="man.gbp.pull">,
-    <xref linkend="man.gbp.dch">,
-    <xref linkend="man.gbp.import.dsc">,
-    <xref linkend="man.gbp.import.orig">,
-    <xref linkend="man.gbp.buildpackage">,
+    <xref linkend="man.gbp.clone"/>,
+    <xref linkend="man.gbp.create.remote.repo"/>,
+    <xref linkend="man.gbp.pq"/>,
+    <xref linkend="man.gbp.pull"/>,
+    <xref linkend="man.gbp.dch"/>,
+    <xref linkend="man.gbp.import.dsc"/>,
+    <xref linkend="man.gbp.import.orig"/>,
+    <xref linkend="man.gbp.buildpackage"/>,
     <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
     <citetitle>The Git-Buildpackage Manual</citetitle></ulink>
   </para>

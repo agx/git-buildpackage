@@ -45,6 +45,7 @@ by version number.
     <screen>
 &gbp-import-dscs; --debsnap package
     </screen>
+    </para>
     </sect1>
 
     <sect1 id="gbp.import.new.upstream">
@@ -224,7 +225,7 @@ upstream-tag = v%(version)s
 	  <replaceable>version</replaceable> will be replaced with the upstream version number as read from
 	  <filename>debian/changelog</filename>.
 	</para>
-	<para>If you're using &pristine-tar;, you can make &gbp-buildpackage commit the generated tarball back to the
+	<para>If you're using &pristine-tar;, you can make &gbp-buildpackage; commit the generated tarball back to the
 	  pristine-tar branch by using the <option>--git-pristine-tar-commit</option> option. This will make sure
 	  others building your package can regenerate the tarball you generated for building the &debian; package.
 	</para>

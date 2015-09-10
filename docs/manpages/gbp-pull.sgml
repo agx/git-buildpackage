@@ -132,10 +132,10 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <xref linkend="man.gbp.buildpackage">,
-      <xref linkend="man.gbp.clone">,
-      <xref linkend="man.gbp.pq">,
-      <xref linkend="man.gbp.conf">
+      <xref linkend="man.gbp.buildpackage"/>,
+      <xref linkend="man.gbp.clone"/>,
+      <xref linkend="man.gbp.pq"/>,
+      <xref linkend="man.gbp.conf"/>
     </para>
   </refsect1>
   <refsect1>

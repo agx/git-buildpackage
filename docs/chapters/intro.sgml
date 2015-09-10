@@ -80,7 +80,7 @@
 	<option>upstream-branch</option>&mdash;it doesn't matter if these branches
 	are maintained with &gbp-import-orig; or not.</para>
         <para>
-        A recommended branch layout is described in <xref linkend="gbp.branch.naming">.
+        A recommended branch layout is described in <xref linkend="gbp.branch.naming"/>.
         </para>
 
 	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
