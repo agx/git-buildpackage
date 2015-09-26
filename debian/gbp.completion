@@ -1,0 +1,148 @@
+# -*- shell-script -*-
+#
+# Bash tab auto-completion rules for git-buildpackage.
+#
+# Copyright (C) 2010  Siegfried-Angel Gevatter Pujals <siegfried@gevatter.com>
+# Copyright (C) 2010,2013,2015  Guido Guenther <agx@sigxcpu.org>
+#
+# Distributed under the GNU General Public License, version 2.0.
+
+_gbp_branches ()
+{
+     [ -d .git ] || return 0
+     git for-each-ref --format="%(refname:short)" refs/heads
+}
+
+
+_gbp_tags ()
+{
+     [ -d .git ] || return 0
+     git for-each-ref --format="%(refname:short)" refs/tags
+}
+
+
+_gbp_options ()
+{
+    GBP_DISABLE_SECTION_DEPRECTATION=true \
+        gbp "${1}" --help | sed -ne 's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
+}
+
+
+_gbp_commands ()
+{
+    gbp --list-cmds | sed -ne 's/^ \+\([a-z\-]\+\) \-.*/\1/p'
+}
+
+
+_gbp_comp ()
+{
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local prev="${COMP_WORDS[COMP_CWORD - 1]}"
+    local options=$1
+    local branch_opts=${2:-"--debian-branch\= --upstream-branch\="}
+    local tag_opts=${3:-"--debian-tag\= --upstream-tag\="}
+    local tristate_opts=${4:-"--color\="}
+    local cbdist_opts=${5:-"--git-dist\="}
+
+# COMPREPLY considers '=' as a word. For $prev we prefer the word before the actual "="
+    if [[ "$prev" == "=" ]]; then
+        prev="${COMP_WORDS[COMP_CWORD - 2]}"
+    elif [[ "$cur" == "=" ]]; then
+        cur=""
+    fi
+
+    if [[ "${branch_opts}" == *$prev* ]]; then
+	local refs=$(_gbp_branches)
+        COMPREPLY=( $(compgen -W "$refs" -- $cur ) )
+        return 0
+    fi
+
+    if [[ "${tag_opts}" == *$prev* ]]; then
+	local refs=$(_gbp_tags)
+        COMPREPLY=( $(compgen -W "$refs" -- $cur ) )
+        return 0
+    fi
+
+    if [[ "${tristate_opts}" == *$prev* ]]; then
+        COMPREPLY=( $(compgen -W 'on off auto' -- $cur ) )
+        return 0
+    fi
+
+    if [[ "${cbdist_opts}" == *$prev* ]]; then
+        local BASE="/var/cache/pbuilder/base-"
+        COMPREPLY=( $( compgen -o dirnames -G "${BASE}${cur}*.cow" \
+                       | sed -e "s,${BASE}\(.*\)\.cow,\1,g" ) )
+        return 0
+    fi
+
+    # separate opts by tab so we can append a space to all options not ending
+    # with an equal sign
+    tab_opts=$(echo "$options" | sed -e 's/ \+/\t/g' -e 's/[^=]$/& /g')
+    type compopt &>/dev/null && compopt -o nospace
+    local IFS=$'\t\n'
+    COMPREPLY=($(compgen -W "$tab_opts" -- $cur))
+}
+
+# check if we can find a gbp command on the commandline
+_gbp_find_cmd_on_cmdline ()
+{
+    local cmds="$1" # list of commands to check for
+    local word cmd c=1
+
+    while [ $c -lt $((COMP_CWORD)) ]; do
+	word="${COMP_WORDS[c]}"
+	for cmd in $cmds; do
+	    if [ "$cmd" = "$word" ]; then
+		echo "$cmd"
+		return
+	    fi
+	done
+	((c++))
+    done
+}
+
+_gbp-buildpackage()
+{
+    local options=$(_gbp_options buildpackage)
+    local branch_opts="--git-debian-branch\= --git-upstream-branch\= --git-upstream-tree\="
+    local tag_opts="--git-debian-tag\= --git-upstream-tag\="
+    local tristate_opts="--git-color\= --git-notify\="
+
+    _gbp_comp "$options" "$branch_opts" "$tag_opts" "$tristate_opts" \
+              "$cbdist_opts"
+}
+
+
+_gbp-pq ()
+{
+    local options=$(_gbp_options pq)
+    options="$options export import rebase drop apply switch"
+    _gbp_comp "$options"
+}
+
+
+_gbp-generic-cmd()
+{
+    local options=$(_gbp_options "${1}")
+    _gbp_comp "$options"
+}
+
+
+_have gbp &&
+_gbp ()
+{
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local commands=$(_gbp_commands)
+    local func
+
+    command=$(_gbp_find_cmd_on_cmdline "$commands")
+    if [ -z "${command}" ]; then
+	COMPREPLY=( $(compgen -W "$commands" -- "${cur}" ) )
+    else
+        if type _gbp-"${command}" >& /dev/null; then
+            _gbp-"${command}"
+        else
+            _gbp-generic-cmd "${command}"
+        fi
+    fi
+} && complete -F _gbp -o default gbp
