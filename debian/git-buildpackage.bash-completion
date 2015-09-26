@@ -128,7 +128,7 @@ _gbp-generic-cmd()
 }
 
 
-have gbp &&
+_have gbp &&
 _gbp ()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"
@@ -145,5 +145,4 @@ _gbp ()
             _gbp-generic-cmd "${command}"
         fi
     fi
-}
-[ "${have:-}" ] && complete -F _gbp -o default gbp
+} && complete -F _gbp -o default gbp
