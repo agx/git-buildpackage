@@ -25,7 +25,7 @@ from glob import glob
 from xml.dom import minidom
 
 from gbp.command_wrappers import Command
-from gbp.git import GitRepository, GitRepositoryError
+from gbp.git import GitRepositoryError
 
 from tests.component import ComponentTestBase, ComponentTestGitRepository
 
@@ -61,6 +61,6 @@ class RpmRepoTestBase(ComponentTestBase):
         dirname = os.path.basename(cls.orig_repos[pkg_name].path)
         shutil.copytree(cls.orig_repos[pkg_name].path, dirname)
         os.chdir(dirname)
-        return GitRepository('.')
+        return ComponentTestGitRepository('.')
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
