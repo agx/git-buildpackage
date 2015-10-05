@@ -287,6 +287,18 @@ class UnpackZipArchive(Command):
         self.run_error = 'Couldn\'t unpack "%s": {err_reason}' % self.archive
 
 
+class CatenateZipArchive(Command):
+    """Wrap zipmerge tool to catenate a zip file with the next"""
+    def __init__(self, archive, **kwargs):
+        self.archive = archive
+        Command.__init__(self, 'zipmerge', [archive], **kwargs)
+
+    def __call__(self, target):
+        self.run_error = 'Couldn\'t append "%s" to "%s": {err_reason}' % \
+                            (target, self.archive)
+        Command.__call__(self, [target])
+
+
 class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[], **kwargs):

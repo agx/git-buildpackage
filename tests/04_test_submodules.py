@@ -14,6 +14,9 @@ import gbp.git
 import gbp.command_wrappers
 
 from gbp.scripts import buildpackage
+from gbp.scripts.common.buildpackage import (git_archive_submodules,
+                                             git_archive_single)
+from tests.testutils import ls_zip
 
 REPO = None
 REPODIR = None
@@ -126,6 +129,19 @@ def test_create_tarballs():
     changelog = { "Source": "test", "Upstream-Version": "0.2" }
     ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
                                  "9", False))
+
+def test_create_zip_archives():
+    """Create an upstream zip archive"""
+    git_archive_submodules(REPO, 'HEAD', 'with-submodules.zip', 'test',
+                           '', '', '', 'zip')
+    # Check that submodules were included
+    contents = ls_zip('with-submodules.zip')
+    ok_('test/test_submodule/testfile' in contents)
+
+    git_archive_single('HEAD', 'without-submodules.zip', 'test',
+                       '', '', '', 'zip')
+    contents = ls_zip('without-submodules.zip')
+    ok_('test/test_submodule/testfile' not in contents)
 
 def test_check_tarfiles():
     """Check the contents of the created tarfile"""
