@@ -531,7 +531,6 @@ def main(argv):
                     raise GbpError("Error exporting packaging files: %s" % err)
             spec.specdir = os.path.abspath(spec_dir)
 
-            orig_prefix = spec.orig_src['prefix']
             # Get/build the orig tarball
             if is_native(repo, options):
                 if spec.orig_src and not options.no_create_orig:
@@ -543,6 +542,7 @@ def main(argv):
                                       "compression '%s -%s'" %
                                       (spec.orig_src['compression'],
                                        options.comp_level))
+                    orig_prefix = spec.orig_src['prefix']
                     if not git_archive(repo, spec, source_dir, tree,
                                        orig_prefix, options.comp_level,
                                        options.with_submodules):
