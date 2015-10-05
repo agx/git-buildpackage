@@ -613,7 +613,7 @@ def main(argv):
         retval = 1
     finally:
         drop_index()
-        #del_tmpdir()
+        del_tmpdir()
 
     if not options.tag_only:
         if spec and options.notify:
