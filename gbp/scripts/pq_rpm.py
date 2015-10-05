@@ -159,7 +159,6 @@ def parse_spec(options, repo, treeish=None):
     """
     try:
         if options.spec_file:
-            options.packaging_dir = os.path.dirname(options.spec_file)
             if not treeish:
                 spec = SpecFile(options.spec_file)
             else:
@@ -175,6 +174,7 @@ def parse_spec(options, repo, treeish=None):
         raise GbpError("Can't parse spec: %s" % err)
     relpath = spec.specpath if treeish else os.path.relpath(spec.specpath,
                                                             repo.path)
+    options.packaging_dir = os.path.dirname(relpath)
     gbp.log.debug("Using '%s' from '%s'" % (relpath, treeish or 'working copy'))
     return spec
 
