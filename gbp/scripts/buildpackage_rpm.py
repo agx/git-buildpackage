@@ -238,16 +238,19 @@ def git_archive_build_orig(repo, spec, output_dir, options):
 
 def is_native(repo, options):
     """Determine whether a package is native or non-native"""
-    if repo.has_branch(options.upstream_branch):
-        return False
-    # Check remotes, too
-    for remote_branch in repo.get_remote_branches():
-        remote, branch = remote_branch.split('/', 1)
-        if branch == options.upstream_branch:
-            gbp.log.debug("Found upstream branch '%s' from remote '%s'" %
-                          (remote, branch))
+    if options.native.is_auto():
+        if repo.has_branch(options.upstream_branch):
             return False
-    return True
+        # Check remotes, too
+        for remote_branch in repo.get_remote_branches():
+            remote, branch = remote_branch.split('/', 1)
+            if branch == options.upstream_branch:
+                gbp.log.debug("Found upstream branch '%s' from remote '%s'" %
+                               (remote, branch))
+                return False
+        return True
+
+    return options.native.is_on()
 
 
 def setup_builder(options, builder_args):
@@ -347,6 +350,8 @@ def build_parser(name, prefix=None, git_treeish=None):
                     type='tristate')
     parser.add_config_file_option(option_name="vendor", action="store",
                     dest="vendor")
+    parser.add_config_file_option(option_name="native", dest="native",
+                    type='tristate')
     tag_group.add_option("--git-tag", action="store_true", dest="tag",
                     default=False,
                     help="create a tag after a successful build")

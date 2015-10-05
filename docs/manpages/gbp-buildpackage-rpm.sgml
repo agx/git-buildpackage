@@ -26,6 +26,7 @@
       <arg><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-vendor</option>=<replaceable>VENDOR</replaceable></arg>
+      <arg><option>--git-native</option>=<replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--git-upstream-branch=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-packaging-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
       <arg><option>--git-ignore-branch</option></arg>
@@ -226,6 +227,17 @@
         <listitem>
           <para>
           Distribution vendor name.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-native=</option><replaceable>[auto|on|off]</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Define the 'nativity' of a package. The default value
+          <replaceable>auto</replaceable> makes &gbp-buildpackage-rpm; to
+          guess. Guessing is based on the existence of upstream branch.
           </para>
         </listitem>
       </varlistentry>

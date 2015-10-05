@@ -647,6 +647,7 @@ class GbpOptionParserRpm(GbpOptionParser):
             'arch'                      : '',
             'mock-root'                 : '',
             'mock-options'              : '',
+            'native'                    : 'auto',
                     })
 
     help = dict(GbpOptionParser.help)
@@ -694,6 +695,8 @@ class GbpOptionParserRpm(GbpOptionParser):
              'mock-options':
                   ("Options to pass to mock, "
                    "default is '%(mock-options)s'"),
+            'native':
+                "Treat this package as native, default is '%(native)s'",
                  })
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
