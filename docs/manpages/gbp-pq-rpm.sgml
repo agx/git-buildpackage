@@ -194,7 +194,46 @@
           </para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>Gbp-Rpm: If &lt;expression&gt;</option>
+        </term>
+        <listitem>
+          <para>
+          Conditional patch. Put patch inside "%if &lt;expression&gt;" in the
+          spec file.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>Gbp-Rpm: IfArch&lt;expression&gt;</option>
+        </term>
+        <listitem>
+          <para>
+          Conditional patch. Put patch inside "%ifarch &lt;expression&gt;" in
+          the spec file.
+          </para>
+        </listitem>
+      </varlistentry>
     </variablelist>
+    <para>
+    For example, the following commit message:
+    </para>
+    <screen>
+      Fix around a problem in Fedora
+
+      which is not applicable elsewhere.
+
+      Gbp-Rpm: If 0%{?fedora}
+    </screen>
+    <para>
+    Will result something like this in the spec file:
+    </para>
+    <screen>
+      # 0001-Fix-around-a-problem-in-Fedora.patch
+      %if 0%{?fedora}
+      %patch0 -p1
+      %endif
+    </screen>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
