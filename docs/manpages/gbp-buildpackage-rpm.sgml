@@ -25,6 +25,7 @@
       <arg><option>--git-color-scheme=</option><replaceable>COLOR_SCHEME</replaceable></arg>
       <arg><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-vendor</option>=<replaceable>VENDOR</replaceable></arg>
       <arg><option>--git-upstream-branch=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-packaging-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
       <arg><option>--git-ignore-branch</option></arg>
@@ -48,13 +49,14 @@
       <arg><option>--git-compression-level=</option><replaceable>LEVEL</replaceable></arg>
       <arg><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>TREEISH</replaceable></arg>
-      <arg><option>--git-export-only</option></arg>
       <arg><option>--git-packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-spec-file=</option><replaceable>FILEPATH</replaceable></arg>
+      <arg><option>--git-export-sourcedir</option>=<replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--git-export-specdir</option>=<replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
       <arg><option>--git-[no-]pristine-tar-commit</option></arg>
       <arg><option>--git-tag-only</option></arg>
       <arg><option>--git-retag</option></arg>
-      <arg><option>--git-[no-]patch-export</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -201,6 +203,24 @@
         <listitem>
           <para>
           Whether to send a desktop notification after the build.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Base directory under which temporary directories are created.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-vendor</option>=<replaceable>VENDOR</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Distribution vendor name.
           </para>
         </listitem>
       </varlistentry>
@@ -400,6 +420,19 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--git-export-sourcedir</option>=<replaceable>DIRECTORY</replaceable>
+        </term>
+        <term><option>--git-export-specdir</option>=<replaceable>DIRECTORY</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Subdirectories under export directory where packaging files are
+          exported. The default build options of rpmbuild builder are also
+          adjusted accordingly.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git-export=</option><replaceable>TREEISH</replaceable>
         </term>
         <listitem>
@@ -418,6 +451,19 @@
         <listitem>
           <para>
           Subdirectory that contains the RPM packaging files.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-spec-file=</option><replaceable>FILEPATH</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Relative path to the spec file to use. Special value
+          <replaceable>auto</replaceable> causes &gbp-buildpackage-rpm; to
+          search and guess.  Other values cause the
+          <option>--git-packaging-dir</option> option to be ignored: the
+          directory of the spec file is used, instead.
           </para>
         </listitem>
       </varlistentry>
