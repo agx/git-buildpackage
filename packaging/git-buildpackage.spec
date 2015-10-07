@@ -12,10 +12,10 @@ URL:        https://honk.sigxcpu.org/piki/projects/git-buildpackage/
 Source0:    %{name}_%{version}.tar.gz
 
 # Conditional package names for requirements
-%if 0%{?fedora} || 0%{?centos_ver} > 7
+%if 0%{?fedora} || 0%{?centos_ver} >= 7
 %define dpkg_pkg_name dpkg-dev
 %else
-%if 0%{?centos_version}
+%if 0%{?centos_ver}
 %define dpkg_pkg_name dpkg-devel
 %else
 %define dpkg_pkg_name dpkg
@@ -92,14 +92,14 @@ Requires:   %{man_pkg_name}
 Requires:   %{python_pkg_name}
 Requires:   python-setuptools
 Requires:   python-dateutil
-%if 0%{?suse_version} || 0%{?tizen_version:1}
-Recommends:     unzip
-Recommends:     libzip
-%else
+%if 0%{?centos_ver} && 0%{?centos_ver} <= 7
 Requires:       unzip
 Requires:       libzip
-%endif
+%else
+Recommends:     unzip
+Recommends:     libzip
 Recommends:     pristine-tar
+%endif
 
 %description common
 Common files and documentation, used by both git-buildpackage debian and rpm tools
@@ -202,7 +202,7 @@ EOF
 %endif
 
 # Disable the Debian tools for old CentOS
-%if 0%{?centos_version} && 0%{?centos_ver} < 7
+%if 0%{?centos_ver} && 0%{?centos_ver} < 7
 for f in `cat files.list`; do
     rm -rfv %{buildroot}/$f
 done
