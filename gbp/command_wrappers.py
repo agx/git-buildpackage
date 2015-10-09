@@ -22,12 +22,45 @@ git-buildpackage and friends
 import subprocess
 import os
 import signal
+import sys
+from contextlib import contextmanager
+from tempfile import TemporaryFile
+
 import gbp.log as log
 
 
 class CommandExecFailed(Exception):
     """Exception raised by the Command class"""
     pass
+
+
+@contextmanager
+def proxy_stdf():
+    """
+    Circulate stdout/stderr via a proper file object. Designed to work around a
+    problem where Python nose replaces sys.stdout/stderr with a custom 'Tee'
+    object that is not a file object (compatible) and thus causes a crash with
+    Popen.
+    """
+    stdout = None
+    if not hasattr(sys.stdout, 'fileno'):
+        stdout = sys.stdout
+        sys.stdout = TemporaryFile()
+    stderr = None
+    if not hasattr(sys.stderr, 'fileno'):
+        stderr = sys.stderr
+        sys.stderr = TemporaryFile()
+    try:
+        yield
+    finally:
+        if stdout:
+            sys.stdout.seek(0)
+            stdout.write(sys.stdout.read())
+            sys.stdout = stdout
+        if stderr:
+            sys.stderr.seek(0)
+            stderr.write(sys.stderr.read())
+            sys.stderr = stderr
 
 
 class Command(object):
@@ -67,26 +100,26 @@ class Command(object):
 
         log.debug("%s %s %s" % (self.cmd, self.args, args))
         self._reset_state()
-        stdout_arg = subprocess.PIPE if self.capture_stdout else None
-        stderr_arg = subprocess.PIPE if self.capture_stderr else None
         cmd = [self.cmd] + self.args + args
         if self.shell:
             # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-
-        try:
-            popen = subprocess.Popen(cmd,
-                                     cwd=self.cwd,
-                                     shell=self.shell,
-                                     env=self.env,
-                                     preexec_fn=default_sigpipe,
-                                     stdout=stdout_arg,
-                                     stderr=stderr_arg)
-            (self.stdout, self.stderr) = popen.communicate()
-        except OSError as err:
-            self.err_reason = "execution failed: %s" % str(err)
-            self.retcode = 1
-            raise
+        with proxy_stdf():
+            stdout_arg = subprocess.PIPE if self.capture_stdout else sys.stdout
+            stderr_arg = subprocess.PIPE if self.capture_stderr else sys.stderr
+            try:
+                popen = subprocess.Popen(cmd,
+                                         cwd=self.cwd,
+                                         shell=self.shell,
+                                         env=self.env,
+                                         preexec_fn=default_sigpipe,
+                                         stdout=stdout_arg,
+                                         stderr=stderr_arg)
+                (self.stdout, self.stderr) = popen.communicate()
+            except OSError as err:
+                self.err_reason = "execution failed: %s" % str(err)
+                self.retcode = 1
+                raise
 
         self.retcode = popen.returncode
         if self.retcode < 0:
