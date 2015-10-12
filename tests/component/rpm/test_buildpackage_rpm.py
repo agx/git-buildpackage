@@ -31,7 +31,7 @@ from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
 from gbp.git import GitRepository
 from gbp.scripts.buildpackage_rpm import main as gbp_rpm
 from tests.component.rpm import RpmRepoTestBase, RPM_TEST_DATA_DIR
-from tests.testutils import ls_tar, ls_zip
+from tests.testutils import ls_tar, ls_zip, capture
 
 # Disable "Method could be a function warning"
 #   pylint: disable=R0201
@@ -47,8 +47,9 @@ MOCK_NOTIFICATIONS = []
 
 def mock_gbp(args):
     """Wrapper for gbp-buildpackage-rpm"""
-    return gbp_rpm(['arg0', '--git-notify=off'] + args +
-                   ['-ba', '--clean', '--target=noarch', '--nodeps'])
+    with capture.capture_stderr():
+        return gbp_rpm(['arg0', '--git-notify=off'] + args +
+                       ['-ba', '--clean', '--target=noarch', '--nodeps'])
 
 def mock_notify(summary, message, notify_opt):
     """Mock notification system"""
