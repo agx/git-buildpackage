@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+set -x
+
+git init .
+git add .
+git commit -m"Smoketest" -a
+cat <<EOF >> ~/.rpmmacros
+%python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib().replace('dist-', 'site-'))")
+%python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1).replace('dist-', 'site-'))")
+EOF
+
+# Build an RPM of ourselfes
+gbp buildpackage-rpm --git-packaging-dir=packaging/ -bb --nodeps
+
+rm -r .git ~/.rpmmacros
+

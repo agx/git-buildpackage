@@ -1,0 +1,4 @@
+Tests: smoke-rpm
+Depends: @,
+ python-rpm
+Restrictions: allow-stderr
