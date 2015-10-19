@@ -197,7 +197,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ] ; then
             # There has to be a configuration file matching our distribution
             # and architecture.
             QEMUCONFIG="/var/cache/pbuilder/$BUILDER-$ARCH-$DIST$EXT.conf"
-            if [ ! -r "$CONFIG" ]; then
+            if [ ! -r "$QEMUCONFIG" ]; then
                 echo "Cannot read configuration file $QEMUCONFIG" >&2
                 exit 1
             fi
