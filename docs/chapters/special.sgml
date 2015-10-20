@@ -65,52 +65,75 @@ cleanup-script.sh
     </sect1>
 
     <sect1 id="gbp.special.pbuilder">
-    <title>Using &pbuilder;</title>
+    <title>Building with &cowbuilder;</title>
     <para>
-    Since &pbuilder; uses different command line arguments than
-    &debuild; and &dpkg-buildpackage;, we can't simply pass the options on the
-    command line but have to wrap them in the <option>--git-builder</option>
-    option instead. <command>git-pbuilder</command> helps you with that:
+      &cowbuilder; is nice tool to build Debian packages in a defined
+      environment.  It makes sure all build-dependencies are specified
+      correctly by building the package in a clean chroot. As its
+      cousin &pbuilder; it can be extended via hooks to (e.g. run
+      autopkg tests) but doesn't need a tarball unpacked but uses copy
+      on write tree to speed up the build.
+    </para>
 
+    <para>
+      Since &cowbuilder; uses different command line arguments than
+      &debuild; and &dpkg-buildpackage;, we can't simply pass the
+      options to run it on the command line. To simplifiy the
+      integration we use a separate helper named &git-pbuilder;.
+      &gbp; has it's own command line option for this:
+    </para>
 <programlisting>
-<command>git-buildpackage</command> <option>--git-builder="git-pbuilder"</option>  <option>--git-cleaner="fakeroot debian/rules clean"</option>
+  <command>gbp buildpackage</command> <option>--git-pbuilder</option>
 </programlisting>
+    <para>
+      This will set the build command to run &git-pbuilder; (which
+      invokes &cowbuilder; by default) and the clean command
+      to <command>/bin/true</command>. It also activates the parsing
+      of several &git-pbuilder; related options
+      like <option>--git-dist</option>, <option>--git-arch</option> and
+      <option>--git-pbuilder-options</option>.
+    </para>
 
-    Note that we also used a different clean command since &pdebuildcmd;
-    <option>clean</option> means something different than &debuildcmd;
-    <option>clean</option>.
-    
-    We can shorten this further by using <filename>~/.gbp.conf</filename>:
-
-<programlisting>
+    <para>
+      We can make &git-pbuilder; usage the default by adding it to
+      <filename>~/.gbp.conf</filename>:
+    </para>
+      <programlisting>
 cat &lt;&lt;EOF &gt; <filename>~/.gbp.conf</filename>
 [DEFAULT]
-# tell git-buildpackage howto clean the source tree
-cleaner = fakeroot debian/rules clean
-# this is how we invoke pbuilder, arguments passed to git-buildpackage will be
-# passed to dpkg-buildpackge in the chroot
-builder = /usr/bin/git-pbuilder
+# We invoke cowbuilder via git-pbuilder. Arguments passed to &gbp-buildpackage;
+# will be passed to dpkg-buildpackge in the chroot
+pbuilder = True
 EOF
-</programlisting>
-
+      </programlisting>
+      <para>
 	<command>git-pbuilder</command> defaults to building a package for the
 	<envar>sid</envar> distribution. If you want to build for another
-	distribution, pass this in the <envar>DIST</envar> environment variable.
+	distribution, pass this in the <option>--git-dist</option> option:
 
-	Invoking &gbp-buildpackage; will now invoke &pdebuildcmd; by
-	default, and all additional command line arguments are passed to
-	<command>dpkg-buildpackage</command>. If you want to use
-	<command>debuild</command> again (without modifying
-	<filename>~/.gbp.conf</filename>), you can use:
-<programlisting>
-<command>git-buildpackage</command> --git-builder=debuild
-</programlisting>
+      <programlisting>
+&gbp-buildpackage; --git-pbuilder --git-dist=jessie
+      </programlisting>
 
-	Furthermore, if you don't want this for all your invocations of
-	&gbp-buildpackage;, you can use <filename>.git/gbp.conf</filename> in
-	one of your &git; repositories instead of
-	<filename>~/.gbp.conf</filename>.
-    </para>
+	If you want to use <command>debuild</command> again (without
+	modifying <filename>~/.gbp.conf</filename>), you can use:
+      </para>
+      <programlisting>
+&gbp-buildpackage; --git-no-pbuilder
+      </programlisting>
+      <para>
+	In order for all of the above to work you have to create a
+	base chroot first using &git-pbuilder;
+      </para>
+      <programlisting>
+<command>git-pbuilder</command> create
+      </programlisting>
+      <para>
+	This can later be updated using
+      </para>
+      <programlisting>
+<command>git-pbuilder</command> update
+      </programlisting>
     </sect1>
 
     <sect1 id="gbp.special.hacking">

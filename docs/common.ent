@@ -16,7 +16,7 @@
   <!ENTITY gbp-clone		"<command>gbp&nbsp;clone</command>">
   <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
   <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
-  <!ENTITY git-pbuilder		"<command>git pbuilder</command>">
+  <!ENTITY git-pbuilder		"<command>git-pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
   <!ENTITY cowbuildercmd	"<command>cowbuilder</command>">
@@ -40,6 +40,7 @@
   <!ENTITY git	       "<productname>Git</productname>">
   <!ENTITY dch	       "<productname>dch</productname>">
   <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
+  <!ENTITY cowbuilder  "<productname>Cowbuilder</productname>">
   <!ENTITY gitloaddirs "<productname>Git_load_dirs</productname>">
   <!ENTITY debuild     "<productname>Debuild</productname>">
   <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
