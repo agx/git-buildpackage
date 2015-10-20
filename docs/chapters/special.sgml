@@ -90,6 +90,7 @@ cleaner = fakeroot debian/rules clean
 # this is how we invoke pbuilder, arguments passed to git-buildpackage will be
 # passed to dpkg-buildpackge in the chroot
 builder = /usr/bin/git-pbuilder
+EOF
 </programlisting>
 
 	<command>git-pbuilder</command> defaults to building a package for the
