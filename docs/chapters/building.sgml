@@ -90,7 +90,7 @@ export-dir=../build-area
 	linkend="man.gbp.buildpackage"/>).
 	To invoke &lintian;, we need to tell it where to find the changes file:
 <programlisting>
-<command>git-buildpackage</command> <option>--git-postbuild</option>=<replaceable>'lintian $GBP_CHANGES_FILE'</replaceable>
+&gbp-buildpackage; <option>--git-postbuild</option>=<replaceable>'lintian $GBP_CHANGES_FILE'</replaceable>
 </programlisting>
         To call &lintian; automatically after each successful build, add:
 <programlisting>
@@ -104,7 +104,7 @@ export-dir=../build-area
 	<para>If you want to push your changes automatically after a successful build and tag,
 	you can use &gbp-buildpackage;'s posttag hook. A very simple invocation would look like this:
 <programlisting>
-<command>git-buildpackage</command> <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push &amp;&amp; git push --tags"</replaceable>
+&gbp-buildpackage; <option>--git-tag</option> <option>--git-posttag</option>=<replaceable>"git push &amp;&amp; git push --tags"</replaceable>
 </programlisting>
 	This assumes you have set up a remote repository to push to in
         <filename>.git/config</filename>.</para>
