@@ -1,3 +1,102 @@
+git-buildpackage (0.7.0) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [17e8a51] docs: Explain gbp dch --upstream-tag. (Closes: #795774)
+  * [4da6402] docs: Split manpages between debian and rpm related tools.
+  * [16dc010] docs: Add manpages for gbp import-srpm and gbp pq-rpm based on
+    Markus Lehtonens work.
+  * [24ee8fc] docs: Add missing EOF.
+  * [01acdd7] docs: git-buildpackage is not a command anymore
+  * [db5d50f] docs: Update pbuilder invocation section. The current docs were
+    badly outdated not even mentioning --git-pbuilder.  Also document that we
+    use cowbuilder with git-pbuilder. (Closes: #703969)
+  * [c39e779] docs: Update gbp.conf manpage. Better explain parse order and
+    option format.
+  * [26c726e] docs: Add meta-closes-bugnum to gbp-pq manpage since it's used
+    with "export --commit".
+  * [45a5d08] docs: Use "hook" consistently for commands that aren't strictly
+    necessary to run a build.
+
+  * [6da8e46] buildpackage: Pass pbuilder dist to prebuild hook. This can e.g.
+    be used to setup a tmpfs for git-pbuilder.
+
+  * [422ae85] buildpackage-rpm: Add a minimal gbp buildpackage-rpm based
+    on Markus Lehtonens work.
+
+  * [c57c9fc] config: Don't print None for unset values. Just leave them
+    empty.
+  * [98df835] config: Don't skip empty values when printing all options, just
+    print an empty value. This allows us to get a complete option list.
+
+  * [e4704a6] git-pbuilder: Update to 1.35. (Closes: #765724)
+  * [4be0df7] git-pbuilder: Check for sudo. (Closes: #796046)
+
+  * [ffdfcd0] packaging: Update description for rpm packages. Make it clear
+    that we're still experimenting with layouts and names.
+  * [5704478,da78c09,50767fd,fc60141] rpm: spec file improvements
+
+  * [488ba32] examples: gbp-posttag-push: Be more verbose when pushing.
+  * [cf69c46] examples: Remove gbp-cowbuilder-sid, git-pbuilder replaced it
+    ages ago.
+  * [7630523] examples: Update jenkins-scratchbuilder to not use "git-" but
+    "gbp ".
+
+  * [c227c70] tests: Skip buildpackage-rpm component tests until we setup a
+    proper test data repo.
+  * [48d9d58] tests: Allow to easily check tags in a repo too.
+  * [20d3c1d] tests: Add simple component test for buildpackage.
+  * [3528b0f] tests: Add simple component test for gbp import-orig.
+  * [34b4f65] tests: Add autopkgtest that builds a RPM of ourself.
+
+  * [386d3a7] bash completion: Move from /etc to /usr/share.
+  * [57f810c] bash completion: Use _have() instead of have() the later not
+    being deprecated.
+  * [25ca642] bash completion: Ensure autoload. The completion needs to be
+    named like the command to be autoloaded.
+
+  [ Lucas Nussbaum ]
+  * [a954d1f] docs: Document gbp import-orig --debsnap.
+  * [88833aa] docs: Document gbp import-orig --uscan.
+  * [bf60f8a] docs: Fix typos in documentation and man pages.
+
+  [ Markus Lehtonen ]
+  * [5cab1bc] tests: tests.testutils: Add ls_dir(), ls_tar() and ls_zip()
+  * [7ce69de] tests: Rewrite gbp.tmpfile.
+  * [f45585f,6d56f24,a645073,3474d74] rpm packaging improvements
+  * [3474d74] docs: Document gbp meta-tag commands of pq-rpm.
+  * [a9ed4b2] docs: Document some options of buildpackage-rpm.
+    Add manpage documentation for some previously undocumented options.
+    Also, drop non-existing --git-patch-export and --git-export-only options
+    from the manpage.
+  * [f157bfb] buildpackage_rpm: Fix crash when package has no source archive.
+
+  [ Jonathan Toppins ]
+  * [c89c29d] dch: Allow bug number format to be overridden to help
+    derivatives like EX-12345. This also helps in pulling CVE numbers simply
+    by letting the user modify the regex to something like 'cve-\d+-\d+'.
+
+  [ Florian Haftmann ]
+  * [2dc9177] buildpackage: Early check before attempting to brand using
+    pre-existing tag
+
+  [ Rafael Laboissiere ]
+  * [cd6d7da] docs: Clarify Gbp-Dch vs Git-Dch meta tag wording.
+    (Closes: #797343)
+
+  [ Daniel Gollub ]
+  * [5210026] dch: Restore correct version-guessing for -0releases.
+
+  [ Anthony Fok ]
+  * [3e1240a] packaging: Add dh-python to Build-Depends
+  * [b49bb0d] docs: Change "it's" to "its" in comments where appropriate
+  * [881087a] docs: Copy-edit git-buildpackage documentations
+  * [d8a30df] docs: Fix SGML validation errors in documentation
+
+  [ James Clarke ]
+  * [ae6826b] git-pbuilder: Check correct config file when using qemubuilder.
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 21 Oct 2015 08:30:40 +0200
+
 git-buildpackage (0.6.33) experimental; urgency=medium
 
   [ Carlos Maddela ]
