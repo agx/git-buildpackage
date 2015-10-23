@@ -29,7 +29,7 @@ def fetch_version():
     try:
         popen = subprocess.Popen('dpkg-parsechangelog', stdout=subprocess.PIPE)
         out, ret = popen.communicate()
-        for line in out.split('\n'):
+        for line in out.decode('utf-8').split('\n'):
             if line.startswith('Version:'):
                 version = line.split(' ')[1].strip()
                 break
