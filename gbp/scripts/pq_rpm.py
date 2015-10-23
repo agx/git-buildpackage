@@ -24,7 +24,6 @@ import errno
 import gzip
 import os
 import re
-import shutil
 import sys
 
 import gbp.log

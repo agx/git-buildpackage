@@ -20,10 +20,8 @@
 
 import ConfigParser
 import os
-import re
 import shutil
 import sys
-from datetime import datetime
 
 import gbp.log
 import gbp.notifications
