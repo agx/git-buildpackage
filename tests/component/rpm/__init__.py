@@ -16,6 +16,8 @@
 #    <http://www.gnu.org/licenses/>
 """Test module for RPM command line tools of the git-buildpackage suite"""
 
+import six
+
 from nose.tools import nottest
 import os
 import shutil
@@ -93,7 +95,7 @@ class RpmRepoTestBase(ComponentTestBase):
             # Fetch all remote refs of the orig repo, too
             repo.fetch('origin', tags=True,
                        refspec='refs/remotes/*:refs/upstream/*')
-            for branch, rev in brs.iteritems():
+            for branch, rev in six.iteritems(brs):
                 repo.create_branch(branch, rev)
             repo.force_head('master', hard=True)
             cls.orig_repos[prj] = repo

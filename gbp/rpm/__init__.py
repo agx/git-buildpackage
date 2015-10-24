@@ -23,6 +23,8 @@ import tempfile
 from optparse import OptionParser
 from collections import defaultdict
 
+import six
+
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
@@ -684,7 +686,7 @@ class SpecFile(object):
             macro_line = self._content.insert_after(macro_line, comment_text)
             macro_line = self._set_special_macro('patch', patchnum, '-p1',
                                                  macro_line)
-            for cmd, args in cmds.iteritems():
+            for cmd, args in six.iteritems(cmds):
                 if cmd in ('if', 'ifarch'):
                     self._content.insert_before(macro_line, '%%%s %s\n' %
                                                 (cmd, args))
@@ -769,7 +771,7 @@ class SpecFile(object):
         """
         orig = None
         sources = self.sources()
-        for num, filename in sorted(sources.iteritems()):
+        for num, filename in sorted(six.iteritems(sources)):
             src = {'num': num, 'filename': os.path.basename(filename),
                    'uri': filename}
             src['filename_base'], src['archive_fmt'], src['compression'] = \

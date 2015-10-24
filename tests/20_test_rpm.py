@@ -22,6 +22,8 @@ import shutil
 import tempfile
 from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
 
+import six
+
 from gbp.errors import GbpError
 from gbp.rpm import (SpecFile, SrcRpmFile, NoSpecError, guess_spec,
                      guess_spec_repo, spec_from_repo)
@@ -295,7 +297,7 @@ class TestSpecFile(RpmTestBase):
         spec = SpecFileTester(spec_filepath)
 
         # Check all the tags
-        for name, val in spec.protected('_tags').iteritems():
+        for name, val in six.iteritems(spec.protected('_tags')):
             rval = None
             if name in ('version', 'release', 'epoch'):
                 rval = '0'
