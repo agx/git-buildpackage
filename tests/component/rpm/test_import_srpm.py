@@ -18,7 +18,7 @@
 
 import os
 import shutil
-import urllib2
+from six.moves import urllib
 from nose.plugins.skip import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 from mock import Mock
@@ -265,8 +265,8 @@ class TestDownloadImport(ComponentTestBase):
                'master/gbp-test-1.0-1.src.rpm'
         # Mock to use local files instead of really downloading
         local_fn = os.path.join(DATA_DIR, os.path.basename(srpm))
-        urllib2.urlopen = Mock()
-        urllib2.urlopen.return_value = open(local_fn, 'r')
+        urllib.urlopen = Mock()
+        urllib.urlopen.return_value = open(local_fn, 'r')
 
         eq_(mock_import(['--no-pristine-tar', '--download', srpm]), 0)
         # Check repository state
@@ -277,9 +277,9 @@ class TestDownloadImport(ComponentTestBase):
         """Test graceful failure when trying download from nonexistent url"""
         srpm = 'http://honk.sigxcpu.org/does/not/exist'
         # Do not connect to remote, mock failure
-        urllib2.urlopen = Mock()
-        urllib2.urlopen.side_effect = urllib2.HTTPError(srpm, 404, "Not found",
-                                                        None, None)
+        urllib.urlopen = Mock()
+        urllib.urlopen.side_effect = urllib.error.HTTPError(srpm, 404, "Not found",
+                                                            None, None)
 
         eq_(mock_import(['--download', srpm]), 1)
         self._check_log(-1, "gbp:error: Download failed: HTTP Error 404")
