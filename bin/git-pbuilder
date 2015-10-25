@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: git-pbuilder,v 1.35 2015/08/16 23:44:08 eagle Exp $
+# $Id: git-pbuilder,v 1.37 2015/10/25 00:56:37 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
@@ -239,9 +239,15 @@ if [ -n "$action" ]; then
         OPTIONS+=( --configfile "$HOME/.pbuilderrc" )
     fi
 
+    # Check that sudo is installed and try to provide a useful error if it
+    # is not.
     if ! which sudo >/dev/null 2>&1; then
-        echo 'sudo not found in $PATH; you need to install the sudo package'
-        echo 'and allow the current user to invoke the builder via sudo' >&2
+        cat >&2 <<EOE
+git-pbuilder: sudo not found in $PATH
+
+sudo was not found in your path.  You need to install the sudo package and
+allow the current user to invoke the builder via sudo.
+EOE
         exit 1
     fi
 
@@ -427,6 +433,10 @@ builder.  Due to how B<sudo> works, invoking the builder with an action
 will not read the user's F<.pbuilderrc> by default, so in this case
 B<git-pbuilder> will add an explicit B<--configfile> option pointing to
 the user's F<.pbuilderrc> if it exists.
+
+If you use B<git-pbuilder> with one of these arguments, you must have
+the C<sudo> package installed, and you must configure B<sudo> to let the
+current user run the appropriate builder command.
 
 =head1 ENVIRONMENT
 
