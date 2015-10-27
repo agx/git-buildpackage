@@ -254,7 +254,7 @@ def main(argv):
             if not clean and not is_empty:
                 gbp.log.err("Repository has uncommitted changes, commit "
                             "these first: ")
-                raise GbpError, out
+                raise GbpError(out)
 
         except GitRepositoryError:
             gbp.log.info("No git repository found, creating one.")

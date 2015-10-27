@@ -795,10 +795,10 @@ def parse_srpm(srpmfile):
     """parse srpm by creating a SrcRpmFile object"""
     try:
         srcrpm = SrcRpmFile(srpmfile)
-    except IOError, err:
-        raise GbpError, "Error reading src.rpm file: %s" % err
-    except librpm.error, err:
-        raise GbpError, "RPM error while reading src.rpm: %s" % err
+    except IOError as err:
+        raise GbpError("Error reading src.rpm file: %s" % err)
+    except librpm.error as err:
+        raise GbpError("RPM error while reading src.rpm: %s" % err)
 
     return srcrpm
 
