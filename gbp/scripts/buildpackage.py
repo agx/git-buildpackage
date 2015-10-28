@@ -66,12 +66,12 @@ def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submo
         gbp.log.err("Error generating submodules' archives")
         return False
     except OSError as e:
-        gbp.log.err("Error creating %s: %s" % (output, str(e))
+        gbp.log.err("Error creating %s: %s" % (output, str(e)))
         return False
     except GbpError:
         raise
     except Exception as e:
-        gbp.log.err("Error creating %s: %s" % (output, str(e))
+        gbp.log.err("Error creating %s: %s" % (output, str(e)))
         return False
     return True
 
