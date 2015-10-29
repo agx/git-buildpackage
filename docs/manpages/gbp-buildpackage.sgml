@@ -90,36 +90,48 @@
       </listitem>
       <listitem>
         <para>
-        (Optionally) export the source tree to a separate build area
+	  (Optionally) run a clean command specified
+	  with <option>--git-cleaner</option>.
         </para>
       </listitem>
       <listitem>
         <para>
-        Build an orig tarball if it doesn't exist.
+        (Optionally) export the source tree to a separate build area.
         </para>
       </listitem>
       <listitem>
         <para>
-        Call <application>debuild</application>(1) (or the application
-        specified via <option>--git-builder</option>) with arguments
-        instructing it to ignore &git; meta-data in the diff.gz, passing along
-        all arguments given to &gbp-buildpackage; that don't start with --git-.
+        Build an orig tarball if it doesn't exist. Optionally using &pristine-tar;.
         </para>
       </listitem>
       <listitem>
         <para>
-        (Optionally) tag the tree after a successful build
+          (Optionally) call a pre build hook.
         </para>
       </listitem>
       <listitem>
         <para>
-        (Optionally) call a post build hook - e.g. to run &lintian;
+          Call <application>debuild</application>(1) or &cowbuilder;
+          (via <option>--git-pbuilder</option>) or the application
+          specified via <option>--git-builder</option>) passing along
+          all arguments given to &gbp-buildpackage; that don't start
+          with --git-.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        (Optionally) tag the tree after a successful build.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+        (Optionally) call a post build hook - e.g. to run &lintian;.
         </para>
       </listitem>
       <listitem>
         <para>
         (Optionally) call a post tag hook - e.g. to push the results to a
-        remote repository after creating the tag
+        remote repository after creating the tag.
         </para>
       </listitem>
     </itemizedlist>
