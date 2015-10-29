@@ -113,9 +113,9 @@
         <para>
           Call <application>debuild</application>(1) or &cowbuilder;
           (via <option>--git-pbuilder</option>) or the application
-          specified via <option>--git-builder</option>) passing along
-          all arguments given to &gbp-buildpackage; that don't start
-          with --git-.
+          specified via <option>--git-builder</option> passing along
+          all arguments given to &gbp-buildpackage; on the command
+          line that don't start with --git-.
         </para>
       </listitem>
       <listitem>
@@ -166,7 +166,7 @@
         <listitem>
           <para>
           Use <replaceable>BUILD_CMD</replaceable> instead of
-          <command>debuild -i -I</command>
+          <command>debuild -i -I</command>.
           </para>
         </listitem>
       </varlistentry>
@@ -176,7 +176,7 @@
         <listitem>
           <para>
           Use <replaceable>CLEAN_CMD</replaceable> instead of
-          <command>debuild clean</command>
+          <command>debuild clean</command>.
           </para>
         </listitem>
       </varlistentry>
@@ -334,7 +334,7 @@
         </term>
         <listitem>
           <para>
-          GPG sign all created tags
+          GPG sign all created tags.
           </para>
         </listitem>
       </varlistentry>
@@ -352,7 +352,7 @@
         </term>
         <listitem>
           <para>
-          use this keyid for gpg signing tags
+          Use this keyid for gpg signing tags.
           </para>
         </listitem>
       </varlistentry>
@@ -361,7 +361,7 @@
         </term>
         <listitem>
           <para>
-          execute <replaceable>COMMAND</replaceable> after tagging a new
+          Execute <replaceable>COMMAND</replaceable> after tagging a new
           version.
           </para>
           <para>
@@ -377,7 +377,7 @@
         </term>
         <listitem>
           <para>
-          execute <replaceable>COMMAND</replaceable> after successful
+          Execute <replaceable>COMMAND</replaceable> after successful
           build.
           </para>
           <para>
@@ -392,7 +392,7 @@
         </term>
         <listitem>
           <para>
-          execute <replaceable>COMMAND</replaceable> after exporting the source
+          Execute <replaceable>COMMAND</replaceable> after exporting the source
           tree - valid only if --git-export-dir has been specified.
           </para>
           <para>
@@ -408,7 +408,7 @@
         </term>
         <listitem>
           <para>
-          execute <replaceable>COMMAND</replaceable> from the build directory
+          Execute <replaceable>COMMAND</replaceable> from the build directory
           before calling <application>debuild</application> or the application
           specified via <option>--git-builder</option>.
           </para>
@@ -435,8 +435,8 @@
         </term>
         <listitem>
           <para>
-          use this tag format when tagging &debian; versions, default is
-          <replaceable>debian/%(version)s</replaceable>
+          Use this tag format when tagging &debian; versions, default is
+          <replaceable>debian/%(version)s</replaceable>.
           </para>
         </listitem>
       </varlistentry>
@@ -445,7 +445,7 @@
         </term>
         <listitem>
           <para>
-          use this tag format when looking for tags of upstream versions,
+          Use this tag format when looking for tags of upstream versions,
           default is <replaceable>upstream/%(version)s</replaceable>.
           </para>
         </listitem>
@@ -454,7 +454,7 @@
         <term><option>--git-debian-tag-msg=</option><replaceable>tag-msg-format</replaceable>
         </term>
         <listitem>
-          <para>use this tag message format when signing &debian; versions,
+          <para>Use this tag message format when signing &debian; versions,
 	  default is <replaceable>%(pkg)s Debian release %(version)s</replaceable></para>
         </listitem>
       </varlistentry>
@@ -464,7 +464,7 @@
         <listitem>
           <para>
           Force creation of an orig tarball (overwriting a pre-existing one if
-          present)
+          present).
           </para>
         </listitem>
       </varlistentry>
@@ -473,7 +473,7 @@
         </term>
         <listitem>
           <para>
-          Don't try to create any orig tarball
+          Don't try to create any orig tarball.
           </para>
         </listitem>
       </varlistentry>
@@ -520,7 +520,7 @@
         <listitem>
           <para>
           How to find the upstream sources used to generate the tarball.
-          <replaceable>TAG</replaceable> looks at a tag corresponding to the
+          <replaceable>TAG</replaceable> (the default) looks at a tag corresponding to the
           version in the changelog. <replaceable>BRANCH</replaceable> looks at
           the upstream branch given via the
           <option>--git-upstream-branch</option> option. Other values are
@@ -538,7 +538,7 @@
         <listitem>
           <para>
           Search for original tarballs in <replaceable>DIRECTORY</replaceable>
-          instead of generating them
+          instead of generating them.
           </para>
         </listitem>
       </varlistentry>
@@ -572,7 +572,7 @@
         </term>
         <listitem>
           <para>
-          Purge (remove) temporary build directory after build
+          Purge (remove) temporary build directory after build.
           </para>
         </listitem>
       </varlistentry>
