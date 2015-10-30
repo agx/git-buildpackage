@@ -33,7 +33,7 @@ Build-Depends:
  unzip,
 Standards-Version: 3.9.6
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
-Vcs-Browser: https://honk.sigxcpu.org/gitweb/?p=git-buildpackage.git
+Vcs-Browser: https://git.sigxcpu.org/cgit/git-buildpackage/
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
 X-Python-Version: >= 2.6
 
