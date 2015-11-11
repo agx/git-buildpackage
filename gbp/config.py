@@ -89,8 +89,8 @@ class GbpOptionParser(OptionParser):
     @type defaults: dict
     @cvar help: help messages
     @type help: dict
-    @cvar def_config_files: list of default config files we parse
-    @type def_config_files: list
+    @cvar def_config_files: config files we parse
+    @type def_config_files: dict (type, path)
     """
     defaults = { 'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
@@ -326,11 +326,11 @@ class GbpOptionParser(OptionParser):
                   "commit changes after export, Default is '%(commit)s'",
            }
 
-    def_config_files = [ '/etc/git-buildpackage/gbp.conf',
-                         '~/.gbp.conf',
-                         '%(top_dir)s/.gbp.conf',
-                         '%(top_dir)s/debian/gbp.conf',
-                         '%(git_dir)s/gbp.conf' ]
+    def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
+                        '~/.gbp.conf':                    'global',
+                        '%(top_dir)s/.gbp.conf':          None,
+                        '%(top_dir)s/debian/gbp.conf':    'debian',
+                        '%(git_dir)s/gbp.conf':           None}
 
     @classmethod
     def get_config_files(klass, no_local=False):
@@ -348,11 +348,11 @@ class GbpOptionParser(OptionParser):
         >>> homedir = os.path.expanduser("~")
         >>> files = GbpOptionParser.get_config_files()
         >>> files_mangled = [file.replace(homedir, 'HOME') for file in files]
-        >>> files_mangled
-        ['/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf', '%(top_dir)s/.gbp.conf', '%(top_dir)s/debian/gbp.conf', '%(git_dir)s/gbp.conf']
+        >>> sorted(files_mangled)
+        ['%(git_dir)s/gbp.conf', '%(top_dir)s/.gbp.conf', '%(top_dir)s/debian/gbp.conf', '/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf']
         >>> files = GbpOptionParser.get_config_files(no_local=True)
         >>> files_mangled = [file.replace(homedir, 'HOME') for file in files]
-        >>> files_mangled
+        >>> sorted(files_mangled)
         ['/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf']
         >>> os.environ['GBP_CONF_FILES'] = 'test1:test2'
         >>> GbpOptionParser.get_config_files()
@@ -361,7 +361,7 @@ class GbpOptionParser(OptionParser):
         >>> if conf_backup is not None: os.environ['GBP_CONF_FILES'] = conf_backup
         """
         envvar = os.environ.get('GBP_CONF_FILES')
-        files = envvar.split(':') if envvar else klass.def_config_files
+        files = envvar.split(':') if envvar else klass.def_config_files.keys()
         files = [os.path.expanduser(fname) for fname in files]
         if no_local:
             files = [fname for fname in files if fname.startswith('/')]
@@ -548,6 +548,46 @@ class GbpOptionParser(OptionParser):
         @rtype: C{str} or C{None}
         """
         return self.config.get(option_name)
+
+    @classmethod
+    def _name_to_filename(cls, name):
+        """
+        Translate a name like 'system' to a config file name
+
+        >>> GbpOptionParser._name_to_filename('foo')
+        >>> GbpOptionParser._name_to_filename('system')
+        '/etc/git-buildpackage/gbp.conf'
+        >>> GbpOptionParser._name_to_filename('global')
+        '~/.gbp.conf'
+        >>> GbpOptionParser._name_to_filename('debian')
+        '%(top_dir)s/debian/gbp.conf'
+        """
+        for k, v in cls.def_config_files.items():
+            if name == v:
+                return k
+        else:
+            return None
+
+    @classmethod
+    def _set_config_file_value(cls, section, option, value, name=None, filename=None):
+        """
+        Write a config value to a file creating it if needed
+
+        On errors a ConfigParserError is raised
+        """
+        if not name and not filename:
+            raise configparser.Error("Either 'name' or 'filename' must be given")
+        if not filename:
+            filename = os.path.expanduser(cls._name_to_filename(name))
+
+        # Create e new config parser since we only operate on a single file
+        cfg = configparser.RawConfigParser()
+        cfg.read(filename)
+        if not cfg.has_section(section):
+            cfg.add_section(section)
+        cfg.set(section, option, value)
+        with open(filename, 'w') as fp:
+            cfg.write(fp)
 
 
 class GbpOptionGroup(OptionGroup):
