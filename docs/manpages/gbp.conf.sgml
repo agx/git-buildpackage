@@ -216,6 +216,14 @@ An example set up for packaging work:
       <listitem><para>Colon separated list of files to parse. The default is
 the above list of configuration files.</para></listitem>
       </varlistentry>
+      <varlistentry>
+	<term><envar>GBP_DISABLE_SECTION_DEPRECTATION</envar></term>
+	<listitem><para>Don't print a deprecation warning when &gbp;
+	    encounters a section starting
+	    with <emphasis>git-</emphasis>
+	    or <emphasis>gbp-</emphasis>.
+	</listitem>
+      </varlistentry>
    </variablelist>
 </refsect1>
 
