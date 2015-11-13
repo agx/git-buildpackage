@@ -32,6 +32,7 @@ all: $(MANUAL) $(MANPAGES)
 
 $(MANUAL): manual.sgml chapters/*.sgml manpages/*.sgml
 	docbook-2-html -s local $<
+	sed -i 's/^CLASS="[A-Z0-9]\+"/\L&/' manual-html/*.html
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
 # We build manpages under 'buildxref/' just to get an updated cross-reference
