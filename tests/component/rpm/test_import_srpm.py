@@ -23,7 +23,7 @@ from nose.plugins.skip import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 from mock import Mock
 
-from gbp.scripts.import_srpm import main as import_srpm
+import gbp.scripts.import_srpm as import_srpm
 from gbp.git import GitRepository
 from gbp.rpm import SrcRpmFile
 
@@ -36,7 +36,7 @@ from tests.component.rpm import RPM_TEST_DATA_DIR as DATA_DIR
 def mock_import(args):
     """Wrapper for import-srpm"""
     # Call import-orig-rpm with added arg0
-    return import_srpm(['arg0'] + args)
+    return import_srpm.main(['arg0'] + args)
 
 
 class TestImportPacked(ComponentTestBase):
@@ -265,8 +265,8 @@ class TestDownloadImport(ComponentTestBase):
                'master/gbp-test-1.0-1.src.rpm'
         # Mock to use local files instead of really downloading
         local_fn = os.path.join(DATA_DIR, os.path.basename(srpm))
-        urllib.urlopen = Mock()
-        urllib.urlopen.return_value = open(local_fn, 'r')
+        import_srpm.urlopen = Mock()
+        import_srpm.urlopen.return_value = open(local_fn, 'r')
 
         eq_(mock_import(['--no-pristine-tar', '--download', srpm]), 0)
         # Check repository state
@@ -277,8 +277,8 @@ class TestDownloadImport(ComponentTestBase):
         """Test graceful failure when trying download from nonexistent url"""
         srpm = 'http://honk.sigxcpu.org/does/not/exist'
         # Do not connect to remote, mock failure
-        urllib.urlopen = Mock()
-        urllib.urlopen.side_effect = urllib.error.HTTPError(srpm, 404, "Not found",
+        import_srpm.urlopen = Mock()
+        import_srpm.urlopen.side_effect = urllib.error.HTTPError(srpm, 404, "Not found",
                                                             None, None)
 
         eq_(mock_import(['--download', srpm]), 1)
