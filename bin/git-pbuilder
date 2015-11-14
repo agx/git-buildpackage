@@ -273,7 +273,7 @@ fi
 
 # Build package: not (update | create | login)
 if [ -z "$GBP_BUILD_DIR" ]; then
-    echo "Warning: git-pbuilder should be run via git-buildpackage" >&2
+    echo "Warning: git-pbuilder should be run via 'gbp buildpackage'" >&2
 fi
 
 # Print out some information about what we're doing.
