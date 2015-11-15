@@ -133,7 +133,7 @@ class ChangeLog(object):
 
     @property
     def name(self):
-        """The packges name"""
+        """The packages name"""
         return self._cp['Source']
 
     @property

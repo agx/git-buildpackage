@@ -64,15 +64,15 @@ class Control(object):
 
     @property
     def name(self):
-        """The packges name"""
+        """The name of the package"""
         return self._control['Source']
 
     @property
     def section(self):
-        """The packges section"""
+        """The section of the package"""
         return self._control['Section']
 
     @property
     def priority(self):
-        """The packges priority"""
+        """The priority of the package"""
         return self._control['Priority']

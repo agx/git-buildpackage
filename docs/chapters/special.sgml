@@ -102,7 +102,7 @@ cleanup-script.sh
 cat &lt;&lt;EOF &gt; <filename>~/.gbp.conf</filename>
 [DEFAULT]
 # We invoke cowbuilder via git-pbuilder. Arguments passed to &gbp-buildpackage;
-# will be passed to dpkg-buildpackge in the chroot
+# will be passed to dpkg-buildpackage in the chroot
 pbuilder = True
 EOF
       </programlisting>

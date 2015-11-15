@@ -30,7 +30,7 @@ git-buildpackage (0.6.0) unstable; urgency=low
 
 git-buildpackage (0.4.61) unstable; urgency=low
 
-  In order to not override dpkg-buildpackge's defaults for 3.0 source packages
+  In order to not override dpkg-buildpackage's defaults for 3.0 source packages
   the default builder command is now "debuild -i -I" instead of "debuild
   -i\.git/ -I.git". If you want to retain the old behaviour please adjust your
   gbp.conf accordingly.
