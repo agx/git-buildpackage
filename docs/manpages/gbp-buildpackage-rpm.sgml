@@ -57,6 +57,11 @@
       <arg><option>--git-[no-]pristine-tar-commit</option></arg>
       <arg><option>--git-tag-only</option></arg>
       <arg><option>--git-retag</option></arg>
+      <arg><option>--git-mock</option></arg>
+      <arg><option>--git-dist</option>=<replaceable>DISTRIBUTION</replaceable></arg>
+      <arg><option>--git-arch</option>=<replaceable>ARCHITECTURE</replaceable></arg>
+      <arg><option>--git-mock-options</option>=<replaceable>OPTIONS</replaceable></arg>
+      <arg><option>--git-mock-root</option>=<replaceable>ROOT</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -544,6 +549,55 @@
           </para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--git-mock</option>
+        </term>
+        <listitem>
+          <para>
+	    Use &mock; to build the rpms by invoking &gbp-builder-mock;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-dist</option>
+        </term>
+        <listitem>
+          <para>
+	    Build for this distribution when using &mock; (e.g.: epel-6).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-arch</option>
+        </term>
+        <listitem>
+          <para>
+	    Build for this architecture when using mock, default is to build
+	    for the current host architecture.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-mock-root</option>
+        </term>
+        <listitem>
+          <para>
+	    The mock root to use. Defaults
+	    to <replaceable>DIST</replaceable>-<replaceable>ARCH</replaceable>
+	    from above.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-mock-options</option>
+        </term>
+        <listitem>
+          <para>
+	    Additional options to pass to mock. Default is to pass no
+	    additional options.
+          </para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
@@ -576,6 +630,10 @@
     <citerefentry>
       <refentrytitle>rpmbuild</refentrytitle>
       <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>mock</refentrytitle>
+      <manvolnum>1</manvolnum>
     </citerefentry>,
     <xref linkend="man.gbp.conf"/>,
     &man.seealso.common;

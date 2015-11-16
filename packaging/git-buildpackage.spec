@@ -156,6 +156,8 @@ GIT_CEILING_DIRECTORIES=%{_builddir} \
 %install
 rm -rf %{buildroot}
 WITHOUT_NOSETESTS=1 %{__python} ./setup.py install --root=%{buildroot} --prefix=/usr
+mkdir -p %{buildroot}/usr/share/%{name}
+mv %{buildroot}/usr/bin/gbp-builder-mock %{buildroot}/usr/share/%{name}/
 
 %if %{with docs}
 # Install man pages
@@ -239,6 +241,7 @@ done
 %dir %{python_sitelib}/gbp/rpm
 %{python_sitelib}/gbp/scripts/*rpm*.py*
 %{python_sitelib}/gbp/rpm/*py*
+/usr/share/git-buildpackage/gbp-builder-mock
 %if %{with docs}
 %{_mandir}/man1/gbp-buildpackage-rpm.1*
 %{_mandir}/man1/gbp-pq-rpm.1*

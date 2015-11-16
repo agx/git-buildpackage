@@ -275,7 +275,22 @@ def packaging_tag_data(repo, commit, name, version, options):
     return (tag_name, tag_msg)
 
 
-def create_packaging_tag(repo, commit, name, version, options):
+def setup_mock(options):
+    """setup everything to use gbp-builder-mock"""
+    if options.use_mock:
+        options.builder = '/usr/share/git-buildpackage/gbp-builder-mock'
+        options.cleaner = '/bin/true'
+        os.environ['GBP_BUILDER_MOCK_DIST'] = options.mock_dist
+        if options.mock_arch:
+            os.environ['GBP_BUILDER_MOCK_ARCH'] = options.mock_arch
+        if options.mock_root:
+            os.environ['GBP_BUILDER_MOCK_ROOT'] = options.mock_root
+        os.environ['GBP_BUILDER_MOCK_EXPORT_DIR'] = options.export_dir
+        if options.mock_options:
+            os.environ['GBP_BUILDER_MOCK_OPTIONS'] = options.mock_options
+
+
+def create_packaging_tag(repo, tag, commit, version, options):
     """Create a packaging/release Git tag"""
     tag_name, tag_msg = packaging_tag_data(repo, commit, name, version, options)
 
@@ -395,6 +410,11 @@ def build_parser(name, prefix=None, git_treeish=None):
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
                     help="hook run after a successful tag operation, default "
                          "is '%(posttag)s'")
+    cmd_group.add_boolean_config_file_option(option_name="mock", dest="use_mock")
+    cmd_group.add_config_file_option(option_name="dist", dest="mock_dist")
+    cmd_group.add_config_file_option(option_name="arch", dest="mock_arch")
+    cmd_group.add_config_file_option(option_name="mock-root", dest="mock_root")
+    cmd_group.add_config_file_option(option_name="mock-options", dest="mock_options")
     cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
     export_group.add_option("--git-no-build", action="store_true",
                     dest="no_build",
@@ -507,6 +527,8 @@ def main(argv):
         if not options.tag_only:
             # Setup builder opts
             setup_builder(options, builder_args)
+            if options.use_mock:
+                setup_mock(options)
 
             # Prepare final export dirs
             export_dir = makedir(options.export_dir)

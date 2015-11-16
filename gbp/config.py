@@ -642,6 +642,11 @@ class GbpOptionParserRpm(GbpOptionParser):
             'export-dir'                : '../rpmbuild',
             'builder'                   : 'rpmbuild',
             'spec-file'                 : '',
+            'mock'                      : 'False',
+            'dist'                      : '',
+            'arch'                      : '',
+            'mock-root'                 : '',
+            'mock-options'              : '',
                     })
 
     help = dict(GbpOptionParser.help)
@@ -674,6 +679,21 @@ class GbpOptionParserRpm(GbpOptionParser):
             'export-specdir':
                 "Subdir (under EXPORT_DIR) where package spec file is "
                 "exported default is '%(export-specdir)s'",
+             'mock':
+                  ("Invoke mock for building using gbp-builder-mock, "
+                   "default is '%(mock)s'"),
+             'dist':
+                 ("Build for this distribution when using mock. E.g.: epel-6, "
+                   "default is '%(dist)s'"),
+             'arch':
+                  ("Build for this architecture when using mock, "
+                   "default is '%(arch)s'"),
+             'mock-root':
+                 ("The mock root (-r) name for building with mock: <dist>-<arch>, "
+                   "default is '%(mock-root)s'"),
+             'mock-options':
+                  ("Options to pass to mock, "
+                   "default is '%(mock-options)s'"),
                  })
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

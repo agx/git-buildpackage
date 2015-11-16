@@ -34,6 +34,7 @@
   <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
   <!ENTITY gbp-pq-rpm           "<command>gbp&nbsp;pq-rpm</command>">
   <!ENTITY rpmbuild             "<command>rpmbuild</command>">
+  <!ENTITY gbp-builder-mock     "<command>gbp-builder-mock</command>">
   <!ENTITY wget                 "<command>wget</command>">
 
   <!ENTITY debian      "<productname>Debian</productname>">
@@ -51,5 +52,6 @@
   <!ENTITY apt-get     "<productname>apt-get</productname>">
   <!ENTITY dget        "<productname>dget</productname>">
   <!ENTITY lintian     "<productname>lintian</productname>">
+  <!ENTITY mock        "<productname>mock</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">
   <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">

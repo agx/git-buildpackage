@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# Helper to invoke mock from 'gbp buildpackage-rpm'
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, please see
+#  <http://www.gnu.org/licenses/>
+#
+#  Copyright (C) 2015 Tzafrir Cohen
+#            (C) 2015 Guido Günther
+
+set -e
+
+# There must be a saner way to do that or a reason why this is not required
+fix_arch() {
+	GBP_BUILDER_MOCK_ARCH=${GBP_BUILDER_MOCK_ARCH:-`uname -m`}
+	case "$ARCH" in
+	amd64) ARCH='x86_64';;
+	esac
+}
+
+
+usage() {
+	EXIT=${1:-1}
+	echo >&2 "$0: Must be run via 'gbp buildpackage-rpm', see manpage for details"
+	exit $EXIT
+}
+
+while [ $# != 0 ]; do
+	case "$1" in
+		--help|-h|-?) usage 0;;
+		*.spec) SPEC="$1";;
+	esac
+	shift
+done
+
+# Make sure we have the necessary tools.
+if [ ! -x /usr/bin/mock ]; then
+    echo "mock not found; you need to install the mock package" >&2
+    exit 1
+fi
+
+gbp_builder_mock() {
+        if [ -z "$GBP_BUILDER_MOCK_DIST" ]; then
+		usage
+        fi
+	local root=${GBP_BUILDER_MOCK_ROOT:-${GBP_BUILDER_MOCK_DIST}-${GBP_BUILDER_MOCK_ARCH}}
+	if [ ! -d "$GBP_BUILDER_MOCK_EXPORT_DIR" ]; then
+		echo >&2 "$0: Missing output directory (GBP_BUILDER_MOCK_EXPORT_DIR). Aborting."
+		usage
+	fi
+        if [ -z "$SPEC" ]; then
+		echo >&2 "$0: No specfile given."
+		exit 1
+        fi
+	export_dir="$PWD"
+	spec="$export_dir/SPECS/$SPEC"
+	sources="$export_dir/SOURCES"
+	srpms="$export_dir/SRPMS"
+	pat="${GBP_BUILDER_MOCK_RESULTS_PAT-results/%(dist)s/%(target_arch)s/}"
+	local resultdir="$export_dir/$pat"
+	local mock="mock -r $root --resultdir=$srpms --spec=$spec --sources=$sources"
+
+	$mock --buildsrpm
+	# Assuming that nothing was built in this directory since the previous command:
+	local srpm=`ls -t $PWD/SRPMS/*.src.rpm 2>/dev/null| head -n1`
+	if [ -z $srpm ]; then
+		echo >&2 "$0: failed to create srpm"
+		exit 1
+	fi
+	$mock --no-cleanup-after --resultdir $resultdir --rebuild "$srpm"
+}
+
+
+fix_arch
+gbp_builder_mock

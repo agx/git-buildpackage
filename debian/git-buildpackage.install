@@ -1,4 +1,5 @@
-usr/bin/
+usr/bin/gbp
+usr/bin/git-pbuilder
 usr/lib/python2.?/dist-packages/gbp-*
 usr/lib/python2.?/dist-packages/gbp/command_wrappers.py
 usr/lib/python2.?/dist-packages/gbp/config.py
