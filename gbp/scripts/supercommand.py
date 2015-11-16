@@ -114,7 +114,15 @@ def supercommand(argv=None):
     prg, cmd = argv[0:2]
     args = argv[1:]
 
-    if cmd in ['--help', '-h', 'help' ]:
+    if cmd in ['--help', '-h']:
+        usage()
+        return 0
+    elif cmd == 'help' and len(args) > 1:
+        # Make the first argument after help the new commadn and
+        # request it's help output
+        cmd = args[1]
+        args = [cmd, '--help']
+    elif cmd == 'help':
         usage()
         return 0
     elif cmd in [ '--version', 'version' ]:
