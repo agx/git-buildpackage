@@ -304,6 +304,10 @@ def main(argv):
             if options.verbose:
                 print_dsc(src)
 
+            if src.additional_tarballs:
+                raise GbpError("Cannot import package with additional tarballs but found '%s'" %
+                               ", ".join([os.path.basename(t) for t in src.additional_tarballs]))
+
             try:
                 repo = DebianGitRepository('.')
                 is_empty = repo.is_empty()

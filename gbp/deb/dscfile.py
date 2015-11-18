@@ -23,6 +23,7 @@ from gbp.errors import GbpError
 from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.deb.policy import DebianPkgPolicy
 
+
 class DscFile(object):
     """Keeps all needed data read from a dscfile"""
     compressions = r"(%s)" % '|'.join(DebianUpstreamSource.known_compressions())
@@ -32,6 +33,8 @@ class DscFile(object):
                             % DebianPkgPolicy.debianversion_chars)
     tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
                          '(\.orig)?\.tar\.%s)' % compressions)
+    add_tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
+                            '(?P<add_tar>\.orig-[a-z0-9-]+)\.tar\.%s)' % compressions)
     diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+'
                           '\.diff.(gz|bz2))')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
@@ -48,6 +51,7 @@ class DscFile(object):
         self.upstream_version = ""
         self.native = False
         self.dscfile = os.path.abspath(dscfile)
+        add_tars = []
 
         f = open(self.dscfile)
         fromdir = os.path.dirname(os.path.abspath(dscfile))
@@ -74,6 +78,10 @@ class DscFile(object):
             if m:
                 self.deb_tgz = os.path.join(fromdir, m.group('deb_tgz'))
                 continue
+            m = self.add_tar_re.match(line)
+            if m:
+                add_tars.append(os.path.join(fromdir, m.group('tar')))
+                continue
             m = self.tar_re.match(line)
             if m:
                 self.tgz = os.path.join(fromdir, m.group('tar'))
@@ -96,6 +104,7 @@ class DscFile(object):
             raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
         if not self.native and not self.debian_version:
             raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
+        self.additional_tarballs = list(set(add_tars))
 
     def _get_version(self):
         version = [ "", self.epoch + ":" ][len(self.epoch) > 0]

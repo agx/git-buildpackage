@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2013,2014 Guido Günther <agx@sigxcpu.org>
+# (C) 2013,2014,2015 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ from tests.component.deb import DEB_TEST_DATA_DIR
 from nose.tools import ok_
 
 from gbp.scripts.import_dsc import main as import_dsc
+
 
 class TestImportDsc(ComponentTestBase):
     """Test importing of debian source packages"""
@@ -82,3 +83,19 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['bar', 'foo', 'master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+    def test_import_multiple(self):
+        """Test if importing a multiple tarball package works"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-3.0-additional-tarballs',
+                                'hello-debhelper_%s.dsc' % version)
+
+        dsc = _dsc('2.8-1')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           dsc]) == 1
+        self._check_log(0, "gbp:error: Cannot import package with additional tarballs but found 'hello-debhelper_2.8.orig-foo.tar.gz")
