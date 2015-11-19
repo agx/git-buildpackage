@@ -290,7 +290,7 @@ def setup_mock(options):
             os.environ['GBP_BUILDER_MOCK_OPTIONS'] = options.mock_options
 
 
-def create_packaging_tag(repo, tag, commit, version, options):
+def create_packaging_tag(repo, commit, name, version, options):
     """Create a packaging/release Git tag"""
     tag_name, tag_msg = packaging_tag_data(repo, commit, name, version, options)
 
