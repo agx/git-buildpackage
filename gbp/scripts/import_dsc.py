@@ -316,13 +316,16 @@ def main(argv):
                 if not clean and not is_empty:
                     gbp.log.err("Repository has uncommitted changes, commit these first: ")
                     raise GbpError(out)
-
             except GitRepositoryError:
                 # no repo found, create one
                 needs_repo = True
                 is_empty = True
 
             if needs_repo:
+                if os.path.exists(src.pkg):
+                    raise GbpError("Directory '%s' already exists. If you want to import into it, "
+                                   "please change into this directory otherwise move it away first."
+                                   % src.pkg)
                 gbp.log.info("No git repository found, creating one.")
                 repo = DebianGitRepository.create(src.pkg)
                 os.chdir(repo.path)

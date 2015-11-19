@@ -99,3 +99,25 @@ class TestImportDsc(ComponentTestBase):
                            '--upstream-branch=upstream',
                            dsc]) == 1
         self._check_log(0, "gbp:error: Cannot import package with additional tarballs but found 'hello-debhelper_2.8.orig-foo.tar.gz")
+
+    def test_existing_dir(self):
+        """
+        Importing outside of git repository with existing target
+        dir must fail
+        """
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-3.0',
+                                'hello-debhelper_%s.dsc' % version)
+
+        # Create directory we should stumble upon
+        os.makedirs('hello-debhelper')
+        dsc = _dsc('2.8-1')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           dsc]) == 1
+        self._check_log(0, "gbp:error: Directory 'hello-debhelper' already exists. If you want to import into it, "
+                        "please change into this directory otherwise move it away first")
