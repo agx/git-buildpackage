@@ -28,7 +28,7 @@ import gbp.log
 def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
-                             usage='%prog [options] command[.optionname] - display configuration settings')
+                                 usage='%prog [options] command[.optionname] - display configuration settings')
     except configparser.ParsingError as err:
         gbp.log.err(err)
         return None
@@ -48,53 +48,64 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
-def parse_cmd_config(command):
-    """Make a command parse its config files"""
-    parser = GbpOptionParser(command)
-    parser.parse_config_files()
-    return parser
-
-
-def print_cmd_single_value(query, printer):
-    """Print a single configuration value of a command
-
-    @param query: the cmd to print the value for
-    @param printer: the printer to output the value
+def build_cmd_parser(section):
     """
-    try:
-        cmd, option = query.split('.')
-    except ValueError:
-        return 2
-
-    parser = parse_cmd_config(cmd)
-    value = parser.get_config_file_value(option)
-    if value is None:
-        value = ''
-    printer("%s=%s" % (query, value))
-    return 0 if value else 1
-
-
-def print_cmd_all_values(cmd, printer):
+    Populate the parser to get a list of valid options
     """
-    Print all configuration values of a command
-
-    @param cmd: the cmd to print the values for
-    @param printer: the printer to output the values
-    """
-    if not cmd:
-        return 2
     try:
         # Populate the parser to get a list of
         # valid options
-        module = import_command(cmd)
-        parser = module.build_parser(cmd)
+        module = import_command(section)
+        parser = module.build_parser(section)
     except (AttributeError, ImportError):
+        # Use the default parser for section that don't
+        # map to a command
+        parser = GbpOptionParser(section)
+        parser.parse_config_files()
+    return parser
+
+
+def print_single_option(parser, option, printer):
+    value = parser.get_config_file_value(option)
+    if value is not None:
+        printer("%s.%s=%s" % (parser.command, option, value))
+    else:
+        return 2
+    return 0
+
+
+def print_all_options(parser, printer):
+    if not parser.valid_options:
+        return 2
+    for opt in parser.valid_options:
+        value = parser.get_config_file_value(opt)
+        printer("%s.%s=%s" % (parser.command, opt, value))
+    return 0
+
+
+def print_cmd_values(query, printer):
+    """
+    Print configuration values of a command
+
+    @param query: the section to print the values for or section.option to
+        print
+    @param printer: the printer to output the values
+    """
+    if not query:
         return 2
 
-    for option in parser.valid_options:
-        value = parser.get_config_file_value(option)
-        printer("%s.%s=%s" % (cmd, option, value))
-    return 0
+    try:
+        section, option = query.split('.')
+    except ValueError:
+        section = query
+        option = None
+
+    parser = build_cmd_parser(section)
+
+    if option:  # Single option query
+        return print_single_option(parser, option, printer)
+    else:  # all options
+        return print_all_options(parser, printer)
 
 
 def value_printer(value):
@@ -117,10 +128,7 @@ def main(argv):
     else:
         query = args[1]
 
-    if '.' in query:
-        retval = print_cmd_single_value(query, value_printer)
-    else:
-        retval = print_cmd_all_values(query, value_printer)
+    retval = print_cmd_values(query, value_printer)
     return retval
 
 if __name__ == '__main__':

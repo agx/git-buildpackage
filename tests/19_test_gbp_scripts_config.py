@@ -19,6 +19,7 @@ import os
 import unittest
 import gbp.scripts.config
 
+
 class TestGbpConfigCommand(unittest.TestCase):
     class SingleValuePrintStub(object):
         def __init__(self):
@@ -44,20 +45,36 @@ class TestGbpConfigCommand(unittest.TestCase):
 
     def test_invocation_single_value(self):
         """Can invoke it for a sngle value  without error"""
-        ret = gbp.scripts.config.main(['doesnotmatter', 'coolcommand.branchname'])
+        ret = gbp.scripts.config.main(['doesnotmatter', 'config.color'])
         self.assertEqual(ret, 0)
 
     def test_invocation_missing_value(self):
         """Can we detect a missing value"""
-        ret = gbp.scripts.config.main(['doesnotmatter', 'coolcommand.doesnotexist'])
-        self.assertEqual(ret, 1)
+        ret = gbp.scripts.config.main(['doesnotmatter', 'config.doesnotexist'])
+        self.assertEqual(ret, 2)
 
-    def test_print_cmd_single_value(self):
-        """Can we fetch a single configuration value"""
+    def test_print_cmd_single_value_default(self):
+        """Can we fetch a single configuration value that is at it's default"""
         printstub = self.SingleValuePrintStub()
-        query = 'coolcommand.branchname'
-        ret = gbp.scripts.config.print_cmd_single_value(query, printstub)
-        self.assertEqual(printstub.result, '%s=abranch' % query)
+        query = 'config.color'
+        ret = gbp.scripts.config.print_cmd_values(query, printstub)
+        self.assertEqual(printstub.result, '%s=auto' % query)
+        self.assertEqual(ret, 0)
+
+    def test_print_cmd_single_value_empty_default(self):
+        """Can we fetch a single configuration value that is at it's default which is empty"""
+        printstub = self.SingleValuePrintStub()
+        query = 'buildpackage.keyid'
+        ret = gbp.scripts.config.print_cmd_values(query, printstub)
+        self.assertEqual(printstub.result, '%s=' % query)
+        self.assertEqual(ret, 0)
+
+    def test_print_cmd_single_value_override(self):
+        """Can we fetch a single configuration value that is overriden by config"""
+        printstub = self.SingleValuePrintStub()
+        query = 'config.color-scheme'
+        ret = gbp.scripts.config.print_cmd_values(query, printstub)
+        self.assertEqual(printstub.result, '%s=checkcheck' % query)
         self.assertEqual(ret, 0)
 
     def test_print_cmd_all_values(self):
@@ -72,14 +89,15 @@ class TestGbpConfigCommand(unittest.TestCase):
                      'pq',
                      'pull' ]:
             printstub = self.AllValuesPrintStub(cmd)
-            ret = gbp.scripts.config.print_cmd_all_values(cmd, printstub)
-            self.assertTrue('%s.color' % cmd in printstub.result.keys())
+            ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
+            self.assertIn('%s.color' % cmd, printstub.result.keys())
+            self.assertEquals(printstub.result['%s.color' % cmd], 'auto')
             self.assertEqual(ret, 0)
 
-    def test_invalid_cms(self):
-        """Invalid commands or those not using the config should rerturn an error code"""
-        for cmd in [ "import_dscs", "supercommand" ]:
+    def test_unexistent_cmds(self):
+        """Unexisting commands should print no values"""
+        for cmd in ["import_dscs", "supercommand"]:
             printstub = self.AllValuesPrintStub(cmd)
-            ret = gbp.scripts.config.print_cmd_all_values(cmd, printstub)
+            ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
+            self.assertEquals(printstub.result, dict())
             self.assertEqual(ret, 2)
-
