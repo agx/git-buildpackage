@@ -87,8 +87,7 @@ class TestPqRpm(RpmRepoTestBase):
             len(repo.get_commits('', 'patch-queue/master')))
 
         # Test export
-        eq_(mock_pq(['export', '--upstream-tag',
-                     'srcdata/gbp-test/upstream/%(version)s']), 0)
+        eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s']), 0)
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec', '0001-my-gz.patch', '0002-my-bzip2.patch',
                  '0003-my2.patch', 'my.patch']
@@ -112,9 +111,8 @@ class TestPqRpm(RpmRepoTestBase):
                                files)
 
         # Test export
-        eq_(mock_pq(['export', '--upstream-tag',
-                     'srcdata/gbp-test2/upstream/%(version)s', '--spec-file',
-                     'packaging/gbp-test2.spec']), 0)
+        eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s',
+                     '--spec-file', 'packaging/gbp-test2.spec']), 0)
         self._check_repo_state(repo, 'master-orphan', branches)
         eq_(repo.status()[' M'], ['packaging/gbp-test2.spec'])
 
@@ -286,8 +284,7 @@ class TestPqRpm(RpmRepoTestBase):
 
         # Force import on top to test parsing spec from another branch
         eq_(mock_pq(['import', '--spec-file=gbp-test.spec', '--force',
-                     '--upstream-tag',
-                     'srcdata/gbp-test/upstream/%(version)s']), 0)
+                     '--upstream-tag', 'upstream/%(version)s']), 0)
 
         # Test with export, too
         eq_(mock_pq(['export', '--spec-file=foo.spec']), 1)
@@ -306,7 +303,7 @@ class TestPqRpm(RpmRepoTestBase):
 
         # Test with export, --spec-file option should override packaging dir
         eq_(mock_pq(['export', '--packaging-dir=foo', '--upstream-tag',
-                     'srcdata/gbp-test/upstream/%(version)s',
+                     'upstream/%(version)s',
                      '--spec-file=gbp-test.spec']), 0)
 
     def test_export_with_merges(self):

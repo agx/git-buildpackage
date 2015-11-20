@@ -26,7 +26,6 @@ import stat
 import subprocess
 
 from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
-from nose.plugins.skip import SkipTest
 
 from gbp.git import GitRepository
 from gbp.scripts.buildpackage_rpm import main as gbp_rpm
@@ -94,12 +93,6 @@ class TestGbpRpm(RpmRepoTestBase):
         with open(filepath) as fobj:
             eq_(fobj.read(), content)
         os.unlink(filepath)
-
-    @classmethod
-    def setup_class(cls, **kwargs):
-        """Setup unit tests"""
-        raise SkipTest("Adjust test repo data refs")
-        super(TestGbpRpm, cls).setup_class(**kwargs)
 
     def test_outside_repo(self):
         """Run outside a git repository"""

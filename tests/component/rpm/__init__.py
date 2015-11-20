@@ -21,8 +21,10 @@ import six
 from nose.tools import nottest
 import os
 import shutil
+from glob import glob
 from xml.dom import minidom
 
+from gbp.command_wrappers import Command
 from gbp.git import GitRepository, GitRepositoryError
 
 from tests.component import ComponentTestBase, ComponentTestGitRepository
@@ -30,39 +32,6 @@ from tests.component import ComponentTestBase, ComponentTestGitRepository
 
 RPM_TEST_DATA_SUBMODULE = os.path.join('tests', 'component', 'rpm', 'data')
 RPM_TEST_DATA_DIR = os.path.abspath(RPM_TEST_DATA_SUBMODULE)
-
-class RepoManifest(object):
-    """Class representing a test repo manifest file"""
-    def __init__(self, filename=None):
-        self._doc = minidom.Document()
-        if filename:
-            self._doc = minidom.parse(filename)
-            # Disable "Instance of 'Document' has no 'firstChild' member"
-            # pylint: disable=E1103
-            if self._doc.firstChild.nodeName != 'gbp-test-manifest':
-                raise Exception('%s is not a test repo manifest' % filename)
-            # pylint: enable=E1103
-        else:
-            self._doc.appendChild(self._doc.createElement("gbp-test-manifest"))
-
-    def projects_iter(self):
-        """Return an iterator over projects"""
-        for prj_e in self._doc.getElementsByTagName('project'):
-            branches = {}
-            for br_e in prj_e.getElementsByTagName('branch'):
-                rev = br_e.getAttribute('revision')
-                branches[br_e.getAttribute('name')] = rev
-            yield prj_e.getAttribute('name'), branches
-
-
-    def write(self, filename):
-        """Write to file"""
-        with open(filename, 'w') as fileobj:
-            fileobj.write(self._doc.toprettyxml())
-
-def setup():
-    """Test Module setup"""
-    ComponentTestGitRepository.check_testdata(RPM_TEST_DATA_SUBMODULE)
 
 
 class RpmRepoTestBase(ComponentTestBase):
@@ -72,33 +41,15 @@ class RpmRepoTestBase(ComponentTestBase):
     def setup_class(cls):
         """Initializations only made once per test run"""
         super(RpmRepoTestBase, cls).setup_class()
-        cls.manifest = RepoManifest(os.path.join(RPM_TEST_DATA_DIR,
-                                                 'test-repo-manifest.xml'))
+
+        # Initialize test data repositories
+        cmd = Command('./manage.py', cwd=RPM_TEST_DATA_DIR, capture_stderr=True)
+        cmd(['import-repo', '-o', cls._tmproot])
+
         cls.orig_repos = {}
-        for prj, brs in cls.manifest.projects_iter():
-            repo = GitRepository.create(os.path.join(cls._tmproot,
-                                        '%s.repo' % prj))
-            try:
-                repo.add_remote_repo('origin', RPM_TEST_DATA_DIR, fetch=True)
-            except GitRepositoryError:
-                # Workaround for older git working on submodules initialized
-                # with newer git
-                gitfile = os.path.join(RPM_TEST_DATA_DIR, '.git')
-                if os.path.isfile(gitfile):
-                    with open(gitfile) as fobj:
-                        link = fobj.readline().replace('gitdir:', '').strip()
-                    link_dir = os.path.join(RPM_TEST_DATA_DIR, link)
-                    repo.remove_remote_repo('origin')
-                    repo.add_remote_repo('origin', link_dir, fetch=True)
-                else:
-                    raise
-            # Fetch all remote refs of the orig repo, too
-            repo.fetch('origin', tags=True,
-                       refspec='refs/remotes/*:refs/upstream/*')
-            for branch, rev in six.iteritems(brs):
-                repo.create_branch(branch, rev)
-            repo.force_head('master', hard=True)
-            cls.orig_repos[prj] = repo
+        for path in glob(cls._tmproot + '/*.repo'):
+            prj = os.path.basename(path).rsplit('.', 1)[0]
+            cls.orig_repos[prj] = ComponentTestGitRepository(path)
 
     @classmethod
     @nottest
