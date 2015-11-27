@@ -23,6 +23,7 @@ Module for testing individual command line tools of the git-buildpackage suite
 import os
 import shutil
 import tempfile
+import unittest
 from nose import SkipTest
 from nose.tools import eq_, ok_     # pylint: disable=E0611
 from .. testutils import GbpLogTester
@@ -80,11 +81,11 @@ class ComponentTestGitRepository(GitRepository):
         return set(blobs)
 
 
-class ComponentTestBase(GbpLogTester):
+class ComponentTestBase(unittest.TestCase, GbpLogTester):
     """Base class for testing cmdline tools of git-buildpackage"""
 
     @classmethod
-    def setup_class(cls):
+    def setUpClass(cls):
         """Test class case setup"""
         # Don't let git see that we're (possibly) under a git directory
         cls.orig_env = os.environ.copy()
@@ -98,7 +99,7 @@ class ComponentTestBase(GbpLogTester):
                             '%(top_dir)s/debian/gbp.conf:%(git_dir)s/gbp.conf'
 
     @classmethod
-    def teardown_class(cls):
+    def tearDownClass(cls):
         """Test class case teardown"""
         # Return original environment
         os.environ.clear()
@@ -107,23 +108,24 @@ class ComponentTestBase(GbpLogTester):
         if not os.getenv("GBP_TESTS_NOCLEAN"):
             shutil.rmtree(cls._tmproot)
 
-    def __init__(self):
+    def __init__(self, methodName='runTest'):
         """Object initialization"""
         self._orig_dir = None
         self._tmpdir = None
+        unittest.TestCase.__init__(self, methodName)
         GbpLogTester.__init__(self)
 
-    def setup(self):
+    def setUp(self):
         """Test case setup"""
         # Change to a temporary directory
         self._orig_dir = os.getcwd()
-        self._tmpdir = tempfile.mkdtemp(prefix='gbp_%s_' % __name__,
+        self._tmpdir = tempfile.mkdtemp(prefix='tmp_%s_' % self._testMethodName,
                                         dir=self._tmproot)
         os.chdir(self._tmpdir)
 
         self._capture_log(True)
 
-    def teardown(self):
+    def tearDown(self):
         """Test case teardown"""
         # Restore original working dir
         os.chdir(self._orig_dir)

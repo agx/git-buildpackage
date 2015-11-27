@@ -217,8 +217,8 @@ class TestImportPacked(ComponentTestBase):
 class TestImportUnPacked(ComponentTestBase):
     """Test importing of unpacked source rpms"""
 
-    def setup(self):
-        super(TestImportUnPacked, self).setup()
+    def setUp(self):
+        super(TestImportUnPacked, self).setUp()
         # Unpack some source rpms
         os.mkdir('multi-unpack')
         for pkg in ['gbp-test-1.0-1.src.rpm', 'gbp-test2-2.0-0.src.rpm']:
@@ -297,11 +297,11 @@ class TestPristineTar(ComponentTestBase):
     """Test importing with pristine-tar"""
 
     @classmethod
-    def setup_class(cls):
+    def setUpClass(cls):
         if not os.path.exists('/usr/bin/pristine-tar'):
             raise SkipTest('Skipping %s:%s as pristine-tar tool is not '
                            'available' % (__name__, cls.__name__))
-        super(TestPristineTar, cls).setup_class()
+        super(TestPristineTar, cls).setUpClass()
 
     def test_basic_import_pristine_tar(self):
         """Test importing of non-native src.rpm, with pristine-tar"""

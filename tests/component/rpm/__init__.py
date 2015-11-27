@@ -38,9 +38,9 @@ class RpmRepoTestBase(ComponentTestBase):
     """Baseclass for tests run in a Git repository with packaging data"""
 
     @classmethod
-    def setup_class(cls):
+    def setUpClass(cls):
         """Initializations only made once per test run"""
-        super(RpmRepoTestBase, cls).setup_class()
+        super(RpmRepoTestBase, cls).setUpClass()
 
         # Initialize test data repositories
         cmd = Command('./manage.py', cwd=RPM_TEST_DATA_DIR, capture_stderr=True)
