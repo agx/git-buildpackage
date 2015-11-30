@@ -492,7 +492,7 @@ C<no>.
 
 =item PBUILDER_BASE
 
-Set this environment variable to change the defualt location for the
+Set this environment variable to change the default location for the
 pbuilder tgz files (F</var/cache/pbuilder>) when BUILDER is set to
 C<pbuilder>.
 
