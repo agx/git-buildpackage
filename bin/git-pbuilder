@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id: git-pbuilder,v 1.38 2015/12/05 22:06:36 eagle Exp $
 #
-# git-pbuilder -- Wrapper around pbuilder for git-buildpackage
+# git-pbuilder -- Wrapper around pbuilder for gbp buildpackage
 #
 # Note that this script requires bash, not a POSIX shell, because it uses bash
 # arrays to handle GIT_PBUILDER_OPTIONS.  It's otherwise quite difficult to
@@ -273,7 +273,7 @@ fi
 
 # Build package: not (update | create | login)
 if [ -z "$GBP_BUILD_DIR" ]; then
-    echo "Warning: git-pbuilder should be run via git-buildpackage" >&2
+    echo "Warning: git-pbuilder should be run via 'gbp buildpackage'" >&2
 fi
 
 # Print out some information about what we're doing.
@@ -330,7 +330,7 @@ DOCS=<<__END_OF_DOCS__
 
 =head1 NAME
 
-git-pbuilder - Wrapper around cowbuilder/qemubuilder for git-buildpackage
+git-pbuilder - Wrapper around cowbuilder/qemubuilder for gbp buildpackage
 
 =head1 SYNOPSIS
 
@@ -343,7 +343,7 @@ DIST=I<distribution> ARCH=I<architecture> [BUILDER=(pbuilder|qemubuilder)] \
 =head1 DESCRIPTION
 
 B<git-pbuilder> is a wrapper around B<pdebuild> intended for use by
-B<git-buildpackage>.  It configures B<pdebuild> to use B<cowbuilder> by
+B<gbp buildpackage>.  It configures B<pdebuild> to use B<cowbuilder> by
 default, passes appropriate options to B<debbuild>, and sets the base path
 for B<cowbuilder> based on the environment variable DIST and, if set, the
 environment variable ARCH.  B<qemubuilder> can be selected instead by
@@ -385,7 +385,7 @@ pointing to B<git-pbuilder> and use that name when wanting to use a
 distribution of C<squeeze>, or C<git-qemubuilder-sid-armel> to use
 B<qemubuilder> to build for the C<armel> architecture and the C<sid>
 distribution.  Explicit settings of BUILDER, DIST, or ARCH always override
-any guesses from the command name.  (But note that B<git-buildpackage>
+any guesses from the command name.  (But note that B<gbp buildpackage>
 does not pass on environment variables when run with B<--git-pbuilder>;
 see below.)
 
@@ -398,7 +398,7 @@ configuration file and set up the pbuilder options and instead rely on the
 settings in .pbuilderrc, set GIT_PBUILDER_AUTOCONF to C<no>.
 
 Normally, one does not run this script directly.  Instead, it's used as
-the builder script for B<git-buildpackage> via the B<--git-pbuilder>
+the builder script for B<gbp buildpackage> via the B<--git-pbuilder>
 command-line option.  When run this way, you should use the B<--git-dist>,
 B<--git-arch>, B<--git-qemubuilder>, B<--git-pbuilder-autoconf>, and
 B<--git-pbuilder-options> flags instead of setting the DIST, ARCH, BUILDER,
@@ -470,7 +470,7 @@ or configuration file and all other logic to determine the options to pass
 to the builder.  Instead, just run the configured builder and assume its
 configuration is handled elsewhere (such as in F<.pbuilderrc>).  This also
 suppresses setting B<--buildresult>, so the user will need to ensure that
-the configuration still puts packages where B<git-buildpackage> expects
+the configuration still puts packages where B<gbp buildpackage> expects
 them.
 
 =item GIT_PBUILDER_OPTIONS
@@ -542,7 +542,7 @@ $DIST defaults to C<sid> if not set.
 
 =head1 SEE ALSO
 
-cowbuilder(8), dpkg-buildpackage(1), git-buildpackage(1), pbuilder(8),
+cowbuilder(8), dpkg-buildpackage(1), gbp-buildpackage(1), pbuilder(8),
 pdebuild(1), qemubuilder(8), sudo(8)
 
 The latest version of this script is available from
