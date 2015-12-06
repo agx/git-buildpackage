@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: git-pbuilder,v 1.37 2015/10/25 00:56:37 eagle Exp $
+# $Id: git-pbuilder,v 1.38 2015/12/05 22:06:36 eagle Exp $
 #
 # git-pbuilder -- Wrapper around pbuilder for git-buildpackage
 #
@@ -273,7 +273,7 @@ fi
 
 # Build package: not (update | create | login)
 if [ -z "$GBP_BUILD_DIR" ]; then
-    echo "Warning: git-pbuilder should be run via 'gbp buildpackage'" >&2
+    echo "Warning: git-pbuilder should be run via git-buildpackage" >&2
 fi
 
 # Print out some information about what we're doing.
@@ -385,7 +385,9 @@ pointing to B<git-pbuilder> and use that name when wanting to use a
 distribution of C<squeeze>, or C<git-qemubuilder-sid-armel> to use
 B<qemubuilder> to build for the C<armel> architecture and the C<sid>
 distribution.  Explicit settings of BUILDER, DIST, or ARCH always override
-any guesses from the command name.
+any guesses from the command name.  (But note that B<git-buildpackage>
+does not pass on environment variables when run with B<--git-pbuilder>;
+see below.)
 
 Any arguments are passed as-is to B<dpkg-buildpackage> via the
 B<--debbuildopts> option to B<pdebuild>.  To pass arguments to the builder
@@ -396,17 +398,12 @@ configuration file and set up the pbuilder options and instead rely on the
 settings in .pbuilderrc, set GIT_PBUILDER_AUTOCONF to C<no>.
 
 Normally, one does not run this script directly.  Instead, it's used as
-the builder script for B<git-buildpackage>.  To configure
-B<git-buildpackage> to use it, add a stanza like:
-
-    [DEFAULT]
-    builder = /path/to/git-pbuilder
-
-in your F<gbp.conf> file (which can be F<.gbp.conf> in your home directory
-or at the top level of the repository, or F<gbp.conf> in the F<.git>
-directory).  DIST and ARCH are read as an environment variable so that you
-can set it before running B<git-buildpackage> without having to worry
-about passing parameters through B<git-buildpackage>.
+the builder script for B<git-buildpackage> via the B<--git-pbuilder>
+command-line option.  When run this way, you should use the B<--git-dist>,
+B<--git-arch>, B<--git-qemubuilder>, B<--git-pbuilder-autoconf>, and
+B<--git-pbuilder-options> flags instead of setting the DIST, ARCH, BUILDER,
+GIT_PBUILDER_AUTOCONF, and GIT_PBUILDER_OPTIONS environment variables.  See
+L<gbp-buildpackage(1)> for more information.
 
 Alternately, B<git-pbuilder> may be called with an argument of C<update>,
 C<create>, or C<login>.  In this case, it calls B<cowbuilder> (or the
