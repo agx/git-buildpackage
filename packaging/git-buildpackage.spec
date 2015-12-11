@@ -64,7 +64,7 @@ BuildRequires:  %{dpkg_pkg_name}
 BuildRequires:  rpm-build
 BuildRequires:  %{rpm_python_pkg_name}
 BuildRequires:  unzip
-BuildRequires:  libzip
+BuildRequires:  /usr/bin/zipmerge
 BuildRequires:  gnupg
 # Missing dep of dpkg in openSUSE
 %if 0%{?suse_version}
@@ -88,10 +88,10 @@ Requires:   python-setuptools
 Requires:   python-dateutil
 %if 0%{?centos_ver} && 0%{?centos_ver} <= 7
 Requires:       unzip
-Requires:       libzip
+Requires:       /usr/bin/zipmerge
 %else
 Recommends:     unzip
-Recommends:     libzip
+Recommends:     /usr/bin/zipmerge
 Recommends:     pristine-tar
 %endif
 
