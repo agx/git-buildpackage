@@ -57,12 +57,15 @@ BuildRequires:  perl-podlators
 
 %if 0%{?do_unittests}
 BuildRequires:  python-coverage
+BuildRequires:  python-mock
 BuildRequires:  python-nose
 BuildRequires:  git-core
 BuildRequires:  %{man_pkg_name}
 BuildRequires:  %{dpkg_pkg_name}
+BuildRequires:  devscripts
 BuildRequires:  rpm-build
 BuildRequires:  %{rpm_python_pkg_name}
+BuildRequires:  pristine-tar
 BuildRequires:  unzip
 BuildRequires:  /usr/bin/zipmerge
 BuildRequires:  gnupg
