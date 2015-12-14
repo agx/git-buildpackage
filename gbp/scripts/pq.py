@@ -211,13 +211,13 @@ def export_patches(repo, branch, options):
         drop_pq(repo, branch)
 
 
-def safe_patches(series):
+def save_patches(series):
     """
-    Safe the current patches in a temporary directory
+    Save the current patches in a temporary directory
     below .git/
 
     @param series: path to series file
-    @return: tmpdir and path to safed series file
+    @return: tmpdir and path to saved series file
     @rtype: tuple
     """
 
@@ -271,7 +271,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
     if len(commits) > 1:
-        tmpdir, series = safe_patches(series)
+        tmpdir, series = save_patches(series)
 
     queue = PatchSeries.read_series_file(series)
 
