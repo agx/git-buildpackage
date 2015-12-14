@@ -19,6 +19,7 @@
 """Common functionality for Debian and RPM buildpackage scripts"""
 
 import os, os.path
+import subprocess
 import pipes
 import tempfile
 import shutil
@@ -31,7 +32,9 @@ index_name = "INDEX"
 # when we want to reference the working copy in treeish context we call it:
 wc_name = "WC"
 # index file name used to export working copy
-wc_index = ".git/gbp_index"
+pipe = subprocess.Popen(["git", "rev-parse", "--git-dir"], shell=False, stdout=subprocess.PIPE)
+gitdir = pipe.stdout.readline().strip()
+wc_index = os.path.join(gitdir, "gbp_index")
 
 
 def sanitize_prefix(prefix):

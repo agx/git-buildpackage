@@ -20,6 +20,7 @@
 from six.moves import configparser
 import errno
 import os
+import subprocess
 import shutil
 import sys
 import tempfile
@@ -214,7 +215,7 @@ def export_patches(repo, branch, options):
 def save_patches(series):
     """
     Save the current patches in a temporary directory
-    below .git/
+    below gitdir, which is usually .git/
 
     @param series: path to series file
     @return: tmpdir and path to saved series file
@@ -224,7 +225,9 @@ def save_patches(series):
     src = os.path.dirname(series)
     name = os.path.basename(series)
 
-    tmpdir = tempfile.mkdtemp(dir='.git/', prefix='gbp-pq')
+    pipe = subprocess.Popen(["git", "rev-parse", "--git-dir"], shell=False, stdout=subprocess.PIPE)
+    gitdir = pipe.stdout.readline().strip()
+    tmpdir = tempfile.mkdtemp(dir=gitdir, prefix='gbp-pq')
     patches = os.path.join(tmpdir, 'patches')
     series = os.path.join(patches, name)
 
