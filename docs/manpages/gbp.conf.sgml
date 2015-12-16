@@ -100,7 +100,7 @@
 <para>
   Options that can be repeated on the command line take Python-like
   lists in the config file. For example,
-  the <xref linkend="man.gbp.import.orig"/> commmand has the
+  the <xref linkend="man.gbp.import.orig"/> command has the
   <option>--filter</option>=<parameter>pattern</parameter> option
   which can be turned into a configuration file option like this:
 </para>
