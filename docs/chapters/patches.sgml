@@ -1,18 +1,25 @@
 <chapter id="gbp.patches">
     <title>Working with patches</title>
-    <para>
-Keeping debian/patches on a patch-queue branch
-I'm keeping all patches for a Debian package that is maintained on branch foo on a patch-queue branch patch-queue/foo:
 
-One can easily work with the unpatched (foo) and patched (patch-queue/foo) branches
-One commit on the patch-queue branch represents exactly on patch in debian/patches/
-Patches can easily be dropped, added by modifying the patch-queue branch (no messing with quilt add, dpatch-edit-patch, cdbs-edit-patch or the like)
-Easy cherry-picking of patches for stable releases, etc.
-Easy forward porting of patches to new upstream versions by using git rebase on the patch-queue/foo branch (patches already applied upstream are detected automatically).
-The generated patch in debian/patches/ has all the necessary information to forward it upstream since it's auto generated via git-format-patch.
-Disadvantage:
+    <para>&gbp-pq; can be used to manage patches inside
+<filename>debian/patches/</filename>. The basic idea is that patches are
+imported to a local <filename>patch-queue/master</filename> branch (with one
+commit on the <filename>patch-queue/master</filename> branch representing
+exactly one patch in <filename>debian/patches/</filename>). There, the
+maintainer will work on them using usual &git; commands (rebase, commit
+--amend, etc). When done, &gbp-pq; will be used to export the patches to
+<filename>debian/patches/</filename>. This workflow facilitates the
+cherry-picking of patches for stable releases, and the forward-porting of
+patches to new upstream versions by using git rebase on the
+<filename>patch-queue/master</filename> branch (patches already applied
+upstream are detected automatically).  The generated patches in debian/patches/
+have all the necessary information to forward them upstream given they are auto
+generated via git-format-patch.</para>
 
-no history on the patch-queue/foo branch, but you do have the history on foo of course.
+<para>The main drawback of this workflow is the lack of history on the
+<filename>patch-queue/master</filename> branch (but there is full history on
+the <filename>master</filename> branch, of course).</para>
+
 Workflow:
 Assuming the Debian source package has it's patches in debian/patches and these are parseable by git-quiltimport(1):
 
