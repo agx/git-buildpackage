@@ -106,34 +106,68 @@ tell &git; to ignore the <filename>.pc</filename> directory.
 <filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>
 sets up these two files for you.
 </para>
+</sect1>
 
+<sect1 id="gbp.patches.team">
+<title>Team maintenance</title>
+
+<para>The easiest way is to not push out any patch-queue/* branches at all.
+They can be recreated by any team member easily by using</para>
+
+<screen>
+<command>git branch -d patch-queue/master</command>
+<command>gbp pq import</command>
+</screen>
 
 <para>
-Team maintenance
-The easiest way is to not push out any patch-queue/* branches at all. They can be recreated by any team member easily by using
+However you can push out patch-queue branches. Other team members must just be
+aware that that branches in the patch-queue/ namespace are being rebased
+frequently.
+</para>
+</sect1>
 
-git branch -d patch-queue/master
-gbp pq import
-However you can push out patch-queue branches. Other team members must just be aware that that branches in the patch-queue/ namespace are being rebased frequently.
 
-Working with 3.0 (quilt) packges
-The 3.0 (quilt) format applies the patches in debian/patches automatically when building a source package. If you want your debian branch to contain the unpatched source there are several ways to handle this:
+<sect1 id="gbp.patches.30quilt">
+<title>Working with 3.0 (quilt) packges</title>
+<para>
+The 3.0 (quilt) format applies the patches in debian/patches automatically when
+building a source package. If you want your debian branch to contain the
+unpatched source there are several ways to handle this:
+</para>
+<itemizedlist>
 
-Using debian/source/local-options
-You can use unapply-patches in debian/source/local-options to unapply the patches after the build. /usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source will this set up for you when run from inside a git repository of a Debian package.
+<listitem><para>Using <filename>debian/source/local-options</filename>:
+You can use <option>unapply-patches</option> in
+<filename>debian/source/local-options</filename> to unapply the patches after
+the build.
+<filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>
+will this set up for you when run from inside a git repository of a Debian
+package.
+</para></listitem>
 
-Using --git-export-dir
-If you're using option --git-export-dir option already there's no problem since the unpatched source tree gets exported before being built (and patch by dpkg-source). Since this implies an extra copy of the whole source tree (which might be slow for big projects) and it's not really necessary when using pbuilder the next method might be more appropriate.
+<listitem><para>Using <option>--git-export-dir</option>:
+If you are using option <option>--git-export-dir</option> already there is no
+problem since the unpatched source tree gets exported before being built (and
+patch by dpkg-source). Since this implies an extra copy of the whole source
+tree (which might be slow for big projects) and it is not really necessary when
+using pbuilder the next method might be more appropriate.
+</para></listitem>
 
-Working from a patch-queue branch
-Instead of building from master build from patch-queue/master prepared by gbp-pq as describe above. This branch has the patches already applied as dpkg-source expects it:
-
-gbp pq import
-gbp buildpackage --git-debian-branch=patch-queue/master
+<listitem><para>
+Working from a patch-queue branch.
+Instead of building from master build from patch-queue/master prepared by
+gbp-pq as describe above. This branch has the patches already applied as
+dpkg-source expects it:</para>
+<screen>
+<command>gbp pq import</command>
+<command>gbp buildpackage --git-debian-branch=patch-queue/master</command>
 Build and test...
+<command>git checkout master</command>
+<command>gbp pq export</command>
+</screen>
+</listitem>
+</itemizedlist>
 
-git checkout master
-gbp pq export
 Cloning a repository
 If you use gbp clone instead of git clone to clone a remote repository it will automatically set up the debian, upstream and pristine-tar branches for you. The manual explains the terminology.
 
