@@ -21,6 +21,7 @@
   &ch.intro;
   &ch.import;
   &ch.building;
+  &ch.patches;
   &ch.releases;
   &ch.cfgfile;
   &ch.special;

@@ -2,6 +2,7 @@
 <!ENTITY ch.workflow SYSTEM "workflow.sgml">
 <!ENTITY ch.import SYSTEM "import.sgml">
 <!ENTITY ch.building SYSTEM "building.sgml">
+<!ENTITY ch.patches SYSTEM "patches.sgml">
 <!ENTITY ch.releases SYSTEM "releases.sgml">
 <!ENTITY ch.cfgfile SYSTEM "cfgfile.sgml">
 <!ENTITY ch.special SYSTEM "special.sgml">
