@@ -100,6 +100,15 @@ your first patch:</para>
 <filename>/usr/share/doc/git-buildpackage/examples/gbp-add-patch</filename>.</para>
 
 <para>
+In order to avoid a patched (unclean) source tree after the build, you
+can use &dpkg-source;'s <option>unapply-patches</option> option and
+tell &git; to ignore the <filename>.pc</filename> directory.
+<filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>
+sets up these two files for you.
+</para>
+
+
+<para>
 Team maintenance
 The easiest way is to not push out any patch-queue/* branches at all. They can be recreated by any team member easily by using
 

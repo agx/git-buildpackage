@@ -268,19 +268,4 @@ exit 0
 </programlisting>
     </sect2>
     </sect1>
-    <sect1 id="gbp.building.patch">
-    <title>Working with patches</title>
-    <para>
-    You can use &gbp-pq; to handle patches. See
-    <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink>
-    for an example workflow.
-    </para>
-    <para>
-    In order to avoid a patched (unclean) source tree after the build, you
-    can use &dpkg-source;'s <option>unapply-patches</option> option and
-    tell &git; to ignore the <filename>.pc</filename> directory.
-    <filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>
-    sets up these two files for you.
-    </para>
-    </sect1>
 </chapter>
