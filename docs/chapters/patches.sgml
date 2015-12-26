@@ -119,6 +119,11 @@ They can be recreated by any team member easily by using</para>
 <command>gbp pq import</command>
 </screen>
 
+<para>The patch-queue branch can also be re-created when pulling (this will additionally drop your current patch-queue branch and recreate it from debian/patches):</para>
+<screen>
+<command>gbp pull --redo-pq</command>
+</screen>
+
 <para>
 However you can push out patch-queue branches. Other team members must just be
 aware that that branches in the patch-queue/ namespace are being rebased
