@@ -20,50 +20,86 @@ generated via git-format-patch.</para>
 <filename>patch-queue/master</filename> branch (but there is full history on
 the <filename>master</filename> branch, of course).</para>
 
-Workflow:
-Assuming the Debian source package has it's patches in debian/patches and these are parseable by git-quiltimport(1):
+    <sect1 id="gbp.patches.workflow">
+<title>Workflow</title>
 
-Create patch-queue branch and import debian/patches onto it using gbp-pq:
+<para>Assuming the Debian source package has its patches in
+<filename>debian/patches</filename> and these are parseable by
+<command>git-quiltimport(1)</command>:</para>
 
-  cd $REPO
-  gbp pq import
-This will switch you to the patch-queue branch automatically. If you started from master the patch-queue branch will be called patch-queue/master.
-Now you can work on the patch-queue branch (add, remove, rebase, test) to get your patches into shape:
-To add what will later become a patch in debian/patches/ simply make a commit. The first line of the commit message will become the patch name later. The following lines include the details of what the patch does.
-To remove or edit commits use git rebase -i master. The git documentation explains how to work with git-rebase.
-Regenerate the patches in debian/patches/ using gbp-pq. This will switch you back to master and regenerate the patches using git-format-patch(1):
+<para>Create patch-queue branch and import debian/patches onto it using gbp-pq:</para>
 
-  gbp pq export
-Commit the result either by using gbp-add-patch or simply
+<screen>
+<command>cd <replaceable>REPO</replaceable></command>
+<command>gbp pq import</command>
+</screen>
 
-  git add debian/patches
-  git commit
-Update debian/changelog (e.g. by running "git-dch -S -a")
-Build the package
-After importing a new upstream version you can use the following commands to refresh debian/patches:
+<para>This will switch you to the <filename>patch-queue</filename> branch
+automatically. If you started from <filename>master</filename> the
+<filename>patch-queue</filename> branch will be called
+<filename>patch-queue/master</filename>.</para>
 
-  gbp pq rebase
-  git checkout master
-  gbp pq export
-If a package doesn't have any patches yet, these are the steps to add your first patch:
+<para>Now you can work on the patch-queue branch (add, remove, rebase, test) to
+get your patches into shape:
+<itemizedlist>
+<listitem><para>To add what will later become a patch in debian/patches/ simply make a
+commit. The first line of the commit message will become the patch name later.
+The following lines include the details of what the patch does.</para></listitem>
+<listitem><para>To remove or edit commits use git rebase -i master. The git documentation
+explains how to work with git-rebase.</para></listitem>
+</itemizedlist></para>
 
-Launch an import, this will switch to the proper branch
+<para>Regenerate the patches in <filename>debian/patches/</filename> using
+&gbp-pq;. This will switch you back to master and regenerate the patches using
+<command>git-format-patch(1)</command>:</para>
 
-  gbp pq import
-Create your first patch:
+<screen>
+  <command>gbp pq export</command>
+</screen>
 
-* Edit files / Test
-* Commit your changes using *git commit*
-Back to the master branch, generate the Quilt patch set
+<para>Commit the result either by using gbp-add-patch or simply</para>
+<screen>
+  <command>git add debian/patches</command>
+  <command>git commit</command>
+</screen>
 
-  git checkout master
-  gbp pq export
-Commit you first patch
+<para>Update debian/changelog (e.g. by running "git-dch -S -a")</para>
+<para>Build the package</para>
 
-  git add -a debian/patches/
-  git commit -m 'my first patch'
-If you want to pick the changelog message from the patch see /usr/share/doc/git-buildpackage/examples/gbp-add-patch.
+<para>After importing a new upstream version you can use the following commands
+to refresh debian/patches:</para>
+<screen>
+<command>gbp pq rebase</command>
+<command>git checkout master</command>
+<command>gbp pq export</command>
+</screen>
 
+<para>If a package doesn't have any patches yet, these are the steps to add
+your first patch:</para>
+<orderedlist>
+<listitem><para>Launch an import, this will switch to the proper branch
+<screen>
+  <command>gbp pq import</command>
+</screen>
+<listitem><para>Create your first patch: edit files, test, commit your changes using <command>git commit</command></para></listitem>
+
+<listitem><para>Back to the master branch, generate the Quilt patch set
+<screen>
+  <command>git checkout master</command>
+  <command>gbp pq export</command>
+</screen></para></listitem>
+
+<listitem><para>Commit you first patch
+<screen>
+  <command>git add -a debian/patches/</command>
+  <command>git commit -m 'my first patch'</command>
+</screen></para></listitem>
+</orderedlist>
+
+<para>If you want to pick the changelog message from the patch see
+<filename>/usr/share/doc/git-buildpackage/examples/gbp-add-patch</filename>.</para>
+
+<para>
 Team maintenance
 The easiest way is to not push out any patch-queue/* branches at all. They can be recreated by any team member easily by using
 
