@@ -100,17 +100,5 @@ This will update all necessary branches to what other developers might have push
 # Update to what others might have pushed and rebuild patch-queue
 gbp pull --redo-pq
 This will additionally drop your current patch-queue branch and recreate it from debian/patches.
-
-Preparing a Backport
-I keep backports on a separate bpo- branch like bpo-lenny:
-
-git checkout bpo-lenny
-git merge debian/&lt;version-currently-in-testing&gt;
-&lt;resolve conflict in debian/changelog&gt;
-&lt;fix up stuff needed for backport&gt;
-gbp buildpackage --git-pbuilder --git-dist=lenny -sa -v &lt;last-backported-version&gt; --git-debian-branch=bpo-lenny
-In order to avoid the merge conflict in the changelog have a look at dpkg-mergechangelogs(1). To create the necessary cowbuilder chroot for Lenny use:
-
-DIST=lenny git-pbuilder create
     </para>
 </chapter>
