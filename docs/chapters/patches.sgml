@@ -1,6 +1,116 @@
 <chapter id="gbp.patches">
     <title>Working with patches</title>
     <para>
-    lorem ipsum
+Keeping debian/patches on a patch-queue branch
+I'm keeping all patches for a Debian package that is maintained on branch foo on a patch-queue branch patch-queue/foo:
+
+One can easily work with the unpatched (foo) and patched (patch-queue/foo) branches
+One commit on the patch-queue branch represents exactly on patch in debian/patches/
+Patches can easily be dropped, added by modifying the patch-queue branch (no messing with quilt add, dpatch-edit-patch, cdbs-edit-patch or the like)
+Easy cherry-picking of patches for stable releases, etc.
+Easy forward porting of patches to new upstream versions by using git rebase on the patch-queue/foo branch (patches already applied upstream are detected automatically).
+The generated patch in debian/patches/ has all the necessary information to forward it upstream since it's auto generated via git-format-patch.
+Disadvantage:
+
+no history on the patch-queue/foo branch, but you do have the history on foo of course.
+Workflow:
+Assuming the Debian source package has it's patches in debian/patches and these are parseable by git-quiltimport(1):
+
+Create patch-queue branch and import debian/patches onto it using gbp-pq:
+
+  cd $REPO
+  gbp pq import
+This will switch you to the patch-queue branch automatically. If you started from master the patch-queue branch will be called patch-queue/master.
+Now you can work on the patch-queue branch (add, remove, rebase, test) to get your patches into shape:
+To add what will later become a patch in debian/patches/ simply make a commit. The first line of the commit message will become the patch name later. The following lines include the details of what the patch does.
+To remove or edit commits use git rebase -i master. The git documentation explains how to work with git-rebase.
+Regenerate the patches in debian/patches/ using gbp-pq. This will switch you back to master and regenerate the patches using git-format-patch(1):
+
+  gbp pq export
+Commit the result either by using gbp-add-patch or simply
+
+  git add debian/patches
+  git commit
+Update debian/changelog (e.g. by running "git-dch -S -a")
+Build the package
+After importing a new upstream version you can use the following commands to refresh debian/patches:
+
+  gbp pq rebase
+  git checkout master
+  gbp pq export
+If a package doesn't have any patches yet, these are the steps to add your first patch:
+
+Launch an import, this will switch to the proper branch
+
+  gbp pq import
+Create your first patch:
+
+* Edit files / Test
+* Commit your changes using *git commit*
+Back to the master branch, generate the Quilt patch set
+
+  git checkout master
+  gbp pq export
+Commit you first patch
+
+  git add -a debian/patches/
+  git commit -m 'my first patch'
+If you want to pick the changelog message from the patch see /usr/share/doc/git-buildpackage/examples/gbp-add-patch.
+
+Team maintenance
+The easiest way is to not push out any patch-queue/* branches at all. They can be recreated by any team member easily by using
+
+git branch -d patch-queue/master
+gbp pq import
+However you can push out patch-queue branches. Other team members must just be aware that that branches in the patch-queue/ namespace are being rebased frequently.
+
+Working with 3.0 (quilt) packges
+The 3.0 (quilt) format applies the patches in debian/patches automatically when building a source package. If you want your debian branch to contain the unpatched source there are several ways to handle this:
+
+Using debian/source/local-options
+You can use unapply-patches in debian/source/local-options to unapply the patches after the build. /usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source will this set up for you when run from inside a git repository of a Debian package.
+
+Using --git-export-dir
+If you're using option --git-export-dir option already there's no problem since the unpatched source tree gets exported before being built (and patch by dpkg-source). Since this implies an extra copy of the whole source tree (which might be slow for big projects) and it's not really necessary when using pbuilder the next method might be more appropriate.
+
+Working from a patch-queue branch
+Instead of building from master build from patch-queue/master prepared by gbp-pq as describe above. This branch has the patches already applied as dpkg-source expects it:
+
+gbp pq import
+gbp buildpackage --git-debian-branch=patch-queue/master
+Build and test...
+
+git checkout master
+gbp pq export
+Cloning a repository
+If you use gbp clone instead of git clone to clone a remote repository it will automatically set up the debian, upstream and pristine-tar branches for you. The manual explains the terminology.
+
+Keeping a repository up to date
+After initially cloning with gbp clone you can run gbp pull to update your debian, upstream and pristine-tar branches from the remote site. So the complete workflow for simple team maintenance looks like this:
+
+# Initially clone the repo once
+gbp clone git://git.debian.org/pkg-libvirt/gtk-vnc.git
+cd gtk-vnc
+Work on that clone, commit, release, push, etc. Now after a couple of days you want to make more changes but don't know if another developer worked on it. So you do:
+
+# Update to what others might have pushed
+gbp pull
+This will update all necessary branches to what other developers might have pushed in the meantime. If you're also using a patch-queue as described above you can refresh that too in one step:
+
+# Update to what others might have pushed and rebuild patch-queue
+gbp pull --redo-pq
+This will additionally drop your current patch-queue branch and recreate it from debian/patches.
+
+Preparing a Backport
+I keep backports on a separate bpo- branch like bpo-lenny:
+
+git checkout bpo-lenny
+git merge debian/&lt;version-currently-in-testing&gt;
+&lt;resolve conflict in debian/changelog&gt;
+&lt;fix up stuff needed for backport&gt;
+gbp buildpackage --git-pbuilder --git-dist=lenny -sa -v &lt;last-backported-version&gt; --git-debian-branch=bpo-lenny
+In order to avoid the merge conflict in the changelog have a look at dpkg-mergechangelogs(1). To create the necessary cowbuilder chroot for Lenny use:
+
+DIST=lenny git-pbuilder create
     </para>
 </chapter>
