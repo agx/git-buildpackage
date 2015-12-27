@@ -40,6 +40,7 @@ ifeq ($(HAVE_SGML2X),1)
 else
 	docbook2html -d local-nosgml2x.dsl -c $(GTK_DOC_CATALOG_FILE) -o $(MANUAL) $<
 endif
+	sed -i 's/^CLASS="[A-Z0-9]\+"/\L&/' manual-html/*.html
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
 
 # We build manpages under 'buildxref/' just to get an updated cross-reference
