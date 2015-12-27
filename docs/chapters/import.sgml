@@ -309,7 +309,8 @@ upstream-tag = v%(version)s
 	  <listitem>
 	    <para>
 	      the &debian; packaging for a release <emphasis>jessie</emphasis>,
-	      <emphasis>wheezy</emphasis>, <emphasis>sid</emphasis> or <emphasis>experimental</emphasis>.
+	      <emphasis>stretch</emphasis>, <emphasis>sid</emphasis>, <emphasis>jessie</emphasis>, <emphasis>jessie-backports</emphasis>, <emphasis>jessie-security</emphasis>
+	      or <emphasis>experimental</emphasis>.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -320,26 +321,6 @@ upstream-tag = v%(version)s
 	  <listitem>
 	    <para>
 	      the upstream sources for a release matching one of the above
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>
-	    security/&lt;release&gt;
-	  </term>
-	  <listitem>
-	    <para>
-	      security updates for a certain release
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>
-	    backports/&lt;release&gt;
-	  </term>
-	  <listitem>
-	    <para>
-	      backports to a certain release
 	    </para>
 	  </listitem>
 	</varlistentry>
