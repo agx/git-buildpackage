@@ -5,9 +5,9 @@
     <para>If you have to handle non-DFSG clean upstream sources, you can use a
     different branch which you have to create once:
     </para>
-    <screen>
-&gitcmd; branch dfsg_clean upstream
-    </screen>
+<programlisting>
+  &gitcmd; branch dfsg_clean upstream
+</programlisting>
     <para>
     This creates the <emphasis>dfsg_clean</emphasis> branch from the tip of a
     branch called <emphasis>upstream</emphasis>.  Then, when importing a new
@@ -17,27 +17,27 @@
     <emphasis>debian-branch</emphasis>  (by default named
     <emphasis>master</emphasis>):
     </para>
-    <screen>
-&gbp-import-orig; --no-merge <filename>/path/to/nondfsg-clean-package_10.4.orig.tar.gz</filename>
-&gitcmd; <option>tag</option> 10.4
-    </screen>
+<programlisting>
+  &gbp-import-orig; --no-merge <filename>/path/to/nondfsg-clean-package_10.4.orig.tar.gz</filename>
+  &gitcmd; <option>tag</option> 10.4
+</programlisting>
     <para>
     After the import, you can switch to the <emphasis>dfsg_clean</emphasis>
     branch and get the newly imported changes from the upstream branch:
     </para>
-    <screen>
-&gitcmd; <option>checkout</option> dfsg_clean
-&gitcmd; <option>pull</option> <filename>.</filename> upstream
-    </screen>
+<programlisting>
+  &gitcmd; <option>checkout</option> dfsg_clean
+  &gitcmd; <option>pull</option> <filename>.</filename> upstream
+</programlisting>
     <para>Now make this checkout dfsg clean (preferably by a cleanup script), commit
     your changes and merge to your <option>debian-branch</option>:</para>
-    <screen>
-cleanup-script.sh
-&gitcmd; commit -a -m "Make source dfsg clean"
-&gitcmd; tag <replaceable>10.4.dfsg</replaceable>
-&gitcmd; checkout <replaceable>master</replaceable>
-&gitcmd; pull <replaceable>.</replaceable> <replaceable>dfsg_clean</replaceable>
-    </screen>
+<programlisting>
+  cleanup-script.sh
+  &gitcmd; commit -a -m "Make source dfsg clean"
+  &gitcmd; tag <replaceable>10.4.dfsg</replaceable>
+  &gitcmd; checkout <replaceable>master</replaceable>
+  &gitcmd; pull <replaceable>.</replaceable> <replaceable>dfsg_clean</replaceable>
+</programlisting>
     </sect1>
 
     <sect1 id="gbp.special.nmus">
@@ -46,16 +46,16 @@ cleanup-script.sh
     First, create a branch that holds the NMUs from the tip of your
     <option>debian-branch</option> (default is <emphasis>master</emphasis>) once:
     </para>
-    <screen>
-&gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>master</replaceable>
-    </screen>
+<programlisting>
+  &gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>master</replaceable>
+</programlisting>
     <para>
     To import an NMU, change into the git repository and use &gbp-import-dsc;:
     </para>
-    <screen>
-&gitcmd; checkout <replaceable>master</replaceable>
-&gbp-import-dsc; <option>--debian-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/package_1.0-1nmu0.dsc</filename>
-    </screen>
+<programlisting>
+  &gitcmd; checkout <replaceable>master</replaceable>
+  &gbp-import-dsc; <option>--debian-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/package_1.0-1nmu0.dsc</filename>
+</programlisting>
     <para>
     This will import the NMU onto the branched named <emphasis>nmu</emphasis>
     instead of the default <option>master</option>. This method can also
@@ -83,7 +83,7 @@ cleanup-script.sh
       &gbp; has it's own command line option for this:
     </para>
 <programlisting>
-  <command>gbp buildpackage</command> <option>--git-pbuilder</option>
+  &gbp-buildpackage; <option>--git-pbuilder</option>
 </programlisting>
     <para>
       This will set the build command to run &git-pbuilder; (which
@@ -98,42 +98,42 @@ cleanup-script.sh
       We can make &git-pbuilder; usage the default by adding it to
       <filename>~/.gbp.conf</filename>:
     </para>
-      <programlisting>
+<programlisting>
 cat &lt;&lt;EOF &gt; <filename>~/.gbp.conf</filename>
 [DEFAULT]
 # We invoke cowbuilder via git-pbuilder. Arguments passed to &gbp-buildpackage;
 # will be passed to dpkg-buildpackage in the chroot
 pbuilder = True
 EOF
-      </programlisting>
+</programlisting>
       <para>
 	<command>git-pbuilder</command> defaults to building a package for the
 	<envar>sid</envar> distribution. If you want to build for another
 	distribution, pass this in the <option>--git-dist</option> option:
 
-      <programlisting>
-&gbp-buildpackage; --git-pbuilder --git-dist=jessie
-      </programlisting>
+<programlisting>
+  &gbp-buildpackage; --git-pbuilder --git-dist=jessie
+</programlisting>
 
 	If you want to use <command>debuild</command> again (without
 	modifying <filename>~/.gbp.conf</filename>), you can use:
       </para>
-      <programlisting>
-&gbp-buildpackage; --git-no-pbuilder
-      </programlisting>
+<programlisting>
+  &gbp-buildpackage; --git-no-pbuilder
+</programlisting>
       <para>
 	In order for all of the above to work you have to create a
 	base chroot first using &git-pbuilder;
       </para>
-      <programlisting>
-<command>git-pbuilder</command> create
-      </programlisting>
+<programlisting>
+  <command>git-pbuilder</command> create
+</programlisting>
       <para>
 	This can later be updated using
       </para>
-      <programlisting>
-<command>git-pbuilder</command> update
-      </programlisting>
+<programlisting>
+  <command>git-pbuilder</command> update
+</programlisting>
     </sect1>
 
     <sect1 id="gbp.special.hacking">
@@ -142,9 +142,9 @@ EOF
     Whenever you need to work on an arbitrary &debian; package, you can check it
     right into &git; with one command:
 <programlisting>
-git-import-dsc --download <filename>package</filename>
-cd <filename>package</filename>
-git-branch debian
+  &gbp-import-dsc --download <filename>package</filename>
+  cd <filename>package</filename>
+  &gitcmd; branch debian
 </programlisting>
     </para>
     <para>
@@ -156,8 +156,8 @@ git-branch debian
     modify the package, revert changes you made, create other branches for
     testing, see what changes you made, etc.  When finished, just do</para>
 <programlisting>
-git-commit -a
-git-diff debian --
+  &gitcmd; commit -a
+  &gitcmd; diff debian --
 </programlisting>
     <para>
 
@@ -165,7 +165,7 @@ git-diff debian --
     fetch the source package from a URL:
 
 <programlisting>
-git-import-dsc --download <filename>http://mentors.debian.net/debian/pool/main/i/ipsec-tools/ipsec-tools_0.7.3-9.dsc</filename>
+  &gbp-import-dsc --download <filename>http://mentors.debian.net/debian/pool/main/i/ipsec-tools/ipsec-tools_0.7.3-9.dsc</filename>
 </programlisting>
 
    The import works incrementally; you can import new versions on top of

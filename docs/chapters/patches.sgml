@@ -40,10 +40,10 @@ the <filename>master</filename> branch, of course).</para>
 <para>Create patch-queue branch and
 import <filename>debian/patches</filename> onto it using &gbp-pq;
 
-<screen>
+<programlisting>
   <command>cd <replaceable>REPO</replaceable></command>
-  <command>gbp pq import</command>
-</screen>
+  &gbp-pq; import
+</programlisting>
 
 <para>This will switch you to the patch-queue branch
 automatically.</para>
@@ -62,26 +62,26 @@ explains how to work with git-rebase.</para></listitem>
 &gbp-pq;. This will switch you back to master and regenerate the patches using
 a method similar to <command>git-format-patch(1)</command>:</para>
 
-<screen>
-  <command>gbp pq export</command>
-</screen>
+<programlisting>
+  &gbp-pq; export
+</programlisting>
 
 <para>Commit the result either by passing <option>--commit</option> to
 the above export or by using git commands:</para>
-<screen>
-  <command>git add debian/patches</command>
-  <command>git commit</command>
-</screen>
+<programlisting>
+  &gitcmd; add debian/patches
+  &gitcmd; commit
+</programlisting>
 
 <para>Update <filename>debian/changelog</filename> (e.g. by running "&gbp-dch; <option>-S</option> <option>-a</option>")</para>
 <para>You can now build the package as usual.</para>
 
 <para>After importing a new upstream version you can use the following commands
 to refresh <filename>debian/patches/</filename>:</para>
-<screen>
-  <command>gbp pq rebase</command>
-  <command>gbp pq export</command>
-</screen>
+<programlisting>
+  &gbp-pq; rebase
+  &gbp-pq; export
+</programlisting>
 
 <para>Should the rebase fail you can resort to
 &gitcmd; <option>rebase</option>.</para>
@@ -94,15 +94,15 @@ patches by using the <option>--time-machine=</option>.
 your first patch:</para>
 <orderedlist>
 <listitem><para>Launch an import, this will switch to the proper branch
-<screen>
-  <command>gbp pq import</command>
-</screen>
+<programlisting>
+  &gbp-pq; import
+</programlisting>
 <listitem><para>Create your first patch: edit files, test, commit your changes using <command>git commit</command></para></listitem>
 
 <listitem><para>To generate the new Quilt patch set use
-<screen>
-  <command>gbp pq export --commit</command>
-</screen>This will switch you back to the <filename>master</filename>
+<programlisting>
+  &gbp-pq; export --commit
+</programlisting>This will switch you back to the <filename>master</filename>
 branch generate the patches and commit them right away to
 your <filename>master</filename> branch.
 
@@ -127,17 +127,17 @@ sets up these two files for you.
 <para>The easiest way is to not push out any patch-queue/* branches at all.
 They can be recreated by any team member easily by using</para>
 
-<screen>
-  <command>git branch -d patch-queue/master</command>
-  <command>gbp pq import</command>
-</screen>
+<programlisting>
+  &gitcmd; branch -d patch-queue/master
+  &gbp-pq; import
+</programlisting>
 
 <para>The patch-queue branch can also be re-created when pulling (this
 will additionally drop your current patch-queue branch and recreate it
 from <filename>debian/patches</filename>):</para>
-<screen>
-  <command>gbp pull --redo-pq</command>
-</screen>
+<programlisting>
+  &gbp-pull; --redo-pq
+</programlisting>
 
 <para>
 Note that you can you can push out patch-queue branches. Other team
@@ -180,13 +180,13 @@ Working from a patch-queue branch.
 Instead of building from master build from patch-queue/master prepared by
 &gbp-pq; as describe above. This branch has the patches already applied as
 dpkg-source expects it:</para>
-<screen>
-  <command>gbp pq import</command>
-  <command>gbp buildpackage --git-debian-branch=patch-queue/master</command>
+<programlisting>
+  &gbp-pq; import
+  &gbp-buildpackage; --git-debian-branch=patch-queue/master
   #Build and test...
-  <command>git checkout master</command>
-  <command>gbp pq export</command>
-</screen>
+  &git; checkout master
+  &gbp-pq; export
+</programlisting>
 </listitem>
 </itemizedlist>
 </chapter>

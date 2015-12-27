@@ -10,9 +10,9 @@
     <emphasis>debian-branch</emphasis> or when you have uncommitted changes in
     your repository), you'll usually use:
     </para>
-<screen>
+<programlisting>
 &gbp-buildpackage; <option>--git-ignore-new</option>
-</screen>
+</programlisting>
     <para>If &gbp-buildpackage; doesn't find a valid upstream tarball, it will
     create one by looking at the tag matching the upstream version. To change
     this behaviour, see the <option>--git-upstream-tree</option> option.
@@ -25,9 +25,9 @@
     </para>
     <para>Once you're satisfied with the build and want to do a release, you commit all
     your changes and issue:</para>
-<screen>
+<programlisting>
 &gbp-buildpackage; <option>--git-tag</option>
-</screen>
+</programlisting>
     <para>This will again build the &debian; package and tag the final result after
     extracting the current version from the changelog. If you want &gpg;-signed
     tags, you can use the <option>--git-sign</option> and
@@ -39,21 +39,21 @@
     <title>Using a separate build dir</title>
     <para>Tools like &svn-buildpackage; use a separate build-area. To achieve a similar behaviour
     with &gbp-buildpackage;, use the <option>--git-export-dir</option> option:</para>
-<screen>
+<programlisting>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area/</replaceable>
-</screen>
+</programlisting>
     <para>This will export the head of the current branch to
     <replaceable>../build-area/package-version</replaceable> and build the
     package. If you don't want to export the current branch head, you can use
     <option>--git-export</option> to export any treeish object.  Here are some
     examples:</para>
-<screen>
+<programlisting>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>debian/0.4.3</replaceable>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>etch</replaceable>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>8caed309653d69b7ab440e3d35abc090eb4c6697</replaceable>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>INDEX</replaceable>
 &gbp-buildpackage; <option>--git-export-dir</option>=<replaceable>../build-area</replaceable> <option>--git-export</option>=<replaceable>WC</replaceable>
-</screen>
+</programlisting>
     <para>The special argument <replaceable>INDEX</replaceable> exports the
     state of the current index, which can be used to include staged but uncommitted
     changes in the build. Whereas the special argument

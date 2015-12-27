@@ -11,9 +11,9 @@
     <option>debian-branch</option> without touching
     <emphasis>debian/changelog</emphasis> at all. Then, when done, do:
     </para>
-<screen>
+<programlisting>
 &gbp-dch; <option>--release</option>
-</screen>
+</programlisting>
     <para>This will look up the latest released version in the changelog,
     increment the version in the &debian; changelog, generate changelog
     messages from the corresponding &git; commit id up to the branch head, and
@@ -22,9 +22,9 @@
     <para>
     But what if you want to have an (unreleased) snapshot for intermediate testing:
     </para>
-<screen>
+<programlisting>
 &gbp-dch; <option>--snapshot</option>
-</screen>
+</programlisting>
    <para>will generate a snapshot release with a specially crafted version number
    and a warning in the changelog that this is a snapshot release:
    </para>
@@ -39,21 +39,21 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
    number will continue to increase. Since the snapshot banners contains the
    commit id of the current branch head, &gbp-dch; can figure out what to
    append to the changelog by itself:
-<screen>
+<programlisting>
 &gbp-dch; <option>--snapshot</option> <option>--auto</option>
-</screen>
+</programlisting>
    will fetch the commit id and add changelog entries from that point to the
    current HEAD&mdash;again auto incrementing the version number. If you don't want
    to start at that commit id, you can specify any id or tag with:</para>
-<screen>
+<programlisting>
 &gbp-dch; <option>--since</option>=<replaceable>e76a6a180a57701ae4ae381f74523cacb3152780</replaceable> <option>--snapshot</option>
-</screen>
+</programlisting>
    <para>
    After testing, you can remove the snapshot header by a final &gbp-dch; call:
    </para>
-<screen>
+<programlisting>
 &gbp-dch; <option>--since</option>=<replaceable>HEAD</replaceable> <option>--release</option>
-</screen>
+</programlisting>
    <para>
    This will add no further entries but simply remove the specially crafted
    version number and the snapshot header. Again you can use any commit id
@@ -65,12 +65,12 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
     <para>If the auto incrementing of the snapshot number doesn't suite your needs, you
     can give any Python expression that evaluates to a positive integer to
     calculate the new snapshot number:</para>
-<screen>
+<programlisting>
 &gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>1</replaceable>
 &gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>'snapshot + 2'</replaceable>
 &gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>'os.popen("git-log --pretty=oneline | wc -l").readlines()[0]'</replaceable>
 &gbp-dch; <option>-S</option> <option>-a</option> <option>--snapshot-number</option>=<replaceable>`git-log --pretty=oneline debian/0.3.3 | wc -l`</replaceable>
-</screen>
+</programlisting>
 <para>
 You can also add the snapshot-number calculation to <filename>gbp.conf</filename>:
 </para>
