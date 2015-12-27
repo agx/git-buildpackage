@@ -25,6 +25,7 @@ import shutil
 import stat
 import subprocess
 
+from nose import SkipTest
 from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
 
 from gbp.git import GitRepository
@@ -192,6 +193,9 @@ class TestGbpRpm(RpmRepoTestBase):
 
     def test_option_tmp_dir(self):
         """Test the --git-tmp-dir option"""
+        if os.getenv("FAKED_MODE"):
+            raise SkipTest("Skipping we're running under fakeroot")
+
         self.init_test_repo('gbp-test-native')
 
         eq_(mock_gbp(['--git-tmp-dir=../gbptmp', '--git-builder=true']), 0)
@@ -514,6 +518,10 @@ class TestGbpRpm(RpmRepoTestBase):
 
     def test_export_failure(self):
         """Test export dir permission problems"""
+
+        if os.getenv("FAKED_MODE"):
+            raise SkipTest("Skipping we're running under fakeroot")
+
         self.init_test_repo('gbp-test-native')
         s_rwx = stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC
 
