@@ -1,3 +1,64 @@
+git-buildpackage (0.7.1) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [0bb2064] Python3 cleanups
+  * [003c7cf,8583e03] Update to git-pbuilder 1.37 and 1.38
+    incorporating our changes. Many thanks to Russ Allberry!
+  * [7cc509d] manpages: mention git-pbuilder upfront in the workflow and add
+    missing pre-build hook
+  * [ebe31e6] manpages: consistency for gbp buildpackage.
+  * [7835216] Use faster CGit URL for Vcs-Browser
+  * [bf4a67d] manpages: document GBP_DISABLE_SECTION_DEPRECTATION
+  * [bfe32f1] buildpackage-rpm: add support for mock chroot builder.
+     Try: gbp buildpackage-rpm --git-mock --git-dist=epel-6
+    This is very heavily based on a patch from Tzafrir Cohen.
+  * [84a2025] Support "gbp help <command>" (Closes: #791759)
+  * [cbd40e5] import_dsc: Fail if a package has additional unhandled tarballs.
+  * [8583e03] import-dsc: Bail out if target dir exists.
+    If import-dsc is not run from within a Git repository it tries to create
+    one named like the souce package. If that directory already exists we
+    get confusing message like:
+        gbp:info: No git repository found, creating one.
+        gbp:warning: Version 0.7.0 already imported.
+        gbp:info: Everything imported under /foo/git-buildpackage
+    Avoid this by checking if the directory exists and aborting in this
+    case. (Closes: #766350)
+  * [6d80239] config: Use the same logic for printing a single and all values.
+    Printing single values didn't populate the parser with defaults so we
+    ended up with empty values for options not set in a config file.
+  * [0d6e99d] Add README.source example. This can be used for gbp managed
+    projects. Different tools are mentioned in different paragraphs so they
+    can be extended or deleted if unused.
+  * [d02d812] docs: Update Patches chapter. Mostly mention --commit and remove
+    referenes to outdated tools.
+  * [597e040] docs: Use <programlisting> consistently.  Use it for command
+    blocks instead of a mixture of programlisting and screen.
+  * [8e1020d] docs: Move all debian packaging branches into the debian/
+    namespace to be consistent with DEP-14
+
+  [ Markus Lehtonen ]
+  * [ac020c3,ec331ef,c195442] rpm packaging cleanups
+  * [82999a8] docs: enable building html docs with docbook2html if sgxml2x is
+    unavailable.
+  * [af17809] tests: enable buildpackage-rpm component tests.
+  * [89648de] buildpackage_rpm: implement --native option.
+  * [fe5ffe0] tests: enable unit tests for buildpackage-rpm
+
+  [ Ken Dreyer ]
+  * [aba67ba] git-pbuilder: spelling fix
+
+  [ Lucas Nussbaum ]
+  * Import content of https://honk.../debian_packages_in_git/ into the
+    official manual.
+    (Closes: #809023)
+
+  [ Anthony Fok ]
+  * [96df9e3] docs: Restore coloured background for <programlisting> in docs
+    by using lower case class names.
+    Closes: #gh:14
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 28 Dec 2015 15:26:56 +0100
+
 git-buildpackage (0.7.0) unstable; urgency=medium
 
   [ Guido Günther ]
