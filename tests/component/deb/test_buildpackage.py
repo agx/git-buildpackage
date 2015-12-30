@@ -22,7 +22,7 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
-from nose.tools import ok_
+from nose.tools import ok_, eq_
 
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.buildpackage import main as buildpackage
@@ -30,6 +30,20 @@ from gbp.scripts.buildpackage import main as buildpackage
 
 class TestBuildpackage(ComponentTestBase):
     """Test building a debian package"""
+
+    def check_hook_vars(self, name, vars):
+        """
+        Check that a hook hat the given vars in
+        it's environment.
+        This assumes the hook was set too
+            printenv > hookname.oug
+        """
+        env = []
+        with open('%s.out' % name) as f:
+            env = [line.split('=')[0] for line in f.readlines()]
+
+        for var in vars:
+            ok_(var in env, "%s not found in %s" % (var, env))
 
     def test_debian_buildpackage(self):
         """Test that building a native debian  package works"""
@@ -43,6 +57,15 @@ class TestBuildpackage(ComponentTestBase):
         repo = ComponentTestGitRepository('git-buildpackage')
         os.chdir('git-buildpackage')
         ret = buildpackage(['arg0',
+                            '--git-prebuild=printenv > prebuild.out',
+                            '--git-postbuild=printenv > postbuild.out',
                             '--git-builder=/bin/true',
                             '--git-cleaner=/bin/true'])
         ok_(ret == 0, "Building the package failed")
+        eq_(os.path.exists('prebuild.out'), True)
+
+        self.check_hook_vars('prebuild', ["GBP_BUILD_DIR",
+                                          "GBP_GIT_DIR"])
+
+        self.check_hook_vars('postbuild', ["GBP_CHANGES_FILE",
+                                           "GBP_BUILD_DIR"])

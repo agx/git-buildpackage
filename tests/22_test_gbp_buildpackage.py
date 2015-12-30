@@ -1,13 +1,15 @@
 # vim: set fileencoding=utf-8 :
 """Test L{gbp.command_wrappers.Command}'s tarball unpack"""
 
-from gbp.scripts.buildpackage import get_pbuilder_dist, GbpError
+from gbp.scripts.buildpackage import (get_pbuilder_dist,
+                                      setup_pbuilder,
+                                      GbpError)
 from . testutils import DebianGitTestRepo
 
 from mock import patch
 
 
-class TestGbpBuildpackage(DebianGitTestRepo):
+class TestGbpBuildpackageDep14(DebianGitTestRepo):
     class Options(object):
         pass
 
@@ -74,3 +76,36 @@ class TestGbpBuildpackage(DebianGitTestRepo):
         with self.assertRaisesRegexp(GbpError,
                                      'DEP14 DIST setup needs branch name to be vendor/suite'):
             get_pbuilder_dist(self.options, self.repo)
+
+
+class TestGbpBuildpackageSetupPbuilder(DebianGitTestRepo):
+    class Options(object):
+        use_pbuilder = True
+        pbuilder_dist = 'sid'
+        pbuilder_arch = ''
+        use_qemubuilder = False
+        pbuilder_autoconf = True
+        pbuilder_options = ''
+
+    def setUp(self):
+        DebianGitTestRepo.setUp(self)
+        self.options = self.Options()
+
+    def test_setup_pbuilder(self):
+        self.assertEqual(setup_pbuilder(self.options,
+                                        self.repo,
+                                        True),
+                         ({'GBP_PBUILDER_DIST': 'sid', 'DIST': 'sid'},
+                          {'GBP_PBUILDER_DIST': 'sid'}))
+
+    def test_setup_pbuilder_arch(self):
+        self.options.pbuilder_arch = 'arm64'
+        self.assertEqual(setup_pbuilder(self.options,
+                                        self.repo,
+                                        True),
+                         ({'ARCH': 'arm64',
+                           'DIST': 'sid',
+                           'GBP_PBUILDER_ARCH': 'arm64',
+                           'GBP_PBUILDER_DIST': 'sid'},
+                          {'GBP_PBUILDER_ARCH': 'arm64',
+                           'GBP_PBUILDER_DIST': 'sid'}))

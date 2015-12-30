@@ -375,21 +375,43 @@ def get_pbuilder_dist(options, repo, native=False):
 
 
 def setup_pbuilder(options, repo, native):
-    """setup everything to use git-pbuilder"""
+    """
+    Setup environment variables for git-pbuilder
+
+    We return two dictionaries (pbd_env, hook_env) that can be passed
+    as environment when running commands
+
+    *pbd_env* is used for the actual build command while *hook_env* is
+    passed to all hooks. They both contain the same information but
+    *pbd_env* contains the depreated variable names not starting with
+    *GBP_*.
+    """
+    pbd_env = {}
+
     if options.use_pbuilder or options.use_qemubuilder:
         options.builder = 'git-pbuilder'
+        pr_builder = os.getenv("BUILDER") or '(cowbuilder)'
         options.cleaner = '/bin/true'
-        os.environ['DIST'] = get_pbuilder_dist(options, repo, native)
+
+        dist = get_pbuilder_dist(options, repo, native)
+        pbd_env['GBP_PBUILDER_DIST'] = pbd_env['DIST'] = pr_dist = dist
         if options.pbuilder_arch:
-            os.environ['ARCH'] = options.pbuilder_arch
+            arch = options.pbuilder_arch
+            pbd_env['GBP_PBUILDER_ARCH'] = pbd_env['ARCH'] = arch
+            pr_arch = ":%s" % arch
+        else:
+            pr_arch = ""
         if options.use_qemubuilder:
-            os.environ['BUILDER'] = "qemubuilder"
+            pbd_env['GBP_PBUILDER_BUILDER'] = pbd_env['BUILDER'] = "qemubuilder"
+            pr_builder = pbd_env["GBP_PBUILDER_BUILDER"]
         if not options.pbuilder_autoconf:
-            os.environ['GIT_PBUILDER_AUTOCONF'] = "no"
+            pbd_env['GBP_PBUILDER_AUTOCONF'] = pbd_env['GIT_PBUILDER_AUTOCONF'] = "no"
         if options.pbuilder_options:
-            os.environ['GIT_PBUILDER_OPTIONS'] = options.pbuilder_options
-        gbp.log.info("Building with %s for %s" % (os.getenv('BUILDER') or '(cowbuilder)',
-                                                  os.getenv('DIST') or '(sid)'))
+            pbd_env['GBP_PBUILDER_OPTIONS'] = pbd_env['GIT_PBUILDER_OPTIONS'] = options.pbuilder_options
+        gbp.log.info("Building with %s for %s%s" % (pr_builder, pr_dist, pr_arch))
+
+    hook_env = dict([(k, pbd_env[k]) for k in pbd_env if k.startswith("GBP_")])
+    return pbd_env, hook_env
 
 
 def disable_hooks(options):
@@ -415,6 +437,13 @@ def changes_file_suffix(dpkg_args):
         return 'all'
     else:
         return os.getenv('ARCH', None) or du.get_arch()
+
+
+def md(a, b):
+    "Merge two dictionaires a and b"
+    c = a.copy()
+    c.update(b)
+    return c
 
 
 def build_parser(name, prefix=None):
@@ -538,6 +567,8 @@ def parse_args(argv, prefix):
 class Hook(RunAtCommand):
     "A hook run during the build"
     def __init__(self, name, *args, **kwargs):
+        if 'shell' not in kwargs:
+            kwargs['shell'] = True
         RunAtCommand.__init__(self, *args, **kwargs)
         self.run_error = '%s-hook %s' % (name, self.run_error)
 
@@ -604,6 +635,8 @@ def main(argv):
                     prepare_upstream_tarball(repo, source.changelog, options, tarball_dir,
                                              output_dir)
 
+            build_env, hook_env = setup_pbuilder(options, repo, source.is_native())
+
             # Export to another build dir if requested:
             if options.export_dir:
                 tmp_dir = os.path.join(output_dir, "%s-tmp" % source.sourcepkg)
@@ -611,9 +644,11 @@ def main(argv):
 
                 # Run postexport hook
                 if options.postexport:
-                    Hook('Postexport', options.postexport, shell=True,
-                         extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                    'GBP_TMP_DIR': tmp_dir})(dir=tmp_dir)
+                    Hook('Postexport', options.postexport,
+                         extra_env=md(hook_env,
+                                      {'GBP_GIT_DIR': repo.git_dir,
+                                       'GBP_TMP_DIR': tmp_dir})
+                         )(dir=tmp_dir)
 
                 major = (source.changelog.debian_version if source.is_native()
                          else source.changelog.upstream_version)
@@ -633,18 +668,17 @@ def main(argv):
                 build_dir = repo_dir
 
             if options.prebuild:
-                Hook('Prebuild', options.prebuild, shell=True,
-                     extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                'GBP_BUILD_DIR': build_dir,
-                                'GBP_PBUILDER_DIST': get_pbuilder_dist(options,
-                                                                       repo,
-                                                                       source.is_native()),
-                                })(dir=build_dir)
+                Hook('Prebuild', options.prebuild,
+                     extra_env=md(hook_env,
+                                  {'GBP_GIT_DIR': repo.git_dir,
+                                   'GBP_BUILD_DIR': build_dir})
+                     )(dir=build_dir)
 
-            setup_pbuilder(options, repo, source.is_native())
             # Finally build the package:
             RunAtCommand(options.builder, dpkg_args, shell=True,
-                         extra_env={'GBP_BUILD_DIR': build_dir})(dir=build_dir)
+                         extra_env=md(build_env,
+                                      {'GBP_BUILD_DIR': build_dir})
+                         )(dir=build_dir)
             if options.postbuild:
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir,
@@ -652,9 +686,11 @@ def main(argv):
                                            source.changelog.noepoch,
                                            changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
-                Hook('Postbuild', options.postbuild, shell=True,
-                     extra_env={'GBP_CHANGES_FILE': changes,
-                                'GBP_BUILD_DIR': build_dir})()
+                Hook('Postbuild', options.postbuild,
+                     extra_env=md(hook_env,
+                                  {'GBP_CHANGES_FILE': changes,
+                                   'GBP_BUILD_DIR': build_dir})
+                     )()
         if options.tag or options.tag_only:
             tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
             gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
@@ -670,10 +706,12 @@ def main(argv):
                             keyid=options.keyid)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
-                Hook('Posttag', options.posttag, shell=True,
-                     extra_env={'GBP_TAG': tag,
-                                'GBP_BRANCH': branch or '(no branch)',
-                                'GBP_SHA1': sha})()
+                Hook('Posttag', options.posttag,
+                     extra_env=md(hook_env,
+                                  {'GBP_TAG': tag,
+                                   'GBP_BRANCH': branch or '(no branch)',
+                                   'GBP_SHA1': sha})
+                     )()
     except CommandExecFailed:
         retval = 1
     except (GbpError, GitRepositoryError) as err:
