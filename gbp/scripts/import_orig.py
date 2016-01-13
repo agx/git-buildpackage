@@ -349,13 +349,6 @@ def main(argv):
         return 1
 
     try:
-        if options.download:
-            source = download_orig(args[0])
-        else:
-            source = find_source(options.uscan, args)
-        if not source:
-            return ret
-
         try:
             repo = DebianGitRepository('.')
         except GitRepositoryError:
@@ -368,12 +361,20 @@ def main(argv):
         if not repo.has_branch(options.upstream_branch) and not is_empty:
             raise GbpError(no_upstream_branch_msg % options.upstream_branch)
 
-        (sourcepackage, version) = detect_name_and_version(repo, source, options)
-
         (clean, out) = repo.is_clean()
         if not clean and not is_empty:
             gbp.log.err("Repository has uncommitted changes, commit these first: ")
             raise GbpError(out)
+
+        # Download the source
+        if options.download:
+            source = download_orig(args[0])
+        else:
+            source = find_source(options.uscan, args)
+        if not source:
+            return ret
+
+        (sourcepackage, version) = detect_name_and_version(repo, source, options)
 
         if repo.bare:
             set_bare_repo_options(options)
