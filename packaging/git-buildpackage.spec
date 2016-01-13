@@ -106,10 +106,10 @@ Group:      Development/Tools/Building
 Requires:   %{name}-common = %{version}-%{release}
 Requires:   rpm
 Requires:   %{rpm_python_pkg_name}
-%if 0%{?suse_version} || 0%{?tizen_version:1}
-Recommends: rpm-build
-%else
+%if 0%{?centos_ver} && 0%{?centos_ver} <= 7
 Requires:   rpm-build
+%else
+Recommends: rpm-build
 %endif
 
 %description rpm
