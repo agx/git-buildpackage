@@ -376,6 +376,10 @@ def main(argv):
 
         (sourcepackage, version) = detect_name_and_version(repo, source, options)
 
+        tag = repo.version_to_tag(options.upstream_tag, version)
+        if repo.has_tag(tag):
+            raise GbpError("Upstream tag '%s' already exists" % tag)
+
         if repo.bare:
             set_bare_repo_options(options)
 
@@ -429,7 +433,6 @@ def main(argv):
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 
-            tag = repo.version_to_tag(options.upstream_tag, version)
             repo.create_tag(name=tag,
                             msg="Upstream version %s" % version,
                             commit=commit,
