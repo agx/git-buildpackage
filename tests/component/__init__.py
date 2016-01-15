@@ -153,7 +153,10 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
     @classmethod
     def _check_repo_state(cls, repo, current_branch, branches, files=None,
                           dirs=None, tags=None):
-        """Check that repository is clean and given branches exist"""
+        """
+        Check that repository is clean and given branches, tags, files
+        and dirs exist
+        """
         branch = repo.branch
         eq_(branch, current_branch)
         ok_(repo.is_clean())
