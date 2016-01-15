@@ -16,7 +16,7 @@ git-buildpackage (0.7.1) unstable; urgency=medium
   * [cbd40e5] import_dsc: Fail if a package has additional unhandled tarballs.
   * [8583e03] import-dsc: Bail out if target dir exists.
     If import-dsc is not run from within a Git repository it tries to create
-    one named like the souce package. If that directory already exists we
+    one named like the source package. If that directory already exists we
     get confusing message like:
         gbp:info: No git repository found, creating one.
         gbp:warning: Version 0.7.0 already imported.
