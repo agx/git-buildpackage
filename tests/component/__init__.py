@@ -187,3 +187,21 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
                 cls.check_files(dirs, local_d)
         if tags is not None:
             cls.check_tags(repo, tags)
+
+    @classmethod
+    def rem_refs(cls, repo, refs):
+        """Remember the SHA1 of the given refs"""
+        rem = []
+        for name in refs:
+            rem.append((name, repo.rev_parse(name)))
+        return rem
+
+    @classmethod
+    def check_refs(cls, repo, rem):
+        """
+        Check that the heads given n (head, sha1) tuples are
+        still pointing to the given sha1
+        """
+        for (h, s) in rem:
+            n = repo.rev_parse(h)
+            ok_(n == s, "Head '%s' points to %s' instead of '%s'" % (h, n, s))

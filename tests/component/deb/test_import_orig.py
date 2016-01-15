@@ -31,6 +31,7 @@ class TestImportOrig(ComponentTestBase):
     """Test importing of new upstream sources"""
 
     pkg = "hello-debhelper"
+    def_branches = ['master', 'upstream', 'pristine-tar']
 
     def _orig(self, version):
         return os.path.join(DEB_TEST_DATA_DIR,
@@ -44,5 +45,19 @@ class TestImportOrig(ComponentTestBase):
         orig = self._orig('2.6')
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
 
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'master', self.def_branches,
                                tags=['upstream/2.6'])
+
+    def test_tag_exists(self):
+        """Test that importing an already importet version fails"""
+        repo = GitRepository.create(self.pkg)
+        os.chdir(self.pkg)
+        orig = self._orig('2.6')
+        # First import
+        ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
+        heads = self.rem_refs(repo, self.def_branches)
+        # Second import must fail
+        ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 1)
+        self._check_log(0, "gbp:error: Upstream tag 'upstream/2.6' already exists")
+        # Check that the second import didn't change any refs
+        self.check_refs(repo, heads)
