@@ -95,8 +95,9 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
                                         dir='.')
         cls._tmproot = os.path.abspath(cls._tmproot)
         # Prevent local config files from messing up the tests
-        os.environ['GBP_CONF_FILES'] = '%(top_dir)s/.gbp.conf:' \
-                            '%(top_dir)s/debian/gbp.conf:%(git_dir)s/gbp.conf'
+        os.environ['GBP_CONF_FILES'] = ':'.join(['%(top_dir)s/.gbp.conf',
+                                                 '%(top_dir)s/debian/gbp.conf',
+                                                 '%(git_dir)s/gbp.conf'])
 
     @classmethod
     def tearDownClass(cls):
@@ -140,7 +141,7 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
         extra = set(filelist) - set(reference)
         missing = set(reference) - set(filelist)
         assert_msg = "Unexpected files: %s, Missing files: %s" % \
-                        (list(extra), list(missing))
+                     (list(extra), list(missing))
         assert not extra and not missing, assert_msg
 
     @classmethod
