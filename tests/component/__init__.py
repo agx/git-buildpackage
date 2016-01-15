@@ -28,7 +28,8 @@ from nose import SkipTest
 from nose.tools import eq_, ok_     # pylint: disable=E0611
 from .. testutils import GbpLogTester
 
-from  gbp.git import GitRepository, GitRepositoryError
+from gbp.git import GitRepository, GitRepositoryError
+
 
 class ComponentTestGitRepository(GitRepository):
     """Git repository class for component tests"""
