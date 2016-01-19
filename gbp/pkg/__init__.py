@@ -178,7 +178,7 @@ class PkgPolicy(object):
         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
         basename = parse_archive_filename(os.path.basename(filename))[0]
 
-        version_filters = map ( lambda x: x % version_chars,
+        version_filters = map(lambda x: x % version_chars,
                            ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
                              r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
                              # Debian native: 'package_<version>.tar.gz'
@@ -300,7 +300,8 @@ class UpstreamSource(object):
     def unpack(self, dir, filters=[]):
         """
         Unpack packed upstream sources into a given directory
-        and determine the toplevel of the source tree.
+        and determine the toplevel of the source tree filtering
+        out files specified by filters.
         """
         if self.is_dir():
             raise GbpError("Cannot unpack directory %s" % self.path)
@@ -308,7 +309,7 @@ class UpstreamSource(object):
         if not filters:
             filters = []
 
-        if type(filters) != type([]):
+        if not isinstance(filters, list):
             raise GbpError("Filters must be a list")
 
         self._unpack_archive(dir, filters)
@@ -316,7 +317,8 @@ class UpstreamSource(object):
 
     def _unpack_archive(self, dir, filters):
         """
-        Unpack packed upstream sources into a given directory.
+        Unpack packed upstream sources into a given directory
+        allowing to filter out files in case of tar archives.
         """
         ext = os.path.splitext(self.path)[1]
         if ext in [ ".zip", ".xpi" ]:
@@ -333,7 +335,7 @@ class UpstreamSource(object):
     def _unpacked_toplevel(self, dir):
         """unpacked archives can contain a leading directory or not"""
         unpacked = glob.glob('%s/*' % dir)
-        unpacked.extend(glob.glob("%s/.*" % dir)) # include hidden files and folders
+        unpacked.extend(glob.glob("%s/.*" % dir))  # include hidden files and folders
         # Check that dir contains nothing but a single folder:
         if len(unpacked) == 1 and os.path.isdir(unpacked[0]):
             return unpacked[0]
@@ -369,15 +371,15 @@ class UpstreamSource(object):
         if not filters:
             filters = []
 
-        if type(filters) != type([]):
+        if not isinstance(filters, list):
             raise GbpError("Filters must be a list")
 
         try:
             unpacked = self.unpacked.rstrip('/')
             repackArchive = gbpc.PackTarArchive(newarchive,
-                                os.path.dirname(unpacked),
-                                os.path.basename(unpacked),
-                                filters)
+                                                os.path.dirname(unpacked),
+                                                os.path.basename(unpacked),
+                                                filters)
             repackArchive()
         except gbpc.CommandExecFailed:
             # repackArchive already printed an error
@@ -386,7 +388,7 @@ class UpstreamSource(object):
 
     @staticmethod
     def known_compressions():
-        return [ args[1][-1] for args in compressor_opts.items() ]
+        return [args[1][-1] for args in compressor_opts.items()]
 
     def guess_version(self, extra_regex=r''):
         return self._pkg_policy.guess_upstream_src_version(self.path,
