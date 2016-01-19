@@ -321,7 +321,9 @@ class UpstreamSource(object):
         allowing to filter out files in case of tar archives.
         """
         ext = os.path.splitext(self.path)[1]
-        if ext in [ ".zip", ".xpi" ]:
+        if ext in [".zip", ".xpi"]:
+            if filters:
+                raise GbpError("Can only filter tar archives: %s", (ext, self.path))
             self._unpack_zip(dir)
         else:
             self._unpack_tar(dir, filters)
