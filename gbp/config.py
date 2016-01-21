@@ -19,7 +19,10 @@
 from optparse import OptionParser, OptionGroup, Option, OptionValueError
 from six.moves import configparser
 from copy import copy
+import errno
 import os.path
+import sys
+
 
 try:
     from gbp.version import gbp_version
@@ -548,6 +551,20 @@ class GbpOptionParser(OptionParser):
         @rtype: C{str} or C{None}
         """
         return self.config.get(option_name)
+
+    def print_help(self, file=None):
+        """
+        Print an extended help message, listing all options and any
+        help text provided with them, to 'file' (default stdout).
+        """
+        if file is None:
+            file = sys.stdout
+        encoding = self._get_encoding(file)
+        try:
+            file.write(self.format_help().encode(encoding, "replace"))
+        except IOError as e:
+            if e.errno != errno.EPIPE:
+                raise
 
     @classmethod
     def _name_to_filename(cls, name):
