@@ -60,6 +60,7 @@
       <arg><option>--git-dont-purge</option></arg>
       <arg><option>--git-tag-only</option></arg>
       <arg><option>--git-retag</option></arg>
+      <arg rep="repeat"><option>OPTION_PASSED_TO_BUILD_CMD</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
