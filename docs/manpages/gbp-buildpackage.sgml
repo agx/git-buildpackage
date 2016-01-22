@@ -138,6 +138,11 @@
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
+    <para>
+      All options are prefixed with <option>git-</option> to
+      distinguish options for &gbp-buildpackage; from options passed
+      to the <replaceable>BUILD_CMD</replaceable>:
+    </para>
     <variablelist>
       <varlistentry>
         <term><option>--git-[no-]ignore-new</option>
@@ -649,10 +654,17 @@
     </screen>
   </refsect1>
   <refsect1>
-      &man.gbp.config-files;
-      <para>
-      All options in the config files are specified without the 'git-' prefix.
-      </para>
+    &man.gbp.config-files;
+    <para>
+      All options in the config files must be specified without the 'git-'
+      prefix. So
+      e.g. <option>--git-debian-branch</option>=<replaceable>debian/sid</replaceable>
+      becomes in &gbp.conf;:
+    </para>
+    <programlisting>
+      [buildpackage]
+      debian-dir  = debian/sid
+    </programlisting>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>
