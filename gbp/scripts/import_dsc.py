@@ -290,6 +290,19 @@ def main(argv):
             gbp.log.err("Need to give exactly one package to import. Try --help.")
             raise GbpError
         else:
+            try:
+                repo = DebianGitRepository('.')
+                is_empty = repo.is_empty()
+
+                (clean, out) = repo.is_clean()
+                if not clean and not is_empty:
+                    gbp.log.err("Repository has uncommitted changes, commit these first: ")
+                    raise GbpError(out)
+            except GitRepositoryError:
+                # no repo found, create one
+                needs_repo = True
+                is_empty = True
+
             pkg = args[0]
             if options.download:
                 dsc = download_source(pkg,
@@ -307,19 +320,6 @@ def main(argv):
             if src.additional_tarballs:
                 raise GbpError("Cannot import package with additional tarballs but found '%s'" %
                                ", ".join([os.path.basename(t) for t in src.additional_tarballs]))
-
-            try:
-                repo = DebianGitRepository('.')
-                is_empty = repo.is_empty()
-
-                (clean, out) = repo.is_clean()
-                if not clean and not is_empty:
-                    gbp.log.err("Repository has uncommitted changes, commit these first: ")
-                    raise GbpError(out)
-            except GitRepositoryError:
-                # no repo found, create one
-                needs_repo = True
-                is_empty = True
 
             if needs_repo:
                 if os.path.exists(src.pkg):
