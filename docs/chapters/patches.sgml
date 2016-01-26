@@ -39,6 +39,7 @@ the <filename>master</filename> branch, of course).</para>
 
 <para>Create patch-queue branch and
 import <filename>debian/patches</filename> onto it using &gbp-pq;
+</para>
 
 <programlisting>
   <command>cd <replaceable>REPO</replaceable></command>
@@ -88,7 +89,7 @@ to refresh <filename>debian/patches/</filename>:</para>
 
 <para>If you forgot to create a patch-queue before importing the new
 upstream version you can make &gbp-pq; figure out where to apply the
-patches by using the <option>--time-machine=</option>.
+patches by using the <option>--time-machine=</option>.</para>
 
 <para>If a package doesn't have any patches yet, these are the steps to add
 your first patch:</para>
@@ -97,6 +98,7 @@ your first patch:</para>
 <programlisting>
   &gbp-pq; import
 </programlisting>
+</para></listitem>
 <listitem><para>Create your first patch: edit files, test, commit your changes using <command>git commit</command></para></listitem>
 
 <listitem><para>To generate the new Quilt patch set use
@@ -189,4 +191,5 @@ dpkg-source expects it:</para>
 </programlisting>
 </listitem>
 </itemizedlist>
+</sect1>
 </chapter>
