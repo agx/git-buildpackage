@@ -65,9 +65,13 @@ class TestBuildpackage(ComponentTestBase):
         eq_(os.path.exists('prebuild.out'), True)
 
         self.check_hook_vars('prebuild', ["GBP_BUILD_DIR",
-                                          "GBP_GIT_DIR"])
+                                          "GBP_GIT_DIR",
+                                          "GBP_GIT_DIR",
+                                          "GBP_BUILD_DIR"])
 
         self.check_hook_vars('postbuild', ["GBP_CHANGES_FILE",
+                                           "GBP_BUILD_DIR",
+                                           "GBP_CHANGES_FILE",
                                            "GBP_BUILD_DIR"])
 
     def test_tag_only(self):
