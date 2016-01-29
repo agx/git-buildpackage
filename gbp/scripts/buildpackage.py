@@ -578,6 +578,7 @@ def main(argv):
     prefix = "git-"
     source = None
     branch = None
+    hook_env = {}
 
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
 

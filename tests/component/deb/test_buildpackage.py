@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2015 Guido Günther <agx@sigxcpu.org>
+# (C) 2015,2016 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -69,3 +69,27 @@ class TestBuildpackage(ComponentTestBase):
 
         self.check_hook_vars('postbuild', ["GBP_CHANGES_FILE",
                                            "GBP_BUILD_DIR"])
+
+    def test_tag_only(self):
+        """Test that only tagging a native debian package works"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-native',
+                                'git-buildpackage_%s.dsc' % version)
+
+        dsc = _dsc('0.4.14')
+        assert import_dsc(['arg0', dsc]) == 0
+        repo = ComponentTestGitRepository('git-buildpackage')
+        os.chdir('git-buildpackage')
+        repo.delete_tag('debian/0.4.14')  # make sure we can tag again
+        ret = buildpackage(['arg0',
+                            '--git-tag-only',
+                            '--git-posttag=printenv > posttag.out',
+                            '--git-builder=touch builder-run.stamp',
+                            '--git-cleaner=/bin/true'])
+        ok_(ret == 0, "Building the package failed")
+        eq_(os.path.exists('posttag.out'), True)
+        eq_(os.path.exists('builder-run.stamp'), False)
+        self.check_hook_vars('posttag', ["GBP_TAG",
+                                         "GBP_BRANCH",
+                                         "GBP_SHA1"])
