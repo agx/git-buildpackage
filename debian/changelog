@@ -1,3 +1,36 @@
+git-buildpackage (0.7.2) unstable; urgency=medium
+
+  * [81ca19d] import_orig: Check git repo before downloading the source.  This
+    makes sure we fail fast and not after the 30MB download
+  * [9dbe0cf] import_orig: Check upfront if the upstream tag already exists.
+    This makes sure we fail fast instead of importing first and then failing
+    to tag.
+  * [0b5a0a2] import_dsc: Check git repo before downloading the source.  This
+    makes sure we fail fast and not after the 30MB download
+  * [9cc0a3f] buildpackage: Move git-pbuilder environemt variables into GBP_
+    namespace.
+    Keep the old ones for backward compatibility but this way they're all
+    available to all hooks and not only to prebuild.  In order to not put more
+    stuff into the process enviroment dont use os.environ but only pass these
+    in via extra_env.
+    While at that test that hooks actually get their environment variables set
+    up correctly.
+  * [36893cb] buildpackage: make sure hook_vars is always available.
+    --tag-only uses different code paths so far only covered by the external
+    test suite. Add a component test to fix that.
+  * [92b7f1b] upstream_source: Don't silently ignore filters when importing
+    zip archives
+  * [35bd093] Don't throw exception when printing help an getting EPIPE.
+    Python's optparse does not ignore EPIPE so just add our own print_help().
+  * [2f0d139] docs: Clarify relation between git- prefixed options and
+    gbp.conf
+  * [fe37670] docs: add options passed to build command to synopsis
+  * [abe4e40] Update to git-pbuilder 1.40.
+    Thanks to Russ Allberry
+  * [2cc710d] docs: Fix sgml parsing errors spotted by docbook2html
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 29 Jan 2016 09:13:18 +0100
+
 git-buildpackage (0.7.1) unstable; urgency=medium
 
   [ Guido Günther ]
