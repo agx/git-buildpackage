@@ -26,4 +26,4 @@ git-pbuilder(1) manpage. In short:
     cd <project>
     gbp buildpackage --git-pbuilder
 
- -- Guido <agx@bogon.m.sigxcpu.org>, Wed,  2 Dec 2015 18:51:15 +0100
+ -- Guido Günther <agx@sigxcpu.org>, Wed,  2 Dec 2015 18:51:15 +0100
