@@ -45,17 +45,16 @@ class TestBuildpackage(ComponentTestBase):
         for var in vars:
             ok_(var in env, "%s not found in %s" % (var, env))
 
-    def test_debian_buildpackage(self):
-        """Test that building a native debian  package works"""
-        def _dsc(version):
+    def _test_buildpackage(self, pkg, dir, version):
+        def _dsc(pkg, version):
             return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-native',
-                                'git-buildpackage_%s.dsc' % version)
+                                dir,
+                                '%s_%s.dsc' % (pkg, version))
 
-        dsc = _dsc('0.4.14')
+        dsc = _dsc(pkg, version)
         assert import_dsc(['arg0', dsc]) == 0
-        repo = ComponentTestGitRepository('git-buildpackage')
-        os.chdir('git-buildpackage')
+        ComponentTestGitRepository(pkg)
+        os.chdir(pkg)
         ret = buildpackage(['arg0',
                             '--git-prebuild=printenv > prebuild.out',
                             '--git-postbuild=printenv > postbuild.out',
@@ -73,6 +72,14 @@ class TestBuildpackage(ComponentTestBase):
                                            "GBP_BUILD_DIR",
                                            "GBP_CHANGES_FILE",
                                            "GBP_BUILD_DIR"])
+
+    def test_debian_buildpackage(self):
+        """Test that building a native debian  package works"""
+        self._test_buildpackage('git-buildpackage', 'dsc-native', '0.4.14')
+
+    def test_non_native_buildpackage(self):
+        """Test that building a native debian  package works"""
+        self._test_buildpackage('hello-debhelper', 'dsc-3.0', '2.8-1')
 
     def test_tag_only(self):
         """Test that only tagging a native debian package works"""
