@@ -64,13 +64,14 @@
     <title>DESCRIPTION</title>
     <para>
     &gbp-dch; reads git commit messages and generates the &debian;
-    changelog from it. If no arguments are given, &gbp-dch; verifies
-    if you're on the <option>debian-branch</option> and starts from
-    the last tagged Debian package version up to the current tip of
-    the current branch. If the distribution of the topmost section in
-    <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>,
-    the changelog entries will be inserted into this section. Otherwise, a new
-    section will be created.
+    changelog from it. If no arguments are given, &gbp-dch; starts
+    from the commit corresponding to the last tagged Debian package
+    version up to the current tip of the current branch. If the
+    distribution of the topmost section in
+    <filename>debian/changelog</filename>
+    is <emphasis>UNRELEASED</emphasis>, the changelog entries will be
+    inserted into this section. Otherwise, a new section will be
+    created.
     </para>
     <para>
     If <option>--auto</option> is given &gbp-dch;, tries to guess the
@@ -87,6 +88,17 @@
     (like backports), you can use <option>--git-log</option> to restrict the
     generated changelog entries further, e.g. by using
     <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.
+    </para>
+    <para>
+      The above relies on the <option>debian-branch</option> option
+      pointing to the current branch
+      and <option>upstream-branch</option> pointing to the
+      corresponding upstream branch in order to find the right merge
+      points of these branches. Furthermore &gbp-dch; must be able to
+      identify git tags from upstream and Debian version numbers. If
+      you're not using the defaults check
+      the <option>upstream-tag</option>
+      and <option>debian-tag</option> options.
     </para>
   </refsect1>
   <refsect1>
