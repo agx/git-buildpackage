@@ -63,10 +63,11 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-dch; reads git commit messages and generates the &debian; changelog from
-    it. If no arguments are given, &gbp-dch; starts from the last tagged Debian
-    package version up to the current tip of the current branch. If the
-    distribution of the topmost section in
+    &gbp-dch; reads git commit messages and generates the &debian;
+    changelog from it. If no arguments are given, &gbp-dch; verifies
+    if you're on the <option>debian-branch</option> and starts from
+    the last tagged Debian package version up to the current tip of
+    the current branch. If the distribution of the topmost section in
     <filename>debian/changelog</filename> is <emphasis>UNRELEASED</emphasis>,
     the changelog entries will be inserted into this section. Otherwise, a new
     section will be created.
