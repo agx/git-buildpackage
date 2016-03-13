@@ -97,8 +97,16 @@ class TestImportDsc(ComponentTestBase):
                            '--pristine-tar',
                            '--debian-branch=master',
                            '--upstream-branch=upstream',
-                           dsc]) == 1
-        self._check_log(0, "gbp:error: Cannot import package with additional tarballs but found 'hello-debhelper_2.8.orig-foo.tar.gz")
+                           dsc]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        commits, expected = len(repo.get_commits()), 2
+
+        for file in ['foo/test1', 'foo/test2']:
+            ok_(file in repo.ls_tree('HEAD'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
     def test_existing_dir(self):
         """

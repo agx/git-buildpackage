@@ -197,12 +197,12 @@ def move_tag_stamp(repo, format, version):
     repo.move_tag(old, new)
 
 
-def set_bare_repo_options(options):
-    """Modify options for import into a bare repository"""
+def disable_pristine_tar(options, reason):
+    """Disable pristine tar if enabled"""
     if options.pristine_tar:
-        gbp.log.info("Bare repository: setting %s option"
-                      % (["", " '--no-pristine-tar'"][options.pristine_tar], ))
+        gbp.log.info("%s: setting '--no-pristine-tar' option" % reason)
         options.pristine_tar = False
+
 
 def build_parser(name):
     try:
@@ -317,10 +317,6 @@ def main(argv):
             if options.verbose:
                 print_dsc(src)
 
-            if src.additional_tarballs:
-                raise GbpError("Cannot import package with additional tarballs but found '%s'" %
-                               ", ".join([os.path.basename(t) for t in src.additional_tarballs]))
-
             if needs_repo:
                 if os.path.exists(src.pkg):
                     raise GbpError("Directory '%s' already exists. If you want to import into it, "
@@ -331,11 +327,17 @@ def main(argv):
                 os.chdir(repo.path)
 
             if repo.bare:
-                set_bare_repo_options(options)
+                disable_pristine_tar(options, "Bare repository")
+            elif src.additional_tarballs:
+                disable_pristine_tar(options, "Component tarballs found")
 
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
             upstream = DebianUpstreamSource(src.tgz)
             upstream.unpack(dirs['tmp'], options.filters)
+            for tarball in src.additional_tarballs:
+                gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball))
+                subtarball = DebianUpstreamSource(tarball)
+                subtarball.unpack(upstream.unpacked, options.filters)
 
             format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
             tag = repo.version_to_tag(format[0], src.upstream_version)
