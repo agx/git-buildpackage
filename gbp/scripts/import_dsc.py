@@ -342,11 +342,11 @@ def main(argv):
             msg = "%s version %s" % (format[1], src.upstream_version)
 
             if repo.find_version(options.debian_tag, src.version):
-                 gbp.log.warn("Version %s already imported." % src.version)
-                 if options.allow_same_version:
+                gbp.log.warn("Version %s already imported." % src.version)
+                if options.allow_same_version:
                     gbp.log.info("Moving tag of version '%s' since import forced" % src.version)
                     move_tag_stamp(repo, options.debian_tag, src.version)
-                 else:
+                else:
                     raise SkipImport
 
             if not repo.find_version(format[0], src.upstream_version):
