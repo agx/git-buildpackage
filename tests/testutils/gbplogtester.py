@@ -2,7 +2,7 @@
 
 import re
 from six import StringIO
-from nose.tools import ok_
+from nose.tools import ok_, assert_less
 
 import gbp.log
 
@@ -49,6 +49,9 @@ class GbpLogTester(object):
         """Check that the specified line on log matches expectations"""
         if self._log is None:
             raise Exception("BUG in unittests: no log captured!")
+        log = self._get_log()
+        assert_less(linenum, len(log),
+                    "Not enough log lines: %d" % len(log))
         output = self._get_log()[linenum].strip()
         ok_(re.match(regex, output),
             "Log entry '%s' doesn't match '%s'" % (output, regex))
