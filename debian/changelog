@@ -1,3 +1,18 @@
+git-buildpackage (0.7.3) unstable; urgency=medium
+
+  * [324b833] Fixup trailer in README.source example
+  * [3a84c11] Add testcase for non-native build-package
+  * [61ced0a] Mention debian branch (Closes: #817980)
+  * [9ef2aff] Clarify {upstream,debian}-{branch,tag} options
+    (Closes: #817980, #817981)
+  * [511b67f] gbplogtester: Check if we have enough log lines
+  * [9990b88] import_dsc: Make 'gbp import-dsc' aware of component tarballs
+    instead of plain failing. Just import the additional tarball but disable
+    pristine-tar until we sorted out how to export things again.
+    (Closes: #561072)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 01 Apr 2016 10:50:05 +0200
+
 git-buildpackage (0.7.2) unstable; urgency=medium
 
   * [81ca19d] import_orig: Check git repo before downloading the source.  This
