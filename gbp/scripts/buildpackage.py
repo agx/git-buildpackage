@@ -368,7 +368,7 @@ def get_pbuilder_dist(options, repo, native=False):
             elif len(parts) == 1 and native and branch in ['master', 'sid']:
                 dist = ''
             else:
-                raise GbpError("DEP14 DIST setup needs branch name to be vendor/suite")
+                raise GbpError("DEP14 DIST: Current branch '%s' does not match vendor/suite" % branch)
     else:
         dist = options.pbuilder_dist
     return dist
