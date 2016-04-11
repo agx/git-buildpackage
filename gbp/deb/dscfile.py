@@ -34,7 +34,7 @@ class DscFile(object):
     tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
                          '(\.orig)?\.tar\.%s)' % compressions)
     add_tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                            '(?P<add_tar>\.orig-[a-z0-9-]+)\.tar\.%s)' % compressions)
+                            '\.orig-(?P<dir>[a-z0-9-]+)\.tar\.%s)' % compressions)
     diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+'
                           '\.diff.(gz|bz2))')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
@@ -80,7 +80,8 @@ class DscFile(object):
                 continue
             m = self.add_tar_re.match(line)
             if m:
-                add_tars.append(os.path.join(fromdir, m.group('tar')))
+                add_tars.append((m.group('dir'),
+                                 os.path.join(fromdir, m.group('tar'))))
                 continue
             m = self.tar_re.match(line)
             if m:
@@ -104,7 +105,7 @@ class DscFile(object):
             raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
         if not self.native and not self.debian_version:
             raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
-        self.additional_tarballs = list(set(add_tars))
+        self.additional_tarballs = dict(add_tars)
 
     def _get_version(self):
         version = [ "", self.epoch + ":" ][len(self.epoch) > 0]

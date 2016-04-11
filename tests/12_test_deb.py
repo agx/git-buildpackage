@@ -37,12 +37,18 @@ Package-List:
  python-libvirt deb python optional
 Checksums-Sha1: 
  3743dc4f3e58d5912a98f568c3e854d97d81f216 20054618 libvirt_0.9.12.orig.tar.gz
+ 3743dc4f3e58d5912a98f568c3e854d97d81f123 20054618 libvirt_0.9.12.orig-foo.tar.gz
+ 3743dc4f3e58d5912a98f568c3e854d97d81f123 20054618 libvirt_0.9.12.orig-bar.tar.gz
  a7ffa64c18a5ee448c98b1dc894a0a27e1670357 35935 libvirt_0.9.12-4.debian.tar.gz
 Checksums-Sha256: 
  298ffc7f2a6d6e78aae46f11a0980f4bc17fa2928f5de6cd9e8abaf5990336e7 20054618 libvirt_0.9.12.orig.tar.gz
+ 298ffc7f2a6d6e78aae46f11a0980f4bc17fa2928f5de6cd9e8abaf599033123 20054618 libvirt_0.9.12.orig-foo.tar.gz
+ 298ffc7f2a6d6e78aae46f11a0980f4bc17fa2928f5de6cd9e8abaf599033123 20054618 libvirt_0.9.12.orig-bar.tar.gz
  e75110c493995ba5366e751f20f3842f30674c3918357fa6eb83175d0afbec31 35935 libvirt_0.9.12-4.debian.tar.gz
 Files: 
  5e842bc55733ceba60c64767580ff3e4 20054618 libvirt_0.9.12.orig.tar.gz
+ 5e842bc55733ceba60c64767580ff123 20054618 libvirt_0.9.12.orig-foo.tar.gz
+ 5e842bc55733ceba60c64767580ff123 20054618 libvirt_0.9.12.orig-bar.tar.gz
  f328960d25e7c843f3ac5f9ba5064251 35935 libvirt_0.9.12-4.debian.tar.gz
 """
 
@@ -57,6 +63,13 @@ Files:
         """Test parsing a valid dsc file"""
         dsc = DscFile.parse(self.dscfile.name)
         self.assertEqual(dsc.version, '0.9.12-4')
+        self.assertEqual(dsc.native, False)
+        self.assertEqual(os.path.basename(dsc.tgz), 'libvirt_0.9.12.orig.tar.gz')
+        self.assertEqual(os.path.basename(dsc.diff), '')
+        self.assertEqual(os.path.basename(dsc.deb_tgz), 'libvirt_0.9.12-4.debian.tar.gz')
+        for s in ['foo', 'bar']:
+            self.assertEqual(os.path.basename(dsc.additional_tarballs[s]),
+                             'libvirt_0.9.12.orig-%s.tar.gz' % s)
 
 
 @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')

@@ -334,7 +334,7 @@ def main(argv):
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
             upstream = DebianUpstreamSource(src.tgz)
             upstream.unpack(dirs['tmp'], options.filters)
-            for tarball in src.additional_tarballs:
+            for tarball in src.additional_tarballs.values():
                 gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball))
                 subtarball = DebianUpstreamSource(tarball)
                 subtarball.unpack(upstream.unpacked, options.filters)
