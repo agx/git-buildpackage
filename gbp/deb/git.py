@@ -28,6 +28,30 @@ class DebianGitRepository(GitRepository):
         super(DebianGitRepository, self).__init__(path)
         self.pristine_tar = DebianPristineTar(self)
 
+    def tree_drop_dirs(self, tree, dirs):
+        """
+        Drop the given top level dirs from the given git tree
+        returning a new tree object.
+        """
+        objs = self.list_tree(tree)
+        new_tree_objs = []
+
+        for m, t, s, n in objs:
+            if not (n in dirs and t == 'tree'):
+                new_tree_objs.append((m, t, s, n))
+        new_tree = self.make_tree(new_tree_objs)
+        return new_tree
+
+    def tree_get_dir(self, tree, dir):
+        """
+        Get the SHA1 of directory in a given tree
+        """
+        toplevel = self.list_tree(tree)
+        for m, t, s, n in toplevel:
+            if n == dir and t == 'tree':
+                return s
+        return None
+
     def find_version(self, format, version):
         """
         Check if a certain version is stored in this repo and return the SHA1
