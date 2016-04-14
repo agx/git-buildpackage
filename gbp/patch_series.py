@@ -22,6 +22,9 @@ import subprocess
 import tempfile
 from gbp.errors import GbpError
 
+re_patch_paths = r'^(\-\-\-|\+\+\+)\s+(.+)[\t$]'
+re_diff_git = r'^diff\s+\-\-git\s+(.+)\s+(.+)$'
+
 
 class Patch(object):
     """
@@ -42,7 +45,10 @@ class Patch(object):
     def __init__(self, path, topic=None, strip=None):
         self.path = path
         self.topic = topic
-        self.strip = strip
+        if strip:
+            self.strip = strip
+        else:
+            self.strip = self._guess_strip()
         self.info = None
         self.long_desc = None
 
@@ -135,6 +141,57 @@ class Patch(object):
             return self.info[key]
         else:
             return get_val() if get_val else None
+
+    def _guess_strip(self):
+        pairs = []
+        strips = set()
+        pair = ['', '']
+
+        try:
+            patch_file = open(self.path, 'r')
+        except:
+            return None
+
+        for line in patch_file:
+            match = re.match(re_diff_git, line.strip())
+            if match:
+                pairs.append([match.group(1), match.group(2)])
+                pair = ['', '']
+                continue
+            match = re.match(re_patch_paths, line.strip())
+            if match:
+                if pair[0]:
+                    pair[1] = match.group(2)
+                    pairs.append(pair)
+                else:
+                    pair[0] = match.group(2)
+                    continue
+            pair = ['', '']
+        patch_file.close()
+
+        for pair in pairs:
+            parts = map(lambda x: x.split('/'), pair)
+            if len(filter(lambda x: x[0] == '', parts)):
+                # It looks like one of the paths is absolute
+                # so can't guess the strip
+                continue
+            if len(set(map(lambda x: len(x), parts))) > 1:
+                # Paths have different number of parts,
+                # can't guess the strip
+                continue
+            strip = len(parts[0])
+            for part in reversed(zip(*parts)):
+                if part[0] == part[1]:
+                    strip -= 1
+                else:
+                    break
+            strips.add(strip)
+
+        if len(strips):
+            # Not sure we should allow different strips in one file
+            return max(list(strips))
+        else:
+            return None
 
     @property
     def subject(self):
