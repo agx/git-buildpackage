@@ -144,6 +144,17 @@ class SpecFile(object):
             for line in filedata.splitlines():
                 self._content.append(line + '\n')
 
+        # Guess sources location
+        if self.specdir:
+            parts = self.specdir.split('/')
+            if parts[-1] == 'SPECS':
+                parts[-1] = 'SOURCES'
+                self.sourcedir = '/'.join(parts)
+            else:
+                self.sourcedir = self.specdir
+        else:
+            self.sourcedir = ''
+
         # Use rpm-python to parse the spec file content
         self._filtertags = ("excludearch", "excludeos", "exclusivearch",
                             "exclusiveos","buildarch")
@@ -679,6 +690,8 @@ class SpecFile(object):
         tag_line = self._content.insert_after(tag_line, comment_text)
         for ind, patch in enumerate(patches):
             cmds = commands[patch] if patch in commands else {}
+            if os.path.isabs(patch):
+                patch = os.path.relpath(patch, self.sourcedir)
             patchnum = startnum + ind
             tag_line = self._set_tag("Patch", patchnum, patch, tag_line)
             # Add '%patch' macro and a preceding comment line
@@ -712,7 +725,7 @@ class SpecFile(object):
                     opts = self._patch_macro_opts(args)
                     strip = int(opts.strip) if opts.strip else 0
                     filename = os.path.basename(tags[num]['linevalue'])
-                    series.append(Patch(os.path.join(self.specdir, filename),
+                    series.append(Patch(os.path.join(self.sourcedir, filename),
                                         strip=strip))
             # Finally, append all unapplied patches to the series, if requested
             if unapplied:
@@ -721,7 +734,7 @@ class SpecFile(object):
                 for num in sorted(unapplied):
                     if num not in ignored:
                         filename = os.path.basename(tags[num]['linevalue'])
-                        series.append(Patch(os.path.join(self.specdir,
+                        series.append(Patch(os.path.join(self.sourcedir,
                                                          filename), strip=0))
         return series
 

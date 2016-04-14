@@ -143,7 +143,7 @@ def update_patch_series(repo, spec, start, end, options):
     rm_patch_files(spec)
 
     patches, commands = generate_patches(repo, start, end,
-                                         spec.specdir, options)
+                                         spec.sourcedir, options)
     spec.update_patches(patches, commands)
     spec.write_spec_file()
     return patches
