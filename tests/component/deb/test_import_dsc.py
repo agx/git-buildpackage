@@ -17,18 +17,29 @@
 #    <http://www.gnu.org/licenses/>
 
 import os
+import hashlib
 
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
-from nose.tools import ok_
+from nose.tools import ok_, eq_
 
 from gbp.scripts.import_dsc import main as import_dsc
+from gbp.deb.pristinetar import DebianPristineTar
+from gbp.deb.dscfile import DscFile
 
 
 class TestImportDsc(ComponentTestBase):
     """Test importing of debian source packages"""
+
+    @staticmethod
+    def _hash_file(filename):
+            h = hashlib.md5()
+            with open(filename, 'rb') as f:
+                buf = f.read()
+            h.update(buf)
+            return h.hexdigest()
 
     def test_debian_import(self):
         """Test that importing of debian native packages works"""
@@ -84,22 +95,22 @@ class TestImportDsc(ComponentTestBase):
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
-    def test_import_multiple(self):
+    def test_import_multiple_pristine_tar(self):
         """Test if importing a multiple tarball package works"""
         def _dsc(version):
             return os.path.join(DEB_TEST_DATA_DIR,
                                 'dsc-3.0-additional-tarballs',
                                 'hello-debhelper_%s.dsc' % version)
 
-        dsc = _dsc('2.8-1')
+        dscfile = _dsc('2.8-1')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
                            '--debian-branch=master',
                            '--upstream-branch=upstream',
-                           dsc]) == 0
+                           dscfile]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
 
         for file in ['foo/test1', 'foo/test2']:
@@ -107,6 +118,21 @@ class TestImportDsc(ComponentTestBase):
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
 
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+        dsc = DscFile.parse(dscfile)
+        # Check if we can rebuild the tarball and subtarball
+        ptars = [('hello-debhelper_2.8.orig.tar.gz', 'pristine-tar', '', dsc.tgz),
+                 ('hello-debhelper_2.8.orig-foo.tar.gz', 'pristine-tar^', 'foo', dsc.additional_tarballs['foo'])]
+
+        p = DebianPristineTar(repo)
+        outdir = os.path.abspath('.')
+        for f, w, s, o in ptars:
+            eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
+            old = self._hash_file(o)
+            p.checkout('hello-debhelper', '2.8', 'gzip', outdir, subtarball=s)
+            new = self._hash_file(os.path.join(outdir, f))
+            eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
+                (f, old, new))
 
     def test_existing_dir(self):
         """
