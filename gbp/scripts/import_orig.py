@@ -23,12 +23,13 @@ import sys
 import tempfile
 import gbp.command_wrappers as gbpc
 from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
-from gbp.deb.upstreamsource import DebianUpstreamSource
+from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
 from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
+from gbp.pkg import parse_archive_filename
 from gbp.format import format_str
 import gbp.log
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
@@ -232,12 +233,12 @@ def detect_name_and_version(repo, source, options):
 
 
 def find_source(use_uscan, args):
-    """Find the tarball to import - either via uscan or via command line argument
+    """Find the main tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
     @rtype: string
     @raise GbpError: raised on all detected errors
 
-    >>> find_source(False, ['too', 'much'])
+    >>> find_source(False, ['too', 'many'])
     Traceback (most recent call last):
     ...
     GbpError: More than one archive specified. Try --help.
@@ -277,8 +278,7 @@ def find_source(use_uscan, args):
     elif len(args) == 0:
         raise GbpError("No archive to import specified. Try --help.")
     else:
-        archive = DebianUpstreamSource(args[0])
-        return archive
+        return DebianUpstreamSource(args[0])
 
 
 def debian_branch_merge(repo, tag, version, options):
@@ -324,6 +324,25 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
                     msg="gbp: Updating %s after import of %s" % (options.debian_branch,
                                                                  tag))
     repo.force_head(commit, hard=True)
+
+
+def get_component_tarballs(name, version, tarball, components):
+    """
+    Figure out the paths to the component tarballs based on the main
+    tarball.
+    """
+    tarballs = []
+    for component in components:
+        (_, _, comp_type) = parse_archive_filename(tarball)
+        cname = DebianPkgPolicy.build_tarball_name(name,
+                                                   version,
+                                                   comp_type,
+                                                   os.path.dirname(tarball),
+                                                   component)
+        tarballs.append((component, cname))
+        if not os.path.exists(cname):
+            raise GbpError("Can not find component tarball %s" % cname)
+    return tarballs
 
 
 def debian_branch_merge_by_merge(repo, tag, version, options):
@@ -391,7 +410,10 @@ def build_parser(name):
                       dest="import_msg")
     import_group.add_boolean_config_file_option(option_name="symlink-orig",
                                                 dest="symlink_orig")
+    import_group.add_option("--component", action="append", metavar='COMPONENT',
+                            dest="components", help="additional component to import, can be given multiple times", default=[])
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
+
 
     parser.add_boolean_config_file_option(option_name="interactive",
                                           dest='interactive')
@@ -477,7 +499,7 @@ def main(argv):
             gbp.log.err("Repository has uncommitted changes, commit these first: ")
             raise GbpError(out)
 
-        # Download the source
+        # Download the main tarball
         if options.download:
             source = download_orig(args[0])
         else:
@@ -485,7 +507,13 @@ def main(argv):
         if not source:
             return ret
 
+        # The main tarball
         (sourcepackage, version) = detect_name_and_version(repo, source, options)
+        # Additionl tarballs we expect to exist
+        component_tarballs = get_component_tarballs(sourcepackage,
+                                                    version,
+                                                    source.path,
+                                                    options.components)
 
         tag = repo.version_to_tag(options.upstream_tag, version)
         if repo.has_tag(tag):
@@ -498,6 +526,8 @@ def main(argv):
             tmpdir = tempfile.mkdtemp(dir='../')
             source.unpack(tmpdir, options.filters)
             gbp.log.debug("Unpacked '%s' to '%s'" % (source.path, source.unpacked))
+            for (component, tarball) in component_tarballs:
+                unpack_component_tarball(source.unpacked, component, tarball, options.filters)
 
         if orig_needs_repack(source, options):
             gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
@@ -525,6 +555,7 @@ def main(argv):
             gbp.log.info("Upstream version is %s" % version)
 
             msg = upstream_import_commit_msg(options, version)
+
             commit = repo.commit_dir(source.unpacked,
                                      msg=msg,
                                      branch=import_branch,
@@ -535,7 +566,9 @@ def main(argv):
             if options.pristine_tar:
                 if pristine_orig:
                     repo.rrr_branch('pristine-tar')
-                    repo.pristine_tar.commit(pristine_orig, import_branch)
+                    repo.create_pristinetar_commits(import_branch,
+                                                    pristine_orig,
+                                                    component_tarballs)
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 

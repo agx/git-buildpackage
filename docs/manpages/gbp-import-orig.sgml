@@ -30,7 +30,8 @@
       <arg><option>--[no-]sign-tags</option></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg rep='repeat'><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--[no-]filter-pristine-tar</option></arg>
       <arg><option>--[no-]symlink-orig</option></arg>
@@ -189,6 +190,28 @@
         <listitem>
           <para>
           filter out files glob-matching pattern. Can be given multiple times.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--component=</option><replaceable>COMPONENT</replaceable>
+        </term>
+        <listitem>
+          <para>
+	    When importing the upstream tarball also look for an additional tarball
+	    with component name <replaceable>COMPONENT</replaceable>. E.g. in
+	    <filename>hello-debhelper_1.0.orig-foo.tar.gz</filename>
+	    the component would be <replaceable>foo</replaceable>. The additional
+	    tarball is expected to be in the same directory than the upstream tarball
+	    and to use the same compression type.
+	  </para>
+	  <para>
+	    Using additional original tarballs is a feature of the 3.0
+	    (quilt) source format. See
+	    the <command>dpkg-source</command> manpage for
+	    details. Note that this option can't be set via &gbp.conf;
+	    since it's considered an experimental feature and might
+	    change incompatibly.
           </para>
         </listitem>
       </varlistentry>

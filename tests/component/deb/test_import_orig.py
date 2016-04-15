@@ -26,9 +26,11 @@ from tests.component.deb import DEB_TEST_DATA_DIR
 
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.import_orig import main as import_orig
+from gbp.deb.pristinetar import DebianPristineTar
+from gbp.deb.dscfile import DscFile
 from gbp.git.repository import GitRepository, GitRepositoryError
 
-from nose.tools import ok_
+from nose.tools import ok_, eq_
 
 
 def raise_if_tag_match(match):
@@ -45,14 +47,14 @@ class TestImportOrig(ComponentTestBase):
     pkg = "hello-debhelper"
     def_branches = ['master', 'upstream', 'pristine-tar']
 
-    def _orig(self, version):
+    def _orig(self, version, dir='dsc-3.0'):
         return os.path.join(DEB_TEST_DATA_DIR,
-                            'dsc-3.0',
+                            dir,
                             '%s_%s.orig.tar.gz' % (self.pkg, version))
 
-    def _dsc(self, version):
+    def _dsc(self, version, dir='dsc-3.0'):
         return os.path.join(DEB_TEST_DATA_DIR,
-                            'dsc-3.0',
+                            dir,
                             '%s_%s.dsc' % (self.pkg, version))
 
     def test_initial_import(self):
@@ -76,6 +78,67 @@ class TestImportOrig(ComponentTestBase):
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
+    def test_update_component_tarballs(self):
+        dsc = self._dsc('2.6-2')
+        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
+        repo = ComponentTestGitRepository(self.pkg)
+        os.chdir(self.pkg)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+
+        # Import 2.8
+        orig = self._orig('2.8', dir='dsc-3.0-additional-tarballs')
+        ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+        for file in ['foo/test1', 'foo/test2']:
+            ok_(file in repo.ls_tree('HEAD'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+            ok_(file in repo.ls_tree('upstream'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+
+        dsc = DscFile.parse(self._dsc('2.8-1', dir='dsc-3.0-additional-tarballs'))
+        # Check if we can rebuild the upstream tarball and additional tarball
+        ptars = [('hello-debhelper_2.8.orig.tar.gz', 'pristine-tar', '', dsc.tgz),
+                 ('hello-debhelper_2.8.orig-foo.tar.gz', 'pristine-tar^', 'foo', dsc.additional_tarballs['foo'])]
+
+        p = DebianPristineTar(repo)
+        outdir = os.path.abspath('.')
+        for f, w, s, o in ptars:
+            eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
+            old = self.hash_file(o)
+            p.checkout('hello-debhelper', '2.8', 'gzip', outdir, component=s)
+            out = os.path.join(outdir, f)
+            new = self.hash_file(out)
+            eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
+                (f, old, new))
+            os.unlink(out)
+
+        # Import 2.9
+        orig = self._orig('2.9', dir='dsc-3.0-additional-tarballs')
+        ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8', 'upstream/2.9'])
+        for file in ['foo/test1', 'foo/test2', 'foo/test3']:
+            ok_(file in repo.ls_tree('HEAD'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+            ok_(file in repo.ls_tree('upstream'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+
+        dsc = DscFile.parse(self._dsc('2.9-1', dir='dsc-3.0-additional-tarballs'))
+        # Check if we can rebuild the upstream tarball and additional tarball
+        ptars = [('hello-debhelper_2.9.orig.tar.gz', 'pristine-tar', '', dsc.tgz),
+                 ('hello-debhelper_2.9.orig-foo.tar.gz', 'pristine-tar^', 'foo', dsc.additional_tarballs['foo'])]
+
+        p = DebianPristineTar(repo)
+        outdir = os.path.abspath('.')
+        for f, w, s, o in ptars:
+            eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
+            old = self.hash_file(o)
+            p.checkout('hello-debhelper', '2.9', 'gzip', outdir, component=s)
+            new = self.hash_file(os.path.join(outdir, f))
+            eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
+                (f, old, new))
 
     def test_tag_exists(self):
         """Test that importing an already imported version fails"""
