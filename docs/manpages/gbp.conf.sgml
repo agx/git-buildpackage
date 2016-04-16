@@ -185,12 +185,14 @@ An example set up for packaging work:
 
  [import-orig]
  dch = False
- filter = .svn
- filter = .hg
- filter = .bzr
- filter = CVS
- filter = debian/*
- filter = */debian/*
+ filter = [
+        '.svn',
+        '.hg',
+        '.bzr',
+        'CVS',
+        'debian/*',
+        '*/debian/*'
+        ]
  filter-pristine-tar = True
 
  [import-dsc]
