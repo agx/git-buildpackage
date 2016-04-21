@@ -353,7 +353,8 @@ def main(argv):
         if not read_yn():
             raise GbpError("Aborted.")
 
-        remote_script = build_remote_script(remote, branches[0])
+        remote_default = branches[0] if branches else options.debian_branch
+        remote_script = build_remote_script(remote, remote_default)
         if options.verbose:
             print(remote_script)
 
@@ -366,7 +367,8 @@ def main(argv):
         if proc.returncode:
             raise GbpError("Error creating remote repository")
 
-        push_branches(remote, branches)
+        if branches:
+            push_branches(remote, branches)
         if options.track:
             setup_branch_tracking(repo, remote, branches)
         else:
