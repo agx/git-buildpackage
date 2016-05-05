@@ -84,7 +84,8 @@ def print_help():
 
 Options:
 
-    --ignore-repo-config: ignore gbp.conf in git repo
+    --debsnap:            use debsnap command to download packages 
+    --ignore-repo-config  ignore gbp.conf in git repo
 """)
 
 
