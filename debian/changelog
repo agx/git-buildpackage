@@ -1,3 +1,24 @@
+git-buildpackage (0.7.4) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [bb373cf] buildpackage: Improve error message when using DEP14
+  * [074e8e6] import_dsc: Allow to use pristine-tar with multiple tarballs
+  * [1aa9fc3,31754ac,6681989,1d8fb9d]: more multiple tarball tooling to
+    support it in other commands besides import-dsc with upcoming releases
+  * [060408f] create_remote_repo: Don't fail if current repo does not have any branches
+    (Closes: #822089)
+  * [d232194] gbp.conf: Add customization example
+  * [816829a] import_dscs: Mention debsnap command in options so it shows up
+    in the bash completion
+
+  [ Daniel Kahn Gillmor ]
+  * [a507ce2] docs: correct gbp.conf example of multiple filter options.
+    Commit 7e8f3bb1223269cf1b646 fixed the section that explains how to use
+    multiple filter options but forgot to clean up the import-orig example
+    at the end of the manpage.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 05 May 2016 13:50:41 +0200
+
 git-buildpackage (0.7.3) unstable; urgency=medium
 
   * [324b833] Fixup trailer in README.source example
