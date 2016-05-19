@@ -22,7 +22,7 @@ import subprocess
 import tempfile
 from gbp.errors import GbpError
 
-re_patch_paths = r'^(\-\-\-|\+\+\+)\s+(.+)[\t$]'
+re_patch_paths = r'^(\-\-\-|\+\+\+)\s+(.+?)(\t|$)'
 re_diff_git = r'^diff\s+\-\-git\s+(.+)\s+(.+)$'
 
 
@@ -45,10 +45,10 @@ class Patch(object):
     def __init__(self, path, topic=None, strip=None):
         self.path = path
         self.topic = topic
-        if strip:
-            self.strip = strip
-        else:
+        if strip is None:
             self.strip = self._guess_strip()
+        else:
+            self.strip = strip
         self.info = None
         self.long_desc = None
 
@@ -153,12 +153,13 @@ class Patch(object):
             return None
 
         for line in patch_file:
-            match = re.match(re_diff_git, line.strip())
+            line = line.strip()
+            match = re.match(re_diff_git, line)
             if match:
                 pairs.append([match.group(1), match.group(2)])
                 pair = ['', '']
                 continue
-            match = re.match(re_patch_paths, line.strip())
+            match = re.match(re_patch_paths, line)
             if match:
                 if pair[0]:
                     pair[1] = match.group(2)
@@ -189,7 +190,7 @@ class Patch(object):
 
         if len(strips):
             # Not sure we should allow different strips in one file
-            return max(list(strips))
+            return min(list(strips))
         else:
             return None
 
