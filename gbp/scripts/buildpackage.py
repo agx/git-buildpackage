@@ -283,9 +283,9 @@ def git_archive_build_orig(repo, cp, output_dir, options):
     @rtype: C{str}
     """
     upstream_tree = get_upstream_tree(repo, cp, options)
-    gbp.log.info("%s does not exist, creating from '%s'" % (du.orig_file(cp,
-                                                            options.comp_type),
-                                                            upstream_tree))
+    gbp.log.info("Creating %s from '%s'" % (du.orig_file(cp,
+                                                         options.comp_type),
+                                            upstream_tree))
     gbp.log.debug("Building upstream tarball with compression '%s -%s'" %
                   (options.comp_type, options.comp_level))
     if not git_archive(repo, cp, output_dir, upstream_tree,
