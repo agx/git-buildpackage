@@ -198,11 +198,7 @@ class PkgPolicy(object):
     @staticmethod
     def has_orig(orig_file, dir):
         "Check if orig tarball exists in dir"
-        try:
-            os.stat( os.path.join(dir, orig_file) )
-        except OSError:
-            return False
-        return True
+        return os.path.exists(os.path.join(dir, orig_file))
 
     @staticmethod
     def symlink_orig(orig_file, orig_dir, output_dir, force=False):
