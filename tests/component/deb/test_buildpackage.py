@@ -104,3 +104,26 @@ class TestBuildpackage(ComponentTestBase):
         self.check_hook_vars('posttag', ["GBP_TAG",
                                          "GBP_BRANCH",
                                          "GBP_SHA1"])
+
+    def test_subtarball_generation(self):
+        """Test that generating tarball and additional tarball works"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-3.0-additional-tarballs',
+                                'hello-debhelper_%s.dsc' % version)
+        dsc = _dsc('2.8-1')
+        tarballs = ["../hello-debhelper_2.8.orig-foo.tar.gz",
+                    "../hello-debhelper_2.8.orig.tar.gz"]
+
+        assert import_dsc(['arg0', dsc]) == 0
+        os.chdir('hello-debhelper')
+        for t in tarballs:
+            self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
+        ret = buildpackage(['arg0',
+                            '--git-subtarball=foo',
+                            '--git-posttag=printenv > posttag.out',
+                            '--git-builder=touch builder-run.stamp',
+                            '--git-cleaner=/bin/true'])
+        ok_(ret == 0, "Building the package failed")
+        for t in tarballs:
+            self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)

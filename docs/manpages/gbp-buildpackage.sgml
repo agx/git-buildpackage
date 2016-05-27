@@ -52,6 +52,7 @@
       <arg><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-compression=</option><replaceable>TYPE</replaceable></arg>
       <arg><option>--git-compression-level=</option><replaceable>LEVEL</replaceable></arg>
+      <arg><option>--git-subtarball=</option><replaceable>SUBTARBALL</replaceable></arg>
       <arg><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
@@ -574,6 +575,23 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--git-subtarball=</option><replaceable>SUBTARBALL</replaceable>
+        </term>
+        <listitem>
+          <para>
+	    When generating tarballs create an additional original
+	    tarball of directory <replaceable>SUBTARBALL</replaceable>
+	    in the source tree. Using additional original tarballs is
+	    a feature of the 3.0 (quilt) souce format. See
+	    the <command>dpkg-source</command> manpage for details. Note that the
+	    <replaceable>--git-pristine-tar-commit</replaceable>
+	    option is currently incompatible with this option. It also can't be
+	    set via &gbp.conf; since it's considered an experimental feature and
+	    might change incompatibly.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git[-no]-purge</option>
         </term>
         <listitem>
@@ -681,6 +699,10 @@
     <citerefentry>
       <refentrytitle>cowbuilder</refentrytitle>
       <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>dpkg-source</refentrytitle>
+      <manvolnum>1</manvolnum>
     </citerefentry>,
     <xref linkend="man.gbp.conf"/>,
     &man.seealso.common;
