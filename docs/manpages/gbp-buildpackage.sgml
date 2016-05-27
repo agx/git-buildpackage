@@ -582,7 +582,7 @@
 	    When generating tarballs create an additional original
 	    tarball of directory <replaceable>SUBTARBALL</replaceable>
 	    in the source tree. Using additional original tarballs is
-	    a feature of the 3.0 (quilt) souce format. See
+	    a feature of the 3.0 (quilt) source format. See
 	    the <command>dpkg-source</command> manpage for details. Note that the
 	    <replaceable>--git-pristine-tar-commit</replaceable>
 	    option is currently incompatible with this option. It also can't be
