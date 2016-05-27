@@ -69,7 +69,7 @@ def git_archive_submodules(repo, treeish, output, prefix, comp_type, comp_level,
         repo.archive(format=format, prefix=prefix,
                      output=main_archive, treeish=treeish)
 
-        # generate each submodule's arhive and append it to the main archive
+        # generate each submodule's archive and append it to the main archive
         for (subdir, commit) in repo.get_submodules(treeish):
             tarpath = [subdir, subdir[2:]][subdir.startswith("./")]
 
