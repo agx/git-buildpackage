@@ -22,7 +22,7 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
-from nose.tools import ok_, eq_
+from nose.tools import ok_, eq_, assert_false, assert_true
 
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.buildpackage import main as buildpackage
@@ -45,13 +45,14 @@ class TestBuildpackage(ComponentTestBase):
         for var in vars:
             ok_(var in env, "%s not found in %s" % (var, env))
 
-    def _test_buildpackage(self, pkg, dir, version):
-        def _dsc(pkg, version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                dir,
-                                '%s_%s.dsc' % (pkg, version))
+    @staticmethod
+    def _dsc_name(pkg, version, dir):
+        return os.path.join(DEB_TEST_DATA_DIR,
+                            dir,
+                            '%s_%s.dsc' % (pkg, version))
 
-        dsc = _dsc(pkg, version)
+    def _test_buildpackage(self, pkg, dir, version):
+        dsc = self._dsc_name(pkg, version, dir)
         assert import_dsc(['arg0', dsc]) == 0
         ComponentTestGitRepository(pkg)
         os.chdir(pkg)
@@ -106,21 +107,44 @@ class TestBuildpackage(ComponentTestBase):
                                          "GBP_SHA1"])
 
     def test_subtarball_generation(self):
-        """Test that generating tarball and additional tarball works"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-3.0-additional-tarballs',
-                                'hello-debhelper_%s.dsc' % version)
-        dsc = _dsc('2.8-1')
-        tarballs = ["../hello-debhelper_2.8.orig-foo.tar.gz",
-                    "../hello-debhelper_2.8.orig.tar.gz"]
+        """Test that generating tarball and additional tarball works without pristine-tar"""
+        pkg = 'hello-debhelper'
+        dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0-additional-tarballs')
+        tarballs = ["../%s_2.8.orig-foo.tar.gz" % pkg,
+                    "../%s_2.8.orig.tar.gz" % pkg]
 
-        assert import_dsc(['arg0', dsc]) == 0
-        os.chdir('hello-debhelper')
+        assert import_dsc(['arg0', '--no-pristine-tar', dsc]) == 0
+        repo = ComponentTestGitRepository(pkg)
+        os.chdir(pkg)
+        assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch must not exist")
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         ret = buildpackage(['arg0',
                             '--git-subtarball=foo',
+                            '--git-no-pristine-tar',
+                            '--git-posttag=printenv > posttag.out',
+                            '--git-builder=touch builder-run.stamp',
+                            '--git-cleaner=/bin/true'])
+        ok_(ret == 0, "Building the package failed")
+        for t in tarballs:
+            self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
+
+    def test_pristinetar_subtarball_generation(self):
+        """Test that generating tarball and additional tarball works with pristine-tar"""
+        pkg = 'hello-debhelper'
+        dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0-additional-tarballs')
+        tarballs = ["../%s_2.8.orig-foo.tar.gz" % pkg,
+                    "../%s_2.8.orig.tar.gz" % pkg]
+
+        assert import_dsc(['arg0', '--pristine-tar', dsc]) == 0
+        repo = ComponentTestGitRepository(pkg)
+        os.chdir(pkg)
+        assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
+        for t in tarballs:
+            self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
+        ret = buildpackage(['arg0',
+                            '--git-subtarball=foo',
+                            '--git-pristine-tar',
                             '--git-posttag=printenv > posttag.out',
                             '--git-builder=touch builder-run.stamp',
                             '--git-cleaner=/bin/true'])

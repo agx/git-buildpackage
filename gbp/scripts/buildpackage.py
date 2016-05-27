@@ -251,11 +251,28 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
         if not repo.has_branch(repo.pristine_tar_branch):
             gbp.log.warn('Pristine-tar branch "%s" not found' %
                          repo.pristine_tar.branch)
+
+        # Make sure the upstream tree exists, it might not be there in
+        # case of subtarballs since we don't keep a ref to it
+        if options.subtarballs:
+            try:
+                upstream_tag = repo.version_to_tag(options.upstream_tag, cp.upstream_version)
+                tree_name = "%s^{tree}" % upstream_tag
+                repo.tree_drop_dirs(tree_name, options.subtarballs)
+            except GitRepositoryError:
+                raise GbpError("Couldn't find upstream tree '%s' to create orig tarball via pristine-tar" % tree_name)
+
         try:
             repo.pristine_tar.checkout(cp.name,
                                        cp.upstream_version,
                                        options.comp_type,
                                        output_dir)
+            for subtarball in options.subtarballs:
+                repo.pristine_tar.checkout(cp.name,
+                                           cp.upstream_version,
+                                           options.comp_type,
+                                           output_dir,
+                                           subtarball=subtarball)
             return True
         except CommandExecFailed:
             if options.pristine_tar_commit:
@@ -594,9 +611,9 @@ def parse_args(argv, prefix):
         gbp.log.warning("--git-dont-purge is depreceted, use --git-no-purge instead")
         options.purge = False
 
-    if options.subtarballs and options.pristine_tar:
-        gbp.log.warning("Subtarblls specified, pristine-tar not yet supported - disabling it.")
-        options.pristine_tar = False
+    if options.subtarballs and options.pristine_tar_commit:
+        gbp.log.warning("Subtarballs specified, pristine-tar-commit not yet supported - disabling it.")
+        options.pristine_tar_commit = False
 
     return options, args, dpkg_args
 
