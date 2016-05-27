@@ -87,25 +87,28 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
                                         options.comp_type,
                                         cp,
                                         options.tarball_dir)
-    orig_file = du.orig_file(cp, options.comp_type)
+
+    orig_files = [du.orig_file(cp, options.comp_type)]
+    if options.subtarballs:
+        orig_files += [du.orig_file(cp, options.comp_type, sub) for sub in options.subtarballs]
 
     # look in tarball_dir first, if found force a symlink to it
-    # FIXME: check for and symlink component tarballs as well
     if options.tarball_dir:
-        gbp.log.debug("Looking for orig tarball '%s' at '%s'" % (orig_file, tarball_dir))
-        if not du.DebianPkgPolicy.symlink_orig(orig_file, tarball_dir, output_dir, force=True):
-            gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
+        gbp.log.debug("Looking for orig tarballs '%s' at '%s'" % (", ".join(orig_files), tarball_dir))
+        missing = du.DebianPkgPolicy.symlink_origs(orig_files, tarball_dir, output_dir, force=True)
+        if missing:
+            msg = "Tarballs '%s' not found at '%s'" % (", ".join(missing), tarball_dir)
         else:
-            gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
+            msg = "All Orig tarballs '%s' found at '%s'" % (", ".join(orig_files), tarball_dir)
+        gbp.log.info(msg)
     if options.no_create_orig:
         return
     # Create tarball if missing or forced
-    # FIXME: check for component tarballs as well
-    if not du.DebianPkgPolicy.has_orig(orig_file, output_dir) or options.force_create:
+    if not du.DebianPkgPolicy.has_origs(orig_files, output_dir) or options.force_create:
         if not pristine_tar_build_orig(repo, cp, output_dir, options):
             upstream_tree = git_archive_build_orig(repo, cp, output_dir, options)
             if options.pristine_tar_commit:
-                pristine_tar_commit(repo, cp, options, output_dir, orig_file, upstream_tree)
+                pristine_tar_commit(repo, cp, options, output_dir, orig_files[0], upstream_tree)
 
 
 def pristine_tar_commit(repo, cp, options, output_dir, orig_file, upstream_tree):

@@ -67,12 +67,24 @@ class TestDetection(unittest.TestCase):
             repo, 'auto', self.cp, str(self.tmpdir))
         self.assertEqual("bzip2", guessed)
 
-    def test_has_orig_false(self):
-        self.assertFalse(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), str(self.tmpdir)))
+    def test_has_orig_single_false(self):
+        self.assertFalse(DebianPkgPolicy.has_origs([orig_file(self.cp, 'gzip')], str(self.tmpdir)))
 
-    def test_has_orig_true(self):
+    def test_has_orig_single_true(self):
         open(self.tmpdir.join('source_1.2.orig.tar.gz'), "w").close()
-        self.assertTrue(DebianPkgPolicy.has_orig(orig_file(self.cp, 'gzip'), str(self.tmpdir)))
+        self.assertTrue(DebianPkgPolicy.has_origs([orig_file(self.cp, 'gzip')], str(self.tmpdir)))
+
+    def test_has_orig_multiple_false(self):
+        orig_files = [orig_file(self.cp, 'gzip')] + \
+                     [orig_file(self.cp, 'gzip', sub) for sub in ['foo', 'bar']]
+        self.assertFalse(DebianPkgPolicy.has_origs(orig_files, str(self.tmpdir)))
+
+    def test_has_orig_multiple_true(self):
+        for ext in ['', '-foo', '-bar']:
+            open(self.tmpdir.join('source_1.2.orig%s.tar.gz' % ext), "w").close()
+        orig_files = [orig_file(self.cp, 'gzip')] + \
+                     [orig_file(self.cp, 'gzip', sub) for sub in ['foo', 'bar']]
+        self.assertTrue(DebianPkgPolicy.has_origs(orig_files, str(self.tmpdir)))
 
     def test_guess_comp_type_bzip2(self):
         repo = MockGitRepository(with_branch=False)

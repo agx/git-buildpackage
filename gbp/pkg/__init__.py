@@ -196,34 +196,48 @@ class PkgPolicy(object):
         return ('', '')
 
     @staticmethod
-    def has_orig(orig_file, dir):
-        "Check if orig tarball exists in dir"
-        return os.path.exists(os.path.join(dir, orig_file))
+    def has_origs(orig_files, dir):
+        "Check orig tarball and sub tarballs exists in dir"
+        for o in orig_files:
+            if not os.path.exists(os.path.join(dir, o)):
+                return False
+        return True
+
+    @classmethod
+    def has_orig(cls, orig_file, dir):
+        return cls.has_origs([orig_file], dir)
 
     @staticmethod
-    def symlink_orig(orig_file, orig_dir, output_dir, force=False):
+    def symlink_origs(orig_files, orig_dir, output_dir, force=False):
         """
         symlink orig tarball from orig_dir to output_dir
-        @return: True if link was created or src == dst
-                 False in case of error or src doesn't exist
+        @return: [] if all links were created, list of
+                 failed links otherwise
         """
         orig_dir = os.path.abspath(orig_dir)
         output_dir = os.path.abspath(output_dir)
+        err = []
 
         if orig_dir == output_dir:
-            return True
+            return []
 
-        src = os.path.join(orig_dir, orig_file)
-        dst = os.path.join(output_dir, orig_file)
-        if not os.access(src, os.F_OK):
-            return False
-        try:
-            if os.access(dst, os.F_OK) and force:
-                os.unlink(dst)
-            os.symlink(src, dst)
-        except OSError:
-            return False
-        return True
+        for f in orig_files:
+            src = os.path.join(orig_dir, f)
+            dst = os.path.join(output_dir, f)
+            if not os.access(src, os.F_OK):
+                err.append(f)
+                continue
+            try:
+                if os.path.exists(dst) and force:
+                    os.unlink(dst)
+                os.symlink(src, dst)
+            except OSError:
+                err.append(f)
+        return err
+
+    @classmethod
+    def symlink_orig(cls, orig_file, orig_dir, output_dir, force=False):
+        return cls.symlink_origs([orig_file], orig_dir, output_dir, force=force)
 
 
 class UpstreamSource(object):
