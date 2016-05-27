@@ -1,3 +1,19 @@
+git-buildpackage (0.7.5) unstable; urgency=medium
+
+  [ Dmitry Teselkin ]
+  * [3a93ada] Use tox for testing
+
+  [ Guido Günther ]
+  * [b56f7b0] buildpackage: don't claim the tarball does not exist. It can
+    also be triggered by --force-create
+  * [4ff5c3a] buildpackage: Simplify tarball generation logic.
+  * [cfcac02] buildpackage: Allow to generate subtarballs.
+  * [508656d] buildpackage: Support pristine-tar with multiple tarballs
+    but disable pristine-tar-commit in this case for now
+  * [22435b2] buildpackage: Check for existence of subtarballs as well
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 27 May 2016 10:27:07 +0200
+
 git-buildpackage (0.7.4) unstable; urgency=medium
 
   [ Guido Günther ]
