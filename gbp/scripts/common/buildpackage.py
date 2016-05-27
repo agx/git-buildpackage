@@ -106,7 +106,7 @@ def git_archive_single(treeish, output, prefix, comp_type, comp_level, comp_opts
     pipe = pipes.Template()
     pipe.prepend("git archive --format=%s --prefix=%s %s" % (format, prefix, treeish), '.-')
     if comp_type:
-        pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts),  '--')
+        pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts), '--')
     ret = pipe.copy('', output)
     if ret:
         raise GbpError("Error creating %s: %d" % (output, ret))
@@ -121,12 +121,12 @@ def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
         paths = []
     else:
         paths = ["'%s'" % nam for _mod, typ, _sha, nam in
-                    repo.list_tree(treeish) if typ == 'blob']
+                 repo.list_tree(treeish) if typ == 'blob']
 
     pipe = pipes.Template()
     pipe.prepend('git archive --format=tar --prefix=%s %s -- %s' %
                  (prefix, treeish, ' '.join(paths)), '.-')
-    pipe.append('tar -C %s -xf -' % output_dir,  '-.')
+    pipe.append('tar -C %s -xf -' % output_dir, '-.')
     top = os.path.abspath(os.path.curdir)
     try:
         ret = pipe.copy('', '')
@@ -143,7 +143,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
                 pipe = pipes.Template()
                 pipe.prepend('git archive --format=tar --prefix=%s%s/ %s' %
                              (prefix, tarpath, commit), '.-')
-                pipe.append('tar -C %s -xf -' % output_dir,  '-.')
+                pipe.append('tar -C %s -xf -' % output_dir, '-.')
                 ret = pipe.copy('', '')
                 os.chdir(top)
                 if ret:
