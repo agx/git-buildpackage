@@ -43,6 +43,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              write_wc, drop_index)
 from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
+#{ upstream tarball preparation
 def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules):
     "create a compressed orig tarball in output_dir using git_archive"
     try:
@@ -94,22 +95,29 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
             gbp.log.info("Orig tarball '%s' not found at '%s'" % (orig_file, tarball_dir))
         else:
             gbp.log.info("Orig tarball '%s' found at '%s'" % (orig_file, tarball_dir))
-    # build an orig unless the user forbids it, always build (and overwrite pre-existing) if user forces it
-    if options.force_create or (not options.no_create_orig and not du.DebianPkgPolicy.has_orig(orig_file, output_dir)):
+    if options.no_create_orig:
+        return
+    # Create tarball if missing or forced
+    if not du.DebianPkgPolicy.has_orig(orig_file, output_dir) or options.force_create:
         if not pristine_tar_build_orig(repo, cp, output_dir, options):
             upstream_tree = git_archive_build_orig(repo, cp, output_dir, options)
             if options.pristine_tar_commit:
-                if repo.pristine_tar.has_commit(cp.name,
-                                                cp.upstream_version,
-                                                options.comp_type):
-                    gbp.log.debug("%s already on pristine tar branch" %
-                                  orig_file)
-                else:
-                    archive = os.path.join(output_dir, orig_file)
-                    gbp.log.debug("Adding %s to pristine-tar branch" %
-                                  archive)
-                    repo.pristine_tar.commit(archive, upstream_tree)
+                pristine_tar_commit(repo, cp, options, output_dir, orig_file, upstream_tree)
 
+
+def pristine_tar_commit(repo, cp, options, output_dir, orig_file, upstream_tree):
+    if repo.pristine_tar.has_commit(cp.name,
+                                    cp.upstream_version,
+                                    options.comp_type):
+        gbp.log.debug("%s already on pristine tar branch" %
+                      orig_file)
+    else:
+        archive = os.path.join(output_dir, orig_file)
+        gbp.log.debug("Adding %s to pristine-tar branch" %
+                      archive)
+        repo.pristine_tar.commit(archive, upstream_tree)
+
+#}
 
 #{ Functions to handle export-dir
 def write_tree(repo, options):
@@ -226,10 +234,12 @@ def prepare_output_dir(dir):
             raise GbpError("Cannot create output dir %s" % output_dir)
     return output_dir
 
+
 def pristine_tar_build_orig(repo, cp, output_dir, options):
     """
-    build orig using pristine-tar
-    @return: True: orig tarball build, False: noop
+    Build orig tarball using pristine-tar
+
+    @returns: C{True} if tarball was build, C{False} otherwise
     """
     if options.pristine_tar:
         if not repo.has_branch(repo.pristine_tar_branch):
