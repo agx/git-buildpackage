@@ -164,6 +164,7 @@ class PatchSeries(list):
     A series of L{Patch}es as read from a quilt series file).
     """
     comment_re = re.compile('\s?#.*$')
+    level_re = re.compile('-p(?P<level>[0-9]+)')
 
     @classmethod
     def read_series_file(klass, seriesfile):
@@ -242,8 +243,8 @@ class PatchSeries(list):
         """
         return re.sub(klass.comment_re, '', line)
 
-    @staticmethod
-    def _split_strip(line):
+    @classmethod
+    def _split_strip(klass, line):
         """
         Separate the -p<num> option from the patch name
 
@@ -259,7 +260,7 @@ class PatchSeries(list):
 
         split = line.rsplit(None, 1)
         if len(split) > 1:
-            m = re.match('-p(?P<level>[0-9]+)', split[1])
+            m = klass.level_re.match(split[1])
             if m:
                 patch = split[0]
                 strip = int(m.group('level'))
