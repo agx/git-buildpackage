@@ -163,6 +163,7 @@ class PatchSeries(list):
     """
     A series of L{Patch}es as read from a quilt series file).
     """
+    comment_re = re.compile('\s?#.*$')
 
     @classmethod
     def read_series_file(klass, seriesfile):
@@ -187,7 +188,7 @@ class PatchSeries(list):
         Read patch series
 
         >>> PatchSeries._read_series(['a/b',
-        ...                           'a -p1',
+        ...                           'a -p1 # comment',
         ...                           'a/b -p2'], '.')
         ... # doctest:+NORMALIZE_WHITESPACE
         [<gbp.patch_series.Patch path='./a/b' topic='a' >,
@@ -227,6 +228,20 @@ class PatchSeries(list):
             topic = None
         return topic
 
+    @classmethod
+    def _strip_comment(klass, line):
+        """
+        Strip a comment from a series file line
+
+        >>> PatchSeries._strip_comment("does/not matter")
+        'does/not matter'
+        >>> PatchSeries._strip_comment("remove/the # comment # text")
+        'remove/the'
+        >>> PatchSeries._strip_comment("leave/level/intact -p1 # comment # text")
+        'leave/level/intact -p1'
+        """
+        return re.sub(klass.comment_re, '', line)
+
     @staticmethod
     def _split_strip(line):
         """
@@ -261,7 +276,7 @@ class PatchSeries(list):
         >>> PatchSeries._parse_line("a/b", '.')
         <gbp.patch_series.Patch path='./a/b' topic='a' >
         """
-        line = line.rstrip()
+        line = klass._strip_comment(line.rstrip())
         topic = klass._get_topic(line)
         (patch, split) = klass._split_strip(line)
         return Patch(os.path.join(patch_dir, patch), topic, split)
