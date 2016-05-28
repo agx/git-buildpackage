@@ -186,9 +186,10 @@ class PatchSeries(list):
         """
         Read patch series
 
-        >>> PatchSeries._read_series(['a/b', \
-                            'a -p1', \
-                            'a/b -p2'], '.') # doctest:+NORMALIZE_WHITESPACE
+        >>> PatchSeries._read_series(['a/b',
+        ...                           'a -p1',
+        ...                           'a/b -p2'], '.')
+        ... # doctest:+NORMALIZE_WHITESPACE
         [<gbp.patch_series.Patch path='./a/b' topic='a' >,
          <gbp.patch_series.Patch path='./a' strip=1 >,
          <gbp.patch_series.Patch path='./a/b' topic='a' strip=2 >]
@@ -201,7 +202,6 @@ class PatchSeries(list):
         @param patch_dir: path prefix to prepend to each patch path
         @type patch_dir: string
         """
-
         queue = PatchSeries()
         for line in series:
             try:
