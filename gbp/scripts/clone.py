@@ -90,8 +90,9 @@ def main(argv):
         pass
 
     try:
+        gbp.log.info("Cloning from '%s'%s" % (source, " into '%s'" % clone_to if not auto_name else ''))
         repo = DebianGitRepository.clone(clone_to, source, options.depth,
-                                         auto_name=auto_name,reference=options.reference)
+                                         auto_name=auto_name, reference=options.reference)
         os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the
