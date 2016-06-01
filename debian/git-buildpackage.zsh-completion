@@ -157,7 +157,7 @@ _gbp-dch () {
 		'--git-author[Use git name configuration for changelog signature]' \
 		'(--multimaint-merge --no-multimaint-merge)--multimaint-merge[Merge commits by maintainer]' \
 		'(--multimaint-merge --no-multimaint-merge)--multimaint-merge[Do not merge commits by maintainer]' \
-		'--spawn-editor=[Spawn an editor]:when:(always snapshot release)' \
+		'--spawn-editor=[Spawn an editor]:when:(always never snapshot release)' \
 		'--commit-msg=[Commit message format string]' \
 		'--commit[Commit the generated changelog]' \
 		'*:Paths:_files -/'
@@ -402,7 +402,7 @@ _gbp-dch () {
 		'--git-author[Use git name configuration for changelog signature]' \
 		'(--multimaint-merge --no-multimaint-merge)--multimaint-merge[Merge commits by maintainer]' \
 		'(--multimaint-merge --no-multimaint-merge)--multimaint-merge[Do not merge commits by maintainer]' \
-		'--spawn-editor=[Spawn an editor]:when:(always snapshot release)' \
+		'--spawn-editor=[Spawn an editor]:when:(always never snapshot release)' \
 		'--commit-msg=[Commit message format string]' \
 		'--commit[Commit the generated changelog]' \
 		'*:Paths:_files -/'

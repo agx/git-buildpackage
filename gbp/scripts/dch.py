@@ -286,10 +286,10 @@ def process_editor_option(options):
     elif options.release:
         states.append("release")
 
-    if options.spawn_editor in states:
-        return "sensible-editor"
-    else:
+    if options.spawn_editor == 'never' or options.spawn_editor not in states:
         return None
+    else:
+        return "sensible-editor"
 
 
 def changelog_commit_msg(options, version):
