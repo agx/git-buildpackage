@@ -53,7 +53,7 @@
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]multimaint</option></arg>
       <arg><option>--[no-]multimaint-merge</option></arg>
-      <arg><option>--spawn-editor=[always|snapshot|release]</option></arg>
+      <arg><option>--spawn-editor=[always|never|snapshot|release]</option></arg>
       <arg><option>--commit-msg=</option><replaceable>msg-format</replaceable></arg>
       <arg><option>--commit</option></arg>
       <arg><option>--customizations=</option><replaceable>customization-file</replaceable></arg>
@@ -390,11 +390,11 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--spawn-editor=<replaceable>[always|snapshot|release]</replaceable></option>
+        <term><option>--spawn-editor=<replaceable>[always|never|snapshot|release]</replaceable></option>
         </term>
         <listitem>
           <para>
-          Whether to spawn an editor: always, when doing snapshots or when
+          Whether to spawn an editor: always, never, when doing snapshots or when
           doing a release.
           </para>
         </listitem>
