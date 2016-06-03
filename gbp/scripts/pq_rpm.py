@@ -323,8 +323,8 @@ def import_spec_patches(repo, options):
         repo.delete_branch(pq_branch)
         raise GbpError('Import failed: %s' % err)
 
-    gbp.log.info("Patches listed in '%s' imported on '%s'" % (spec.specfile,
-                                                              pq_branch))
+    gbp.log.info("%d patches listed in '%s' imported on '%s'" % (len(queue), spec.specfile,
+                                                                 pq_branch))
 
 
 def rebase_pq(repo, options):

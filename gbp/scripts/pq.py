@@ -308,6 +308,8 @@ def import_quilt_patches(repo, branch, series, tries, force):
         gbp.log.debug("Remove temporary patch safe '%s'" % tmpdir)
         shutil.rmtree(tmpdir)
 
+    return len(queue)
+
 
 def rebase_pq(repo, branch):
     if is_pq_branch(branch):
@@ -402,10 +404,10 @@ def main(argv):
         elif action == "import":
             series = SERIES_FILE
             tries = options.time_machine if (options.time_machine > 0) else 1
-            import_quilt_patches(repo, current, series, tries, options.force)
+            num = import_quilt_patches(repo, current, series, tries, options.force)
             current = repo.get_branch()
-            gbp.log.info("Patches listed in '%s' imported on '%s'" %
-                          (series, current))
+            gbp.log.info("%d patches listed in '%s' imported on '%s'" %
+                          (num, series, current))
         elif action == "drop":
             drop_pq(repo, current)
         elif action == "rebase":
