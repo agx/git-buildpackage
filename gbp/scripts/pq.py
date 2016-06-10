@@ -73,7 +73,7 @@ def generate_patches(repo, start, end, outdir, options):
             raise GbpError('%s not a valid tree-ish' % treeish)
 
     # Generate patches
-    rev_list = reversed(repo.get_commits(start, end))
+    rev_list = reversed(repo.get_commits(start, end, options='--no-merges'))
     for commit in rev_list:
         info = repo.get_commit_info(commit)
         # Parse 'gbp-pq-topic:'
