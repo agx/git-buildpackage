@@ -225,6 +225,22 @@
     &man.gbp.config-files;
   </refsect1>
   <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+      Download and import a source package from a URL:
+    </para>
+    <screen>
+      &gbp-import-dsc; --download http://http.debian.net/debian/pool/main/h/hello/hello_2.10-1.dsc
+    </screen>
+    <para>
+      Download and import a source package via <command>apt-get
+      source</command> from unstable:
+    </para>
+    <screen>
+      &gbp-import-dsc; --download hello/sid
+    </screen>
+  </refsect1>
+  <refsect1>
     <title>SEE ALSO</title>
 
     <para>
