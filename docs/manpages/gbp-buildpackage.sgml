@@ -682,7 +682,7 @@
     </para>
     <programlisting>
       [buildpackage]
-      debian-dir  = debian/sid
+      debian-branch = debian/sid
     </programlisting>
   </refsect1>
   <refsect1>
