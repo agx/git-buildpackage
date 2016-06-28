@@ -58,7 +58,7 @@ def prepare_pristine_tar(archive, pkg, version):
         return None
 
     ext = os.path.splitext(archive)[1]
-    if ext in ['.tgz', '.tbz2', '.tlz', '.txz' ]:
+    if ext in ['.tgz', '.tbz2', '.tlz', '.txz']:
         ext = ".%s" % ext[2:]
 
     link = "../%s_%s.orig.tar%s" % (pkg, version, ext)
@@ -164,7 +164,7 @@ def find_source(use_uscan, args):
         else:
             gbp.log.info("package is up to date, nothing to do.")
             return None
-    if len(args) > 1: # source specified
+    if len(args) > 1:  # source specified
         raise GbpError("More than one archive specified. Try --help.")
     elif len(args) == 0:
         raise GbpError("No archive to import specified. Try --help.")
@@ -231,8 +231,8 @@ def set_bare_repo_options(options):
     """Modify options for import into a bare repository"""
     if options.pristine_tar or options.merge:
         gbp.log.info("Bare repository: setting %s%s options"
-                      % (["", " '--no-pristine-tar'"][options.pristine_tar],
-                         ["", " '--no-merge'"][options.merge]))
+                     % (["", " '--no-pristine-tar'"][options.pristine_tar],
+                        ["", " '--no-merge'"][options.merge]))
         options.pristine_tar = False
         options.merge = False
 
@@ -390,7 +390,7 @@ def main(argv):
 
         if orig_needs_repack(source, options):
             gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
-            (source, tmpdir)  = repack_source(source, sourcepackage, version, tmpdir, options.filters)
+            (source, tmpdir) = repack_source(source, sourcepackage, version, tmpdir, options.filters)
 
         (pristine_orig, linked) = prepare_pristine_tar(source.path,
                                                        sourcepackage,
@@ -449,8 +449,8 @@ def main(argv):
             # Update working copy and index if we've possibly updated the
             # checked out branch
             current_branch = repo.get_branch()
-            if current_branch in [ options.upstream_branch,
-                                   repo.pristine_tar_branch]:
+            if current_branch in [options.upstream_branch,
+                                  repo.pristine_tar_branch]:
                 repo.force_head(current_branch, hard=True)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = str(err) or 'Unknown error, please report a bug'
