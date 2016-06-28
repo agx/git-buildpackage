@@ -194,15 +194,16 @@
       <varlistentry>
         <term><option>--[no-]drop</option></term>
         <listitem>
-          <para>Whether to drop (delete) the patch queue branch after
+          <para>Whether to automatically drop (delete) the patch queue branch after
           a successful export</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>--force</option></term>
         <listitem>
-          <para>In case of <option>import</option>, import even if the branch already
-            exists</para>
+          <para>In case of <option>import</option>, import even if the
+            patch-queue branch already exists and overwrite its
+            content with <filename>debian/patches</filename>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
