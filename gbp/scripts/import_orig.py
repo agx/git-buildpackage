@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006, 2007, 2009, 2011, 2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006, 2007, 2009, 2011, 2015, 2016 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -34,6 +34,19 @@ import gbp.log
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
                                             repack_source, is_link_target, download_orig)
+
+
+class ImportOrigDebianGitRepository(DebianGitRepository):
+    """
+    Like a DebianGitRepository but can also perform rollbacks and knows
+    about some of the inner workings upstream vcs_tag, …
+    """
+    def vcs_tag_parent(self, vcs_tag_format, version):
+        """If linking to the upstream VCS get the commit id"""
+        if vcs_tag_format:
+            return [self.rev_parse("%s^{}" % self.version_to_tag(vcs_tag_format, version))],
+        else:
+            return None
 
 
 def prepare_pristine_tar(archive, pkg, version):
@@ -350,11 +363,11 @@ def main(argv):
 
     try:
         try:
-            repo = DebianGitRepository('.')
+            repo = ImportOrigDebianGitRepository('.')
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
-        # an empty repo has now branches:
+        # an empty repo has no branches:
         initial_branch = repo.get_branch()
         is_empty = False if initial_branch else True
 
@@ -415,16 +428,10 @@ def main(argv):
 
             import_branch = [ options.upstream_branch, None ][is_empty]
             msg = upstream_import_commit_msg(options, version)
-
-            if options.vcs_tag:
-                parents = [repo.rev_parse("%s^{}" % repo.version_to_tag(options.vcs_tag, version))]
-            else:
-                parents = None
-
             commit = repo.commit_dir(source.unpacked,
                                      msg=msg,
                                      branch=import_branch,
-                                     other_parents=parents,
+                                     other_parents=repo.vcs_tag_parent(options.vcs_tag, version),
                                      )
 
             if options.pristine_tar:
