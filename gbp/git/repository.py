@@ -1444,12 +1444,12 @@ class GitRepository(object):
         # Build list of parents:
         parents = []
         if cur:
-            parents = [ cur ]
+            parents.append(cur)
         if other_parents:
             for parent in other_parents:
                 sha = self.rev_parse(parent)
                 if sha not in parents:
-                    parents += [ sha ]
+                    parents.append(sha)
 
         commit = self.commit_tree(tree=tree, msg=msg, parents=parents,
                                   author=author, committer=committer)
