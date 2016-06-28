@@ -36,17 +36,112 @@ from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             repack_source, is_link_target, download_orig)
 
 
+class RollbackError(GitRepositoryError):
+    """
+    An error raised if the actual rollback failed
+    """
+    def __init__(self, errors):
+        self.msg = "Automatic rollback failed"
+        super(RollbackError, self).__init__(self.msg)
+        self.errors = errors
+
+    def __str__(self):
+        return "%s %s" % (self.msg, self.errors)
+
 class ImportOrigDebianGitRepository(DebianGitRepository):
     """
     Like a DebianGitRepository but can also perform rollbacks and knows
     about some of the inner workings upstream vcs_tag, …
     """
+    def __init__(self, *args, **kwargs):
+        self.rollbacks = []
+        self.rollback_errors = []
+        DebianGitRepository.__init__(self, *args, **kwargs)
+
     def vcs_tag_parent(self, vcs_tag_format, version):
         """If linking to the upstream VCS get the commit id"""
         if vcs_tag_format:
             return [self.rev_parse("%s^{}" % self.version_to_tag(vcs_tag_format, version))],
         else:
             return None
+
+    def rrr(self, refname, action, reftype):
+        """
+        Remember ref for rollback
+
+        @param refname: ref to roll back
+        @param action: the rollback action (delete, reset, ...)
+        @param reftype: the reference type (tag, branch, ...)
+        """
+        sha = None
+
+        if action == 'reset':
+            try:
+                sha = self.rev_parse(refname)
+            except GitRepositoryError as err:
+                gbp.log.warning("Failed to rev-parse %s: %s" % (refname, err))
+        elif action == 'delete':
+            pass
+        else:
+            raise GbpError("Unknown action %s for %s %s" % (action, reftype, refname))
+        self.rollbacks.append((refname, reftype, action, sha))
+
+    def rrr_branch(self, branchname, action='reset-or-delete'):
+        if action == 'reset-or-delete':
+            if self.has_branch(branchname):
+                return self.rrr(branchname, 'reset', 'branch')
+            else:
+                return self.rrr(branchname, 'delete', 'branch')
+        else:
+            return self.rrr(branchname, action, 'branch')
+
+    def rrr_tag(self, tagname, action='delete'):
+        return self.rrr(tagname, action, 'tag')
+
+    def rollback(self):
+        """
+        Perform a complete rollback
+
+        Try to roll back as much as possible and remember what failed.
+        """
+        for (name, reftype, action, sha) in self.rollbacks:
+            try:
+                if action == 'delete':
+                    gbp.log.info('Rolling back %s %s by deleting it' % (reftype, name))
+                    if reftype == 'tag':
+                        self.delete_tag(name)
+                    elif reftype == 'branch':
+                        gbp.log.info('Rolling back branch %s by deleting it' % name)
+                        self.delete_branch(name)
+                    else:
+                        raise GitRepositoryError("Don't know how to delete %s %s" % (reftype, name))
+                elif action == 'reset' and reftype == 'branch':
+                    gbp.log.info('Rolling back branch %s by resetting it to %s' % (name, sha))
+                    self.update_ref("refs/heads/%s" % name, sha, msg="gbp import-orig: failure rollback of %s" % name)
+                else:
+                    raise GitRepositoryError("Don't know how to %s %s %s" % (action, reftype, name))
+            except GitRepositoryError as e:
+                self.rollback_errors.append((name, reftype, action, sha, e))
+        if self.rollback_errors:
+            raise RollbackError(self.rollback_errors)
+
+    # Wrapped methods for rollbacks
+    def create_tag(self, *args, **kwargs):
+        name = kwargs['name']
+        ret = super(ImportOrigDebianGitRepository, self).create_tag(*args, **kwargs)
+        self.rrr_tag(name)
+        return ret
+
+    def commit_dir(self, *args, **kwargs):
+        import_branch = kwargs['branch']
+        self.rrr_branch(import_branch)
+        return super(ImportOrigDebianGitRepository, self).commit_dir(*args, **kwargs)
+
+    def create_branch(self, *args, **kwargs):
+        branch = kwargs['branch']
+        ret = super(ImportOrigDebianGitRepository, self).create_branch(*args, **kwargs)
+        self.rrr_branch(branch, 'delete')
+        return ret
 
 
 def prepare_pristine_tar(archive, pkg, version):
@@ -300,6 +395,8 @@ def build_parser(name):
 
     parser.add_boolean_config_file_option(option_name="interactive",
                                           dest='interactive')
+    parser.add_boolean_config_file_option(option_name="rollback",
+                                          dest="rollback")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
@@ -437,6 +534,7 @@ def main(argv):
 
             if options.pristine_tar:
                 if pristine_orig:
+                    repo.rrr_branch('pristine-tar')
                     repo.pristine_tar.commit(pristine_orig, import_branch)
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
@@ -446,10 +544,12 @@ def main(argv):
                             commit=commit,
                             sign=options.sign_tags,
                             keyid=options.keyid)
+
             if is_empty:
                 repo.create_branch(branch=options.debian_branch, rev=commit)
                 repo.force_head(options.debian_branch, hard=True)
             elif options.merge:
+                repo.rrr_branch(options.debian_branch)
                 debian_branch_merge(repo, tag, version, options)
 
             # Update working copy and index if we've possibly updated the
@@ -465,6 +565,17 @@ def main(argv):
         if str(err):
             gbp.log.err(err)
         ret = 1
+        if repo and options.rollback:
+            gbp.log.err("Error detected, Will roll back changes.")
+            try:
+                repo.rollback()
+                # Make sure the very last line as an error message
+                gbp.log.err("Rolled back changes after import error.")
+            except Exception as e:
+                gbp.log.error("Automatic rollback failed: %s" % e)
+                gbp.log.error("Clean up manually and please report a bug: %s" %
+                              repo.rollback_errors)
+
 
     if pristine_orig and linked and not options.symlink_orig:
         os.unlink(pristine_orig)

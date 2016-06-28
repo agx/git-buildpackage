@@ -169,6 +169,7 @@ class GbpOptionParser(OptionParser):
                  'drop': 'False',
                  'commit': 'False',
                  'upstream-vcs-tag': '',
+                 'rollback': 'True',
              }
     help = {
              'debian-branch':
@@ -327,6 +328,8 @@ class GbpOptionParser(OptionParser):
                    "after export. Default is '%(drop)s'"),
               'commit':
                   "commit changes after export, Default is '%(commit)s'",
+              'rollback':
+                  "Rollback repository changes when encountering an error",
            }
 
     def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
