@@ -320,6 +320,9 @@ class GitRepository(object):
         @param remote: delete a remote branch
         @param remote: C{bool}
         """
+        if not self.has_branch(branch):
+            return
+
         args = GitArgs('-D')
         args.add_true(remote, '-r')
         args.add(branch)
@@ -1962,4 +1965,3 @@ class GitRepository(object):
                                      % (remote, abspath, err[1]))
         return None
 #}
-
