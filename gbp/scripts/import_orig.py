@@ -356,6 +356,7 @@ def main(argv):
     tmpdir = ''
     pristine_orig = None
     linked = False
+    repo = None
 
     (options, args) = parse_args(argv)
     if not options:
@@ -417,26 +418,26 @@ def main(argv):
             pass
 
         try:
-            upstream_branch = [ options.upstream_branch, 'master' ][is_empty]
+            import_branch = options.upstream_branch
             filter_msg = ["", " (filtering out %s)"
                               % options.filters][len(options.filters) > 0]
             gbp.log.info("Importing '%s' to branch '%s'%s..." % (source.path,
-                                                                 upstream_branch,
+                                                                 import_branch,
                                                                  filter_msg))
             gbp.log.info("Source package is %s" % sourcepackage)
             gbp.log.info("Upstream version is %s" % version)
 
-            import_branch = [ options.upstream_branch, None ][is_empty]
             msg = upstream_import_commit_msg(options, version)
             commit = repo.commit_dir(source.unpacked,
                                      msg=msg,
                                      branch=import_branch,
                                      other_parents=repo.vcs_tag_parent(options.vcs_tag, version),
+                                     create_missing_branch=is_empty,
                                      )
 
             if options.pristine_tar:
                 if pristine_orig:
-                    repo.pristine_tar.commit(pristine_orig, upstream_branch)
+                    repo.pristine_tar.commit(pristine_orig, import_branch)
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 
@@ -446,10 +447,8 @@ def main(argv):
                             sign=options.sign_tags,
                             keyid=options.keyid)
             if is_empty:
-                repo.create_branch(options.upstream_branch, rev=commit)
-                repo.force_head(options.upstream_branch, hard=True)
-                if options.debian_branch != 'master':
-                    repo.rename_branch('master', options.debian_branch)
+                repo.create_branch(branch=options.debian_branch, rev=commit)
+                repo.force_head(options.debian_branch, hard=True)
             elif options.merge:
                 debian_branch_merge(repo, tag, version, options)
 
