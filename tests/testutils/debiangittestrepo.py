@@ -10,11 +10,14 @@ import gbp.deb.git
 class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single unit test"""
 
-    def setUp(self):
+    def setUp(self, repo_cls=None):
         self.tmpdir = context.new_tmpdir(__name__)
 
+        if repo_cls is None:
+            repo_cls = gbp.deb.git.DebianGitRepository
+
         repodir = self.tmpdir.join('test_repo')
-        self.repo = gbp.deb.git.DebianGitRepository.create(repodir)
+        self.repo = repo_cls.create(repodir)
 
     def tearDown(self):
         context.teardown()
