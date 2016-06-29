@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for libvirt-daemon-system
+# postrm script for git-buildpackage
 #
 # see: dh_installdeb(1)
 
