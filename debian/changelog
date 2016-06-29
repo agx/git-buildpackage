@@ -1,3 +1,11 @@
+git-buildpackage (0.7.5~bpo8+1) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports (Closes: #826344).
+  * [e29cd4d] Opencode bash completion installation since the
+    dh_bash-completion in Jessie still puts files to /etc
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 29 Jun 2016 16:14:16 +0200
+
 git-buildpackage (0.7.5) unstable; urgency=medium
 
   [ Dmitry Teselkin ]
