@@ -191,7 +191,7 @@ def do_snapshot(changelog, repo, next_snapshot):
     cp['MangledVersion'] = "%s~%s" % (release, suffix)
 
     mangle_changelog(changelog, cp, commit)
-    return snapshot, commit
+    return snapshot, commit, cp['MangledVersion']
 
 def parse_commit(repo, commitid, opts, last_commit=False):
     """Parse a commit and return message, author, and author email"""
@@ -527,8 +527,8 @@ def main(argv):
             do_release(changelog, repo, cp, use_git_author=options.use_git_author,
                        dch_options=dch_options)
         elif options.snapshot:
-            (snap, version) = do_snapshot(changelog, repo, options.snapshot_number)
-            gbp.log.info("Changelog has been prepared for snapshot #%d at %s" % (snap, version))
+            (snap, commit, version) = do_snapshot(changelog, repo, options.snapshot_number)
+            gbp.log.info("Changelog %s (snapshot #%d) prepared up to %s" % (version, snap, commit[:7]))
 
         if editor_cmd:
             gbpc.Command(editor_cmd, ["debian/changelog"])()
@@ -541,7 +541,7 @@ def main(argv):
             # Commit the changes to the changelog file
             msg = changelog_commit_msg(options, version)
             repo.commit_files([changelog], msg)
-            gbp.log.info("Changelog has been committed for version %s" % version)
+            gbp.log.info("Changelog committed for version %s" % version)
 
     except (gbpc.CommandExecFailed,
             GbpError,
