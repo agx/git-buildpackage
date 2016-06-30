@@ -341,7 +341,6 @@
     <para>
       <xref linkend="man.gbp.buildpackage.rpm">,
       <xref linkend="man.gbp.import.srpm">,
-      <xref linkend="man.gbp.import.orig.rpm">,
       <xref linkend="man.gbp.conf">,
       &man.seealso.common;
       <ulink url="https://honk.sigxcpu.org/cl2vcs">

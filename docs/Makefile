@@ -13,8 +13,8 @@ MAN1S = \
         gbp-pq            \
         gbp-pull          \
         gbp-buildpackage-rpm \
-        gbp-import-srpm \
-        gbp-pq-rpm \
+        gbp-import-srpm   \
+        gbp-pq-rpm        \
         gbp-rpm-ch        \
         $(NULL)
 
