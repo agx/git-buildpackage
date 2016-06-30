@@ -10,6 +10,8 @@ gbp.egg-info/
 nosetests.xml
 *~
 *.sw?
+\#*#
+.#*
 
 docs/*.1
 docs/*.5
