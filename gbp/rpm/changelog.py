@@ -46,7 +46,7 @@ class _ChangelogHeader(object):
     def __str__(self):
         keys = dict(self._data)
         keys['time'] = self._data['time'].strftime(
-                            self._pkgpolicy.Changelog.header_time_format)
+            self._pkgpolicy.Changelog.header_time_format)
         try:
             return self._pkgpolicy.Changelog.header_format % keys + '\n'
         except KeyError as err:
@@ -92,7 +92,6 @@ class _ChangelogSection(object):
         self.header = _ChangelogHeader(pkgpolicy, *args, **kwargs)
         self.entries = []
         self._trailer = '\n'
-
 
     def __str__(self):
         text = str(self.header)
@@ -180,7 +179,7 @@ class ChangelogParser(object):
             raise ChangelogError("Unable to parse changelog header: %s" % text)
         try:
             time = datetime.datetime.strptime(match.group('ch_time'),
-                                             "%a %b %d %Y")
+                                              "%a %b %d %Y")
         except ValueError:
             raise ChangelogError("Unable to parse changelog header: invalid "
                                  "timestamp '%s'" % match.group('ch_time'))
@@ -225,7 +224,6 @@ class ChangelogParser(object):
 
         return entries
 
-
     def parse_section(self, text):
         """Parse one section"""
         # Check that the first line(s) look like a changelog header
@@ -243,4 +241,3 @@ class ChangelogParser(object):
             section.append_entry(entry)
 
         return section
-

@@ -21,6 +21,7 @@ import re
 from gbp.pkg import PkgPolicy, parse_archive_filename
 from gbp.scripts.common.pq import parse_gbp_commands
 
+
 class RpmPkgPolicy(PkgPolicy):
     """Packaging policy for RPM"""
 
@@ -35,15 +36,15 @@ class RpmPkgPolicy(PkgPolicy):
 
     # Regexp for checking the validity of package name
     packagename_re = re.compile("^[%s][%s%s]+$" %
-                                        (alnum, alnum, name_whitelist_chars))
+                                (alnum, alnum, name_whitelist_chars))
     packagename_msg = ("Package names must be at least two characters long, "
                        "start with an alphanumeric and can only contain "
                        "alphanumerics or characters in %s" %
-                            list(name_whitelist_chars))
+                       list(name_whitelist_chars))
 
     # Regexp for checking the validity of package (upstream) version
     upstreamversion_re = re.compile("^[0-9][%s%s]*$" %
-                                        (alnum, version_whitelist_chars))
+                                    (alnum, version_whitelist_chars))
     upstreamversion_msg = ("Upstream version numbers must start with a digit "
                            "and can only containg alphanumerics or characters "
                            "in %s" % list(version_whitelist_chars))
@@ -77,7 +78,7 @@ class RpmPkgPolicy(PkgPolicy):
 
         # Regexps for splitting/parsing the changelog section (of
         # Tizen / Fedora style changelogs)
-        section_match_re =  r'^\*'
+        section_match_re = r'^\*'
         section_split_re = r'^\*\s*(?P<ch_header>\S.*?)$\n(?P<ch_body>.*)'
         header_split_re = r'(?P<ch_time>\S.*\s[0-9]{4})\s+(?P<ch_name>\S.*$)'
         header_name_split_re = r'(?P<name>[^<]*)\s+<(?P<email>[^>]+)>((\s*-)?\s+(?P<revision>\S+))?$'
@@ -87,7 +88,6 @@ class RpmPkgPolicy(PkgPolicy):
         header_format = "* %(time)s %(name)s <%(email)s> %(revision)s"
         header_time_format = "%a %b %d %Y"
         header_rev_format = "%(version)s"
-
 
     class ChangelogEntryFormatter(object):
         """Helper class for generating changelog entries from git commits"""
@@ -123,7 +123,7 @@ class RpmPkgPolicy(PkgPolicy):
                     tag = match.group('tag')
                     ids_str = match.group('ids')
                     bug_ids = [bug_id.strip() for bug_id in
-                                bug_id_re.findall(ids_str)]
+                               bug_id_re.findall(ids_str)]
                     if tag in tags:
                         tags[tag] += bug_ids
                     else:
@@ -186,7 +186,7 @@ class RpmPkgPolicy(PkgPolicy):
                 text = ["- %s" % subject]
 
             # Add all non-filtered-out lines from commit message, unless 'short'
-            if (kwargs['full'] or 'full' in cmds) and not 'short' in cmds:
+            if (kwargs['full'] or 'full' in cmds) and 'short' not in cmds:
                 # Add all non-blank body lines.
                 text.extend(["  " + line for line in body if line.strip()])
 
@@ -198,4 +198,3 @@ class RpmPkgPolicy(PkgPolicy):
                 text[-1] += bts_msg
 
             return text
-

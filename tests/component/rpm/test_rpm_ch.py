@@ -18,7 +18,7 @@
 
 import os
 import re
-from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 from gbp.scripts.rpm_ch import main as rpm_ch
 from gbp.git import GitRepository
@@ -34,6 +34,7 @@ def mock_ch(args):
 
     return rpm_ch(['arg0', '--packaging-branch=master',
                    '--spawn-editor=never'] + args)
+
 
 class TestRpmCh(RpmRepoTestBase):
     """Basic tests for git-rpm-ch"""
@@ -227,7 +228,7 @@ class TestRpmCh(RpmRepoTestBase):
                      'Signed-off-by:.*']), 0)
         commit_msg_body = repo.get_commit_info('HEAD')['body']
         full_msg = [line for line in commit_msg_body.splitlines() if
-                        (line and not line.startswith('Signed-off-by:'))]
+                    (line and not line.startswith('Signed-off-by:'))]
         content = self.read_file('packaging/gbp-test-native.changes')
         # New lines: header, 1 entry "header", filtered entry "body" from
         # commit message and one empty line
@@ -326,7 +327,7 @@ class TestRpmCh(RpmRepoTestBase):
 
     def test_commit_guessing_fail(self):
         """Test for failure of start commit guessing"""
-        repo = self.init_test_repo('gbp-test-native')
+        self.init_test_repo('gbp-test-native')
 
         # Add "very old" header to changelog
         with open('packaging/gbp-test-native.changes', 'w') as ch_fp:
@@ -335,4 +336,3 @@ class TestRpmCh(RpmRepoTestBase):
         # last changelog section
         eq_(mock_ch([]), 1)
         self._check_log(-1, "gbp:error: Couldn't determine starting point")
-
