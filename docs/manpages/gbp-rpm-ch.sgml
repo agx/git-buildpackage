@@ -21,7 +21,7 @@
     <cmdsynopsis>
       &gbp-rpm-ch;
       &man.common.options.synopsis;
-      <arg><option>--git-tmp-dir</option>=<replaceable>DIRECTORY</replaceable></arg>
+      <arg><option>--tmp-dir</option>=<replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--vendor</option>=<replaceable>VENDOR</replaceable></arg>
       <arg><option>--packaging-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
       <arg><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
