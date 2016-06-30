@@ -16,10 +16,26 @@
 #    <http://www.gnu.org/licenses/>
 """An RPM Changelog"""
 
+import locale
 import datetime
 import re
 
+from functools import wraps
+
 import gbp.log
+
+
+def c_locale(category):
+    def _decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            saved = locale.setlocale(category, None)
+            locale.setlocale(category, 'C')
+            ret = f(*args, **kwargs)
+            locale.setlocale(category, saved)
+            return ret
+        return wrapper
+    return _decorator
 
 
 class ChangelogError(Exception):
@@ -43,6 +59,7 @@ class _ChangelogHeader(object):
             return self._data[key]
         return None
 
+    @c_locale(locale.LC_TIME)
     def __str__(self):
         keys = dict(self._data)
         keys['time'] = self._data['time'].strftime(
@@ -171,6 +188,7 @@ class ChangelogParser(object):
         except IOError as err:
             raise ChangelogError("Unable to read changelog file: %s" % err)
 
+    @c_locale(locale.LC_TIME)
     def _parse_section_header(self, text):
         """Parse one changelog section header"""
         # Try to split out time stamp and "changelog name"
