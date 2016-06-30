@@ -187,13 +187,15 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag):
 
 def print_dsc(dsc):
     if dsc.native:
-        gbp.log.debug("Debian Native Package %s")
+        gbp.log.debug("Debian Native Package")
         gbp.log.debug("Version: %s" % dsc.upstream_version)
         gbp.log.debug("Debian tarball: %s" % dsc.tgz)
     else:
         gbp.log.debug("Upstream version: %s" % dsc.upstream_version)
         gbp.log.debug("Debian version: %s" % dsc.debian_version)
         gbp.log.debug("Upstream tarball: %s" % dsc.tgz)
+        if dsc.additional_tarballs:
+            gbp.log.debug("Additional tarballs: %s" % ", ".join(dsc.additional_tarballs.values()))
         if dsc.diff:
             gbp.log.debug("Debian patch: %s" % dsc.diff)
         if dsc.deb_tgz:
