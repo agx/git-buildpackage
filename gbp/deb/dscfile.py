@@ -97,14 +97,19 @@ class DscFile(object):
                 continue
         f.close()
 
+        # Source format 1.0 can have non-native packages without a Debian revision:
+        # e.g. http://snapshot.debian.org/archive/debian/20090801T192339Z/pool/main/l/latencytop/latencytop_0.5.dsc
+        if self.pkgformat == "1.0" and self.diff:
+            self.native = False
+        elif not self.native and not self.debian_version:
+            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
+
         if not self.pkg:
             raise GbpError("Cannot parse package name from '%s'" % self.dscfile)
         elif not self.tgz:
             raise GbpError("Cannot parse archive name from '%s'" % self.dscfile)
         if not self.upstream_version:
             raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
-        if not self.native and not self.debian_version:
-            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
         self.additional_tarballs = dict(add_tars)
 
     def _get_version(self):
@@ -112,7 +117,10 @@ class DscFile(object):
         if self.native:
             version += self.upstream_version
         else:
-            version += "%s-%s" % (self.upstream_version, self.debian_version)
+            if self.debian_version != '':
+                version += "%s-%s" % (self.upstream_version, self.debian_version)
+            else:   # possible in 1.0
+                version += "%s" % self.upstream_version
         return version
 
     version = property(_get_version)
