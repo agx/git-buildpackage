@@ -11,8 +11,9 @@ and
 
 This testcase creates this reposity:
 
-    - A repository at L{repo_dir} called I{repo}
+    - A repository at I{repo_dir} called I{repo}
 
+@undocumented: repo_dir test_data
 """
 
 from . import context

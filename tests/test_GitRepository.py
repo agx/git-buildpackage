@@ -5,10 +5,12 @@ Test L{gbp.git.GitRepository}
 
 This testcase creates several repositores:
 
-    - A repository at L{repo_dir} called I{repo}
-    - A bare repository at L{bare_dir} called I{bare}
-    - A clone of I{repo} below L{clone_dir} called I{clone}
-    - A mirror of I{repo} below L{mirror_clone_dir} called I{mirror}
+    - A repository at I{repo_dir} called I{repo}
+    - A bare repository at I{bare_dir} called I{bare}
+    - A clone of I{repo} below I{clone_dir} called I{clone}
+    - A mirror of I{repo} below I{mirror_clone_dir} called I{mirror}
+
+@undocumented: repo_dir bare_dir clone_dir mirror_clone_dir
 """
 
 from . import context
