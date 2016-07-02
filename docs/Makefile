@@ -28,6 +28,7 @@ VERSION_ENT=version.ent
 GBP_VERSION=../gbp/version.py
 DEB_VERSION=$(shell sed -ne 's/^gbp_version="\([.a-z0-9~-]\+\)"/\1/p' $(GBP_VERSION))
 CHANGELOG=../debian/changelog
+MAN_DATE=$(shell dpkg-parsechangelog -l ../debian/changelog -SDate | TZ=UTC LC_ALL=C date -f- +'%d %B %Y')
 
 # Stuff to build docs outside Debian
 HAVE_SGML2X ?= 1
@@ -50,12 +51,14 @@ BUILD_MAN_XREF_PAGES=$(patsubst %,buildxref/%,$(SGML_MANPAGES))
 
 buildxref/%.1 buildxref/%.5: man.%.sgml manpages/%.sgml
 	docbook2man -o buildxref $<
+	sed -i -r "s/\"[^\"]+\"/\"$(MAN_DATE)\"/3" $@
 
 manpage.refs: $(BUILD_MAN_XREF_PAGES)
 	cp buildxref/$@ $@
 
 %.1 %.5: manpage.refs
 	docbook2man -o . man.$*.sgml
+	sed -i -r "s/\"[^\"]+\"/\"$(MAN_DATE)\"/3" $@
 
 git-pbuilder.1: ../bin/git-pbuilder
 	pod2man $< $@
