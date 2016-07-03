@@ -72,9 +72,10 @@ class TestImportOrig(ComponentTestBase):
         ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
 
-        self._orig('2.8')
+        orig = self._orig('2.8')
+        ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
-                               tags=['debian/2.6-2', 'upstream/2.6'])
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
     def test_tag_exists(self):
         """Test that importing an already imported version fails"""
