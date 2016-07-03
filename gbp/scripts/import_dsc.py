@@ -41,19 +41,6 @@ class SkipImport(Exception):
     pass
 
 
-def generate_pristine_tarballs(repo, src, upstream_tree):
-    subdirs = src.additional_tarballs.keys()
-    main_tree = repo.tree_drop_dirs(upstream_tree, subdirs)
-
-    for dir, tarball in src.additional_tarballs.items():
-        subtree = repo.tree_get_dir(upstream_tree, dir)
-        if not subtree:
-            raise GbpError("No tree for '%s' found in '%s' to create pristine tar commit from" % (dir, upstream_tree))
-        gbp.log.debug("Creating pristine tar commit '%s' from '%s'" % (dir, subtree))
-        repo.pristine_tar.commit(tarball, subtree)
-    repo.pristine_tar.commit(src.tgz, main_tree)
-
-
 def download_source(pkg, dirs, unauth):
     opts = [ '--download-only' ]
     if unauth:
@@ -400,7 +387,9 @@ def main(argv):
                 if is_empty:
                     repo.create_branch(options.upstream_branch, commit)
                 if options.pristine_tar:
-                    generate_pristine_tarballs(repo, src, options.upstream_branch)
+                    repo.create_pristinetar_commits(options.upstream_branch,
+                                                    src.tgz,
+                                                    src.additional_tarballs.items())
             if (not repo.has_branch(options.debian_branch)
                 and (is_empty or options.create_missing_branches)):
                 repo.create_branch(options.debian_branch, commit)

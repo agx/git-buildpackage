@@ -21,6 +21,9 @@ from gbp.git import GitRepository, GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.format import format_str
 
+import gbp.log
+
+
 class DebianGitRepository(GitRepository):
     """A git repository that holds the source of a Debian package"""
 
@@ -198,5 +201,26 @@ class DebianGitRepository(GitRepository):
         @rtype: C{Bool}
         """
         return True if self.has_branch(self.pristine_tar_branch) else False
+
+    def create_pristinetar_commits(self, upstream_tree, tarball, component_tarballs):
+        """
+        Create pristine-tar commits for a package with main tarball tarball
+        and (optionl) component tarballs based on upstream_tree
+
+        @param tarball: path to main tarball
+        @param component_tarballs: C{list} of C{tuple}s of component
+            name and path to additional tarball
+        @param upstream_tree: the treeish in the git repo to create the commits against
+        """
+        components = [c for (c, t) in component_tarballs]
+        main_tree = self.tree_drop_dirs(upstream_tree, components)
+
+        for component, name in component_tarballs:
+            subtree = self.tree_get_dir(upstream_tree, component)
+            if not subtree:
+                raise GitRepositoryError("No tree for '%s' found in '%s' to create pristine tar commit from" % (component, upstream_tree))
+            gbp.log.debug("Creating pristine tar commit '%s' from '%s'" % (component, subtree))
+            self.pristine_tar.commit(name, subtree)
+        self.pristine_tar.commit(tarball, main_tree)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
