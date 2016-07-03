@@ -166,7 +166,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag):
         author = get_author_from_changelog(unpack_dir)
         committer = get_committer_from_author(author, options)
         commit = repo.commit_dir(unpack_dir,
-                                 "Imported Debian patch %s" % src.version,
+                                 "Import Debian patch %s" % src.version,
                                  branch = options.debian_branch,
                                  other_parents = parents,
                                  author=author,
@@ -386,7 +386,7 @@ def main(argv):
                 author = committer = {}
 
             commit = repo.commit_dir(upstream.unpacked,
-                                     "Imported %s" % msg,
+                                     "Import %s" % msg,
                                      branch,
                                      author=author,
                                      committer=committer)

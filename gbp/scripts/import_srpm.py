@@ -356,7 +356,7 @@ def main(argv):
                 src_vendor = "Native" if options.native else "Upstream"
                 msg = "%s version %s" % (src_vendor, spec.upstreamversion)
                 src_commit = repo.commit_dir(sources.unpacked,
-                        "Imported %s" % msg,
+                        "Import %s" % msg,
                         branch,
                         author=author,
                         committer=committer,
@@ -399,7 +399,7 @@ def main(argv):
 
             if options.orphan_packaging or not sources:
                 commit = repo.commit_dir(dirs['packaging_base'],
-                        "Imported %s" % msg,
+                        "Import %s" % msg,
                         branch,
                         author=author,
                         committer=committer,
@@ -417,7 +417,7 @@ def main(argv):
                     shutil.copy2(os.path.join(dirs['packaging'], fname),
                                  pkgsubdir)
                 commit = repo.commit_dir(sources.unpacked,
-                        "Imported %s" % msg,
+                        "Import %s" % msg,
                         branch,
                         other_parents=[src_commit],
                         author=author,
