@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006, 2007, 2011, 2012, 2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006, 2007, 2011, 2012, 2015, 2016 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -27,7 +27,7 @@ import pipes
 import time
 import gbp.command_wrappers as gbpc
 from gbp.deb.dscfile import DscFile
-from gbp.deb.upstreamsource import DebianUpstreamSource
+from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_subtarball
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
@@ -346,10 +346,9 @@ def main(argv):
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
         upstream = DebianUpstreamSource(src.tgz)
         upstream.unpack(dirs['tmp'], options.filters)
-        for tarball in src.additional_tarballs.values():
+        for (component, tarball) in src.additional_tarballs.items():
             gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball))
-            subtarball = DebianUpstreamSource(tarball)
-            subtarball.unpack(upstream.unpacked, options.filters)
+            unpack_subtarball(upstream.unpacked, component, tarball, options.filters)
 
         format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
         tag = repo.version_to_tag(format[0], src.upstream_version)

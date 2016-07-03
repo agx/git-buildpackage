@@ -1,6 +1,7 @@
 # vim: set fileencoding=utf-8 :
 #
 # (C) 2013 Intel Corporation <markus.lehtonen@linux.intel.com>
+# (C) 2016 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +19,11 @@
 
 from gbp.pkg import UpstreamSource
 from gbp.deb.policy import DebianPkgPolicy
+import gbp.command_wrappers
+
+import os
+import shutil
+import tempfile
 
 
 class DebianUpstreamSource(UpstreamSource):
@@ -26,3 +32,23 @@ class DebianUpstreamSource(UpstreamSource):
         super(DebianUpstreamSource, self).__init__(name,
                                                    unpacked,
                                                    DebianPkgPolicy)
+
+
+def unpack_subtarball(dest, component, tarball, filters):
+    """
+    Unpack the tarball I{tarball} into dest naming it I{component}.
+    Apply filters during unpack.
+    """
+    olddir = os.path.abspath(os.path.curdir)
+    tmpdir = None
+    try:
+        tmpdir = os.path.abspath(tempfile.mkdtemp(dir=os.path.join(dest, '..')))
+        source = DebianUpstreamSource(tarball)
+        source.unpack(tmpdir, filters)
+
+        dest = os.path.join(dest, component)
+        shutil.move(source.unpacked, dest)
+    finally:
+        os.chdir(olddir)
+        if tmpdir is not None:
+            gbp.command_wrappers.RemoveTree(tmpdir)()
