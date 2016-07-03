@@ -117,7 +117,7 @@ class Command(object):
         If run quietly it will not print an error message via the
         L{gbp.log} logging API.
 
-        Wether the command prints anything to stdout/stderr depends on
+        Whether the command prints anything to stdout/stderr depends on
         the I{capture_stderr}, I{capture_stdout} instance variables.
 
         All errors will be reported as subclass of the

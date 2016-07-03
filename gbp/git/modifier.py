@@ -141,7 +141,7 @@ class GitModifier(object):
         >>> g.get_committer_env()['GIT_COMMITTER_NAME']
         'Joey Ramone'
 
-        @return: Commiter information suitable to use as environment variables
+        @return: Committer information suitable to use as environment variables
         @rtype: C{dict}
         """
         return self._get_env('committer')
