@@ -179,7 +179,7 @@
           <para>
           use this format string for the commit message when importing upstream
           versions, default is
-          <replaceable>Imported Upstream version %(version)s</replaceable>
+          <replaceable>New upstream version %(version)s</replaceable>
           </para>
         </listitem>
       </varlistentry>
