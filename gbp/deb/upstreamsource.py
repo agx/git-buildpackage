@@ -46,8 +46,10 @@ def unpack_subtarball(dest, component, tarball, filters):
         source = DebianUpstreamSource(tarball)
         source.unpack(tmpdir, filters)
 
-        dest = os.path.join(dest, component)
-        shutil.move(source.unpacked, dest)
+        newdest = os.path.join(dest, component)
+        if os.path.exists(newdest):
+            shutil.rmtree(newdest)
+        shutil.move(source.unpacked, newdest)
     finally:
         os.chdir(olddir)
         if tmpdir is not None:
