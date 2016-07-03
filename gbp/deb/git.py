@@ -191,7 +191,7 @@ class DebianGitRepository(GitRepository):
 
     def has_pristine_tar_branch(self):
         """
-        Wheter the repo has a I{pristine-tar} branch.
+        Whether the repo has a I{pristine-tar} branch.
 
         @return: C{True} if the repo has pristine-tar commits already, C{False}
             otherwise

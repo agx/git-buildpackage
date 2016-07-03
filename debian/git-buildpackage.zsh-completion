@@ -76,7 +76,7 @@ _gbp-buildpackage() {
 	__gbp_tag_format_options git-
 	__gbp_tag_sign_options git-
 	_arguments \
-	  '--git-ignore-new[build with uncommited changes in the source tree]' \
+	  '--git-ignore-new[build with uncommitted changes in the source tree]' \
 	  '--git-no-ignore-new[negates --git-ignore-new]' \
 	  '--git-tag[create a tag after a successful build]' \
 	  '--git-tag-only[do not build, only tag and run the posttag hook]' \
@@ -321,7 +321,7 @@ _gbp-buildpackage() {
 	__gbp_tag_format_options git-
 	__gbp_tag_sign_options git-
 	_arguments \
-	  '--git-ignore-new[build with uncommited changes in the source tree]' \
+	  '--git-ignore-new[build with uncommitted changes in the source tree]' \
 	  '--git-no-ignore-new[negates --git-ignore-new]' \
 	  '--git-tag[create a tag after a successful build]' \
 	  '--git-tag-only[do not build, only tag and run the posttag hook]' \

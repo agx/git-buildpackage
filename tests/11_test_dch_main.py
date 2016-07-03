@@ -163,7 +163,7 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIsNotNone(re.search(snap_mark + header2.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
         self.assertIn("""  * added debian/compat\n""", lines)
-        # First snapshot entry must have disapear
+        # First snapshot entry must have disappeared
         self.assertNotIn(header1.group(0) + "\n", lines)
         # But its changelog must be included in the new one
         self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
@@ -272,7 +272,7 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIsNotNone(re.search(snap_mark + header2.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
         self.assertIn("""  * added debian/compat\n""", lines)
-        # First snapshot entry must have disapear
+        # First snapshot entry must have disappeared
         self.assertNotIn(header1.group(0) + "\n", lines)
         # But its changelog must be included in the new one
         self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)

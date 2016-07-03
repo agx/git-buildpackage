@@ -264,7 +264,7 @@ class GitRepository(object):
 
     @property
     def bare(self):
-        """Wheter this is a bare repository"""
+        """Whether this is a bare repository"""
         return self._bare
 
     @property
@@ -440,7 +440,7 @@ class GitRepository(object):
         @type commit: C{str}
         @param verbose: whether to print a summary after the merge
         @type verbose: C{bool}
-        @param edit: wheter to invoke an editor to edit the merge message
+        @param edit: whether to invoke an editor to edit the merge message
         @type edit: C{bool}
         """
         args = GitArgs()
@@ -1440,7 +1440,7 @@ class GitRepository(object):
                     cur = None
                 else:
                     raise
-        else: # emtpy repo
+        else: # empty repo
             cur = None
             branch = 'master'
 

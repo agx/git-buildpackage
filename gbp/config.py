@@ -220,7 +220,7 @@ class GbpOptionParser(OptionParser):
              'meta-closes-bugnum':
                   "Meta bug number format, default is '%(meta-closes-bugnum)s'",
              'ignore-new':
-                  "Build with uncommited changes in the source tree, default is '%(ignore-new)s'",
+                  "Build with uncommitted changes in the source tree, default is '%(ignore-new)s'",
              'ignore-branch':
                   ("Build although debian-branch != current branch, "
                    "default is '%(ignore-branch)s'"),
@@ -303,7 +303,7 @@ class GbpOptionParser(OptionParser):
                    "but look TIME_MACHINE commits back, "
                    "default is '%(time-machine)d'"),
              'pbuilder-autoconf':
-                  ("Wheter to configure pbuilder automatically, "
+                  ("Whether to configure pbuilder automatically, "
                    "default is '%(pbuilder-autoconf)s'"),
              'pbuilder-options':
                   ("Options to pass to pbuilder, "

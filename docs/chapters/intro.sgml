@@ -87,7 +87,7 @@
 	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
 	url="http://git.debian.org/">git.debian.org</ulink>; this can also be
-	automatized with &gbp-buildpackage;'s <option>post-tag</option>
+	automated with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
 </sect1>
 

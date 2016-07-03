@@ -174,7 +174,7 @@ class Uscan(object):
                              cwd=self._dir,
                              stdout=subprocess.PIPE)
         out = p.communicate()[0]
-        # uscan exits with 1 in case of uptodate and when an error occured.
+        # uscan exits with 1 in case of uptodate and when an error occurred.
         # Don't fail in the uptodate case:
         self._parse_uptodate(out)
         if not self.uptodate:

@@ -329,7 +329,7 @@ class TestGbpRpm(RpmRepoTestBase):
         eq_(len(repo.get_commits(until='pristine-tar')), 2)
         shutil.rmtree('../rpmbuild')
 
-        # Second time no pristine-tar should not be commited
+        # Second time no pristine-tar should not be committed
         eq_(mock_gbp(['--git-pristine-tar-commit']), 0)
         eq_(len(repo.get_commits(until='pristine-tar')), 2)
 

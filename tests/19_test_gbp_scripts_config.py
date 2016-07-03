@@ -70,7 +70,7 @@ class TestGbpConfigCommand(unittest.TestCase):
         self.assertEqual(ret, 0)
 
     def test_print_cmd_single_value_override(self):
-        """Can we fetch a single configuration value that is overriden by config"""
+        """Can we fetch a single configuration value that is overridden by config"""
         printstub = self.SingleValuePrintStub()
         query = 'config.color-scheme'
         ret = gbp.scripts.config.print_cmd_values(query, printstub)
