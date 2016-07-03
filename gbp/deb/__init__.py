@@ -80,7 +80,7 @@ def parse_changelog_repo(repo, branch, filename):
     return ChangeLog(repo.show(sha))
 
 
-def orig_file(cp, compression, subtarball=None):
+def orig_file(cp, compression, component=None):
     """
     The name of the orig file belonging to changelog cp
 
@@ -88,13 +88,13 @@ def orig_file(cp, compression, subtarball=None):
     'foo_1.0.orig.tar.bz2'
     >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz")
     'bar_0.0~git1234.orig.tar.xz'
-    >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz", subtarball="sub1")
+    >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz", component="sub1")
     'bar_0.0~git1234.orig-sub1.tar.xz'
     """
     return DebianPkgPolicy.build_tarball_name(cp['Source'],
                                               cp['Upstream-Version'],
                                               compression,
-                                              subtarball=subtarball)
+                                              component=component)
 
 
 def get_arch():

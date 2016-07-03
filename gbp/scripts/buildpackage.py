@@ -1,4 +1,3 @@
-
 # vim: set fileencoding=utf-8 :
 #
 # (C) 2006-2016 Guido Günther <agx@sigxcpu.org>
@@ -45,14 +44,14 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
 from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
 #{ upstream tarball preparation
-def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules, subtarball=None):
+def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules, component=None):
     "create a compressed orig tarball in output_dir using git_archive"
     try:
         comp_opts = compressor_opts[comp_type][0]
     except KeyError:
         raise GbpError("Unsupported compression type '%s'" % comp_type)
 
-    output = os.path.join(output_dir, du.orig_file(cp, comp_type, subtarball=subtarball))
+    output = os.path.join(output_dir, du.orig_file(cp, comp_type, component=component))
     prefix = "%s-%s" % (cp['Source'], cp['Upstream-Version'])
 
     try:
@@ -89,8 +88,8 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
                                         options.tarball_dir)
 
     orig_files = [du.orig_file(cp, options.comp_type)]
-    if options.subtarballs:
-        orig_files += [du.orig_file(cp, options.comp_type, sub) for sub in options.subtarballs]
+    if options.components:
+        orig_files += [du.orig_file(cp, options.comp_type, c) for c in options.components]
 
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
@@ -253,12 +252,12 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
                          repo.pristine_tar.branch)
 
         # Make sure the upstream tree exists, it might not be there in
-        # case of subtarballs since we don't keep a ref to it
-        if options.subtarballs:
+        # case of components since we don't keep a ref to it
+        if options.components:
             try:
                 upstream_tag = repo.version_to_tag(options.upstream_tag, cp.upstream_version)
                 tree_name = "%s^{tree}" % upstream_tag
-                repo.tree_drop_dirs(tree_name, options.subtarballs)
+                repo.tree_drop_dirs(tree_name, options.components)
             except GitRepositoryError:
                 raise GbpError("Couldn't find upstream tree '%s' to create orig tarball via pristine-tar" % tree_name)
 
@@ -267,12 +266,12 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
                                        cp.upstream_version,
                                        options.comp_type,
                                        output_dir)
-            for subtarball in options.subtarballs:
+            for component in options.components:
                 repo.pristine_tar.checkout(cp.name,
                                            cp.upstream_version,
                                            options.comp_type,
                                            output_dir,
-                                           subtarball=subtarball)
+                                           component=component)
             return True
         except CommandExecFailed:
             if options.pristine_tar_commit:
@@ -321,26 +320,26 @@ def git_archive_build_orig(repo, cp, output_dir, options):
                                             upstream_tree))
     gbp.log.debug("Building upstream tarball with compression '%s -%s'" %
                   (options.comp_type, options.comp_level))
-    main_tree = repo.tree_drop_dirs(upstream_tree, options.subtarballs)
+    main_tree = repo.tree_drop_dirs(upstream_tree, options.components)
     if not git_archive(repo, cp, output_dir, main_tree,
                        options.comp_type,
                        options.comp_level,
                        options.with_submodules):
         raise GbpError("Cannot create upstream tarball at '%s'" % output_dir)
-    for subtarball in options.subtarballs:
-        subtree = repo.tree_get_dir(upstream_tree, subtarball)
+    for component in options.components:
+        subtree = repo.tree_get_dir(upstream_tree, component)
         if not subtree:
-            raise GbpError("No tree for '%s' found in '%s' to create subtarball from" % (subtarball, upstream_tree))
-        gbp.log.info("Creating subtarball '%s' from '%s'" % (du.orig_file(cp,
-                                                                          options.comp_type,
-                                                                          subtarball=subtarball),
-                                                             subtree))
+            raise GbpError("No tree for '%s' found in '%s' to create additional tarball from" % (component, upstream_tree))
+        gbp.log.info("Creating additional tarball '%s' from '%s'" % (du.orig_file(cp,
+                                                                                  options.comp_type,
+                                                                                  component=component),
+                                                                     subtree))
         if not git_archive(repo, cp, output_dir, subtree,
                            options.comp_type,
                            options.comp_level,
                            options.with_submodules,
-                           subtarball=subtarball):
-            raise GbpError("Cannot create upstream component tarball %s at '%s'" % (subtarball, output_dir))
+                           component=component):
+            raise GbpError("Cannot create additional tarball %s at '%s'" % (component, output_dir))
     return upstream_tree
 
 
@@ -544,8 +543,8 @@ def build_parser(name, prefix=None):
                       help="Compression type, default is '%(compression)s'")
     orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
                       help="Compression level, default is '%(compression-level)s'")
-    orig_group.add_option("--git-subtarball", action="append", metavar='SUBTARBALL',
-                          dest="subtarballs", help="subtarsball to generate, can be given multiple times", default=[])
+    orig_group.add_option("--git-component", action="append", metavar='COMPONENT',
+                          dest="components", help="subtarsball to generate, can be given multiple times", default=[])
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
@@ -611,8 +610,8 @@ def parse_args(argv, prefix):
         gbp.log.warning("--git-dont-purge is depreceted, use --git-no-purge instead")
         options.purge = False
 
-    if options.subtarballs and options.pristine_tar_commit:
-        gbp.log.warning("Subtarballs specified, pristine-tar-commit not yet supported - disabling it.")
+    if options.components and options.pristine_tar_commit:
+        gbp.log.warning("Components specified, pristine-tar-commit not yet supported - disabling it.")
         options.pristine_tar_commit = False
 
     return options, args, dpkg_args

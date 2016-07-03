@@ -43,7 +43,7 @@ class DebianPristineTar(PristineTar):
 
         return super(DebianPristineTar, self).has_commit(name_regexp)
 
-    def checkout(self, package, version, comp_type, output_dir, subtarball=None):
+    def checkout(self, package, version, comp_type, output_dir, component=None):
         """
         Checkout the orig tarball for package I{package} of I{version} and
         compression type I{comp_type} to I{output_dir}
@@ -61,6 +61,6 @@ class DebianPristineTar(PristineTar):
                                                   version,
                                                   comp_type,
                                                   output_dir,
-                                                  subtarball=subtarball)
+                                                  component=component)
         super(DebianPristineTar, self).checkout(name)
 

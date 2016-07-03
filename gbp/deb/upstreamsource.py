@@ -34,7 +34,7 @@ class DebianUpstreamSource(UpstreamSource):
                                                    DebianPkgPolicy)
 
 
-def unpack_subtarball(dest, component, tarball, filters):
+def unpack_component_tarball(dest, component, tarball, filters):
     """
     Unpack the tarball I{tarball} into dest naming it I{component}.
     Apply filters during unpack.

@@ -112,7 +112,7 @@ class TestImportDsc(ComponentTestBase):
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
         dsc = DscFile.parse(dscfile)
-        # Check if we can rebuild the tarball and subtarball
+        # Check if we can rebuild the tarball and component
         ptars = [('hello-debhelper_2.8.orig.tar.gz', 'pristine-tar', '', dsc.tgz),
                  ('hello-debhelper_2.8.orig-foo.tar.gz', 'pristine-tar^', 'foo', dsc.additional_tarballs['foo'])]
 
@@ -121,7 +121,7 @@ class TestImportDsc(ComponentTestBase):
         for f, w, s, o in ptars:
             eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
             old = self.hash_file(o)
-            p.checkout('hello-debhelper', '2.8', 'gzip', outdir, subtarball=s)
+            p.checkout('hello-debhelper', '2.8', 'gzip', outdir, component=s)
             new = self.hash_file(os.path.join(outdir, f))
             eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
                 (f, old, new))

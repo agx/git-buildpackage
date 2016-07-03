@@ -52,7 +52,7 @@
       <arg><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-compression=</option><replaceable>TYPE</replaceable></arg>
       <arg><option>--git-compression-level=</option><replaceable>LEVEL</replaceable></arg>
-      <arg><option>--git-subtarball=</option><replaceable>SUBTARBALL</replaceable></arg>
+      <arg><option>--git-component=</option><replaceable>component</replaceable></arg>
       <arg><option>--git-export-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-export=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
@@ -575,12 +575,12 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-subtarball=</option><replaceable>SUBTARBALL</replaceable>
+        <term><option>--git-component=</option><replaceable>COMPONENT</replaceable>
         </term>
         <listitem>
           <para>
 	    When generating tarballs create an additional original
-	    tarball of directory <replaceable>SUBTARBALL</replaceable>
+	    tarball of directory <replaceable>COMPONENT</replaceable>
 	    in the source tree. Using additional original tarballs is
 	    a feature of the 3.0 (quilt) source format. See
 	    the <command>dpkg-source</command> manpage for details. Note that the

@@ -106,7 +106,7 @@ class TestBuildpackage(ComponentTestBase):
                                          "GBP_BRANCH",
                                          "GBP_SHA1"])
 
-    def test_subtarball_generation(self):
+    def test_component_generation(self):
         """Test that generating tarball and additional tarball works without pristine-tar"""
         pkg = 'hello-debhelper'
         dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0-additional-tarballs')
@@ -120,7 +120,7 @@ class TestBuildpackage(ComponentTestBase):
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         ret = buildpackage(['arg0',
-                            '--git-subtarball=foo',
+                            '--git-component=foo',
                             '--git-no-pristine-tar',
                             '--git-posttag=printenv > posttag.out',
                             '--git-builder=touch builder-run.stamp',
@@ -129,7 +129,7 @@ class TestBuildpackage(ComponentTestBase):
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
-    def test_pristinetar_subtarball_generation(self):
+    def test_pristinetar_component_generation(self):
         """Test that generating tarball and additional tarball works with pristine-tar"""
         pkg = 'hello-debhelper'
         dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0-additional-tarballs')
@@ -143,7 +143,7 @@ class TestBuildpackage(ComponentTestBase):
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         ret = buildpackage(['arg0',
-                            '--git-subtarball=foo',
+                            '--git-component=foo',
                             '--git-pristine-tar',
                             '--git-posttag=printenv > posttag.out',
                             '--git-builder=touch builder-run.stamp',

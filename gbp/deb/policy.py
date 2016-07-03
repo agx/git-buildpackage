@@ -62,7 +62,7 @@ class DebianPkgPolicy(PkgPolicy):
     debianversion_chars = 'a-zA-Z\\d.~+-'
 
     @staticmethod
-    def build_tarball_name(name, version, compression, dir=None, subtarball=None):
+    def build_tarball_name(name, version, compression, dir=None, component=None):
         """
         Given a source package's I{name}, I{version} and I{compression}
         return the name of the corresponding upstream tarball.
@@ -71,7 +71,7 @@ class DebianPkgPolicy(PkgPolicy):
         'foo_1.0.orig.tar.bz2'
         >>> DebianPkgPolicy.build_tarball_name('bar', '0.0~git1234', 'xz')
         'bar_0.0~git1234.orig.tar.xz'
-        >>> DebianPkgPolicy.build_tarball_name('bar', '0.0~git1234', 'xz', subtarball="foo")
+        >>> DebianPkgPolicy.build_tarball_name('bar', '0.0~git1234', 'xz', component="foo")
         'bar_0.0~git1234.orig-foo.tar.xz'
 
         @param name: the source package's name
@@ -86,7 +86,7 @@ class DebianPkgPolicy(PkgPolicy):
         @rtype: C{str}
         """
         ext = compressor_opts[compression][1]
-        sub = '-{0}'.format(subtarball) if subtarball else ''
+        sub = '-{0}'.format(component) if component else ''
         tarball = "%s_%s.orig%s.tar.%s" % (name, version, sub, ext)
         if dir:
             tarball = os.path.join(dir, tarball)

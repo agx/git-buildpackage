@@ -27,7 +27,7 @@ import pipes
 import time
 import gbp.command_wrappers as gbpc
 from gbp.deb.dscfile import DscFile
-from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_subtarball
+from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
@@ -335,7 +335,7 @@ def main(argv):
         upstream.unpack(dirs['tmp'], options.filters)
         for (component, tarball) in src.additional_tarballs.items():
             gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball))
-            unpack_subtarball(upstream.unpacked, component, tarball, options.filters)
+            unpack_component_tarball(upstream.unpacked, component, tarball, options.filters)
 
         format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
         tag = repo.version_to_tag(format[0], src.upstream_version)
