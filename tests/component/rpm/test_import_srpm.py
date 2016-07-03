@@ -274,7 +274,7 @@ class TestDownloadImport(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
 
     def test_nonexistent_url(self):
-        """Test graceful failure when trying download from nonexistent url"""
+        """Test graceful failure when trying download from non-existent url"""
         srpm = 'http://honk.sigxcpu.org/does/not/exist'
         # Do not connect to remote, mock failure
         import_srpm.urlopen = Mock()

@@ -708,9 +708,9 @@ def test_create_bare():
     (True, '')
     """
 
-def test_nonexistant():
+def test_nonexistent():
     """
-    Check that accessing a non existant repository fails.
+    Check that accessing a non-existent repository fails.
 
     Methods tested:
          - L{gbp.git.GitRepository.__init__}

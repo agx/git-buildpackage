@@ -217,7 +217,7 @@ def test_parse_sections():
 
 def test_add_section():
     """
-    Test if we can add a section to an existant changelog
+    Test if we can add a section to an existing changelog
 
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}
@@ -263,7 +263,7 @@ def test_add_section():
 
 def test_add_entry():
     """
-    Test if we can add an entry to an existant changelog
+    Test if we can add an entry to an existing changelog
 
     Methods tested:
          - L{gbp.deb.changelog.ChangeLog.__init__}

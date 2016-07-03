@@ -128,7 +128,7 @@ def main(argv):
         upstream_sha1 = repo.rev_parse("%s^{}" % upstream_tag)
 
     if not repo.verify_tag(env.tag):
-        print("Not pushing nonexistent or unsigned tag '%s'." % env.tag, file=sys.stderr)
+        print("Not pushing non-existent or unsigned tag '%s'." % env.tag, file=sys.stderr)
         return 0
 
     for dest in dests:

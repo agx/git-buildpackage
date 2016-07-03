@@ -94,8 +94,8 @@ class TestGbpConfigCommand(unittest.TestCase):
             self.assertEquals(printstub.result['%s.color' % cmd], 'auto')
             self.assertEqual(ret, 0)
 
-    def test_unexistent_cmds(self):
-        """Unexisting commands should print no values"""
+    def test_nonexistent_cmds(self):
+        """Non-existing commands should print no values"""
         for cmd in ["import_dscs", "supercommand"]:
             printstub = self.AllValuesPrintStub(cmd)
             ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
