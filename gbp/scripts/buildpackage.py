@@ -643,8 +643,6 @@ def main(argv):
     except GitRepositoryError:
         gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
-    else:
-        repo_dir = os.path.abspath(os.path.curdir)
 
     try:
         Command(options.cleaner, shell=True)()
@@ -715,11 +713,9 @@ def main(argv):
                 if not source.is_native() and options.postexport:
                     prepare_upstream_tarball(repo, source.changelog, options, tarball_dir,
                                              output_dir)
-
-            if options.export_dir:
                 build_dir = export_dir
             else:
-                build_dir = repo_dir
+                build_dir = repo.path
 
             if options.prebuild:
                 Hook('Prebuild', options.prebuild,
