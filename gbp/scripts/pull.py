@@ -159,6 +159,9 @@ def main(argv):
             Command("gbp-pq")(["import"])
 
         repo.set_branch(current)
+    except KeyboardInterrupt:
+        retval = 1
+        gbp.log.err("Interrupted. Aborting.")
     except CommandExecFailed:
         retval = 1
     except (GbpError, GitRepositoryError) as err:

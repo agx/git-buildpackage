@@ -767,6 +767,9 @@ def main(argv):
                                    'GBP_BRANCH': branch or '(no branch)',
                                    'GBP_SHA1': sha})
                      )()
+    except KeyboardInterrupt:
+        retval = 1
+        gbp.log.err("Interrupted. Aborting.")
     except CommandExecFailed:
         retval = 1
     except (GbpError, GitRepositoryError) as err:

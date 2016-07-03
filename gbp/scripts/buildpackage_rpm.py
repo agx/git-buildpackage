@@ -622,7 +622,9 @@ def main(argv):
                                    'GBP_SHA1': sha})()
         else:
             vcs_info = get_vcs_info(repo, tree)
-
+    except KeyboardInterrupt:
+        retval = 1
+        gbp.log.err("Interrupted. Aborting.")
     except CommandExecFailed:
         retval = 1
     except GitRepositoryError as err:

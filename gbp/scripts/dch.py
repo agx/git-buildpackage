@@ -542,7 +542,9 @@ def main(argv):
             msg = changelog_commit_msg(options, version)
             repo.commit_files([changelog], msg)
             gbp.log.info("Changelog committed for version %s" % version)
-
+    except KeyboardInterrupt:
+        ret = 1
+        gbp.log.err("Interrupted. Aborting.")
     except (gbpc.CommandExecFailed,
             GbpError,
             GitRepositoryError,

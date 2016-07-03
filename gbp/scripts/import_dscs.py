@@ -154,7 +154,9 @@ def main(argv):
         for dsc in dscs[1:]:
             if importer.importdsc(dsc):
                 raise GbpError("Failed to import '%s'" % dscs[0].dscfile)
-
+    except KeyboardInterrupt:
+        ret = 1
+        gbp.log.err("Interrupted. Aborting.")
     except (GbpError, gbpc.CommandExecFailed, GitRepositoryError) as err:
         if str(err):
             gbp.log.err(err)

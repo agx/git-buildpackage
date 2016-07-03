@@ -443,6 +443,9 @@ def main(argv):
             apply_single_patch(repo, current, patch, fallback_author=None)
         elif action == "switch":
             switch_pq(repo, current)
+    except KeyboardInterrupt:
+        retval = 1
+        gbp.log.err("Interrupted. Aborting.")
     except CommandExecFailed:
         retval = 1
     except GitRepositoryError as err:

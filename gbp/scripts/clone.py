@@ -119,7 +119,9 @@ def main(argv):
                         repo.create_branch(branch, remote)
 
         repo.set_branch(options.debian_branch)
-
+    except KeyboardInterrupt:
+        retval = 1
+        gbp.log.err("Interrupted. Aborting.")
     except GitRepositoryError as err:
         gbp.log.err("Git command failed: %s" % err)
         retval = 1
