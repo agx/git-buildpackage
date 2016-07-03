@@ -310,8 +310,8 @@ class UpstreamSource(object):
     def unpack(self, dir, filters=[]):
         """
         Unpack packed upstream sources into a given directory
-        and determine the toplevel of the source tree filtering
-        out files specified by filters.
+        (filtering out files specified by filters) and determine the
+        toplevel of the source tree.
         """
         if self.is_dir():
             raise GbpError("Cannot unpack directory %s" % self.path)
