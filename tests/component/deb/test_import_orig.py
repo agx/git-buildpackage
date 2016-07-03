@@ -20,7 +20,8 @@ import os
 
 from mock import patch, DEFAULT
 
-from tests.component import ComponentTestBase
+from tests.component import (ComponentTestBase,
+                             ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
 from gbp.scripts.import_dsc import main as import_dsc
@@ -65,11 +66,10 @@ class TestImportOrig(ComponentTestBase):
                                tags=['upstream/2.6'])
 
     def test_update(self):
-        repo = GitRepository.create(self.pkg)
-        os.chdir(self.pkg)
-
         dsc = self._dsc('2.6-2')
         ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
+        repo = ComponentTestGitRepository(self.pkg)
+        os.chdir(self.pkg)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
 
         orig = self._orig('2.8')
