@@ -115,7 +115,7 @@ class GbpOptionParser(OptionParser):
                  'debian-tag'      : 'debian/%(version)s',
                  'debian-tag-msg'  : '%(pkg)s Debian release %(version)s',
                  'upstream-tag'    : 'upstream/%(version)s',
-                 'import-msg'      : 'Imported Upstream version %(version)s',
+                 'import-msg'      : 'Import upstream version %(version)s',
                  'commit-msg'      : 'Update changelog for %(version)s release',
                  'filter'          : [],
                  'snapshot-number' : 'snapshot + 1',
