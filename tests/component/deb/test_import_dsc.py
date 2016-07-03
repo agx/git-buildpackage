@@ -33,14 +33,6 @@ from gbp.deb.dscfile import DscFile
 class TestImportDsc(ComponentTestBase):
     """Test importing of debian source packages"""
 
-    @staticmethod
-    def _hash_file(filename):
-            h = hashlib.md5()
-            with open(filename, 'rb') as f:
-                buf = f.read()
-            h.update(buf)
-            return h.hexdigest()
-
     def test_debian_import(self):
         """Test that importing of debian native packages works"""
         def _dsc(version):
@@ -128,9 +120,9 @@ class TestImportDsc(ComponentTestBase):
         outdir = os.path.abspath('.')
         for f, w, s, o in ptars:
             eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
-            old = self._hash_file(o)
+            old = self.hash_file(o)
             p.checkout('hello-debhelper', '2.8', 'gzip', outdir, subtarball=s)
-            new = self._hash_file(os.path.join(outdir, f))
+            new = self.hash_file(os.path.join(outdir, f))
             eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
                 (f, old, new))
 

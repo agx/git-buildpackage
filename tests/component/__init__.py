@@ -20,6 +20,7 @@
 Module for testing individual command line tools of the git-buildpackage suite
 """
 
+import hashlib
 import os
 import shutil
 import tempfile
@@ -205,3 +206,12 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
         for (h, s) in rem:
             n = repo.rev_parse(h)
             ok_(n == s, "Head '%s' points to %s' instead of '%s'" % (h, n, s))
+
+    @staticmethod
+    def hash_file(filename):
+        h = hashlib.md5()
+        with open(filename, 'rb') as f:
+            buf = f.read()
+            h.update(buf)
+        return h.hexdigest()
+
