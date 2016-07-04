@@ -512,12 +512,8 @@ class GbpOptionParser(OptionParser):
         self.parse_config_files()
         self.valid_options = []
 
-        if self.command.startswith('git-') or self.command.startswith('gbp-'):
-            prog = self.command
-        else:
-            prog = "gbp %s" % self.command
         OptionParser.__init__(self, option_class=GbpOption,
-                              prog=prog,
+                              prog="gbp %s" % self.command,
                               usage=usage, version='%s %s' % (self.command,
                                                               gbp_version))
 
