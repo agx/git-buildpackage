@@ -72,9 +72,10 @@ def extract_thanks_info(lines, options):
     """Return a list of all of the Thanks: entries, and a list of all
     of the lines that do not contain Thanks: entries."""
     thanks = []
+    thanks_re = re.compile(r'thanks:\s+', re.I)
     other_lines = []
     for line in lines:
-        if line.startswith('Thanks: '):
+        if thanks_re.match(line):
             thanks.append(line.split(' ', 1)[1].strip())
         else:
             other_lines.append(line)
