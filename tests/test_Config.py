@@ -80,3 +80,18 @@ def test_filter():
     ['this', 'is', 'a', 'list']
     >>> del os.environ['GBP_CONF_FILES']
     """
+
+def test_filters():
+    """
+    The filter can be given in plural form
+    >>> import os
+    >>> from gbp.config import GbpOptionParser
+    >>> tmpdir = str(context.new_tmpdir('bar'))
+    >>> confname = os.path.join(tmpdir, 'gbp.conf')
+    >>> GbpOptionParser._set_config_file_value('bar', 'filters', '["abc", "def"]\\n', filename=confname)
+    >>> os.environ['GBP_CONF_FILES'] = confname
+    >>> parser = GbpOptionParser('bar')
+    >>> parser.config['filter']
+    ['abc', 'def']
+    >>> del os.environ['GBP_CONF_FILES']
+    """

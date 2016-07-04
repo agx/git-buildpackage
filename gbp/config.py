@@ -423,6 +423,24 @@ class GbpOptionParser(OptionParser):
         else:
             return []
 
+    def parse_lists(self):
+        """
+        Parse options that can be given as lists
+
+        Since they take multiple arguments they can also be given in plural form
+        e.g. components instead of component.
+        """
+        for opt in self.list_opts:
+            try:
+                plural_opt = opt + 's'
+                valp = self._listify(self.config.get(plural_opt, None))
+                vals = self._listify(self.config[opt])
+                if valp and vals:
+                    raise configparser.Error("Found %s and %s - use only one" % (valp, vals))
+                self.config[opt] = valp or vals
+            except ValueError:
+                raise configparser.Error("Failed to parse %s: %s" % (opt, self.config[opt]))
+
     def parse_config_files(self):
         """
         Parse the possible config files and set appropriate values
@@ -473,11 +491,7 @@ class GbpOptionParser(OptionParser):
                 raise configparser.NoSectionError(
                         "Mandatory section [%s] does not exist." % section)
 
-        for opt in self.list_opts:
-            try:
-                self.config[opt] = self._listify(self.config[opt])
-            except ValueError:
-                raise configparser.Error("Failed to parse %s: %s" % (opt, self.config[opt]))
+        self.parse_lists()
 
     def __init__(self, command, prefix='', usage=None, sections=[]):
         """
