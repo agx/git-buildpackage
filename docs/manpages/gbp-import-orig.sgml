@@ -209,9 +209,8 @@
 	    Using additional original tarballs is a feature of the 3.0
 	    (quilt) source format. See
 	    the <command>dpkg-source</command> manpage for
-	    details. Note that this option can't be set via &gbp.conf;
-	    since it's considered an experimental feature and might
-	    change incompatibly.
+	    details. This is currently considered an experimental
+	    feature and might change incompatibly.
           </para>
         </listitem>
       </varlistentry>

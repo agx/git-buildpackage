@@ -170,6 +170,7 @@ class GbpOptionParser(OptionParser):
                  'commit': 'False',
                  'upstream-vcs-tag': '',
                  'rollback': 'True',
+                 'component': [],
              }
     help = {
              'debian-branch':
@@ -330,6 +331,8 @@ class GbpOptionParser(OptionParser):
                   "commit changes after export, Default is '%(commit)s'",
               'rollback':
                   "Rollback repository changes when encountering an error",
+              'component':
+                  'component name for additional tarballs',
            }
 
     def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
@@ -338,7 +341,7 @@ class GbpOptionParser(OptionParser):
                         '%(top_dir)s/debian/gbp.conf':    'debian',
                         '%(git_dir)s/gbp.conf':           None}
 
-    list_opts = ['filter']
+    list_opts = ['filter', 'component']
 
     @classmethod
     def get_config_files(klass, no_local=False):

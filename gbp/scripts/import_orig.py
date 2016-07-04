@@ -410,8 +410,8 @@ def build_parser(name):
                       dest="import_msg")
     import_group.add_boolean_config_file_option(option_name="symlink-orig",
                                                 dest="symlink_orig")
-    import_group.add_option("--component", action="append", metavar='COMPONENT',
-                            dest="components", help="additional component to import, can be given multiple times", default=[])
+    import_group.add_config_file_option("component", action="append", metavar='COMPONENT',
+                                        dest="components")
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
 
 

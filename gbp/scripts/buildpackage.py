@@ -543,8 +543,8 @@ def build_parser(name, prefix=None):
                       help="Compression type, default is '%(compression)s'")
     orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
                       help="Compression level, default is '%(compression-level)s'")
-    orig_group.add_option("--git-component", action="append", metavar='COMPONENT',
-                          dest="components", help="subtarsball to generate, can be given multiple times", default=[])
+    orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
+                                      dest="components")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
