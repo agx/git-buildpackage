@@ -18,7 +18,6 @@
 #
 """Build an RPM package out of a Git repository"""
 
-from six.moves import configparser
 import os
 import shutil
 import sys
@@ -34,6 +33,7 @@ from gbp.pkg import compressor_opts
 from gbp.rpm.git import GitRepositoryError, RpmGitRepository
 from gbp.rpm.policy import RpmPkgPolicy
 from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile
+from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              git_archive_submodules,
                                              git_archive_single, dump_tree,
@@ -317,7 +317,7 @@ def build_parser(name, prefix=None, git_treeish=None):
     try:
         parser = GbpOptionParserRpm(command=os.path.basename(name),
                                     prefix=prefix)
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -479,7 +479,7 @@ def main(argv):
     options, gbp_args, builder_args = parse_args(argv, prefix)
 
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     try:
         repo = RpmGitRepository(os.path.curdir)

@@ -18,7 +18,6 @@
 #
 """manage patches in a patch queue"""
 
-from six.moves import configparser
 import bz2
 import errno
 import gzip
@@ -37,10 +36,12 @@ from gbp.patch_series import PatchSeries, Patch
 from gbp.pkg import parse_archive_filename
 from gbp.rpm import (SpecFile, NoSpecError, guess_spec, guess_spec_repo,
                      spec_from_repo)
+from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
             parse_gbp_commands, format_patch, format_diff,
             switch_to_pq_branch, apply_single_patch, apply_and_commit_patch,
             drop_pq, switch_pq)
+
 from gbp.scripts.common.buildpackage import dump_tree
 
 
@@ -360,8 +361,8 @@ drop           Drop (delete) the patch queue /devel branch associated to
 apply          Apply a patch
 switch         Switch to patch-queue branch and vice versa.""")
 
-    except configparser.ParsingError as err:
-        gbp.log.err('Invalid config file: %s' % err)
+    except GbpError as err:
+        gbp.log.err(err)
         return None
 
     parser.add_boolean_config_file_option(option_name="patch-numbers",
@@ -398,7 +399,7 @@ def main(argv):
 
     (options, args) = parse_args(argv)
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 

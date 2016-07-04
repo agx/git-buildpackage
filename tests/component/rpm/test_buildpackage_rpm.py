@@ -106,17 +106,6 @@ class TestGbpRpm(RpmRepoTestBase):
         self._check_log(0, 'gbp:error: %s is not a git repository' %
                             os.path.abspath('.'))
 
-    def test_invalid_config_file(self):
-        """Test invalid config file"""
-        # Create and commit dummy invalid config file
-        repo = GitRepository.create('.')
-        with open('.gbp.conf', 'w') as conffd:
-            conffd.write('foobar\n')
-        repo.add_files('.gbp.conf')
-        repo.commit_all('Add conf')
-        eq_(mock_gbp([]), 1)
-        self._check_log(0, 'gbp:error: File contains no section headers.')
-
     def test_native_build(self):
         """Basic test of native pkg"""
         self.init_test_repo('gbp-test-native')
@@ -224,7 +213,7 @@ class TestGbpRpm(RpmRepoTestBase):
         eq_(mock_gbp(['--git-tag', '--git-packaging-tag=rel-tag']), 1)
 
         # Re-tag
-        eq_(mock_gbp(['--git-retag', '--git-packaging-tag=rel-tag']), 1)
+        eq_(mock_gbp(['--git-retag', '--git-packaging-tag=rel-tag']), 3)
         self._check_log(-1, "gbp:error: '--git-retag' needs either '--git-tag'")
 
         eq_(mock_gbp(['--git-tag', '--git-packaging-tag=rel-tag',

@@ -41,6 +41,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              git_archive_submodules,
                                              git_archive_single, dump_tree,
                                              write_wc, drop_index)
+from gbp.scripts.common import ExitCodes
 from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
 #{ upstream tarball preparation
@@ -496,7 +497,7 @@ def md(a, b):
 def build_parser(name, prefix=None):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -636,7 +637,7 @@ def main(argv):
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
 
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     try:
         repo = DebianGitRepository(os.path.curdir)

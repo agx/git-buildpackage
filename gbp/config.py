@@ -23,6 +23,7 @@ import errno
 import os.path
 import sys
 
+from gbp.errors import GbpError
 
 try:
     from gbp.version import gbp_version
@@ -509,8 +510,12 @@ class GbpOptionParser(OptionParser):
         self.sections = sections
         self.prefix = prefix
         self.config = {}
-        self.parse_config_files()
         self.valid_options = []
+
+        try:
+            self.parse_config_files()
+        except configparser.ParsingError as err:
+            raise GbpError(str(err) + "\nSee 'man gbp.conf' for the format.")
 
         OptionParser.__init__(self, option_class=GbpOption,
                               prog="gbp %s" % self.command,

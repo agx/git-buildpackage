@@ -16,7 +16,6 @@
 #    <http://www.gnu.org/licenses/>
 """Import a Debian source package into a Git repository"""
 
-from six.moves import configparser
 import sys
 import re
 import os
@@ -35,7 +34,9 @@ from gbp.git.modifier import GitModifier
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
                         no_upstream_branch_msg)
 from gbp.errors import GbpError
+from gbp.scripts.common import ExitCodes
 import gbp.log
+
 
 class SkipImport(Exception):
     pass
@@ -210,7 +211,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
                                        usage='%prog [options] /path/to/package.dsc')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -285,7 +286,7 @@ def main(argv):
 
     options, args = parse_args(argv)
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     try:
         if len(args) != 1:

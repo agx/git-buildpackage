@@ -65,16 +65,6 @@ class TestRpmCh(RpmRepoTestBase):
         eq_(mock_ch([]), 1)
         self._check_log(0, 'gbp:error: No Git repository at ')
 
-    def test_invalid_config_file(self):
-        """Test invalid config file"""
-        # Create dummy invalid config file and run git-rpm-ch
-        GitRepository.create('.')
-        with open('.gbp.conf', 'w') as conffd:
-            conffd.write('foobar\n')
-        eq_(mock_ch([]), 1)
-        self._check_log(0, 'gbp:error: invalid config file: File contains no '
-                           'section headers.')
-
     def test_update_spec_changelog(self):
         """Test updating changelog in spec"""
         repo = self.init_test_repo('gbp-test')

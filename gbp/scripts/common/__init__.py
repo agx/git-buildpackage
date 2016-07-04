@@ -15,3 +15,10 @@
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
 """Parts shared between the deb and rpm commands"""
+
+
+class ExitCodes(object):
+    ok = 0,
+    failed = 1               # Allow other errors
+    no_value = 2             # Value does not exist (gbp config only)
+    parse_error = 3          # Failed to parse configuration file

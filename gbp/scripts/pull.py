@@ -19,7 +19,6 @@
 #
 """Pull remote changes and fast forward debian, upstream and pristine-tar branch"""
 
-from six.moves import configparser
 import sys
 import os
 import os.path
@@ -28,6 +27,7 @@ from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.git import DebianGitRepository
+from gbp.scripts.common import ExitCodes
 import gbp.log
 
 
@@ -75,7 +75,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                                  usage='%prog [options] - safely update a repository from remote')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -112,7 +112,7 @@ def main(argv):
 
     (options, args) = parse_args(argv)
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 

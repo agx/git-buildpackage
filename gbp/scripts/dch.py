@@ -19,7 +19,6 @@
 
 from __future__ import print_function
 
-from six.moves import configparser
 import os.path
 import re
 import sys
@@ -33,6 +32,7 @@ from gbp.deb import compare_versions
 from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.deb.git import GitRepositoryError, DebianGitRepository
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
+from gbp.scripts.common import ExitCodes
 
 user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -300,7 +300,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name),
                                        usage='%prog [options] paths')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -389,13 +389,14 @@ def build_parser(name):
 def parse_args(argv):
     parser = build_parser(argv[0])
     if not parser:
-        return None, None
+        return [None] * 4
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     dch_options = process_options(options, parser)
     editor_cmd = process_editor_option(options)
     return options, args, dch_options, editor_cmd
+
 
 def main(argv):
     ret = 0
@@ -405,8 +406,10 @@ def main(argv):
     version_change = {}
     branch = None
 
-
     options, args, dch_options, editor_cmd = parse_args(argv)
+
+    if not options:
+        return ExitCodes.parse_error
 
     try:
         try:

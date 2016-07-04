@@ -21,7 +21,9 @@ from six.moves import configparser
 import sys
 import os, os.path
 from gbp.config import GbpOptionParser
+from gbp.errors import GbpError
 from gbp.scripts.supercommand import import_command
+from gbp.scripts.common import ExitCodes
 import gbp.log
 
 
@@ -29,7 +31,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                                  usage='%prog [options] command[.optionname] - display configuration settings')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -119,7 +121,7 @@ def main(argv):
     (options, args) = parse_args(argv)
 
     if options is None:
-        return retval
+        return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 

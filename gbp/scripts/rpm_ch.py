@@ -18,7 +18,6 @@
 #
 """Generate RPM changelog entries from git commit messages"""
 
-import ConfigParser
 from datetime import datetime
 import os.path
 import pwd
@@ -35,6 +34,7 @@ from gbp.rpm import (guess_spec, NoSpecError, SpecFile, split_version_str,
 from gbp.rpm.changelog import Changelog, ChangelogParser, ChangelogError
 from gbp.rpm.git import GitRepositoryError, RpmGitRepository
 from gbp.rpm.policy import RpmPkgPolicy
+from gbp.scripts.common import ExitCodes
 from gbp.tmpfile import init_tmpdir, del_tmpdir
 
 
@@ -309,8 +309,8 @@ def build_parser(name):
     try:
         parser = GbpOptionParserRpm(command=os.path.basename(name),
                                     prefix='', usage='%prog [options] paths')
-    except ConfigParser.ParsingError as err:
-        gbp.log.error('invalid config file: %s' % err)
+    except GbpError as err:
+        gbp.log.error(err)
         return None
 
     range_grp = GbpOptionGroup(parser, "commit range options",
@@ -398,7 +398,7 @@ def main(argv):
     """Script main function"""
     options, args = parse_args(argv)
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     try:
         init_tmpdir(options.tmp_dir, prefix='rpm-ch_')

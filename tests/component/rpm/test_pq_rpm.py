@@ -61,16 +61,6 @@ class TestPqRpm(RpmRepoTestBase):
         self._check_log(0, 'gbp:error: %s is not a git repository' %
                               os.path.abspath(os.getcwd()))
 
-    def test_invalid_config_file(self):
-        """Test invalid config file"""
-        # Create dummy invalid config file and run pq-rpm
-        GitRepository.create('.')
-        with open('.gbp.conf', 'w') as conffd:
-            conffd.write('foobar\n')
-        eq_(mock_pq(['foo']), 1)
-        self._check_log(0, 'gbp:error: Invalid config file: File contains no '
-                           'section headers.')
-
     def test_import_export(self):
         """Basic test for patch import and export"""
         repo = self.init_test_repo('gbp-test')

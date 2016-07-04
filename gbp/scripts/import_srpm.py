@@ -17,7 +17,6 @@
 #    <http://www.gnu.org/licenses/>
 """Import an RPM source package into a Git repository"""
 
-from six.moves import configparser
 import sys
 import re
 import os
@@ -37,6 +36,7 @@ from gbp.git.modifier import GitModifier
 from gbp.config import (GbpOptionParserRpm, GbpOptionGroup,
                        no_upstream_branch_msg)
 from gbp.errors import GbpError
+from gbp.scripts.common import ExitCodes
 import gbp.log
 from gbp.pkg import parse_archive_filename
 
@@ -123,7 +123,7 @@ def build_parser(name):
                                     prefix='',
                                     usage='%prog [options] /path/to/package'
                                           '.src.rpm')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -205,6 +205,8 @@ def main(argv):
     skipped = False
 
     options, args = parse_args(argv)
+    if not options:
+        return ExitCodes.parse_error
 
     if len(args) != 1:
         gbp.log.err("Need to give exactly one package to import. Try --help.")

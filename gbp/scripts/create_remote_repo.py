@@ -20,7 +20,6 @@
 
 from __future__ import print_function
 
-from six.moves import configparser
 import sys
 import os, os.path
 from six.moves import urllib
@@ -36,7 +35,10 @@ from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.deb.git import DebianGitRepository
+from gbp.scripts.common import ExitCodes
+
 import gbp.log
+
 
 def print_config(remote, branches):
     """
@@ -237,7 +239,7 @@ def build_parser(name, sections=[]):
                                        usage='%prog [options] - '
                                        'create a remote repository',
                                        sections=sections)
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -308,11 +310,10 @@ def main(argv):
     changelog = 'debian/changelog'
     cmd = []
 
-    try:
-        options, args = parse_args(argv)
-    except Exception as e:
-        print("%s" % e, file=sys.stderr)
-        return 1
+    options, args = parse_args(argv)
+
+    if not options:
+        return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     try:

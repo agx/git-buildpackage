@@ -26,6 +26,7 @@ from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
 from gbp.errors import GbpError
+from gbp.scripts.common import ExitCodes
 import gbp.log
 
 
@@ -33,7 +34,7 @@ def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
                                  usage='%prog [options] repository - clone a remote repository')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -58,7 +59,7 @@ def build_parser(name):
     return parser
 
 
-def parse_args (argv):
+def parse_args(argv):
     parser = build_parser(argv[0])
     if not parser:
         return None, None
@@ -73,7 +74,7 @@ def main(argv):
 
     (options, args) = parse_args(argv)
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     if len(args) < 2:
         gbp.log.err("Need a repository to clone.")

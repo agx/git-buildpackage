@@ -17,7 +17,6 @@
 #
 """Manage Debian patches on a patch queue branch"""
 
-from six.moves import configparser
 import errno
 import os
 import shutil
@@ -35,6 +34,7 @@ from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                  switch_to_pq_branch, apply_single_patch,
                                  apply_and_commit_patch, switch_pq,
                                  drop_pq, get_maintainer_from_control)
+from gbp.scripts.common import ExitCodes
 from gbp.dch import extract_bts_cmds
 
 PATCH_DIR = "debian/patches/"
@@ -334,7 +334,7 @@ def build_parser(name):
         "  drop           drop (delete) the patch queue associated to the current branch.\n"
         "  apply          apply a patch\n"
         "  switch         switch to patch-queue branch and vice versa")
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.err(err)
         return None
 
@@ -369,7 +369,7 @@ def main(argv):
 
     (options, args) = parse_args(argv)
     if not options:
-        return 1
+        return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
