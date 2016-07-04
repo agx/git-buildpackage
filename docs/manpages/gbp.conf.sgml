@@ -56,15 +56,17 @@
       zero or one sections for each &gbp; command. Additionally, there
       can be an arbitrary number of
       <option>remote-config</option> sections.  Comments start with a
-      hash sign (<option>#</option>). The syntax is:
+      hash sign (<option>#</option>). The overall layout is:
     </para>
 <programlisting>
     [DEFAULT]
-    # This section is for global settings. Affects all commands
+    # This section is for global settings. Affects all commands.
+    # Options set here have the lowest priority.
     key = value
 
     [&lt;command&gt;]
     # Specific sections for each command, like <command>buildpackage</command>
+    # Options set here have lower priority than command line options
     key = value
 
     [remote-config &lt;name&gt;]
@@ -81,15 +83,20 @@
 </para>
 
 <para>
-  The <option>key=value</option> pairs of the command sections are
-  named like the command-line options of the corresponding command
-  with the '--' stripped off and can hold the same values (but see
-  below for details). For example,
+  The keys in the
+  <option>key</option>=<parameter>value</parameter> pairs are named
+  like the command-line options of the corresponding command (with the
+  '--' stripped off) and can hold the same values, but see below for
+  details. In case of &gbp-buildpackage; and &gbp-buildpackage-rpm;
+  the key needs '--git-' instead of '--' stripped off.
+</para>
+<para>
+  For example,
   the <xref linkend="man.gbp.buildpackage"/> manual page documents
   the <option>--git-export-dir</option>=<parameter>directory</parameter>
   option which can be turned into configuration file setting by
   dropping the
-  <option>--git</option> prefix:
+  <option>--git-</option> prefix:
 </para>
 
 <programlisting>
