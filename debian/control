@@ -11,7 +11,7 @@ Build-Depends:
  jade,
  perl,
  pychecker,
- python (>> 2.6.6-3~),
+ python (>> 2.7.3),
  python-coverage,
  python-dateutil,
  python-epydoc,
@@ -36,7 +36,7 @@ Standards-Version: 3.9.6
 Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
 Vcs-Browser: https://git.sigxcpu.org/cgit/git-buildpackage/
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
-X-Python-Version: >= 2.6
+X-Python-Version: >= 2.7
 
 Package: git-buildpackage
 Architecture: all
