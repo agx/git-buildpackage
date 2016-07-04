@@ -1,50 +1,30 @@
-git-buildpackage (0.7.6~1.gbpbc3805) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @bc3805cda768c5f543f90264c9a69de8a18e8464 **
+git-buildpackage (0.8.0) experimental; urgency=medium
 
   [ Markus Lehtonen ]
-  * [5a7483e] import_dsc: remove excess indentation in code
-  * [af2be3b] rpm: add gbp.rpm.changelog module.
-    This new module contains basic containers and functionality for parsing
-    and updating rpm changelogs. It is coupled with the rpm packaging policy
-    class which now has definitions for rpm changelog formatting.
   * [c5cfb5e] Introduce gbp-rpm-ch.
     Initial version of gbp rpm-ch command, a tool for maintaining
     RPM changelogs. The new command supports %changelog section inside spec
     files as well as separate changelog files ("OBS style"). (Closes: #808027)
 
   [ Guido Günther ]
-  * [b4b7f9f] clone: Be a bit more verbose and let the user know that we started cloning
-  * [0cae8d7] Patch$eries: minor indentation cleanup
+  * [b4b7f9f] clone: Be a bit more verbose and let the user know that we
+    started cloning
   * [1f58d21] PatchSeries: Strip comment from patch names (Closes: #825536)
-  * [f2d5678] PatchSeries: compile patch level regex only once
   * [1989c32] pq: Report number of imported patches
   * [dcb145f] Use existing option as example in gbp-buildpackage manpage.
     Thanks to Nicolas Braud-Santoni (Closes: #828703)
   * [f1c64e2] manpages: add examples for gbp {clone,import-dsc}
-  * [9c5f06d] GitRepository.commit_dir: use append insteald of += to append to list
-  * [83dfa67] GitRepository: Deleting a non-existing branch should not throw an error
+  * [83dfa67] GitRepository: Deleting a non-existing branch should not throw
+    an error
   * [ba7b087] docs: Clarify some gbp pq options
-  * [2e53013] debiantestgitrepo: Allow to inject repo class name.
-    This allows us to use the helpers for other repo types as well
-  * [db077c9] import_orig: Simplify vcs_tag_parent
-    by moving it to a import orig specific repository class
-  * [0f1426f] import_orig: Simplify the import_branch vs upstream_branch logic.
-    We don't need both if we don't insist on the first branch in a repo
-    being master.
-  * [ebc6b91] import_orig: Recover from import errors
-    by winding back branches and tags to their pre-error states
-    (Closes: #828838)
+  * [ebc6b91] import_orig: Recover from import errors by winding back branches
+    and tags to their pre-error states (Closes: #828838)
   * [4964234] dch: Log version number when preparing a snapshot
     (Closes: #829025)
-  * [7a6641a] import-dsc: Don't fail on 1.0 non-native packages without a Debian version
+  * [7a6641a] import-dsc: Don't fail on 1.0 non-native packages without a
+    Debian version
     (Closes: #829070)
-  * [6732732] rpm-ch: Make pylint happy
-  * [e7a2e18] rpm.changelog: Wrap str{f,p}time calls
-    so we're sure they run under a C locale. Otherwise we might misparse
-    dates due to locale differences. This unbreaks rpm-ch's the test suite.
   * [8c4460c] Actually install gbp-rpm-ch and unbreak manpage generation
-  * [6ef4591] docs: make rpm-ch option match reality
   * [d92b656] tests: Omit build dependend variables from epydocs
     based on a patch from Sascha Steinbiss (Closes: #827546)
   * [d977377] Set date in manpages based on last changelog entry
@@ -52,21 +32,32 @@ git-buildpackage (0.7.6~1.gbpbc3805) UNRELEASED; urgency=medium
     (#800797).
     Thanks to Sascha Steinbiss for the patch
   * [53f37eb] import-orig: Make default import message more gbp-dch friendly.
-    Debian changelogs usually have "New upstream version <versionnumber>".
-  * [312c9b9] Use imperative for for git messages
-    as suggested in gh:#26.
+  * [312c9b9] Use imperative for git messages as suggested in gh:#26.
   * [2bc3801] import_dsc: don't assume component tarballs have the correct name.
-    The tarball needs to be unpacked into component/ regardless how
-    the toplevel directory in the tarball itself is named. (Closes: #829458)
+    (Closes: #829458)
   * [bc3805c] import_orig: add support for importing additional tarballs.
     We expect the additional tarballs to be located next to the orig tarball
     and to be already named properly. (Closes: #561071)
+  * [870c901] Docs: Clarify on possible key names and priorities in gbp.conf
+  * [7a521d4] Handle Ctrl-C more gracefully
+  * [b540c98] additional tarballs: allow one to configure components via gbp.conf
+  * [1d4d4a2] config: Allow one to give list values in plural form
+  * [700e164] config: Properly abort on config file parsing errors
+    instead of printing an exception on the console
+  * [3b4912d] config: always use 'gbp <cmd>' in help output.
+    The {git,gbp}- versions went away ages ago
+  * [f545010] Give more instructions when config is unparseable
+    and make return codes and messages consistent.
+    (Closes: #733640)
+  * [a0ed81b] Require python 2.7. It's the default up to Wheezy
+    (Closes: #685031)
 
   [ Otto Kekäläinen ]
   * [af16f59] Fix simple spelling errors in comments and strings
-  * [f28a26b] Fix spelling of existant->existent in function names, strings and comments
+  * [f28a26b] Fix spelling of existant->existent in function names, strings
+    and comments
 
- -- Guido Günther <agx@sigxcpu.org>  Sun, 03 Jul 2016 20:07:47 +0200
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 04 Jul 2016 21:47:42 +0200
 
 git-buildpackage (0.7.5) unstable; urgency=medium
 
