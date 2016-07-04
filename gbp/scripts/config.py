@@ -117,6 +117,10 @@ def main(argv):
     retval = 1
 
     (options, args) = parse_args(argv)
+
+    if options is None:
+        return retval
+
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if not args:
