@@ -338,6 +338,8 @@ class GbpOptionParser(OptionParser):
                         '%(top_dir)s/debian/gbp.conf':    'debian',
                         '%(git_dir)s/gbp.conf':           None}
 
+    list_opts = ['filter']
+
     @classmethod
     def get_config_files(klass, no_local=False):
         """
@@ -392,6 +394,32 @@ class GbpOptionParser(OptionParser):
             gbp.log.warn("Old style config section [%s] found "
                          "please rename to [%s]" % (oldcmd, cmd))
 
+    @staticmethod
+    def _listify(value):
+        """
+        >>> GbpOptionParser._listify(None)
+        []
+        >>> GbpOptionParser._listify('string')
+        ['string']
+        >>> GbpOptionParser._listify('["q", "e", "d"] ')
+        ['q', 'e', 'd']
+        >>> GbpOptionParser._listify('[')
+        Traceback (most recent call last):
+        ...
+        Error: [ is not a proper list
+        """
+        # filter can be either a list or a string, always build a list:
+        if value:
+            if value.startswith('['):
+                try:
+                    return eval(value)
+                except SyntaxError:
+                    raise configparser.Error("%s is not a proper list" % value)
+            else:
+                return [value]
+        else:
+            return []
+
     def parse_config_files(self):
         """
         Parse the possible config files and set appropriate values
@@ -442,14 +470,11 @@ class GbpOptionParser(OptionParser):
                 raise configparser.NoSectionError(
                         "Mandatory section [%s] does not exist." % section)
 
-        # filter can be either a list or a string, always build a list:
-        if self.config['filter']:
-            if self.config['filter'].startswith('['):
-                self.config['filter'] = eval(self.config['filter'])
-            else:
-                self.config['filter'] = [ self.config['filter'] ]
-        else:
-            self.config['filter'] = []
+        for opt in self.list_opts:
+            try:
+                self.config[opt] = self._listify(self.config[opt])
+            except ValueError:
+                raise configparser.Error("Failed to parse %s: %s" % (opt, self.config[opt]))
 
     def __init__(self, command, prefix='', usage=None, sections=[]):
         """
