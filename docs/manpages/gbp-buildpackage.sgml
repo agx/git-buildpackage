@@ -537,6 +537,13 @@
           <replaceable>INDEX</replaceable> exports the current index whereas
           the special name <replaceable>WC</replaceable> exports the current
           working copy as is.
+	  </para>
+	  <para>
+	    Note that using <replaceable>WC</replaceable> enables the
+	    <option>--git-ignore-branch</option>
+	    and <option>--git-ignore-new</option> options as well
+	    since when exporting the working copy there's no point in
+	    enforcing any branch or modification checks.
           </para>
         </listitem>
       </varlistentry>

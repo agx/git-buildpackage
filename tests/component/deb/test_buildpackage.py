@@ -146,6 +146,16 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
 
+    @RepoFixtures.quilt30()
+    def test_export_wc_buildpackage(self, repo):
+        """Test that exporting working copy works and it ignores
+        modifications the source tree """
+        with open(os.path.join(repo.path, 'foo.txt'), 'w') as f:
+            f.write("foo")
+        self._test_buildpackage(repo, ['--git-export=WC',
+                                       '--git-export-dir=../foo/bar'])
+        ok_(os.path.exists('../foo/bar'))
+
     @RepoFixtures.native()
     def test_argument_quoting(self, repo):
         """Test that we quote arguments to builder (#)"""

@@ -133,7 +133,7 @@ def pristine_tar_commit(repo, source, options, output_dir, orig_file, upstream_t
 
 
 # Functions to handle export-dir
-def write_tree(repo, options):
+def maybe_write_tree(repo, options):
     """
     Write a tree of the index or working copy if necessary
 
@@ -503,6 +503,15 @@ def setup_pbuilder(options, repo, native):
     return pbd_env, hook_env
 
 
+def mangle_export_wc_opts(options):
+    """
+    Make building with --export=WC simpler
+    """
+    if options.export == wc_name:
+        options.ignore_branch = True
+        options.ignore_new = True
+
+
 def disable_hooks(options):
     """Disable all hooks (except for builder)"""
     for hook in ['cleaner', 'postexport', 'prebuild', 'postbuild', 'posttag']:
@@ -666,6 +675,7 @@ def parse_args(argv, prefix):
         gbp.log.warn("Components specified, pristine-tar-commit not yet supported - disabling it.")
         options.pristine_tar_commit = False
 
+    mangle_export_wc_opts(options)
     return options, args, dpkg_args
 
 
@@ -703,7 +713,7 @@ def main(argv):
                 raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
 
         head = repo.head
-        tree = write_tree(repo, options)
+        tree = maybe_write_tree(repo, options)
         source = source_vfs(repo, options, tree)
 
         check_tag(options, repo, source)
