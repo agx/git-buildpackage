@@ -17,7 +17,6 @@
 #
 """Query and display config file values"""
 
-from six.moves import configparser
 import sys
 import os, os.path
 from gbp.config import GbpOptionParser

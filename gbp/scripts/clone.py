@@ -19,7 +19,6 @@
 #
 """Clone a Git repository and set it up for gbp"""
 
-from six.moves import configparser
 import sys
 import os, os.path
 from gbp.config import (GbpOptionParser, GbpOptionGroup)

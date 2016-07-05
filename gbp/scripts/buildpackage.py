@@ -17,7 +17,6 @@
 #
 """Build a Debian package out of a Git repository"""
 
-from six.moves import configparser
 import errno
 import os, os.path
 import shutil

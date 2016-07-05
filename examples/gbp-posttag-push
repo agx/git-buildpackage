@@ -21,7 +21,6 @@
 
 from __future__ import print_function
 
-from six.moves import configparser
 import os
 import subprocess
 import sys
@@ -30,6 +29,8 @@ import gbp.log
 from gbp.config import GbpOptionParser
 from gbp.deb.git import DebianGitRepository
 
+from gbp.errors import GbpError
+from gbp.scripts.common import ExitCodes
 
 
 class Env(object):
@@ -84,9 +85,9 @@ def main(argv):
     try:
         parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
                                  usage='%prog [options] paths')
-    except configparser.ParsingError as err:
+    except GbpError as err:
         gbp.log.error(err)
-        return 1
+        return ExitCodes.parse_error
 
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
                       action="store_true", help="dry run, don't push.")
