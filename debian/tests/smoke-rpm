@@ -4,6 +4,8 @@ set -e
 set -x
 
 git init .
+git config user.email "you@example.com"
+git config user.name "Doesnot Matter"
 git add .
 git commit -m"Smoketest" -a
 cat <<EOF >> ~/.rpmmacros
