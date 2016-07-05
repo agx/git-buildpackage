@@ -68,6 +68,9 @@ class TestImportOrig(ComponentTestBase):
                                tags=['upstream/2.6'])
 
     def test_update(self):
+        """
+        Test that importing a new version works
+        """
         dsc = self._dsc('2.6-2')
         ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
         repo = ComponentTestGitRepository(self.pkg)
@@ -80,6 +83,9 @@ class TestImportOrig(ComponentTestBase):
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
     def test_update_component_tarballs(self):
+        """
+        Test importing new version with additional tarballs works
+        """
         dsc = self._dsc('2.6-2')
         ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
         repo = ComponentTestGitRepository(self.pkg)
@@ -155,6 +161,10 @@ class TestImportOrig(ComponentTestBase):
         self.check_refs(repo, heads)
 
     def test_update_fail_create_upstream_tag(self):
+        """
+        Test that we can recover from a failure to create the upstream
+        tag
+        """
         repo = GitRepository.create(self.pkg)
         os.chdir(self.pkg)
 
@@ -173,6 +183,9 @@ class TestImportOrig(ComponentTestBase):
         self.check_refs(repo, heads)
 
     def test_update_fail_merge(self):
+        """
+        Test that we can recover from a failed merge
+        """
         repo = GitRepository.create(self.pkg)
         os.chdir(self.pkg)
 
@@ -193,6 +206,10 @@ class TestImportOrig(ComponentTestBase):
     @patch('gbp.git.repository.GitRepository.create_tag',
            side_effect=raise_if_tag_match('upstream/'))
     def test_initial_import_fail_create_upstream_tag(self, RepoMock):
+        """
+        Test that we can recover from a failure to create the upstream
+        tag on initial import
+        """
         repo = GitRepository.create(self.pkg)
         os.chdir(self.pkg)
         orig = self._orig('2.6')
@@ -201,6 +218,10 @@ class TestImportOrig(ComponentTestBase):
         self._check_repo_state(repo, None, [], tags=[])
 
     def test_initial_import_fail_create_debian_branch(self):
+        """
+        Test that we can recover from creating the Debian branch on
+        initial import
+        """
         repo = GitRepository.create(self.pkg)
         os.chdir(self.pkg)
         orig = self._orig('2.6')
