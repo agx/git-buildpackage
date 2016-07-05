@@ -33,7 +33,7 @@ from gbp.deb.dscfile import DscFile
 class TestImportDsc(ComponentTestBase):
     """Test importing of debian source packages"""
 
-    def test_debian_import(self):
+    def test_import_debian_native(self):
         """Test that importing of debian native packages works"""
         def _dsc(version):
             return os.path.join(DEB_TEST_DATA_DIR,
@@ -147,3 +147,17 @@ class TestImportDsc(ComponentTestBase):
                            dsc]) == 1
         self._check_log(0, "gbp:error: Directory 'hello-debhelper' already exists. If you want to import into it, "
                         "please change into this directory otherwise move it away first")
+
+    def test_import_10(self):
+        """Test if importing a 1.0 source format package works"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-1.0',
+                                'hello-debhelper_%s.dsc' % version)
+
+        dsc = _dsc('2.6-2')
+        assert import_dsc(['arg0', dsc]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'master', ['master', 'upstream'],
+                               tags=['upstream/2.6', 'debian/2.6-2'])
+        assert len(repo.get_commits()) == 2

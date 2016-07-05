@@ -64,9 +64,14 @@ def download_source(pkg, dirs, unauth):
 
 def apply_patch(diff):
     "Apply patch to a source tree"
+    patch_opts = ['-N', '-p1', '-F0', '-u', '-t',
+                  '-Vnever', '-g0', '-z.gbp.orig',
+                  '--quiet']
+
     pipe = pipes.Template()
     pipe.prepend('gunzip -c %s' % diff,  '.-')
-    pipe.append('patch -p1 --quiet', '-.')
+    pipe.append('patch %s' % ' '.join(patch_opts), '-.')
+
     try:
         ret = pipe.copy('', '')
         if ret:
