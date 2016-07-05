@@ -112,7 +112,6 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
                     if reftype == 'tag':
                         self.delete_tag(name)
                     elif reftype == 'branch':
-                        gbp.log.info('Rolling back branch %s by deleting it' % name)
                         self.delete_branch(name)
                     else:
                         raise GitRepositoryError("Don't know how to delete %s %s" % (reftype, name))
