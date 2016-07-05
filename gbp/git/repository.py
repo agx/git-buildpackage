@@ -886,7 +886,7 @@ class GitRepository(object):
         @rtype: C{bool}
         """
         # an empty repo has no branches:
-        return False if self.branch else True
+        return len(self.get_local_branches()) == 0
 
     def rev_parse(self, name, short=0):
         """

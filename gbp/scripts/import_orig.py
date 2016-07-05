@@ -486,9 +486,7 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
-        # an empty repo has no branches:
-        initial_branch = repo.get_branch()
-        is_empty = False if initial_branch else True
+        is_empty = repo.is_empty()
 
         if not repo.has_branch(options.upstream_branch) and not is_empty:
             raise GbpError(no_upstream_branch_msg % options.upstream_branch)
