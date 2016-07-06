@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
-"""Tests for the git-rpm-ch tool"""
+"""Tests for the gbp-rpm-ch tool"""
 
 import os
 import re
@@ -30,14 +30,14 @@ from tests.component.rpm import RpmRepoTestBase
 
 
 def mock_ch(args):
-    """Wrapper for git-rpm-ch"""
+    """Wrapper for gbp-rpm-ch"""
 
     return rpm_ch(['arg0', '--packaging-branch=master',
                    '--spawn-editor=never'] + args)
 
 
 class TestRpmCh(RpmRepoTestBase):
-    """Basic tests for git-rpm-ch"""
+    """Basic tests for gbp-rpm-ch"""
 
     def setUp(self):
         """Test case setup"""
@@ -54,14 +54,14 @@ class TestRpmCh(RpmRepoTestBase):
             return fobj.readlines()
 
     def test_invalid_args(self):
-        """See that git-rpm-ch fails gracefully when called with invalid args"""
+        """See that gbp-rpm-ch fails gracefully when called with invalid args"""
         GitRepository.create('.')
 
         with assert_raises(SystemExit):
             mock_ch(['--invalid-opt'])
 
     def test_import_outside_repo(self):
-        """Run git-rpm-ch when not in a git repository"""
+        """Run gbp-rpm-ch when not in a git repository"""
         eq_(mock_ch([]), 1)
         self._check_log(0, 'gbp:error: No Git repository at ')
 

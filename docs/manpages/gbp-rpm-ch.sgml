@@ -13,7 +13,6 @@
     &rpm-mansection;
   </refmeta>
   <refnamediv>
-    <refname>git-rpm-ch;</refname>
     <refname>gbp-rpm-ch;</refname>
     <refpurpose>Generate the RPM changelog from git commit messages</refpurpose>
   </refnamediv>
