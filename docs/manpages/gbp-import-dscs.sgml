@@ -20,7 +20,7 @@
     <cmdsynopsis>
       &gbp-import-dscs;
       <arg><option>options</option></arg>
-      <arg><option>git-import-dsc options</option></arg>
+      <arg><option>gbp import-dsc options</option></arg>
       <arg choice="plain"><replaceable>pkg_1.dsc</replaceable></arg>
       <arg choice="plain"><replaceable>pkg_2.dsc</replaceable></arg>
       <arg choice="plain"><replaceable>...</replaceable></arg>
@@ -32,7 +32,7 @@
       &gbp-import-dscs;
       <arg choice="req">--debsnap</arg>
       <arg><option>options</option></arg>
-      <arg><option>git-import-dsc options</option></arg>
+      <arg><option>gbp import-dsc options</option></arg>
       <arg choice="req"><replaceable>package</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
