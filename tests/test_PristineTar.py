@@ -1,5 +1,4 @@
 # vim: set fileencoding=utf-8 :
-
 """
 Test pristine-tar related methods in
 
@@ -11,17 +10,26 @@ and
 
 This testcase creates this reposity:
 
-    - A repository at I{repo_dir} called I{repo}
+    - A repository at I{dirs['repo']} called I{repo}
 
-@undocumented: repo_dir test_data
 """
 
+import os
 from . import context
 
-import os
 
-repo_dir = context.new_tmpdir(__name__).join('repo')
 test_data = os.path.join(context.projectdir, "tests/test_PristineTar_data")
+dirs = {}
+
+
+def setup_module():
+    dirs['repo'] = context.new_tmpdir(__name__).join('repo')
+
+
+def teardown_module():
+    del dirs['repo']
+    context.teardown()
+
 
 def test_create():
     """
@@ -31,7 +39,7 @@ def test_create():
          - L{gbp.deb.git.DebianGitRepository.create}
 
     >>> import os, gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository.create(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository.create(dirs['repo'])
     """
 
 def test_empty_repo():
@@ -43,7 +51,7 @@ def test_empty_repo():
          - L{gbp.deb.pristinetar.DebianPristineTar.has_commit}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.has_pristine_tar_branch()
     False
     >>> repo.pristine_tar.has_commit('upstream', '1.0', 'gzip')
@@ -59,7 +67,7 @@ def test_commit_dir():
          - L{gbp.git.repository.GitRepository.create_branch}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> commit = repo.commit_dir(test_data, msg="initial commit", branch=None)
     >>> repo.create_branch('upstream')
     """
@@ -72,9 +80,9 @@ def test_create_tarball():
          - L{gbp.deb.git.DebianGitRepository.archive}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.archive('tar', 'upstream/', '../upstream_1.0.orig.tar', 'upstream')
-    >>> gbp.command_wrappers.Command('gzip', [ '-n', '%s/../upstream_1.0.orig.tar' % repo_dir])()
+    >>> gbp.command_wrappers.Command('gzip', [ '-n', '%s/../upstream_1.0.orig.tar' % dirs['repo']])()
     """
 
 def test_pristine_tar_commit():
@@ -85,7 +93,7 @@ def test_pristine_tar_commit():
          - L{gbp.deb.pristinetar.DebianPristineTar.commit}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.commit('../upstream_1.0.orig.tar.gz', 'upstream')
     """
 
@@ -98,7 +106,7 @@ def test_pristine_has_commit():
          - L{gbp.pkg.pristinetar.PristineTar.get_commit}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.has_commit('upstream', '1.0', 'bzip2')
     False
     >>> repo.pristine_tar.has_commit('upstream', '1.0', 'gzip')
@@ -119,7 +127,7 @@ def test_pristine_tar_checkout():
          - L{gbp.deb.pristinetar.DebianPristineTar.checkout}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.checkout('upstream', '1.0', 'gzip', '..')
     """
 
@@ -131,7 +139,7 @@ def test_pristine_tar_checkout_nonexistent():
          - L{gbp.deb.pristinetar.DebianPristineTar.checkout}
 
     >>> import gbp.deb.git
-    >>> repo = gbp.deb.git.DebianGitRepository(repo_dir)
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.checkout('upstream', '1.1', 'gzip', '..')
     Traceback (most recent call last):
     ...
@@ -139,11 +147,5 @@ def test_pristine_tar_checkout_nonexistent():
     pristine-tar: git show refs/heads/pristine-tar:upstream_1.1.orig.tar.gz.delta failed
     """
 
-def test_teardown():
-    """
-    Perform the teardown
-
-    >>> context.teardown()
-    """
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
