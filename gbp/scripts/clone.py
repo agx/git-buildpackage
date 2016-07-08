@@ -26,6 +26,7 @@ from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
+from gbp.scripts.common.hook import Hook
 import gbp.log
 
 
@@ -38,7 +39,9 @@ def build_parser(name):
         return None
 
     branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
+    cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke hooks")
     parser.add_option_group(branch_group)
+    parser.add_option_group(cmd_group)
 
     branch_group.add_option("--all", action="store_true", dest="all", default=False,
                             help="track all branches, not only debian and upstream")
@@ -49,6 +52,9 @@ def build_parser(name):
                             help="git history depth (for creating shallow clones)")
     branch_group.add_option("--reference", action="store", dest="reference", default=None,
                             help="git reference repository (use local copies where possible)")
+    cmd_group.add_config_file_option(option_name="postclone", dest="postclone",
+                            help="hook to run after cloning the source tree, default is '%(postclone)s'")
+    cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -96,7 +102,8 @@ def main(argv):
         os.chdir(repo.path)
 
         # Reparse the config files of the cloned repository so we pick up the
-        # branch information from there:
+        # branch information from there but don't overwrite hooks:
+        postclone = options.postclone
         (options, args) = parse_args(argv)
 
         # Track all branches:
@@ -119,6 +126,12 @@ def main(argv):
                         repo.create_branch(branch, remote)
 
         repo.set_branch(options.debian_branch)
+
+        if postclone:
+            Hook('Postclone', options.postclone,
+                 extra_env={'GBP_GIT_DIR': repo.git_dir},
+                 )()
+
     except KeyboardInterrupt:
         retval = 1
         gbp.log.err("Interrupted. Aborting.")

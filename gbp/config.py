@@ -110,6 +110,7 @@ class GbpOptionParser(OptionParser):
                  'posttag'         : '',
                  'postbuild'       : '',
                  'prebuild'        : '',
+                 'postclone'       : '',
                  'postexport'      : '',
                  'postimport'      : '',
                  'hooks'           : 'True',
