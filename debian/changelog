@@ -1,3 +1,24 @@
+git-buildpackage (0.8.1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [3a5a497] import_dsc: Use the same patch options as dpkg-source for 1.0
+    packages (except for creating backup files) (Closes: #670099)
+  * [8d84fd3] dch: Match 'thanks' case insensitive (Closes: #746753)
+  * [29f16ca] Unbreak autopkgtest by setting git user and email
+  * [2b33349] import_orig: Drop duplicate log message when rolling back a branch
+  * [7ba43f6] Improve check for empty_repository.
+    Based on a patch by Carlos Maddela (Closes: #791472)
+  * [55fd73a] Remove outdated ref on git-import-dsc
+  * [1fae819] Use proper test fixtures.
+    (Closes: #723888)
+  * [95c8c53] clone: add postclone hook (Closes: #812816, #812815)
+  * [491adcf] clone: document missing directory option
+
+  [ Michael Elovskikh ]
+  * [a6311e6] Added option `never` to dch `--spawn-editor` choices
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 08 Jul 2016 15:44:28 +0200
+
 git-buildpackage (0.8.0) experimental; urgency=medium
 
   [ Markus Lehtonen ]
