@@ -30,7 +30,8 @@
       <arg><option>--reference=</option><replaceable>repository</replaceable></arg>
       <arg><option>--git-postclone=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-[no-]hooks</option></arg>
-      <arg choice="plain"><replaceable>remote_uri</replaceable></arg>
+      <arg choice="plain"><replaceable>repository</replaceable></arg>
+      <arg><replaceable>directory</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -115,6 +116,26 @@
           <para>
             Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
             repository the package is being built from).
+          </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    <variablelist>
+      <varlistentry>
+	<term><replaceable>repository</replaceable></term>
+	<listitem>
+          <para>
+	    The (possibly remote) repository to clone from.
+          </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    <variablelist>
+      <varlistentry>
+	<term><replaceable>directory</replaceable></term>
+	<listitem>
+          <para>
+	    The directory to clone to.
           </para>
 	</listitem>
       </varlistentry>
