@@ -215,3 +215,17 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
             h.update(buf)
         return h.hexdigest()
 
+    @staticmethod
+    def check_hook_vars(name, vars):
+        """
+        Check that a hook had the given vars in
+        it's environment.
+        This assumes the hook was set too
+            printenv > hookname.out
+        """
+        env = []
+        with open('%s.out' % name) as f:
+            env = [line.split('=')[0] for line in f.readlines()]
+
+        for var in vars:
+            ok_(var in env, "%s not found in %s" % (var, env))

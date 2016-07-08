@@ -41,6 +41,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
                                              git_archive_single, dump_tree,
                                              write_wc, drop_index)
 from gbp.scripts.common import ExitCodes
+from gbp.scripts.common.hook import Hook
 from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
 #{ upstream tarball preparation
@@ -486,13 +487,6 @@ def changes_file_suffix(dpkg_args):
         return os.getenv('ARCH', None) or du.get_arch()
 
 
-def md(a, b):
-    "Merge two dictionaires a and b"
-    c = a.copy()
-    c.update(b)
-    return c
-
-
 def build_parser(name, prefix=None):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
@@ -617,15 +611,6 @@ def parse_args(argv, prefix):
     return options, args, dpkg_args
 
 
-class Hook(RunAtCommand):
-    "A hook run during the build"
-    def __init__(self, name, *args, **kwargs):
-        if 'shell' not in kwargs:
-            kwargs['shell'] = True
-        RunAtCommand.__init__(self, *args, **kwargs)
-        self.run_error = '%s-hook %s' % (name, self.run_error)
-
-
 def main(argv):
     retval = 0
     prefix = "git-"
@@ -697,9 +682,9 @@ def main(argv):
                 # Run postexport hook
                 if options.postexport:
                     Hook('Postexport', options.postexport,
-                         extra_env=md(hook_env,
-                                      {'GBP_GIT_DIR': repo.git_dir,
-                                       'GBP_TMP_DIR': tmp_dir})
+                         extra_env=Hook.md(hook_env,
+                                           {'GBP_GIT_DIR': repo.git_dir,
+                                            'GBP_TMP_DIR': tmp_dir})
                          )(dir=tmp_dir)
 
                 major = (source.changelog.debian_version if source.is_native()
@@ -719,15 +704,15 @@ def main(argv):
 
             if options.prebuild:
                 Hook('Prebuild', options.prebuild,
-                     extra_env=md(hook_env,
+                     extra_env=Hook.md(hook_env,
                                   {'GBP_GIT_DIR': repo.git_dir,
                                    'GBP_BUILD_DIR': build_dir})
                      )(dir=build_dir)
 
             # Finally build the package:
             RunAtCommand(options.builder, dpkg_args, shell=True,
-                         extra_env=md(build_env,
-                                      {'GBP_BUILD_DIR': build_dir})
+                         extra_env=Hook.md(build_env,
+                                           {'GBP_BUILD_DIR': build_dir})
                          )(dir=build_dir)
             if options.postbuild:
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
@@ -737,9 +722,9 @@ def main(argv):
                                            changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
                 Hook('Postbuild', options.postbuild,
-                     extra_env=md(hook_env,
-                                  {'GBP_CHANGES_FILE': changes,
-                                   'GBP_BUILD_DIR': build_dir})
+                     extra_env=Hook.md(hook_env,
+                                       {'GBP_CHANGES_FILE': changes,
+                                        'GBP_BUILD_DIR': build_dir})
                      )()
         if options.tag or options.tag_only:
             tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
@@ -757,10 +742,10 @@ def main(argv):
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
                 Hook('Posttag', options.posttag,
-                     extra_env=md(hook_env,
-                                  {'GBP_TAG': tag,
-                                   'GBP_BRANCH': branch or '(no branch)',
-                                   'GBP_SHA1': sha})
+                     extra_env=Hook.md(hook_env,
+                                       {'GBP_TAG': tag,
+                                        'GBP_BRANCH': branch or '(no branch)',
+                                        'GBP_SHA1': sha})
                      )()
     except KeyboardInterrupt:
         retval = 1

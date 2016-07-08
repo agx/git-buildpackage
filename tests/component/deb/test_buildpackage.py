@@ -31,20 +31,6 @@ from gbp.scripts.buildpackage import main as buildpackage
 class TestBuildpackage(ComponentTestBase):
     """Test building a debian package"""
 
-    def check_hook_vars(self, name, vars):
-        """
-        Check that a hook hat the given vars in
-        it's environment.
-        This assumes the hook was set too
-            printenv > hookname.oug
-        """
-        env = []
-        with open('%s.out' % name) as f:
-            env = [line.split('=')[0] for line in f.readlines()]
-
-        for var in vars:
-            ok_(var in env, "%s not found in %s" % (var, env))
-
     @staticmethod
     def _dsc_name(pkg, version, dir):
         return os.path.join(DEB_TEST_DATA_DIR,
