@@ -346,11 +346,13 @@ def get_component_tarballs(name, version, tarball, components):
 
 def debian_branch_merge_by_merge(repo, tag, version, options):
     gbp.log.info("Merging to '%s'" % options.debian_branch)
+    branch = repo.get_branch()
+    repo.set_branch(options.debian_branch)
     try:
         repo.merge(tag)
     except GitRepositoryError:
         raise GbpError("Merge failed, please resolve.")
-    repo.set_branch(options.debian_branch)
+    repo.set_branch(branch)
 
 
 def set_bare_repo_options(options):
