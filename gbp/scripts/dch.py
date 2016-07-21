@@ -61,11 +61,15 @@ def get_author_email(repo, use_git_config):
     author = email = None
 
     if use_git_config:
-        try: author = repo.get_config('user.name')
-        except KeyError: pass
+        try:
+            author = repo.get_config('user.name')
+        except KeyError:
+            pass
 
-        try: email = repo.get_config('user.email')
-        except KeyError: pass
+        try:
+            email = repo.get_config('user.email')
+        except KeyError:
+            pass
     return author, email
 
 
@@ -81,7 +85,7 @@ def fixup_section(repo, use_git_author, options, dch_options):
     author, email = get_author_email(repo, use_git_author)
     used_options = ['distribution', 'urgency']
     opts = []
-    mainttrailer_opts = [ '--nomainttrailer', '--mainttrailer', '-t' ]
+    mainttrailer_opts = ['--nomainttrailer', '--mainttrailer', '-t']
 
     # This must not be done for snapshots or snapshots changelog entries
     # will not be concatenated
@@ -100,7 +104,7 @@ def fixup_section(repo, use_git_author, options, dch_options):
                 break
         else:
             opts.append(mainttrailer_opts[0])
-    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options+opts)
+    ChangeLog.spawn_dch(msg='', author=author, email=email, dch_options=dch_options + opts)
 
 
 def snapshot_version(version):
@@ -118,12 +122,12 @@ def snapshot_version(version):
     """
     try:
         (release, suffix) = version.rsplit('~', 1)
-        (snapshot, commit)  = suffix.split('.', 1)
+        (snapshot, commit) = suffix.split('.', 1)
         if not commit.startswith('gbp'):
             raise ValueError
         else:
             snapshot = int(snapshot)
-    except ValueError: # not a snapshot release
+    except ValueError:  # not a snapshot release
         release = version
         snapshot = 0
     return release, snapshot
@@ -143,13 +147,13 @@ def mangle_changelog(changelog, cp, snapshot=''):
         cr = open(changelog, 'r')
 
         print("%(Source)s (%(MangledVersion)s) "
-                    "%(Distribution)s; urgency=%(urgency)s\n" % cp, file=cw)
+              "%(Distribution)s; urgency=%(urgency)s\n" % cp, file=cw)
 
-        cr.readline() # skip version and empty line
+        cr.readline()  # skip version and empty line
         cr.readline()
         line = cr.readline()
         if snapshot_re.match(line):
-            cr.readline() # consume the empty line after the snapshot header
+            cr.readline()  # consume the empty line after the snapshot header
             line = ''
 
         if snapshot:
@@ -192,6 +196,7 @@ def do_snapshot(changelog, repo, next_snapshot):
 
     mangle_changelog(changelog, cp, commit)
     return snapshot, commit, cp['MangledVersion']
+
 
 def parse_commit(repo, commitid, opts, last_commit=False):
     """Parse a commit and return message, author, and author email"""
@@ -320,7 +325,7 @@ def build_parser(name):
     parser.add_option_group(naming_group)
     parser.add_option_group(custom_group)
 
-    parser.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
+    parser.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
     naming_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     naming_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
@@ -371,7 +376,7 @@ def build_parser(name):
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
     commit_group.add_config_file_option(option_name="spawn-editor", dest="spawn_editor")
     parser.add_config_file_option(option_name="commit-msg",
-                      dest="commit_msg")
+                                  dest="commit_msg")
     parser.add_option("-c", "--commit", action="store_true", dest="commit", default=False,
                       help="commit changelog file after generating")
 
@@ -381,8 +386,6 @@ def build_parser(name):
     custom_group.add_config_file_option(option_name="customizations",
                                         dest="customization_file",
                                         help=help_msg)
-
-
     return parser
 
 
@@ -443,7 +446,7 @@ def main(argv):
                     msg = "Starting from first commit"
                 gbp.log.info(msg)
                 found_snapshot_banner = has_snapshot_banner(cp)
-            else: # Fallback: continue from last tag
+            else:  # Fallback: continue from last tag
                 since = repo.find_version(options.debian_tag, cp['Version'])
                 if not since:
                     raise GbpError("Version %s not found" % cp['Version'])
@@ -456,7 +459,7 @@ def main(argv):
 
         # add a new changelog section if:
         if (options.new_version or options.bpo or options.nmu or options.qa or
-            options.team or options.security):
+                options.team or options.security):
             if options.bpo:
                 version_change['increment'] = '--bpo'
             elif options.nmu:
@@ -491,7 +494,7 @@ def main(argv):
         for c in commits:
             i += 1
             parsed = parse_commit(repo, c, options,
-                                  last_commit = i == len(commits))
+                                  last_commit=(i == len(commits)))
             commit_msg, (commit_author, commit_email) = parsed
             if not commit_msg:
                 # Some commits can be ignored
@@ -509,7 +512,6 @@ def main(argv):
                 add_section = False
             else:
                 cp.add_entry(commit_msg, commit_author, commit_email, dch_options)
-
 
         # Show a message if there were no commits (not even ignored
         # commits).

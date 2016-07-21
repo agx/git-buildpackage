@@ -75,7 +75,7 @@ class DebianGitRepository(GitRepository):
         """
         tag = self.version_to_tag(format, version)
         legacy_tag = self._build_legacy_tag(format, version)
-        if self.has_tag(tag): # new tags are injective
+        if self.has_tag(tag):  # new tags are injective
             # dereference to a commit object
             return self.rev_parse("%s^0" % tag)
         elif self.has_tag(legacy_tag):
@@ -86,7 +86,7 @@ class DebianGitRepository(GitRepository):
                 if line.endswith(" %s\n" % version):
                     # dereference to a commit object
                     return self.rev_parse("%s^0" % legacy_tag)
-                elif line.startswith('---'): # GPG signature start
+                elif line.startswith('---'):  # GPG signature start
                     return None
         return None
 
@@ -127,7 +127,7 @@ class DebianGitRepository(GitRepository):
         >>> DebianGitRepository._build_legacy_tag('upstream/%(version)s', '1:2.0~3')
         'upstream/2.0.3'
         """
-        if ':' in version: # strip of any epochs
+        if ':' in version:  # strip of any epochs
             version = version.split(':', 1)[1]
         version = version.replace('~', '.')
         return format % dict(version=version)
@@ -149,7 +149,7 @@ class DebianGitRepository(GitRepository):
 
         """
         return format_str(format, dict(version=DebianGitRepository._sanitize_version(version),
-                                       hversion=DebianGitRepository._sanitize_version(version).replace('.','-')))
+                                       hversion=DebianGitRepository._sanitize_version(version).replace('.', '-')))
 
     @staticmethod
     def _sanitize_version(version):
