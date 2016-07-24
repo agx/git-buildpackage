@@ -19,6 +19,7 @@
 
 import errno
 import os
+import subprocess
 import shutil
 import sys
 import tempfile
@@ -211,20 +212,22 @@ def export_patches(repo, branch, options):
         drop_pq(repo, branch)
 
 
-def safe_patches(series):
+def save_patches(series):
     """
-    Safe the current patches in a temporary directory
-    below .git/
+    Save the current patches in a temporary directory
+    below gitdir, which is usually .git/
 
     @param series: path to series file
-    @return: tmpdir and path to safed series file
+    @return: tmpdir and path to saved series file
     @rtype: tuple
     """
 
     src = os.path.dirname(series)
     name = os.path.basename(series)
 
-    tmpdir = tempfile.mkdtemp(dir='.git/', prefix='gbp-pq')
+    pipe = subprocess.Popen(["git", "rev-parse", "--git-dir"], shell=False, stdout=subprocess.PIPE)
+    gitdir = pipe.stdout.readline().strip()
+    tmpdir = tempfile.mkdtemp(dir=gitdir, prefix='gbp-pq')
     patches = os.path.join(tmpdir, 'patches')
     series = os.path.join(patches, name)
 
@@ -271,7 +274,7 @@ def import_quilt_patches(repo, branch, series, tries, force):
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
     if len(commits) > 1:
-        tmpdir, series = safe_patches(series)
+        tmpdir, series = save_patches(series)
 
     queue = PatchSeries.read_series_file(series)
 

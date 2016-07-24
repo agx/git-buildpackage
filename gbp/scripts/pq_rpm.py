@@ -209,7 +209,7 @@ def export_patches(repo, options):
     GitCommand('status')(['--', spec.specdir])
 
 
-def safe_patches(queue):
+def save_patches(queue):
     """
     Safe the current patches in a temporary directory
 
@@ -306,7 +306,7 @@ def import_spec_patches(repo, options):
                   recursive=False)
         spec.specdir = packaging_tmp
     in_queue = spec.patchseries()
-    queue = safe_patches(in_queue)
+    queue = save_patches(in_queue)
     # Do import
     try:
         gbp.log.info("Switching to branch '%s'" % pq_branch)
