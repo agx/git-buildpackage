@@ -1651,13 +1651,15 @@ class GitRepository(object):
         output, ret = self._git_getoutput('format-patch', options.args)
         return [ line.strip() for line in output ]
 
-    def apply_patch(self, patch, index=True, context=None, strip=None):
+    def apply_patch(self, patch, index=True, context=None, strip=None, fix_ws=False):
         """Apply a patch using git apply"""
         args = []
         if context:
             args += [ '-C', context ]
         if index:
             args.append("--index")
+        if fix_ws:
+            args.append("--whitespace=fix")
         if strip != None:
             args += [ '-p', str(strip) ]
         args.append(patch)
