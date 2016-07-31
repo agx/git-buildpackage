@@ -316,7 +316,11 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
         else:
             gbp.log.warn("Patch '%s' has no authorship information" % patch_fn)
 
-    repo.apply_patch(patch.path, strip=patch.strip)
+    try:
+        repo.apply_patch(patch.path, strip=patch.strip)
+    except GitRepositoryError:
+        gbp.log.warn("Patch %s failed to apply, retrying with whitespace fixup" % patch_fn)
+        repo.apply_patch(patch.path, strip=patch.strip, fix_ws=True)
     tree = repo.write_tree()
     msg = "%s\n\n%s" % (patch.subject, patch.long_desc)
     if topic:
