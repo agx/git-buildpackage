@@ -59,6 +59,9 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
         self.rollback_errors = []
         DebianGitRepository.__init__(self, *args, **kwargs)
 
+    def has_rollbacks(self):
+        return len(self.rollbacks) > 0
+
     def vcs_tag_parent(self, vcs_tag_format, version):
         """If linking to the upstream VCS get the commit id"""
         if vcs_tag_format:
@@ -597,7 +600,7 @@ def main(argv):
         if str(err):
             gbp.log.err(err)
         ret = 1
-        if repo and options.rollback:
+        if repo and repo.has_rollbacks() and options.rollback:
             gbp.log.err("Error detected, Will roll back changes.")
             try:
                 repo.rollback()
@@ -607,7 +610,6 @@ def main(argv):
                 gbp.log.error("Automatic rollback failed: %s" % e)
                 gbp.log.error("Clean up manually and please report a bug: %s" %
                               repo.rollback_errors)
-
 
     if pristine_orig and linked and not options.symlink_orig:
         os.unlink(pristine_orig)
