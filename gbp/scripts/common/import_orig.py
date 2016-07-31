@@ -171,8 +171,8 @@ def download_orig(url):
                 for d in r.iter_content(CHUNK_SIZE):
                     target_fd.write(d)
     except Exception as e:
-        raise GbpError("Failed to download %s: %s" % (url, e))
         if os.path.exists(target):
             os.unlink(target)
+        raise GbpError("Failed to download %s: %s" % (url, e))
 
     return DebianUpstreamSource(target)
