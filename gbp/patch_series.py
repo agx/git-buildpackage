@@ -163,7 +163,7 @@ class PatchSeries(list):
     """
     A series of L{Patch}es as read from a quilt series file).
     """
-    comment_re = re.compile('\s?#.*$')
+    comment_re = re.compile('\s+#.*$')
     level_re = re.compile('-p(?P<level>[0-9]+)')
 
     @classmethod
@@ -236,7 +236,7 @@ class PatchSeries(list):
 
         >>> PatchSeries._strip_comment("does/not matter")
         'does/not matter'
-        >>> PatchSeries._strip_comment("remove/the # comment # text")
+        >>> PatchSeries._strip_comment("remove/the  # comment # text")
         'remove/the'
         >>> PatchSeries._strip_comment("leave/level/intact -p1 # comment # text")
         'leave/level/intact -p1'
