@@ -28,8 +28,8 @@
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--depth=</option><replaceable>depth</replaceable></arg>
       <arg><option>--reference=</option><replaceable>repository</replaceable></arg>
-      <arg><option>--git-postclone=</option><replaceable>COMMAND</replaceable></arg>
-      <arg><option>--git-[no-]hooks</option></arg>
+      <arg><option>--postclone=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--[no-]hooks</option></arg>
       <arg choice="plain"><replaceable>repository</replaceable></arg>
       <arg><replaceable>directory</replaceable></arg>
     </cmdsynopsis>
@@ -97,7 +97,7 @@
     </variablelist>
     <variablelist>
       <varlistentry>
-	<term><option>--git-[no-]hooks</option></term>
+	<term><option>--[no-]hooks</option></term>
 	<listitem>
           <para>
             Enable running hooks.
@@ -107,7 +107,7 @@
     </variablelist>
     <variablelist>
       <varlistentry>
-	<term><option>--git-postclone=</option><replaceable>COMMAND</replaceable></term>
+	<term><option>--postclone=</option><replaceable>COMMAND</replaceable></term>
 	<listitem>
           <para>
             Execute <replaceable>COMMAND</replaceable> after cloning the source
