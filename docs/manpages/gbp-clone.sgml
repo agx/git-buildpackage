@@ -117,6 +117,11 @@
             Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
             repository the package is being built from).
           </para>
+	  <para>Note that if you clone a repository that contains a
+	    hook configuration in <filename>debian/gbp.conf</filename>
+	    this hook will not be run automatically to prevent execution
+	    of untrusted code.
+	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
