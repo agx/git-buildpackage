@@ -1,3 +1,24 @@
+git-buildpackage (0.8.2) experimental; urgency=medium
+
+  * [1f0013c] import-orig: Switch to Debian branch before merging in changes
+    otherwise we'd always merge into the current working copy
+    (Closes: #832016)
+  * [a52aff5] download_orig: unlink file before raising the exception
+    otherwise we would not clean up
+  * [3d261da] import_orig: Only try rollbacks if necessary.
+  * [61e659d] pq: strip comments with multiple leading whitespace. Really
+    Closes: #825536
+  * [68940fb] pq: Retry patch with whitespace fixup on failure.  This helps
+    patches with CRLF line endings and we don't lose anything since we'd
+    failed otherwise anyway. (Closes: #833066)
+  * [e2671b9] docs: fix --postclone and --hooks options of git-clone.
+    Thanks to IOhannes m zmoelnig for pointing this out
+  * [e68a0a1] docs: Document --postclone hook behaviour with debian/gbp.conf
+    Thanks to IOhannes m zmoelnig for pointing this out
+    (Closes: #833143)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 02 Aug 2016 19:26:33 +0200
+
 git-buildpackage (0.8.1) experimental; urgency=medium
 
   [ Guido Günther ]
