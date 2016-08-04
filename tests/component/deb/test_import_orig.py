@@ -63,7 +63,6 @@ class TestImportOrig(ComponentTestBase):
         os.chdir(self.pkg)
         orig = self._orig('2.6')
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
-
         self._check_repo_state(repo, 'master', self.def_branches,
                                tags=['upstream/2.6'])
 
@@ -78,9 +77,18 @@ class TestImportOrig(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
 
         orig = self._orig('2.8')
-        ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
+        ok_(import_orig(['arg0',
+                         '--postimport=printenv > postimport.out',
+                         '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+        eq_(os.path.exists('postimport.out'), True)
+        self.check_hook_vars('postimport', ["GBP_BRANCH",
+                                            "GBP_TAG",
+                                            "GBP_UPSTREAM_VERSION",
+                                            "GBP_DEBIAN_VERSION"])
+
+
 
     def test_update_component_tarballs(self):
         """

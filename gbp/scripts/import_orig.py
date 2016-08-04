@@ -298,8 +298,13 @@ def debian_branch_merge(repo, tag, version, options):
             cp = ChangeLog(filename='debian/changelog')
             if cp.has_epoch():
                 epoch = '%s:' % cp.epoch
-        info = {'version': "%s%s-1" % (epoch, version)}
-        env = {'GBP_BRANCH': options.debian_branch}
+        debian_version = "%s%s-1" % (epoch, version)
+        info = {'version': debian_version}
+        env = {'GBP_BRANCH': options.debian_branch,
+               'GBP_TAG': tag,
+               'GBP_UPSTREAM_VERSION': version,
+               'GBP_DEBIAN_VERSION': debian_version,
+               }
         gbpc.Command(format_str(options.postimport, info), extra_env=env, shell=True)()
 
 
