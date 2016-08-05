@@ -23,6 +23,7 @@ Build-Depends:
  python-six,
  python-setuptools,
  sgml2x,
+ sp,
 # For the testsuite
  bzip2,
  cpio,
