@@ -83,12 +83,10 @@ class TestImportOrig(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         eq_(os.path.exists('postimport.out'), True)
-        self.check_hook_vars('postimport', ["GBP_BRANCH",
-                                            "GBP_TAG",
-                                            "GBP_UPSTREAM_VERSION",
-                                            "GBP_DEBIAN_VERSION"])
-
-
+        self.check_hook_vars('postimport', [("GBP_BRANCH", "master"),
+                                            ("GBP_TAG", "upstream/2.8"),
+                                            ("GBP_UPSTREAM_VERSION", "2.8"),
+                                            ("GBP_DEBIAN_VERSION", "2.8-1")])
 
     def test_update_component_tarballs(self):
         """

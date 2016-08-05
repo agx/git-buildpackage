@@ -87,8 +87,8 @@ class TestBuildpackage(ComponentTestBase):
         ok_(ret == 0, "Building the package failed")
         eq_(os.path.exists('posttag.out'), True)
         eq_(os.path.exists('builder-run.stamp'), False)
-        self.check_hook_vars('posttag', ["GBP_TAG",
-                                         "GBP_BRANCH",
+        self.check_hook_vars('posttag', [("GBP_TAG", "debian/0.4.14"),
+                                         ("GBP_BRANCH", "master"),
                                          "GBP_SHA1"])
 
     def test_component_generation(self):

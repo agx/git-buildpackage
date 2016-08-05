@@ -216,16 +216,22 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
         return h.hexdigest()
 
     @staticmethod
-    def check_hook_vars(name, vars):
+    def check_hook_vars(name, expected):
         """
         Check that a hook had the given vars in
         it's environment.
         This assumes the hook was set too
             printenv > hookname.out
         """
-        env = []
         with open('%s.out' % name) as f:
-            env = [line.split('=')[0] for line in f.readlines()]
+            parsed = dict([line[:-1].split('=', 1) for line in f.readlines()])
 
-        for var in vars:
-            ok_(var in env, "%s not found in %s" % (var, env))
+        for var in expected:
+            if len(var) == 2:
+                k, v = var
+            else:
+                k, v = var, None
+            ok_(k in parsed, "%s not found in %s" % (k, parsed))
+            if v is not None:
+                ok_(v == parsed[k],
+                    "Got %s not expected value %s for %s" % (parsed[k], v, k))
