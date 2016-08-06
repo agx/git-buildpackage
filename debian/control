@@ -8,7 +8,6 @@ Build-Depends:
  dh-python,
  docbook-utils,
  gtk-doc-tools,
- jade,
  perl,
  pychecker,
  python (>> 2.7.3),
@@ -23,7 +22,6 @@ Build-Depends:
  python-six,
  python-setuptools,
  sgml2x,
- sp,
 # For the testsuite
  bzip2,
  cpio,
