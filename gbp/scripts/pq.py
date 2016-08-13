@@ -24,7 +24,9 @@ import sys
 import tempfile
 import re
 from gbp.config import GbpOptionParserDebian
-from gbp.git import (GitRepositoryError, GitRepository)
+from gbp.deb.source import DebianSource
+from gbp.deb.git import DebianGitRepository
+from gbp.git import GitRepositoryError
 from gbp.command_wrappers import (GitCommand, CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
@@ -171,6 +173,18 @@ def commit_patches(repo, branch, patches, options):
     return added, removed
 
 
+def find_upstream_commit(repo, cp, upstream_tag):
+    """
+    Find commit corresponding upstream version
+    """
+
+    upstream_commit = repo.find_version(upstream_tag, cp.upstream_version)
+    if not upstream_commit:
+        raise GbpError("Couldn't find upstream version %s" %
+                       cp.upstream_version)
+    return upstream_commit
+
+
 def export_patches(repo, branch, options):
     """Export patches from the pq branch into a patch series"""
     if is_pq_branch(branch):
@@ -234,7 +248,8 @@ def safe_patches(series):
     return (tmpdir, series)
 
 
-def import_quilt_patches(repo, branch, series, tries, force):
+def import_quilt_patches(repo, branch, series, tries, force, pq_from,
+                         upstream_tag):
     """
     apply a series of quilt patches in the series file 'series' to branch
     the patch-queue branch for 'branch'
@@ -245,6 +260,10 @@ def import_quilt_patches(repo, branch, series, tries, force):
     @param tries: try that many times to apply the patches going back one
                   commit in the branches history after each failure.
     @param force: import the patch series even if the branch already exists
+    @param pq_from: what to use as the starting point for the pq branch.
+                    DEBIAN indicates the current branch, TAG indicates that
+                    the corresponding upstream tag should be used.
+    @param upstream_tag: upstream tag template to use
     """
     tmpdir = None
 
@@ -267,10 +286,16 @@ def import_quilt_patches(repo, branch, series, tries, force):
                            % pq_branch)
 
     maintainer = get_maintainer_from_control(repo)
-    commits = repo.get_commits(num=tries, first_parent=True)
+    if pq_from.upper() == 'TAG':
+        vfs = gbp.git.vfs.GitVfs(repo, branch)
+        source = DebianSource(vfs)
+        commits = [find_upstream_commit(repo, source.changelog, upstream_tag)]
+    else:  # pq_from == 'DEBIAN'
+        commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
-    if len(commits) > 1:
+    # If we are using the upstream_tag, we always need a copy of the patches
+    if len(commits) > 1 or pq_from.upper() == 'TAG':
         tmpdir, series = safe_patches(series)
 
     queue = PatchSeries.read_series_file(series)
@@ -354,6 +379,8 @@ def build_parser(name):
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     parser.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
+    parser.add_config_file_option(option_name="pq-from", dest="pq_from")
+    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     return parser
 
 
@@ -392,7 +419,7 @@ def main(argv):
         return 1
 
     try:
-        repo = GitRepository(os.path.curdir)
+        repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:
         gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
@@ -404,7 +431,9 @@ def main(argv):
         elif action == "import":
             series = SERIES_FILE
             tries = options.time_machine if (options.time_machine > 0) else 1
-            num = import_quilt_patches(repo, current, series, tries, options.force)
+            num = import_quilt_patches(repo, current, series, tries,
+                                       options.force, options.pq_from,
+                                       options.upstream_tag)
             current = repo.get_branch()
             gbp.log.info("%d patches listed in '%s' imported on '%s'" %
                           (num, series, current))
