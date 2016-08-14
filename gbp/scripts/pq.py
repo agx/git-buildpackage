@@ -336,13 +336,23 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
     return len(queue)
 
 
-def rebase_pq(repo, branch):
+def rebase_pq(repo, branch, pq_from, upstream_tag):
+
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
     else:
         switch_to_pq_branch(repo, branch)
         base = branch
-    GitCommand("rebase")([base])
+
+    if pq_from.upper() == 'TAG':
+        vfs = gbp.git.vfs.GitVfs(repo, base)
+        source = DebianSource(vfs)
+        upstream_commit = find_upstream_commit(repo, source.changelog, upstream_tag)
+        _from = upstream_commit
+    else:
+        _from = base
+
+    GitCommand("rebase")([_from])
 
 
 def build_parser(name):
@@ -440,7 +450,7 @@ def main(argv):
         elif action == "drop":
             drop_pq(repo, current)
         elif action == "rebase":
-            rebase_pq(repo, current)
+            rebase_pq(repo, current, options.pq_from, options.upstream_tag)
         elif action == "apply":
             patch = Patch(patchfile)
             maintainer = get_maintainer_from_control(repo)
