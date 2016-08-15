@@ -1,12 +1,12 @@
 #!/bin/bash
-# $Id: git-pbuilder,v 1.40 2016/01/23 23:59:19 eagle Exp $
+# $Id: git-pbuilder,v 1.42 2016/08/13 21:21:07 eagle Exp $
 #
-# git-pbuilder -- Wrapper around pbuilder for gbp buildpackage
+# Wrapper around pbuilder for gbp buildpackage
 #
 # Note that this script requires bash, not a POSIX shell, because it uses bash
-# arrays to handle GIT_PBUILDER_OPTIONS.  It's otherwise quite difficult to
-# get the contents of that environment variable to undergo the correct amount
-# of shell expansion.
+# arrays to handle GIT_PBUILDER_OPTIONS and GIT_PBUILDER_PDEBUILDOPTIONS.
+# It's otherwise quite difficult to get the contents of that environment
+# variable to undergo the correct amount of shell expansion.
 #
 # Written by Russ Allbery <eagle@eyrie.org>
 # Based on the example in the git-buildpackage documentation
@@ -78,7 +78,7 @@ if expr "$DIST" : '.*-backports$' >/dev/null; then
     # -backports.  Backports was incorporated into the main mirrors as of
     # wheezy.
     case $DIST in
-        squeeze|oldstable)
+        squeeze)
             BACKPORTS='http://backports.debian.org/debian-backports'
             ;;
         *)
@@ -104,8 +104,10 @@ if [ ! -x /usr/sbin/"$BUILDER" ]; then
 fi
 
 # Default options come from the environment.  Use eval to parse
-# GIT_PBUILDER_OPTIONS into an array since some arguments may have quoting.
+# GIT_PBUILDER_OPTIONS and GIT_PBUILDER_PDEBUILDOPTIONS into arrays, since
+# some arguments may have quoting.
 eval "OPTIONS=( $GIT_PBUILDER_OPTIONS )"
+eval "PDEBUILDOPTS=( $GIT_PBUILDER_PDEBUILDOPTIONS )"
 OUTPUT_DIR="${GIT_PBUILDER_OUTPUT_DIR:-../}"
 
 # How we handle options depends on what type of builder we're using.  Ignore
@@ -325,10 +327,10 @@ done
 # seems to pass everything through properly.
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
     pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" \
-        -- "${OPTIONS[@]}"
+        "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
 else
     pdebuild --buildresult "$OUTPUT_DIR" --pbuilder "$BUILDER" \
-        --debbuildopts "$DEBBUILDOPTS" -- "${OPTIONS[@]}"
+        --debbuildopts "$DEBBUILDOPTS" "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
 fi
 status="$?"
 if [ -n "`ls ../*_source.changes`" ] && [ true != "$source_only" ] ; then
@@ -429,9 +431,8 @@ B<--othermirror> parameter to the builder:
     deb http://backports.debian.org/debian-backports $DIST main
 
 The first will be used for most distributions, and the second for
-C<squeeze-backports> or C<oldstable-backports>. If the distribution ends in
-C<-lts>, the following will be added as an B<--othermirror> parameter to the
-builder:
+C<squeeze-backports>. If the distribution ends in C<-lts>, the following will
+be added as an B<--othermirror> parameter to the builder:
 
     deb http://ftp.debian.org/debian $DIST main
 
@@ -498,6 +499,13 @@ value of the environment variable.
 Where to put the result of the build.  The default is C<..> (the parent
 directory).  This setting is ignored if GIT_PBUILDER_AUTOCONF is set to
 C<no>.
+
+=item GIT_PBUILDER_PDEBUILDOPTIONS
+
+Add additional options for B<pdebuild> itself (such as
+B<--use-pdebuild-internal>).  The contents of this variable will undergo
+shell expansion, so any arguments containing shell metacharacters or
+whitespace need to be quoted in the value of the environment variable.
 
 =item PBUILDER_BASE
 
