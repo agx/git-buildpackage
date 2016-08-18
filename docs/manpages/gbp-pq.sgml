@@ -29,6 +29,8 @@
       <arg><option>--force</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
       <arg><option>--meta-closes-bugnum=bug-number-format</option></arg>
+      <arg><option>--pq-from=</option><replaceable>[DEBIAN|TAG]</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <group choice="plain">
         <arg><option>drop</option></arg>
         <arg><option>export</option></arg>
@@ -227,6 +229,30 @@
 	    <option>export</option> <option>--commit</option>.  The
             default is <literal>'(?:bug|issue)?\#?\s?\d+'</literal>.
             See <xref linkend="man.gbp.dch"/> for details.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pq-from=</option><replaceable>[DEBIAN|TAG]</replaceable>
+        </term>
+        <listitem>
+          <para>
+          How to find the starting point for the patch queue base. The options are DEBIAN, that will use the Debian branch as the base for the patch queue branch, and TAG, that will use the corresponding upstream tag as a base for the patch queue branch.
+          </para>
+          <para>
+          This is only needed if your upstream branch is not merged in the Debian branch.
+          The default is <replaceable>DEBIAN</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+     </variablelist>
+      <varlistentry>
+        <term><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this tag format when looking for tags of upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>.
           </para>
         </listitem>
       </varlistentry>
