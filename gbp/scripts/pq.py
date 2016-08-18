@@ -202,7 +202,16 @@ def export_patches(repo, branch, options):
         else:
             gbp.log.debug("%s does not exist." % PATCH_DIR)
 
-    patches = generate_patches(repo, branch, pq_branch, PATCH_DIR, options)
+    if options.pq_from.upper() == 'TAG':
+        vfs = gbp.git.vfs.GitVfs(repo, branch)
+        source = DebianSource(vfs)
+        upstream_commit = find_upstream_commit(repo, source.changelog,
+                                               options.upstream_tag)
+        base = upstream_commit
+    else:
+        base = branch
+
+    patches = generate_patches(repo, base, pq_branch, PATCH_DIR, options)
 
     if patches:
         with open(SERIES_FILE, 'w') as seriesfd:
