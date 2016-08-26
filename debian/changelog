@@ -1,3 +1,19 @@
+git-buildpackage (0.8.3) unstable; urgency=medium
+
+  * Upload to unstable
+  * [51620e9] import-orig: export version information to postimport hook
+    (Closes: #833429)
+  * [086ff78] Drop dependencies on sp and jade.
+    Thanks to Neil Roeth
+  * [bf46e26] Update to git-pbuilder 1.42
+  * [99e7703] import_orig: Properly abort merge on rollbacks.
+    If merging fails we need to call "git merge --abort"
+  * [a868977] tests: match env vars values in hook checks too
+  * [fae6456] tests: only check gbp related env vars in hooks.
+    This avoids test failures when env vars contain newlines
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 26 Aug 2016 14:18:17 +0200
+
 git-buildpackage (0.8.2) experimental; urgency=medium
 
   * [1f0013c] import-orig: Switch to Debian branch before merging in changes
