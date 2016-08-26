@@ -453,6 +453,12 @@ class GitRepository(object):
         args.add(commit)
         self._git_command("merge", args.args)
 
+    def abort_merge(self):
+        """
+        Abort a merge
+        """
+        self._git_command("merge", ["--abort"])
+
     def is_fast_forward(self, from_branch, to_branch):
         """
         Check if an update I{from from_branch} to I{to_branch} would be a fast

@@ -86,6 +86,8 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
                 gbp.log.warning("Failed to rev-parse %s: %s" % (refname, err))
         elif action == 'delete':
             pass
+        elif action == 'abortmerge':
+            pass
         else:
             raise GbpError("Unknown action %s for %s %s" % (action, reftype, refname))
         self.rollbacks.append((refname, reftype, action, sha))
@@ -101,6 +103,9 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
 
     def rrr_tag(self, tagname, action='delete'):
         return self.rrr(tagname, action, 'tag')
+
+    def rrr_merge(self, commit, action='abortmerge'):
+        return self.rrr(commit, action, 'commit')
 
     def rollback(self):
         """
@@ -121,6 +126,9 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
                 elif action == 'reset' and reftype == 'branch':
                     gbp.log.info('Rolling back branch %s by resetting it to %s' % (name, sha))
                     self.update_ref("refs/heads/%s" % name, sha, msg="gbp import-orig: failure rollback of %s" % name)
+                elif action == 'abortmerge':
+                    gbp.log.info('Rolling back failed merge of %s' % name)
+                    self.abort_merge()
                 else:
                     raise GitRepositoryError("Don't know how to %s %s %s" % (action, reftype, name))
             except GitRepositoryError as e:
@@ -145,6 +153,16 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
         ret = super(ImportOrigDebianGitRepository, self).create_branch(*args, **kwargs)
         self.rrr_branch(branch, 'delete')
         return ret
+
+    def merge(self, *args, **kwargs):
+        commit = args[0] if args else kwargs['commit']
+        try:
+            return super(ImportOrigDebianGitRepository, self).merge(*args, **kwargs)
+        except GitRepositoryError:
+            # Only cleanup in the error case to undo working copy
+            # changes. Resetting the refs handles the other cases.
+            self.rrr_merge(commit)
+            raise
 
 
 def prepare_pristine_tar(archive, pkg, version):
@@ -359,7 +377,7 @@ def debian_branch_merge_by_merge(repo, tag, version, options):
     try:
         repo.merge(tag)
     except GitRepositoryError:
-        raise GbpError("Merge failed, please resolve.")
+        raise GbpError("Automatic merge failed.")
     repo.set_branch(branch)
 
 
@@ -612,7 +630,7 @@ def main(argv):
                 # Make sure the very last line as an error message
                 gbp.log.err("Rolled back changes after import error.")
             except Exception as e:
-                gbp.log.error("Automatic rollback failed: %s" % e)
+                gbp.log.error("%s" % e)
                 gbp.log.error("Clean up manually and please report a bug: %s" %
                               repo.rollback_errors)
 
