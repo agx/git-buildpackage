@@ -224,7 +224,7 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
             printenv > hookname.out
         """
         with open('%s.out' % name) as f:
-            parsed = dict([line[:-1].split('=', 1) for line in f.readlines()])
+            parsed = dict([line[:-1].split('=', 1) for line in f.readlines() if line.startswith("GBP_")])
 
         for var in expected:
             if len(var) == 2:
