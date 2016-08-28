@@ -24,7 +24,9 @@ import sys
 import tempfile
 import re
 from gbp.config import GbpOptionParserDebian
-from gbp.git import (GitRepositoryError, GitRepository)
+from gbp.deb.source import DebianSource
+from gbp.deb.git import DebianGitRepository
+from gbp.git import GitRepositoryError
 from gbp.command_wrappers import (GitCommand, CommandExecFailed)
 from gbp.errors import GbpError
 import gbp.log
@@ -171,8 +173,22 @@ def commit_patches(repo, branch, patches, options):
     return added, removed
 
 
+def find_upstream_commit(repo, cp, upstream_tag):
+    """
+    Find commit corresponding upstream version
+    """
+
+    upstream_commit = repo.find_version(upstream_tag, cp.upstream_version)
+    if not upstream_commit:
+        raise GbpError("Couldn't find upstream version %s" %
+                       cp.upstream_version)
+    return upstream_commit
+
+
 def export_patches(repo, branch, options):
     """Export patches from the pq branch into a patch series"""
+    patch_dir = os.path.join(repo.path, PATCH_DIR)
+    series_file = os.path.join(repo.path, SERIES_FILE)
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
         gbp.log.info("On '%s', switching to '%s'" % (branch, base))
@@ -181,19 +197,28 @@ def export_patches(repo, branch, options):
 
     pq_branch = pq_branch_name(branch)
     try:
-        shutil.rmtree(PATCH_DIR)
+        shutil.rmtree(patch_dir)
     except OSError as e:
         if e.errno != errno.ENOENT:
             raise GbpError("Failed to remove patch dir: %s" % e.strerror)
         else:
-            gbp.log.debug("%s does not exist." % PATCH_DIR)
+            gbp.log.debug("%s does not exist." % patch_dir)
 
-    patches = generate_patches(repo, branch, pq_branch, PATCH_DIR, options)
+    if options.pq_from.upper() == 'TAG':
+        vfs = gbp.git.vfs.GitVfs(repo, branch)
+        source = DebianSource(vfs)
+        upstream_commit = find_upstream_commit(repo, source.changelog,
+                                               options.upstream_tag)
+        base = upstream_commit
+    else:
+        base = branch
+
+    patches = generate_patches(repo, base, pq_branch, patch_dir, options)
 
     if patches:
-        with open(SERIES_FILE, 'w') as seriesfd:
+        with open(series_file, 'w') as seriesfd:
             for patch in patches:
-                seriesfd.write(os.path.relpath(patch, PATCH_DIR) + '\n')
+                seriesfd.write(os.path.relpath(patch, patch_dir) + '\n')
         if options.commit:
             added, removed = commit_patches(repo, branch, patches, options)
             if added:
@@ -203,7 +228,7 @@ def export_patches(repo, branch, options):
                 what = 'patches' if len(removed) > 1 else 'patch'
                 gbp.log.info("Removed %s %s from patch series" % (what, ', '.join(removed)))
         else:
-            GitCommand('status')(['--', PATCH_DIR])
+            GitCommand('status', cwd=repo.path)(['--', PATCH_DIR])
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
 
@@ -211,7 +236,7 @@ def export_patches(repo, branch, options):
         drop_pq(repo, branch)
 
 
-def safe_patches(series):
+def safe_patches(series, repo):
     """
     Safe the current patches in a temporary directory
     below .git/
@@ -224,7 +249,7 @@ def safe_patches(series):
     src = os.path.dirname(series)
     name = os.path.basename(series)
 
-    tmpdir = tempfile.mkdtemp(dir='.git/', prefix='gbp-pq')
+    tmpdir = tempfile.mkdtemp(dir=repo.git_dir, prefix='gbp-pq')
     patches = os.path.join(tmpdir, 'patches')
     series = os.path.join(patches, name)
 
@@ -234,19 +259,25 @@ def safe_patches(series):
     return (tmpdir, series)
 
 
-def import_quilt_patches(repo, branch, series, tries, force):
+def import_quilt_patches(repo, branch, series, tries, force, pq_from,
+                         upstream_tag):
     """
     apply a series of quilt patches in the series file 'series' to branch
     the patch-queue branch for 'branch'
 
     @param repo: git repository to work on
-    @param branch: branch to base pqtch queue on
-    @param series; series file to read patches from
+    @param branch: branch to base patch queue on
+    @param series: series file to read patches from
     @param tries: try that many times to apply the patches going back one
                   commit in the branches history after each failure.
     @param force: import the patch series even if the branch already exists
+    @param pq_from: what to use as the starting point for the pq branch.
+                    DEBIAN indicates the current branch, TAG indicates that
+                    the corresponding upstream tag should be used.
+    @param upstream_tag: upstream tag template to use
     """
     tmpdir = None
+    series = os.path.join(repo.path, series)
 
     if is_pq_branch(branch):
         if force:
@@ -267,11 +298,18 @@ def import_quilt_patches(repo, branch, series, tries, force):
                            % pq_branch)
 
     maintainer = get_maintainer_from_control(repo)
-    commits = repo.get_commits(num=tries, first_parent=True)
+    if pq_from.upper() == 'TAG':
+        vfs = gbp.git.vfs.GitVfs(repo, branch)
+        source = DebianSource(vfs)
+        commits = [find_upstream_commit(repo, source.changelog, upstream_tag)]
+    else:  # pq_from == 'DEBIAN'
+        commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
-    if len(commits) > 1:
-        tmpdir, series = safe_patches(series)
+    # If we are using the upstream_tag, we always need a copy of the patches
+    if len(commits) > 1 or pq_from.upper() == 'TAG':
+        if os.path.exists(series):
+            tmpdir, series = safe_patches(series, repo)
 
     queue = PatchSeries.read_series_file(series)
 
@@ -311,13 +349,23 @@ def import_quilt_patches(repo, branch, series, tries, force):
     return len(queue)
 
 
-def rebase_pq(repo, branch):
+def rebase_pq(repo, branch, pq_from, upstream_tag):
+
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
     else:
         switch_to_pq_branch(repo, branch)
         base = branch
-    GitCommand("rebase")([base])
+
+    if pq_from.upper() == 'TAG':
+        vfs = gbp.git.vfs.GitVfs(repo, base)
+        source = DebianSource(vfs)
+        upstream_commit = find_upstream_commit(repo, source.changelog, upstream_tag)
+        _from = upstream_commit
+    else:
+        _from = base
+
+    GitCommand("rebase", cwd=repo.path)([_from])
 
 
 def build_parser(name):
@@ -354,6 +402,8 @@ def build_parser(name):
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     parser.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
+    parser.add_config_file_option(option_name="pq-from", dest="pq_from")
+    parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     return parser
 
 
@@ -392,7 +442,7 @@ def main(argv):
         return 1
 
     try:
-        repo = GitRepository(os.path.curdir)
+        repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:
         gbp.log.err("%s is not a git repository" % (os.path.abspath('.')))
         return 1
@@ -404,14 +454,16 @@ def main(argv):
         elif action == "import":
             series = SERIES_FILE
             tries = options.time_machine if (options.time_machine > 0) else 1
-            num = import_quilt_patches(repo, current, series, tries, options.force)
+            num = import_quilt_patches(repo, current, series, tries,
+                                       options.force, options.pq_from,
+                                       options.upstream_tag)
             current = repo.get_branch()
             gbp.log.info("%d patches listed in '%s' imported on '%s'" %
                           (num, series, current))
         elif action == "drop":
             drop_pq(repo, current)
         elif action == "rebase":
-            rebase_pq(repo, current)
+            rebase_pq(repo, current, options.pq_from, options.upstream_tag)
         elif action == "apply":
             patch = Patch(patchfile)
             maintainer = get_maintainer_from_control(repo)

@@ -99,6 +99,7 @@ class GbpOptionParser(OptionParser):
     defaults = { 'debian-branch'   : 'master',
                  'upstream-branch' : 'upstream',
                  'upstream-tree'   : 'TAG',
+                 'pq-from'         : 'DEBIAN',
                  'pristine-tar'    : 'False',
                  'pristine-tar-commit': 'False',
                  'filter-pristine-tar' : 'False',
@@ -183,6 +184,9 @@ class GbpOptionParser(OptionParser):
              'upstream-tree':
                   ("Where to generate the upstream tarball from "
                    "(tag or branch), default is '%(upstream-tree)s'"),
+             'pq-from':
+                  ("How to find the patch queue base. DEBIAN or TAG, "
+                   "the default is '%(pq-from)s'"),
              'debian-tag':
                   ("Format string for debian tags, "
                    "default is '%(debian-tag)s'"),
