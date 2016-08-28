@@ -21,7 +21,9 @@ from . import testutils
 import os
 import unittest
 
-from gbp.scripts.pq import generate_patches, export_patches
+from gbp.command_wrappers import GitCommand
+from gbp.scripts.pq import (generate_patches, export_patches,
+                            import_quilt_patches, rebase_pq, SERIES_FILE)
 import gbp.scripts.common.pq as pq
 import gbp.patch_series
 
@@ -251,6 +253,122 @@ class TestParseGbpCommand(unittest.TestCase):
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'], ['cmd'])
         self.assertEquals(cmds, {'cmd': None})
         self.assertEquals(body, 'Foo')
+
+
+class TestFromTAG(testutils.DebianGitTestRepo):
+    """Test L{gbp.pq}'s pq-from=TAG"""
+
+    class Options(object):
+        commit = True
+        drop = False
+        force = False
+        meta_closes = 'Closes|LP'
+        meta_closes_bugnum = r'(?:bug|issue)?\#?\s?\d+'
+        patch_num_format = '%04d-'
+        patch_numbers = False
+        pq_from = 'TAG'
+        renumber = False
+        upstream_tag = 'upstream/%(version)s'
+
+    def git_create_empty_branch(self, branch):
+        GitCommand('checkout', cwd=self.repo.path)(['--orphan', branch])
+        GitCommand('rm', cwd=self.repo.path)(['-rf', '.'])
+
+    def setUp(self):
+        testutils.DebianGitTestRepo.setUp(self)
+        self.add_file('debian/control')
+        self.add_file(
+            'debian/changelog',
+            'foo (0.0.1-1) UNRELEASED; urgency=medium\n'
+            '\n'
+            '  * Initial foo\n'
+            '\n'
+            ' -- Mr. T. S. <t@example.com>  '
+            'Thu, 01 Jan 1970 00:00:00 +0000\n'
+        )
+        self.git_create_empty_branch('bar')
+        self.add_file('foo', 'foo')
+        self.repo.create_tag('upstream/0.0.1')
+        self.repo.set_branch('master')
+
+    def test_empty(self):
+
+        import_quilt_patches(self.repo,
+                             branch=self.repo.get_branch(),
+                             series=SERIES_FILE,
+                             tries=1,
+                             force=TestFromTAG.Options.force,
+                             pq_from=TestFromTAG.Options.pq_from,
+                             upstream_tag=TestFromTAG.Options.upstream_tag)
+        diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
+        self.assertEqual('', diff)
+        diff = self.repo.diff(self.repo.get_branch(), 'master')
+        self.assertNotEqual('', diff)
+
+        rebase_pq(self.repo,
+                  branch=self.repo.get_branch(),
+                  pq_from=TestFromTAG.Options.pq_from,
+                  upstream_tag=TestFromTAG.Options.upstream_tag)
+        diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
+        self.assertEqual('', diff)
+        diff = self.repo.diff(self.repo.get_branch(), 'master')
+        self.assertNotEqual('', diff)
+
+        export_patches(self.repo,
+                       branch=self.repo.get_branch(),
+                       options=TestFromTAG.Options())
+        diff = self.repo.diff(self.repo.get_branch(), self.repo.head)
+        self.assertEqual('', diff)
+
+    def test_adding_patch(self):
+        import_quilt_patches(self.repo,
+                             branch=self.repo.get_branch(),
+                             series=SERIES_FILE,
+                             tries=1,
+                             force=TestFromTAG.Options.force,
+                             pq_from=TestFromTAG.Options.pq_from,
+                             upstream_tag=TestFromTAG.Options.upstream_tag)
+        self.add_file('bar', 'bar', 'added bar')
+        export_patches(self.repo,
+                       branch=self.repo.get_branch(),
+                       options=TestFromTAG.Options())
+        self.assertTrue(os.path.exists(os.path.join(self.repo.path,
+                                                    os.path.dirname(SERIES_FILE),
+                                                    'added-bar.patch')))
+        rebase_pq(self.repo,
+                  branch=self.repo.get_branch(),
+                  pq_from=TestFromTAG.Options.pq_from,
+                  upstream_tag=TestFromTAG.Options.upstream_tag)
+        export_patches(self.repo,
+                       branch=self.repo.get_branch(),
+                       options=TestFromTAG.Options())
+        self.assertTrue(os.path.exists(os.path.join(self.repo.path,
+                                                    os.path.dirname(SERIES_FILE),
+                                                    'added-bar.patch')))
+        # New upstream release
+        self.repo.set_branch('bar')
+        GitCommand('cherry-pick', cwd=self.repo.path)(['patch-queue/master'])
+        self.repo.create_tag('upstream/0.0.2')
+        self.repo.set_branch('master')
+        self.add_file(
+            'debian/changelog',
+            'foo (0.0.2-1) UNRELEASED; urgency=medium\n'
+            '\n'
+            '  * Initial foo\n'
+            '\n'
+            ' -- Mr. T. S. <t@example.com>  '
+            'Thu, 01 Jan 1970 00:00:00 +0000\n'
+        )
+        rebase_pq(self.repo,
+                  branch=self.repo.get_branch(),
+                  pq_from=TestFromTAG.Options.pq_from,
+                  upstream_tag=TestFromTAG.Options.upstream_tag)
+        export_patches(self.repo,
+                       branch=self.repo.get_branch(),
+                       options=TestFromTAG.Options())
+        self.assertFalse(os.path.exists(os.path.join(self.repo.path,
+                                                     os.path.dirname(SERIES_FILE),
+                                                     'added-bar.patch')))
 
 
 def _patch_path(name):
