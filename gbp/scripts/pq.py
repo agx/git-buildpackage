@@ -187,6 +187,8 @@ def find_upstream_commit(repo, cp, upstream_tag):
 
 def export_patches(repo, branch, options):
     """Export patches from the pq branch into a patch series"""
+    patch_dir = os.path.join(repo.path, PATCH_DIR)
+    series_file = os.path.join(repo.path, SERIES_FILE)
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
         gbp.log.info("On '%s', switching to '%s'" % (branch, base))
@@ -195,12 +197,12 @@ def export_patches(repo, branch, options):
 
     pq_branch = pq_branch_name(branch)
     try:
-        shutil.rmtree(PATCH_DIR)
+        shutil.rmtree(patch_dir)
     except OSError as e:
         if e.errno != errno.ENOENT:
             raise GbpError("Failed to remove patch dir: %s" % e.strerror)
         else:
-            gbp.log.debug("%s does not exist." % PATCH_DIR)
+            gbp.log.debug("%s does not exist." % patch_dir)
 
     if options.pq_from.upper() == 'TAG':
         vfs = gbp.git.vfs.GitVfs(repo, branch)
@@ -211,12 +213,12 @@ def export_patches(repo, branch, options):
     else:
         base = branch
 
-    patches = generate_patches(repo, base, pq_branch, PATCH_DIR, options)
+    patches = generate_patches(repo, base, pq_branch, patch_dir, options)
 
     if patches:
-        with open(SERIES_FILE, 'w') as seriesfd:
+        with open(series_file, 'w') as seriesfd:
             for patch in patches:
-                seriesfd.write(os.path.relpath(patch, PATCH_DIR) + '\n')
+                seriesfd.write(os.path.relpath(patch, patch_dir) + '\n')
         if options.commit:
             added, removed = commit_patches(repo, branch, patches, options)
             if added:
@@ -226,7 +228,7 @@ def export_patches(repo, branch, options):
                 what = 'patches' if len(removed) > 1 else 'patch'
                 gbp.log.info("Removed %s %s from patch series" % (what, ', '.join(removed)))
         else:
-            GitCommand('status')(['--', PATCH_DIR])
+            GitCommand('status', cwd=repo.path)(['--', PATCH_DIR])
     else:
         gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
 
@@ -234,7 +236,7 @@ def export_patches(repo, branch, options):
         drop_pq(repo, branch)
 
 
-def safe_patches(series):
+def safe_patches(series, repo):
     """
     Safe the current patches in a temporary directory
     below .git/
@@ -247,7 +249,7 @@ def safe_patches(series):
     src = os.path.dirname(series)
     name = os.path.basename(series)
 
-    tmpdir = tempfile.mkdtemp(dir='.git/', prefix='gbp-pq')
+    tmpdir = tempfile.mkdtemp(dir=repo.git_dir, prefix='gbp-pq')
     patches = os.path.join(tmpdir, 'patches')
     series = os.path.join(patches, name)
 
@@ -264,8 +266,8 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
     the patch-queue branch for 'branch'
 
     @param repo: git repository to work on
-    @param branch: branch to base pqtch queue on
-    @param series; series file to read patches from
+    @param branch: branch to base patch queue on
+    @param series: series file to read patches from
     @param tries: try that many times to apply the patches going back one
                   commit in the branches history after each failure.
     @param force: import the patch series even if the branch already exists
@@ -275,6 +277,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
     @param upstream_tag: upstream tag template to use
     """
     tmpdir = None
+    series = os.path.join(repo.path, series)
 
     if is_pq_branch(branch):
         if force:
@@ -305,7 +308,8 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
     # the latest one
     # If we are using the upstream_tag, we always need a copy of the patches
     if len(commits) > 1 or pq_from.upper() == 'TAG':
-        tmpdir, series = safe_patches(series)
+        if os.path.exists(series):
+            tmpdir, series = safe_patches(series, repo)
 
     queue = PatchSeries.read_series_file(series)
 
@@ -361,7 +365,7 @@ def rebase_pq(repo, branch, pq_from, upstream_tag):
     else:
         _from = base
 
-    GitCommand("rebase")([_from])
+    GitCommand("rebase", cwd=repo.path)([_from])
 
 
 def build_parser(name):
