@@ -245,7 +245,6 @@
           </para>
         </listitem>
       </varlistentry>
-     </variablelist>
       <varlistentry>
         <term><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable>
         </term>
