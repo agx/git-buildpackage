@@ -21,12 +21,13 @@ import subprocess
 import time
 from gbp.errors import GbpError
 
+
 class FastImport(object):
     """Add data to a git repository using I{git fast-import}"""
     _bufsize = 1024
 
     m_regular = 644
-    m_exec    = 755
+    m_exec = 755
     m_symlink = 120000
 
     def __init__(self, repo):
@@ -36,7 +37,7 @@ class FastImport(object):
         """
         self._repo = repo
         try:
-            self._fi = subprocess.Popen([ 'git', 'fast-import', '--quiet'],
+            self._fi = subprocess.Popen(['git', 'fast-import', '--quiet'],
                                         stdin=subprocess.PIPE, cwd=repo.path)
             self._out = self._fi.stdin
         except OSError as err:

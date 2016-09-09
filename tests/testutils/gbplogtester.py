@@ -6,6 +6,7 @@ from nose.tools import ok_, assert_less
 
 import gbp.log
 
+
 class GbpLogTester(object):
     """
     Helper class for tests that need to capture logging output

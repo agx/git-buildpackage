@@ -24,9 +24,7 @@ from tests.component import ComponentTestGitRepository
 DEB_TEST_SUBMODULE = os.path.join('tests', 'component', 'deb', 'data')
 DEB_TEST_DATA_DIR = os.path.abspath(DEB_TEST_SUBMODULE)
 
+
 def setup():
     """Test Module setup"""
     ComponentTestGitRepository.check_testdata(DEB_TEST_SUBMODULE)
-
-
-

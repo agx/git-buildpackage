@@ -12,6 +12,7 @@ import zipfile
 
 from gbp.pkg import UpstreamSource
 
+
 class TestDir(unittest.TestCase):
     def setUp(self):
         self.tmpdir = context.new_tmpdir(__name__)
@@ -28,6 +29,7 @@ class TestDir(unittest.TestCase):
 
     def tearDown(self):
         context.teardown()
+
 
 class TestTar(unittest.TestCase):
     """Test if packing tar archives works"""
@@ -92,4 +94,3 @@ class TestZip(unittest.TestCase):
         self.assertEqual(source.guess_version(), ('gbp', '0.1'))
         source.unpack(str(self.tmpdir))
         self.assertNotEqual(source.unpacked, None)
-

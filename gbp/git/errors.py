@@ -16,7 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 """Git base error exception"""
 
+
 class GitError(Exception):
     """Exception thrown by Git related classes"""
     pass
-

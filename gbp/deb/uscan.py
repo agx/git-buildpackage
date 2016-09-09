@@ -16,10 +16,14 @@
 #    <http://www.gnu.org/licenses/>
 """Interface to uscan"""
 
-import os, re, subprocess
+import os
+import re
+import subprocess
+
 
 class UscanError(Exception):
     pass
+
 
 class Uscan(object):
     cmd = '/usr/bin/uscan'
@@ -84,7 +88,7 @@ class Uscan(object):
                     for n in ('package',
                               'upstream-version',
                               'upstream-url'):
-                        m = re.match("<%s>(.*)</%s>" % (n,n), row)
+                        m = re.match("<%s>(.*)</%s>" % (n, n), row)
                         if m:
                             d[n] = m.group(1)
                 d["ext"] = os.path.splitext(d['upstream-url'])[1]
@@ -94,10 +98,10 @@ class Uscan(object):
 
                 # Fall back to the upstream source name otherwise
                 if not os.path.exists(source):
-                    source = "../%s" % d['upstream-url'].rsplit('/',1)[1]
+                    source = "../%s" % d['upstream-url'].rsplit('/', 1)[1]
                     if not os.path.exists(source):
                         raise UscanError("Couldn't find tarball at '%s'" %
-                                     source)
+                                         source)
             except KeyError as e:
                 raise UscanError("Couldn't find '%s' in uscan output" %
                                  e.args[0])
@@ -157,7 +161,7 @@ class Uscan(object):
         msg = None
 
         for n in ('errors', 'warnings'):
-            m = re.search("<%s>(.*)</%s>" % (n,n), out, re.DOTALL)
+            m = re.search("<%s>(.*)</%s>" % (n, n), out, re.DOTALL)
             if m:
                 msg = "Uscan failed: %s" % m.group(1)
                 break
@@ -165,7 +169,6 @@ class Uscan(object):
         if not msg:
             msg = "Uscan failed - debug by running 'uscan --verbose'"
         raise UscanError(msg)
-
 
     def scan(self, destdir='..'):
         """Invoke uscan to fetch a new upstream version"""

@@ -17,7 +17,6 @@
 #    <http://www.gnu.org/licenses/>
 
 import os
-import hashlib
 
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)

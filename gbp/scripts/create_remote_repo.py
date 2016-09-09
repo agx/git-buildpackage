@@ -70,12 +70,14 @@ def print_config(remote, branches):
         remote = %s
         merge = refs/heads/%s""" % (branch, remote['name'], branch))
 
+
 def sort_dict(d):
     """Return a sorted list of (key, value) tuples"""
     s = []
     for key in sorted(six.iterkeys(d)):
         s.append((key, d[key]))
     return s
+
 
 def parse_url(remote_url, name, pkg, template_dir=None):
     """
@@ -116,7 +118,7 @@ def parse_url(remote_url, name, pkg, template_dir=None):
     else:
         raise GbpError("URL must use ssh protocol.")
 
-    if not '%(pkg)s' in remote_url and not remote_url.endswith(".git"):
+    if '%(pkg)s' not in remote_url and not remote_url.endswith(".git"):
         raise GbpError("URL needs to contain either a repository name or '%(pkg)s'")
 
     if ":" in frags.netloc:
@@ -162,7 +164,7 @@ def build_remote_script(remote, branch):
     args['git-init-args'] = '--bare --shared'
     if args['template-dir']:
         args['git-init-args'] += (' --template=%s'
-                                    % args['template-dir'])
+                                  % args['template-dir'])
     remote_script_pattern = ['',
       'set -e',
       'umask 002',
@@ -214,7 +216,7 @@ def read_yn():
         if old_settings:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-    if ch in ( 'y', 'Y' ):
+    if ch in ('y', 'Y'):
         return True
     else:
         return False
@@ -293,7 +295,7 @@ def parse_args(argv, sections=[]):
     # section to parse, this makes e.g. --help work as expected:
     for arg in argv:
         if arg.startswith('--remote-config='):
-            sections = ['remote-config %s' % arg.split('=',1)[1]]
+            sections = ['remote-config %s' % arg.split('=', 1)[1]]
             break
     else:
         sections = []
@@ -325,12 +327,12 @@ def main(argv):
     try:
         branches = []
 
-        for branch in [ options.debian_branch, options.upstream_branch ]:
+        for branch in [options.debian_branch, options.upstream_branch]:
             if repo.has_branch(branch):
-                branches += [ branch ]
+                branches += [branch]
 
         if repo.has_pristine_tar_branch() and options.pristine_tar:
-            branches += [ repo.pristine_tar_branch ]
+            branches += [repo.pristine_tar_branch]
 
         try:
             cp = ChangeLog(filename=changelog)

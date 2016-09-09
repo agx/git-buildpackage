@@ -20,6 +20,7 @@ from gbp.pkg import compressor_opts
 from gbp.pkg.pristinetar import PristineTar
 from gbp.deb import DebianPkgPolicy
 
+
 class DebianPristineTar(PristineTar):
     """The pristine-tar branch in a Debian git repository"""
     def has_commit(self, package, version, comp_type=None):
@@ -63,4 +64,3 @@ class DebianPristineTar(PristineTar):
                                                   output_dir,
                                                   component=component)
         super(DebianPristineTar, self).checkout(name)
-

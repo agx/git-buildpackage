@@ -12,6 +12,7 @@ import six
 
 import gbp.pkg
 
+
 class TestUnpack(unittest.TestCase):
     """Make sure we unpack gzip and bzip2 archives correctly"""
     archive_prefix = "archive"
@@ -26,10 +27,10 @@ class TestUnpack(unittest.TestCase):
             assert os.path.exists(target), "%s does not exist" % target
 
     def _create_archive(self, comp):
-        filelist = [ 'README', 'setup.py' ]
+        filelist = ['README', 'setup.py']
 
         name = "%s_0.1.tar.%s" % (self.archive_prefix, comp)
-        t = tarfile.open(name= name, mode='w:%s' % comp)
+        t = tarfile.open(name=name, mode='w:%s' % comp)
         for f in filelist:
             t.add(os.path.join(self.top, f),
                   os.path.join(self._unpack_dir(comp), f))
@@ -41,7 +42,7 @@ class TestUnpack(unittest.TestCase):
         self.top = context.projectdir
         context.chdir(self.dir)
         self.archives = {}
-        for ext in [ "gz", "bz2" ]:
+        for ext in ["gz", "bz2"]:
             self.archives[ext] = self._create_archive(ext)
 
     def tearDown(self):
@@ -50,12 +51,12 @@ class TestUnpack(unittest.TestCase):
     def test_upstream_source_type(self):
         for (comp, archive) in six.iteritems(self.archives):
             source = gbp.pkg.UpstreamSource(archive[0])
-            assert source.is_orig() == True
-            assert source.is_dir() == False
-            assert source.unpacked == None
+            assert source.is_orig() is True
+            assert source.is_dir() is False
+            assert source.unpacked is None
             source.unpack(".")
-            assert source.is_orig() == True
-            assert source.is_dir() == False
+            assert source.is_orig() is True
+            assert source.is_dir() is False
             assert type(source.unpacked) == str
 
     def test_upstream_source_unpack(self):

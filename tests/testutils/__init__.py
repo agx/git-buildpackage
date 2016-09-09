@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 
-from .. import context
+from .. import context  # noqa: F401
 
 import os
 import shutil
@@ -21,6 +21,7 @@ __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
            'MockedChangeLog', 'get_dch_default_urgency', 'capture_stderr',
            'ls_dir', 'ls_tar', 'ls_zip']
 
+
 class OsReleaseFile(object):
     """Repesents a simple file with key-value pairs"""
 
@@ -38,7 +39,7 @@ class OsReleaseFile(object):
                         self._values[key] = value.strip()
         except IOError as err:
             gbp.log.info('Failed to read OS release file %s: %s' %
-                            (filename, err))
+                         (filename, err))
 
     def __getitem__(self, key):
         if key in self._values:
@@ -54,6 +55,7 @@ class OsReleaseFile(object):
     def __repr__(self):
         return repr(self._values)
 
+
 class MockedChangeLog(ChangeLog):
     contents = """foo (%s) experimental; urgency=low
 
@@ -61,7 +63,7 @@ class MockedChangeLog(ChangeLog):
 
  -- Debian Maintainer <maint@debian.org>  Sat, 01 Jan 2012 00:00:00 +0100"""
 
-    def __init__(self, version, changes = "a important change"):
+    def __init__(self, version, changes="a important change"):
         ChangeLog.__init__(self,
                            contents=self.contents % (version, changes))
 
@@ -101,6 +103,7 @@ def ls_dir(directory, directories=True):
             contents.update(['%s%s' % (prefix, dname) for dname in dirs])
     return contents
 
+
 def ls_tar(tarball, directories=True):
     """List the contents of tar archive"""
     tmpdir = tempfile.mkdtemp()
@@ -111,6 +114,7 @@ def ls_tar(tarball, directories=True):
     finally:
         shutil.rmtree(tmpdir)
 
+
 def ls_zip(archive, directories=True):
     """List the contents of zip file"""
     tmpdir = tempfile.mkdtemp()
@@ -120,4 +124,3 @@ def ls_zip(archive, directories=True):
         return ls_dir(tmpdir, directories)
     finally:
         shutil.rmtree(tmpdir)
-

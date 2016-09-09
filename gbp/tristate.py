@@ -19,27 +19,28 @@
 A switch with three states: on|off|auto
 """
 
+
 class Tristate(object):
     """Tri-state value: on, off or auto """
-    ON  = True      # state is on == do it
+    ON = True       # state is on == do it
     OFF = False     # state is off == don't do it
     AUTO = -1       # autodetect == do if possible
 
     # We accept true as alias for on and false as alias for off
-    _VALID_NAMES = [ 'on', 'off', 'true', 'false', 'auto' ]
+    _VALID_NAMES = ['on', 'off', 'true', 'false', 'auto']
 
     def __init__(self, val):
-        if type(val) in [ type(t) for t in (True, 1) ]:
+        if type(val) in [type(t) for t in (True, 1)]:
             if val > 0:
                 self._state = self.ON
             elif val < 0:
                 self._state = self.AUTO
             else:
                 self._state = self.OFF
-        elif type(val) in [ type(t) for t in ("", u"") ]:
-            if val.lower() in [ 'on', 'true' ]:
+        elif type(val) in [type(t) for t in ("", u"")]:
+            if val.lower() in ['on', 'true']:
                 self._state = self.ON
-            elif val.lower() in [ 'auto' ]:
+            elif val.lower() in ['auto']:
                 self._state = self.AUTO
             else:
                 self._state = self.OFF

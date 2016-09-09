@@ -21,7 +21,6 @@ git-buildpackage and friends
 
 import subprocess
 import os
-import os.path
 import signal
 import gbp.log as log
 

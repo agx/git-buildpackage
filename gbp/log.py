@@ -124,23 +124,29 @@ def err(msg):
     """Logs a message with level ERROR on the GBP logger"""
     LOGGER.error(msg)
 
+
 def error(msg):
     err(msg)
+
 
 def warn(msg):
     """Logs a message with level WARNING on the GBP logger"""
     LOGGER.warning(msg)
 
+
 def warning(msg):
     warn(msg)
+
 
 def info(msg):
     """Logs a message with level INFO on the GBP logger"""
     LOGGER.info(msg)
 
+
 def debug(msg):
     """Logs a message with level DEBUG on the GBP logger"""
     LOGGER.debug(msg)
+
 
 def _parse_color_scheme(color_scheme=""):
     """Set logging colors"""
@@ -159,8 +165,10 @@ def _parse_color_scheme(color_scheme=""):
         except ValueError:
             try:
                 scheme[level] = COLORS[color.lower()]
-            except KeyError: pass
+            except KeyError:
+                pass
     return scheme
+
 
 def setup(color, verbose, color_scheme=""):
     """Basic logger setup"""
@@ -176,4 +184,3 @@ def setup(color, verbose, color_scheme=""):
 logging.setLoggerClass(GbpLogger)
 
 LOGGER = getLogger("gbp")
-

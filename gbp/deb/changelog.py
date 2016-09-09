@@ -23,9 +23,11 @@ import os
 import subprocess
 from gbp.command_wrappers import Command
 
+
 class NoChangeLogError(Exception):
     """No changelog found"""
     pass
+
 
 class ParseChangeLogError(Exception):
     """Problem parsing changelog"""
@@ -92,9 +94,9 @@ class ChangeLog(object):
     def _parse(self):
         """Parse a changelog based on the already read contents."""
         cmd = subprocess.Popen(['dpkg-parsechangelog', '-l-'],
-                                stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+                               stdin=subprocess.PIPE,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
         (output, errors) = cmd.communicate(self._contents)
         if cmd.returncode:
             raise ParseChangeLogError("Failed to parse changelog. "
@@ -138,8 +140,8 @@ class ChangeLog(object):
 
     @property
     def version(self):
-       """The full version string"""
-       return self._cp['Version']
+        """The full version string"""
+        return self._cp['Version']
 
     @property
     def upstream_version(self):
@@ -198,7 +200,7 @@ class ChangeLog(object):
         """
         section = ''
         for line in self._contents.split('\n'):
-            if line and line[0] not in [ ' ', '\t' ]:
+            if line and line[0] not in [' ', '\t']:
                 section += line
             else:
                 if section:

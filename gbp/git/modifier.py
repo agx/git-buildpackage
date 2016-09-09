@@ -21,13 +21,16 @@ like committing changes or authoring a patch
 """
 
 import six
-import calendar, datetime
+import calendar
+import datetime
 
 from gbp.git.errors import GitError
+
 
 class GitModifierError(GitError):
     """Exception thrown by L{GitModifier}"""
     pass
+
 
 class GitTz(datetime.tzinfo):
     """Simple class to store the utc offset only"""
@@ -40,6 +43,7 @@ class GitTz(datetime.tzinfo):
 
     def dst(self, dt):
         return datetime.timedelta(0)
+
 
 class GitModifier(object):
     """Stores authorship/committer information"""
@@ -64,16 +68,16 @@ class GitModifier(object):
             timestamp, offset = date.split()
             offset_h = int(offset[:-2])
             offset_m = int(offset[-2:])
-            tz = GitTz(offset_h*3600 + offset_m*60)
+            tz = GitTz(offset_h * 3600 + offset_m * 60)
             self._date = datetime.datetime.fromtimestamp(int(timestamp), tz)
-        elif type(date) in  [ type(0), type(0.0) ]:
+        elif type(date) in [type(0), type(0.0)]:
             self._date = datetime.datetime.fromtimestamp(date, tz)
         elif isinstance(date, datetime.datetime):
             if date.tzinfo:
                 self._date = date
             else:
                 self._date = date.replace(tzinfo=tz)
-        elif date != None:
+        elif date is not None:
             raise ValueError("Date '%s' not timestamp, "
                              "datetime object or git raw date" % date)
 
@@ -154,7 +158,7 @@ class GitModifier(object):
 
     @staticmethod
     def keys():
-        return [ 'name', 'email', 'date' ]
+        return ['name', 'email', 'date']
 
     def items(self):
         items = []

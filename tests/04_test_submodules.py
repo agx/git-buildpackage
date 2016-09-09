@@ -27,6 +27,7 @@ TMPDIR = None
 TESTFILE_NAME = "testfile"
 TESTDIR_NAME = "testdir"
 
+
 class Submodule(object):
     """Class representing remote repo for Git submodule"""
     def __init__(self, name, tmpdir):
@@ -52,6 +53,7 @@ def setup():
 def teardown():
     """Test module teardown"""
     context.teardown()
+
 
 def test_empty_has_submodules():
     """Test empty repo for submodules"""
@@ -87,6 +89,7 @@ def test_add_submodule():
     REPO.add_submodule(SUBMODULES[0].dir)
     REPO.commit_all(msg='Added submodule %s' % SUBMODULES[0].dir)
 
+
 def test_has_submodules():
     """Check for submodules"""
     ok_(REPO.has_submodules())
@@ -97,8 +100,8 @@ def test_has_submodules():
 def test_get_submodules():
     """Check for submodules list of  (name, hash)"""
     modules = REPO.get_submodules("master")[0]
-    eq_(modules[0] , 'test_submodule')
-    eq_(len(modules[1]) , 40)
+    eq_(modules[0], 'test_submodule')
+    eq_(len(modules[1]), 40)
 
 
 def test_dump_tree():
@@ -122,13 +125,14 @@ def test_dump_tree():
 def test_create_tarballs():
     """Create an upstream tarball"""
     # Tarball with submodules
-    changelog = { "Source": "test", "Upstream-Version": "0.1" }
+    changelog = {"Source": "test", "Upstream-Version": "0.1"}
     ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
                                  "9", True))
     # Tarball without submodules
-    changelog = { "Source": "test", "Upstream-Version": "0.2" }
+    changelog = {"Source": "test", "Upstream-Version": "0.2"}
     ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
                                  "9", False))
+
 
 def test_create_zip_archives():
     """Create an upstream zip archive"""
@@ -143,30 +147,33 @@ def test_create_zip_archives():
     contents = ls_zip('without-submodules.zip')
     ok_('test/test_submodule/testfile' not in contents)
 
+
 def test_check_tarfiles():
     """Check the contents of the created tarfile"""
     # Check tarball with submodules
     tarobj = tarfile.open(TMPDIR.join("test_0.1.orig.tar.bz2"), 'r:*')
     files = tarobj.getmembers()
-    ok_("test-0.1/.gitmodules" in [ f.name for f in files ])
-    eq_(len(files) , 10)
+    ok_("test-0.1/.gitmodules" in [f.name for f in files])
+    eq_(len(files), 10)
     # Check tarball without submodules
     tarobj = tarfile.open(TMPDIR.join("test_0.2.orig.tar.bz2"), 'r:*')
     files = tarobj.getmembers()
-    ok_(("test-0.2/%s" % TESTFILE_NAME) in [ f.name for f in files ])
-    eq_(len(files) , 6)
+    ok_(("test-0.2/%s" % TESTFILE_NAME) in [f.name for f in files])
+    eq_(len(files), 6)
+
 
 def test_add_whitespace_submodule():
     """Add a second submodule with name containing whitespace"""
     REPO.add_submodule(SUBMODULES[1].dir)
     REPO.commit_all(msg='Added submodule %s' % SUBMODULES[0].dir)
 
+
 def test_get_more_submodules():
     """Check for submodules list of  (name, hash)"""
     module = REPO.get_submodules("master")
     eq_(len(module), len(SUBMODULE_NAMES))
     for module in REPO.get_submodules("master"):
-        eq_(len(module[1]) , 40)
+        eq_(len(module[1]), 40)
         ok_(os.path.basename(module[0]) in SUBMODULE_NAMES)
 
 

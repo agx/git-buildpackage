@@ -5,7 +5,8 @@ Test L{gbp.config.GbpOptionParser}
 Test L{gbp.config.GbpOptionParserDebian}
 """
 
-from . import context
+from . import context  # noqa: F401
+
 
 def test_option_parser():
     """
@@ -19,6 +20,7 @@ def test_option_parser():
     >>> c.add_boolean_config_file_option(option_name='overlay', dest='overlay')
     >>> c.add_boolean_config_file_option(option_name='track', dest='track')
     """
+
 
 def test_option_parser_debian():
     """
@@ -34,6 +36,7 @@ def test_option_parser_debian():
     >>> c.add_config_file_option(option_name='builder', dest='builder', help='foo')
     """
 
+
 def test_option_group():
     """
     Methods tested:
@@ -47,11 +50,12 @@ def test_option_group():
     >>> g.add_boolean_config_file_option(option_name='track', dest='track')
     """
 
+
 def test_tristate():
     """
     Methods tested:
          - L{gbp.config.GbpOptionParser.add_config_file_option}
-    
+
     >>> import gbp.config
     >>> c = gbp.config.GbpOptionParser('tristate')
     >>> c.add_config_file_option(option_name="color", dest="color", type='tristate')
@@ -59,6 +63,7 @@ def test_tristate():
     >>> options.color
     auto
     """
+
 
 def test_filter():
     """
@@ -80,6 +85,7 @@ def test_filter():
     ['this', 'is', 'a', 'list']
     >>> del os.environ['GBP_CONF_FILES']
     """
+
 
 def test_filters():
     """

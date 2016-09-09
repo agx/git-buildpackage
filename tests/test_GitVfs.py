@@ -6,9 +6,10 @@ Test L{gbp.git.GitVfs}
 
 import gbp.log
 
-from . import context
+from . import context  # noqa: F401
 
 gbp.log.setup(color=False, verbose=True)
+
 
 def test_read():
     """

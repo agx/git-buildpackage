@@ -18,7 +18,7 @@
 """Query and display config file values"""
 
 import sys
-import os, os.path
+import os
 from gbp.config import GbpOptionParser
 from gbp.errors import GbpError
 from gbp.scripts.supercommand import import_command

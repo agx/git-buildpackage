@@ -29,6 +29,7 @@ from gbp.scripts import import_dsc
 from gbp.config import GbpOptionParser
 import gbp.log
 
+
 class DscCompareVersions(DpkgCompareVersions):
     def __init__(self):
         DpkgCompareVersions.__init__(self)
@@ -51,8 +52,8 @@ def fetch_snapshots(pkg, downloaddir):
 
     gbp.log.info("Downloading snapshots of '%s' to '%s'..." %
                  (pkg, downloaddir))
-    debsnap = gbpc.Command("debsnap", [ '--force', '--destdir=%s' %
-                                        (downloaddir), pkg])
+    debsnap = gbpc.Command("debsnap", ['--force', '--destdir=%s' %
+                                       (downloaddir), pkg])
     try:
         debsnap()
     except gbpc.CommandExecFailed:
@@ -68,6 +69,7 @@ def fetch_snapshots(pkg, downloaddir):
 
     return [os.path.join(downloaddir, dsc) for dsc in dscs]
 
+
 def set_gbp_conf_files():
     """
     Filter out all gbp.conf files that are local to the git repository and set
@@ -78,13 +80,14 @@ def set_gbp_conf_files():
     os.environ['GBP_CONF_FILES'] = gbp_conf_files
     gbp.log.debug("Setting GBP_CONF_FILES to '%s'" % gbp_conf_files)
 
+
 def print_help():
     print("""Usage: gbp import-dscs [options] [gbp-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
        gbp import-dscs --debsnap [options] [gbp-import-dsc options] package
 
 Options:
 
-    --debsnap:            use debsnap command to download packages 
+    --debsnap:            use debsnap command to download packages
     --ignore-repo-config  ignore gbp.conf in git repo
 """)
 
@@ -129,7 +132,7 @@ def main(argv):
 
         if use_debsnap:
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp())
-            dscs = [ DscFile.parse(f) for f in fetch_snapshots(pkg, dirs['tmp']) ]
+            dscs = [DscFile.parse(f) for f in fetch_snapshots(pkg, dirs['tmp'])]
 
         dscs.sort(cmp=dsc_cmp)
         importer = GitImportDsc(import_args)

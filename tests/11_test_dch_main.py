@@ -50,7 +50,6 @@ cl_debian = """test-package (0.9-1) unstable; urgency=%s
 class TestScriptDch(DebianGitTestRepo):
     """Test git-dch"""
 
-
     def setUp(self):
         DebianGitTestRepo.setUp(self)
         self.add_file("foo", "bar")
@@ -70,10 +69,8 @@ class TestScriptDch(DebianGitTestRepo):
                         "--upstream-branch=upstream", "--id-length=0", "--spawn-editor=/bin/true"]
         self.repo.create_tag(deb_tag, msg=deb_tag_msg, commit="HEAD~1")
 
-
     def tearDown(self):
         DebianGitTestRepo.tearDown(self)
-
 
     def run_dch(self, dch_options=None):
         # Take care to copy the list
@@ -84,13 +81,11 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual(ret, 0)
         return open("debian/changelog").readlines()
 
-
     def test_dch_main_new_upstream_version(self):
         """Test dch.py like gbp dch script does: new upstream version"""
         lines = self.run_dch()
         self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=%s\n" % default_urgency, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_release(self):
         """Test dch.py like gbp dch script does: new upstream version - release"""
@@ -99,14 +94,12 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (1.0-1) %s; urgency=%s\n" % (os_codename, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_auto(self):
         """Test dch.py like gbp dch script does: new upstream version - guess last commit"""
         options = ["--auto"]
         lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=%s\n" % default_urgency, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_snapshot(self):
         """Test dch.py like gbp dch script does: new upstream version - snapshot mode"""
@@ -117,7 +110,6 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_2_snapshots_auto(self):
         """Test dch.py like gbp dch script does: new upstream version - two snapshots - auto"""
@@ -140,7 +132,6 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertNotIn(header1.group(0) + "\n", lines)
         self.assertIn("""  * added debian/control\n""", lines)
         self.assertIn("""  * added debian/compat\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_2_snapshots_commit_auto(self):
         """Test dch.py like gbp dch script does: new upstream version - two committed snapshots - auto"""
@@ -168,7 +159,6 @@ class TestScriptDch(DebianGitTestRepo):
         # But its changelog must be included in the new one
         self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_auto_release(self):
         """Test dch.py like gbp dch script does: new upstream version - auto - release"""
         options = ["--auto", "--release"]
@@ -176,10 +166,9 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (1.0-1) %s; urgency=%s\n" % (os_codename, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_auto_snapshot(self):
         """Test dch.py like gbp dch script does: new upstream version - auto - snapshot mode"""
-        options = [ "--auto", "--snapshot" ]
+        options = ["--auto", "--snapshot"]
         options.append("--snapshot")
         lines = self.run_dch(options)
         header = re.search(snap_header_1, lines[0])
@@ -188,14 +177,12 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_snapshot_release(self):
         """Test dch.py like gbp dch script does: new upstream version - snapshot - release"""
         options = ["--snapshot", "--release"]
         with capture_stderr() as c:
             self.assertRaises(SystemExit, self.run_dch, options)
         self.assertTrue("'--snapshot' and '--release' are incompatible options" in c.output())
-
 
     def test_dch_main_new_upstream_version_with_distribution(self):
         """Test dch.py like gbp dch script does: new upstream version - set distribution"""
@@ -204,14 +191,12 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (1.0-1) testing; urgency=%s\n" % default_urgency, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_release_distribution(self):
         """Test dch.py like gbp dch script does: new upstream version - release - set distribution"""
         options = ["--release", "--distribution=testing", "--force-distribution"]
         lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) testing; urgency=%s\n" % default_urgency, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_snapshot_distribution(self):
         """Test dch.py like gbp dch script does: new upstream version - snapshot mode - do not set distribution"""
@@ -222,7 +207,6 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_2_snapshots_auto_distribution(self):
         """Test dch.py like gbp dch script does: new upstream version - two snapshots - do not set distribution"""
@@ -248,7 +232,6 @@ class TestScriptDch(DebianGitTestRepo):
         # But its changelog must not be included in the new one since
         # we do not commit
         self.assertNotIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_2_snapshots_commit_auto_distribution(self):
         """Test dch.py like gbp dch script does: new upstream version - two committed snapshots - do not set distribution"""
@@ -277,14 +260,12 @@ class TestScriptDch(DebianGitTestRepo):
         # But its changelog must be included in the new one
         self.assertIn("""  * TEST-COMMITTED-SNAPSHOT\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_urgency(self):
         """Test dch.py like gbp dch script does: new upstream version - set urgency"""
         options = ["--urgency=emergency"]
         lines = self.run_dch(options)
         self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=emergency\n", lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_new_upstream_version_with_release_urgency(self):
         """Test dch.py like gbp dch script does: new upstream version - release - set urgency"""
@@ -293,17 +274,15 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (1.0-1) %s; urgency=emergency\n" % os_codename, lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_new_upstream_version_with_snapshot_urgency(self):
         """Test dch.py like gbp dch script does: new upstream version - snapshot mode - set urgency"""
-        options = ["--snapshot",  "--urgency=emergency"]
+        options = ["--snapshot", "--urgency=emergency"]
         lines = self.run_dch(options)
         header = re.search(snap_header_1, lines[0])
         self.assertIsNotNone(header)
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_increment_debian_version(self):
         """Test dch.py like gbp dch script does: increment debian version"""
@@ -314,7 +293,6 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (%s) UNRELEASED; urgency=%s\n" % (new_version_0_9, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_increment_debian_version_with_release(self):
         """Test dch.py like gbp dch script does: increment debian version - release"""
         self.repo.delete_tag("upstream/1.0")
@@ -323,7 +301,6 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (%s) %s; urgency=%s\n" % (new_version_0_9, os_codename, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_increment_debian_version_with_auto(self):
         """Test dch.py like gbp dch script does: increment debian version - guess last commit"""
         self.repo.delete_tag("upstream/1.0")
@@ -331,7 +308,6 @@ class TestScriptDch(DebianGitTestRepo):
         lines = self.run_dch(options)
         self.assertEqual("test-package (%s) UNRELEASED; urgency=%s\n" % (new_version_0_9, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_increment_debian_version_with_snapshot(self):
         """Test dch.py like gbp dch script does: increment debian version - snapshot mode"""
@@ -344,27 +320,24 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_increment_debian_version_with_auto_release(self):
         """Test dch.py like gbp dch script does: increment debian version - auto - release"""
         self.repo.delete_tag("upstream/1.0")
-        options = ["--auto",  "--release"]
+        options = ["--auto", "--release"]
         lines = self.run_dch(options)
         self.assertEqual("test-package (%s) %s; urgency=%s\n" % (new_version_0_9, os_codename, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
-
     def test_dch_main_increment_debian_version_with_auto_snapshot(self):
         """Test dch.py like gbp dch script does: increment debian version - auto - snapshot mode"""
         self.repo.delete_tag("upstream/1.0")
-        options = ["--auto",  "--snapshot"]
+        options = ["--auto", "--snapshot"]
         lines = self.run_dch(options)
         header = re.search(snap_header_0_9, lines[0])
         self.assertIsNotNone(header)
         self.assertEqual(header.lastindex, 1)
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
-
 
     def test_dch_main_closes_default(self):
         options = ["--meta"]
@@ -373,7 +346,6 @@ class TestScriptDch(DebianGitTestRepo):
         lines = self.run_dch(options)
         self.assertIn("""  * test debian closes commit (Closes: #123456)\n""",
                       lines)
-
 
     def test_dch_main_closes_non_debian_bug_numbers(self):
         self.add_file("closes", "test file",

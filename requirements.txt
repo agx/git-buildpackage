@@ -1,4 +1,5 @@
 coverage>=2.85
+flake8>=3
 mock
 nose>=0.11.1
 nosexcover>=1.0.7

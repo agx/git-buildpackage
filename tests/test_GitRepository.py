@@ -116,6 +116,7 @@ def test_branch_master():
     'master'
     """
 
+
 def test_clean():
     """
     Remove untracked files from the working tree
@@ -135,6 +136,7 @@ def test_clean():
     True
     """
 
+
 def test_create_branch():
     """
     Create a branch name I{foo}
@@ -151,6 +153,7 @@ def test_create_branch():
     >>> repo.branch_contains("doesnotexist", 'HEAD', remote=True)
     False
     """
+
 
 def test_delete_branch():
     """
@@ -169,6 +172,7 @@ def test_delete_branch():
     ...
     GitRepositoryError: Can't delete the branch you're on
     """
+
 
 def test_set_branch():
     """
@@ -228,6 +232,7 @@ def test_set_upstream_branch():
     GitRepositoryError: Branch origin/bla doesn't exist!
     """
 
+
 def test_get_upstream_branch():
     """
     Get info about upstream branches set in test_set_upstream_branch
@@ -242,6 +247,7 @@ def test_get_upstream_branch():
     Traceback (most recent call last):
     GitRepositoryError: Branch bla doesn't exist!
     """
+
 
 def test_tag():
     """
@@ -270,6 +276,7 @@ def test_tag():
     >>> repo.tags
     ['tag', 'tag2']
     """
+
 
 def test_describe():
     """
@@ -304,6 +311,7 @@ def test_describe():
     >>> repo.create_tag('tag2', msg='foo')
     """
 
+
 def test_find_tag():
     """
     Find tags
@@ -320,6 +328,7 @@ def test_find_tag():
     ...
     GitRepositoryError: Can't describe HEAD. Git error: fatal: No names found, cannot describe anything.
     """
+
 
 def test_find_branch_tag():
     """
@@ -338,6 +347,7 @@ def test_find_branch_tag():
     GitRepositoryError: Can't describe .... Git error: fatal: No names found, cannot describe anything.
     """
 
+
 def test_move_tag():
     """
     Move a tag
@@ -355,6 +365,7 @@ def test_move_tag():
     True
     """
 
+
 def test_delete_tag():
     """
     Delete tags
@@ -371,6 +382,7 @@ def test_delete_tag():
     >>> repo.has_tag("moved")
     False
     """
+
 
 def test_get_obj_type():
     """
@@ -392,6 +404,7 @@ def test_get_obj_type():
     'blob'
     >>> repo.delete_tag("tag3")
     """
+
 
 def test_list_files():
     """
@@ -437,6 +450,7 @@ def test_list_files():
     >>> repo.list_files(['modified'])
     []
     """
+
 
 def test_get_commits():
     """
@@ -503,6 +517,7 @@ def test_get_commit_info():
     'foo'
     """
 
+
 def test_diff():
     """
     Test git-diff
@@ -524,6 +539,7 @@ def test_diff():
     True
     """
 
+
 def test_diff_status():
     """
     Methods tested:
@@ -536,6 +552,7 @@ def test_diff_status():
     >>> repo.diff_status("HEAD~1", "HEAD")          # doctest:+ELLIPSIS
     defaultdict(<... 'list'>, {'M': ['testfile']})
     """
+
 
 def test_mirror_clone():
     """
@@ -565,6 +582,7 @@ def test_mirror_clone():
     'foo'
     >>> mirror.force_head('foo^')
     """
+
 
 def test_clone():
     """
@@ -612,6 +630,7 @@ def test_clone():
     False
     """
 
+
 def test_get_remotes():
     """
     Merge a branch
@@ -634,6 +653,7 @@ def test_get_remotes():
     True
     """
 
+
 def test_merge():
     """
     Merge a branch
@@ -647,6 +667,7 @@ def test_merge():
     >>> repo.set_branch('master')
     >>> repo.merge('foo')
     """
+
 
 def test_pull():
     """
@@ -664,6 +685,7 @@ def test_pull():
     >>> clone.pull(all_remotes=True)
     >>> clone.pull('origin', all_remotes=True)
     """
+
 
 def test_fetch():
     """
@@ -696,6 +718,7 @@ def test_fetch():
     >>> clone.remove_remote_repo('foo')
     """
 
+
 def test_create_bare():
     """
     Create a bare repository
@@ -718,6 +741,7 @@ def test_create_bare():
     (True, '')
     """
 
+
 def test_nonexistent():
     """
     Check that accessing a non-existent repository fails.
@@ -732,6 +756,7 @@ def test_nonexistent():
     GitRepositoryError: No Git repository at '/does/not/exist'
     """
 
+
 def test_create_noperm():
     """
     Check that creating a repository at a path that isn't writeable fails
@@ -745,6 +770,7 @@ def test_create_noperm():
     ...
     GitRepositoryError: Cannot create Git repository at '/does/not/exist': Permission denied
     """
+
 
 def test_checkout():
     """
@@ -786,6 +812,7 @@ def test_checkout():
     >>> repo.branch
     """
 
+
 def test_gc():
     """
     Test garbace collection
@@ -797,6 +824,7 @@ def test_gc():
     >>> repo = gbp.git.GitRepository(dirs['repo'])
     >>> repo.collect_garbage()
     """
+
 
 def test_grep_log():
     """
@@ -820,6 +848,7 @@ def test_grep_log():
     GitRepositoryError: Error grepping log for foo: fatal: bad revision 'doesnotexist'
     """
 
+
 def test_is_ff():
     """
     Test if branch is fast forwardable
@@ -837,6 +866,7 @@ def test_is_ff():
     >>> repo.is_fast_forward('master', 'ff')
     (False, True)
     """
+
 
 def test_update_ref():
     """
@@ -894,6 +924,7 @@ def test_update_submodules():
     >>> repo.update_submodules()
     """
 
+
 def test_get_merge_base():
     """
     Find the common ancestor of two objects
@@ -911,6 +942,7 @@ def test_get_merge_base():
     ...
     GitRepositoryError: Failed to get common ancestor: fatal: Not a valid object name doesnotexist
     """
+
 
 def test_status():
     r"""
@@ -933,6 +965,7 @@ def test_status():
     >>> list(repo.status().items())
     [('R ', ['test_status\x00test_statusnew'])]
     """
+
 
 def test_cmd_has_feature():
     r"""

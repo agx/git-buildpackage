@@ -7,6 +7,7 @@ import unittest
 
 import gbp.deb.git
 
+
 class DebianGitTestRepo(unittest.TestCase):
     """Scratch repo for a single unit test"""
 
@@ -39,6 +40,6 @@ class DebianGitTestRepo(unittest.TestCase):
             os.makedirs(d)
 
         with open(path, 'w+') as f:
-            content == None or f.write(content)
+            content is None or f.write(content)
         self.repo.add_files(name, force=True)
         self.repo.commit_files(path, msg or "added %s" % name)

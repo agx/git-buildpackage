@@ -20,9 +20,10 @@ import os
 import gbp.log
 from gbp.command_wrappers import Command
 
+
 class PristineTar(Command):
     """The pristine-tar branch in a git repository"""
-    cmd='/usr/bin/pristine-tar'
+    cmd = '/usr/bin/pristine-tar'
     branch = 'pristine-tar'
 
     def __init__(self, repo):
@@ -79,4 +80,3 @@ class PristineTar(Command):
         self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr}" %
                           (self.branch, upstream))
         self.__call__(['commit', archive, upstream])
-

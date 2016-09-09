@@ -2,7 +2,7 @@
 
 """Check if --help works"""
 
-from . import context
+from . import context  # noqa: F401
 
 from .testutils.data import TestCaseWithData
 

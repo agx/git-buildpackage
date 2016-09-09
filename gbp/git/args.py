@@ -21,6 +21,7 @@ Git command argument handling helpers
 import six
 import collections
 
+
 class GitArgs(object):
     """
     Handle arguments to git commands
@@ -106,4 +107,3 @@ class GitArgs(object):
         else:
             self.add(noopt)
         return self
-

@@ -34,7 +34,7 @@ def fetch_version():
                 version = line.split(' ')[1].strip()
                 break
     except OSError:
-        pass # Failing is fine, we just can't print the version then
+        pass  # Failing is fine, we just can't print the version then
 
     with open('gbp/version.py', 'w') as f:
         f.write('"The current gbp version number"\n')

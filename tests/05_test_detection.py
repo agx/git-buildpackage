@@ -10,6 +10,7 @@ from gbp.scripts import buildpackage
 from gbp.deb import (DebianPkgPolicy, orig_file)
 from gbp.errors import GbpError
 
+
 class MockGitRepository:
     def __init__(self, with_branch=False, subject=None):
         self.with_branch = with_branch
@@ -26,6 +27,7 @@ class MockGitRepository:
 
     def get_commit_info(self, commit):
         return {'subject': self.subject}
+
 
 class TestDetection(unittest.TestCase):
     def setUp(self):

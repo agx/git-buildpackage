@@ -32,15 +32,15 @@ from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
-                                 parse_gbp_commands, format_patch,
-                                 switch_to_pq_branch, apply_single_patch,
-                                 apply_and_commit_patch, switch_pq,
-                                 drop_pq, get_maintainer_from_control)
+                                   parse_gbp_commands, format_patch,
+                                   switch_to_pq_branch, apply_single_patch,
+                                   apply_and_commit_patch, switch_pq,
+                                   drop_pq, get_maintainer_from_control)
 from gbp.scripts.common import ExitCodes
 from gbp.dch import extract_bts_cmds
 
 PATCH_DIR = "debian/patches/"
-SERIES_FILE = os.path.join(PATCH_DIR,"series")
+SERIES_FILE = os.path.join(PATCH_DIR, "series")
 
 
 def parse_old_style_topic(commit_info):
@@ -158,12 +158,12 @@ def commit_patches(repo, branch, patches, options):
     vfs = gbp.git.vfs.GitVfs(repo, branch)
     try:
         oldseries = vfs.open('debian/patches/series')
-        oldpatches = [ p.strip() for p in oldseries.readlines() ]
+        oldpatches = [p.strip() for p in oldseries.readlines()]
         oldseries.close()
     except IOError:
         # No series file yet
         oldpatches = []
-    newpatches = [ p[len(PATCH_DIR):] for p in patches ]
+    newpatches = [p[len(PATCH_DIR):] for p in patches]
 
     # FIXME: handle case were only the contents of the patches changed
     added, removed = compare_series(oldpatches, newpatches)
@@ -338,7 +338,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
         else:
             # All patches applied successfully
             break
-        i-=1
+        i -= 1
     else:
         raise GbpError("Couldn't apply patches")
 
@@ -368,20 +368,24 @@ def rebase_pq(repo, branch, pq_from, upstream_tag):
     GitCommand("rebase", cwd=repo.path)([_from])
 
 
+def usage_msg():
+    return """%prog [options] action - maintain patches on a patch queue branch
+Actions:
+  export         export the patch queue associated to the current branch
+                 into a quilt patch series in debian/patches/ and update the
+                 series file.
+  import         create a patch queue branch from quilt patches in debian/patches.
+  rebase         switch to patch queue branch associated to the current
+                 branch and rebase against current branch.
+  drop           drop (delete) the patch queue associated to the current branch.
+  apply          apply a patch
+  switch         switch to patch-queue branch and vice versa"""
+
+
 def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name),
-                                   usage="%prog [options] action - maintain patches on a patch queue branch\n"
-        "Actions:\n"
-        "  export         export the patch queue associated to the current branch\n"
-        "                 into a quilt patch series in debian/patches/ and update the\n"
-        "                 series file.\n"
-        "  import         create a patch queue branch from quilt patches in debian/patches.\n"
-        "  rebase         switch to patch queue branch associated to the current\n"
-        "                 branch and rebase against current branch.\n"
-        "  drop           drop (delete) the patch queue associated to the current branch.\n"
-        "  apply          apply a patch\n"
-        "  switch         switch to patch-queue branch and vice versa")
+                                       usage=usage_msg())
     except GbpError as err:
         gbp.log.err(err)
         return None
@@ -459,7 +463,7 @@ def main(argv):
                                        options.upstream_tag)
             current = repo.get_branch()
             gbp.log.info("%d patches listed in '%s' imported on '%s'" %
-                          (num, series, current))
+                         (num, series, current))
         elif action == "drop":
             drop_pq(repo, current)
         elif action == "rebase":

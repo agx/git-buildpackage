@@ -16,16 +16,12 @@
 #    <http://www.gnu.org/licenses/>
 """Test module for RPM command line tools of the git-buildpackage suite"""
 
-import six
-
 from nose.tools import nottest
 import os
 import shutil
 from glob import glob
-from xml.dom import minidom
 
 from gbp.command_wrappers import Command
-from gbp.git import GitRepositoryError
 
 from tests.component import ComponentTestBase, ComponentTestGitRepository
 
@@ -33,9 +29,11 @@ from tests.component import ComponentTestBase, ComponentTestGitRepository
 RPM_TEST_DATA_SUBMODULE = os.path.join('tests', 'component', 'rpm', 'data')
 RPM_TEST_DATA_DIR = os.path.abspath(RPM_TEST_DATA_SUBMODULE)
 
+
 def setup():
     """Test Module setup"""
     ComponentTestGitRepository.check_testdata(RPM_TEST_DATA_SUBMODULE)
+
 
 class RpmRepoTestBase(ComponentTestBase):
     """Baseclass for tests run in a Git repository with packaging data"""

@@ -19,13 +19,14 @@
 import calendar
 import dateutil.parser
 
-from gbp.git.modifier import GitModifier
-from gbp.git.commit import GitCommit
-from gbp.git.errors import GitError
-from gbp.git.repository import GitRepository, GitRepositoryError
-from gbp.git.fastimport import FastImport
-from gbp.git.args import GitArgs
-from gbp.git.vfs import GitVfs
+from gbp.git.modifier import GitModifier   # noqa: F401
+from gbp.git.commit import GitCommit       # noqa: F401
+from gbp.git.errors import GitError        # noqa: F401
+from gbp.git.repository import (           # noqa: F401
+    GitRepository, GitRepositoryError)
+from gbp.git.fastimport import FastImport  # noqa: F401
+from gbp.git.args import GitArgs           # noqa: F401
+from gbp.git.vfs import GitVfs             # noqa: F401
 
 
 def rfc822_date_to_git(rfc822_date):

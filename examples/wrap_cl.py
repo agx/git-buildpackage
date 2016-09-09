@@ -8,6 +8,7 @@
 import textwrap
 import gbp.dch
 
+
 def format_changelog_entry(commit_info, options, last_commit=False):
     entry = gbp.dch.format_changelog_entry(commit_info, options, last_commit)
     if entry:

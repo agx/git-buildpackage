@@ -2,10 +2,11 @@
 
 """Test L{Changelog}'s guess_version_from_upstream"""
 
-from . import context
+from . import context  # noqa: F401
 from . import testutils
 
 from gbp.scripts import dch
+
 
 class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
     """Test guess_version_from_upstream"""
@@ -16,7 +17,6 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         tagformat = 'upstream/%(version)s'
         uversion = '1.1'
         upstream_branch = 'upstream'
-
 
         self.add_file('doesnot', 'matter')
         self.repo.create_branch('upstream')

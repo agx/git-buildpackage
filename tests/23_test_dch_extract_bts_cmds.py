@@ -14,7 +14,6 @@
 #    <http://www.gnu.org/licenses/>
 """Test gbp.dch.extract_bts_cmds()"""
 
-import os
 import unittest
 
 from gbp.dch import extract_bts_cmds

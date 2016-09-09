@@ -35,6 +35,7 @@ try:
 except ImportError:
     pass
 
+
 def orig_needs_repack(upstream_source, options):
     """
     Determine if the upstream sources needs to be repacked

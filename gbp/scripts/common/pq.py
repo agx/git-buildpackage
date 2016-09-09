@@ -176,6 +176,7 @@ def write_patch_file(filename, commit_info, diff):
 
 DEFAULT_PATCH_NUM_PREFIX_FORMAT = "%04d-"
 
+
 def format_patch(outdir, repo, commit_info, series, numbered=True,
                  path_exclude_regex=None, topic='', name=None, renumber=False,
                  patch_num_prefix_format=DEFAULT_PATCH_NUM_PREFIX_FORMAT):
@@ -188,10 +189,10 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
 
     try:
         num_prefix = str(patch_num_prefix_format) % (len(series) + 1) \
-                     if numbered else ''
+            if numbered else ''
     except Exception:
-        gbp.log.warn("Bad format format string '%s', " \
-                     "falling back to default '%s'" % \
+        gbp.log.warn("Bad format format string '%s', "
+                     "falling back to default '%s'" %
                      (str(patch_num_prefix_format),
                       DEFAULT_PATCH_NUM_PREFIX_FORMAT))
         num_prefix = DEFAULT_PATCH_NUM_PREFIX_FORMAT % (len(series) + 1)
@@ -200,7 +201,7 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
         if renumber:
             # Remove any existing numeric prefix if the patch
             # should be renumbered
-            name =  re.sub('^\d+[-_]*', '', name)
+            name = re.sub('^\d+[-_]*', '', name)
         else:
             # Otherwise, clear proposed prefix
             num_prefix = ''
@@ -214,9 +215,8 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
     filepath = os.path.join(outdir, filename)
     # Make sure that we don't overwrite existing patches in the series
     if filepath in series:
-        presuffix = '-%d' % \
-                    len([p for p in series \
-                         if p.startswith(os.path.splitext(filepath)[0])])
+        presuffix = '-%d' % len([p for p in series
+                                 if p.startswith(os.path.splitext(filepath)[0])])
         filename = num_prefix + base + presuffix + suffix
         filepath = os.path.join(outdir, filename)
 

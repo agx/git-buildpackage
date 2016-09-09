@@ -22,6 +22,7 @@ from gbp.deb.changelog import ChangeLog
 
 import six
 
+
 class FileVfs(object):
     def __init__(self, dir):
         """
@@ -36,8 +37,10 @@ class FileVfs(object):
         flags = flags or 'r'
         return open(os.path.join(self._dir, path), flags)
 
+
 class DebianSourceError(Exception):
     pass
+
 
 class DebianSource(object):
     """
@@ -68,10 +71,10 @@ class DebianSource(object):
             if f.type:
                 return f.type == 'native'
         except IOError as e:
-            pass # Fall back to changelog parsing
+            pass  # Fall back to changelog parsing
 
         try:
-            return not '-' in self.changelog.version
+            return '-' not in self.changelog.version
         except IOError as e:
             raise DebianSourceError("Failed to determine source format: %s" % e)
 

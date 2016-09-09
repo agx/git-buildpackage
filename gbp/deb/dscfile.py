@@ -29,16 +29,16 @@ class DscFile(object):
     compressions = r"(%s)" % '|'.join(DebianUpstreamSource.known_compressions())
     pkg_re = re.compile(r'Source:\s+(?P<pkg>.+)\s*')
     version_re = re.compile(r'Version:\s((?P<epoch>\d+)\:)?'
-                             '(?P<version>[%s]+)\s*$'
+                            '(?P<version>[%s]+)\s*$'
                             % DebianPkgPolicy.debianversion_chars)
     tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                         '(\.orig)?\.tar\.%s)' % compressions)
+                        '(\.orig)?\.tar\.%s)' % compressions)
     add_tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
                             '\.orig-(?P<dir>[a-z0-9-]+)\.tar\.%s)' % compressions)
     diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+'
-                          '\.diff.(gz|bz2))')
+                         '\.diff.(gz|bz2))')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
-                             '\.debian.tar.%s)' % compressions)
+                            '\.debian.tar.%s)' % compressions)
     format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*')
 
     def __init__(self, dscfile):
@@ -63,7 +63,7 @@ class DscFile(object):
                     self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
                     self.native = False
                 else:
-                    self.native = True # Debian native package
+                    self.native = True  # Debian native package
                     self.upstream_version = m.group('version')
                 if m.group('epoch'):
                     self.epoch = m.group('epoch')
@@ -113,7 +113,7 @@ class DscFile(object):
         self.additional_tarballs = dict(add_tars)
 
     def _get_version(self):
-        version = [ "", self.epoch + ":" ][len(self.epoch) > 0]
+        version = ["", self.epoch + ":"][len(self.epoch) > 0]
         if self.native:
             version += self.upstream_version
         else:

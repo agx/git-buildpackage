@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006-2011, 2016 Guido Guenther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 #
 """Common functionality for Debian and RPM buildpackage scripts"""
 
-import os, os.path
+import os
+import os.path
 import pipes
 import tempfile
 import shutil
@@ -112,7 +113,7 @@ def git_archive_single(treeish, output, prefix, comp_type, comp_level, comp_opts
         raise GbpError("Error creating %s: %d" % (output, ret))
 
 
-#{ Functions to handle export-dir
+#  Functions to handle export-dir
 def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
     "dump a tree to output_dir"
     output_dir = os.path.dirname(export_dir)
@@ -147,7 +148,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
                 ret = pipe.copy('', '')
                 os.chdir(top)
                 if ret:
-                     raise GbpError("Error in dump_tree archive pipe in submodule %s" % subdir)
+                    raise GbpError("Error in dump_tree archive pipe in submodule %s" % subdir)
     except OSError as err:
         gbp.log.err("Error dumping tree to %s: %s" % (output_dir, err[0]))
         return False

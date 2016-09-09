@@ -26,7 +26,8 @@ import sys
 
 # Command is this module and common/ is shared code
 # so we don't allow these to be imported:
-invalid_modules = [ 'common', 'supercommand' ]
+invalid_modules = ['common', 'supercommand']
+
 
 def sanitize(cmd):
     """
@@ -34,6 +35,7 @@ def sanitize(cmd):
     so turn it into an underscore.
     """
     return cmd.replace('-', '_')
+
 
 def usage():
     print("""
@@ -50,6 +52,7 @@ The most commonly used commands are:
 Use '--list-cmds' to list all available commands.
 """)
 
+
 def version(prog):
     try:
         from gbp.version import gbp_version
@@ -64,7 +67,7 @@ def import_command(cmd):
     """
     modulename = sanitize(cmd)
     if (not re.match(r'[a-z][a-z0-9_]', modulename) or
-        modulename in invalid_modules):
+            modulename in invalid_modules):
         raise ImportError('Illegal module name %s' % modulename)
 
     return __import__('gbp.scripts.%s' % modulename, fromlist='main', level=0)
@@ -75,7 +78,7 @@ def pymod_to_cmd(mod):
     >>> pymod_to_cmd('/x/y/z/a_cmd.py')
     'a-cmd'
     """
-    return os.path.basename(mod.rsplit('.', 1)[0]).replace('_','-')
+    return os.path.basename(mod.rsplit('.', 1)[0]).replace('_', '-')
 
 
 def get_available_commands(path):
@@ -125,10 +128,10 @@ def supercommand(argv=None):
     elif cmd == 'help':
         usage()
         return 0
-    elif cmd in [ '--version', 'version' ]:
+    elif cmd in ['--version', 'version']:
         version(argv[0])
         return 0
-    elif cmd in [ '--list-cmds', 'list-cmds' ]:
+    elif cmd in ['--list-cmds', 'list-cmds']:
         list_available_commands()
         return 0
 

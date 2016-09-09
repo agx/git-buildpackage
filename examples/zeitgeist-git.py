@@ -48,14 +48,14 @@ else:
     try:
         CLIENT = ZeitgeistClient()
     except RuntimeError as e:
-        print("Unable to connect to Zeitgeist, won't send events. Reason: '%s'" %e)
+        print("Unable to connect to Zeitgeist, won't send events. Reason: '%s'" % e)
 
 
 def get_repo():
     """Get uri of remote repository and its name"""
     repo = None
     uri = subprocess.Popen(['git', 'config', '--get', 'remote.origin.url'],
-                             stdout=subprocess.PIPE).communicate()[0]
+                           stdout=subprocess.PIPE).communicate()[0]
 
     if uri:
         uri = uri.strip().decode(sys.getfilesystemencoding())
@@ -65,7 +65,7 @@ def get_repo():
             sep = ':'
         try:
             repo = unicode(uri.rsplit(sep, 1)[1])
-        except IndexError: # no known separator
+        except IndexError:  # no known separator
             repo = uri
         repo = repo.rsplit(u'.git', 1)[0]
     return repo, uri
@@ -86,19 +86,18 @@ def main(argv):
         origin = uri
 
     subject = Subject.new_for_values(
-                uri = uri,
-                interpretation = Interpretation.DOCUMENT.TEXT_DOCUMENT.PLAIN_TEXT_DOCUMENT.SOURCE_CODE.uri,
-                manifestation = Manifestation.FILE_DATA_OBJECT.uri,
-                text = repo,
-                origin = origin)
+        uri=uri,
+        interpretation=Interpretation.DOCUMENT.TEXT_DOCUMENT.PLAIN_TEXT_DOCUMENT.SOURCE_CODE.uri,
+        manifestation=Manifestation.FILE_DATA_OBJECT.uri,
+        text=repo,
+        origin=origin)
     event = Event.new_for_values(
-                timestamp = int(time.time() * 1000),
-                interpretation = interpretation,
-                manifestation = Manifestation.USER_ACTIVITY.uri,
-                actor = "application://gitg.desktop",
-                subjects = [subject])
+        timestamp=int(time.time() * 1000),
+        interpretation=interpretation,
+        manifestation=Manifestation.USER_ACTIVITY.uri,
+        actor="application://gitg.desktop",
+        subjects=[subject])
     CLIENT.insert_event(event)
 
 if __name__ == '__main__':
     main(sys.argv)
-

@@ -27,6 +27,7 @@ from gbp.git import GitRepositoryError
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.policy import DebianPkgPolicy
 
+
 class DpkgCompareVersions(gbpc.Command):
     dpkg = '/usr/bin/dpkg'
 
@@ -43,16 +44,16 @@ class DpkgCompareVersions(gbpc.Command):
         @raises CommandExecFailed: if the version comparison fails
         """
         self.run_error = "Couldn't compare %s with %s" % (version1, version2)
-        res = self.call([ version1, 'lt', version2 ])
-        if res not in [ 0, 1 ]:
+        res = self.call([version1, 'lt', version2])
+        if res not in [0, 1]:
             if self.stderr:
                 self.run_error += ' (%s)' % self.stderr
             raise gbpc.CommandExecFailed("%s: bad return code %d" % (self.run_error, res))
         if res == 0:
             return -1
         elif res == 1:
-            res = self.call([ version1, 'gt', version2 ])
-            if res not in [ 0, 1 ]:
+            res = self.call([version1, 'gt', version2])
+            if res not in [0, 1]:
                 if self.stderr:
                     self.run_error += ' (%s)' % self.stderr
                 raise gbpc.CommandExecFailed("%s: bad return code %d" % (self.run_error, res))

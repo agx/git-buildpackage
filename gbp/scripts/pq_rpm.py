@@ -55,6 +55,7 @@ def is_ancestor(repo, parent, child):
         merge_base = None
     return merge_base == parent_sha1
 
+
 def generate_patches(repo, start, end, outdir, options):
     """
     Generate patch files from git
@@ -100,7 +101,7 @@ def generate_patches(repo, start, end, outdir, options):
                                                   'gbp-rpm',
                                                   ('ignore'),
                                                   ('if', 'ifarch'))
-        if not 'ignore' in cmds:
+        if 'ignore' not in cmds:
             patch_fn = format_patch(outdir, repo, info, patches,
                                     options.patch_numbers)
             if patch_fn:
@@ -223,7 +224,7 @@ def safe_patches(queue):
 
     if len(queue) > 0:
         gbp.log.debug("Safeing patches '%s' in '%s'" %
-                        (os.path.dirname(queue[0].path), tmpdir))
+                      (os.path.dirname(queue[0].path), tmpdir))
     for patch in queue:
         base, _archive_fmt, comp = parse_archive_filename(patch.path)
         uncompressors = {'gzip': gzip.open, 'bzip2': bz2.BZ2File}
@@ -315,7 +316,7 @@ def import_spec_patches(repo, options):
         if not queue:
             return
         gbp.log.info("Trying to apply patches from branch '%s' onto '%s'" %
-                        (base, upstream_commit))
+                     (base, upstream_commit))
         for patch in queue:
             gbp.log.debug("Applying %s" % patch.path)
             apply_and_commit_patch(repo, patch, packager)
@@ -463,4 +464,3 @@ def main(argv):
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
-

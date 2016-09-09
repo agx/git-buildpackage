@@ -18,7 +18,6 @@
 
 import re
 
-from gbp.git.errors import GitError
 
 class GitCommit(object):
     """A git commit"""
@@ -44,5 +43,3 @@ class GitCommit(object):
         @rtype: C{bool}
         """
         return True if GitCommit.sha1_re.match(value) else False
-
-

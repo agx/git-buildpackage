@@ -49,6 +49,7 @@ class RollbackError(GitRepositoryError):
     def __str__(self):
         return "%s %s" % (self.msg, self.errors)
 
+
 class ImportOrigDebianGitRepository(DebianGitRepository):
     """
     Like a DebianGitRepository but can also perform rollbacks and knows
@@ -440,7 +441,6 @@ def build_parser(name):
     import_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                         dest="components")
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
-
 
     parser.add_boolean_config_file_option(option_name="interactive",
                                           dest='interactive')

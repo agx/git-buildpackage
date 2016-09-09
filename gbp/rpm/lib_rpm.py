@@ -26,8 +26,8 @@ try:
     librpm = __import__(RpmPkgPolicy.python_rpmlib_module_name)
 except ImportError:
     gbp.log.warn("Failed to import '%s' as rpm python module, using host's "
-                    "default rpm library instead" %
-                    RpmPkgPolicy.python_rpmlib_module_name)
+                 "default rpm library instead" %
+                 RpmPkgPolicy.python_rpmlib_module_name)
     import rpm as librpm
 
 # Module initialization
@@ -44,4 +44,3 @@ def get_librpm_log(truncate=True):
     if truncate:
         _rpmlogfd.truncate(0)
     return log
-

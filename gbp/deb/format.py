@@ -16,8 +16,10 @@
 #    <http://www.gnu.org/licenses/>
 """Parse debian/source/format"""
 
+
 class DebianSourceFormatError(Exception):
     pass
+
 
 class DebianSourceFormat(object):
     """
@@ -47,8 +49,7 @@ class DebianSourceFormat(object):
 
         self._version = parts[0]
         if len(parts) == 2:
-            if (parts[1][0] == '(' and
-                parts[1][-1] == ')'):
+            if (parts[1][0] == '(' and parts[1][-1] == ')'):
                 self._type = parts[1][1:-1]
             else:
                 raise DebianSourceFormatError("Cannot get source format from "

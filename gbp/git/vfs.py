@@ -17,7 +17,8 @@
 """Make blobs in a git repository accessible as file like objects"""
 
 from six import StringIO
-from  gbp.git.repository import GitRepositoryError
+from gbp.git.repository import GitRepositoryError
+
 
 class GitVfs(object):
 
