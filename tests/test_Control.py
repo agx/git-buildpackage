@@ -4,7 +4,7 @@
 Test L{gbp.deb.control.Control}
 """
 
-from . import context
+from . import context  # noqa: 401
 
 cl_debian = """Source: git-buildpackage
 Section: vcs
@@ -40,6 +40,7 @@ Description: Suite to help with Debian packages in Git repositories
   * gbp-create-remote-repo: create remote repositories
 """
 
+
 def test_parse_control():
     """
     Parse a the control of debian package
@@ -71,6 +72,7 @@ def test_parse_control():
     >>> cl['Package']
 
     """
+
 
 def test_no_control_error():
     """
