@@ -42,6 +42,7 @@ def test_create():
     >>> repo = gbp.deb.git.DebianGitRepository.create(dirs['repo'])
     """
 
+
 def test_empty_repo():
     """
     Empty repos have no branch pristine-tar branch
@@ -58,6 +59,7 @@ def test_empty_repo():
     False
     """
 
+
 def test_commit_dir():
     """
     Empty repos have no branch pristine-tar branch
@@ -72,6 +74,7 @@ def test_commit_dir():
     >>> repo.create_branch('upstream')
     """
 
+
 def test_create_tarball():
     """
     Create a tarball from a git tree
@@ -85,6 +88,7 @@ def test_create_tarball():
     >>> gbp.command_wrappers.Command('gzip', [ '-n', '%s/../upstream_1.0.orig.tar' % dirs['repo']])()
     """
 
+
 def test_pristine_tar_commit():
     """
     Commit the delta to the pristine-tar branch
@@ -96,6 +100,7 @@ def test_pristine_tar_commit():
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.commit('../upstream_1.0.orig.tar.gz', 'upstream')
     """
+
 
 def test_pristine_has_commit():
     """
@@ -119,6 +124,7 @@ def test_pristine_has_commit():
     True
     """
 
+
 def test_pristine_tar_checkout():
     """
     Checkout a tarball using pristine-tar
@@ -130,6 +136,7 @@ def test_pristine_tar_checkout():
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.checkout('upstream', '1.0', 'gzip', '..')
     """
+
 
 def test_pristine_tar_checkout_nonexistent():
     """
