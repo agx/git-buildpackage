@@ -27,23 +27,24 @@ import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 
 # compression types, extra options and extensions
-compressor_opts = { 'gzip'  : [ '-n', 'gz' ],
-                    'bzip2' : [ '', 'bz2' ],
-                    'lzma'  : [ '', 'lzma' ],
-                    'xz'    : [ '', 'xz' ] }
+compressor_opts = {'gzip': ['-n', 'gz'],
+                   'bzip2': ['', 'bz2'],
+                   'lzma': ['', 'lzma'],
+                   'xz': ['', 'xz']}
 
 # Map frequently used names of compression types to the internal ones:
-compressor_aliases = { 'bz2' : 'bzip2',
-                       'gz'  : 'gzip', }
+compressor_aliases = {'bz2': 'bzip2',
+                      'gz': 'gzip', }
 
 # Supported archive formats
-archive_formats = [ 'tar', 'zip' ]
+archive_formats = ['tar', 'zip']
 
 # Map combined file extensions to archive and compression format
-archive_ext_aliases = { 'tgz'   : ('tar', 'gzip'),
-                        'tbz2'  : ('tar', 'bzip2'),
-                        'tlz'   : ('tar', 'lzma'),
-                        'txz'   : ('tar', 'xz')}
+archive_ext_aliases = {'tgz': ('tar', 'gzip'),
+                       'tbz2': ('tar', 'bzip2'),
+                       'tlz': ('tar', 'lzma'),
+                       'txz': ('tar', 'xz')}
+
 
 def parse_archive_filename(filename):
     """
@@ -178,14 +179,15 @@ class PkgPolicy(object):
         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
         basename = parse_archive_filename(os.path.basename(filename))[0]
 
-        version_filters = map(lambda x: x % version_chars,
-                           ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
-                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
-                             # Debian native: 'package_<version>.tar.gz'
-                             r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)',
-                             # Upstream 'package-<version>.tar.gz'
-                             # or directory 'package-<version>':
-                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)'))
+        version_filters = map(
+            lambda x: x % version_chars,
+            (  # Debian upstream tarball: package_'<version>.orig.tar.gz'
+                r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
+                # Debian native: 'package_<version>.tar.gz'
+                r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)',
+                # Upstream 'package-<version>.tar.gz'
+                # or directory 'package-<version>':
+                r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)'))
         if extra_regex:
             version_filters = extra_regex + version_filters
 
@@ -282,8 +284,8 @@ class UpstreamSource(object):
                 self._orig = True
             elif parts[-2] == 'tar':
                 if (parts[-1] in compressor_opts or
-                    parts[-1] in compressor_aliases):
-                        self._orig = True
+                        parts[-1] in compressor_aliases):
+                    self._orig = True
         except IndexError:
             self._orig = False
 
