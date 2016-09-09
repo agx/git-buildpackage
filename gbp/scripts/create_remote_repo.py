@@ -337,7 +337,7 @@ def main(argv):
         else:
             gbp.log.info("You can now add:")
             print_config(remote, branches)
-            gbp.log.info("to your .git/config to 'gbp-pull' and 'git push' in the future.")
+            gbp.log.info("to your .git/config to 'gbp pull' and 'git push' in the future.")
     except KeyboardInterrupt:
         retval = 1
         gbp.log.err("Interrupted. Aborting.")
