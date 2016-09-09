@@ -119,7 +119,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         self.assertEqual(len(changes), len(expected_patches))
 
         d = context.new_tmpdir(__name__)
-        expected_paths = [os.path.join(str(d), n) for n in expected_patches ]
+        expected_paths = [os.path.join(str(d), n) for n in expected_patches]
 
         # Commit changes
         for c in changes:
@@ -150,14 +150,14 @@ class TestWritePatch(testutils.DebianGitTestRepo):
             renumber = False
             patch_num_format = '%04d-'
 
-        expected_patches = [ 'gbptest/added-foo.patch',
-                             'gbptest/patchname.diff' ]
+        expected_patches = ['gbptest/added-foo.patch',
+                            'gbptest/patchname.diff']
 
-        changes = [ ('foo', 'foo', ("added foo\n\n"
-                                    "Gbp-Pq: Topic gbptest")),
-                    ('baz', 'baz', ("added bar\n\n"
-                                    "Gbp-Pq: Topic gbptest\n"
-                                    "Gbp-Pq: Name patchname.diff")) ]
+        changes = [('foo', 'foo', ("added foo\n\n"
+                                   "Gbp-Pq: Topic gbptest")),
+                   ('baz', 'baz', ("added bar\n\n"
+                                   "Gbp-Pq: Topic gbptest\n"
+                                   "Gbp-Pq: Name patchname.diff"))]
 
         self._test_generate_patches(changes, expected_patches, opts)
 
@@ -169,14 +169,14 @@ class TestWritePatch(testutils.DebianGitTestRepo):
             renumber = True
             patch_num_format = '%02d_'
 
-        expected_patches = [ 'gbptest/01_added-foo.patch',
-                             'gbptest/02_patchname.diff' ]
+        expected_patches = ['gbptest/01_added-foo.patch',
+                            'gbptest/02_patchname.diff']
 
-        changes = [ ('foo', 'foo', ("added foo\n\n"
-                                    "Gbp-Pq: Topic gbptest")),
-                    ('baz', 'baz', ("added bar\n\n"
-                                    "Gbp-Pq: Topic gbptest\n"
-                                    "Gbp-Pq: Name 099-patchname.diff")) ]
+        changes = [('foo', 'foo', ("added foo\n\n"
+                                   "Gbp-Pq: Topic gbptest")),
+                   ('baz', 'baz', ("added bar\n\n"
+                                   "Gbp-Pq: Topic gbptest\n"
+                                   "Gbp-Pq: Name 099-patchname.diff"))]
 
         self._test_generate_patches(changes, expected_patches, opts)
 
@@ -188,22 +188,22 @@ class TestWritePatch(testutils.DebianGitTestRepo):
             renumber = True
             patch_num_format = '%02d_'
 
-        expected_patches = [ 'gbptest/added-foo.patch',
-                             'gbptest/patchname.diff',
-                             'gbptest/patchname-1.diff',
-                             'gbptest/patchname-2.diff' ]
+        expected_patches = ['gbptest/added-foo.patch',
+                            'gbptest/patchname.diff',
+                            'gbptest/patchname-1.diff',
+                            'gbptest/patchname-2.diff']
 
-        changes = [ ('foo', 'foo', ("added foo\n\n"
-                                    "Gbp-Pq: Topic gbptest")),
-                    ('baz', 'baz', ("added bar\n\n"
-                                    "Gbp-Pq: Topic gbptest\n"
-                                    "Gbp-Pq: Name 099-patchname.diff")),
-                    ('qux', 'qux', ("added qux\n\n"
-                                    "Gbp-Pq: Topic gbptest\n"
-                                    "Gbp-Pq: Name 100-patchname.diff")),
-                    ('norf', 'norf', ("added norf\n\n"
-                                      "Gbp-Pq: Topic gbptest\n"
-                                      "Gbp-Pq: Name 101-patchname.diff")) ]
+        changes = [('foo', 'foo', ("added foo\n\n"
+                                   "Gbp-Pq: Topic gbptest")),
+                   ('baz', 'baz', ("added bar\n\n"
+                                   "Gbp-Pq: Topic gbptest\n"
+                                   "Gbp-Pq: Name 099-patchname.diff")),
+                   ('qux', 'qux', ("added qux\n\n"
+                                   "Gbp-Pq: Topic gbptest\n"
+                                   "Gbp-Pq: Name 100-patchname.diff")),
+                   ('norf', 'norf', ("added norf\n\n"
+                                     "Gbp-Pq: Topic gbptest\n"
+                                     "Gbp-Pq: Name 101-patchname.diff"))]
 
         self._test_generate_patches(changes, expected_patches, opts)
 
