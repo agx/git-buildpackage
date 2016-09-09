@@ -23,6 +23,7 @@ import gbp.scripts.import_dscs as import_dscs
 
 from gbp.errors import GbpError
 
+
 class StubGitImportDsc(object):
     """
     A Stub for GitImportDsc.
@@ -40,6 +41,7 @@ class StubGitImportDsc(object):
         """
         return 1 if dsc.filename == self.failfile else 0
 
+
 class DscStub(object):
     def __init__(self, filename, version):
         self.filename = filename
@@ -56,6 +58,7 @@ class DscStub(object):
 # hook up stubs
 import_dscs.GitImportDsc = StubGitImportDsc
 import_dscs.DscFile = DscStub
+
 
 class TestImportDscs(testutils.DebianGitTestRepo):
     """Test L{gbp.scripts.import_dscs}'s """
@@ -93,4 +96,3 @@ class TestImportDscs(testutils.DebianGitTestRepo):
         gbp.log.err = self.orig_err
         testutils.DebianGitTestRepo.tearDown(self)
         context.teardown()
-
