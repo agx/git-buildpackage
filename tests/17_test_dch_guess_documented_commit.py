@@ -2,10 +2,11 @@
 
 """Test L{Changelog}'s guess_version_from_upstream"""
 
-from . import context
+from . import context  # noqa: 401
 from . import testutils
 
 from gbp.scripts import dch
+
 
 class TestGuessDocumentedCommit(testutils.DebianGitTestRepo):
     def setUp(self):
@@ -19,7 +20,7 @@ class TestGuessDocumentedCommit(testutils.DebianGitTestRepo):
         Guess the commit to start from from the snapshot banner
         """
         cp = testutils.MockedChangeLog(self.version,
-                             "*** SNAPSHOT build @12345 ***")
+                                       "*** SNAPSHOT build @12345 ***")
         guessed_commit = dch.guess_documented_commit(cp, None, None)
         self.assertEqual(guessed_commit, '12345')
 
