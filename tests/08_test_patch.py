@@ -2,7 +2,7 @@
 
 """Test L{Patch} class"""
 
-from . import context
+from . import context  # noqa: 401
 
 import os
 import unittest
