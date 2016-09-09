@@ -3,7 +3,7 @@
 """
 Test L{gbp.deb.changelog.ChangeLog}
 """
-from . import context
+from . import context  # noqa: 401
 import os
 import nose
 
@@ -30,14 +30,14 @@ git-buildpackage (0.5.31) unstable; urgency=low
  -- Guido Günther <agx@sigxcpu.org>  Wed, 28 Sep 2011 20:21:34 +0200
 """
 
-cl_upstream="""python-dateutil (1.0-1) unstable; urgency=low
+cl_upstream = """python-dateutil (1.0-1) unstable; urgency=low
 
   * Initial release (Closes: #386256)
 
  -- Guido Günther <agx@sigxcpu.org>  Wed,  6 Sep 2006 10:33:06 +0200
 """
 
-cl_epoch="""xserver-xorg-video-nv (1:1.2.0-3) unstable; urgency=low
+cl_epoch = """xserver-xorg-video-nv (1:1.2.0-3) unstable; urgency=low
 
   [ Steve Langasek ]
   * Upload to unstable
@@ -45,10 +45,12 @@ cl_epoch="""xserver-xorg-video-nv (1:1.2.0-3) unstable; urgency=low
  -- David Nusinow <dnusinow@debian.org>  Mon, 18 Sep 2006 19:57:45 -0400
 """
 
+
 def setup():
     """Setup test module"""
     if not os.path.exists('/usr/bin/debchange'):
         raise nose.SkipTest('debchange tool not present')
+
 
 def test_parse_debian_only():
     """
@@ -81,6 +83,7 @@ def test_parse_debian_only():
     >>> cl.epoch
     >>> cl.upstream_version
     """
+
 
 def test_parse_no_eopch():
     """
@@ -117,6 +120,7 @@ def test_parse_no_eopch():
     >>> cl.has_epoch()
     False
     """
+
 
 def test_parse_eopch():
     """
@@ -155,6 +159,7 @@ def test_parse_eopch():
     True
     """
 
+
 def test_parse_name():
     """
     Methods tested:
@@ -168,6 +173,7 @@ def test_parse_name():
     >>> cl.name
     'git-buildpackage'
     """
+
 
 def test_parse_last_mod():
     """
@@ -190,6 +196,7 @@ def test_parse_last_mod():
     >>> cl.date
     'Mon, 17 Oct 2011 10:15:22 +0200'
     """
+
 
 def test_parse_sections():
     """
@@ -214,6 +221,7 @@ def test_parse_sections():
     >>> cl.sections[1].version
     '0.5.31'
     """
+
 
 def test_add_section():
     """
@@ -260,6 +268,7 @@ def test_add_section():
     True
     >>> shutil.rmtree(testdir, ignore_errors=True)
     """
+
 
 def test_add_entry():
     """
