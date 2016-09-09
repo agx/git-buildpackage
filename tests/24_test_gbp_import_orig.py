@@ -29,4 +29,3 @@ class TestImportOrigGitRepository(DebianGitTestRepo):
     def test_rrr_unknown_action(self):
         with self.assertRaisesRegexp(GbpError, "Unknown action unknown for tag doesnotmatter"):
             self.repo.rrr('doesnotmatter', 'unknown', 'tag')
-
