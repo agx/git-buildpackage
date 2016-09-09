@@ -2,9 +2,11 @@
 
 """Test L{gbp.deb}"""
 
-from . import context
+from . import context  # noqa: 401
 
-import os, tempfile, unittest
+import os
+import tempfile
+import unittest
 
 import gbp.deb
 
