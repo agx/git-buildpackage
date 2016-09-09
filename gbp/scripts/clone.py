@@ -20,7 +20,7 @@
 """Clone a Git repository and set it up for gbp"""
 
 import sys
-import os, os.path
+import os
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
@@ -53,7 +53,8 @@ def build_parser(name):
     branch_group.add_option("--reference", action="store", dest="reference", default=None,
                             help="git reference repository (use local copies where possible)")
     cmd_group.add_config_file_option(option_name="postclone", dest="postclone",
-                            help="hook to run after cloning the source tree, default is '%(postclone)s'")
+                                     help="hook to run after cloning the source tree, "
+                                     "default is '%(postclone)s'")
     cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -111,19 +112,19 @@ def main(argv):
             remotes = repo.get_remote_branches()
             for remote in remotes:
                 local = remote.replace("origin/", "", 1)
-                if not repo.has_branch(local) and \
-                    local != "HEAD":
-                        repo.create_branch(local, remote)
-        else: # only track gbp's default branches
-            branches = [ options.debian_branch, options.upstream_branch ]
+                if (not repo.has_branch(local) and
+                        local != "HEAD"):
+                    repo.create_branch(local, remote)
+        else:  # only track gbp's default branches
+            branches = [options.debian_branch, options.upstream_branch]
             if options.pristine_tar:
-                branches += [ repo.pristine_tar_branch ]
+                branches += [repo.pristine_tar_branch]
             gbp.log.debug('Will track branches: %s' % branches)
             for branch in branches:
                 remote = 'origin/%s' % branch
-                if repo.has_branch(remote, remote=True) and \
-                    not repo.has_branch(branch):
-                        repo.create_branch(branch, remote)
+                if (repo.has_branch(remote, remote=True) and
+                        not repo.has_branch(branch)):
+                    repo.create_branch(branch, remote)
 
         repo.set_branch(options.debian_branch)
 
