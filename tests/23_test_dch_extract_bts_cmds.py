@@ -18,10 +18,12 @@ import unittest
 
 from gbp.dch import extract_bts_cmds
 
+
 class OptionsStub:
     def __init__(self):
         self.meta_closes = "Closes|LP"
         self.meta_closes_bugnum = r'(?:bug|issue)?\#?\s?\d+'
+
 
 class TestExtractBTSCmds(unittest.TestCase):
     def test_debian_commands(self):
