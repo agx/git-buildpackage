@@ -21,13 +21,12 @@
 from __future__ import print_function
 
 import sys
-import os, os.path
+import os
 from six.moves import urllib
 import subprocess
-import tty, termios
+import tty
+import termios
 import re
-
-import six
 
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)
@@ -71,46 +70,10 @@ def print_config(remote, branches):
         merge = refs/heads/%s""" % (branch, remote['name'], branch))
 
 
-def sort_dict(d):
-    """Return a sorted list of (key, value) tuples"""
-    s = []
-    for key in sorted(six.iterkeys(d)):
-        s.append((key, d[key]))
-    return s
-
-
 def parse_url(remote_url, name, pkg, template_dir=None):
     """
     Sanity check our remote URL
 
-    >>> sort_dict(parse_url("ssh://host/path/%(pkg)s", "origin", "package"))
-    [('base', ''), ('dir', '/path/package'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', None), ('scheme', 'ssh'), ('template-dir', None), ('url', 'ssh://host/path/package')]
-
-    >>> sort_dict(parse_url("ssh://host:22/path/repo.git", "origin", "package"))
-    [('base', ''), ('dir', '/path/repo.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('template-dir', None), ('url', 'ssh://host:22/path/repo.git')]
-
-    >>> sort_dict(parse_url("ssh://host:22/~/path/%(pkg)s.git", "origin", "package"))
-    [('base', '~/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('template-dir', None), ('url', 'ssh://host:22/~/path/package.git')]
-
-    >>> sort_dict(parse_url("ssh://host:22/~user/path/%(pkg)s.git", "origin", "package", "/doesnot/exist"))
-    [('base', '~user/'), ('dir', 'path/package.git'), ('host', 'host'), ('name', 'origin'), ('pkg', 'package'), ('port', '22'), ('scheme', 'ssh'), ('template-dir', '/doesnot/exist'), ('url', 'ssh://host:22/~user/path/package.git')]
-
-    >>> parse_url("git://host/repo.git", "origin", "package")
-    Traceback (most recent call last):
-        ...
-    GbpError: URL must use ssh protocol.
-    >>> parse_url("ssh://host/path/repo", "origin", "package")
-    Traceback (most recent call last):
-        ...
-    GbpError: URL needs to contain either a repository name or '%(pkg)s'
-    >>> parse_url("ssh://host:asdf/path/%(pkg)s.git", "origin", "package")
-    Traceback (most recent call last):
-        ...
-    GbpError: URL contains invalid port.
-    >>> parse_url("ssh://host/~us er/path/%(pkg)s.git", "origin", "package")
-    Traceback (most recent call last):
-        ...
-    GbpError: URL contains invalid ~username expansion.
     """
     frags = urllib.parse.urlparse(remote_url)
     if frags.scheme in ['ssh', 'git+ssh', '']:
@@ -154,10 +117,6 @@ def parse_url(remote_url, name, pkg, template_dir=None):
 def build_remote_script(remote, branch):
     """
     Create the script that will be run on the remote side
-    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': None}, 'branch')
-    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared\\necho "pkg packaging" > description\\necho "ref: refs/heads/branch" > HEAD\\n'
-    >>> build_remote_script({'base': 'base', 'dir': 'dir', 'pkg': 'pkg', 'template-dir': '/doesnot/exist'}, 'branch')
-    '\\nset -e\\numask 002\\nif [ -d base"dir" ]; then\\n  echo "Repository at "basedir" already exists - giving up."\\n  exit 1\\nfi\\nmkdir -p base"dir"\\ncd base"dir"\\ngit init --bare --shared --template=/doesnot/exist\\necho "pkg packaging" > description\\necho "ref: refs/heads/branch" > HEAD\\n'
     """
     args = remote
     args['branch'] = branch
