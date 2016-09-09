@@ -19,6 +19,7 @@ import sys
 import unittest
 import gbp.scripts.supercommand
 
+
 class TestSuperCommand(unittest.TestCase):
 
     def test_import(self):
@@ -52,4 +53,3 @@ class TestSuperCommand(unittest.TestCase):
     def test_missing_arg(self):
         self.assertEqual(gbp.scripts.supercommand.supercommand(
                          ['argv0']), 1)
-
