@@ -72,4 +72,3 @@ class TestClone(ComponentTestBase):
         self._check_repo_state(cloned, 'master', ['master'])
         assert len(cloned.get_commits()) == 1
         self.check_hook_vars('postclone', ["GBP_GIT_DIR"])
-
