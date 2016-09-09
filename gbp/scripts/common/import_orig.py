@@ -23,7 +23,6 @@ import tempfile
 import gbp.command_wrappers as gbpc
 import gbp.log
 
-from gbp.pkg import UpstreamSource
 from gbp.errors import GbpError
 from gbp.deb.upstreamsource import DebianUpstreamSource
 
@@ -31,7 +30,7 @@ from gbp.deb.upstreamsource import DebianUpstreamSource
 # line editing and history capabilities. However, if readline is not
 # available, raw_input will still work.
 try:
-    import readline
+    import readline  # noqa: F401
 except ImportError:
     pass
 
@@ -81,7 +80,7 @@ def ask_package_name(default, name_validator_func, err_msg):
     """
     while True:
         sourcepackage = raw_input("What will be the source package name? [%s] " % default)
-        if not sourcepackage: # No input, use the default.
+        if not sourcepackage:  # No input, use the default.
             sourcepackage = default
         # Valid package name, return it.
         if name_validator_func(sourcepackage):
@@ -100,7 +99,7 @@ def ask_package_version(default, ver_validator_func, err_msg):
     """
     while True:
         version = raw_input("What is the upstream version? [%s] " % default)
-        if not version: # No input, use the default.
+        if not version:  # No input, use the default.
             version = default
         # Valid version, return it.
         if ver_validator_func(version):
@@ -117,13 +116,13 @@ def repacked_tarball_name(source, name, version):
         # Repacked orig tarball needs a different name since there's already
         # one with that name
         name = os.path.join(
-                    os.path.dirname(source.path),
-                    os.path.basename(source.path).replace(".tar", ".gbp.tar"))
+            os.path.dirname(source.path),
+            os.path.basename(source.path).replace(".tar", ".gbp.tar"))
     else:
         # Repacked sources or other archives get canonical name
         name = os.path.join(
-                    os.path.dirname(source.path),
-                    "%s_%s.orig.tar.bz2" % (name, version))
+            os.path.dirname(source.path),
+            "%s_%s.orig.tar.bz2" % (name, version))
     return name
 
 
@@ -131,9 +130,9 @@ def repack_source(source, name, version, tmpdir, filters):
     """Repack the source tree"""
     name = repacked_tarball_name(source, name, version)
     repacked = source.pack(name, filters)
-    if source.is_orig(): # the tarball was filtered on unpack
+    if source.is_orig():  # the tarball was filtered on unpack
         repacked.unpacked = source.unpacked
-    else: # otherwise unpack the generated tarball get a filtered tree
+    else:  # otherwise unpack the generated tarball get a filtered tree
         if tmpdir:
             cleanup_tmp_tree(tmpdir)
         tmpdir = tempfile.mkdtemp(dir='../')
@@ -150,7 +149,7 @@ def download_orig(url):
     @rtype: DebianUpstreamSource
     @raises GbpError: on all errors
     """
-    CHUNK_SIZE=4096
+    CHUNK_SIZE = 4096
 
     try:
         import requests
