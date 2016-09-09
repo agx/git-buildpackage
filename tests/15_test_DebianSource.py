@@ -24,6 +24,7 @@ from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.deb.format import DebianSourceFormat
 from gbp.git.vfs import GitVfs
 
+
 class TestDebianSource(testutils.DebianGitTestRepo):
     """Test L{gbp.deb.source}'s """
 
