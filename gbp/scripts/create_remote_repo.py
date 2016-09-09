@@ -102,15 +102,15 @@ def parse_url(remote_url, name, pkg, template_dir=None):
         base = ""
         path = frags.path
 
-    remote = { 'pkg' : pkg,
-               'url' : remote_url % { 'pkg': pkg },
-               'dir' : path % { 'pkg': pkg },
-               'base': base,
-               'host': host,
-               'port': port,
-               'name': name,
-               'scheme': scheme,
-               'template-dir': template_dir}
+    remote = {'pkg': pkg,
+              'url': remote_url % {'pkg': pkg},
+              'dir': path % {'pkg': pkg},
+              'base': base,
+              'host': host,
+              'port': port,
+              'name': name,
+              'scheme': scheme,
+              'template-dir': template_dir}
     return remote
 
 
@@ -124,19 +124,20 @@ def build_remote_script(remote, branch):
     if args['template-dir']:
         args['git-init-args'] += (' --template=%s'
                                   % args['template-dir'])
-    remote_script_pattern = ['',
-      'set -e',
-      'umask 002',
-      'if [ -d %(base)s"%(dir)s" ]; then',
-      '  echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."',
-      '  exit 1',
-      'fi',
-      'mkdir -p %(base)s"%(dir)s"',
-      'cd %(base)s"%(dir)s"',
-      'git init %(git-init-args)s',
-      'echo "%(pkg)s packaging" > description',
-      'echo "ref: refs/heads/%(branch)s" > HEAD',
-      '' ]
+    remote_script_pattern = \
+        ['',
+         'set -e',
+         'umask 002',
+         'if [ -d %(base)s"%(dir)s" ]; then',
+         '  echo "Repository at \"%(base)s%(dir)s\" already exists - giving up."',
+         '  exit 1',
+         'fi',
+         'mkdir -p %(base)s"%(dir)s"',
+         'cd %(base)s"%(dir)s"',
+         'git init %(git-init-args)s',
+         'echo "%(pkg)s packaging" > description',
+         'echo "ref: refs/heads/%(branch)s" > HEAD',
+         '']
     remote_script = '\n'.join(remote_script_pattern) % args
     return remote_script
 
