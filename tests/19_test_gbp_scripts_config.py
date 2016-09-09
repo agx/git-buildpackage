@@ -79,15 +79,15 @@ class TestGbpConfigCommand(unittest.TestCase):
 
     def test_print_cmd_all_values(self):
         """Can we fetch the configuration for all commands"""
-        for cmd in [ 'buildpackage',
-                     'clone',
-                     'config',
-                     'create_remote_repo',
-                     'dch',
-                     'import_dsc',
-                     'import_orig',
-                     'pq',
-                     'pull' ]:
+        for cmd in ['buildpackage',
+                    'clone',
+                    'config',
+                    'create_remote_repo',
+                    'dch',
+                    'import_dsc',
+                    'import_orig',
+                    'pq',
+                    'pull']:
             printstub = self.AllValuesPrintStub(cmd)
             ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
             self.assertIn('%s.color' % cmd, printstub.result.keys())
