@@ -404,41 +404,41 @@ def build_parser(name):
         return None
 
     import_group = GbpOptionGroup(parser, "import options",
-                      "pristine-tar and filtering")
+                                  "pristine-tar and filtering")
     tag_group = GbpOptionGroup(parser, "tag options",
-                      "options related to git tag creation")
+                               "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "version and branch naming options",
-                      "version number and branch layout options")
-    cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke external commands and hooks")
-
-    for group in [import_group, branch_group, tag_group, cmd_group ]:
+                                  "version number and branch layout options")
+    cmd_group = GbpOptionGroup(parser, "external command options",
+                               "how and when to invoke external commands and hooks")
+    for group in [import_group, branch_group, tag_group, cmd_group]:
         parser.add_option_group(group)
 
     branch_group.add_option("-u", "--upstream-version", dest="version",
-                      help="Upstream Version")
+                            help="Upstream Version")
     branch_group.add_config_file_option(option_name="debian-branch",
-                      dest="debian_branch")
+                                        dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
-                      dest="upstream_branch")
+                                        dest="upstream_branch")
     branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag",
-                            help="Upstream VCS tag add to the merge commit")
+                                        help="Upstream VCS tag add to the merge commit")
     branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
     branch_group.add_config_file_option(option_name="merge-mode", dest="merge_mode")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                      dest="sign_tags")
+                                             dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid",
-                      dest="keyid")
+                                     dest="keyid")
     tag_group.add_config_file_option(option_name="upstream-tag",
-                      dest="upstream_tag")
+                                     dest="upstream_tag")
     import_group.add_config_file_option(option_name="filter",
-                      dest="filters", action="append")
+                                        dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
-                      dest="pristine_tar")
+                                                dest="pristine_tar")
     import_group.add_boolean_config_file_option(option_name="filter-pristine-tar",
-                      dest="filter_pristine_tar")
+                                                dest="filter_pristine_tar")
     import_group.add_config_file_option(option_name="import-msg",
-                      dest="import_msg")
+                                        dest="import_msg")
     import_group.add_boolean_config_file_option(option_name="symlink-orig",
                                                 dest="symlink_orig")
     import_group.add_config_file_option("component", action="append", metavar='COMPONENT',
