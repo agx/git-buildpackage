@@ -35,6 +35,7 @@ from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
                                             repack_source, is_link_target, download_orig)
+from gbp.scripts.common.hook import Hook
 
 
 class RollbackError(GitRepositoryError):
@@ -324,7 +325,9 @@ def debian_branch_merge(repo, tag, version, options):
                'GBP_UPSTREAM_VERSION': version,
                'GBP_DEBIAN_VERSION': debian_version,
                }
-        gbpc.Command(format_str(options.postimport, info), extra_env=env, shell=True)()
+        Hook('Postimport',
+             format_str(options.postimport, info),
+             extra_env=env)()
 
 
 def debian_branch_merge_by_replace(repo, tag, version, options):
