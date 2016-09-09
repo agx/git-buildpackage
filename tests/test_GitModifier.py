@@ -4,7 +4,8 @@
 Test L{gbp.git.GitModifier}
 """
 
-from . import context
+from . import context  # noqa: F401
+
 
 def test_author():
     """
@@ -38,6 +39,7 @@ def test_author():
     >>> modifier['date']
     """
 
+
 def test_date():
     """
     Methods tested:
@@ -69,6 +71,7 @@ def test_date():
     '+0000'
     """
 
+
 def test_dict():
     """
     Test C{dict} interface
@@ -79,4 +82,3 @@ def test_dict():
     >>> sorted(modifier.items())
     [('date', '1 +0000'), ('email', 'bar'), ('name', 'foo')]
     """
-
