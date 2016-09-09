@@ -331,9 +331,11 @@ def build_parser(name):
     naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
     naming_group.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
-                      help="expression to determine the next snapshot number, default is '%(snapshot-number)s'")
+                                        help="expression to determine the next snapshot number, "
+                                        "default is '%(snapshot-number)s'")
     parser.add_config_file_option(option_name="git-log", dest="git_log",
-                      help="options to pass to git-log, default is '%(git-log)s'")
+                                  help="options to pass to git-log, "
+                                  "default is '%(git-log)s'")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
@@ -341,37 +343,44 @@ def build_parser(name):
                                   dest="color_scheme")
     range_group.add_option("-s", "--since", dest="since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
     range_group.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
-                      help="autocomplete changelog from last snapshot or tag")
+                           help="autocomplete changelog from last snapshot or tag")
     version_group.add_option("-R", "--release", action="store_true", dest="release", default=False,
-                      help="mark as release")
+                             help="mark as release")
     version_group.add_option("-S", "--snapshot", action="store_true", dest="snapshot", default=False,
-                      help="mark as snapshot build")
+                             help="mark as snapshot build")
     version_group.add_option("-D", "--distribution", dest="distribution", help="Set distribution")
     version_group.add_option("--force-distribution", action="store_true", dest="force_distribution", default=False,
-                      help="Force the provided distribution to be used, even if it doesn't match the list of known distributions")
+                             help="Force the provided distribution to be used, "
+                             "even if it doesn't match the list of known distributions")
     version_group.add_option("-N", "--new-version", dest="new_version",
-                      help="use this as base for the new version number")
+                             help="use this as base for the new version number")
     version_group.add_option("-U", "--urgency", dest="urgency", help="Set urgency level")
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
-                      help="Increment the Debian release number for an upload to backports, and add a backport upload changelog comment.")
+                             help="Increment the Debian release number for an upload to backports, "
+                             "and add a backport upload changelog comment.")
     version_group.add_option("--nmu", dest="nmu", action="store_true", default=False,
-                      help="Increment the Debian release number for a non-maintainer upload")
+                             help="Increment the Debian release number for a non-maintainer upload")
     version_group.add_option("--qa", dest="qa", action="store_true", default=False,
-                      help="Increment the Debian release number for a Debian QA Team upload, and add a QA upload changelog comment.")
+                             help="Increment the Debian release number for a Debian QA Team upload, "
+                             "and add a QA upload changelog comment.")
     version_group.add_option("--team", dest="team", action="store_true", default=False,
-                      help="Increment the Debian release number for a Debian Team upload, and add a Team upload changelog comment.")
+                             help="Increment the Debian release number for a Debian Team upload, "
+                             "and add a Team upload changelog comment.")
     version_group.add_option("--security", dest="security", action="store_true", default=False,
-                      help="Increment the Debian release number for a security upload and add a security upload changelog comment.")
+                             help="Increment the Debian release number for a security upload and "
+                             "add a security upload changelog comment.")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     commit_group.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
     commit_group.add_boolean_config_file_option(option_name="full", dest="full")
     commit_group.add_config_file_option(option_name="id-length", dest="idlen",
-                      help="include N digits of the commit id in the changelog entry, default is '%(id-length)s'",
-                      type="int", metavar="N")
+                                        help="include N digits of the commit id in the changelog entry, "
+                                        "default is '%(id-length)s'",
+                                        type="int", metavar="N")
     commit_group.add_config_file_option(option_name="ignore-regex", dest="ignore_regex",
-                      help="Ignore commit lines matching regex, default is '%(ignore-regex)s'")
+                                        help="Ignore commit lines matching regex, "
+                                        "default is '%(ignore-regex)s'")
     commit_group.add_boolean_config_file_option(option_name="multimaint", dest="multimaint")
     commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
     commit_group.add_config_file_option(option_name="spawn-editor", dest="spawn_editor")
