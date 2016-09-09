@@ -2,11 +2,12 @@
 
 """Test  L{buildpackage}'s get_upstream_tree method"""
 
-from . import context
+from . import context  # noqa: 401
 from . import testutils
 
 import gbp.errors
 import gbp.scripts.buildpackage as buildpackage
+
 
 class MockOptions(object):
     def __init__(self,
@@ -16,6 +17,7 @@ class MockOptions(object):
         self.upstream_branch = upstream_branch
         self.upstream_tree = upstream_tree
         self.upstream_tag = upstream_tag
+
 
 class TestGetUpstreamTree(testutils.DebianGitTestRepo):
     def test_valid_upstream_branch(self):
@@ -60,7 +62,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         """Get upstream tree from a valid tag"""
         self.add_file('foo')
         self.repo.rev_parse('master')
-        cp = { 'Upstream-Version': '1.0~rc3' }
+        cp = {'Upstream-Version': '1.0~rc3'}
         self.repo.create_tag('upstream/1.0_rc3')
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
@@ -70,7 +72,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
     def test_invalid_tag(self):
         """Getting upstream tree from an invalid tag must fail"""
         self.add_file('foo')
-        cp = { 'Upstream-Version': '1.0~rc3' }
+        cp = {'Upstream-Version': '1.0~rc3'}
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
         self.assertRaises(gbp.errors.GbpError,
