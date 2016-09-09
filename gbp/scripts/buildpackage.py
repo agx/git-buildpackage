@@ -18,7 +18,7 @@
 """Build a Debian package out of a Git repository"""
 
 import errno
-import os, os.path
+import os
 import shutil
 import sys
 import time
@@ -44,7 +44,8 @@ from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.hook import Hook
 from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
-#{ upstream tarball preparation
+
+# upstream tarball preparation
 def git_archive(repo, cp, output_dir, treeish, comp_type, comp_level, with_submodules, component=None):
     "create a compressed orig tarball in output_dir using git_archive"
     try:
@@ -123,9 +124,8 @@ def pristine_tar_commit(repo, cp, options, output_dir, orig_file, upstream_tree)
                       archive)
         repo.pristine_tar.commit(archive, upstream_tree)
 
-#}
 
-#{ Functions to handle export-dir
+# Functions to handle export-dir
 def write_tree(repo, options):
     """
     Write a tree of the index or working copy if necessary
@@ -207,10 +207,10 @@ def extract_orig(orig_tarball, dest_dir):
     if os.path.exists(underlay_debian_dir) and os.path.exists(format_file):
         format = DebianSourceFormat.parse_file(format_file)
         if format.version in ['2.0', '3.0']:
-            gbp.log.info("Removing debian/ from unpacked upstream source at %s" % underlay_debian_dir)
+            gbp.log.info("Removing debian/ from unpacked upstream "
+                         "source at %s" % underlay_debian_dir)
             shutil.rmtree(underlay_debian_dir)
 
-#}
 
 def source_vfs(repo, options, tree):
     """Init source package info either from git or from working copy"""
@@ -220,7 +220,7 @@ def source_vfs(repo, options, tree):
             source = DebianSource(GitVfs(repo, tree))
         else:
             source = DebianSource('.')
-            source.is_native() # check early if this works
+            source.is_native()  # check early if this works
     except Exception as e:
         raise GbpError("Can't determine package type: %s" % e)
     return source
@@ -260,7 +260,8 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
                 tree_name = "%s^{tree}" % upstream_tag
                 repo.tree_drop_dirs(tree_name, options.components)
             except GitRepositoryError:
-                raise GbpError("Couldn't find upstream tree '%s' to create orig tarball via pristine-tar" % tree_name)
+                raise GbpError("Couldn't find upstream tree '%s' to create "
+                               "orig tarball via pristine-tar" % tree_name)
 
         try:
             repo.pristine_tar.checkout(cp.name,
@@ -330,17 +331,18 @@ def git_archive_build_orig(repo, cp, output_dir, options):
     for component in options.components:
         subtree = repo.tree_get_dir(upstream_tree, component)
         if not subtree:
-            raise GbpError("No tree for '%s' found in '%s' to create additional tarball from" % (component, upstream_tree))
-        gbp.log.info("Creating additional tarball '%s' from '%s'" % (du.orig_file(cp,
-                                                                                  options.comp_type,
-                                                                                  component=component),
-                                                                     subtree))
+            raise GbpError("No tree for '%s' found in '%s' to create additional tarball from"
+                           % (component, upstream_tree))
+        gbp.log.info("Creating additional tarball '%s' from '%s'"
+                     % (du.orig_file(cp, options.comp_type, component=component),
+                        subtree))
         if not git_archive(repo, cp, output_dir, subtree,
                            options.comp_type,
                            options.comp_level,
                            options.with_submodules,
                            component=component):
-            raise GbpError("Cannot create additional tarball %s at '%s'" % (component, output_dir))
+            raise GbpError("Cannot create additional tarball %s at '%s'"
+                           % (component, output_dir))
     return upstream_tree
 
 
@@ -494,18 +496,25 @@ def build_parser(name, prefix=None):
         gbp.log.err(err)
         return None
 
-    tag_group = GbpOptionGroup(parser, "tag options", "options related to git tag creation")
-    branch_group = GbpOptionGroup(parser, "branch options", "branch layout options")
-    cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke external commands and hooks")
-    orig_group = GbpOptionGroup(parser, "orig tarball options", "options related to the creation of the orig tarball")
-    export_group = GbpOptionGroup(parser, "export build-tree options", "alternative build tree related options")
-    parser.add_option_group(tag_group)
-    parser.add_option_group(orig_group)
-    parser.add_option_group(branch_group)
-    parser.add_option_group(cmd_group)
-    parser.add_option_group(export_group)
+    tag_group = GbpOptionGroup(parser,
+                               "tag options",
+                               "options related to git tag creation")
+    orig_group = GbpOptionGroup(parser,
+                                "orig tarball options",
+                                "options related to the creation of the orig tarball")
+    branch_group = GbpOptionGroup(parser,
+                                  "branch options",
+                                  "branch layout options")
+    cmd_group = GbpOptionGroup(parser,
+                               "external command options",
+                               "how and when to invoke external commands and hooks")
+    export_group = GbpOptionGroup(parser,
+                                  "export build-tree options",
+                                  "alternative build tree related options")
+    for group in [tag_group, orig_group, branch_group, cmd_group]:
+        parser.add_option_group(group)
 
-    parser.add_boolean_config_file_option(option_name = "ignore-new", dest="ignore_new")
+    parser.add_boolean_config_file_option(option_name="ignore-new", dest="ignore_new")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
@@ -513,11 +522,11 @@ def build_parser(name, prefix=None):
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="notify", dest="notify", type='tristate')
     tag_group.add_option("--git-tag", action="store_true", dest="tag", default=False,
-                      help="create a tag after a successful build")
+                         help="create a tag after a successful build")
     tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
-                      help="don't build, only tag and run the posttag hook")
+                         help="don't build, only tag and run the posttag hook")
     tag_group.add_option("--git-retag", action="store_true", dest="retag", default=False,
-                      help="don't fail if the tag already exists")
+                         help="don't fail if the tag already exists")
     tag_group.add_boolean_config_file_option(option_name="sign-tags", dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid", dest="keyid")
     tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
@@ -528,44 +537,53 @@ def build_parser(name, prefix=None):
     orig_group.add_boolean_config_file_option(option_name="pristine-tar-commit",
                                               dest="pristine_tar_commit")
     orig_group.add_config_file_option(option_name="force-create", dest="force_create",
-                      help="force creation of orig tarball", action="store_true")
+                                      help="force creation of orig tarball", action="store_true")
     orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
-                      help="don't create orig tarball", action="store_true")
+                                      help="don't create orig tarball", action="store_true")
     orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",
-                      help="location to look for external tarballs")
+                                      help="location to look for external tarballs")
     orig_group.add_config_file_option(option_name="compression", dest="comp_type",
-                      help="Compression type, default is '%(compression)s'")
+                                      help="Compression type, default is '%(compression)s'")
     orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
-                      help="Compression level, default is '%(compression-level)s'")
+                                      help="Compression level, default is '%(compression-level)s'")
     orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                       dest="components")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
-    branch_group.add_boolean_config_file_option(option_name = "ignore-branch", dest="ignore_branch")
-    branch_group.add_boolean_config_file_option(option_name = "submodules", dest="with_submodules")
+    branch_group.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
+    branch_group.add_boolean_config_file_option(option_name="submodules", dest="with_submodules")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
-                      help="command to build the Debian package, default is '%(builder)s'")
+                                     help="command to build the Debian package, "
+                                          "default is '%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
-                      help="command to clean the working copy, default is '%(cleaner)s'")
+                                     help="command to clean the working copy, "
+                                          "default is '%(cleaner)s'")
     cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
-                      help="hook to run before a build, default is '%(prebuild)s'")
+                                     help="hook to run before a build, "
+                                          "default is '%(prebuild)s'")
     cmd_group.add_config_file_option(option_name="postexport", dest="postexport",
-                      help="hook to run after exporting the source tree, default is '%(postexport)s'")
+                                     help="hook to run after exporting the source tree, "
+                                          "default is '%(postexport)s'")
     cmd_group.add_config_file_option(option_name="postbuild", dest="postbuild",
-                      help="hook run after a successful build, default is '%(postbuild)s'")
+                                     help="hook run after a successful build, "
+                                          "default is '%(postbuild)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
-                      help="hook run after a successful tag operation, default is '%(posttag)s'")
+                                     help="hook run after a successful tag operation, "
+                                          "default is '%(posttag)s'")
     cmd_group.add_boolean_config_file_option(option_name="pbuilder", dest="use_pbuilder")
     cmd_group.add_boolean_config_file_option(option_name="qemubuilder", dest="use_qemubuilder")
     cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
     cmd_group.add_config_file_option(option_name="arch", dest="pbuilder_arch")
-    cmd_group.add_boolean_config_file_option(option_name = "pbuilder-autoconf", dest="pbuilder_autoconf")
+    cmd_group.add_boolean_config_file_option(option_name="pbuilder-autoconf",
+                                             dest="pbuilder_autoconf")
     cmd_group.add_config_file_option(option_name="pbuilder-options", dest="pbuilder_options")
     cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
     export_group.add_config_file_option(option_name="export-dir", dest="export_dir", type="path",
-                      help="before building the package export the source into EXPORT_DIR, default is '%(export-dir)s'")
+                                        help="before building the package export the source into EXPORT_DIR, "
+                                             "default is '%(export-dir)s'")
     export_group.add_config_file_option("export", dest="export",
-                      help="export treeish object TREEISH, default is '%(export)s'", metavar="TREEISH")
+                                        help="export treeish object TREEISH, "
+                                             "default is '%(export)s'", metavar="TREEISH")
     export_group.add_boolean_config_file_option(option_name="purge", dest="purge")
     export_group.add_option("--git-dont-purge", action="store_true", dest="dont_purge", default=False,
                             help="deprecated, use --git-no-purge instead")
@@ -574,11 +592,11 @@ def build_parser(name, prefix=None):
 
 
 def parse_args(argv, prefix):
-    args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0 ]
-    dpkg_args = [ arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1 ]
+    args = [arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0]
+    dpkg_args = [arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1]
 
     # We handle these although they don't have a --git- prefix
-    for arg in [ "--help", "-h", "--version" ]:
+    for arg in ["--help", "-h", "--version"]:
         if arg in dpkg_args:
             args.append(arg)
 
@@ -592,7 +610,8 @@ def parse_args(argv, prefix):
         disable_hooks(options)
     if options.retag:
         if not options.tag and not options.tag_only:
-            gbp.log.err("'--%sretag' needs either '--%stag' or '--%stag-only'" % (prefix, prefix, prefix))
+            gbp.log.err("'--%sretag' needs either '--%stag' or '--%stag-only'"
+                        % (prefix, prefix, prefix))
             return None, None, None
 
     if options.overlay and not options.export_dir:
@@ -705,8 +724,8 @@ def main(argv):
             if options.prebuild:
                 Hook('Prebuild', options.prebuild,
                      extra_env=Hook.md(hook_env,
-                                  {'GBP_GIT_DIR': repo.git_dir,
-                                   'GBP_BUILD_DIR': build_dir})
+                                       {'GBP_GIT_DIR': repo.git_dir,
+                                        'GBP_BUILD_DIR': build_dir})
                      )(dir=build_dir)
 
             # Finally build the package:
