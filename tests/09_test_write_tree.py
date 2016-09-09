@@ -4,7 +4,7 @@
 
 from __future__ import print_function
 
-from . import context
+from . import context  # noqa: 401
 from . import testutils
 
 import os
