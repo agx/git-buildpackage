@@ -8,8 +8,8 @@ import tempfile
 
 sys.path.insert(0, os.path.abspath('..'))
 
-import gbp
-import gbp.log
+import gbp       # noqa: E402
+import gbp.log   # noqa: E402
 
 gbp.log.setup(False, False)
 
@@ -20,18 +20,21 @@ projectdir = os.path.dirname(os.path.dirname(os.path.abspath(gbp.__file__)))
 _chdir_backup = None
 _tmpdirs = []
 
+
 def chdir(dir):
     global _chdir_backup
     if not _chdir_backup:
         _chdir_backup = os.path.abspath(os.curdir)
     os.chdir(str(dir))
 
+
 def new_tmpdir(name):
     global _tmpdirs
-    prefix='gbp_%s_' % name
+    prefix = 'gbp_%s_' % name
     tmpdir = TmpDir(prefix)
     _tmpdirs.append(tmpdir)
     return tmpdir
+
 
 def teardown():
     if _chdir_backup:
@@ -39,6 +42,7 @@ def teardown():
     for tmpdir in _tmpdirs:
         tmpdir.rmdir()
     del _tmpdirs[:]
+
 
 class TmpDir(object):
 
