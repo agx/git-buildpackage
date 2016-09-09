@@ -43,7 +43,7 @@ class SkipImport(Exception):
 
 
 def download_source(pkg, dirs, unauth):
-    opts = [ '--download-only' ]
+    opts = ['--download-only']
     if unauth:
         opts.append('--allow-unauthenticated')
 
@@ -69,7 +69,7 @@ def apply_patch(diff):
                   '--quiet']
 
     pipe = pipes.Template()
-    pipe.prepend('gunzip -c %s' % diff,  '.-')
+    pipe.prepend('gunzip -c %s' % diff, '.-')
     pipe.append('patch %s' % ' '.join(patch_opts), '-.')
 
     try:
@@ -137,6 +137,7 @@ def check_parents(repo, branch, tag):
 
     return parents
 
+
 def apply_debian_patch(repo, unpack_dir, src, options, tag):
     """apply the debian patch and tag appropriately"""
     try:
@@ -160,8 +161,8 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag):
         committer = get_committer_from_author(author, options)
         commit = repo.commit_dir(unpack_dir,
                                  "Import Debian patch %s" % src.version,
-                                 branch = options.debian_branch,
-                                 other_parents = parents,
+                                 branch=options.debian_branch,
+                                 other_parents=parents,
                                  author=author,
                                  committer=committer)
         if not options.skip_debian_tag:
@@ -221,13 +222,12 @@ def build_parser(name):
         return None
 
     import_group = GbpOptionGroup(parser, "import options",
-                      "pristine-tar and filtering")
+                                  "pristine-tar and filtering")
     tag_group = GbpOptionGroup(parser, "tag options",
-                      "options related to git tag creation")
+                               "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "version and branch naming options",
-                      "version number and branch layout options")
-
-    for group in [import_group, branch_group, tag_group ]:
+                                  "version number and branch layout options")
+    for group in [import_group, branch_group, tag_group]:
         parser.add_option_group(group)
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -238,38 +238,37 @@ def build_parser(name):
     parser.add_option("--download", action="store_true", dest="download", default=False,
                       help="download source package")
     branch_group.add_config_file_option(option_name="debian-branch",
-                      dest="debian_branch")
+                                        dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
-                      dest="upstream_branch")
+                                        dest="upstream_branch")
     branch_group.add_boolean_config_file_option(option_name="create-missing-branches",
-                      dest="create_missing_branches")
+                                                dest="create_missing_branches")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                      dest="sign_tags")
+                                             dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid",
-                      dest="keyid")
+                                     dest="keyid")
     tag_group.add_config_file_option(option_name="debian-tag",
-                      dest="debian_tag")
+                                     dest="debian_tag")
     tag_group.add_config_file_option(option_name="upstream-tag",
-                      dest="upstream_tag")
-    tag_group.add_option("--skip-debian-tag",dest="skip_debian_tag",
+                                     dest="upstream_tag")
+    tag_group.add_option("--skip-debian-tag", dest="skip_debian_tag",
                          action="store_true", default=False,
                          help="Don't add a tag after importing the Debian patch")
 
-
     import_group.add_config_file_option(option_name="filter",
-                      dest="filters", action="append")
+                                        dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
-                      dest="pristine_tar")
+                                                dest="pristine_tar")
     import_group.add_option("--allow-same-version", action="store_true",
-                      dest="allow_same_version", default=False,
-                      help="allow to import already imported version")
+                            dest="allow_same_version", default=False,
+                            help="allow to import already imported version")
     import_group.add_boolean_config_file_option(option_name="author-is-committer",
-                      dest="author_committer")
+                                                dest="author_committer")
     import_group.add_boolean_config_file_option(option_name="author-date-is-committer-date",
-                      dest="author_committer_date")
+                                                dest="author_committer_date")
     import_group.add_boolean_config_file_option(option_name="allow-unauthenticated",
-                      dest="allow_unauthenticated")
+                                                dest="allow_unauthenticated")
     return parser
 
 
@@ -319,7 +318,7 @@ def main(argv):
             dsc = pkg
 
         src = DscFile.parse(dsc)
-        if src.pkgformat not in [ '1.0', '3.0' ]:
+        if src.pkgformat not in ['1.0', '3.0']:
             raise GbpError("Importing %s source format not yet supported." % src.pkgformat)
         if options.verbose:
             print_dsc(src)
@@ -396,8 +395,8 @@ def main(argv):
                     repo.create_pristinetar_commits(options.upstream_branch,
                                                     src.tgz,
                                                     src.additional_tarballs.items())
-            if (not repo.has_branch(options.debian_branch)
-                and (is_empty or options.create_missing_branches)):
+            if (not repo.has_branch(options.debian_branch) and
+                    (is_empty or options.create_missing_branches)):
                 repo.create_branch(options.debian_branch, commit)
         if not src.native:
             if src.diff or src.deb_tgz:
@@ -425,7 +424,7 @@ def main(argv):
     finally:
         os.chdir(dirs['top'])
 
-    for d in [ 'tmp', 'download' ]:
+    for d in ['tmp', 'download']:
         if d in dirs:
             gbpc.RemoveTree(dirs[d])()
 
