@@ -29,6 +29,7 @@
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--[no-]track</option></arg>
+      <arg><option>--[no-]bare</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -118,6 +119,14 @@
         <listitem>
 	  <para>Whether to set up branch tracking for the debian, upstream and
 	  pristine-tar branches.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]bare</option>
+        </term>
+        <listitem>
+	  <para>Whether to the remote repository should be a bare
+	  repository (this is the default).</para>
         </listitem>
       </varlistentry>
     </variablelist>

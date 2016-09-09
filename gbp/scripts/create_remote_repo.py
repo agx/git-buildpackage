@@ -70,7 +70,7 @@ def print_config(remote, branches):
         merge = refs/heads/%s""" % (branch, remote['name'], branch))
 
 
-def parse_url(remote_url, name, pkg, template_dir=None):
+def parse_url(remote_url, name, pkg, template_dir=None, bare=True):
     """
     Sanity check our remote URL
 
@@ -110,7 +110,8 @@ def parse_url(remote_url, name, pkg, template_dir=None):
               'port': port,
               'name': name,
               'scheme': scheme,
-              'template-dir': template_dir}
+              'template-dir': template_dir,
+              'bare': bare}
     return remote
 
 
@@ -120,7 +121,14 @@ def build_remote_script(remote, branch):
     """
     args = remote
     args['branch'] = branch
-    args['git-init-args'] = '--bare --shared'
+    args['git-init-args'] = '--shared'
+    if args['bare']:
+        args['git-init-args'] += ' --bare'
+        args['checkout_cmd'] = ''
+        args['git_dir'] = '.'
+    else:
+        args['checkout_cmd'] = 'git checkout -f'
+        args['git_dir'] = '.git'
     if args['template-dir']:
         args['git-init-args'] += (' --template=%s'
                                   % args['template-dir'])
@@ -135,8 +143,8 @@ def build_remote_script(remote, branch):
          'mkdir -p %(base)s"%(dir)s"',
          'cd %(base)s"%(dir)s"',
          'git init %(git-init-args)s',
-         'echo "%(pkg)s packaging" > description',
-         'echo "ref: refs/heads/%(branch)s" > HEAD',
+         'echo "%(pkg)s packaging" > %(git_dir)s/description',
+         'echo "ref: refs/heads/%(branch)s" > %(git_dir)s/HEAD',
          '']
     remote_script = '\n'.join(remote_script_pattern) % args
     return remote_script
@@ -219,6 +227,8 @@ def build_parser(name, sections=[]):
                                                 dest="pristine_tar")
     branch_group.add_boolean_config_file_option(option_name="track",
                                                 dest='track')
+    branch_group.add_boolean_config_file_option(option_name="bare",
+                                                dest='bare')
     parser.add_option("-v", "--verbose",
                       action="store_true",
                       dest="verbose",
@@ -308,7 +318,8 @@ def main(argv):
         remote = parse_url(options.remote_url,
                            options.name,
                            pkg,
-                           options.template_dir)
+                           options.template_dir,
+                           options.bare)
         if repo.has_remote_repo(options.name):
             raise GbpError("You already have a remote name '%s' defined for this repository." % options.name)
 

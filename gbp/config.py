@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2010-2012,2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010-2012,2015,2016 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -174,6 +174,7 @@ class GbpOptionParser(OptionParser):
                  'upstream-vcs-tag': '',
                  'rollback': 'True',
                  'component': [],
+                 'bare': 'True',
              }
     help = {
              'debian-branch':
@@ -339,6 +340,9 @@ class GbpOptionParser(OptionParser):
                   "Rollback repository changes when encountering an error",
               'component':
                   'component name for additional tarballs',
+              'bare':
+                  "wether to create a bare repository on the remote side. "
+                  "'Default is '%(bare)s'.",
            }
 
     def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
