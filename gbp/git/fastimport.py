@@ -113,14 +113,14 @@ class FastImport(object):
 committer %(name)s <%(email)s> %(time)s
 data %(length)s
 %(msg)s%(from)s""" %
-            { 'branch': branch,
-              'name':   committer.name,
-              'email':  committer.email,
-              'time':   committer.date,
-              'length': length,
-              'msg': msg,
-              'from': from_,
-              })
+                        {'branch': branch,
+                         'name': committer.name,
+                         'email': committer.email,
+                         'time': committer.date,
+                         'length': length,
+                         'msg': msg,
+                         'from': from_,
+                         })
 
     def deleteall(self):
         """
