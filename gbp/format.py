@@ -18,6 +18,7 @@
 
 from gbp.errors import GbpError
 
+
 def format_str(msg, args):
     """
     Format a string with the given dict. Be a bit more verbose than
@@ -41,5 +42,3 @@ def format_str(msg, args):
     except KeyError as e:
         raise GbpError("Failed to format %s: Missing value %s in %s" %
                        (msg, e, args))
-
-
