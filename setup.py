@@ -47,28 +47,35 @@ def readme():
     with open('README') as file:
         return file.read()
 
-setup(name = "gbp",
-      version = fetch_version(),
-      author = u'Guido Günther',
-      author_email = 'agx@sigxcpu.org',
-      url = 'https://honk.sigxcpu.org/piki/projects/git-buildpackage/',
-      description = 'Suite to help with Debian packages in Git repositories',
-      license = 'GPLv2+',
-      long_description = readme(),
-      classifiers = [
+
+def setup_requires():
+    if os.getenv('WITHOUT_NOSETESTS'):
+        return []
+    else:
+        return ['nose>=0.11.1', 'coverage>=2.85', 'nosexcover>=1.0.7']
+
+
+setup(name="gbp",
+      version=fetch_version(),
+      author=u'Guido Günther',
+      author_email='agx@sigxcpu.org',
+      url='https://honk.sigxcpu.org/piki/projects/git-buildpackage/',
+      description='Suite to help with Debian packages in Git repositories',
+      license='GPLv2+',
+      long_description=readme(),
+      classifiers=[
           'Environment :: Console',
           'Programming Language :: Python :: 2',
           'Topic :: Software Development :: Version Control :: Git',
           'Operating System :: POSIX :: Linux',
       ],
-      scripts = ['bin/git-pbuilder',
-                 'bin/gbp-builder-mock'],
-      packages = find_packages(exclude=['tests', 'tests.*']),
-      data_files = [("/etc/git-buildpackage/", ["gbp.conf"]),],
-      requires = ["six"],
-      setup_requires=['nose>=0.11.1', 'coverage>=2.85', 'nosexcover>=1.0.7'] if \
-                        os.getenv('WITHOUT_NOSETESTS') is None else [],
-      entry_points = {
-          'console_scripts': [ 'gbp = gbp.scripts.supercommand:supercommand' ],
+      scripts=['bin/git-pbuilder',
+               'bin/gbp-builder-mock'],
+      packages=find_packages(exclude=['tests', 'tests.*']),
+      data_files=[("/etc/git-buildpackage/", ["gbp.conf"]), ],
+      requires=["six"],
+      setup_requires=setup_requires(),
+      entry_points={
+          'console_scripts': ['gbp=gbp.scripts.supercommand:supercommand'],
       },
-)
+      )
