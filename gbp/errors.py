@@ -16,6 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 """Errors raised in gbp commands"""
 
+
 class GbpError(Exception):
     """Generic exception raised in git-buildpackage commands"""
     pass
