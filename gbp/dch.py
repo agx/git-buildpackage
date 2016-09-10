@@ -20,6 +20,7 @@ import re
 
 MAX_CHANGELOG_LINE_LENGTH = 76
 
+
 def extract_git_dch_cmds(lines, options):
     """Return a dictionary of all Git-Dch: commands found in lines.
     The command keys will be lowercased, i.e. {'ignore' : True,
@@ -45,6 +46,7 @@ def filter_ignore_rx_matches(lines, options):
     else:
         return lines
 
+
 def extract_bts_cmds(lines, opts):
     """Return a dictionary of the bug tracking system commands
     contained in the the given lines.  i.e. {'closed' : [1], 'fixed':
@@ -58,7 +60,7 @@ def extract_bts_cmds(lines, opts):
     for line in lines:
         m = bts_rx.match(line)
         if m:
-            bug_nums = [ bug.strip() for bug in _bug_re.findall(line, re.I) ]
+            bug_nums = [bug.strip() for bug in _bug_re.findall(line, re.I)]
             try:
                 commands[m.group('bts')] += bug_nums
             except KeyError:
@@ -114,13 +116,13 @@ def format_changelog_entry(commit_info, options, last_commit=False):
         entry[0] = '[%s] ' % commitid[0:options.idlen] + entry[0]
 
     bts_cmds = {}
-    thanks  = []
+    thanks = []
     if options.meta:
         (bts_cmds, body) = extract_bts_cmds(body, options)
         (thanks, body) = extract_thanks_info(body, options)
     body = filter_ignore_rx_matches(body, options)
 
-    if 'full' in git_dch_cmds or (options.full and not 'short' in git_dch_cmds):
+    if 'full' in git_dch_cmds or (options.full and 'short' not in git_dch_cmds):
         # Add all non-blank body lines.
         entry.extend([line for line in body if line.strip()])
     if thanks:
