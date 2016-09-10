@@ -26,6 +26,7 @@ from gbp.errors import GbpError
 
 _old_tempdirs = []
 
+
 def init_tmpdir(path, prefix):
     """Initialize a temporary directory structure"""
     try:
@@ -42,6 +43,7 @@ def init_tmpdir(path, prefix):
     tempfile.tempdir = tmpdir
     return tmpdir
 
+
 def del_tmpdir():
     """Remove tempdir and restore tempfile module"""
     if _old_tempdirs:
@@ -51,4 +53,3 @@ def del_tmpdir():
         tempfile.tempdir = _old_tempdirs.pop()
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
-
