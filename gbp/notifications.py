@@ -19,6 +19,7 @@ import warnings
 
 notify_module = None
 
+
 def enable_notifications():
     global notify_module
 
@@ -37,7 +38,7 @@ def enable_notifications():
 def build_msg(cp, success):
     summary = "Gbp %s" % ["failed", "successful"][success]
     msg = ("Build of %s %s %s" %
-            (cp['Source'], cp['Version'], ["failed", "succeeded"][success]))
+           (cp['Source'], cp['Version'], ["failed", "succeeded"][success]))
 
     return summary, msg
 
@@ -67,4 +68,3 @@ def notify(summary, message, notify_opt):
         return [True, False][notify_opt.is_on()]
 
     return notify_opt.do(send_notification, summary, message)
-
