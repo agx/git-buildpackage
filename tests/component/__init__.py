@@ -86,6 +86,25 @@ class ComponentTestGitRepository(GitRepository):
         blobs = [obj[3] for obj in objs if obj[1] == 'blob']
         return set(blobs)
 
+    def get_head_author_subject(self):
+        out, err, ret = self._git_inout('format-patch', ['-1', '--stdout', '--subject-prefix='],
+                                        capture_stderr=True)
+        if ret:
+            raise GitRepositoryError("Cannot get head author/subject: %s" %
+                                     err.strip())
+
+        output = out.decode('utf-8')
+        for line in output.split('\n'):
+            line = line.strip()
+            if not line:
+                # end of headers
+                break
+            if line.startswith('From:'):
+                author = line.replace('From:', '').strip()
+            elif line.startswith('Subject:'):
+                subject = line.replace('Subject:', '').strip()
+        return author, subject
+
 
 class ComponentTestBase(unittest.TestCase, GbpLogTester):
     """Base class for testing cmdline tools of git-buildpackage"""
