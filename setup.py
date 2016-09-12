@@ -38,7 +38,7 @@ def fetch_version():
 
     with open('gbp/version.py', 'w') as f:
         f.write('"The current gbp version number"\n')
-        f.write('gbp_version="%s"\n' % version)
+        f.write('gbp_version = "%s"\n' % version)
 
     return version
 
