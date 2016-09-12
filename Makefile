@@ -9,8 +9,7 @@ test:
 	python setup.py nosetests --with-xcoverage
 
 syntax-check:
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q \
-	    gbp gbp.scripts gbp.git gbp.deb
+	flake8 -j1
 
 docs:
 	make -C docs
