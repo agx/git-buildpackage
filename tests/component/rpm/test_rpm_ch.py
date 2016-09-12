@@ -190,11 +190,19 @@ class TestRpmCh(RpmRepoTestBase):
         eq_(mock_ch(['--git-author', '--since=HEAD^1']), 0)
 
         # Test the --git-author option
+        saved_author = os.environ.get('GIT_AUTHOR_NAME')
+        saved_email = os.environ.get('GIT_AUTHOR_EMAIL')
+        os.environ['GIT_AUTHOR_NAME'] = 'John Doe'
+        os.environ['GIT_AUTHOR_EMAIL'] = 'jd@host.com'
         with open(os.path.join(repo.git_dir, 'config'), 'a') as fobj:
             fobj.write('[user]\n  name=John Doe\n  email=jd@host.com\n')
         eq_(mock_ch(['--git-author', '--since=HEAD^']), 0)
         header = self.read_file('packaging/gbp-test-native.changes')[0]
         ok_(re.match(r'.+ John Doe <jd@host\.com> .+', header), header)
+        if saved_author:
+            os.environ['GIT_AUTHOR_NAME'] = saved_author
+        if saved_email:
+            os.environ['GIT_AUTHOR_EMAIL'] = saved_email
 
     def test_option_full(self):
         """Test the --full cmdline option"""
