@@ -27,7 +27,7 @@ class TestUnpack(unittest.TestCase):
             assert os.path.exists(target), "%s does not exist" % target
 
     def _create_archive(self, comp):
-        filelist = ['README', 'setup.py']
+        filelist = ['README.md', 'setup.py']
 
         name = "%s_0.1.tar.%s" % (self.archive_prefix, comp)
         t = tarfile.open(name=name, mode='w:%s' % comp)
@@ -72,7 +72,7 @@ class TestUnpack(unittest.TestCase):
             self._check_files(archive[1], comp)
 
     def test_upstream_source_unpack_filtered(self):
-        exclude = "README"
+        exclude = "README.md"
 
         for (comp, archive) in six.iteritems(self.archives):
             source = gbp.pkg.UpstreamSource(archive[0])

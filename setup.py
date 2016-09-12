@@ -44,7 +44,7 @@ def fetch_version():
 
 
 def readme():
-    with open('README') as file:
+    with open('README.md') as file:
         return file.read()
 
 
