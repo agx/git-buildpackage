@@ -2,7 +2,7 @@ Running the Tests
 -----------------
 The tests are run via
 
-    python setup.py nosetests
+    make
 
 To also run the component tests, you need to initialize the git submodules once
 via:
@@ -17,7 +17,7 @@ Building the API Docs
 ---------------------
 You can build the API docs using
 
-    epydoc -v --config=setup.cfg
+    make apidocs
 
 
 Contributing Patches

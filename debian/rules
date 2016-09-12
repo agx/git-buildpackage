@@ -14,28 +14,19 @@ ZSH_COMPDIR = /usr/share/zsh/vendor-completions/
 PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 
 %:
-	dh $@ --with python2
+	dh $@ --with python2 --buildsystem=python_distutils
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	dh_auto_test
-	export GIT_AUTHOR_NAME="Gbp Tests";		\
-	export GIT_AUTHOR_EMAIL=tests@example.com;	\
-	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
-	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
-	PYTHONPATH=.					\
-	python setup.py nosetests --with-xcoverage
-	
-	PYTHONPATH=. pychecker $(PYCHECKER_ARGS) -q \
-		gbp gbp.scripts gbp.git gbp.deb
+	make
 else
 	@echo "Checks disabled via DEB_BUILD_OPTIONS"
 endif
 
 override_dh_auto_build:
 	dh_auto_build
-	epydoc -v --config=setup.cfg
-	make -C docs/
+	make apidocs docs
 
 override_dh_auto_install:
 	dh_auto_install
