@@ -38,6 +38,7 @@
         <arg><option>--bpo</option></arg>
         <arg><option>--nmu</option></arg>
         <arg><option>--qa</option></arg>
+        <arg><option>--security</option></arg>
         <arg><option>--team</option></arg>
       </group>
       <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
@@ -317,6 +318,18 @@
           <para>
             Increment the Debian release number for a Debian QA Team upload, and
             add a QA upload changelog comment.
+            This option can't be set via &gbp.conf;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--security</option>
+        </term>
+        <listitem>
+          <para>
+            Increment the Debian release number for a Debian Security
+            Team non-maintainer upload, and add a "Security Team
+            upload" changelog comment.
             This option can't be set via &gbp.conf;.
           </para>
         </listitem>
