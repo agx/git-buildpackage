@@ -161,8 +161,9 @@
         </term>
         <listitem>
           <para>
-          Start reading commit messages at
-          <replaceable>committish</replaceable>.
+            Start reading commit messages at
+            <replaceable>committish</replaceable>.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -171,8 +172,9 @@
           <option>-a</option></term>
         <listitem>
           <para>
-          Guess the last commit documented in the changelog from the
-          snapshot banner (or from the last tag if no snapshot banner exists).
+            Guess the last commit documented in the changelog from the
+            snapshot banner (or from the last tag if no snapshot banner exists).
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -256,9 +258,10 @@
               <option>-R</option></term>
         <listitem>
           <para>
-          Remove any snapshot release banners and version suffixes, set
-          the current distribution to <replaceable>unstable</replaceable>, and
-          open the changelog for final tweaking.
+            Remove any snapshot release banners and version suffixes, set
+            the current distribution to <replaceable>unstable</replaceable>, and
+            open the changelog for final tweaking.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -272,6 +275,7 @@
           <replaceable>newversion</replaceable>. Together with
           <option>--snapshot</option>, the snapshot number will be appended to
           <replaceable>newversion</replaceable>.
+          This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -280,7 +284,8 @@
         </term>
         <listitem>
           <para>
-          Create a Team upload changelog entry.
+            Create a Team upload changelog entry.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -289,8 +294,9 @@
         </term>
         <listitem>
           <para>
-          Increment the Debian release number for an upload to backports, and
-          add a backport upload changelog comment.
+            Increment the Debian release number for an upload to backports, and
+            add a backport upload changelog comment.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -299,7 +305,8 @@
         </term>
         <listitem>
           <para>
-          Increment  the  Debian  release  number  for a non-maintainer upload.
+            Increment  the  Debian  release  number  for a non-maintainer upload.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -308,8 +315,9 @@
         </term>
         <listitem>
           <para>
-          Increment the Debian release number for a Debian QA Team upload, and
-          add a QA upload changelog comment.
+            Increment the Debian release number for a Debian QA Team upload, and
+            add a QA upload changelog comment.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -318,7 +326,8 @@
         </term>
         <listitem>
           <para>
-          Set the distribution field to <replaceable>name</replaceable>.
+            Set the distribution field to <replaceable>name</replaceable>.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
@@ -327,8 +336,9 @@
         </term>
         <listitem>
           <para>
-          Force the distribution specified with <option>--distribution</option>
-          to be used, even if it doesn't match the list of known distributions.
+            Force the distribution specified with <option>--distribution</option>
+            to be used, even if it doesn't match the list of known distributions.
+            This option can't be set via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
