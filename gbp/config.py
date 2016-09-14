@@ -350,6 +350,9 @@ class GbpOptionParser(OptionParser):
             "'Default is '%(bare)s'.",
     }
 
+    short_opts = {
+    }
+
     def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
                         '~/.gbp.conf': 'global',
                         '%(top_dir)s/.gbp.conf': None,
@@ -579,6 +582,14 @@ class GbpOptionParser(OptionParser):
             default = self.config[option_name]
         return default
 
+    def get_opt_names(self, option_name):
+        names = ["--%s%s" % (self.prefix, option_name)]
+        if option_name in self.short_opts:
+            if self.prefix:
+                raise ValueError("Options with prefix cannot have a short option")
+            names.insert(0, self.short_opts[option_name])
+        return names
+
     @save_option
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
@@ -592,7 +603,8 @@ class GbpOptionParser(OptionParser):
         """
         if not help:
             help = self.help[option_name]
-        OptionParser.add_option(self, "--%s%s" % (self.prefix, option_name), dest=dest,
+        opt_names = self.get_opt_names(option_name)
+        OptionParser.add_option(self, *opt_names, dest=dest,
                                 default=self.get_default(option_name, **kwargs),
                                 help=help % self.config, **kwargs)
 
@@ -681,7 +693,8 @@ class GbpOptionGroup(OptionGroup):
         """
         if not help:
             help = self.parser.help[option_name]
-        OptionGroup.add_option(self, "--%s%s" % (self.parser.prefix, option_name), dest=dest,
+        opt_names = self.parser.get_opt_names(option_name)
+        OptionGroup.add_option(self, *opt_names, dest=dest,
                                default=self.parser.get_default(option_name, **kwargs),
                                help=help % self.parser.config, **kwargs)
 

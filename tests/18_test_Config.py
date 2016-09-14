@@ -109,3 +109,25 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         self.assertTrue('upstream-branch' in params)
         self.assertTrue('debian-branch' in params)
         self.assertTrue('color' in params)
+
+    def test_short_option_with_prefix(self):
+        """Options with short options can't have a prefix"""
+        class TestOptonParser(GbpOptionParser):
+            list_opts = []
+            defaults = {'withshort': 'foo'}
+            short_opts = {'withshort': '-S'}
+        parser = TestOptonParser('cmd', prefix='p')
+        with self.assertRaisesRegexp(ValueError, "Options with prefix cannot have a short option"):
+            parser.add_config_file_option(option_name="withshort", dest="with_short", help="foo")
+
+    def test_short_option(self):
+        class TestOptionParser(GbpOptionParser):
+            list_opts = []
+            defaults = {'withshort': 'foo'}
+            short_opts = {'withshort': '-S'}
+
+        parser = TestOptionParser('cmd')
+        parser.add_config_file_option(option_name="withshort", dest="with_short", help="foo")
+        self.assertItemsEqual(['withshort'], parser.valid_options)
+        self.assertTrue(parser.has_option("--withshort"))
+        self.assertTrue(parser.has_option("-S"))
