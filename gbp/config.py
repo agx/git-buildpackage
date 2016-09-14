@@ -55,14 +55,16 @@ def check_tristate(option, opt, value):
         return val
 
 
-def safe_option(f):
+def save_option(f):
+    """save options on the underlying parser"""
     def _decorator(self, *args, **kwargs):
         obj = self
         option_name = kwargs.get('option_name')
         if not option_name and len(args):
             option_name = args[0]
 
-        # We're decorating GbpOption not GbpOptionParser
+        # We're decorating GbpOption but store valid_options on
+        # GbpOptionParser
         if not hasattr(obj, 'valid_options'):
             if not hasattr(obj, 'parser'):
                 raise ValueError("Can only decorete GbpOptionParser and GbpOptionGroup not %s" % obj)
@@ -577,7 +579,7 @@ class GbpOptionParser(OptionParser):
             default = self.config[option_name]
         return default
 
-    @safe_option
+    @save_option
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
@@ -666,7 +668,7 @@ class GbpOptionParser(OptionParser):
 
 
 class GbpOptionGroup(OptionGroup):
-    @safe_option
+    @save_option
     def add_config_file_option(self, option_name, dest, help=None, **kwargs):
         """
         set a option for the command line parser, the default is read from the config file
