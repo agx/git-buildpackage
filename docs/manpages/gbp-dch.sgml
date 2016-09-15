@@ -26,14 +26,29 @@
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--ignore-branch</option></arg>
       <group>
-        <arg><option>--snapshot</option></arg>
-        <arg><option>--release</option></arg>
+	<group>
+	  <arg><option>-S</option></arg>
+          <arg><option>--snapshot</option></arg>
+	</group>
+	<group>
+	  <arg><option>-R</option></arg>
+          <arg><option>--release</option></arg>
+	</group>
       </group>
       <group>
-        <arg><option>--auto</option></arg>
-        <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+	<group>
+	  <arg><option>-a</option></arg>
+          <arg><option>--auto</option></arg>
+	</group>
+	<group>
+	  <arg><option>-s</option> <replaceable>commitish</replaceable></arg>
+          <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+	</group>
       </group>
-      <arg><option>--new-version=</option><replaceable>version</replaceable></arg>
+      <group>
+	<arg><option>-N</option> <replaceable>version</replaceable></arg>
+	<arg><option>--new-version=</option><replaceable>version</replaceable></arg>
+      </group>
       <group>
         <arg><option>--bpo</option></arg>
         <arg><option>--nmu</option></arg>
@@ -43,7 +58,10 @@
       </group>
       <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
       <arg><option>--force-distribution</option></arg>
-      <arg><option>--urgency=</option><replaceable>level</replaceable></arg>
+      <group>
+	<arg><option>-U</option> <replaceable>level</replaceable></arg>
+	<arg><option>--urgency=</option><replaceable>level</replaceable></arg>
+      </group>
       <arg><option>--[no-]full</option></arg>
       <arg><option>--[no-]meta</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
@@ -56,8 +74,12 @@
       <arg><option>--[no-]multimaint-merge</option></arg>
       <arg><option>--spawn-editor=[always|never|snapshot|release]</option></arg>
       <arg><option>--commit-msg=</option><replaceable>msg-format</replaceable></arg>
-      <arg><option>--commit</option></arg>
+      <group>
+	<arg><option>-c</option></arg>
+	<arg><option>--commit</option></arg>
+      </group>
       <arg><option>--customizations=</option><replaceable>customization-file</replaceable></arg>
+      <arg><option>--verbose</option></arg>
       <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
