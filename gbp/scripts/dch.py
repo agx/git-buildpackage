@@ -354,7 +354,7 @@ def build_parser(name):
                              "even if it doesn't match the list of known distributions")
     version_group.add_option("-N", "--new-version", dest="new_version",
                              help="use this as base for the new version number")
-    version_group.add_option("-U", "--urgency", dest="urgency", help="Set urgency level")
+    version_group.add_config_file_option("urgency", dest="urgency")
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
                              help="Increment the Debian release number for an upload to backports, "
                              "and add a backport upload changelog comment.")

@@ -180,6 +180,7 @@ class GbpOptionParser(OptionParser):
                 'rollback': 'True',
                 'component': [],
                 'bare': 'True',
+                'urgency': 'medium',
                 }
     help = {
         'debian-branch':
@@ -348,9 +349,12 @@ class GbpOptionParser(OptionParser):
         'bare':
             "wether to create a bare repository on the remote side. "
             "'Default is '%(bare)s'.",
+        'urgency':
+            "Set urgency level, default is '%(urgency)s'"
     }
 
     short_opts = {
+        'urgency': '-U',
     }
 
     def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
