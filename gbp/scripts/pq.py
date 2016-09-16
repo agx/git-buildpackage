@@ -147,7 +147,7 @@ def format_series_diff(added, removed, options):
     return msg
 
 
-def commit_patches(repo, branch, patches, options):
+def commit_patches(repo, branch, patches, options, patch_dir):
     """
     Commit chanages exported from patch queue
     """
@@ -163,7 +163,7 @@ def commit_patches(repo, branch, patches, options):
     except IOError:
         # No series file yet
         oldpatches = []
-    newpatches = [p[len(PATCH_DIR):] for p in patches]
+    newpatches = [p[len(patch_dir):] for p in patches]
 
     # FIXME: handle case were only the contents of the patches changed
     added, removed = compare_series(oldpatches, newpatches)
@@ -220,7 +220,7 @@ def export_patches(repo, branch, options):
             for patch in patches:
                 seriesfd.write(os.path.relpath(patch, patch_dir) + '\n')
         if options.commit:
-            added, removed = commit_patches(repo, branch, patches, options)
+            added, removed = commit_patches(repo, branch, patches, options, patch_dir)
             if added:
                 what = 'patches' if len(added) > 1 else 'patch'
                 gbp.log.info("Added %s %s to patch series" % (what, ', '.join(added)))
