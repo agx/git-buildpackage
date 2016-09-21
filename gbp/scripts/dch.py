@@ -466,6 +466,7 @@ def main(argv):
                                    options=options.git_log.split(" "))
         commits.reverse()
 
+        add_section = False
         # add a new changelog section if:
         if (options.new_version or options.bpo or options.nmu or options.qa or
                 options.team or options.security):
@@ -483,14 +484,13 @@ def main(argv):
                 version_change['version'] = options.new_version
             # the user wants to force a new version
             add_section = True
-        elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_banner and commits:
-            # the last version was a release and we have pending commits
-            add_section = True
-        elif options.snapshot and not found_snapshot_banner:
-            # the user want to switch to snapshot mode
-            add_section = True
-        else:
-            add_section = False
+        elif cp['Distribution'] != "UNRELEASED" and not found_snapshot_banner:
+            if commits:
+                # the last version was a release and we have pending commits
+                add_section = True
+            if options.snapshot:
+                # the user want to switch to snapshot mode
+                add_section = True
 
         if add_section and not version_change and not source.is_native():
             # Get version from upstream if none provided

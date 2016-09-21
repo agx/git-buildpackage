@@ -339,6 +339,22 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
         self.assertIn("""  * added debian/control\n""", lines)
 
+    def test_dch_main_unreleased_debian_version_with_snapshot(self):
+        """Test dch.py like gbp dch script does: snapshot mode with unreleased debian version"""
+        new_version_1_0 = '1.0-1'
+        options = ["--commit"]
+        options.append("--commit-msg=UNRELEASED-version")
+        lines = self.run_dch()
+        header = re.search(r"\(%s\) UNRELEASED" % new_version_1_0, lines[0])
+        self.assertIsNotNone(header)
+        options = ["--snapshot", "--auto"]
+        lines = self.run_dch(options)
+        header = re.search(snap_header_1, lines[0])
+        self.assertIsNotNone(header)
+        self.assertEqual(header.lastindex, 1)
+        self.assertIsNotNone(re.search(snap_mark + header.group(1), lines[2]))
+        self.assertIn("""  * added debian/control\n""", lines)
+
     def test_dch_main_closes_default(self):
         options = ["--meta"]
         self.add_file("closes", "test file",
