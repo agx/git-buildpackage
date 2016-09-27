@@ -13,8 +13,10 @@ cat <<EOF >> ~/.rpmmacros
 %python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1).replace('dist-', 'site-'))")
 EOF
 
-# Build an RPM of ourselfes
-gbp buildpackage-rpm --git-packaging-dir=packaging/ -bb --nodeps
+gbp buildpackage-rpm --help
 
-rm -r .git ~/.rpmmacros
-
+# Build an RPM of ourselfes if build-deps are available
+if python -c "import setuptools"; then
+  gbp buildpackage-rpm --git-packaging-dir=packaging/ -bb --nodeps
+  rm -r .git ~/.rpmmacros
+fi
