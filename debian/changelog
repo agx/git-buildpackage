@@ -1,3 +1,44 @@
+git-buildpackage (0.8.4) unstable; urgency=medium
+
+  [ Maximiliano Curia ]
+  * [e615c65] pq: Handle unmerged debian branches. This allows one to import
+    the patch-queue branch onto the upstream tag.
+    (Closes: #834726)
+  * [f6433f9] pq: Ensure we are working in the right git directory.
+
+  [ Guido Günther ]
+  * [6909bb1] Unbreak gbp-pq manpage generation
+  * flake8 cleaniness
+  * [7a7068d] create_remote_repo: allow one to create non bare repositories
+    (Closes: #837158)
+  * [98cea5f] import_orig: Use gbp.scripts.common.hook
+  * [5ff1be8] test_rpm_ch: use GIT_AUTHOR_* env vars.
+  * [98ea945] flake8: Ignore rpm related files for now. This makes it easier
+    to integrate changes from git-buildpackage-rpm.
+  * [3ded91b] Move doc generation and test invocation to separate Makefile
+  * [2845359] Switch from pychecker to flake8. The later is maintained and
+    has more checks Use '-j1' for now since otherwise we need /dev/shm access
+    which fails in a pbuilder chroot with EPERM.
+  * [264090e] Rename README to README.md to get Markdown formatting
+  * [2809284] dch: document which options can't be set via gbp.conf
+  * [2122d8b] dch: document --security
+  * [ef7ca4a] config: allow one to specify short options
+  * [3feba49] dch: make urgency a config file option so it can be set via
+    gbp.conf (Closes: #837680)
+  * [fdcee06] dch: add missing short opts to manpage
+  * [dbb9623] Unbreak patch delta output broken by "pq: Ensure we are working
+    in the right git directory"
+  * [3e26d02] Vcs-Git: use https transport
+  * [74c7bc0] autopkgtest: Skip build if setuptools is not available
+  * [6ec588a] pq: restrict choices of pq-from to 'DEBIAN' and 'TAG'
+
+  [ Markus Lehtonen ]
+  * [c6b32c8] Command: redirect stdout/stderr to sys.stdout/stderr.
+  * [245b443] tests: capture stderr in buildpackage-rpm unit tests.
+    Reduces spurious output from rpmbuild. (Closes: #829690)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 27 Sep 2016 18:56:12 +0200
+
 git-buildpackage (0.8.3) unstable; urgency=medium
 
   * Upload to unstable
