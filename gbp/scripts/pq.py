@@ -406,7 +406,7 @@ def build_parser(name):
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes")
     parser.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
-    parser.add_config_file_option(option_name="pq-from", dest="pq_from")
+    parser.add_config_file_option(option_name="pq-from", dest="pq_from", choices=['DEBIAN', 'TAG'])
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     return parser
 
