@@ -271,7 +271,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         upstream_tag = 'upstream/%(version)s'
 
     def git_create_empty_branch(self, branch):
-        GitCommand('checkout', cwd=self.repo.path)(['--orphan', branch])
+        GitCommand('checkout', cwd=self.repo.path)(['-q', '--orphan', branch])
         GitCommand('rm', cwd=self.repo.path)(['-rf', '.'])
 
     def setUp(self):
