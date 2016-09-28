@@ -173,15 +173,16 @@ def commit_patches(repo, branch, patches, options, patch_dir):
     return added, removed
 
 
-def find_upstream_commit(repo, cp, upstream_tag):
+def find_upstream_commit(repo, branch, upstream_tag):
     """
-    Find commit corresponding upstream version
+    Find commit corresponding upstream version based on changelog
     """
-
-    upstream_commit = repo.find_version(upstream_tag, cp.upstream_version)
+    vfs = gbp.git.vfs.GitVfs(repo, branch)
+    cl = DebianSource(vfs).changelog
+    upstream_commit = repo.find_version(upstream_tag, cl.upstream_version)
     if not upstream_commit:
         raise GbpError("Couldn't find upstream version %s" %
-                       cp.upstream_version)
+                       cl.upstream_version)
     return upstream_commit
 
 
@@ -205,11 +206,7 @@ def export_patches(repo, branch, options):
             gbp.log.debug("%s does not exist." % patch_dir)
 
     if options.pq_from.upper() == 'TAG':
-        vfs = gbp.git.vfs.GitVfs(repo, branch)
-        source = DebianSource(vfs)
-        upstream_commit = find_upstream_commit(repo, source.changelog,
-                                               options.upstream_tag)
-        base = upstream_commit
+        base = find_upstream_commit(repo, branch, options.upstream_tag)
     else:
         base = branch
 
@@ -299,9 +296,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
 
     maintainer = get_maintainer_from_control(repo)
     if pq_from.upper() == 'TAG':
-        vfs = gbp.git.vfs.GitVfs(repo, branch)
-        source = DebianSource(vfs)
-        commits = [find_upstream_commit(repo, source.changelog, upstream_tag)]
+        commits = [find_upstream_commit(repo, branch, upstream_tag)]
     else:  # pq_from == 'DEBIAN'
         commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
@@ -358,10 +353,7 @@ def rebase_pq(repo, branch, pq_from, upstream_tag):
         base = branch
 
     if pq_from.upper() == 'TAG':
-        vfs = gbp.git.vfs.GitVfs(repo, base)
-        source = DebianSource(vfs)
-        upstream_commit = find_upstream_commit(repo, source.changelog, upstream_tag)
-        _from = upstream_commit
+        _from = find_upstream_commit(repo, base, upstream_tag)
     else:
         _from = base
 
