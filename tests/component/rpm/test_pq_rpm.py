@@ -18,7 +18,7 @@
 
 import os
 import tempfile
-from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 from gbp.scripts.pq_rpm import main as pq
 from gbp.git import GitRepository
@@ -34,6 +34,7 @@ def mock_pq(args):
     """Wrapper for pq"""
     # Call pq-rpm with added arg0
     return pq(['arg0'] + args)
+
 
 class TestPqRpm(RpmRepoTestBase):
     """Basic tests for gbp-pq-rpm"""
@@ -59,7 +60,7 @@ class TestPqRpm(RpmRepoTestBase):
         """Run pq-rpm when not in a git repository"""
         eq_(mock_pq(['export']), 1)
         self._check_log(0, 'gbp:error: %s is not a git repository' %
-                              os.path.abspath(os.getcwd()))
+                        os.path.abspath(os.getcwd()))
 
     def test_import_export(self):
         """Basic test for patch import and export"""
@@ -317,7 +318,7 @@ class TestPqRpm(RpmRepoTestBase):
         eq_(mock_pq(['export']), 0)
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec', 'my.patch',
-                  '%s-to-%s.diff' % (upstr_rev, merge_rev), '0002-my2.patch']
+                 '%s-to-%s.diff' % (upstr_rev, merge_rev), '0002-my2.patch']
         self._check_repo_state(repo, 'master', branches, files)
 
     def test_import_unapplicable_patch(self):
@@ -329,10 +330,10 @@ class TestPqRpm(RpmRepoTestBase):
             patch_file.write('-this-does\n+not-apply\n')
         eq_(mock_pq(['import']), 1)
         self._check_log(-2, "("
-                             "Aborting|"
-                             "Please, commit your changes or stash them|"
-                             "gbp:error: Import failed.* You have local changes"
-                            ")")
+                        "Aborting|"
+                        "Please, commit your changes or stash them|"
+                        "gbp:error: Import failed.* You have local changes"
+                        ")")
         self._check_repo_state(repo, 'master', branches)
 
         # Now commit the changes to the patch and try again
@@ -341,4 +342,3 @@ class TestPqRpm(RpmRepoTestBase):
         eq_(mock_pq(['import']), 1)
         self._check_log(-2, "gbp:error: Import failed: Error running git apply")
         self._check_repo_state(repo, 'master', branches)
-
