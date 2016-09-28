@@ -186,6 +186,12 @@ def find_upstream_commit(repo, branch, upstream_tag):
     return upstream_commit
 
 
+def pq_on_upstream_tag(pq_from):
+    """Return True if the patch queue is based on the uptream tag,
+    False if its based on the debian packaging branch"""
+    return True if pq_from.upper() == 'TAG' else False
+
+
 def export_patches(repo, branch, options):
     """Export patches from the pq branch into a patch series"""
     patch_dir = os.path.join(repo.path, PATCH_DIR)
@@ -205,7 +211,7 @@ def export_patches(repo, branch, options):
         else:
             gbp.log.debug("%s does not exist." % patch_dir)
 
-    if options.pq_from.upper() == 'TAG':
+    if pq_on_upstream_tag(options.pq_from):
         base = find_upstream_commit(repo, branch, options.upstream_tag)
     else:
         base = branch
@@ -295,14 +301,14 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
                            % pq_branch)
 
     maintainer = get_maintainer_from_control(repo)
-    if pq_from.upper() == 'TAG':
+    if pq_on_upstream_tag(pq_from):
         commits = [find_upstream_commit(repo, branch, upstream_tag)]
     else:  # pq_from == 'DEBIAN'
         commits = repo.get_commits(num=tries, first_parent=True)
     # If we go back in history we have to safe our pq so we always try to apply
     # the latest one
     # If we are using the upstream_tag, we always need a copy of the patches
-    if len(commits) > 1 or pq_from.upper() == 'TAG':
+    if len(commits) > 1 or pq_on_upstream_tag(pq_from):
         if os.path.exists(series):
             tmpdir, series = safe_patches(series, repo)
 
@@ -352,7 +358,7 @@ def rebase_pq(repo, branch, pq_from, upstream_tag):
         switch_to_pq_branch(repo, branch)
         base = branch
 
-    if pq_from.upper() == 'TAG':
+    if pq_on_upstream_tag(pq_from):
         _from = find_upstream_commit(repo, base, upstream_tag)
     else:
         _from = base
