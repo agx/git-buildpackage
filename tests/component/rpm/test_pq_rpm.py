@@ -25,6 +25,7 @@ from gbp.git import GitRepository
 from gbp.command_wrappers import GitCommand
 
 from tests.component.rpm import RpmRepoTestBase
+from tests.testutils import capture_stderr
 
 # Disable "Method could be a function warning"
 # pylint: disable=R0201
@@ -54,7 +55,8 @@ class TestPqRpm(RpmRepoTestBase):
 
         # Test invalid cmdline options
         with assert_raises(SystemExit):
-            mock_pq(['--invalid-arg=123'])
+            with capture_stderr() as c:
+                mock_pq(['--invalid-arg=123'])
 
     def test_import_outside_repo(self):
         """Run pq-rpm when not in a git repository"""
