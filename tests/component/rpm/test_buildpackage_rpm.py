@@ -26,7 +26,7 @@ import stat
 import subprocess
 
 from nose import SkipTest
-from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 from gbp.git import GitRepository
 from gbp.scripts.buildpackage_rpm import main as gbp_rpm
@@ -50,6 +50,7 @@ def mock_gbp(args):
     with capture.capture_stderr():
         return gbp_rpm(['arg0', '--git-notify=off'] + args +
                        ['-ba', '--clean', '--target=noarch', '--nodeps'])
+
 
 def mock_notify(summary, message, notify_opt):
     """Mock notification system"""
@@ -76,7 +77,7 @@ class TestGbpRpm(RpmRepoTestBase):
             raise Exception("Failed to get file metadata for %s: %s" %
                             (rpm, stderr))
         return sorted([(nam, mod, dig) for dig, mod, nam in
-                        [lin.split(None, 2) for lin in stdout.splitlines()]])
+                       [lin.split(None, 2) for lin in stdout.splitlines()]])
 
     @staticmethod
     def check_rpms(directory):
@@ -105,7 +106,7 @@ class TestGbpRpm(RpmRepoTestBase):
         """Run outside a git repository"""
         eq_(mock_gbp([]), 1)
         self._check_log(0, 'gbp:error: %s is not a git repository' %
-                            os.path.abspath('.'))
+                        os.path.abspath('.'))
 
     def test_native_build(self):
         """Basic test of native pkg"""
@@ -246,8 +247,8 @@ class TestGbpRpm(RpmRepoTestBase):
         # Dummy update to upstream branch
         pkg_branch = repo.get_branch()
         upstr_branch = 'upstream'
-        orig_files = ['gbp-test/' + path for \
-                path in repo.ls_tree(upstr_branch)] + ['gbp-test']
+        orig_files = ['gbp-test/' + path for
+                      path in repo.ls_tree(upstr_branch)] + ['gbp-test']
         repo.set_branch(upstr_branch)
         with open('new-file', 'w') as fobj:
             fobj.write('New file\n')
@@ -374,7 +375,7 @@ class TestGbpRpm(RpmRepoTestBase):
 
         sub_files = sub_repo.ls_tree('HEAD')
         upstr_files = ['gbp-test/' + path for
-                            path in repo.ls_tree(upstr_branch)]
+                       path in repo.ls_tree(upstr_branch)]
 
         # Test the "no" option
         eq_(mock_gbp(['--git-no-submodules', '--git-upstream-tree=%s' %
@@ -388,7 +389,7 @@ class TestGbpRpm(RpmRepoTestBase):
                       upstr_branch, '--git-ignore-new']), 0)
         tar_files = ls_tar('../rpmbuild/SOURCES/gbp-test-1.1.tar.bz2', False)
         ref_files = upstr_files + ['gbp-test/gbp-test-native.repo/' + path for
-                                        path in sub_files]
+                                   path in sub_files]
         self.check_files(ref_files, tar_files)
         shutil.rmtree('../rpmbuild')
 
@@ -416,7 +417,7 @@ class TestGbpRpm(RpmRepoTestBase):
         zip_files = ls_zip('../rpmbuild/SOURCES/gbp-test-native-1.0.zip', False)
         ref_files = master_files + \
                     ['gbp-test-native-1.0/gbp-test-native2.repo/' + path for
-                                        path in sub_files]
+                     path in sub_files]
         self.check_files(ref_files, zip_files)
 
         # Test submodule failure
@@ -541,7 +542,7 @@ class TestGbpRpm(RpmRepoTestBase):
         # Test exporting of some other commit than HEAD
         eq_(mock_gbp(['--git-export=release/1.0-1']), 0)
         eq_(os.listdir('../rpmbuild/RPMS/noarch'),
-                       ['gbp-test-1.0-1.noarch.rpm'])
+            ['gbp-test-1.0-1.noarch.rpm'])
         self.check_rpms('../rpmbuild/RPMS/*')
 
         # Modify one tracked file, create one untracked and one ignored file
@@ -603,4 +604,3 @@ class TestGbpRpm(RpmRepoTestBase):
         # Packaging dir should be taken from spec file if it is defined
         eq_(mock_gbp(['--git-packaging-dir=foo',
                       '--git-spec-file=packaging/gbp-test-native.spec']), 0)
-
