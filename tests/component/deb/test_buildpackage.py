@@ -37,18 +37,23 @@ class TestBuildpackage(ComponentTestBase):
                             dir,
                             '%s_%s.dsc' % (pkg, version))
 
-    def _test_buildpackage(self, pkg, dir, version):
+    def _test_buildpackage(self, pkg, dir, version, opts=[]):
         dsc = self._dsc_name(pkg, version, dir)
         assert import_dsc(['arg0', dsc]) == 0
         ComponentTestGitRepository(pkg)
+        prebuild_out = os.path.join(os.path.abspath(pkg), 'prebuild.out')
+        postbuild_out = os.path.join(os.path.abspath(pkg), 'postbuild.out')
         os.chdir(pkg)
-        ret = buildpackage(['arg0',
-                            '--git-prebuild=printenv > prebuild.out',
-                            '--git-postbuild=printenv > postbuild.out',
-                            '--git-builder=/bin/true',
-                            '--git-cleaner=/bin/true'])
+
+        args = ['arg0',
+                '--git-prebuild=printenv > %s' % prebuild_out,
+                '--git-postbuild=printenv > %s' % postbuild_out,
+                '--git-builder=/bin/true',
+                '--git-cleaner=/bin/true'] + opts
+        ret = buildpackage(args)
         ok_(ret == 0, "Building the package failed")
-        eq_(os.path.exists('prebuild.out'), True)
+        eq_(os.path.exists(prebuild_out), True)
+        eq_(os.path.exists(postbuild_out), True)
 
         self.check_hook_vars('prebuild', ["GBP_BUILD_DIR",
                                           "GBP_GIT_DIR",
