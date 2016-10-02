@@ -141,3 +141,12 @@ class TestBuildpackage(ComponentTestBase):
         ok_(ret == 0, "Building the package failed")
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
+
+    def test_export_dir_buildpackage(self):
+        """Test that building with a export dir works"""
+        self._test_buildpackage('hello-debhelper',
+                                'dsc-3.0',
+                                '2.8-1',
+                                ['--git-export-dir=../foo'],
+                                )
+        ok_(os.path.exists('../foo'))
