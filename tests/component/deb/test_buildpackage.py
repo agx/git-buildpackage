@@ -60,11 +60,11 @@ class TestBuildpackage(ComponentTestBase):
                                            "GBP_BUILD_DIR"])
 
     def test_debian_buildpackage(self):
-        """Test that building a native debian  package works"""
+        """Test that building a native debian package works"""
         self._test_buildpackage('git-buildpackage', 'dsc-native', '0.4.14')
 
     def test_non_native_buildpackage(self):
-        """Test that building a native debian  package works"""
+        """Test that building a source 3.0 debian package works"""
         self._test_buildpackage('hello-debhelper', 'dsc-3.0', '2.8-1')
 
     def test_tag_only(self):
