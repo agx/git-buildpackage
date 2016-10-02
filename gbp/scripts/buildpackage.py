@@ -511,7 +511,7 @@ def build_parser(name, prefix=None):
     export_group = GbpOptionGroup(parser,
                                   "export build-tree options",
                                   "alternative build tree related options")
-    for group in [tag_group, orig_group, branch_group, cmd_group]:
+    for group in [tag_group, orig_group, branch_group, cmd_group, export_group]:
         parser.add_option_group(group)
 
     parser.add_boolean_config_file_option(option_name="ignore-new", dest="ignore_new")
