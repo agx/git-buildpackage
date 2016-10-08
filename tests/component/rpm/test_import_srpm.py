@@ -29,6 +29,7 @@ from gbp.rpm import SrcRpmFile
 
 from tests.component import ComponentTestBase
 from tests.component.rpm import RPM_TEST_DATA_DIR as DATA_DIR
+from tests.testutils import capture_stderr
 
 # Disable "Method could be a function warning"
 # pylint: disable=R0201
@@ -36,7 +37,8 @@ from tests.component.rpm import RPM_TEST_DATA_DIR as DATA_DIR
 def mock_import(args):
     """Wrapper for import-srpm"""
     # Call import-orig-rpm with added arg0
-    return import_srpm.main(['arg0'] + args)
+    with capture_stderr():
+        return import_srpm.main(['arg0'] + args)
 
 
 class TestImportPacked(ComponentTestBase):
