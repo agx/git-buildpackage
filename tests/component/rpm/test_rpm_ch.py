@@ -22,6 +22,7 @@ from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 from gbp.scripts.rpm_ch import main as rpm_ch
 from gbp.git import GitRepository
+from tests.testutils import capture_stderr
 
 from tests.component.rpm import RpmRepoTestBase
 
@@ -31,9 +32,9 @@ from tests.component.rpm import RpmRepoTestBase
 
 def mock_ch(args):
     """Wrapper for gbp-rpm-ch"""
-
-    return rpm_ch(['arg0', '--packaging-branch=master',
-                   '--spawn-editor=never'] + args)
+    with capture_stderr():
+        return rpm_ch(['arg0', '--packaging-branch=master',
+                       '--spawn-editor=never'] + args)
 
 
 class TestRpmCh(RpmRepoTestBase):
