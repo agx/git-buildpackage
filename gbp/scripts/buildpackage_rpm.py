@@ -78,8 +78,8 @@ def git_archive(repo, spec, output_dir, treeish, prefix, comp_level,
             git_archive_single(treeish, output, prefix,
                                spec.orig_src['compression'], comp_level,
                                comp_opts, spec.orig_src['archive_fmt'])
-    except (GitRepositoryError, CommandExecFailed):
-        gbp.log.err("Error generating submodules' archives")
+    except (GitRepositoryError, CommandExecFailed) as e:
+        gbp.log.err("Error generating submodules' archives: %s" % e)
         return False
     return True
 
