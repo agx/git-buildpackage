@@ -400,7 +400,8 @@ class TestGbpRpm(RpmRepoTestBase):
                       upstr_branch, '--git-ignore-new']), 2)
         self._check_log(-2,
                         ".*Error generating submodules' archives: "
-                        "Unable to archive [0-9a-f]+: fatal: not a tree object")
+                        "Failed to list submodules of [0-9a-f]{40}: fatal: "
+                        "not a tree object")
 
     def test_option_submodules_native(self):
         """Test the --git-submodules option for native packages"""

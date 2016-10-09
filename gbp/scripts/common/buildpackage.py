@@ -24,6 +24,7 @@ import pipes
 import tempfile
 import shutil
 from gbp.command_wrappers import (CatenateTarArchive, CatenateZipArchive)
+from gbp.git import GitRepositoryError
 from gbp.errors import GbpError
 import gbp.log
 
@@ -152,7 +153,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
     except OSError as err:
         gbp.log.err("Error dumping tree to %s: %s" % (output_dir, err[0]))
         return False
-    except GbpError as err:
+    except (GitRepositoryError, GbpError) as err:
         gbp.log.err(err)
         return False
     except Exception as e:

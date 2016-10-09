@@ -1840,9 +1840,17 @@ class GitRepository(object):
         if recursive:
             args += ['-r']
 
-        out, ret = self._git_getoutput('ls-tree', args, cwd=path)
-        for line in out:
-            mode, objtype, commit, name = line[:-1].split(None, 3)
+        out, err, ret = self._git_inout('ls-tree',
+                                        args,
+                                        cwd=path,
+                                        capture_stderr=True)
+        if ret:
+            raise GitRepositoryError("Failed to list submodules of %s: %s" %
+                                     (treeish, err.strip()))
+        for line in out.split('\n'):
+            if not line:
+                continue
+            mode, objtype, commit, name = line.split(None, 3)
             # A submodules is shown as "commit" object in ls-tree:
             if objtype == "commit":
                 nextpath = os.path.join(path, name)
