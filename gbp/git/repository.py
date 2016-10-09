@@ -1749,7 +1749,8 @@ class GitRepository(object):
         @type output: C{str}
         @param treeish: the treeish to create the archive from
         @type treeish: C{str}
-        @param kwargs: additional commandline options passed to git-archive
+        @param cwd: The directory to run in. Defaults to the current dir
+        @type cwd: C{str}
         """
         args = ['--format=%s' % format,
                 '--prefix=%s' % prefix,
