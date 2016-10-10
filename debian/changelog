@@ -1,3 +1,39 @@
+git-buildpackage (0.8.5) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * Fixes:
+    * [7c964ea] buildpackage: add back export-dir options
+      (Closes: #839581)
+
+  * Improvements:
+    * [9817e89] posttag-push: Print branches we push to
+
+  * Cleanups:
+    * [a5a8a1c] pq: remove redundancies in --pq-from code paths
+    * [59dce12] pq: introduce pq_on_upstream_tag
+    * [f31bcd2] pq: make TestFromTAG tests silent
+    * [c1ab85a] test_pq_rpm: flake8 clean
+    * [86068d4] test_pq_rpm.py: don't spew on stderr
+    * [46787e3] test_buildpackage_rpm.py: flake8 clean
+    * [f96c8e1] tests: capture stderr in gbp rpm-ch component tests - reduces
+      spurious output
+    * [e4c893d] tests: capture stderr in gbp import_srpm component tests -
+      reduces spurious output
+    * [43beb38] GitRepository.archive: use _git_inout instead of the
+      deprecated _git_getoutput that spews to stderr This silences a spurious
+      output to stderr in test_buildpackage_rpm
+    * [55e8c8f] GitRepository.list_submodules: use _git_inout and check exit
+      status.
+    * [53f9f40] test_buildpackage_rpm: check that we fail subtarball
+      generation correctly
+    * [f87c21c] tests/buildpackage: test --git-export-dir
+
+  [ Linn Crosetto ]
+  * [c1b32fa] dch: avoid adding section in snapshot mode if distribution is
+    UNRELEASED. (Closes: #838714)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 10 Oct 2016 18:06:32 +0200
+
 git-buildpackage (0.8.4) unstable; urgency=medium
 
   [ Maximiliano Curia ]
