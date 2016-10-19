@@ -412,7 +412,7 @@ def get_pbuilder_dist(options, repo, native=False):
                 vendor = du.get_vendor().lower()
                 suite = parts[1]
                 if vendor == parts[0]:
-                    dist = '' if suite == 'sid' else suite
+                    dist = '' if suite in ['sid', 'master'] else suite
                 else:
                     dist = '%s_%s' % (parts[0], suite)
             elif len(parts) == 1 and native and branch in ['master', 'sid']:

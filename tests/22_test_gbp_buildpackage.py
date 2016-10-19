@@ -34,6 +34,14 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         patch.assert_called_once_with()
 
     @patch('gbp.deb.get_vendor', return_value='Debian')
+    def test_get_pbuilder_dist_dep14_debian_master(self, patch):
+        branch = 'debian/master'
+        self.repo.create_branch(branch)
+        self.repo.set_branch(branch)
+        self.assertEqual(get_pbuilder_dist(self.options, self.repo), '')
+        patch.assert_called_once_with()
+
+    @patch('gbp.deb.get_vendor', return_value='Debian')
     def test_get_pbuilder_dist_dep14_debian_suite(self, patch):
         branch = 'debian/squeeze-lts'
         self.repo.create_branch(branch)
