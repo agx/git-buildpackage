@@ -357,11 +357,11 @@ class GbpOptionParser(OptionParser):
         'urgency': '-U',
     }
 
-    def_config_files = {'/etc/git-buildpackage/gbp.conf': 'system',
-                        '~/.gbp.conf': 'global',
-                        '%(top_dir)s/.gbp.conf': None,
-                        '%(top_dir)s/debian/gbp.conf': 'debian',
-                        '%(git_dir)s/gbp.conf': None}
+    def_config_files = [('/etc/git-buildpackage/gbp.conf', 'system'),
+                        ('~/.gbp.conf', 'global'),
+                        ('%(top_dir)s/.gbp.conf', None),
+                        ('%(top_dir)s/debian/gbp.conf', 'debian'),
+                        ('%(git_dir)s/gbp.conf', None)]
 
     list_opts = ['filter', 'component']
 
@@ -394,7 +394,7 @@ class GbpOptionParser(OptionParser):
         >>> if conf_backup is not None: os.environ['GBP_CONF_FILES'] = conf_backup
         """
         envvar = os.environ.get('GBP_CONF_FILES')
-        files = envvar.split(':') if envvar else klass.def_config_files.keys()
+        files = envvar.split(':') if envvar else [f for (f, _) in klass.def_config_files]
         files = [os.path.expanduser(fname) for fname in files]
         if no_local:
             files = [fname for fname in files if fname.startswith('/')]
@@ -655,7 +655,7 @@ class GbpOptionParser(OptionParser):
         >>> GbpOptionParser._name_to_filename('debian')
         '%(top_dir)s/debian/gbp.conf'
         """
-        for k, v in cls.def_config_files.items():
+        for k, v in cls.def_config_files:
             if name == v:
                 return k
         else:
