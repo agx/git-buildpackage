@@ -27,6 +27,7 @@ import subprocess
 import tty
 import termios
 import re
+from six.moves import configparser
 
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)
@@ -209,7 +210,7 @@ def build_parser(name, sections=[]):
                                        usage='%prog [options] - '
                                        'create a remote repository',
                                        sections=sections)
-    except GbpError as err:
+    except (GbpError, configparser.NoSectionError) as err:
         gbp.log.err(err)
         return None
 
