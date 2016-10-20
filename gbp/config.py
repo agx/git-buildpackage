@@ -412,12 +412,21 @@ class GbpOptionParser(OptionParser):
         except KeyError:
             # Skip if filename wasn't expanded, i.e. we're not in git repo
             return
+        if (repo and
+                filename == os.path.join(repo.path, '.gbp.conf') and
+                os.path.exists(filename)):
+            self._warn_old_gbp_conf(filename)
         parser.read(filename)
 
     def _warn_old_config_section(self, oldcmd, cmd):
         if not os.getenv("GBP_DISABLE_SECTION_DEPRECTATION"):
             gbp.log.warn("Old style config section [%s] found "
                          "please rename to [%s]" % (oldcmd, cmd))
+
+    def _warn_old_gbp_conf(self, gbp_conf):
+        if not os.getenv("GBP_DISABLE_GBP_CONF_DEPRECTATION"):
+            gbp.log.warn("Deprecated configuration file found at %s, "
+                         "check gbp.conf(5) for alternatives" % gbp_conf)
 
     @staticmethod
     def _listify(value):
