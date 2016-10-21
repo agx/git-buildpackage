@@ -59,9 +59,19 @@
     for it unless <option>--no-interactive</option> is given.
     </para>
     <para>
-    The sources are placed on the upstream branch (default:
-    <replaceable>upstream</replaceable>), tagged and merged onto the debian
-    branch (default: <replaceable>master</replaceable>).
+      The sources are placed on the upstream branch (default:
+      <replaceable>upstream</replaceable>), tagged and merged onto the
+      debian branch (default: <replaceable>master</replaceable>).  This
+      is either done using <command>git merge</command> in case
+      of <option>--merge-mode=</option><replaceable>merge</replaceable>
+      (the default) or by creating a new tree that consists of the new
+      upstream version plus the <filename>debian/</filename>
+      directory. This behaviour can be enabled via
+      the <option>--merge-mode=</option><replaceable>replace</replaceable>
+      option and is preferable for source format 3.0 (quilt) packages
+      since direct modifications of the upstream sources are not
+      allowed in that format and so a 1:1 replacement of the upstream
+      sources is almost always desired.
     </para>
     <para>In case of an error &gbp-import-orig; will rollback (undo)
       all changes it has done to the repository (see
