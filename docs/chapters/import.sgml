@@ -95,6 +95,35 @@ by version number.
     use <replaceable>%(version)s</replaceable> in your message to get
     the imported upstream version).
     </para>
+
+    <sect2>
+      <title>Recovering from errors</title>
+      <para>In case of an error &gbp-import-orig; will by default
+	rollback (undo) all changes it has done to the repository so far:
+      </para>
+      <programlisting>
+	$ &gbp; import-orig --verbose --filter='CVS/*' --filter='.bzr/*' --filter='.hg/*' --filter='.svn/*' --upstream-version=1.9 ../gif2apng-1.9.tar.gz
+	gbp:info: Importing '../gif2apng-1.9.tar.gz' to branch 'upstream' (filtering out ["'CVS/*'", "'.bzr/*'", "'.hg/*'", "'.svn/*'"])...
+	gbp:info: Source package is gif2apng
+	gbp:info: Upstream version is 1.9
+	gbp:info: Merging to 'master'
+	gbp:error: Automatic merge failed.
+	gbp:error: Error detected, Will roll back changes.
+	gbp:info: Rolling back branch upstream by resetting it to a6733c1f1e190ac0ed4774abc3466e9986a6df5e
+	gbp:info: Rolling back branch pristine-tar by resetting it to 0ee24ac614c920e30af82d602882c2ee841c88e5
+	gbp:info: Rolling back tag upstream/1.9 by deleting it
+	gbp:info: Rolling back branch master by resetting it to ce99782336e83a56e8e579b3cdadf93b0c19e1a8
+	gbp:info: Rolling back failed merge of upstream/1.9
+	gbp:error: Rolled back changes after import error.
+      </programlisting>
+      <para>
+      In this case the import failed due to a merge conflict. Other
+      reasons are running out of disk space, problems when generating
+      the pristine-tar delta. If you don't want &gbp-import-orig; to
+      undo changes made to the repository use
+      the <option>--no-rollback</option>.
+      </para>
+    </sect2>
     </sect1>
 
     <sect1 id="gbp.import.convert">

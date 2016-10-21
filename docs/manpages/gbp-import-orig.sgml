@@ -37,6 +37,7 @@
       <arg><option>--[no-]symlink-orig</option></arg>
       <arg><option>--postimport=cmd</option></arg>
       <arg><option>--[no-]interactive</option></arg>
+      <arg><option>--[no-]rollback</option></arg>
       <arg><option>--download</option></arg>
       <group choice="plain">
         <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
@@ -61,6 +62,10 @@
     The sources are placed on the upstream branch (default:
     <replaceable>upstream</replaceable>), tagged and merged onto the debian
     branch (default: <replaceable>master</replaceable>).
+    </para>
+    <para>In case of an error &gbp-import-orig; will rollback (undo)
+      all changes it has done to the repository (see
+      the <option>--rollback</option> option).
     </para>
   </refsect1>
   <refsect1>
@@ -306,6 +311,14 @@
           <para>
           Run command interactively, i.e. ask package name and version if
           needed.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]rollback</option></term>
+        <listitem>
+          <para>
+	    Rollback changes in case of an error.
           </para>
         </listitem>
       </varlistentry>
