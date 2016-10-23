@@ -1,3 +1,18 @@
+git-buildpackage (0.8.6) unstable; urgency=medium
+
+  * [a35d7d6] buildpackage: handle <vendor>/master
+  * [12fda23] create-remote-repo: print proper error message on missing
+    remote-configs instead of printing the exception to the console.
+  * [e917d3a] config: Turn dict of config files into a list so we get a fixed
+    order with all Python versions
+  * [c092d73] config: warn on deprecated $REPO/.gbp.conf location.  The file
+    is deprecated at least since 2012 but we never warned about it.  Warning
+    can be disabled via GBP_DISABLE_GBP_CONF_DEPRECTATION.
+  * [507ae50] import-orig: Document --rollback option
+  * [eb3be92] import-orig: Give some context on --merge-mode=replace option
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 23 Oct 2016 17:16:23 +0200
+
 git-buildpackage (0.8.5) unstable; urgency=medium
 
   [ Guido Günther ]
