@@ -9,6 +9,7 @@ Build-Depends:
  docbook-utils,
  flake8,
  gtk-doc-tools,
+ libdistro-info-perl,
  perl,
  python (>> 2.7.3),
  python-coverage,
