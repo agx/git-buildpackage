@@ -817,4 +817,9 @@ class GbpOptionParserRpm(GbpOptionParser):
                 "default is '%(git-author)s'",
         })
 
+    def _warn_old_gbp_conf(self, gbp_conf):
+        # The rpm based tools use $repo/.gbp.conf a lot, don't
+        # warn there yet
+        pass
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
