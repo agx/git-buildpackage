@@ -11,7 +11,7 @@
 # signed.
 #
 # use:
-# [git-buildpackage]
+# [buildpackage]
 # posttag = gbp-posttag-push
 #
 # Options:

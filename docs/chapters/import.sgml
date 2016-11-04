@@ -247,7 +247,7 @@ EOF
 	  In this case, the configuration option would look like:
 	</para>
 <programlisting>
-[git-buildpackage]
+[buildpackage]
 upstream-tag = v%(version)s
 </programlisting>
 	<para>
@@ -266,7 +266,7 @@ upstream-tag = v%(version)s
 	  substitution. The substitution syntax is as follows:
 	</para>
 <programlisting>
-[git-buildpackage]
+[buildpackage]
 upstream-tag = v%(version%A%B)s
 </programlisting>
 	<para>

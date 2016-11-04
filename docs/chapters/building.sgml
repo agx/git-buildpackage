@@ -61,7 +61,7 @@
     <para>If you want to default to build in a separate build area, you can
     specify the directory to use in the <filename>gbp.conf</filename> file.
 <programlisting>
-[git-buildpackage]
+[buildpackage]
 # use a build area relative to the git repository
 export-dir=../build-area
 # to use the same build area for all packages use an absolute path:
@@ -174,7 +174,7 @@ echo "done."
     by specifying the export directory:
     </para>
 <programlisting>
-[git-buildpackage]
+[buildpackage]
 # use a build area relative to the git repository
 export-dir = ../build-area
 # disable the since the sources are being exported first
