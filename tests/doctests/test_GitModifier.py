@@ -4,7 +4,7 @@
 Test L{gbp.git.GitModifier}
 """
 
-from . import context  # noqa: F401
+from .. import context  # noqa: F401
 
 
 def test_author():

@@ -11,7 +11,7 @@ This testcase creates several repositores:
     - A mirror of I{repo} below I{mirror_dirs['clone']} called I{mirror}
 """
 
-from . import context
+from .. import context
 
 import gbp.log
 

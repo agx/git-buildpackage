@@ -15,7 +15,7 @@ This testcase creates this reposity:
 """
 
 import os
-from . import context
+from .. import context
 
 
 test_data = os.path.join(context.projectdir, "tests/test_PristineTar_data")

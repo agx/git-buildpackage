@@ -5,7 +5,7 @@ Test L{gbp.config.GbpOptionParser}
 Test L{gbp.config.GbpOptionParserDebian}
 """
 
-from . import context  # noqa: F401
+from .. import context  # noqa: F401
 
 
 def test_option_parser():
