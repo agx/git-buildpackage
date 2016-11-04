@@ -260,6 +260,31 @@ upstream-tag = v%(version)s
 	</para>
 
 	<sect3>
+	  <title>Upstream tag version mangling</title>
+	<para>
+	  Since version 0.8.7, &gbp-buildpackage; supports basic version mangling for upstream tags via
+	  substitution. The substitution syntax is as follows:
+	</para>
+<programlisting>
+[git-buildpackage]
+upstream-tag = v%(version%A%B)s
+</programlisting>
+	<para>
+	  In this example, each occurrence of <replaceable>A</replaceable> will be replaced by <replaceable>B</replaceable>
+	  in the upstream version number. An occasional upstream format is to use tag <replaceable>v1_2_3</replaceable>
+	  for release <replaceable>1.2.3</replaceable>. Use <replaceable>v%(version%.%_)s</replaceable> to transform
+	  <replaceable>1.2.3</replaceable> into <replaceable>v1_2_3</replaceable>.
+	</para>
+	<para>
+	  If you need to use the <replaceable>%</replaceable> character in either of the substitution strings,
+	  you have to escape it. E.g. <replaceable>%(version%-%\%)s</replaceable> will replace <replaceable>-</replaceable> with
+	  <replaceable>%</replaceable>, transforming <replaceable>1-A.B.C</replaceable> to <replaceable>1%A.B.C</replaceable>.
+	  <replaceable>%(version%\%%.)s</replaceable> on the other hand will replace <replaceable>%</replaceable> with
+	  <replaceable>.</replaceable>, turning <replaceable>X%Y%Z</replaceable> into <replaceable>X.Y.Z</replaceable>.
+	</para>
+	</sect3>
+
+	<sect3>
 	  <title>Step by step</title>
 	<para>To not make any assumptions about &gbp;'s configuration, the following steps have all options given
 	  in its long versions on the command line. You can add these

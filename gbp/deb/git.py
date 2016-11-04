@@ -142,12 +142,26 @@ class DebianGitRepository(GitRepository):
         hversion is useful for upstreams with tagging policies that prohibit .
         characters.
 
+        %(version%A%B)s provides %(version)s with string 'A' replaced by 'B'.
+        This way, simple version mangling is possible via substitution.
+        Inside either substition string, '%' needs to be escaped. See the
+        examples below.
+
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
         'debian/0%0_0'
         >>> DebianGitRepository.version_to_tag("libfoo-%(hversion)s", "1.8.1")
         'libfoo-1-8-1'
-
+        >>> DebianGitRepository.version_to_tag("v%(version%.%_)s", "1.2.3")
+        'v1_2_3'
+        >>> DebianGitRepository.version_to_tag("%(version%-%\%)s", "0-1.2.3")
+        '0%1.2.3'
+        >>> DebianGitRepository.version_to_tag("%(version%\%%.)s", "0%1%2%3")
+        '0.1.2.3'
         """
+        r = re.search(r"%\(version%([^%]+|.*\\%.*)%([^%]+|.*\\%.*)\)s", format)
+        if r:
+            format = re.sub(r"%\(version%([^%]+|.*\\%.*)%([^%]|.*\\%.*)+\)s", "%(version)s", format)
+            version = version.replace(r.group(1).replace('\%', '%'), r.group(2).replace('\%', '%'))
         return format_str(format, dict(version=DebianGitRepository._sanitize_version(version),
                                        hversion=DebianGitRepository._sanitize_version(version).replace('.', '-')))
 
