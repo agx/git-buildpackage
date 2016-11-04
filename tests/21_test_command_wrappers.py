@@ -63,6 +63,21 @@ class TestCommandWrapperFailures(unittest.TestCase, GbpLogTester):
         self.assertEqual(self.false.stderr, '')
         self.assertEqual(self.false.stdout, 'we have a problem')
 
+    def test_log_use_err_or_reason_for_error_messge_reason(self):
+        self.false.run_error = "AFAIK {stderr_or_reason}"
+        with self.assertRaises(CommandExecFailed):
+            self.false.__call__()
+        self.log_tester._check_log(0, "gbp:error: AFAIK execution failed: .Errno 2. No such file or directory")
+        self.assertEqual(self.false.retcode, 1)
+
+    @patch_popen(stderr='we have a problem', returncode=1)
+    def test_log_use_err_or_reason_for_error_messge_error(self, create_mock):
+        self.false.run_error = "Erpel {stderr_or_reason}"
+        with self.assertRaises(CommandExecFailed):
+            self.false.__call__()
+        self.log_tester._check_log(0, "gbp:error: Erpel we have a problem")
+        self.assertEqual(self.false.retcode, 1)
+
     @patch_popen(returncode=0)
     def test_no_log_on_success(self, create_mock):
         self.false.__call__()

@@ -140,8 +140,10 @@ class Command(object):
         """
         stdout = self.stdout.rstrip() if self.stdout else self.stdout
         stderr = self.stderr.rstrip() if self.stderr else self.stderr
+        stderr_or_reason = self.stderr.rstrip() if self.stderr else self.err_reason
         return self.run_error.format(stdout=stdout,
                                      stderr=stderr,
+                                     stderr_or_reason=stderr_or_reason,
                                      err_reason=self.err_reason)
 
     def __call__(self, args=[], quiet=False):

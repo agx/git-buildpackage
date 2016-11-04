@@ -99,7 +99,7 @@ class SrcRpmFile(object):
         c = gbpc.RunAtCommand('rpm2cpio',
                               [self.srpmfile, '|', 'cpio', '-id'],
                               shell=True, capture_stderr=True)
-        c.run_error = "'%s' failed: {stderr}" % (" ".join([c.cmd] + c.args))
+        c.run_error = "'%s' failed: {stderr_or_reason}" % (" ".join([c.cmd] + c.args))
         c(dir=dest_dir)
 
 
