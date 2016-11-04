@@ -56,3 +56,5 @@
   <!ENTITY mock        "<productname>mock</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">
   <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
+
+  <!ENTITY pyformat    "<ulink url='https://docs.python.org/2/library/stdtypes.html#string-formatting'><citetitle>Python format string</citetitle></ulink>">

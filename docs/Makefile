@@ -36,7 +36,7 @@ GTK_DOC_CATALOG_FILE ?= /usr/share/sgml/gtk-doc/gtk-doc.cat
 
 all: $(MANUAL) $(MANPAGES)
 
-$(MANUAL): manual.sgml chapters/*.sgml manpages/*.sgml
+$(MANUAL): manual.sgml chapters/*.sgml manpages/*.sgml common.ent
 ifeq ($(HAVE_SGML2X),1)
 	docbook-2-html -s local $<
 else

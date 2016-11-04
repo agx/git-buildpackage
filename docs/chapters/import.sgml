@@ -89,11 +89,11 @@ by version number.
     <option>--pristine-tar</option> option.  This is recommended.
     </para>
     <para>To customize the commit message used by &gbp-import-orig;, use
-    the <option>--import-msg</option> option. This string is a standard
-    Python format string, into which the
-    <replaceable>version</replaceable> variable is interpolated. (i.e.,
-    use <replaceable>%(version)s</replaceable> in your message to get
-    the imported upstream version).
+    the <option>--import-msg</option> option. This string is a
+    &pyformat;, into which the
+    <replaceable>version</replaceable> variable is
+    interpolated. (i.e., use <replaceable>%(version)s</replaceable> in
+    your message to get the imported upstream version).
     </para>
 
     <sect2>
@@ -226,65 +226,84 @@ EOF
     <sect1 id="gbp.import.upstream-git">
     <title>When upstream uses Git</title>
     <para>
-      If upstream already uses git for packaging, there are several ways to handle packaging. Two of them will
-      be described in a bit detail here:
+      If upstream uses &git; for development (and you don't want to
+      ignore that fact entirely), there are at least three ways to
+      handle packaging. The first one uses &git; exclusively and
+      creates the upstream tarballs from the upstream tag while the
+      second one still uses upstream tarballs but links your packaging
+      &git; history with upstreams &git; history. The third one also
+      uses a tarballs but does not link to the upstream history.
     </para>
 
       <sect2 id="gbp.import.upstream.git.notarball">
 	<title>No upstream tarballs</title>
-	<para>If upstream doesn't build upstream tarballs, or you don't care about them, the simplest
-	  way is to clone upstream's repository and create a separate packaging branch in there.
+	<para>If upstream doesn't build upstream tarballs, or you
+	  don't care about them, the simplest way is to clone
+	  upstream's repository and create a separate packaging branch
+	  in there. You will not need &gbp-import-orig; at all with
+	  this workflow. &gbp-buildpackage; will handle creating the
+	  upstream tarballs needed the Debian source package for you.
+	</para>
+	<para>
+	  For that to work you need to tell &gbp; how the
+	  upstream tag format looks. Therefore you either
+	  use the <option>--git-upstream-tag</option> command line option
+	  or the <option>upstream-tag</option> configuration file
+	  variable to specify upstream's tag format.
 	</para>
 
 	<para>
-	  In order to help &gbp-buildpackage; to find upstream tags, you need to specify the format
-	  using the <option>--git-upstream-tag</option> command line option or the the <option>upstream-tag</option>
-	  configuration variable.
-	</para>
-
-	<para>
-	  A common upstream format is to put a <replaceable>v</replaceable> in front of the version number.
-	  In this case, the configuration option would look like:
+	  A common upstream format is to put
+	  a <replaceable>v</replaceable> in front of the version
+	  number.  In this case, the configuration option would look
+	  like:
 	</para>
 <programlisting>
 [buildpackage]
 upstream-tag = v%(version)s
 </programlisting>
 	<para>
-	  <replaceable>version</replaceable> will be replaced with the upstream version number as read from
-	  <filename>debian/changelog</filename>.
-	</para>
-	<para>If you're using &pristine-tar;, you can make &gbp-buildpackage; commit the generated tarball back to the
-	  pristine-tar branch by using the <option>--git-pristine-tar-commit</option> option. This will make sure
-	  others building your package can regenerate the tarball you generated for building the &debian; package.
+	  <replaceable>version</replaceable> will be replaced with the
+	  upstream version number as determined from
+	  <filename>debian/changelog</filename>. The <replaceable>%()s</replaceable>
+	  might be familiar from &pyformat;s.
 	</para>
 
-	<sect3>
-	  <title>Upstream tag version mangling</title>
 	<para>
-	  Since version 0.8.7, &gbp-buildpackage; supports basic version mangling for upstream tags via
-	  substitution. The substitution syntax is as follows:
+	  Some upstreams use other formats though and don't separate
+	  numbers by dots but rather by
+	  underscore(<replaceable>_</replaceable>),
+	  hyphen(<replaceable>-</replaceable>) or anything else. In
+	  order to cope with that you can use version mangling via
+	  substitution. The substitution works as follows:
 	</para>
 <programlisting>
 [buildpackage]
-upstream-tag = v%(version%A%B)s
+upstream-tag = v%(version%.%_)s
 </programlisting>
 	<para>
-	  In this example, each occurrence of <replaceable>A</replaceable> will be replaced by <replaceable>B</replaceable>
-	  in the upstream version number. An occasional upstream format is to use tag <replaceable>v1_2_3</replaceable>
-	  for release <replaceable>1.2.3</replaceable>. Use <replaceable>v%(version%.%_)s</replaceable> to transform
-	  <replaceable>1.2.3</replaceable> into <replaceable>v1_2_3</replaceable>.
+	  This means that each occurrence
+	  of <replaceable>.</replaceable> will be replaced
+	  by <replaceable>_</replaceable> in the upstream version
+	  number. For example the upstream
+	  version <replaceable>1.2.3</replaceable> as determined from
+	  the <filename>debian/changelog</filename> will be looked up
+	  as &git; tag <replaceable>v1_2_3</replaceable> by
+	  &gbp-buildpackage;.
 	</para>
 	<para>
 	  If you need to use the <replaceable>%</replaceable> character in either of the substitution strings,
 	  you have to escape it. E.g. <replaceable>%(version%-%\%)s</replaceable> will replace <replaceable>-</replaceable> with
 	  <replaceable>%</replaceable>, transforming <replaceable>1-A.B.C</replaceable> to <replaceable>1%A.B.C</replaceable>.
-	  <replaceable>%(version%\%%.)s</replaceable> on the other hand will replace <replaceable>%</replaceable> with
-	  <replaceable>.</replaceable>, turning <replaceable>X%Y%Z</replaceable> into <replaceable>X.Y.Z</replaceable>.
 	</para>
-	</sect3>
 
-	<sect3>
+	<para>If you're using &pristine-tar;, you can make &gbp-buildpackage; commit the generated tarball back to the
+	  pristine-tar branch by using the <option>--git-pristine-tar-commit</option> option. This will make sure
+	  others building your package can exactly regenerate the
+	  tarball you created when building the &debian; package.
+	</para>
+
+        <sect3>
 	  <title>Step by step</title>
 	<para>To not make any assumptions about &gbp;'s configuration, the following steps have all options given
 	  in its long versions on the command line. You can add these
@@ -329,7 +348,7 @@ upstream-tag = v%(version%A%B)s
       </sect2>
 
       <sect2 id="gbp.import.upstream.git.tarball">
-	<title>Upstream tarballs</title>
+	<title>Upstream tarballs and linked upstream history</title>
 	<para>If you want to track upstream's &git; but continue to import the upstream tarballs,
 	  e.g. to make sure the tarball uploaded
 	  to &debian; has the same checksum as upstream's, you can use the <option>--upstream-vcs-tag</option> option
@@ -340,6 +359,35 @@ upstream-tag = v%(version%A%B)s
 </programlisting>
 	  to add upstream's tag as additional parent to the merge commit.
 	  See <ulink url="http://bugs.debian.org/664771">#664771</ulink> for more details.
+	</para>
+      </sect2>
+
+      <sect2 id="gbp.import.upstream.git.separate">
+	<title>Upstream tarballs and separate upstream history</title>
+	<para>
+	  If you want to have upstream's &git; history available but
+	  don't want to link it to your packaging history you can
+	  simply keep it as a separate history. E.g. if you already have
+	  a &git; repository with your packaging, change into that
+	  repository and do:
+<programlisting>
+ &gitcmd; remote add upstream https://upstream.example.com/upstream.git
+ &gitcmd; fetch upstream
+</programlisting>
+	  This will pull in upstream's &git; history into your repo but since
+	  your packaging commits and upstreams commits have no common
+	  parents the two histories will stay nicely separated.
+	  Of course you can browse it and cherry-pick from it but
+	  any remote repos you push to will not get upstream's history
+	  by default unless you push any of upstream's refs.
+	  <warning>
+	    <para>
+	      Since &git; has a single tag namespace pushing
+	      changes with <command>git push --tags</command> will
+	      push upstream's tags (and therefore it's history) too so
+	      be shure to only push dedicated tag names.
+	    </para>
+	  </warning>
 	</para>
       </sect2>
 
