@@ -647,6 +647,7 @@ def main(argv):
         gbp.log.info("Successfully imported version %s of %s" % (version, source.path))
     return ret
 
+
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
 

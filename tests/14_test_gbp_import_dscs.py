@@ -55,6 +55,7 @@ class DscStub(object):
         version = filename[4]
         return cls(filename, version)
 
+
 # hook up stubs
 import_dscs.GitImportDsc = StubGitImportDsc
 import_dscs.DscFile = DscStub

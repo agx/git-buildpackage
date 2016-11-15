@@ -463,6 +463,7 @@ def main(argv):
         gbp.log.info("Version '%s' imported under '%s'" % (ver_str, spec.name))
     return ret
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
 

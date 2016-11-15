@@ -113,6 +113,7 @@ class DebianSourceFormat(object):
             f.write("%s (%s)" % (version, type))
         return klass.parse_file(klass.format_file)
 
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

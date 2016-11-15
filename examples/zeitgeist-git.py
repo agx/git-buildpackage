@@ -99,5 +99,6 @@ def main(argv):
         subjects=[subject])
     CLIENT.insert_event(event)
 
+
 if __name__ == '__main__':
     main(sys.argv)

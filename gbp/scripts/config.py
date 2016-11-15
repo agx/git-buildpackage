@@ -136,6 +136,7 @@ def main(argv):
     retval = print_cmd_values(query, value_printer)
     return retval
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
 

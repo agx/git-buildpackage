@@ -173,6 +173,7 @@ def main(argv):
         gbp.log.info('Everything imported under %s' % dirs['pkg'])
     return ret
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
 
