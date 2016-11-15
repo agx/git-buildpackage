@@ -23,6 +23,7 @@ _gbp_tags ()
 
 _gbp_options ()
 {
+    GBP_DISABLE_GBP_CONF_DEPRECTATION=true \
     GBP_DISABLE_SECTION_DEPRECTATION=true \
         gbp "${1}" --help | sed -ne 's/^ \+\(\(\-[a-z]\), \)\?\(\-\-[a-z\-]\+\=\?\).*/\2 \3/p'
 }
