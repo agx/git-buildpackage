@@ -424,9 +424,11 @@ class GbpOptionParser(OptionParser):
                          "please rename to [%s]" % (oldcmd, cmd))
 
     def _warn_old_gbp_conf(self, gbp_conf):
-        if not os.getenv("GBP_DISABLE_GBP_CONF_DEPRECTATION"):
+        if (not os.getenv("GBP_DISABLE_GBP_CONF_DEPRECTATION") and
+                not self._warned_old_gbp_conf):
             gbp.log.warn("Deprecated configuration file found at %s, "
                          "check gbp.conf(5) for alternatives" % gbp_conf)
+            self._warned_old_gbp_conf = True
 
     @staticmethod
     def _listify(value):
@@ -541,6 +543,7 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.valid_options = []
+        self._warned_old_gbp_conf = False
 
         try:
             self.parse_config_files()
