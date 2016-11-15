@@ -729,6 +729,10 @@ class GbpOptionParserDebian(GbpOptionParser):
         'builder': 'debuild -i -I',
     })
 
+    def _warn_old_gbp_conf(self, gbp_conf):
+        if os.path.exists("debian/control"):
+            GbpOptionParser._warn_old_gbp_conf(self, gbp_conf)
+
 
 class GbpOptionParserRpm(GbpOptionParser):
     """
