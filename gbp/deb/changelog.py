@@ -49,7 +49,7 @@ class ChangeLogSection(object):
         return self._version
 
     @classmethod
-    def parse(klass, section):
+    def parse(cls, section):
         """
         Parse one changelog section
 
@@ -61,7 +61,7 @@ class ChangeLogSection(object):
         header = section.split('\n')[0]
         package = header.split()[0]
         version = header.split()[1][1:-1]
-        return klass(package, version)
+        return cls(package, version)
 
 
 class ChangeLog(object):

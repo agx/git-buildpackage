@@ -1865,7 +1865,7 @@ class GitRepository(object):
 #{ Repository Creation
 
     @classmethod
-    def create(klass, path, description=None, bare=False):
+    def create(cls, path, description=None, bare=False):
         """
         Create a repository at path
 
@@ -1886,12 +1886,12 @@ class GitRepository(object):
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
             try:
-                stdout, stderr, ret = klass.__git_inout(command='init',
-                                                        args=args.args,
-                                                        input=None,
-                                                        extra_env=None,
-                                                        cwd=abspath,
-                                                        capture_stderr=True)
+                stdout, stderr, ret = cls.__git_inout(command='init',
+                                                      args=args.args,
+                                                      input=None,
+                                                      extra_env=None,
+                                                      cwd=abspath,
+                                                      capture_stderr=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git init: %s" % excobj)
             if ret:
@@ -1901,14 +1901,14 @@ class GitRepository(object):
                 with open(os.path.join(abspath, git_dir, "description"), 'w') as f:
                     description += '\n' if description[-1] != '\n' else ''
                     f.write(description)
-            return klass(abspath)
+            return cls(abspath)
         except OSError as err:
             raise GitRepositoryError("Cannot create Git repository at '%s': %s"
                                      % (abspath, err[1]))
         return None
 
     @classmethod
-    def clone(klass, path, remote, depth=0, recursive=False, mirror=False,
+    def clone(cls, path, remote, depth=0, recursive=False, mirror=False,
               bare=False, auto_name=True, reference=None):
         """
         Clone a git repository at I{remote} to I{path}.
@@ -1952,12 +1952,12 @@ class GitRepository(object):
                 os.makedirs(abspath)
 
             try:
-                stdout, stderr, ret = klass.__git_inout(command='clone',
-                                                        args=args.args,
-                                                        input=None,
-                                                        extra_env=None,
-                                                        cwd=abspath,
-                                                        capture_stderr=True)
+                stdout, stderr, ret = cls.__git_inout(command='clone',
+                                                      args=args.args,
+                                                      input=None,
+                                                      extra_env=None,
+                                                      cwd=abspath,
+                                                      capture_stderr=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git clone: %s" % excobj)
             if ret:
@@ -1973,7 +1973,7 @@ class GitRepository(object):
                         name = "%s.git" % name
                 elif name.endswith('.git'):
                     name = name[:-4]
-            return klass(os.path.join(abspath, name))
+            return cls(os.path.join(abspath, name))
         except OSError as err:
             raise GitRepositoryError("Cannot clone Git repository "
                                      "'%s' to '%s': %s"

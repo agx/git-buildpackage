@@ -74,7 +74,7 @@ class DebianSourceFormat(object):
         return "%s (%s)" % (self._version, self._type)
 
     @classmethod
-    def parse_file(klass, filename):
+    def parse_file(cls, filename):
         """
         Parse debian/source/format file
 
@@ -95,10 +95,10 @@ class DebianSourceFormat(object):
         >>> os.unlink(t.name)
         """
         with open(filename) as f:
-            return klass(f.read())
+            return cls(f.read())
 
     @classmethod
-    def from_content(klass, version, type, format_file=None):
+    def from_content(cls, version, type, format_file=None):
         """
         Write a format file from I{type} and I{format} at
         I{format_file}
@@ -108,10 +108,10 @@ class DebianSourceFormat(object):
         @param format_file: the format file to create with
             the above parameters
         """
-        format_file = format_file or klass.format_file
-        with open(klass.format_file, 'w') as f:
+        format_file = format_file or cls.format_file
+        with open(cls.format_file, 'w') as f:
             f.write("%s (%s)" % (version, type))
-        return klass.parse_file(klass.format_file)
+        return cls.parse_file(cls.format_file)
 
 
 if __name__ == "__main__":

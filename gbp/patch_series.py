@@ -167,7 +167,7 @@ class PatchSeries(list):
     level_re = re.compile('-p(?P<level>[0-9]+)')
 
     @classmethod
-    def read_series_file(klass, seriesfile):
+    def read_series_file(cls, seriesfile):
         """Read a series file into L{Patch} objects"""
         patch_dir = os.path.dirname(seriesfile)
 
@@ -179,12 +179,12 @@ class PatchSeries(list):
         except Exception as err:
             raise GbpError("Cannot open series file: %s" % err)
 
-        queue = klass._read_series(s, patch_dir)
+        queue = cls._read_series(s, patch_dir)
         s.close()
         return queue
 
     @classmethod
-    def _read_series(klass, series, patch_dir):
+    def _read_series(cls, series, patch_dir):
         """
         Read patch series
 
@@ -211,7 +211,7 @@ class PatchSeries(list):
                     continue
             except IndexError:
                 continue  # ignore empty lines
-            queue.append(klass._parse_line(line, patch_dir))
+            queue.append(cls._parse_line(line, patch_dir))
         return queue
 
     @staticmethod
@@ -230,7 +230,7 @@ class PatchSeries(list):
         return topic
 
     @classmethod
-    def _strip_comment(klass, line):
+    def _strip_comment(cls, line):
         """
         Strip a comment from a series file line
 
@@ -241,10 +241,10 @@ class PatchSeries(list):
         >>> PatchSeries._strip_comment("leave/level/intact -p1 # comment # text")
         'leave/level/intact -p1'
         """
-        return re.sub(klass.comment_re, '', line)
+        return re.sub(cls.comment_re, '', line)
 
     @classmethod
-    def _split_strip(klass, line):
+    def _split_strip(cls, line):
         """
         Separate the -p<num> option from the patch name
 
@@ -260,7 +260,7 @@ class PatchSeries(list):
 
         split = line.rsplit(None, 1)
         if len(split) > 1:
-            m = klass.level_re.match(split[1])
+            m = cls.level_re.match(split[1])
             if m:
                 patch = split[0]
                 strip = int(m.group('level'))
@@ -268,7 +268,7 @@ class PatchSeries(list):
         return (patch, strip)
 
     @classmethod
-    def _parse_line(klass, line, patch_dir):
+    def _parse_line(cls, line, patch_dir):
         """
         Parse a single line from a series file
 
@@ -277,7 +277,7 @@ class PatchSeries(list):
         >>> PatchSeries._parse_line("a/b", '.')
         <gbp.patch_series.Patch path='./a/b' topic='a' >
         """
-        line = klass._strip_comment(line.rstrip())
-        topic = klass._get_topic(line)
-        (patch, split) = klass._split_strip(line)
+        line = cls._strip_comment(line.rstrip())
+        topic = cls._get_topic(line)
+        (patch, split) = cls._split_strip(line)
         return Patch(os.path.join(patch_dir, patch), topic, split)

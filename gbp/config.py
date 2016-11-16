@@ -366,7 +366,7 @@ class GbpOptionParser(OptionParser):
     list_opts = ['filter', 'component']
 
     @classmethod
-    def get_config_files(klass, no_local=False):
+    def get_config_files(cls, no_local=False):
         """
         Get list of config files from the I{GBP_CONF_FILES} environment
         variable.
@@ -394,7 +394,7 @@ class GbpOptionParser(OptionParser):
         >>> if conf_backup is not None: os.environ['GBP_CONF_FILES'] = conf_backup
         """
         envvar = os.environ.get('GBP_CONF_FILES')
-        files = envvar.split(':') if envvar else [f for (f, _) in klass.def_config_files]
+        files = envvar.split(':') if envvar else [f for (f, _) in cls.def_config_files]
         files = [os.path.expanduser(fname) for fname in files]
         if no_local:
             files = [fname for fname in files if fname.startswith('/')]
