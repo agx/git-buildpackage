@@ -181,6 +181,15 @@ class DebianGitRepository(GitRepository):
         return version.replace('~', '_').replace(':', '%')
 
     @staticmethod
+    def _unsanitize_version(tag):
+        """Reverse _sanitize_version
+
+        >>> DebianGitRepository._unsanitize_version("1%0_bpo3")
+        '1:0~bpo3'
+        """
+        return tag.replace('_', '~').replace('%', ':')
+
+    @staticmethod
     def tag_to_version(tag, format):
         """Extract the version from a tag
 
@@ -194,8 +203,7 @@ class DebianGitRepository(GitRepository):
                                     '(?P<version>[\w_%+-.]+)')
         r = re.match(version_re, tag)
         if r:
-            version = r.group('version').replace('_', '~').replace('%', ':')
-            return version
+            return DebianGitRepository._unsanitize_version(r.group('version'))
         return None
 
     @property
