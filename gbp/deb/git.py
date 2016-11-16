@@ -169,6 +169,8 @@ class DebianGitRepository(GitRepository):
     def _sanitize_version(version):
         """sanitize a version so git accepts it as a tag
 
+        as descirbed in DEP14
+
         >>> DebianGitRepository._sanitize_version("0.0.0")
         '0.0.0'
         >>> DebianGitRepository._sanitize_version("0.0~0")
@@ -177,17 +179,26 @@ class DebianGitRepository(GitRepository):
         '0%0.0'
         >>> DebianGitRepository._sanitize_version("0%0~0")
         '0%0_0'
+        >>> DebianGitRepository._sanitize_version("0....0")
+        '0.#.#.#.0'
+        >>> DebianGitRepository._sanitize_version("0.lock")
+        '0.#lock'
         """
-        return version.replace('~', '_').replace(':', '%')
+        v = re.sub('\.(?=\.|$|lock$)', '.#', version)
+        return v.replace('~', '_').replace(':', '%')
 
     @staticmethod
     def _unsanitize_version(tag):
         """Reverse _sanitize_version
 
+        as descirbed in DEP14
+
         >>> DebianGitRepository._unsanitize_version("1%0_bpo3")
         '1:0~bpo3'
+        >>> DebianGitRepository._unsanitize_version("1%0_bpo3.#.")
+        '1:0~bpo3..'
         """
-        return tag.replace('_', '~').replace('%', ':')
+        return tag.replace('_', '~').replace('%', ':').replace('#', '')
 
     @staticmethod
     def tag_to_version(tag, format):
