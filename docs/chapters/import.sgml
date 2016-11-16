@@ -411,7 +411,7 @@ upstream-tag = v%(version%.%_)s
       </para>
       <para>
 	This layout is simple to get started but falls short if one needs to maintain several versions of
-	the package at the same time. Therefore the following layout is recommended:
+	the package at the same time. Therefore the following the &dep14; layout is recommended:
       </para>
 
       <variablelist>
@@ -429,17 +429,17 @@ upstream-tag = v%(version%.%_)s
 	</varlistentry>
 	<varlistentry>
 	  <term>
-	    upstream/&lt;release&gt;
+	    upstream/latest
 	  </term>
 	  <listitem>
 	    <para>
-	      the upstream sources for a release matching one of the above
+	      the latest upstream sources.
 	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
 	  <term>
-	    dfsg/&lt;release&gt;
+	    dfsg/latest
 	  </term>
 	  <listitem>
 	    <para>
