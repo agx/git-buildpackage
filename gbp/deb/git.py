@@ -161,12 +161,22 @@ class DebianGitRepository(GitRepository):
         >>> DebianGitRepository.version_to_tag("%(version%-%\%)s", "0-1.2.3")
         '0%1.2.3'
         """
+        f, v = cls._mangle_version(format, version)
+        return format_str(f, dict(version=cls._sanitize_version(v),
+                                  hversion=cls._sanitize_version(v).replace('.', '-')))
+
+    @classmethod
+    def _mangle_version(cls, format, version):
+        """
+        Basic version mangling to replce single characters
+        """
         r = re.search(cls.version_mangle_re, format)
         if r:
-            format = re.sub(cls.version_mangle_re, "%(version)s", format)
-            version = version.replace(r.group('M'), r.group('R').replace('\%', '%'))
-        return format_str(format, dict(version=DebianGitRepository._sanitize_version(version),
-                                       hversion=DebianGitRepository._sanitize_version(version).replace('.', '-')))
+            f = re.sub(cls.version_mangle_re, "%(version)s", format)
+            v = version.replace(r.group('M'), r.group('R').replace('\%', '%'))
+            return f, v
+        else:
+            return format, version
 
     @staticmethod
     def _sanitize_version(version):
