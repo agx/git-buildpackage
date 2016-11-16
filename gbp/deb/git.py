@@ -169,6 +169,9 @@ class DebianGitRepository(GitRepository):
     def _mangle_version(cls, format, version):
         """
         Basic version mangling to replce single characters
+
+        >>> DebianGitRepository._mangle_version("%(version%-%\%)s", "0-1.2.3")
+        ('%(version)s', '0%1.2.3')
         """
         r = re.search(cls.version_mangle_re, format)
         if r:
@@ -177,6 +180,29 @@ class DebianGitRepository(GitRepository):
             return f, v
         else:
             return format, version
+
+    @classmethod
+    def _unmangle_format(cls, format):
+        """
+        Reverse of _mangle_version for format
+        """
+        r = re.search(cls.version_mangle_re, format)
+        if r:
+            return re.sub(cls.version_mangle_re, "%(version)s", format)
+        else:
+            return format
+
+    @classmethod
+    def _unmangle_version(cls, format, tag):
+        """
+        Reverse of _mangle_version for version
+        """
+        r = re.search(cls.version_mangle_re, format)
+        if r:
+            v = tag.replace(r.group('R').replace('\%', '%'), r.group('M'))
+            return v
+        else:
+            return tag
 
     @staticmethod
     def _sanitize_version(version):
@@ -213,21 +239,26 @@ class DebianGitRepository(GitRepository):
         """
         return tag.replace('_', '~').replace('%', ':').replace('#', '')
 
-    @staticmethod
-    def tag_to_version(tag, format):
+    @classmethod
+    def tag_to_version(cls, tag, format):
         """Extract the version from a tag
 
         >>> DebianGitRepository.tag_to_version("upstream/1%2_3-4", "upstream/%(version)s")
         '1:2~3-4'
         >>> DebianGitRepository.tag_to_version("foo/2.3.4", "foo/%(version)s")
         '2.3.4'
+        >>> DebianGitRepository.tag_to_version("v1-2-3", "v%(version%.%-)s")
+        '1.2.3'
+        >>> DebianGitRepository.tag_to_version("v1.#.2", "v%(version%.%-)s")
+        '1..2'
         >>> DebianGitRepository.tag_to_version("foo/2.3.4", "upstream/%(version)s")
         """
-        version_re = format.replace('%(version)s',
-                                    '(?P<version>[\w_%+-.]+)')
+        f = cls._unmangle_format(format)
+        version_re = f.replace('%(version)s', '(?P<version>[\w_%+-.#]+)')
         r = re.match(version_re, tag)
         if r:
-            return DebianGitRepository._unsanitize_version(r.group('version'))
+            v = cls._unsanitize_version(r.group('version'))
+            return cls._unmangle_version(format, v)
         return None
 
     @property
