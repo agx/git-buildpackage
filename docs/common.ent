@@ -58,3 +58,4 @@
   <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
 
   <!ENTITY pyformat    "<ulink url='https://docs.python.org/2/library/stdtypes.html#string-formatting'><citetitle>Python format string</citetitle></ulink>">
+  <!ENTITY dep14       "<ulink url='http://dep.debian.net/deps/dep14/'><citetitle>DEP-14</citetitle></ulink>">
