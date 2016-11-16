@@ -274,8 +274,9 @@ upstream-tag = v%(version)s
 	  numbers by dots but rather by
 	  underscore(<replaceable>_</replaceable>),
 	  hyphen(<replaceable>-</replaceable>) or anything else. In
-	  order to cope with that you can use version mangling via
-	  substitution. The substitution works as follows:
+	  order to cope with that you can use version mangling of these
+	  characters via substitution. The substitution works as
+	  follows:
 	</para>
 <programlisting>
 [buildpackage]
@@ -292,9 +293,10 @@ upstream-tag = v%(version%.%_)s
 	  &gbp-buildpackage;.
 	</para>
 	<para>
-	  If you need to use the <replaceable>%</replaceable> character in either of the substitution strings,
+	  If you want the substitution to be the <replaceable>%</replaceable> character
 	  you have to escape it. E.g. <replaceable>%(version%-%\%)s</replaceable> will replace <replaceable>-</replaceable> with
 	  <replaceable>%</replaceable>, transforming <replaceable>1-A.B.C</replaceable> to <replaceable>1%A.B.C</replaceable>.
+	  Only a single replacement is supported and it can only replace a single character.
 	</para>
 
 	<para>If you're using &pristine-tar;, you can make &gbp-buildpackage; commit the generated tarball back to the

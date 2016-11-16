@@ -27,6 +27,11 @@ import gbp.log
 class DebianGitRepository(GitRepository):
     """A git repository that holds the source of a Debian package"""
 
+    version_mangle_re = (r'%\(version'
+                         '%(?P<M>[^%])'
+                         '%(?P<R>([^%]|\\%))+'
+                         '\)s')
+
     def __init__(self, path):
         super(DebianGitRepository, self).__init__(path)
         self.pristine_tar = DebianPristineTar(self)
@@ -132,8 +137,8 @@ class DebianGitRepository(GitRepository):
         version = version.replace('~', '.')
         return format % dict(version=version)
 
-    @staticmethod
-    def version_to_tag(format, version):
+    @classmethod
+    def version_to_tag(cls, format, version):
         """Generate a tag from a given format and a version
 
         %(version)s provides a clean version that works as a git tag.
@@ -144,7 +149,7 @@ class DebianGitRepository(GitRepository):
 
         %(version%A%B)s provides %(version)s with string 'A' replaced by 'B'.
         This way, simple version mangling is possible via substitution.
-        Inside either substition string, '%' needs to be escaped. See the
+        Inside the substition string, '%' needs to be escaped. See the
         examples below.
 
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
@@ -155,13 +160,11 @@ class DebianGitRepository(GitRepository):
         'v1_2_3'
         >>> DebianGitRepository.version_to_tag("%(version%-%\%)s", "0-1.2.3")
         '0%1.2.3'
-        >>> DebianGitRepository.version_to_tag("%(version%\%%.)s", "0%1%2%3")
-        '0.1.2.3'
         """
-        r = re.search(r"%\(version%([^%]+|.*\\%.*)%([^%]+|.*\\%.*)\)s", format)
+        r = re.search(cls.version_mangle_re, format)
         if r:
-            format = re.sub(r"%\(version%([^%]+|.*\\%.*)%([^%]|.*\\%.*)+\)s", "%(version)s", format)
-            version = version.replace(r.group(1).replace('\%', '%'), r.group(2).replace('\%', '%'))
+            format = re.sub(cls.version_mangle_re, "%(version)s", format)
+            version = version.replace(r.group('M'), r.group('R').replace('\%', '%'))
         return format_str(format, dict(version=DebianGitRepository._sanitize_version(version),
                                        hversion=DebianGitRepository._sanitize_version(version).replace('.', '-')))
 
