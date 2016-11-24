@@ -26,6 +26,7 @@ from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import repo_setup
 from gbp.scripts.common.hook import Hook
 import gbp.log
 
@@ -62,6 +63,10 @@ def build_parser(name):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
+    parser.add_config_file_option(option_name="repo-user", dest="repo_user",
+                                  choices=['DEBIAN', 'GIT'])
+    parser.add_config_file_option(option_name="repo-email", dest="repo_email",
+                                  choices=['DEBIAN', 'GIT'])
     return parser
 
 
@@ -127,6 +132,8 @@ def main(argv):
                     repo.create_branch(branch, remote)
 
         repo.set_branch(options.debian_branch)
+
+        repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
         if postclone:
             Hook('Postclone', options.postclone,

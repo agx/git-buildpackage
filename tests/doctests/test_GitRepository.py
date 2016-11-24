@@ -996,4 +996,17 @@ def test_cmd_has_feature():
     True
     """
 
+
+def test_set_user_name_and_email():
+    r"""
+    Methods tested:
+        - L{gbp.git.GitRepository.set_user_name}
+        - L{gbp.git.GitRepository.set_user_email}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(dirs['repo'])
+    >>> repo.set_user_name("Michael Stapelberg")
+    >>> repo.set_user_email("stapelberg@test.invalid")
+    """
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

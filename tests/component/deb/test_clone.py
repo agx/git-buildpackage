@@ -72,3 +72,27 @@ class TestClone(ComponentTestBase):
         self._check_repo_state(cloned, 'master', ['master'])
         assert len(cloned.get_commits()) == 1
         self.check_hook_vars('postclone', ["GBP_GIT_DIR"])
+
+    def test_clone_environ(self):
+        """Test that environment variables influence git configuration"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-native',
+                                'git-buildpackage_%s.dsc' % version)
+
+        # Build up somethng we can clone from
+        dsc = _dsc('0.4.14')
+        os.environ['DEBFULLNAME'] = 'testing tester'
+        os.environ['DEBEMAIL'] = 'gbp-tester@debian.invalid'
+        assert import_dsc(['arg0', dsc]) == 0
+        repo = ComponentTestGitRepository('git-buildpackage')
+        self._check_repo_state(repo, 'master', ['master'])
+        assert len(repo.get_commits()) == 1
+
+        got = repo.get_config("user.email")
+        want = os.environ['DEBEMAIL']
+        ok_(got == want, "unexpected git config user.email: got %s, want %s" % (got, want))
+
+        got = repo.get_config("user.name")
+        want = os.environ['DEBFULLNAME']
+        ok_(got == want, "unexpected git config user.name: got %s, want %s" % (got, want))

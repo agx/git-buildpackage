@@ -35,6 +35,7 @@ from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
                         no_upstream_branch_msg)
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import repo_setup
 import gbp.log
 
 
@@ -269,6 +270,11 @@ def build_parser(name):
                                                 dest="author_committer_date")
     import_group.add_boolean_config_file_option(option_name="allow-unauthenticated",
                                                 dest="allow_unauthenticated")
+
+    parser.add_config_file_option(option_name="repo-user", dest="repo_user",
+                                  choices=['DEBIAN', 'GIT'])
+    parser.add_config_file_option(option_name="repo-email", dest="repo_email",
+                                  choices=['DEBIAN', 'GIT'])
     return parser
 
 
@@ -340,6 +346,8 @@ def main(argv):
 
         if repo.bare:
             disable_pristine_tar(options, "Bare repository")
+
+        repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
         upstream = DebianUpstreamSource(src.tgz)

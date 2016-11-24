@@ -37,6 +37,7 @@ from gbp.config import (GbpOptionParserRpm, GbpOptionGroup,
                         no_upstream_branch_msg)
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import repo_setup
 import gbp.log
 from gbp.pkg import parse_archive_filename
 
@@ -186,6 +187,11 @@ def build_parser(name):
         dest="author_is_committer")
     import_group.add_config_file_option(option_name="packaging-dir",
                                         dest="packaging_dir")
+
+    parser.add_config_file_option(option_name="repo-user", dest="repo_user",
+                                  choices=['DEBIAN', 'GIT'])
+    parser.add_config_file_option(option_name="repo-email", dest="repo_email",
+                                  choices=['DEBIAN', 'GIT'])
     return parser
 
 
@@ -272,6 +278,8 @@ def main(argv):
             target = target or spec.name
             repo = RpmGitRepository.create(target)
             os.chdir(repo.path)
+
+        repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
         if repo.bare:
             set_bare_repo_options(options)

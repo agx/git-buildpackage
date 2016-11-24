@@ -1063,6 +1063,24 @@ class GitRepository(object):
             raise KeyError
         return value[0][:-1]  # first line with \n ending removed
 
+    def set_user_name(self, name):
+        """
+        Sets the full name to use for git commits.
+
+        @param name: full name to use
+        """
+        args = GitArgs('user.name', name)
+        self._git_command("config", args.args)
+
+    def set_user_email(self, email):
+        """
+        Sets the email address to use for git commits.
+
+        @param email: email address to use
+        """
+        args = GitArgs('user.email', email)
+        self._git_command("config", args.args)
+
     def get_author_info(self):
         """
         Determine a sane values for author name and author email from git's

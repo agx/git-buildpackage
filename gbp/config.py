@@ -181,6 +181,8 @@ class GbpOptionParser(OptionParser):
                 'component': [],
                 'bare': 'True',
                 'urgency': 'medium',
+                'repo-user': 'DEBIAN',
+                'repo-email': 'DEBIAN',
                 }
     help = {
         'debian-branch':
@@ -350,7 +352,15 @@ class GbpOptionParser(OptionParser):
             "wether to create a bare repository on the remote side. "
             "'Default is '%(bare)s'.",
         'urgency':
-            "Set urgency level, default is '%(urgency)s'"
+            "Set urgency level, default is '%(urgency)s'",
+        'repo-user':
+            "Set repo username from the DEBFULLNAME and DEBEMAIL "
+            "environment variables ('DEBIAN') or fallback to the "
+            "git configuration ('GIT'), default is '%(repo-user)s'",
+        'repo-email':
+            "Set repo email from the DEBFULLNAME and DEBEMAIL "
+            "environment variables ('DEBIAN') or fallback to the "
+            "git configuration ('GIT'), default is '%(repo-email)s'"
     }
 
     short_opts = {
