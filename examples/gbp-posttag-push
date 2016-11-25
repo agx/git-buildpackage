@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009,2012,2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009,2012,2015,2016 Guido Guenther <agx@sigxcpu.org>
 #
 # gbp-posttag-push: post tag hook to be called by git-buildpackage to push out
 # the newly created tag and to forward the remote branch to that position
@@ -21,15 +21,18 @@
 
 from __future__ import print_function
 
+import glob
 import os
 import subprocess
 import sys
 
 import gbp.log
-from gbp.config import GbpOptionParser
+from gbp.command_wrappers import Command, CommandExecFailed
+from gbp.config import GbpOptionParserDebian
 from gbp.deb.git import DebianGitRepository
-
+from gbp.deb.source import DebianSource
 from gbp.errors import GbpError
+from gbp.git.vfs import GitVfs
 from gbp.scripts.common import ExitCodes
 
 
@@ -78,16 +81,19 @@ def get_upstream_tag(repo, tag, tag_format):
     return None
 
 
-def main(argv):
-    env = Env()
-    upstream_sha1 = None
+def build_parser(name):
+
+    # Until we moved this out of examples
+    os.environ['GBP_DISABLE_SECTION_DEPRECTATION'] = '1'
+    GbpOptionParserDebian.defaults['upload-cmd'] = ""
+    GbpOptionParserDebian.help['upload-cmd'] = "Upload command, default is '%(upload-cmd)s'"
 
     try:
-        parser = GbpOptionParser(command=os.path.basename(argv[0]), prefix='',
-                                 usage='%prog [options] paths')
+        parser = GbpOptionParserDebian(command=os.path.basename(name),
+                                       usage='%prog [options]')
     except GbpError as err:
-        gbp.log.error(err)
-        return ExitCodes.parse_error
+        gbp.log.err(err)
+        return None
 
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
                       action="store_true", help="dry run, don't push.")
@@ -99,14 +105,56 @@ def main(argv):
                                   dest="upstream_branch")
     parser.add_config_file_option(option_name="upstream-tag",
                                   dest="upstream_tag")
+    parser.add_config_file_option(option_name="debian-tag",
+                                  dest="debian_tag")
+    parser.add_config_file_option(option_name="upload-cmd",
+                                  dest="upload_cmd")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+    parser.add_config_file_option(option_name="color-scheme",
+                                  dest="color_scheme")
     parser.add_option("--verbose", action="store_true", dest="verbose",
                       default=False, help="verbose command execution")
+    return parser
 
-    (options, args) = parser.parse_args()
 
-    gbp.log.setup(False, options.verbose)
+def parse_args(argv):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
+    return parser.parse_args(argv)
+
+
+def find_changes(sourcename, version):
+    glob_ex = "../%s_%s_*.changes" % (sourcename, version)
+    gbp.log.info("Looking for changes at %s" % glob_ex)
+    return glob.glob(glob_ex)
+
+
+def upload_changes(changes, cmd, dryrun):
+    ret = 0
+    for name in changes:
+        gbp.log.info("Running %s" % " ".join([cmd, name]))
+        try:
+            if not dryrun:
+                Command(cmd, [name], shell=False)()
+        except CommandExecFailed:
+            gbp.log.err("Upload of '%s' failed." % name)
+            ret = 1
+    return ret
+
+
+def main(argv):
+    retval = 0
+    env = Env()
+    upstream_sha1 = None
+
+    (options, args) = parse_args(argv)
+    if not options:
+        return ExitCodes.parse_error
+
+    gbp.log.setup(options.color, options.verbose, options.color_scheme)
+
     repo = DebianGitRepository('.')
-
     if options.dryrun:
         print("Dry run mode. Not pushing.")
         repo.push = git_push_sim
@@ -132,6 +180,8 @@ def main(argv):
         print("Not pushing non-existent or unsigned tag '%s'." % env.tag, file=sys.stderr)
         return 0
 
+    source = DebianSource(GitVfs(repo, env.tag))
+
     for dest in dests:
         print("Pushing %s to %s" % (env.tag, dest))
         repo.push_tag(dest, env.tag)
@@ -144,7 +194,17 @@ def main(argv):
                                         upstream_sha1, remote=True):
                 print("Pushing %s to %s %s" % (upstream_sha1, dest, options.upstream_branch))
                 repo.push(dest, upstream_sha1, options.upstream_branch)
-        print("done.")
+
+    if options.upload_cmd:
+        version = repo.tag_to_version(env.tag, options.debian_tag)
+        changes = find_changes(source.sourcepkg, version)
+        if len(changes):
+            retval = upload_changes(changes, options.upload_cmd, options.dryrun)
+        else:
+            gbp.log.info("No changes file found, nothing to upload.")
+    else:
+        gbp.log.info("No upload command defined, not uploading to the archive")
+    return retval
 
 
 if __name__ == '__main__':
