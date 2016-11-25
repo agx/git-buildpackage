@@ -19,6 +19,6 @@
 
 class ExitCodes(object):
     ok = 0,
-    failed = 1               # Allow other errors
+    failed = 1               # All other errors
     no_value = 2             # Value does not exist (gbp config only)
     parse_error = 3          # Failed to parse configuration file

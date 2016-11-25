@@ -32,7 +32,7 @@ git clean -dfx
 # Reset the changelog
 git checkout -f debian/changelog
 
-# Create a monitonically increasing changelog by including the build number
+# Create a monotonically increasing changelog by including the build number
 gbp dch -S -a --ignore-branch --snapshot-number=${BUILD_NUMBER}
 
 # Build the package
