@@ -156,7 +156,7 @@ def main(argv):
 
     repo = DebianGitRepository('.')
     if options.dryrun:
-        print("Dry run mode. Not pushing.")
+        gbp.log.warn("Dry run mode. Not pushing, not uploading.")
         repo.push = git_push_sim
         repo.push_tag = git_push_sim
 
@@ -165,7 +165,7 @@ def main(argv):
         if var:
             env.__dict__.setdefault( "%s" % envvar.split("_")[1].lower(), var)
         else:
-            print("%s not set." % envvar, file=sys.stderr)
+            gbp.log.err("%s not set." % envvar, file=sys.stderr)
             return 1
 
     dests = get_push_targets(env)
@@ -177,22 +177,22 @@ def main(argv):
         upstream_sha1 = repo.rev_parse("%s^{}" % upstream_tag)
 
     if not repo.verify_tag(env.tag):
-        print("Not pushing non-existent or unsigned tag '%s'." % env.tag, file=sys.stderr)
+        gbp.log.info("Not pushing non-existent or unsigned tag '%s'." % env.tag, file=sys.stderr)
         return 0
 
     source = DebianSource(GitVfs(repo, env.tag))
 
     for dest in dests:
-        print("Pushing %s to %s" % (env.tag, dest))
+        gbp.log.info("Pushing %s to %s" % (env.tag, dest))
         repo.push_tag(dest, env.tag)
-        print("Pushing %s to %s %s" % (env.sha1, dest, dests[dest]))
+        gbp.log.info("Pushing %s to %s %s" % (env.sha1, dest, dests[dest]))
         repo.push(dest, env.sha1, dests[dest])
         if options.push_upstream and upstream_tag:
-            print("Pushing %s to %s" % (upstream_tag, dest))
+            gbp.log.info("Pushing %s to %s" % (upstream_tag, dest))
             repo.push_tag(dest, upstream_tag)
             if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
                                         upstream_sha1, remote=True):
-                print("Pushing %s to %s %s" % (upstream_sha1, dest, options.upstream_branch))
+                gbp.log.info("Pushing %s to %s %s" % (upstream_sha1, dest, options.upstream_branch))
                 repo.push(dest, upstream_sha1, options.upstream_branch)
 
     if options.upload_cmd:
