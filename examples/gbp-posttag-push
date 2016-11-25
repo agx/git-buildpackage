@@ -48,9 +48,9 @@ def get_push_targets(env):
         if not len(remote):
             continue
         repo, refspec = remote.split()
-        repo = ".".join(repo.split('.')[1:-1]) # remote.<repo>.push
+        repo = ".".join(repo.split('.')[1:-1])  # remote.<repo>.push
         try:
-            remote = refspec.split(':')[1] # src:dest
+            remote = refspec.split(':')[1]  # src:dest
         except IndexError:
             remote = refspec
         dests[repo] = remote
@@ -60,10 +60,10 @@ def get_push_targets(env):
 def get_pull(env):
     """where did we pull from?"""
     cmd = 'git config --get branch."%s".remote' % env.branch
-    remote =  subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].strip()
+    remote = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].strip()
     if not remote:
         remote = 'origin'
-    return { remote: env.branch }
+    return {remote: env.branch}
 
 
 def git_push_sim(*args):
@@ -73,7 +73,6 @@ def git_push_sim(*args):
 def get_upstream_tag(repo, tag, tag_format):
     # FIXME: This assumes the debian version is the last part after the slash:
     version = tag.split('/')[-1]
-    no_epoch = version.split(':')[-1]
     upstream = version.rsplit('-')[0]
     tag = tag_format % dict(version=upstream)
     if repo.has_tag(tag):
@@ -160,10 +159,10 @@ def main(argv):
         repo.push = git_push_sim
         repo.push_tag = git_push_sim
 
-    for envvar in [ "GBP_TAG", "GBP_BRANCH", "GBP_SHA1" ]:
+    for envvar in ["GBP_TAG", "GBP_BRANCH", "GBP_SHA1"]:
         var = os.getenv(envvar)
         if var:
-            env.__dict__.setdefault( "%s" % envvar.split("_")[1].lower(), var)
+            env.__dict__.setdefault("%s" % envvar.split("_")[1].lower(), var)
         else:
             gbp.log.err("%s not set." % envvar, file=sys.stderr)
             return 1
