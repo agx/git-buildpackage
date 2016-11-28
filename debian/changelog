@@ -1,3 +1,45 @@
+git-buildpackage (0.8.7) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [924f809] Build-depend on libdistro-info-perl.
+    This silences the testsuite and unbreaks the build on Ubuntu
+    (Closes: #842960)
+  * [36b8a58] rpm: don't warn about deprecated $repo/.gbp.conf.
+    People use it a lot with rpm based tools so don't warn there until we
+    clearly suggested a better location.
+  * [3c498e1] docs: Don't suggest deprecated section names in examples
+  * [42657fc] docs: Rework "upstream uses git" section
+  * [ced46db] tests: Move doctests to subdir
+  * [ea5775a] commands: allow to fall back to error reason if stderr is empty.
+    Use this in PristineTar and SrcRpmFile to give better error messages if
+    the command doesn't even get to print to stderr (i.e. missing on disk).
+    (Closes: #842592)
+  * [4cacaeb] Avoid printing deprecation twice.  Some tools reparse the
+    config. We don't want another deprecation in this case.
+  * [039a286] Avoid deprecation outside of Debian package repositories.  E.g.
+    ~ might have a .gbp.conf for the user and might be git managed.
+  * [acf7a73] Avoid deprecation on bash completion
+  * [6f75d7c] Fix new flake8 errors. (Closes: #844932)
+  * [420e299] DebianGitRepository: Handle dot escaping as specified in DEP-14
+    (Closes: #843840)
+  * [d360a6d] DebianGitRepository: simplify version mangling '%' is not valid
+    in a Debian version number and we only want single character replacements
+    for now.
+  * [7ed5e2b] DebianGitRepository: Unmangle version.  When mapping from a git
+    tag to a Debian version unamngle it.
+  * [0b317ee] docs: Use version mangling with care
+  * [c96a5b4] docs: Recommend DEP-14
+  * [9cb3966] examples/gbp-posttag-push: allow to upload packages too after
+    pushing all the git data to the remote end. Making one more custom
+    packaging script obsolete.
+
+  [ Jonas Meurer ]
+  * [dd5c3bc] Add version mangling.
+    This allows to replace characters in upstream version numbers. I.e.
+    replace '-' by '.'. (Closes: #842638)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 28 Nov 2016 08:39:35 +0100
+
 git-buildpackage (0.8.6) unstable; urgency=medium
 
   * [a35d7d6] buildpackage: handle <vendor>/master
