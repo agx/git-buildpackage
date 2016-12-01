@@ -328,6 +328,7 @@ class SpecFile(object):
         patchparser.add_option("-P", dest="patchnum")
         patchparser.add_option("-b", dest="backup")
         patchparser.add_option("-E", dest="removeempty")
+        patchparser.add_option("-F", dest="fuzz")
         arglist = args.split()
         return patchparser.parse_args(arglist)[0]
 

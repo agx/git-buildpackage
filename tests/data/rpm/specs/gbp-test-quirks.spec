@@ -25,6 +25,6 @@ Spec for testing some quirks of spec parsing. No intended for building an RPM.
 # Patches are applied out-of-order wrt. numbering
 %patch5
 %patch2
-%patch1
+%patch1 -F2
 # Patch 999 does not exist, rpmbuild would fail but GBP should not
 %patch999
