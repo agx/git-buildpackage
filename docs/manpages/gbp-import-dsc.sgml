@@ -1,5 +1,3 @@
-FIXME
-
 <refentry id="man.gbp.import.dsc">
   <refentryinfo>
     <address>
@@ -48,6 +46,7 @@ FIXME
         <arg><replaceable>URL</replaceable></arg>
         <arg><replaceable>source-package</replaceable></arg>
       </group>
+      <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
