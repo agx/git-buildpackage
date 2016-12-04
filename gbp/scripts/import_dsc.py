@@ -216,7 +216,7 @@ def disable_pristine_tar(options, reason):
 def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] /path/to/package.dsc [<target>]')
+                                       usage='%prog [options] /path/to/package.dsc [target]')
     except GbpError as err:
         gbp.log.err(err)
         return None
@@ -293,7 +293,13 @@ def main(argv):
         return ExitCodes.parse_error
 
     try:
-        if len(args) > 2:
+        if len(args) == 1:
+            pkg = args[0]
+            target = None
+        elif len(args) == 2:
+            pkg = args[0]
+            target = args[1]
+        else:
             gbp.log.err("Need to give exactly one package to import. Try --help.")
             raise GbpError
         try:
@@ -309,7 +315,6 @@ def main(argv):
             needs_repo = True
             is_empty = True
 
-        pkg = args[0]
         if options.download:
             dsc = download_source(pkg,
                                   dirs=dirs,
@@ -324,7 +329,7 @@ def main(argv):
             print_dsc(src)
 
         if needs_repo:
-            target = args[1] if len(args) >= 2 else src.pkg
+            target = target or src.pkg
             if os.path.exists(target):
                 raise GbpError("Directory '%s' already exists. If you want to import into it, "
                                "please change into this directory otherwise move it away first."

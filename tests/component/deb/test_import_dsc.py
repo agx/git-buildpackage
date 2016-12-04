@@ -160,3 +160,19 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream'],
                                tags=['upstream/2.6', 'debian/2.6-2'])
         assert len(repo.get_commits()) == 2
+
+    def test_target_dir(self):
+        """Test if setting the target dir works"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-3.0',
+                                'hello-debhelper_%s.dsc' % version)
+        dsc = _dsc('2.6-2')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--no-pristine-tar',
+                           dsc,
+                           'targetdir']) == 0
+        assert os.path.exists('targetdir')
+        repo = ComponentTestGitRepository('targetdir')
+        self._check_repo_state(repo, 'master', ['master', 'upstream'])
