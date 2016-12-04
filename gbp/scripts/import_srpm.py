@@ -122,7 +122,7 @@ def build_parser(name):
         parser = GbpOptionParserRpm(command=os.path.basename(name),
                                     prefix='',
                                     usage='%prog [options] /path/to/package'
-                                          '.src.rpm [<target>]')
+                                          '.src.rpm [target]')
     except GbpError as err:
         gbp.log.err(err)
         return None
@@ -208,7 +208,13 @@ def main(argv):
     if not options:
         return ExitCodes.parse_error
 
-    if len(args) != 1:
+    if len(args) == 1:
+        srpm = args[0]
+        target = None
+    elif len(args) == 2:
+        srpm = args[0]
+        target = args[1]
+    else:
         gbp.log.err("Need to give exactly one package to import. Try --help.")
         return 1
     try:
@@ -217,7 +223,6 @@ def main(argv):
         gbp.log.err(err)
         return 1
     try:
-        srpm = args[0]
         if options.download:
             srpm = download_source(srpm)
 
@@ -261,7 +266,7 @@ def main(argv):
         except GitRepositoryError:
             gbp.log.info("No git repository found, creating one.")
             is_empty = True
-            target = args[1] if len(args) == 2 else spec.name
+            target = target or spec.name
             repo = RpmGitRepository.create(target)
             os.chdir(repo.path)
 

@@ -76,6 +76,15 @@ class TestImportPacked(ComponentTestBase):
         # Two commits: upstream and packaging files
         eq_(len(repo.get_commits()), 2)
 
+    def test_target_dir(self):
+        """Test importing to target dir"""
+        srpm = os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm')
+        eq_(mock_import(['--no-pristine-tar', srpm, 'targetdir']), 0)
+        # Check repository state
+        assert os.path.exists('targetdir')
+        repo = GitRepository('targetdir')
+        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+
     def test_basic_import_orphan(self):
         """
         Test importing of non-native src.rpm to separate packaging and
