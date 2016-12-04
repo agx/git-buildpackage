@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2011 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2011,2016 Guido Guenther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ from six.moves import urllib
 import gbp.command_wrappers as gbpc
 from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile
 from gbp.rpm import (parse_srpm, guess_spec, SpecFile, NoSpecError,
-                     RpmUpstreamSource, compose_version_str)
+                     RpmUpstreamSource, compose_version_str, filter_version)
 from gbp.rpm.git import (RpmGitRepository, GitRepositoryError)
 from gbp.git.modifier import GitModifier
 from gbp.config import (GbpOptionParserRpm, GbpOptionGroup,
@@ -314,10 +314,18 @@ def main(argv):
         else:
             sources = None
 
-        src_tag_format = options.packaging_tag if options.native \
-                                               else options.upstream_tag
         tag_str_fields = dict(spec.version, vendor=options.vendor.lower())
-        src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
+        if options.native:
+            src_tag_format = options.packaging_tag
+            src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
+            upstream_tag = src_tag
+            upstream_str_fields = tag_str_fields
+        else:
+            src_tag_format = options.upstream_tag
+            src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
+            upstream_str_fields = filter_version(tag_str_fields, 'release')
+            upstream_tag = repo.version_to_tag(src_tag_format, upstream_str_fields)
+
         ver_str = compose_version_str(spec.version)
 
         if repo.find_version(options.packaging_tag, tag_str_fields):
@@ -347,7 +355,7 @@ def main(argv):
 
         # Import sources
         if sources:
-            src_commit = repo.find_version(src_tag_format, tag_str_fields)
+            src_commit = repo.find_version(src_tag_format, upstream_str_fields)
             if not src_commit:
                 gbp.log.info("Tag %s not found, importing sources" % src_tag)
 
@@ -369,7 +377,7 @@ def main(argv):
                         author=author,
                         committer=committer,
                         create_missing_branch=options.create_missing_branches)
-                repo.create_tag(name=src_tag,
+                repo.create_tag(name=src_tag if options.native else upstream_tag,
                                 msg=msg,
                                 commit=src_commit,
                                 sign=options.sign_tags,

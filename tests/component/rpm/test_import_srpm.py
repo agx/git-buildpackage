@@ -58,7 +58,9 @@ class TestImportPacked(ComponentTestBase):
         repo = GitRepository('gbp-test')
         files =  {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
                   'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'}
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'master', ['master', 'upstream'],
+                               files=files,
+                               tags=['packaging/1.0-1', 'upstream/1.0'])
         # Two commits: upstream and packaging files
         eq_(len(repo.get_commits()), 2)
 
@@ -71,8 +73,9 @@ class TestImportPacked(ComponentTestBase):
         files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
                  'gbp-test2.spec', 'gbp-test2-alt.spec', 'my.patch',
                  'my2.patch', 'my3.patch'}
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-
+        self._check_repo_state(repo, 'master', ['master', 'upstream'],
+                               files=files,
+                               tags=['packaging/1%2.0-0', 'upstream/1%2.0'])
         # Two commits: upstream and packaging files
         eq_(len(repo.get_commits()), 2)
 
@@ -108,7 +111,9 @@ class TestImportPacked(ComponentTestBase):
         files = {'.gbp.conf', 'Makefile', 'README', 'dummy.sh',
                  'packaging/gbp-test-native.spec'}
         repo = GitRepository('gbp-test-native')
-        self._check_repo_state(repo, 'master', ['master'], files)
+        self._check_repo_state(repo, 'master', ['master'],
+                               files=files,
+                               tags=['packaging/1.0-1'])
         # Only one commit: the imported source tarball
         eq_(len(repo.get_commits()), 1)
 
