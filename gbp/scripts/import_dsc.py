@@ -216,7 +216,7 @@ def disable_pristine_tar(options, reason):
 def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] /path/to/package.dsc')
+                                       usage='%prog [options] /path/to/package.dsc [<target>]')
     except GbpError as err:
         gbp.log.err(err)
         return None
@@ -293,7 +293,7 @@ def main(argv):
         return ExitCodes.parse_error
 
     try:
-        if len(args) != 1:
+        if len(args) > 2:
             gbp.log.err("Need to give exactly one package to import. Try --help.")
             raise GbpError
         try:
@@ -324,12 +324,13 @@ def main(argv):
             print_dsc(src)
 
         if needs_repo:
-            if os.path.exists(src.pkg):
+            target = args[1] if len(args) >= 2 else src.pkg
+            if os.path.exists(target):
                 raise GbpError("Directory '%s' already exists. If you want to import into it, "
                                "please change into this directory otherwise move it away first."
-                               % src.pkg)
+                               % target)
             gbp.log.info("No git repository found, creating one.")
-            repo = DebianGitRepository.create(src.pkg)
+            repo = DebianGitRepository.create(target)
             os.chdir(repo.path)
 
         if repo.bare:
@@ -429,7 +430,7 @@ def main(argv):
             gbpc.RemoveTree(dirs[d])()
 
     if not ret and not skipped:
-        gbp.log.info("Version '%s' imported under '%s'" % (src.version, src.pkg))
+        gbp.log.info("Version '%s' imported under '%s'" % (src.version, repo.path))
     return ret
 
 

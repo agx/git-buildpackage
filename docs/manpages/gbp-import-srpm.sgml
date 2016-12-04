@@ -1,3 +1,5 @@
+FIXME
+
 <refentry id="man.gbp.import.srpm">
   <refentryinfo>
     <address>
@@ -36,6 +38,7 @@
       <arg><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
       <arg><option>--native</option></arg>
       <arg choice="plain"><replaceable>SRPM</replaceable></arg>
+      <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
       &gbp-import-srpm;
@@ -54,7 +57,9 @@
     &gbp-import-srpm; imports an RPM source package into a &git; repository,
     notes the package version in the commit logs, and commits the change. All
     information, including package name, version and upstream source is
-    automatically detected from the source package. The tool supports importing
+    automatically detected from the source package but you can override the
+    location of the new repository by optionally specifying the
+    <replaceable>target</replaceable> argument. The tool supports importing
     both archived (src.rpm files) or unpacked (directory) source RPMs.
     </para>
   </refsect1>

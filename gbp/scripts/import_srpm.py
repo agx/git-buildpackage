@@ -122,7 +122,7 @@ def build_parser(name):
         parser = GbpOptionParserRpm(command=os.path.basename(name),
                                     prefix='',
                                     usage='%prog [options] /path/to/package'
-                                          '.src.rpm')
+                                          '.src.rpm [<target>]')
     except GbpError as err:
         gbp.log.err(err)
         return None
@@ -261,7 +261,8 @@ def main(argv):
         except GitRepositoryError:
             gbp.log.info("No git repository found, creating one.")
             is_empty = True
-            repo = RpmGitRepository.create(spec.name)
+            target = args[1] if len(args) == 2 else spec.name
+            repo = RpmGitRepository.create(target)
             os.chdir(repo.path)
 
         if repo.bare:
@@ -460,7 +461,7 @@ def main(argv):
         del_tmpdir()
 
     if not ret and not skipped:
-        gbp.log.info("Version '%s' imported under '%s'" % (ver_str, spec.name))
+        gbp.log.info("Version '%s' imported under '%s'" % (ver_str, repo.path))
     return ret
 
 

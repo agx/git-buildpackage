@@ -1,3 +1,5 @@
+FIXME
+
 <refentry id="man.gbp.import.dsc">
   <refentryinfo>
     <address>
@@ -35,6 +37,7 @@
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
+      <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
       &gbp-import-dsc;
@@ -58,7 +61,8 @@
     <para>
     If the command is run from within an existing repository, it will import
     into this; if not, a new repository named as the Debian source package is
-    created.
+    created. You can override the location of the new repository by specifying
+    the optional <replaceable>target</replaceable> argument.
     </para>
   </refsect1>
   <refsect1>
