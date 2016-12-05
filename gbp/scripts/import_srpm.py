@@ -34,7 +34,7 @@ from gbp.rpm import (parse_srpm, guess_spec, SpecFile, NoSpecError,
 from gbp.rpm.git import (RpmGitRepository, GitRepositoryError)
 from gbp.git.modifier import GitModifier
 from gbp.config import (GbpOptionParserRpm, GbpOptionGroup,
-                       no_upstream_branch_msg)
+                        no_upstream_branch_msg)
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
 import gbp.log
@@ -44,6 +44,7 @@ no_packaging_branch_msg = """
 Repository does not have branch '%s' for packaging/distribution sources.
 You need to reate it or use --packaging-branch to specify it.
 """
+
 
 class SkipImport(Exception):
     """Nothing imported"""
@@ -63,6 +64,7 @@ def download_file(target_dir, url):
     except urllib.error.URLError as err:
         raise GbpError("Download failed: %s" % err.reason)
     return local_fn
+
 
 def download_source(pkg):
     """Download package from a remote location"""
@@ -128,63 +130,64 @@ def build_parser(name):
         return None
 
     import_group = GbpOptionGroup(parser, "import options",
-                      "pristine-tar and filtering")
+                                  "pristine-tar and filtering")
     tag_group = GbpOptionGroup(parser, "tag options",
-                      "options related to git tag creation")
+                               "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "version and branch naming options",
-                      "version number and branch layout options")
+                                  "version number and branch layout options")
 
-    for group in [import_group, branch_group, tag_group ]:
+    for group in [import_group, branch_group, tag_group]:
         parser.add_option_group(group)
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
                       default=False, help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color",
-                      type='tristate')
+                                  type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
     parser.add_config_file_option(option_name="vendor", action="store",
-                    dest="vendor")
+                                  dest="vendor")
     parser.add_option("--download", action="store_true", dest="download",
                       default=False, help="download source package")
     branch_group.add_config_file_option(option_name="packaging-branch",
-                      dest="packaging_branch")
+                                        dest="packaging_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
-                      dest="upstream_branch")
+                                        dest="upstream_branch")
     branch_group.add_boolean_config_file_option(
-                      option_name="create-missing-branches",
-                      dest="create_missing_branches")
+        option_name="create-missing-branches",
+        dest="create_missing_branches")
     branch_group.add_option("--orphan-packaging", action="store_true",
-                      dest="orphan_packaging", default=False,
-                      help="The packaging branch doesn't base on upstream")
+                            dest="orphan_packaging", default=False,
+                            help="The packaging branch doesn't base on upstream")
     branch_group.add_option("--native", action="store_true",
-                      dest="native", default=False,
-                      help="This is a dist native package, no separate "
-                           "upstream branch")
+                            dest="native", default=False,
+                            help="This is a dist native package, no separate "
+                            "upstream branch")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                      dest="sign_tags")
+                                             dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid",
-                      dest="keyid")
+                                     dest="keyid")
     tag_group.add_config_file_option(option_name="packaging-tag",
-                      dest="packaging_tag")
+                                     dest="packaging_tag")
     tag_group.add_config_file_option(option_name="upstream-tag",
-                      dest="upstream_tag")
+                                     dest="upstream_tag")
 
     import_group.add_config_file_option(option_name="filter",
-                      dest="filters", action="append")
+                                        dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
-                      dest="pristine_tar")
+                                                dest="pristine_tar")
     import_group.add_option("--allow-same-version", action="store_true",
-                      dest="allow_same_version", default=False,
-                      help="allow to import already imported version")
+                            dest="allow_same_version", default=False,
+                            help="allow to import already imported version")
     import_group.add_boolean_config_file_option(
-                      option_name="author-is-committer",
-                      dest="author_is_committer")
+        option_name="author-is-committer",
+        dest="author_is_committer")
     import_group.add_config_file_option(option_name="packaging-dir",
-                      dest="packaging_dir")
+                                        dest="packaging_dir")
     return parser
+
 
 def parse_args(argv):
     """Parse commandline arguments"""
@@ -247,7 +250,7 @@ def main(argv):
             dirs['src'] = os.path.abspath(srpm)
             spec = guess_spec(srpm, True, preferred_spec)
         else:
-            gbp.log.debug("Trying to import an srpm from '%s' with spec "\
+            gbp.log.debug("Trying to import an srpm from '%s' with spec "
                           "file '%s'" % (os.path.dirname(srpm), srpm))
             dirs['src'] = os.path.abspath(os.path.dirname(srpm))
             spec = SpecFile(srpm)
@@ -289,8 +292,8 @@ def main(argv):
             files = os.listdir(dirs['src'])
         else:
             # Need to copy files to the packaging directory given by caller
-            files = [os.path.basename(patch.path) \
-                    for patch in spec.patchseries(unapplied=True, ignored=True)]
+            files = [os.path.basename(patch.path)
+                     for patch in spec.patchseries(unapplied=True, ignored=True)]
             for filename in spec.sources().values():
                 files.append(os.path.basename(filename))
             files.append(os.path.join(spec.specdir, spec.specfile))
@@ -367,16 +370,16 @@ def main(argv):
                                      branch)
                     else:
                         gbp.log.err(no_upstream_branch_msg % branch + "\n"
-                            "Also check the --create-missing-branches option.")
+                                    "Also check the --create-missing-branches option.")
                         raise GbpError
                 src_vendor = "Native" if options.native else "Upstream"
                 msg = "%s version %s" % (src_vendor, spec.upstreamversion)
                 src_commit = repo.commit_dir(sources.unpacked,
-                        "Import %s" % msg,
-                        branch,
-                        author=author,
-                        committer=committer,
-                        create_missing_branch=options.create_missing_branches)
+                                             "Import %s" % msg,
+                                             branch,
+                                             author=author,
+                                             committer=committer,
+                                             create_missing_branch=options.create_missing_branches)
                 repo.create_tag(name=src_tag if options.native else upstream_tag,
                                 msg=msg,
                                 commit=src_commit,
@@ -388,7 +391,7 @@ def main(argv):
                         archive_fmt = parse_archive_filename(orig_tarball)[1]
                         if archive_fmt == 'tar':
                             repo.pristine_tar.commit(orig_tarball,
-                                                    'refs/heads/%s' %
+                                                     'refs/heads/%s' %
                                                      options.upstream_branch)
                         else:
                             gbp.log.warn('Ignoring pristine-tar, %s archives '
@@ -415,11 +418,11 @@ def main(argv):
 
             if options.orphan_packaging or not sources:
                 commit = repo.commit_dir(dirs['packaging_base'],
-                        "Import %s" % msg,
-                        branch,
-                        author=author,
-                        committer=committer,
-                        create_missing_branch=options.create_missing_branches)
+                                         "Import %s" % msg,
+                                         branch,
+                                         author=author,
+                                         committer=committer,
+                                         create_missing_branch=options.create_missing_branches)
             else:
                 # Copy packaging files to the unpacked sources dir
                 try:
@@ -433,12 +436,12 @@ def main(argv):
                     shutil.copy2(os.path.join(dirs['packaging'], fname),
                                  pkgsubdir)
                 commit = repo.commit_dir(sources.unpacked,
-                        "Import %s" % msg,
-                        branch,
-                        other_parents=[src_commit],
-                        author=author,
-                        committer=committer,
-                        create_missing_branch=options.create_missing_branches)
+                                         "Import %s" % msg,
+                                         branch,
+                                         other_parents=[src_commit],
+                                         author=author,
+                                         committer=committer,
+                                         create_missing_branch=options.create_missing_branches)
                 # Import patches on top of the source tree
                 # (only for non-native packages with non-orphan packaging)
                 force_to_branch_head(repo, options.packaging_branch)
