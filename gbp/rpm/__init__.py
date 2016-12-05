@@ -967,7 +967,7 @@ def filter_version(evr, key):
     @param evr: dict of version components
     @type evr: C{dict} of C{str}
     @param key: key to remove
-    @type evr: C{str}
+    @type key: C{str}
     @return: new verion dict
     @rtype: C{dict} of C{str}
 
