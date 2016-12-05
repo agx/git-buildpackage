@@ -927,6 +927,7 @@ def split_version_str(version):
 
     return ret
 
+
 def compose_version_str(evr):
     """
     Compose a full version string from individual "version components",
@@ -957,6 +958,23 @@ def compose_version_str(evr):
         if version:
             return version
     return None
+
+
+def filter_version(evr, key):
+    """
+    Remove entry from the version dict
+
+    @param evr: dict of version components
+    @type evr: C{dict} of C{str}
+    @param key: key to remove
+    @type evr: C{str}
+    @return: new verion dict
+    @rtype: C{dict} of C{str}
+
+    >>> filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'vendor': 'baz'}, 'vendor').keys()
+    ['epoch', 'upstreamversion']
+    """
+    return {k: evr[k] for k in evr if k != key}
 
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
