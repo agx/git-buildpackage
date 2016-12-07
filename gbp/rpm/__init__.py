@@ -972,9 +972,9 @@ def filter_version(evr, *keys):
 
     @param evr: dict of version components
     @type evr: C{dict} of C{str}
-    @param key: key to remove
-    @type key: C{str}
-    @return: new verion dict
+    @param keys: keys to remove
+    @type keys: C{str}s
+    @return: new version dict
     @rtype: C{dict} of C{str}
 
     >>> filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'vendor': 'baz'}, 'vendor').keys()
