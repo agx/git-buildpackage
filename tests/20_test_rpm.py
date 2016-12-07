@@ -20,7 +20,7 @@ import filecmp
 import os
 import shutil
 import tempfile
-from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 import six
 
@@ -60,6 +60,7 @@ class RpmTestBase(object):
         """Test case teardown"""
         shutil.rmtree(self.tmpdir)
 
+
 class TestSrcRpmFile(RpmTestBase):
     """Test L{gbp.rpm.SrcRpmFile}"""
 
@@ -85,7 +86,8 @@ class TestSrcRpmFile(RpmTestBase):
         for fn in ['gbp-test-1.0.tar.bz2', 'foo.txt', 'bar.tar.gz', 'my.patch',
                    'my2.patch', 'my3.patch']:
             ok_(os.path.exists(os.path.join(self.tmpdir, fn)),
-                    "%s not found" % fn)
+                "%s not found" % fn)
+
 
 class TestSpecFile(RpmTestBase):
     """Test L{gbp.rpm.SpecFile}"""
@@ -250,7 +252,7 @@ class TestSpecFile(RpmTestBase):
             spec.protected('_delete_special_macro')('invalidmacro', 0)
         with assert_raises(GbpError):
             spec.protected('_set_special_macro')('invalidmacro', 0, 'args',
-                           prev)
+                                                 prev)
 
         # Check resulting spec file
         spec.write_spec_file()
@@ -307,7 +309,7 @@ class TestSpecFile(RpmTestBase):
                 rval = 'my_%s' % name
             if rval:
                 eq_(val['value'], rval, ("'%s:' is '%s', expecting '%s'" %
-                                              (name, val['value'], rval)))
+                                         (name, val['value'], rval)))
             eq_(spec.ignorepatches, [])
             # Check patch numbers and patch filenames
             patches = {}
@@ -344,15 +346,15 @@ class TestSpecFile(RpmTestBase):
         eq_(files, ['05.patch', '01.patch'])
         # Also ignored patches are returned in the correct order
         files = [os.path.basename(patch.path) for patch in
-                    spec.patchseries(ignored=True)]
+                 spec.patchseries(ignored=True)]
         eq_(files, ['05.patch', '02.patch', '01.patch'])
         # Unapplied patches are added to the end of the series
         files = [os.path.basename(patch.path) for patch in
-                    spec.patchseries(unapplied=True)]
+                 spec.patchseries(unapplied=True)]
         eq_(files, ['05.patch', '01.patch', '03.patch'])
         # Return all patches (for which tag is found)
         files = [os.path.basename(patch.path) for patch in
-                    spec.patchseries(unapplied=True, ignored=True)]
+                 spec.patchseries(unapplied=True, ignored=True)]
         eq_(files, ['05.patch', '02.patch', '01.patch', '03.patch', '04.patch'])
 
 
@@ -371,7 +373,7 @@ class TestUtilityFunctions(RpmTestBase):
             guess_spec(SPEC_DIR, recursive=False)
         # Spec found
         spec = guess_spec(SPEC_DIR, recursive=False,
-                             preferred_name = 'gbp-test2.spec')
+                          preferred_name='gbp-test2.spec')
         eq_(spec.specfile, 'gbp-test2.spec')
         eq_(spec.specdir, SPEC_DIR)
 

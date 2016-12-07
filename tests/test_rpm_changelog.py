@@ -31,14 +31,14 @@ class TestChangelogHeader(object):
 
     def test_str_format(self):
         """Basic test for header"""
-        time = datetime(2014, 01, 29, 12, 13, 14)
+        time = datetime(2014, 1, 29, 12, 13, 14)
         header = _ChangelogHeader(RpmPkgPolicy, time, name="John Doe",
                                   email="user@host.com", revision="1")
         eq_(str(header), "* Wed Jan 29 2014 John Doe <user@host.com> 1\n")
 
     def test_str_format_err(self):
         """Test missing properties"""
-        time = datetime(2014, 01, 29, 12, 13, 14)
+        time = datetime(2014, 1, 29, 12, 13, 14)
         header = _ChangelogHeader(RpmPkgPolicy, time, name="John", revision="1")
         with assert_raises(ChangelogError):
             str(header)
@@ -70,7 +70,7 @@ class TestChangelogSection(object):
 
     def setup(self):
         """Initialize test"""
-        time = datetime(2014, 01, 29, 12, 13, 14)
+        time = datetime(2014, 1, 29, 12, 13, 14)
         self.default_sect = _ChangelogSection(RpmPkgPolicy, time, name="J. D.",
                                               email="u@h", revision="1")
         entry = _ChangelogEntry(RpmPkgPolicy, "J. D.", "- my change")
@@ -94,7 +94,7 @@ class TestChangelogSection(object):
     def test_set_header(self):
         """Test set_header() method"""
         section = self.default_sect
-        time = datetime(2014, 01, 30)
+        time = datetime(2014, 1, 30)
         section.set_header(time=time, name="Jane", email="u@h", revision="1.1")
         eq_(str(section), "* Thu Jan 30 2014 Jane <u@h> 1.1\n- my change\n\n")
 
@@ -219,7 +219,7 @@ class TestChangelog(object):
     def test_add_section(self):
         """Test the add_section() method"""
         changelog = Changelog(RpmPkgPolicy)
-        time = datetime(2014, 01, 30)
+        time = datetime(2014, 1, 30)
         new_section = changelog.add_section(time=time, name="Jane Doe",
                                             email="j@doe.com", revision="1.2")
         eq_(str(changelog), "* Thu Jan 30 2014 Jane Doe <j@doe.com> 1.2\n\n")
