@@ -320,7 +320,9 @@ class SpecFile(object):
     def _patch_macro_opts(args):
         """Parse arguments of the '%patch' macro"""
 
-        patchparser = OptionParser()
+        patchparser = OptionParser(
+            prog="%s internal patch macro opts parser" % __name__,
+            usage="%prog for " + args)
         patchparser.add_option("-p", dest="strip")
         patchparser.add_option("-s", dest="silence")
         patchparser.add_option("-P", dest="patchnum")
@@ -333,7 +335,9 @@ class SpecFile(object):
     def _setup_macro_opts(args):
         """Parse arguments of the '%setup' macro"""
 
-        setupparser = OptionParser()
+        setupparser = OptionParser(
+            prog="%s internal setup macro opts parser" % __name__,
+            usage="%prog for " + args)
         setupparser.add_option("-n", dest="name")
         setupparser.add_option("-c", dest="create_dir", action="store_true")
         setupparser.add_option("-D", dest="no_delete_dir", action="store_true")
