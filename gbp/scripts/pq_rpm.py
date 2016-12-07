@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011 Guido Günther <agx@sigxcpu.org>
+# (C) 2011,2016 Guido Günther <agx@sigxcpu.org>
 # (C) 2012-2014 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -38,9 +38,10 @@ from gbp.rpm import (SpecFile, NoSpecError, guess_spec, guess_spec_repo,
                      spec_from_repo)
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
-            parse_gbp_commands, format_patch, format_diff,
-            switch_to_pq_branch, apply_single_patch, apply_and_commit_patch,
-            drop_pq, switch_pq)
+                                   parse_gbp_commands, format_patch, format_diff,
+                                   switch_to_pq_branch, apply_single_patch,
+                                   apply_and_commit_patch,
+                                   drop_pq, switch_pq)
 
 from gbp.scripts.common.buildpackage import dump_tree
 
@@ -297,7 +298,7 @@ def import_spec_patches(repo, options):
             repo.create_branch(pq_branch, upstream_commit, force=True)
     except GitRepositoryError as err:
         raise GbpError("Cannot create patch-queue branch '%s': %s" %
-                        (pq_branch, err))
+                       (pq_branch, err))
 
     # Put patches in a safe place
     if spec_treeish:
@@ -344,13 +345,9 @@ def rebase_pq(repo, options):
     GitCommand("rebase")([upstream_commit])
 
 
-def build_parser(name):
-    """Construct command line parser"""
-    try:
-        parser = GbpOptionParserRpm(command=os.path.basename(name),
-                                    prefix='', usage=
-"""%prog [options] action - maintain patches on a patch queue branch
-tions:
+def usage_msg():
+    return """%prog [options] action - maintain patches on a patch queue branch
+Ations:
 export         Export the patch queue / devel branch associated to the
                current branch into a patch series in and update the spec file
 import         Create a patch queue / devel branch from spec file
@@ -360,29 +357,36 @@ rebase         Switch to patch queue / devel branch associated to the current
 drop           Drop (delete) the patch queue /devel branch associated to
                the current branch.
 apply          Apply a patch
-switch         Switch to patch-queue branch and vice versa.""")
+switch         Switch to patch-queue branch and vice versa."""
+
+
+def build_parser(name):
+    """Construct command line parser"""
+    try:
+        parser = GbpOptionParserRpm(command=os.path.basename(name),
+                                    prefix='', usage=usage_msg())
 
     except GbpError as err:
         gbp.log.err(err)
         return None
 
     parser.add_boolean_config_file_option(option_name="patch-numbers",
-            dest="patch_numbers")
+                                          dest="patch_numbers")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
-            default=False, help="Verbose command execution")
+                      default=False, help="Verbose command execution")
     parser.add_option("--force", dest="force", action="store_true",
-            default=False,
-            help="In case of import even import if the branch already exists")
+                      default=False,
+                      help="In case of import even import if the branch already exists")
     parser.add_config_file_option(option_name="color", dest="color",
-            type='tristate')
+                                  type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
-            dest="color_scheme")
+                                  dest="color_scheme")
     parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
     parser.add_config_file_option(option_name="upstream-tag",
-            dest="upstream_tag")
+                                  dest="upstream_tag")
     parser.add_config_file_option(option_name="spec-file", dest="spec_file")
     parser.add_config_file_option(option_name="packaging-dir",
-            dest="packaging_dir")
+                                  dest="packaging_dir")
     return parser
 
 
