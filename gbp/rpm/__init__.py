@@ -966,7 +966,7 @@ def compose_version_str(evr):
     return None
 
 
-def filter_version(evr, key):
+def filter_version(evr, *keys):
     """
     Remove entry from the version dict
 
@@ -979,8 +979,10 @@ def filter_version(evr, key):
 
     >>> filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'vendor': 'baz'}, 'vendor').keys()
     ['epoch', 'upstreamversion']
+    >>> filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'revision': 'baz'}, 'epoch', 'revision').keys()
+    ['upstreamversion']
     """
-    return {k: evr[k] for k in evr if k != key}
+    return {k: evr[k] for k in evr if k not in keys}
 
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

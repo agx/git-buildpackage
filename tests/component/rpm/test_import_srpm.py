@@ -75,7 +75,7 @@ class TestImportPacked(ComponentTestBase):
                  'my2.patch', 'my3.patch'}
         self._check_repo_state(repo, 'master', ['master', 'upstream'],
                                files=files,
-                               tags=['packaging/1%2.0-0', 'upstream/1%2.0'])
+                               tags=['packaging/1%2.0-0', 'upstream/2.0'])
         # Two commits: upstream and packaging files
         eq_(len(repo.get_commits()), 2)
 

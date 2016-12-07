@@ -326,7 +326,7 @@ def main(argv):
         else:
             src_tag_format = options.upstream_tag
             src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
-            upstream_str_fields = filter_version(tag_str_fields, 'release')
+            upstream_str_fields = filter_version(tag_str_fields, 'release', 'epoch')
             upstream_tag = repo.version_to_tag(src_tag_format, upstream_str_fields)
 
         ver_str = compose_version_str(spec.version)
