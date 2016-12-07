@@ -29,7 +29,7 @@ import sys
 import gbp.log
 from gbp.command_wrappers import Command, CommandExecFailed
 from gbp.config import GbpOptionParserDebian
-from gbp.deb.git import DebianGitRepository
+from gbp.deb.git import DebianGitRepository, GitRepositoryError
 from gbp.deb.source import DebianSource
 from gbp.errors import GbpError
 from gbp.git.vfs import GitVfs
@@ -181,28 +181,34 @@ def main(argv):
 
     source = DebianSource(GitVfs(repo, env.tag))
 
-    for dest in dests:
-        gbp.log.info("Pushing %s to %s" % (env.tag, dest))
-        repo.push_tag(dest, env.tag)
-        gbp.log.info("Pushing %s to %s %s" % (env.sha1, dest, dests[dest]))
-        repo.push(dest, env.sha1, dests[dest])
-        if options.push_upstream and upstream_tag:
-            gbp.log.info("Pushing %s to %s" % (upstream_tag, dest))
-            repo.push_tag(dest, upstream_tag)
-            if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
-                                        upstream_sha1, remote=True):
-                gbp.log.info("Pushing %s to %s %s" % (upstream_sha1, dest, options.upstream_branch))
-                repo.push(dest, upstream_sha1, options.upstream_branch)
+    try:
+        for dest in dests:
+            gbp.log.info("Pushing %s to %s" % (env.tag, dest))
+            repo.push_tag(dest, env.tag)
+            gbp.log.info("Pushing %s to %s %s" % (env.sha1, dest, dests[dest]))
+            repo.push(dest, env.sha1, dests[dest])
+            if options.push_upstream and upstream_tag:
+                gbp.log.info("Pushing %s to %s" % (upstream_tag, dest))
+                repo.push_tag(dest, upstream_tag)
+                if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
+                                            upstream_sha1, remote=True):
+                    gbp.log.info("Pushing %s to %s %s" % (upstream_sha1, dest, options.upstream_branch))
+                    repo.push(dest, upstream_sha1, options.upstream_branch)
 
-    if options.upload_cmd:
-        version = repo.tag_to_version(env.tag, options.debian_tag)
-        changes = find_changes(source.sourcepkg, version)
-        if len(changes):
-            retval = upload_changes(changes, options.upload_cmd, options.dryrun)
+        if options.upload_cmd:
+            version = repo.tag_to_version(env.tag, options.debian_tag)
+            changes = find_changes(source.sourcepkg, version)
+            if len(changes):
+                retval = upload_changes(changes, options.upload_cmd, options.dryrun)
+            else:
+                gbp.log.info("No changes file found, nothing to upload.")
         else:
-            gbp.log.info("No changes file found, nothing to upload.")
-    else:
-        gbp.log.info("No upload command defined, not uploading to the archive")
+            gbp.log.info("No upload command defined, not uploading to the archive")
+    except (GbpError, GitRepositoryError) as err:
+        if str(err):
+            gbp.log.err(err)
+        retval = 1
+
     return retval
 
 
