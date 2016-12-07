@@ -65,7 +65,7 @@ class ChangelogFile(object):
         # Parse topmost section and try to determine the start commit
         if self.changelog.sections:
             self.changelog.sections[0] = parser.parse_section(
-                    self.changelog.sections[0])
+                self.changelog.sections[0])
 
     def write(self):
         """Write changelog file to disk"""
@@ -83,6 +83,7 @@ class ChangelogFile(object):
             return self._file.specpath
         else:
             return self._file
+
 
 def load_customizations(customization_file):
     """Load user defined customizations file"""
@@ -202,7 +203,7 @@ def guess_commit(section, repo, options):
         if 'release' in fields:
             tag_str_fields['release'] = fields['release']
     commit = repo.find_version(options.packaging_tag,
-                                   tag_str_fields)
+                               tag_str_fields)
     if commit:
         return commit
     else:
@@ -266,7 +267,8 @@ def entries_from_commits(changelog, repo, commits, options):
     for commit in commits:
         info = repo.get_commit_info(commit)
         entry_text = ChangelogEntryFormatter.compose(info, full=options.full,
-                        ignore_re=options.ignore_regex, id_len=options.idlen)
+                                                     ignore_re=options.ignore_regex,
+                                                     id_len=options.idlen)
         if entry_text:
             entries.append(changelog.create_entry(author=info['author'].name,
                                                   text=entry_text))
@@ -287,7 +289,7 @@ def update_changelog(changelog, entries, repo, spec, options):
         revision = options.changelog_revision % rev_str_fields
     except KeyError as err:
         raise GbpError("Unable to construct revision field: unknown key "
-                "%s, only %s are accepted" % (err, rev_str_fields.keys()))
+                       "%s, only %s are accepted" % (err, rev_str_fields.keys()))
 
     # Add a new changelog section if new release or an empty changelog
     if options.release or not changelog.sections:
@@ -314,70 +316,71 @@ def build_parser(name):
         return None
 
     range_grp = GbpOptionGroup(parser, "commit range options",
-                    "which commits to add to the changelog")
+                               "which commits to add to the changelog")
     format_grp = GbpOptionGroup(parser, "changelog entry formatting",
-                    "how to format the changelog entries")
+                                "how to format the changelog entries")
     naming_grp = GbpOptionGroup(parser, "naming",
-                    "branch names, tag formats, directory and file naming")
+                                "branch names, tag formats, directory and file naming")
     parser.add_option_group(range_grp)
     parser.add_option_group(format_grp)
     parser.add_option_group(naming_grp)
 
     # Non-grouped options
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
-                    help="verbose command execution")
+                      help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color",
-                    type='tristate')
+                                  type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
-                    dest="color_scheme")
+                                  dest="color_scheme")
     parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
     parser.add_config_file_option(option_name="vendor", action="store",
-                    dest="vendor")
+                                  dest="vendor")
     parser.add_config_file_option(option_name="git-log", dest="git_log",
-                    help="options to pass to git-log, default is '%(git-log)s'")
+                                  help="options to pass to git-log, default is '%(git-log)s'")
     parser.add_boolean_config_file_option(option_name="ignore-branch",
-                    dest="ignore_branch")
+                                          dest="ignore_branch")
     parser.add_config_file_option(option_name="customizations",
-                    dest="customization_file",
-                    help="Load Python code from CUSTOMIZATION_FILE. At the "
-                    "moment, the only useful thing the code can do is define a "
-                    "custom ChangelogEntryFormatter class.")
+                                  dest="customization_file",
+                                  help="Load Python code from CUSTOMIZATION_FILE. At the "
+                                  "moment, the only useful thing the code can do is define a "
+                                  "custom ChangelogEntryFormatter class.")
 
     # Naming group options
     naming_grp.add_config_file_option(option_name="packaging-branch",
-                    dest="packaging_branch")
+                                      dest="packaging_branch")
     naming_grp.add_config_file_option(option_name="packaging-tag",
-                    dest="packaging_tag")
+                                      dest="packaging_tag")
     naming_grp.add_config_file_option(option_name="packaging-dir",
-                    dest="packaging_dir")
+                                      dest="packaging_dir")
     naming_grp.add_config_file_option(option_name="changelog-file",
-                    dest="changelog_file")
+                                      dest="changelog_file")
     naming_grp.add_config_file_option(option_name="spec-file", dest="spec_file")
     # Range group options
     range_grp.add_option("-s", "--since", dest="since",
-                    help="commit to start from (e.g. HEAD^^^, release/0.1.2)")
+                         help="commit to start from (e.g. HEAD^^^, release/0.1.2)")
     # Formatting group options
     format_grp.add_option("--no-release", action="store_false", default=True,
-                    dest="release",
-                    help="no release, just update the last changelog section")
+                          dest="release",
+                          help="no release, just update the last changelog section")
     format_grp.add_boolean_config_file_option(option_name="git-author",
-                    dest="git_author")
+                                              dest="git_author")
     format_grp.add_boolean_config_file_option(option_name="full", dest="full")
     format_grp.add_config_file_option(option_name="id-length", dest="idlen",
-                    help="include N digits of the commit id in the changelog "
-                         "entry, default is '%(id-length)s'",
-                    type="int", metavar="N")
+                                      help="include N digits of the commit id in the changelog "
+                                      "entry, default is '%(id-length)s'",
+                                      type="int", metavar="N")
     format_grp.add_config_file_option(option_name="ignore-regex",
-                    dest="ignore_regex",
-                    help="Ignore lines in commit message matching regex, "
-                         "default is '%(ignore-regex)s'")
+                                      dest="ignore_regex",
+                                      help="Ignore lines in commit message matching regex, "
+                                      "default is '%(ignore-regex)s'")
     format_grp.add_config_file_option(option_name="changelog-revision",
-                    dest="changelog_revision")
+                                      dest="changelog_revision")
     format_grp.add_config_file_option(option_name="spawn-editor",
-                    dest="spawn_editor")
+                                      dest="spawn_editor")
     format_grp.add_config_file_option(option_name="editor-cmd",
-                    dest="editor_cmd")
+                                      dest="editor_cmd")
     return parser
+
 
 def parse_args(argv):
     """Parse command line and config file options"""
@@ -393,6 +396,7 @@ def parse_args(argv):
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     return options, args
+
 
 def main(argv):
     """Script main function"""
