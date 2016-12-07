@@ -117,7 +117,7 @@ def generate_patches(repo, start, end, outdir, options):
         if patch_fn:
             patches.append(patch_fn)
 
-    return patches, commands
+    return [os.path.relpath(p) for p in patches], commands
 
 
 def rm_patch_files(spec):

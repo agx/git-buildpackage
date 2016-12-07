@@ -23,6 +23,7 @@ from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 from gbp.scripts.pq_rpm import main as pq
 from gbp.git import GitRepository
 from gbp.command_wrappers import GitCommand
+from gbp.rpm import SpecFile
 
 from tests.component.rpm import RpmRepoTestBase
 from tests.testutils import capture_stderr
@@ -39,6 +40,11 @@ def mock_pq(args):
 
 class TestPqRpm(RpmRepoTestBase):
     """Basic tests for gbp-pq-rpm"""
+
+    def _has_patches(self, specfile, patches):
+        spec = SpecFile(specfile)
+        eq_(sorted([p['linevalue'] for p in spec._patches().values()]),
+            sorted(patches))
 
     def test_invalid_args(self):
         """See that pq-rpm fails gracefully when called with invalid args"""
@@ -72,6 +78,8 @@ class TestPqRpm(RpmRepoTestBase):
         eq_(mock_pq(['import']), 0)
         files = ['AUTHORS', 'dummy.sh', 'Makefile', 'NEWS', 'README',
                  'mydir/myfile.txt']
+        patches = ['my.patch', '0001-my-gz.patch', '0002-my-bzip2.patch', '0003-my2.patch']
+
         branches.append('patch-queue/master')
         self._check_repo_state(repo, 'patch-queue/master', branches, files)
         eq_(repo.get_merge_base('upstream', 'patch-queue/master'),
@@ -82,15 +90,16 @@ class TestPqRpm(RpmRepoTestBase):
         # Test export
         eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s']), 0)
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
-                 'gbp-test.spec', '0001-my-gz.patch', '0002-my-bzip2.patch',
-                 '0003-my2.patch', 'my.patch']
+                 'gbp-test.spec'] + patches
         self._check_repo_state(repo, 'master', branches, files)
         eq_(repo.status()[' M'], ['gbp-test.spec'])
+        self._has_patches('gbp-test.spec', patches)
 
         # Another export after removing some patches
         os.unlink('0001-my-gz.patch')
         eq_(mock_pq(['export']), 0)
         self._check_repo_state(repo, 'master', branches, files)
+        self._has_patches('gbp-test.spec', patches)
 
     def test_import_export2(self):
         """Another test for import and export"""
@@ -100,6 +109,7 @@ class TestPqRpm(RpmRepoTestBase):
         # Import
         eq_(mock_pq(['import']), 0)
         files = ['dummy.sh', 'Makefile', 'README', 'mydir/myfile.txt']
+        patches = ['packaging/0001-My-modification.patch', 'my.patch']
         self._check_repo_state(repo, 'patch-queue/master-orphan', branches,
                                files)
 
@@ -108,6 +118,7 @@ class TestPqRpm(RpmRepoTestBase):
                      '--spec-file', 'packaging/gbp-test2.spec']), 0)
         self._check_repo_state(repo, 'master-orphan', branches)
         eq_(repo.status()[' M'], ['packaging/gbp-test2.spec'])
+        self._has_patches('packaging/gbp-test2.spec', patches)
 
     def test_rebase(self):
         """Basic test for rebase action"""
@@ -241,10 +252,11 @@ class TestPqRpm(RpmRepoTestBase):
         branches = repo.get_local_branches()
         # Export
         eq_(mock_pq(['export', '--no-patch-numbers']), 0)
+        patches = ['my-gz.patch', 'my-bzip2.patch', 'my2.patch', 'my.patch']
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
-                 'gbp-test.spec', 'my-gz.patch', 'my-bzip2.patch', 'my2.patch',
-                 'my.patch']
+                 'gbp-test.spec'] + patches
         self._check_repo_state(repo, 'master', branches, files)
+        self._has_patches('gbp-test.spec', patches)
 
     def test_option_tmp_dir(self):
         """Test the --tmp-dir cmdline option"""
@@ -318,10 +330,12 @@ class TestPqRpm(RpmRepoTestBase):
 
         # Export should create diff up to the merge point and one "normal" patch
         eq_(mock_pq(['export']), 0)
+        patches = ['my.patch',
+                   '%s-to-%s.diff' % (upstr_rev, merge_rev), '0002-my2.patch']
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
-                 'gbp-test.spec', 'my.patch',
-                 '%s-to-%s.diff' % (upstr_rev, merge_rev), '0002-my2.patch']
+                 'gbp-test.spec'] + patches
         self._check_repo_state(repo, 'master', branches, files)
+        self._has_patches('gbp-test.spec', patches)
 
     def test_import_unapplicable_patch(self):
         """Test import when a patch does not apply"""
