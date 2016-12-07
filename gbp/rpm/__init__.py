@@ -40,6 +40,7 @@ class NoSpecError(Exception):
     """Spec file parsing error"""
     pass
 
+
 class MacroExpandError(Exception):
     """Macro expansion in spec file failed"""
     pass
@@ -70,8 +71,8 @@ class SrcRpmFile(object):
     @property
     def version(self):
         """Get the (downstream) version of the RPM package"""
-        version = dict(upstreamversion = self.rpmhdr[librpm.RPMTAG_VERSION],
-                       release = self.rpmhdr[librpm.RPMTAG_RELEASE])
+        version = dict(upstreamversion=self.rpmhdr[librpm.RPMTAG_VERSION],
+                       release=self.rpmhdr[librpm.RPMTAG_RELEASE])
         if self.rpmhdr[librpm.RPMTAG_EPOCH] is not None:
             version['epoch'] = str(self.rpmhdr[librpm.RPMTAG_EPOCH])
         return version
@@ -106,17 +107,17 @@ class SrcRpmFile(object):
 class SpecFile(object):
     """Class for parsing/modifying spec files"""
     tag_re = re.compile(r'^(?P<name>[a-z]+)(?P<num>[0-9]+)?\s*:\s*'
-                         '(?P<value>\S(.*\S)?)\s*$', flags=re.I)
+                        '(?P<value>\S(.*\S)?)\s*$', flags=re.I)
     directive_re = re.compile(r'^%(?P<name>[a-z]+)(?P<num>[0-9]+)?'
-                               '(\s+(?P<args>.*))?$', flags=re.I)
+                              '(\s+(?P<args>.*))?$', flags=re.I)
     gbptag_re = re.compile(r'^\s*#\s*gbp-(?P<name>[a-z-]+)'
-                            '(\s*:\s*(?P<args>\S.*))?$', flags=re.I)
+                           '(\s*:\s*(?P<args>\S.*))?$', flags=re.I)
     # Here "sections" stand for all scripts, scriptlets and other directives,
     # but not macros
     section_identifiers = ('package', 'description', 'prep', 'build', 'install',
-            'clean', 'check', 'pre', 'preun', 'post', 'postun', 'verifyscript',
-            'files', 'changelog', 'triggerin', 'triggerpostin', 'triggerun',
-            'triggerpostun')
+                           'clean', 'check', 'pre', 'preun', 'post', 'postun', 'verifyscript',
+                           'files', 'changelog', 'triggerin', 'triggerpostin', 'triggerun',
+                           'triggerpostun')
 
     def __init__(self, filename=None, filedata=None):
 
@@ -146,15 +147,15 @@ class SpecFile(object):
 
         # Use rpm-python to parse the spec file content
         self._filtertags = ("excludearch", "excludeos", "exclusivearch",
-                            "exclusiveos","buildarch")
+                            "exclusiveos", "buildarch")
         self._listtags = self._filtertags + ('source', 'patch',
-                                  'requires', 'conflicts', 'recommends',
-                                  'suggests', 'supplements', 'enhances',
-                                  'provides', 'obsoletes', 'buildrequires',
-                                  'buildconflicts', 'buildrecommends',
-                                  'buildsuggests', 'buildsupplements',
-                                  'buildenhances', 'collections',
-                                  'nosource', 'nopatch')
+                                             'requires', 'conflicts', 'recommends',
+                                             'suggests', 'supplements', 'enhances',
+                                             'provides', 'obsoletes', 'buildrequires',
+                                             'buildconflicts', 'buildrecommends',
+                                             'buildsuggests', 'buildsupplements',
+                                             'buildenhances', 'collections',
+                                             'nosource', 'nopatch')
         self._specinfo = self._parse_filtered_spec(self._filtertags)
 
         # Other initializations
@@ -164,7 +165,7 @@ class SpecFile(object):
         self.release = source_header[librpm.RPMTAG_RELEASE]
         # rpm-python returns epoch as 'long', convert that to string
         self.epoch = str(source_header[librpm.RPMTAG_EPOCH]) \
-            if source_header[librpm.RPMTAG_EPOCH] != None else None
+            if source_header[librpm.RPMTAG_EPOCH] is not None else None
         self.packager = source_header[librpm.RPMTAG_PACKAGER]
         self._tags = {}
         self._special_directives = defaultdict(list)
@@ -186,7 +187,7 @@ class SpecFile(object):
         skip_tags = [tag.lower() for tag in skip_tags]
         with tempfile.NamedTemporaryFile(prefix='gbp') as filtered:
             filtered.writelines(str(line) for line in self._content
-                    if str(line).split(":")[0].strip().lower() not in skip_tags)
+                                if str(line).split(":")[0].strip().lower() not in skip_tags)
             filtered.flush()
             try:
                 # Parse two times to circumvent a rpm-python problem where
@@ -196,16 +197,16 @@ class SpecFile(object):
             except ValueError as err:
                 rpmlog = get_librpm_log()
                 gbp.log.debug("librpm log:\n        %s" %
-                                "\n        ".join(rpmlog))
+                              "\n        ".join(rpmlog))
                 raise GbpError("RPM error while parsing %s: %s (%s)" %
-                                (self.specfile, err, rpmlog[-1]))
+                               (self.specfile, err, rpmlog[-1]))
 
     @property
     def version(self):
         """Get the (downstream) version"""
-        version = dict(upstreamversion = self.upstreamversion,
-                       release = self.release)
-        if self.epoch != None:
+        version = dict(upstreamversion=self.upstreamversion,
+                       release=self.release)
+        if self.epoch is not None:
             version['epoch'] = self.epoch
         return version
 
@@ -429,7 +430,7 @@ class SpecFile(object):
             elif typ == 2 or typ == 10:
                 # Patch tag without any number defined is treated by RPM as
                 # having number (2^31-1), we use number -1
-                if num >= pow(2,30):
+                if num >= pow(2, 30):
                     num = -1
                 if num in patches:
                     patches[num]['linevalue'] = name
@@ -506,7 +507,7 @@ class SpecFile(object):
         if key in ('patch', 'vcs'):
             if key in self._tags:
                 insertafter = key
-            elif not insertafter in self._tags:
+            elif insertafter not in self._tags:
                 insertafter = 'name'
             after_line = self._tags[insertafter]['lines'][-1]['line']
             if value:
@@ -759,8 +760,8 @@ class SpecFile(object):
                     try:
                         prefix = self.macro_expand(opts.name) + '/'
                     except MacroExpandError as err:
-                        gbp.log.warn("Couldn't determine prefix from %%setup "\
-                                     "macro (%s). Using filename base as a "  \
+                        gbp.log.warn("Couldn't determine prefix from %%setup "
+                                     "macro (%s). Using filename base as a "
                                      "fallback" % err)
                         prefix = orig['filename_base'] + '/'
                 else:
@@ -782,7 +783,7 @@ class SpecFile(object):
             src['filename_base'], src['archive_fmt'], src['compression'] = \
                 parse_archive_filename(os.path.basename(filename))
             if (src['filename_base'].startswith(self.name) and
-                src['archive_fmt']):
+                    src['archive_fmt']):
                 # Take the first archive that starts with pkg name
                 orig = src
                 break
@@ -851,10 +852,10 @@ def guess_spec_repo(repo, treeish, topdir='', recursive=True, preferred_name=Non
     topdir = topdir.rstrip('/') + ('/') if topdir else ''
     try:
         file_list = [nam for (mod, typ, sha, nam) in
-                    repo.list_tree(treeish, recursive, topdir) if typ == 'blob']
+                     repo.list_tree(treeish, recursive, topdir) if typ == 'blob']
     except GitRepositoryError as err:
         raise NoSpecError("Cannot find spec file from treeish %s, Git error: %s"
-                            % (treeish, err))
+                          % (treeish, err))
     spec_path = guess_spec_fn(file_list, preferred_name)
     return spec_from_repo(repo, treeish, spec_path)
 

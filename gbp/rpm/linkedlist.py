@@ -59,7 +59,6 @@ class LinkedListNode(object):
             data = ""
         self._data = data
 
-
     def delete(self):
         """Delete node"""
         if self.prev:

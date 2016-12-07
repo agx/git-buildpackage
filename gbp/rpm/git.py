@@ -18,9 +18,10 @@
 
 from gbp.format import format_str
 from gbp.errors import GbpError
-from gbp.git import GitRepository, GitRepositoryError
+from gbp.git import GitRepository, GitRepositoryError  # noqa: F401
 from gbp.pkg.pristinetar import PristineTar
 from gbp.rpm import compose_version_str
+
 
 class RpmGitRepository(GitRepository):
     """A git repository that holds the source of an RPM package"""
@@ -45,7 +46,7 @@ class RpmGitRepository(GitRepository):
             tag = self.version_to_tag(format, str_fields)
         except GbpError:
             return None
-        if self.has_tag(tag): # new tags are injective
+        if self.has_tag(tag):  # new tags are injective
             # dereference to a commit object
             return self.rev_parse("%s^0" % tag)
         return None
