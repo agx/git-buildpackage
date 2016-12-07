@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2011,2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006-2011,2015,2016 Guido Günther <agx@sigxcpu.org>
 # (C) 2012-2015 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ def is_native(repo, options):
             remote, branch = remote_branch.split('/', 1)
             if branch == options.upstream_branch:
                 gbp.log.debug("Found upstream branch '%s' from remote '%s'" %
-                               (remote, branch))
+                              (remote, branch))
                 return False
         return True
 
@@ -305,15 +305,15 @@ def build_parser(name, prefix=None, git_treeish=None):
         return None
 
     tag_group = GbpOptionGroup(parser, "tag options",
-                    "options related to git tag creation")
+                               "options related to git tag creation")
     branch_group = GbpOptionGroup(parser, "branch options",
-                    "branch layout options")
+                                  "branch layout options")
     cmd_group = GbpOptionGroup(parser, "external command options",
-                    "how and when to invoke external commands and hooks")
+                               "how and when to invoke external commands and hooks")
     orig_group = GbpOptionGroup(parser, "orig tarball options",
-                    "options related to the creation of the orig tarball")
+                                "options related to the creation of the orig tarball")
     export_group = GbpOptionGroup(parser, "export build-tree options",
-                    "alternative build tree related options")
+                                  "alternative build tree related options")
     parser.add_option_group(tag_group)
     parser.add_option_group(orig_group)
     parser.add_option_group(branch_group)
@@ -321,83 +321,83 @@ def build_parser(name, prefix=None, git_treeish=None):
     parser.add_option_group(export_group)
 
     parser.add_boolean_config_file_option(option_name="ignore-new",
-                    dest="ignore_new")
+                                          dest="ignore_new")
     parser.add_option("--git-verbose", action="store_true", dest="verbose",
-                    default=False, help="verbose command execution")
+                      default=False, help="verbose command execution")
     parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
     parser.add_config_file_option(option_name="color", dest="color",
-                    type='tristate')
+                                  type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
-                    dest="color_scheme")
+                                  dest="color_scheme")
     parser.add_config_file_option(option_name="notify", dest="notify",
-                    type='tristate')
+                                  type='tristate')
     parser.add_config_file_option(option_name="vendor", action="store",
-                    dest="vendor")
+                                  dest="vendor")
     parser.add_config_file_option(option_name="native", dest="native",
-                    type='tristate')
+                                  type='tristate')
     tag_group.add_option("--git-tag", action="store_true", dest="tag",
-                    default=False,
-                    help="create a tag after a successful build")
+                         default=False,
+                         help="create a tag after a successful build")
     tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only",
-                    default=False,
-                    help="don't build, only tag and run the posttag hook")
+                         default=False,
+                         help="don't build, only tag and run the posttag hook")
     tag_group.add_option("--git-retag", action="store_true", dest="retag",
-                    default=False, help="don't fail if the tag already exists")
+                         default=False, help="don't fail if the tag already exists")
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                    dest="sign_tags")
+                                             dest="sign_tags")
     tag_group.add_config_file_option(option_name="keyid", dest="keyid")
     tag_group.add_config_file_option(option_name="packaging-tag",
-                    dest="packaging_tag")
+                                     dest="packaging_tag")
     tag_group.add_config_file_option(option_name="packaging-tag-msg",
-                    dest="packaging_tag_msg")
+                                     dest="packaging_tag_msg")
     tag_group.add_config_file_option(option_name="upstream-tag",
-                    dest="upstream_tag")
+                                     dest="upstream_tag")
     orig_group.add_config_file_option(option_name="upstream-tree",
-                    dest="upstream_tree")
+                                      dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar",
-                    dest="pristine_tar")
+                                              dest="pristine_tar")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar-commit",
-                    dest="pristine_tar_commit")
+                                              dest="pristine_tar_commit")
     orig_group.add_config_file_option(option_name="force-create",
-                    dest="force_create", action="store_true",
-                    help="force creation of upstream source tarball")
+                                      dest="force_create", action="store_true",
+                                      help="force creation of upstream source tarball")
     orig_group.add_config_file_option(option_name="no-create-orig",
-                    dest="no_create_orig", action="store_true",
-                    help="don't create upstream source tarball")
+                                      dest="no_create_orig", action="store_true",
+                                      help="don't create upstream source tarball")
     orig_group.add_config_file_option(option_name="tarball-dir",
-                    dest="tarball_dir", type="path",
-                    help="location to look for external tarballs")
+                                      dest="tarball_dir", type="path",
+                                      help="location to look for external tarballs")
     orig_group.add_config_file_option(option_name="compression-level",
-                    dest="comp_level",
-                    help="Compression level, default is "
-                         "'%(compression-level)s'")
+                                      dest="comp_level",
+                                      help="Compression level, default is "
+                                      "'%(compression-level)s'")
     branch_group.add_config_file_option(option_name="upstream-branch",
-                    dest="upstream_branch")
+                                        dest="upstream_branch")
     branch_group.add_config_file_option(option_name="packaging-branch",
-                    dest="packaging_branch")
-    branch_group.add_boolean_config_file_option(option_name = "ignore-branch",
-                    dest="ignore_branch")
-    branch_group.add_boolean_config_file_option(option_name = "submodules",
-                    dest="with_submodules")
+                                        dest="packaging_branch")
+    branch_group.add_boolean_config_file_option(option_name="ignore-branch",
+                                                dest="ignore_branch")
+    branch_group.add_boolean_config_file_option(option_name="submodules",
+                                                dest="with_submodules")
     cmd_group.add_config_file_option(option_name="builder", dest="builder",
-                    help="command to build the package, default is "
-                         "'%(builder)s'")
+                                     help="command to build the package, default is "
+                                     "'%(builder)s'")
     cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
-                    help="command to clean the working copy, default is "
-                         "'%(cleaner)s'")
+                                     help="command to clean the working copy, default is "
+                                     "'%(cleaner)s'")
     cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
-                    help="command to run before a build, default is "
-                         "'%(prebuild)s'")
+                                     help="command to run before a build, default is "
+                                     "'%(prebuild)s'")
     cmd_group.add_config_file_option(option_name="postexport",
-                    dest="postexport",
-                    help="command to run after exporting the source tree, "
-                         "default is '%(postexport)s'")
+                                     dest="postexport",
+                                     help="command to run after exporting the source tree, "
+                                     "default is '%(postexport)s'")
     cmd_group.add_config_file_option(option_name="postbuild", dest="postbuild",
-                    help="hook run after a successful build, default is "
-                         "'%(postbuild)s'")
+                                     help="hook run after a successful build, default is "
+                                     "'%(postbuild)s'")
     cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
-                    help="hook run after a successful tag operation, default "
-                         "is '%(posttag)s'")
+                                     help="hook run after a successful tag operation, default "
+                                     "is '%(posttag)s'")
     cmd_group.add_boolean_config_file_option(option_name="mock", dest="use_mock")
     cmd_group.add_config_file_option(option_name="dist", dest="mock_dist")
     cmd_group.add_config_file_option(option_name="arch", dest="mock_arch")
@@ -405,24 +405,24 @@ def build_parser(name, prefix=None, git_treeish=None):
     cmd_group.add_config_file_option(option_name="mock-options", dest="mock_options")
     cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
     export_group.add_option("--git-no-build", action="store_true",
-                    dest="no_build",
-                    help="Don't run builder or the associated hooks")
+                            dest="no_build",
+                            help="Don't run builder or the associated hooks")
     export_group.add_config_file_option(option_name="export-dir",
-                    dest="export_dir", type="path",
-                    help="Build topdir, also export the sources under "
-                         "EXPORT_DIR, default is '%(export-dir)s'")
+                                        dest="export_dir", type="path",
+                                        help="Build topdir, also export the sources under "
+                                        "EXPORT_DIR, default is '%(export-dir)s'")
     export_group.add_config_file_option(option_name="export-specdir",
-                    dest="export_specdir", type="path")
+                                        dest="export_specdir", type="path")
     export_group.add_config_file_option(option_name="export-sourcedir",
-                    dest="export_sourcedir", type="path")
+                                        dest="export_sourcedir", type="path")
     export_group.add_config_file_option("export", dest="export",
-                    metavar="TREEISH",
-                    help="export treeish object TREEISH, default is "
-                         "'%(export)s'")
+                                        metavar="TREEISH",
+                                        help="export treeish object TREEISH, default is "
+                                        "'%(export)s'")
     export_group.add_config_file_option(option_name="packaging-dir",
-                    dest="packaging_dir")
+                                        dest="packaging_dir")
     export_group.add_config_file_option(option_name="spec-file",
-                    dest="spec_file")
+                                        dest="spec_file")
     return parser
 
 
