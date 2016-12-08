@@ -80,14 +80,18 @@ class TestGbpConfigCommand(unittest.TestCase):
     def test_print_cmd_all_values(self):
         """Can we fetch the configuration for all commands"""
         for cmd in ['buildpackage',
+                    'buildpackage_rpm',
                     'clone',
                     'config',
                     'create_remote_repo',
                     'dch',
                     'import_dsc',
                     'import_orig',
+                    'import_srpm',
                     'pq',
-                    'pull']:
+                    'pq_rpm',
+                    'pull',
+                    'rpm_ch']:
             printstub = self.AllValuesPrintStub(cmd)
             ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
             self.assertIn('%s.color' % cmd, printstub.result.keys())
@@ -96,7 +100,7 @@ class TestGbpConfigCommand(unittest.TestCase):
 
     def test_nonexistent_cmds(self):
         """Non-existing commands should print no values"""
-        for cmd in ["import_dscs", "supercommand"]:
+        for cmd in ["import_dscs", "supercommand", "nonexistent"]:
             printstub = self.AllValuesPrintStub(cmd)
             ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
             self.assertEquals(printstub.result, dict())
