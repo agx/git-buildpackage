@@ -267,22 +267,27 @@ EOE
 
     # Run the builder.
     if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
+        set -x
         sudo "$BUILDER" "$action" "${OPTIONS[@]}" "$@"
     else
         if [ "$EXT" = '-backports' ] ; then
             OTHERMIRROR="deb $BACKPORTS $DIST$EXT main"
+            set -x
             sudo "$BUILDER" "$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         elif [ "$EXT" = '-lts' ] ; then
             OTHERMIRROR="deb $LTS $DIST$EXT main"
+            set -x
             sudo "$BUILDER" "$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         else
+            set -x
             sudo "$BUILDER" "$action" --distribution "$DIST" \
                 "${OPTIONS[@]}" "$@"
         fi
     fi
-    exit $?
+    { set +x; } 2>/dev/null
+    exit 0
 fi
 
 # Build package: not (update | create | login)
