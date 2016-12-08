@@ -1,5 +1,5 @@
 # vim: set fileencoding=utf-8 :
-# (C) 2014 Guido Günther <agx@sigxcpu.org>
+# (C) 2014,2016 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -45,12 +45,12 @@ class TestGbpConfigCommand(unittest.TestCase):
 
     def test_invocation_single_value(self):
         """Can invoke it for a sngle value  without error"""
-        ret = gbp.scripts.config.main(['doesnotmatter', 'config.color'])
+        ret = gbp.scripts.config.main(['argv0', 'config.color'])
         self.assertEqual(ret, 0)
 
     def test_invocation_missing_value(self):
         """Can we detect a missing value"""
-        ret = gbp.scripts.config.main(['doesnotmatter', 'config.doesnotexist'])
+        ret = gbp.scripts.config.main(['argv0', 'config.doesnotexist'])
         self.assertEqual(ret, 2)
 
     def test_print_cmd_single_value_default(self):

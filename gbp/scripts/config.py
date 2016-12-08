@@ -109,9 +109,8 @@ def print_cmd_values(query, printer):
         return print_all_options(parser, printer)
 
 
-def value_printer(value):
-    if (value):
-        print(value)
+def value_printer(output):
+    print(output)
 
 
 def main(argv):
