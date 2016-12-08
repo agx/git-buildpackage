@@ -38,7 +38,7 @@ usage() {
 
 while [ $# != 0 ]; do
 	case "$1" in
-		--help|-h|-?) usage 0;;
+		--help|-h|-\?) usage 0;;
 		*.spec) SPEC="$1";;
 	esac
 	shift
