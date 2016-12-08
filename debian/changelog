@@ -1,3 +1,34 @@
+git-buildpackage (0.8.8) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * [03276df] Add ability to specify the clone target to gbp-import-{dsc,srpm}
+    (Closes: #846567)
+
+  [ Guido Günther ]
+  * [0a9cf44] docs: setting target dir is supported for --download too
+  * [f631e64] import_dsc: fail properly again without a package to import
+  * [a10c77b] import_srpm: allow for more than one argument otherwise giving a
+    target dir always raises an error
+  * [e1aec57,627b858] import_rpms: use upstream version for upstream tag
+    (Closes: #846936)
+  * [ce42aadc] pq_rpm: use relative path names for patches Based on a patch
+    from Tzafrir Cohen
+    (Closes: #834582)
+  * [fa091b6] rpm: improve error message on specfile patch parser errors.
+  * [bf4afbe] gbp-posttag-push: catch exceptions instead of printing the full
+    trace
+  * [1d44f48] buildpackage_rpm: drop unused vcs_info()
+  * flake8 cleanups all over the rpm code
+
+  [ Tzafrir Cohen ]
+  * [73d30ef] specfile: handle %patch -F.
+    (Closes: #846479)
+  * [d9b28f9] gbp-mock: handle single letter options by properly handling '-?'
+    to request help output.
+    (Closes: #847464)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 08 Dec 2016 14:52:18 +0100
+
 git-buildpackage (0.8.7) unstable; urgency=medium
 
   [ Guido Günther ]
