@@ -27,3 +27,34 @@ mailing list or add it to a bug report against git-buildpackage on
 
     http://bugs.debian.org/src:git-buildpackage
 
+
+Layout
+------
+
+    gbp/scripts/*.py    - the actual gbp commands (buildpackage, dch, …)
+    gbp/scripts/common/ - code shared between Debian and RPM commands
+    gbp/deb/            - Debian package handling (control, dsc, …)
+    gbp/rpm/            - RPM package handling (spec files, …)
+    gbp/git/            - Git repository interaction
+    tests/*.py          - unit tests
+    tests/doctests      - doctests that also serve as examples
+    tests/component/    - component tests that invoke actual commands
+
+Interfaces
+----------
+A gbp command in gbp/scripts/<commmand>.py must provide these interfaces:
+
+When one invokes `gbp <command>` gbp/scripts/<commmand>.py is imported by
+
+    gbp/scripts/supercommand.py
+
+which then invokes it's *main* function with all given command line arguments.
+It is expected to return with the exit status that should be passed back to the
+shell.
+
+When one invokes `gbp config <command>` gbp/scripts/<commmand>.py is imported by
+
+    gbp/scripts/config.py
+
+which then invokes it's *build_parser* function with the command name as argument.
+It is expected to return a GbpConfigParser with all config files parsed.
