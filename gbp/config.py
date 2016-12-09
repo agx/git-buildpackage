@@ -400,7 +400,7 @@ class GbpOptionParser(OptionParser):
             files = [fname for fname in files if fname.startswith('/')]
         return files
 
-    def _read_config_file(self, parser, repo, filename):
+    def _read_config_file(self, repo, filename):
         """Read config file"""
         str_fields = {}
         if repo:
@@ -416,7 +416,7 @@ class GbpOptionParser(OptionParser):
                 filename == os.path.join(repo.path, '.gbp.conf') and
                 os.path.exists(filename)):
             self._warn_old_gbp_conf(filename)
-        parser.read(filename)
+        self.config_parser.read(filename)
 
     def _warn_old_config_section(self, oldcmd, cmd):
         if not os.getenv("GBP_DISABLE_SECTION_DEPRECTATION"):
@@ -429,6 +429,11 @@ class GbpOptionParser(OptionParser):
             gbp.log.warn("Deprecated configuration file found at %s, "
                          "check gbp.conf(5) for alternatives" % gbp_conf)
             self._warned_old_gbp_conf = True
+
+    @property
+    def config_file_sections(self):
+        """List of all found config file sections"""
+        return self.config_parser.sections()
 
     @staticmethod
     def _listify(value):
@@ -479,11 +484,9 @@ class GbpOptionParser(OptionParser):
         Parse the possible config files and set appropriate values
         default values
         """
-        parser = configparser.SafeConfigParser()
+        parser = self.config_parser
         # Fill in the built in values
         self.config = dict(self.__class__.defaults)
-        # Update with the values from the defaults section. This is needed
-        # in case the config file doesn't have a [<command>] section at all
         config_files = self.get_config_files()
         try:
             repo = GitRepository(".")
@@ -491,7 +494,9 @@ class GbpOptionParser(OptionParser):
             repo = None
         # Read all config files
         for filename in config_files:
-            self._read_config_file(parser, repo, filename)
+            self._read_config_file(repo, filename)
+        # Update with the values from the defaults section. This is needed
+        # in case the config file doesn't have a [<command>] section at all
         self.config.update(dict(parser.defaults()))
 
         # Make sure we read any legacy sections prior to the real subcommands
@@ -543,6 +548,7 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.valid_options = []
+        self.config_parser = configparser.SafeConfigParser()
         self._warned_old_gbp_conf = False
 
         try:
