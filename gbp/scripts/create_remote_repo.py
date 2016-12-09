@@ -204,11 +204,18 @@ def push_branches(remote, branches):
     gitPush([remote['url'], '--tags'])
 
 
+def usage_msg():
+    return """%prog [options] - create a remote git repository
+Actions:
+  create         create the repository. This is the default when no action is
+                 given.
+  list           list available configuration templates for remote repositories"""
+
+
 def build_parser(name, sections=[]):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] - '
-                                       'create a remote repository',
+                                       usage=usage_msg(),
                                        sections=sections)
     except (GbpError, configparser.NoSectionError) as err:
         gbp.log.err(err)
@@ -258,21 +265,19 @@ def parse_args(argv):
     @param argv: the command line arguments
     @type argv: C{list} of C{str}
     """
-
-    # We simpley handle the template section as an additional config file
+    sections = []
+    # We handle the template section as an additional config file
     # section to parse, this makes e.g. --help work as expected:
     for arg in argv:
         if arg.startswith('--remote-config='):
             sections = ['remote-config %s' % arg.split('=', 1)[1]]
             break
-    else:
-        sections = []
 
     parser = build_parser(argv[0], sections)
     if not parser:
-        return None, None
+        return None, None, None
 
-    return parser.parse_args(argv)
+    return list(parser.parse_args(argv)) + [parser.config_file_sections]
 
 
 def do_create(options):
@@ -353,11 +358,29 @@ def do_create(options):
     return retval
 
 
+def get_config_names(sections):
+    config_names = []
+    for section in sections:
+        if section.startswith("remote-config "):
+            config_names.append(section.split(' ', 1)[1])
+    return config_names
+
+
+def do_list(sections):
+    names = get_config_names(sections)
+    if names:
+        gbp.log.info("Available remote config templates:")
+        for n in names:
+            print("    %s" % n)
+    else:
+        gbp.log.info("No remot config templates found.")
+    return 0
+
+
 def main(argv):
     retval = 1
 
-    options, args = parse_args(argv)
-
+    options, args, sections = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 
@@ -370,7 +393,12 @@ def main(argv):
         return 1
 
     action = args[1]
-    retval = do_create(options)
+    if action == 'create':
+        retval = do_create(options)
+    elif action == 'list':
+        retval = do_list(sections)
+    else:
+        gbp.log.error("Unknown action '%s'" % action)
     return retval
 
 

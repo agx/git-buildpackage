@@ -30,6 +30,10 @@
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--[no-]track</option></arg>
       <arg><option>--[no-]bare</option></arg>
+      <group choice="opt">
+        <arg><replaceable>create</replaceable></arg>
+        <arg><replaceable>list</replaceable></arg>
+      </group>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -47,6 +51,10 @@
     Note: By default, the remote repositories are created in the <systemitem
     class="groupname">collab-maint</systemitem> repository on <systemitem
     class="systemname">git.debian.org</systemitem>.
+    </para>
+    <para>
+      When invoked with <option>list</option> it lists the available
+      remote config templates.
     </para>
   </refsect1>
   <refsect1>
