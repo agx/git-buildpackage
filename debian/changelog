@@ -1,3 +1,9 @@
+git-buildpackage (0.8.7~bpo8+1) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports (Closes: #826344).
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 09 Dec 2016 09:47:19 +0100
+
 git-buildpackage (0.8.7) unstable; urgency=medium
 
   [ Guido Günther ]
