@@ -275,17 +275,11 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
-def main(argv):
+def do_create(options):
     retval = 0
     changelog = 'debian/changelog'
     cmd = []
 
-    options, args = parse_args(argv)
-
-    if not options:
-        return ExitCodes.parse_error
-
-    gbp.log.setup(options.color, options.verbose, options.color_scheme)
     try:
         repo = DebianGitRepository(os.path.curdir)
     except GitRepositoryError:
@@ -356,7 +350,27 @@ def main(argv):
         if str(err):
             gbp.log.err(err)
         retval = 1
+    return retval
 
+
+def main(argv):
+    retval = 1
+
+    options, args = parse_args(argv)
+
+    if not options:
+        return ExitCodes.parse_error
+
+    gbp.log.setup(options.color, options.verbose, options.color_scheme)
+
+    if len(args) == 1:
+        args.append('create')  # the default
+    elif len(args) > 2:
+        gbp.log.error("Only one action allowed")
+        return 1
+
+    action = args[1]
+    retval = do_create(options)
     return retval
 
 
