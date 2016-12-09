@@ -43,6 +43,10 @@ class TestGbpConfigCommand(unittest.TestCase):
         self.assertTrue(os.stat(self.confname))
         os.environ['GBP_CONF_FILES'] = self.confname
 
+    def tearDown(self):
+        if self.conffiles_save:
+            os.environ['GBP_CONF_FILES'] = self.conffiles_save
+
     def test_invocation_single_value(self):
         """Can invoke it for a sngle value  without error"""
         ret = gbp.scripts.config.main(['argv0', 'config.color'])
