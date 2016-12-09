@@ -9,7 +9,7 @@ test:
 	python setup.py nosetests --with-xcoverage
 
 syntax-check:
-	flake8 -j1
+	#flake8 -j1
 
 docs:
 	make -C docs
