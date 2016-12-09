@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2010, 2012, 2015 Guido Günther <agx@sigxcpu.org>
+# (C) 2010,2012,2015,2016 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -251,15 +251,12 @@ def build_parser(name, sections=[]):
     return parser
 
 
-def parse_args(argv, sections=[]):
+def parse_args(argv):
     """
     Parse the command line arguments and config files.
 
     @param argv: the command line arguments
     @type argv: C{list} of C{str}
-    @param sections: additional sections to add to the config file parser
-        besides the command name
-    @type sections: C{list} of C{str}
     """
 
     # We simpley handle the template section as an additional config file
