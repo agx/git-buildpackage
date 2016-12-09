@@ -40,7 +40,7 @@ class TestGbpConfigCommand(unittest.TestCase):
     def setUp(self):
         self.conffiles_save = os.environ.get('GBP_CONF_FILES')
         self.confname = 'tests/data/gbp_config.conf'
-        self.assertTrue(os.stat(self.confname))
+        self.assertTrue(os.path.exists(self.confname))
         os.environ['GBP_CONF_FILES'] = self.confname
 
     def tearDown(self):
