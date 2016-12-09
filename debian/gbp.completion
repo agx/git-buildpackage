@@ -21,6 +21,14 @@ _gbp_tags ()
 }
 
 
+_gbp_remote_configs ()
+{
+    GBP_DISABLE_GBP_CONF_DEPRECTATION=true \
+    GBP_DISABLE_SECTION_DEPRECTATION=true \
+        gbp create-remote-repo list | sed -ne 's/^ \+\([a-z]\+\)/\1/p'
+}
+
+
 _gbp_options ()
 {
     GBP_DISABLE_GBP_CONF_DEPRECTATION=true \
@@ -44,6 +52,7 @@ _gbp_comp ()
     local tag_opts=${3:-"--debian-tag\= --upstream-tag\="}
     local tristate_opts=${4:-"--color\="}
     local cbdist_opts=${5:-"--git-dist\="}
+    local remote_config_opts="--remote-config\="
 
 # COMPREPLY considers '=' as a word. For $prev we prefer the word before the actual "="
     if [[ "$prev" == "=" ]]; then
@@ -73,6 +82,12 @@ _gbp_comp ()
         local BASE="/var/cache/pbuilder/base-"
         COMPREPLY=( $( compgen -o dirnames -G "${BASE}${cur}*.cow" \
                        | sed -e "s,${BASE}\(.*\)\.cow,\1,g" ) )
+        return 0
+    fi
+
+    if [[ "${remote_config_opts}" == *$prev* ]]; then
+        local remote_configs=$(_gbp_remote_configs)
+        COMPREPLY=( $(compgen -W "$remote_configs" -- $cur ) )
         return 0
     fi
 
@@ -118,6 +133,14 @@ _gbp-pq ()
 {
     local options=$(_gbp_options pq)
     options="$options export import rebase drop apply switch"
+    _gbp_comp "$options"
+}
+
+
+_gbp-create-remote-repo ()
+{
+    local options=$(_gbp_options create-remote-repo)
+    options="$options list"
     _gbp_comp "$options"
 }
 
