@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: git-pbuilder,v 1.42 2016/08/13 21:21:07 eagle Exp $
+# $Id: git-pbuilder,v 1.43 2016/12/10 18:54:05 eagle Exp $
 #
 # Wrapper around pbuilder for gbp buildpackage
 #
