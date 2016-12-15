@@ -66,7 +66,7 @@ setup(name="gbp",
       classifiers=[
           'Environment :: Console',
           'Programming Language :: Python :: 2',
-          'Topic :: Software Development :: Version Control :: Git',
+          'Topic :: Software Development :: Version Control',
           'Operating System :: POSIX :: Linux',
       ],
       scripts=['bin/git-pbuilder',
