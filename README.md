@@ -1,11 +1,11 @@
 Git-buildpackage
 ----------------
-This is a bunch of scripts to ease the development of Debian packages with git.
-For more documentation on how to use these tools, see the manual online at:
+Tools to ease the development of Debian and (partially) RPM packages in git
+repositories.  For documentation see the manual online at:
 
   http://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.html
 
-On Debian systems, this can be found in
+On Debian systems, the documentation can be found in
 /usr/share/doc/git-buildpackage/manual-html.
 
 The API documentation of the gbp module can be found at:
