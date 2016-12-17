@@ -72,7 +72,7 @@ setup(name="gbp",
       scripts=['bin/git-pbuilder',
                'bin/gbp-builder-mock'],
       packages=find_packages(exclude=['tests', 'tests.*']),
-      data_files=[("/etc/git-buildpackage/", ["gbp.conf"]), ],
+      data_files=[("share/git-buildpackage/", ["gbp.conf"]), ],
       requires=["six"],
       setup_requires=setup_requires(),
       entry_points={

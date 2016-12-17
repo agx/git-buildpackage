@@ -29,4 +29,4 @@ usr/lib/python2.?/dist-packages/gbp/scripts/supercommand.py
 usr/lib/python2.?/dist-packages/gbp/tmpfile.py
 usr/lib/python2.?/dist-packages/gbp/tristate.py
 usr/lib/python2.?/dist-packages/gbp/version.py
-etc/git-buildpackage/gbp.conf
+usr/share/git-buildpackage/gbp.conf etc/git-buildpackage/gbp.conf

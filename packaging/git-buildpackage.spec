@@ -161,6 +161,8 @@ rm -rf %{buildroot}
 WITHOUT_NOSETESTS=1 %{__python} ./setup.py install --root=%{buildroot} --prefix=/usr
 mkdir -p %{buildroot}/usr/share/%{name}
 mv %{buildroot}/usr/bin/gbp-builder-mock %{buildroot}/usr/share/%{name}/
+mkdir -p %{buildroot}/%{_sysconfdir}/git-buildpackage/
+mv %{buildroot}/usr/share/%{name}/gbp.conf %{buildroot}/%{_sysconfdir}/git-buildpackage/
 
 %if %{with docs}
 # Install man pages
