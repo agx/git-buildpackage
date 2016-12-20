@@ -53,11 +53,13 @@ _gbp_comp ()
     local tristate_opts=${4:-"--color\="}
     local cbdist_opts=${5:-"--git-dist\="}
     local remote_config_opts="--remote-config\="
+    local start_opt=""
 
 # COMPREPLY considers '=' as a word. For $prev we prefer the word before the actual "="
     if [[ "$prev" == "=" ]]; then
         prev="${COMP_WORDS[COMP_CWORD - 2]}"
     elif [[ "$cur" == "=" ]]; then
+        start_opt=1
         cur=""
     fi
 
@@ -96,7 +98,11 @@ _gbp_comp ()
     tab_opts=$(echo "$options" | sed -e 's/ \+/\t/g' -e 's/[^=]$/& /g')
     type compopt &>/dev/null && compopt -o nospace
     local IFS=$'\t\n'
-    COMPREPLY=($(compgen -W "$tab_opts" -- $cur))
+    if [ -n "$start_opt" ]; then
+        COMPREPLY=""  # we don't have any good suggestions
+    else
+        COMPREPLY=($(compgen -W "$tab_opts" -- $cur))
+    fi
 }
 
 # check if we can find a gbp command on the commandline
