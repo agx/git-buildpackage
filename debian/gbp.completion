@@ -53,6 +53,9 @@ _gbp_comp ()
     local tristate_opts=${4:-"--color\="}
     local cbdist_opts=${5:-"--git-dist\="}
     local remote_config_opts="--remote-config\="
+    local file_opts="--postimport\= --git-builder\= --git-cleaner\= \
+                     --git-export-dir\= --git-postbuild\= --git-postexport\= \
+                     --git-posttag\= --git-prebuild\= --git-tarball-dir\="
     local start_opt=""
 
 # COMPREPLY considers '=' as a word. For $prev we prefer the word before the actual "="
@@ -90,6 +93,11 @@ _gbp_comp ()
     if [[ "${remote_config_opts}" == *$prev* ]]; then
         local remote_configs=$(_gbp_remote_configs)
         COMPREPLY=( $(compgen -W "$remote_configs" -- $cur ) )
+        return 0
+    fi
+
+    if [[ "${file_opts}" == *$prev* ]]; then
+        COMPREPLY=( $(compgen -f -- $cur ) )
         return 0
     fi
 
