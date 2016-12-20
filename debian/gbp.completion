@@ -49,7 +49,7 @@ _gbp_comp ()
     local prev="${COMP_WORDS[COMP_CWORD - 1]}"
     local options=$1
     local branch_opts=${2:-"--debian-branch\= --upstream-branch\="}
-    local tag_opts=${3:-"--debian-tag\= --upstream-tag\="}
+    local tag_opts=${3:-"--debian-tag\= --upstream-tag\= --upstream-vcs-tag\="}
     local tristate_opts=${4:-"--color\="}
     local cbdist_opts=${5:-"--git-dist\="}
     local remote_config_opts="--remote-config\="
