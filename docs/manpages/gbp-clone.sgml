@@ -30,6 +30,8 @@
       <arg><option>--reference=</option><replaceable>repository</replaceable></arg>
       <arg><option>--postclone=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--[no-]hooks</option></arg>
+      <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
+      <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
       <arg choice="plain"><replaceable>repository</replaceable></arg>
       <arg><replaceable>directory</replaceable></arg>
     </cmdsynopsis>
@@ -123,6 +125,28 @@
 	    of untrusted code.
 	  </para>
 	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--repo-email=</option><option>[GIT|DEBIAN]</option></term>
+        <listitem>
+          <para>
+	    When set to <option>DEBIAN</option>
+	    use the <envar>DEBEMAIL</envar> environment variable to set the
+	    user.email &git; configuration otherwise use &git;'s
+	    defaults.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--repo-user=</option><option>[GIT|DEBIAN]</option></term>
+        <listitem>
+          <para>
+	    When set to <option>DEBIAN</option>
+	    use the <envar>DEBUSER</envar> environment variable to set the
+	    user.name &git; configuration otherwise use &git;'s
+	    defaults.
+          </para>
+        </listitem>
       </varlistentry>
     </variablelist>
     <variablelist>

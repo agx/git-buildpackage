@@ -35,6 +35,8 @@
       <arg><option>--upstream-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
       <arg><option>--native</option></arg>
+      <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
+      <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
       <arg choice="plain"><replaceable>SRPM</replaceable></arg>
       <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
@@ -222,6 +224,28 @@
           <para>
           Treat the package as native package. No separate upstream branch or
           upstream tags will be created.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--repo-user=</option><option>[GIT|DEBIAN]</option></term>
+        <listitem>
+          <para>
+	    When set to <option>DEBIAN</option>
+	    use the <envar>DEBUSER</envar> environment variable to set the
+	    user.name &git; configuration otherwise use &git;'s
+	    defaults. Only affects newly created repos.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--repo-email=</option><option>[GIT|DEBIAN]</option></term>
+        <listitem>
+          <para>
+	    When set to <option>DEBIAN</option>
+	    use the <envar>DEBEMAIL</envar> environment variable to set the
+	    user.email &git; configuration otherwise use &git;'s
+	    defaults. Only affects newly created repos.
           </para>
         </listitem>
       </varlistentry>

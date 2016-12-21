@@ -34,6 +34,8 @@
       <arg><option>--skip-debian-tag=</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
+      <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
       <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
@@ -219,6 +221,28 @@
         <listitem>
           <para>
           Create missing upstream and debian branch if missing.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--repo-user=</option><option>[GIT|DEBIAN]</option></term>
+        <listitem>
+          <para>
+	    When set to <option>DEBIAN</option>
+	    use the <envar>DEBUSER</envar> environment variable to set the
+	    user.name &git; configuration otherwise use &git;'s
+	    defaults. Only affects newly created repos.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--repo-email=</option><option>[GIT|DEBIAN]</option></term>
+        <listitem>
+          <para>
+	    When set to <option>DEBIAN</option>
+	    use the <envar>DEBEMAIL</envar> environment variable to set the
+	    user.email &git; configuration otherwise use &git;'s
+	    defaults. Only affects newly created repos.
           </para>
         </listitem>
       </varlistentry>
