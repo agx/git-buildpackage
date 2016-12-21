@@ -278,8 +278,7 @@ def main(argv):
             target = target or spec.name
             repo = RpmGitRepository.create(target)
             os.chdir(repo.path)
-
-        repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
+            repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
         if repo.bare:
             set_bare_repo_options(options)

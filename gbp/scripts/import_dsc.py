@@ -343,11 +343,10 @@ def main(argv):
             gbp.log.info("No git repository found, creating one.")
             repo = DebianGitRepository.create(target)
             os.chdir(repo.path)
+            repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
         if repo.bare:
             disable_pristine_tar(options, "Bare repository")
-
-        repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
         upstream = DebianUpstreamSource(src.tgz)
