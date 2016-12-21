@@ -96,8 +96,6 @@
           <para>Track pristine tar branch.</para>
         </listitem>
       </varlistentry>
-    </variablelist>
-    <variablelist>
       <varlistentry>
 	<term><option>--[no-]hooks</option></term>
 	<listitem>
@@ -106,8 +104,6 @@
           </para>
 	</listitem>
       </varlistentry>
-    </variablelist>
-    <variablelist>
       <varlistentry>
 	<term><option>--postclone=</option><replaceable>COMMAND</replaceable></term>
 	<listitem>
@@ -148,8 +144,6 @@
           </para>
         </listitem>
       </varlistentry>
-    </variablelist>
-    <variablelist>
       <varlistentry>
 	<term><replaceable>repository</replaceable></term>
 	<listitem>
@@ -158,8 +152,6 @@
           </para>
 	</listitem>
       </varlistentry>
-    </variablelist>
-    <variablelist>
       <varlistentry>
 	<term><replaceable>directory</replaceable></term>
 	<listitem>
