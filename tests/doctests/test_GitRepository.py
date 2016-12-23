@@ -90,6 +90,12 @@ def test_add_files():
     ...                                os.path.join(repo.path, "testfile"))
     >>> repo.is_clean()[0]
     False
+    >>> repo.is_clean('doesnotexist')[0]
+    True
+    >>> repo.is_clean(paths='testfile')[0]
+    False
+    >>> repo.is_clean(paths=['doesnotexist', 'testfile'])[0]
+    False
     >>> repo.is_clean(ignore_untracked=True)[0]
     True
     >>> repo.add_files(repo.path, force=True)

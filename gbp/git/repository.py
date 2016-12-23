@@ -791,25 +791,32 @@ class GitRepository(object):
             args += [commit, '--']
             self._git_command("reset", args)
 
-    def _status(self, porcelain, ignore_untracked):
+    def _status(self, porcelain, ignore_untracked, paths):
         args = GitArgs()
         args.add_true(ignore_untracked, '-uno')
         args.add_true(porcelain, '--porcelain')
 
+        if paths is None:
+            paths = []
+        elif isinstance(paths, six.string_types):
+            paths = [paths]
+
         out, ret = self._git_getoutput('status',
-                                       args.args,
+                                       args.args + paths,
                                        extra_env={'LC_ALL': 'C'})
         if ret:
             raise GitRepositoryError("Can't get repository status")
         return out
 
-    def is_clean(self, ignore_untracked=False):
+    def is_clean(self, ignore_untracked=False, paths=None):
         """
         Does the repository contain any uncommitted modifications?
 
         @param ignore_untracked: whether to ignore untracked files when
             checking the repository status
         @type ignore_untracked: C{bool}
+        @param paths: only check changes on paths
+        @type paths: C{list} of C{stings}
         @return: C{True} if the repository is clean, C{False} otherwise
             and Git's status message
         @rtype: C{tuple}
@@ -818,11 +825,13 @@ class GitRepository(object):
             return (True, '')
 
         out = self._status(porcelain=True,
-                           ignore_untracked=ignore_untracked)
+                           ignore_untracked=ignore_untracked,
+                           paths=paths)
         if out:
             # Get a more helpful error message.
             out = self._status(porcelain=False,
-                               ignore_untracked=ignore_untracked)
+                               ignore_untracked=ignore_untracked,
+                               paths=paths)
             return (False, "".join(out))
         else:
             return (True, '')
