@@ -1710,7 +1710,7 @@ class GitRepository(object):
         self._git_command("apply", args)
 
     def diff(self, obj1, obj2=None, paths=None, stat=False, summary=False,
-             text=False, ignore_submodules=True):
+             text=False, ignore_submodules=True, abbrev=None):
         """
         Diff two git repository objects
 
@@ -1732,6 +1732,7 @@ class GitRepository(object):
         @rtype: C{str}
         """
         options = GitArgs('-p', '--no-ext-diff')
+        config_args = GitArgs()
         if stat is True:
             options.add('--stat')
         elif stat:
@@ -1743,7 +1744,11 @@ class GitRepository(object):
         options.add_true(obj2, obj2)
         if paths:
             options.add('--', paths)
-        output, stderr, ret = self._git_inout('diff', options.args)
+        if abbrev is not None:
+            config_args.add('core.abbrev=%d' % abbrev)
+        output, stderr, ret = self._git_inout('diff',
+                                              options.args,
+                                              config_args=config_args.args)
         if ret:
             raise GitRepositoryError("Git diff failed")
         return output
