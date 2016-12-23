@@ -168,8 +168,10 @@ def commit_patches(repo, branch, patches, options, patch_dir):
     # FIXME: handle case were only the contents of the patches changed
     added, removed = compare_series(oldpatches, newpatches)
     msg = format_series_diff(added, removed, options)
-    repo.add_files(PATCH_DIR)
-    repo.commit_staged(msg=msg)
+
+    if not repo.is_clean(paths='debian/patches')[0]:
+        repo.add_files(PATCH_DIR)
+        repo.commit_staged(msg=msg)
     return added, removed
 
 

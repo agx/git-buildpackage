@@ -210,8 +210,12 @@ class TestWritePatch(testutils.DebianGitTestRepo):
 
 class TestExport(testutils.DebianGitTestRepo):
     class Options(object):
-        drop = True
+        drop = False
         patch_numbers = False
+        renumber = False
+        patch_num_format = ''
+        meta_closes = False
+        meta_closes_bugnum = ''
         pq_from = 'DEBIAN'
 
     def setUp(self):
@@ -223,11 +227,35 @@ class TestExport(testutils.DebianGitTestRepo):
         repo = self.repo
         start = repo.get_branch()
         pq_branch = os.path.join('patch-queue', start)
+        opts = TestExport.Options()
+        opts.drop = True
+
         pq.switch_pq(repo, start)
         self.assertEqual(repo.get_branch(), pq_branch)
-        export_patches(repo, pq_branch, TestExport.Options)
+        export_patches(repo, pq_branch, opts)
         self.assertEqual(repo.get_branch(), start)
         self.assertFalse(repo.has_branch(pq_branch))
+
+    def test_commit(self):
+        """Test if we commit the patch-queue branch with --commit"""
+        repo = self.repo
+        start = repo.get_branch()
+        pq_branch = os.path.join('patch-queue', start)
+        opts = TestExport.Options()
+        opts.commit = True
+        pq.switch_pq(repo, start)
+        self.assertEqual(len(repo.get_commits()), 1)
+        self.assertEqual(repo.get_branch(), pq_branch)
+        self.add_file('foo', 'foo')
+        export_patches(repo, pq_branch, opts)
+        self.assertEqual(repo.get_branch(), start)
+        self.assertTrue(repo.has_branch(pq_branch))
+        self.assertEqual(len(repo.get_commits()), 2,
+                         "Export did not create commit")
+        export_patches(repo, pq_branch, opts)
+        self.assertEqual(repo.get_branch(), start)
+        self.assertEqual(len(repo.get_commits()), 2,
+                         "Export must not create another commit")
 
 
 class TestParseGbpCommand(unittest.TestCase):
