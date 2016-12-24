@@ -126,6 +126,7 @@ def parse_args(argv):
 def find_changes(sourcename, version):
     glob_ex = "../%s_%s_*.changes" % (sourcename, version)
     gbp.log.info("Looking for changes at %s" % glob_ex)
+    # FIXME: verify version in .changes file
     return glob.glob(glob_ex)
 
 
@@ -196,7 +197,7 @@ def main(argv):
                     repo.push(dest, upstream_sha1, options.upstream_branch)
 
         if options.upload_cmd:
-            version = repo.tag_to_version(env.tag, options.debian_tag)
+            version = repo.tag_to_version(env.tag, options.debian_tag).split(':')[-1]
             changes = find_changes(source.sourcepkg, version)
             if len(changes):
                 retval = upload_changes(changes, options.upload_cmd, options.dryrun)
