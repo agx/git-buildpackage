@@ -164,7 +164,7 @@ def main(argv):
         if var:
             env.__dict__.setdefault("%s" % envvar.split("_")[1].lower(), var)
         else:
-            gbp.log.err("%s not set." % envvar, file=sys.stderr)
+            gbp.log.err("%s not set." % envvar)
             return 1
 
     dests = get_push_targets(env)
@@ -176,7 +176,7 @@ def main(argv):
         upstream_sha1 = repo.rev_parse("%s^{}" % upstream_tag)
 
     if not repo.verify_tag(env.tag):
-        gbp.log.info("Not pushing non-existent or unsigned tag '%s'." % env.tag, file=sys.stderr)
+        gbp.log.info("Not pushing non-existent or unsigned tag '%s'." % env.tag)
         return 0
 
     source = DebianSource(GitVfs(repo, env.tag))
