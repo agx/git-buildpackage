@@ -85,7 +85,7 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
             try:
                 sha = self.rev_parse(refname)
             except GitRepositoryError as err:
-                gbp.log.warning("Failed to rev-parse %s: %s" % (refname, err))
+                gbp.log.warn("Failed to rev-parse %s: %s" % (refname, err))
         elif action == 'delete':
             pass
         elif action == 'abortmerge':
@@ -633,9 +633,9 @@ def main(argv):
                 # Make sure the very last line as an error message
                 gbp.log.err("Rolled back changes after import error.")
             except Exception as e:
-                gbp.log.error("%s" % e)
-                gbp.log.error("Clean up manually and please report a bug: %s" %
-                              repo.rollback_errors)
+                gbp.log.err("%s" % e)
+                gbp.log.err("Clean up manually and please report a bug: %s" %
+                            repo.rollback_errors)
 
     if pristine_orig and linked and not options.symlink_orig:
         os.unlink(pristine_orig)

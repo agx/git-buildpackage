@@ -124,10 +124,10 @@ def main(argv):
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if not args:
-        gbp.log.error("No command given")
+        gbp.log.err("No command given")
         return 2
     elif len(args) != 2:
-        gbp.log.error("Can only take a command or command.optionname, check --help")
+        gbp.log.err("Can only take a command or command.optionname, check --help")
         return 2
     else:
         query = args[1]

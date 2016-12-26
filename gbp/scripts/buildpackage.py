@@ -620,11 +620,11 @@ def parse_args(argv, prefix):
 
     # --git-dont-purge is deprecated:
     if options.dont_purge:
-        gbp.log.warning("--git-dont-purge is depreceted, use --git-no-purge instead")
+        gbp.log.warn("--git-dont-purge is depreceted, use --git-no-purge instead")
         options.purge = False
 
     if options.components and options.pristine_tar_commit:
-        gbp.log.warning("Components specified, pristine-tar-commit not yet supported - disabling it.")
+        gbp.log.warn("Components specified, pristine-tar-commit not yet supported - disabling it.")
         options.pristine_tar_commit = False
 
     return options, args, dpkg_args

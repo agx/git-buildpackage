@@ -125,17 +125,9 @@ def err(msg):
     LOGGER.error(msg)
 
 
-def error(msg):
-    err(msg)
-
-
 def warn(msg):
     """Logs a message with level WARNING on the GBP logger"""
     LOGGER.warning(msg)
-
-
-def warning(msg):
-    warn(msg)
 
 
 def info(msg):

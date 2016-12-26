@@ -312,7 +312,7 @@ def build_parser(name):
         parser = GbpOptionParserRpm(command=os.path.basename(name),
                                     prefix='', usage='%prog [options] paths')
     except GbpError as err:
-        gbp.log.error(err)
+        gbp.log.err(err)
         return None
 
     range_grp = GbpOptionGroup(parser, "commit range options",

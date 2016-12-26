@@ -389,7 +389,7 @@ def main(argv):
     if len(args) == 1:
         args.append('create')  # the default
     elif len(args) > 2:
-        gbp.log.error("Only one action allowed")
+        gbp.log.err("Only one action allowed")
         return 1
 
     action = args[1]
@@ -398,7 +398,7 @@ def main(argv):
     elif action == 'list':
         retval = do_list(sections)
     else:
-        gbp.log.error("Unknown action '%s'" % action)
+        gbp.log.err("Unknown action '%s'" % action)
     return retval
 
 
