@@ -17,7 +17,6 @@ This testcase creates this reposity:
 import os
 from .. import context
 
-
 test_data = os.path.join(context.projectdir, "tests/test_PristineTar_data")
 dirs = {}
 
@@ -145,14 +144,17 @@ def test_pristine_tar_checkout_nonexistent():
     Methods tested:
          - L{gbp.deb.pristinetar.DebianPristineTar.checkout}
 
+    # Silence error output
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
+    >>> _gbp_log_err_bak = gbp.log.err
+    >>> gbp.log.err = lambda x: None
     >>> repo.pristine_tar.checkout('upstream', '1.1', 'gzip', '..')
     Traceback (most recent call last):
     ...
     CommandExecFailed: Pristine-tar couldn't checkout "upstream_1.1.orig.tar.gz": fatal: Path 'upstream_1.1.orig.tar.gz.delta' does not exist in 'refs/heads/pristine-tar'
     pristine-tar: git show refs/heads/pristine-tar:upstream_1.1.orig.tar.gz.delta failed
+    >>> gbp.log.err = _gbp_log_err_bak
     """
-
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
