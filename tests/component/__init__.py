@@ -25,11 +25,15 @@ import os
 import shutil
 import tempfile
 import unittest
+from unittest import skipUnless
 from nose import SkipTest
 from nose.tools import eq_, ok_     # pylint: disable=E0611
 from .. testutils import GbpLogTester
 
 from gbp.git import GitRepository, GitRepositoryError
+
+
+__all__ = ['ComponentTestGitRepository', 'ComponentTestBase', 'GbpLogTester', 'skipUnless']
 
 
 class ComponentTestGitRepository(GitRepository):

@@ -21,8 +21,9 @@ import os
 from mock import patch, DEFAULT
 
 from tests.component import (ComponentTestBase,
-                             ComponentTestGitRepository)
-from tests.component.deb import DEB_TEST_DATA_DIR
+                             ComponentTestGitRepository,
+                             skipUnless)
+from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL
 
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.import_orig import main as import_orig
@@ -43,12 +44,16 @@ def raise_if_tag_match(match):
 
 class TestImportOrig(ComponentTestBase):
     """Test importing of new upstream versions"""
-
     pkg = "hello-debhelper"
     def_branches = ['master', 'upstream', 'pristine-tar']
 
     def _orig(self, version, dir='dsc-3.0'):
         return os.path.join(DEB_TEST_DATA_DIR,
+                            dir,
+                            '%s_%s.orig.tar.gz' % (self.pkg, version))
+
+    def _download_url(self, version, dir='dsc-3.0'):
+        return os.path.join(DEB_TEST_DOWNLOAD_URL,
                             dir,
                             '%s_%s.orig.tar.gz' % (self.pkg, version))
 
@@ -62,6 +67,16 @@ class TestImportOrig(ComponentTestBase):
         repo = GitRepository.create(self.pkg)
         os.chdir(self.pkg)
         orig = self._orig('2.6')
+        ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
+        self._check_repo_state(repo, 'master', self.def_branches,
+                               tags=['upstream/2.6'])
+
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_download(self):
+        """Test that importing via download works"""
+        repo = GitRepository.create(self.pkg)
+        os.chdir(self.pkg)
+        orig = self._download_url('2.6')
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', self.def_branches,
                                tags=['upstream/2.6'])

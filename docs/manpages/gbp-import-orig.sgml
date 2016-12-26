@@ -38,9 +38,9 @@
       <arg><option>--postimport=cmd</option></arg>
       <arg><option>--[no-]interactive</option></arg>
       <arg><option>--[no-]rollback</option></arg>
-      <arg><option>--download</option></arg>
       <group choice="plain">
-        <arg choice="plain"><replaceable>upstream-source</replaceable></arg>
+        <arg choice="plain"><replaceable>filename</replaceable></arg>
+        <arg choice="plain"><replaceable>url</replaceable></arg>
         <arg><option>--uscan</option></arg>
       </group>
     </cmdsynopsis>
@@ -48,15 +48,41 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-import-orig; imports <replaceable>upstream-source</replaceable> into
-    the &git; repository. <replaceable>upstream-source</replaceable> can either
-    be a gzip, bzip2, lzma or xz compressed tar archive, a zip archive, or an
-    already unpacked source tree. If it is already of the form
-    <replaceable>package-name_version.orig.tar.gz</replaceable>, the version
-    information is read from the tarball's filename, otherwise it can be given
-    on the command line via <option>--upstream-version</option>.  If the source
-    package name or version can't be determined, &gbp-import-orig; will prompt
-    for it unless <option>--no-interactive</option> is given.
+      &gbp-import-orig; imports upstream sources into a &git;
+      repository. It can import from three sources:
+    </para>
+    <orderedlist>
+      <listitem>
+	<para>
+	  <replaceable>filename</replaceable>: A file in the local
+	  file system. Gzip, bzip2, lzma and xz compressed tar
+	  archives, zip archives and already unpacked source trees are
+	  supported.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  <replaceable>url</replaceable>: The tarball is downloaded
+	  from a <replaceable>http</replaceable>
+	  or <replaceable>https</replaceable> <replaceable>url</replaceable>.
+	  This needs the python-request package installed.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  <option>--uscan</option>: The latest upstream version is fetched
+	  via &uscan; relying on <filename>debian/watch</filename>.
+	</para>
+      </listitem>
+    </orderedlist>
+    <para>
+      If the tarballs name is already of the form
+      <replaceable>package-name_version.orig.tar.gz</replaceable>, the
+      version information is determined from the tarball's filename,
+      otherwise it can be given on the command line
+      via <option>--upstream-version</option>.  If the source package
+      name or version can't be determined, &gbp-import-orig; will
+      prompt for it unless <option>--no-interactive</option> is given.
     </para>
     <para>
       The sources are placed on the upstream branch (default:
@@ -302,16 +328,7 @@
         <term><option>--uscan</option></term>
         <listitem>
           <para>
-          Use uscan to fetch new upstream version.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--uscan</option></term>
-        <listitem>
-          <para>
-            Download the tarball from the given HTTP URL. This needs
-            python-request installed.
+          Use &uscan; to fetch new upstream version.
           </para>
         </listitem>
       </varlistentry>
@@ -343,7 +360,13 @@
       &gbp-import-orig; --uscan
     </screen>
     <para>
-    After downloading an upstream tarball by hand, import it
+      Fetch tarball from an URL
+    </para>
+    <screen>
+      &gbp-import-orig; https://debian.example.com/sid/upstream-tarball-0.1.tar.gz
+    </screen>
+    <para>
+    Import a local tarball
     </para>
     <screen>
       &gbp-import-orig; ../upstream-tarball-0.1.tar.gz
@@ -360,6 +383,10 @@
       <xref linkend="man.gbp.import.dscs"/>,
       <xref linkend="man.gbp.dch"/>,
       <xref linkend="man.gbp.conf"/>,
+      <citerefentry>
+        <refentrytitle>uscan</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
       &man.seealso.common;
     </para>
   </refsect1>

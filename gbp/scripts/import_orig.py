@@ -18,6 +18,7 @@
 """Import a new upstream version into a Git repository"""
 
 import os
+import re
 import sys
 import tempfile
 import gbp.command_wrappers as gbpc
@@ -461,22 +462,13 @@ def build_parser(name):
     parser.add_option("--uscan", dest='uscan', action="store_true",
                       default=False, help="use uscan(1) to download the new tarball.")
     parser.add_option("--download", dest='download', action="store_true",
-                      default=False, help="Download from URL via http(s).")
+                      default=False, help="Ignored. Accepted for compatibility.")
     return parser
 
 
 def parse_args(argv):
     """Parse the command line arguments
     @return: options and arguments
-
-    # Silence error output
-    >>> _gbp_log_error_bak = gbp.log.error
-    >>> gbp.log.error = lambda x: None
-    >>> parse_args(['arg0', '--download', '--uscan'])
-    (None, None)
-    >>> parse_args(['arg0', '--download', 'first', 'second'])
-    (None, None)
-    >>> gbp.log.error = _gbp_log_error_bak
     """
 
     parser = build_parser(argv[0])
@@ -489,15 +481,25 @@ def parse_args(argv):
     if options.no_dch:
         gbp.log.warn("'--no-dch' passed. This is now the default, please remove this option.")
 
-    if options.uscan and options.download:
-        gbp.log.error("Either uscan or --download can be used, not both.")
-        return None, None
+    if options.download:
+        gbp.log.warn("Passing --download explicitly is deprecated.")
 
-    if options.download and len(args) != 1:
-        gbp.log.error("Need exactly one URL to download not %s" % args)
-        return None, None
-
+    options.download = is_download(args)
     return options, args
+
+
+def is_download(args):
+    """
+    >>> is_download(["http://foo.example.com"])
+    True
+    >>> is_download([])
+    False
+    >>> is_download(["foo-1.1.orig.tar.gz"])
+    False
+    """
+    if args and re.match("https?://", args[0]):
+        return True
+    return False
 
 
 def main(argv):
