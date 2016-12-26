@@ -59,7 +59,10 @@ def download_source(pkg, dirs, unauth):
     gbp.log.info("Downloading '%s' using '%s'..." % (pkg, cmd))
 
     gbpc.RunAtCommand(cmd, opts, shell=False)(dir=dirs['download'])
-    dsc = glob.glob(os.path.join(dirs['download'], '*.dsc'))[0]
+    try:
+        dsc = glob.glob(os.path.join(dirs['download'], '*.dsc'))[0]
+    except IndexError:
+        raise GbpError("Did not find a dsc file at %s/" % dirs['download'])
     return dsc
 
 

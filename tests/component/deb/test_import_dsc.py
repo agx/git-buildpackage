@@ -71,6 +71,19 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 1
 
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_broken_download(self):
+        def _not_a_dsc(version):
+            return os.path.join(DEB_TEST_DOWNLOAD_URL,
+                                'dsc-3.0',
+                                'hello-debhelper_%s.orig.tar.gz' % version)
+
+        f = _not_a_dsc('2.6')
+        assert import_dsc(['arg0',
+                           '--allow-unauthenticated',
+                           f]) == 1
+        self._check_log(-1, "gbp:error: Did not find a dsc file at")
+
     def test_create_branches(self):
         """Test if creating missing branches works"""
         def _dsc(version):
