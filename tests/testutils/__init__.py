@@ -15,10 +15,11 @@ from gbp.deb.changelog import ChangeLog
 
 from . gbplogtester import GbpLogTester
 from . debiangittestrepo import DebianGitTestRepo
-from . capture import capture_stderr
+from . capture import capture_stdout, capture_stderr
 
 __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
-           'MockedChangeLog', 'get_dch_default_urgency', 'capture_stderr',
+           'MockedChangeLog', 'get_dch_default_urgency',
+           'capture_stderr', 'capture_stdout',
            'ls_dir', 'ls_tar', 'ls_zip']
 
 
