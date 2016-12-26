@@ -25,7 +25,6 @@
       <arg><option>--author-is-committer</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--download</option></arg>
       <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--[no-]create-missing-branches</option></arg>
@@ -42,11 +41,9 @@
     <cmdsynopsis>
       &gbp-import-dsc;
       <arg><option>options</option></arg>
-      <arg choice="req"><option>--download</option></arg>
       <arg><option>--[no-]allow-unauthenticated</option></arg>
       <group choice="plain">
         <arg><replaceable>URL</replaceable></arg>
-        <arg><replaceable>source-package</replaceable></arg>
       </group>
       <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
@@ -54,16 +51,25 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-import-dsc; imports a &debian; source package into a &git; repository,
-    notes the package version in the commit logs, and commits the change. All
-    information, including package name, version, &debian;  diffs, and upstream
-    source, is automatically detected from the source package.
+      &gbp-import-dsc; imports a &debian; source package into a &git; repository,
+      notes the package version in the commit logs, and commits the change. All
+      information, including package name, version, &debian; modifications and upstream
+      source, is automatically detected from the source package. After
+      import the repository can be used with the other &gbp; tools.
     </para>
     <para>
-    If the command is run from within an existing repository, it will import
-    into this; if not, a new repository named as the Debian source package is
+    If the command is run from within an existing &git; repository, it will import
+    into it; if not, a new repository named as the Debian source package is
     created. You can override the location of the new repository by specifying
     the optional <replaceable>target</replaceable> argument.
+    </para>
+    <para>
+      When given a <replaceable>URL</replaceable> &gbp-import-dsc;
+      will download the source package prior to importing it. &dget;
+      is used for all schemes except for the special
+      scheme <replaceable>apt://</replaceable> which uses &apt-get;
+      (and therefore needs <replaceable>deb-src</replaceable>
+      entries in your <filename>/etc/apt/sources.list</filename>).
     </para>
   </refsect1>
   <refsect1>
@@ -159,24 +165,13 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--download</option>
-        </term>
-        <listitem>
-          <para>
-          Download the source package instead of looking for it in the local
-          file system. The argument can either be a
-          <replaceable>source-package</replaceable> name or a
-          <replaceable>URL</replaceable>. The former uses &apt-get; to download
-          the source while the later uses &dget;.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>--allow-unauthenticated</option>
         </term>
         <listitem>
           <para>
-          Whether to skip signature verification on downloads.
+            Whether to skip signature verification on
+            downloads. Passed on verbatim to &dget; and &apt-get;
+            respectively. Use with care.
           </para>
         </listitem>
       </varlistentry>
@@ -257,14 +252,20 @@
       Download and import a source package from a URL:
     </para>
     <screen>
-      &gbp-import-dsc; --download http://http.debian.net/debian/pool/main/h/hello/hello_2.10-1.dsc
+      &gbp-import-dsc; http://http.debian.net/debian/pool/main/h/hello/hello_2.10-1.dsc
     </screen>
     <para>
       Download and import a source package via <command>apt-get
       source</command> from unstable:
     </para>
     <screen>
-      &gbp-import-dsc; --download hello/sid
+      &gbp-import-dsc; apt://hello/sid
+    </screen>
+    <para>
+      Import a source package in the local file system:
+    </para>
+    <screen>
+      &gbp-import-dsc; ../hello_2.10-1.dsc
     </screen>
   </refsect1>
   <refsect1>
@@ -278,6 +279,10 @@
       <citerefentry>
         <refentrytitle>apt-get</refentrytitle>
         <manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>sources.list</refentrytitle>
+        <manvolnum>5</manvolnum>
       </citerefentry>,
       <citerefentry>
         <refentrytitle>dget</refentrytitle>

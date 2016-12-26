@@ -236,8 +236,6 @@ def build_parser(name):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
-    parser.add_option("--download", action="store_true", dest="download", default=False,
-                      help="download source package")
     branch_group.add_config_file_option(option_name="debian-branch",
                                         dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
@@ -275,6 +273,8 @@ def build_parser(name):
                                   choices=['DEBIAN', 'GIT'])
     parser.add_config_file_option(option_name="repo-email", dest="repo_email",
                                   choices=['DEBIAN', 'GIT'])
+    parser.add_option("--download", dest='download', action="store_true",
+                      default=False, help="Ignored. Accepted for compatibility.")
     return parser
 
 
@@ -285,7 +285,50 @@ def parse_args(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
+
+    if options.download:
+        gbp.log.warn("Passing --download explicitly is deprecated.")
+
     return options, args
+
+
+def is_download(pkg):
+    """
+    >>> is_download("http://foo.example.com/apackage.dsc")
+    (True, 'http://foo.example.com/apackage.dsc')
+    >>> is_download("apt://apackage/sid")
+    (True, 'apackage/sid')
+    >>> is_download("apt_1.0_amd64.dsc")
+    (False, 'apt_1.0_amd64.dsc')
+    >>> is_download("file:///foo/apackage.dsc")
+    (False, '/foo/apackage.dsc')
+    """
+    if pkg.startswith('file://'):
+        return (False, pkg[len('file://'):])
+    if pkg.startswith('apt://'):
+        return (True, pkg[len('apt://'):])
+    elif re.match("[a-z]{1,5}://", pkg):
+        return (True, pkg)
+    return (False, pkg)
+
+
+def parse_all(argv):
+    options, args = parse_args(argv)
+    if not options:
+        return None, None, None
+
+    if len(args) == 1:
+        pkg = args[0]
+        target = None
+    elif len(args) == 2:
+        pkg = args[0]
+        target = args[1]
+    else:
+        gbp.log.err("Need to give exactly one package to import. Try --help.")
+        return None, None, None
+
+    (options.download, pkg) = is_download(pkg) or options.download
+    return options, pkg, target
 
 
 def main(argv):
@@ -294,20 +337,11 @@ def main(argv):
     ret = 0
     skipped = False
 
-    options, args = parse_args(argv)
+    options, pkg, target = parse_all(argv)
     if not options:
         return ExitCodes.parse_error
 
     try:
-        if len(args) == 1:
-            pkg = args[0]
-            target = None
-        elif len(args) == 2:
-            pkg = args[0]
-            target = args[1]
-        else:
-            gbp.log.err("Need to give exactly one package to import. Try --help.")
-            raise GbpError
         try:
             repo = DebianGitRepository('.')
             is_empty = repo.is_empty()

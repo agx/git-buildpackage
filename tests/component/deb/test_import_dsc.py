@@ -19,8 +19,9 @@
 import os
 
 from tests.component import (ComponentTestBase,
-                             ComponentTestGitRepository)
-from tests.component.deb import DEB_TEST_DATA_DIR
+                             ComponentTestGitRepository,
+                             skipUnless)
+from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL
 
 from nose.tools import ok_, eq_
 
@@ -55,6 +56,20 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 3
+
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_download(self):
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DOWNLOAD_URL,
+                                'dsc-native',
+                                'git-buildpackage_%s.dsc' % version)
+        dsc = _dsc('0.4.14')
+        assert import_dsc(['arg0',
+                           '--allow-unauthenticated',
+                           dsc]) == 0
+        repo = ComponentTestGitRepository('git-buildpackage')
+        self._check_repo_state(repo, 'master', ['master'])
+        assert len(repo.get_commits()) == 1
 
     def test_create_branches(self):
         """Test if creating missing branches works"""
