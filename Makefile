@@ -1,5 +1,8 @@
 all: syntax-check test
 
+all+net:
+	$(MAKE) GBP_NETWORK_TESTS=1 all
+
 test:
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\

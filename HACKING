@@ -12,6 +12,11 @@ via:
 This will fetch the necessary binary data for the DEB and RPM component tests,
 and the tests are from now on included within each regular test run.
 
+Some tests reach out to the network. To run these in addition to all
+other tests use:
+
+    make all+net
+
 
 Building the API Docs
 ---------------------
