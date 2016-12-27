@@ -31,7 +31,10 @@ Build-Depends:
  pristine-tar,
  rpm,
  unzip,
- zipmerge
+ zipmerge,
+# For the network tests
+ curl,
+ python-requests,
 Standards-Version: 3.9.8
 Vcs-Git: https://git.sigxcpu.org/cgit/git-buildpackage/
 Vcs-Browser: https://git.sigxcpu.org/cgit/git-buildpackage/
