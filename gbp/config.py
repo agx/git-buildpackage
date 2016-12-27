@@ -386,15 +386,16 @@ class GbpOptionParser(OptionParser):
         @return: list of config files we need to parse
         @rtype: C{list}
 
+        >>> import re
         >>> conf_backup = os.getenv('GBP_CONF_FILES')
         >>> if conf_backup is not None: del os.environ['GBP_CONF_FILES']
         >>> homedir = os.path.expanduser("~")
         >>> files = GbpOptionParser.get_config_files()
-        >>> files_mangled = [file.replace(homedir, 'HOME') for file in files]
+        >>> files_mangled = [re.sub("^%s" % homedir, 'HOME', file) for file in files]
         >>> sorted(files_mangled)
         ['%(git_dir)s/gbp.conf', '%(top_dir)s/.gbp.conf', '%(top_dir)s/debian/gbp.conf', '/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf']
         >>> files = GbpOptionParser.get_config_files(no_local=True)
-        >>> files_mangled = [file.replace(homedir, 'HOME') for file in files]
+        >>> files_mangled = [re.sub("^%s" % homedir, 'HOME', file) for file in files]
         >>> sorted(files_mangled)
         ['/etc/git-buildpackage/gbp.conf', 'HOME/.gbp.conf']
         >>> os.environ['GBP_CONF_FILES'] = 'test1:test2'
