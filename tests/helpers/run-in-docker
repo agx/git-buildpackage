@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -eu
+
+echo $(pwd)
+cat >Dockerfile <<EOF
+FROM debian:sid
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo "deb http://ftp.de.debian.org/debian sid main" > /etc/apt/sources.list
+RUN apt-get update && apt-get dist-upgrade --yes
+RUN apt-get install -y --no-install-recommends build-essential adduser
+RUN adduser gbp --disabled-password --gecos='gbp test user' --shell=/bin/bash --home /git-buildpackage
+
+WORKDIR /git-buildpackage
+COPY . .
+RUN chown -R gbp: .
+
+RUN apt-get -y build-dep .
+# Run as non root so permision tests pass
+CMD su -c "make all+net" gbp
+EOF
+
+CIDFILE="$(mktemp --dry-run)"
+TAG="git-buildpackage/sid"
+echo "Building Docker image ${TAG}"
+docker build . --tag=${TAG}
+docker run --cidfile=${CIDFILE} ${TAG}
+
+docker rm "$(cat ${CIDFILE})" >/dev/null
+rm -f "${CIDFILE}"
+
