@@ -308,7 +308,7 @@ def is_download(pkg):
     """
     if pkg.startswith('file://'):
         return (False, pkg[len('file://'):])
-    if pkg.startswith('apt://'):
+    elif pkg.startswith('apt://'):
         return (True, pkg[len('apt://'):])
     elif re.match("[a-z]{1,5}://", pkg):
         return (True, pkg)
@@ -330,7 +330,9 @@ def parse_all(argv):
         gbp.log.err("Need to give exactly one package to import. Try --help.")
         return None, None, None
 
-    (options.download, pkg) = is_download(pkg) or options.download
+    download, pkg = is_download(pkg)
+    # honor options.download until removed
+    options.download = download or options.download
     return options, pkg, target
 
 
