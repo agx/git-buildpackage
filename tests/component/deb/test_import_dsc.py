@@ -101,6 +101,9 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         os.chdir('hello-debhelper')
         assert len(repo.get_commits()) == 2
+        reflog, ret = repo._git_getoutput('reflog')
+        ok_("gbp: Import Debian patch" in reflog[1])
+        ok_("gbp: Import Upstream version 2.6" in reflog[2])
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         dsc = _dsc('2.8-1')
         assert import_dsc(['arg0',
