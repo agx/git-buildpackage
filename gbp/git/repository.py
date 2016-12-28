@@ -534,12 +534,11 @@ class GitRepository(object):
         @param msg: the reason for the update
         @type msg: C{str}
         """
-        args = [ref, new]
-        if old:
-            args += [old]
-        if msg:
-            args = ['-m', msg] + args
-        self._git_command("update-ref", args)
+        args = GitArgs()
+        args.add_true(msg, '-m', msg)
+        args.add(ref, new)
+        args.add_true(old, old)
+        self._git_command("update-ref", args.args)
 
     def branch_contains(self, branch, commit, remote=False):
         """
