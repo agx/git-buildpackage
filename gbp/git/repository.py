@@ -1242,7 +1242,7 @@ class GitRepository(object):
         self._git_command("pull", args.args)
 
     def push(self, repo=None, src=None, dst=None, ff_only=True, force=False,
-             tags=False):
+             tags=False, dry_run=False):
         """
         Push changes to the remote repo
 
@@ -1259,11 +1259,14 @@ class GitRepository(object):
         @type force: C{bool}
         @param tags: push all refs under refs/tags, in addition to other refs
         @type tags: C{bool}
+        @param dry_run: dry run
+        @type dry_run: C{bool}
         """
         args = GitArgs()
         args.add_cond(repo, repo)
         args.add_true(force, "-f")
         args.add_true(tags, "--tags")
+        args.add_true(dry_run, "--dry-run")
 
         # Allow for src == '' to delete dst on the remote
         if src is not None:
@@ -1276,7 +1279,7 @@ class GitRepository(object):
 
         self._git_command("push", args.args)
 
-    def push_tag(self, repo, tag):
+    def push_tag(self, repo, tag, dry_run=False):
         """
         Push a tag to the remote repo
 
@@ -1284,8 +1287,11 @@ class GitRepository(object):
         @type repo: C{str}
         @param tag: the name of the tag
         @type tag: C{str}
+        @param dry_run: dry run
+        @type dry_run: C{bool}
         """
         args = GitArgs(repo, 'tag', tag)
+        args.add_true(dry_run, "--dry-run")
         self._git_command("push", args.args)
 
 #{ Files
