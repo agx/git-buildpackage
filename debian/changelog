@@ -1,3 +1,54 @@
+git-buildpackage (0.8.9) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [b6a94b6] git-pbuilder: Run actions under "set -x"
+    cowbuilder is currently very terse about certain errors so run the
+    action under "set -x" to print the exact command invocation.
+    This will also help to diagnose sudo issues.
+  * [ef1d8e7] create-remote-repo: allow to list config sections via
+      gbp create-remote-repo list
+  * [be44031] gbp create-remote-repo: autocomplete --remote-config= too
+  * [1291b17] Update to git-builder 1.43. Thanks Russ Allberry!
+  * [0e3deeb] setup.py: use a valid classifier
+    from https://pypi.python.org/pypi?%3Aaction=list_classifiers
+  * [9cbb9df] Use relative patch to install gbp.conf to make
+    pip install --user work
+  * [6f5070d] bash completion: don't complete options values with options.  So
+    far hitting <tab> on --bar= would have all other options as suggestions
+    which is confusing.
+  * [a21e394] bash completion: complete tags on --upstream-vcs-tag= too
+  * [fe39b8e] bash completion: complete filenames on hooks, cleaners and builders
+  * [f7a61fa] Only set username and email when creating repos.  Don't modify
+    existing ones.
+  * [cb8169d] gbp {clone, import_dsc, import_srpm}: Document new
+    --repo-{user,email} options
+  * [7b297b7] GitRepository: allow to check cleanliness of arbitrary paths
+  * [e31f15b] gbp pq: Don't fail --commit on empty commits. So far we would fail
+    empty commits with a confusing error
+  * [bad1f23] import-orig: Handle download errors properly.
+  * [d90e6be] import-orig: determine download automatically making --download
+    superfluous and deprecated.
+  * [58271d6] import-dsc: determine download automatically making --download
+    superfluous and deprecated.
+  * [8038a6f] import-dsc: Improve error message if there is no dsc file
+    instead of spewing the exception on the console.
+  * [9ecb5a4] Add helper to run tests in docker container
+    and use this on travisci. Some ideas taken form travis.debian.net.
+  * [3b1b9bc] GitRepository: use GitArgs for update_ref
+  * [1ac2724] GitRepository.commit_dir: add a proper reflog entry
+    otherwise 'gbp import-dsc' adds reflog entries without a description.
+  * [7ae2778] GitRepository: allow for dry-run push
+  * Various enhancements to the test-suite including tests that reach out to
+    the network to test these import options
+  * Various enhancements to the gbp-posttag-push example hook like trying the
+    git push with --dry-run before the upload.
+
+  [ Michael Stapelberg ]
+  * [67cf3ed] gbp clone: configure user.email, user.name from DEBEMAIL/DEBFULLNAME.
+    Close: #845536
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 31 Dec 2016 17:13:03 +0100
+
 git-buildpackage (0.8.8) unstable; urgency=medium
 
   [ Chris Lamb ]
