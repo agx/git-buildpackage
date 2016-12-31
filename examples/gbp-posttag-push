@@ -143,6 +143,22 @@ def upload_changes(changes, cmd, dryrun):
     return ret
 
 
+def do_push(repo, dests, debian_tag, debian_sha1, upstream_tag, upstream_sha1, upstream_branch, dry_run):
+    verb = "Dry-run: Pushing" if dry_run else "Pushing"
+    for dest in dests:
+        gbp.log.info("%s %s to %s" % (verb, debian_tag, dest))
+        repo.push_tag(dest, debian_tag, dry_run)
+        gbp.log.info("%s %s to %s:%s" % (verb, debian_sha1, dest, dests[dest]))
+        repo.push(dest, debian_sha1, dests[dest])
+        if upstream_tag:
+            gbp.log.info("%s %s to %s" % (verb, upstream_tag, dest))
+            repo.push_tag(dest, upstream_tag, dry_run)
+            if not repo.branch_contains("%s/%s" % (dest, upstream_branch),
+                                        upstream_sha1, remote=True):
+                gbp.log.info("%s %s to %s:%s" % (verb, upstream_sha1, dest, upstream_branch))
+                repo.push(dest, upstream_sha1, upstream_branch, dry_run)
+
+
 def main(argv):
     retval = 0
     env = Env()
@@ -183,20 +199,15 @@ def main(argv):
     source = DebianSource(GitVfs(repo, env.tag))
 
     try:
-        for dest in dests:
-            gbp.log.info("Pushing %s to %s" % (env.tag, dest))
-            repo.push_tag(dest, env.tag)
-            gbp.log.info("Pushing %s to %s %s" % (env.sha1, dest, dests[dest]))
-            repo.push(dest, env.sha1, dests[dest])
-            if options.push_upstream and upstream_tag:
-                gbp.log.info("Pushing %s to %s" % (upstream_tag, dest))
-                repo.push_tag(dest, upstream_tag)
-                if not repo.branch_contains("%s/%s" % (dest, options.upstream_branch),
-                                            upstream_sha1, remote=True):
-                    gbp.log.info("Pushing %s to %s %s" % (upstream_sha1, dest, options.upstream_branch))
-                    repo.push(dest, upstream_sha1, options.upstream_branch)
-
         if options.upload_cmd:
+            do_push(repo,
+                    dests,
+                    env.tag,
+                    env.sha1,
+                    upstream_tag if options.push_upstream and upstream_tag else None,
+                    upstream_sha1,
+                    options.upstream_branch,
+                    dry_run=True)
             version = repo.tag_to_version(env.tag, options.debian_tag).split(':')[-1]
             changes = find_changes(source.sourcepkg, version)
             if len(changes):
@@ -205,6 +216,15 @@ def main(argv):
                 gbp.log.info("No changes file found, nothing to upload.")
         else:
             gbp.log.info("No upload command defined, not uploading to the archive")
+
+        do_push(repo,
+                dests,
+                env.tag,
+                env.sha1,
+                upstream_tag if options.push_upstream and upstream_tag else None,
+                upstream_sha1,
+                options.upstream_branch,
+                dry_run=False)
     except (GbpError, GitRepositoryError) as err:
         if str(err):
             gbp.log.err(err)
