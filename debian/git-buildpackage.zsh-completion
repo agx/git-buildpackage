@@ -170,7 +170,6 @@ _gbp-import-dsc() {
 	__gbp_tag_sign_options
 	_arguments \
 		'--filter=-[Filter out files]' \
-		'--download=-[Download the source package]' \
 		'--allow-unauthenticated[Skip signature verification on downloads]' \
 		'--allow-same-version[Import a package with the same debian version]' \
 		'--author-is-committer[Use the author identity as committer identity]' \
@@ -415,7 +414,6 @@ _gbp-import-dsc() {
 	__gbp_tag_sign_options
 	_arguments \
 		'--filter=-[Filter out files]' \
-		'--download=-[Download the source package]' \
 		'--allow-unauthenticated[Skip signature verification on downloads]' \
 		'--allow-same-version[Import a package with the same debian version]' \
 		'--author-is-committer[Use the author identity as committer identity]' \
