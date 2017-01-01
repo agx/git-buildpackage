@@ -284,7 +284,7 @@ class TestDownloadImport(ComponentTestBase):
         import_srpm.urlopen = Mock()
         import_srpm.urlopen.return_value = open(local_fn, 'r')
 
-        eq_(mock_import(['--no-pristine-tar', '--download', srpm]), 0)
+        eq_(mock_import(['--no-pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
@@ -297,15 +297,15 @@ class TestDownloadImport(ComponentTestBase):
         import_srpm.urlopen.side_effect = urllib.error.HTTPError(srpm, 404, "Not found",
                                                                  None, None)
 
-        eq_(mock_import(['--download', srpm]), 1)
+        eq_(mock_import([srpm]), 1)
         self._check_log(-1, "gbp:error: Download failed: HTTP Error 404")
         self._clear_log()
 
     def test_invalid_url(self):
         """Test graceful failure when trying download from invalid url"""
         srpm = 'foob://url.does.not.exist.com/foo.src.rpm'
-        eq_(mock_import(['--download', srpm]), 1)
-        self._check_log(-1, "gbp:error: Download failed: unknown url type:")
+        eq_(mock_import([srpm]), 1)
+        self._check_log(-1, ".*No such file or directory: 'foob://url.does.not.exist.com/foo.src.rpm")
         self._clear_log()
 
 

@@ -18,7 +18,6 @@
 """Import a new upstream version into a Git repository"""
 
 import os
-import re
 import sys
 import tempfile
 import gbp.command_wrappers as gbpc
@@ -32,7 +31,7 @@ from gbp.errors import GbpError
 from gbp.pkg import parse_archive_filename
 from gbp.format import format_str
 import gbp.log
-from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import ExitCodes, is_download
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
                                             repack_source, is_link_target, download_orig)
@@ -486,20 +485,6 @@ def parse_args(argv):
 
     options.download = is_download(args)
     return options, args
-
-
-def is_download(args):
-    """
-    >>> is_download(["http://foo.example.com"])
-    True
-    >>> is_download([])
-    False
-    >>> is_download(["foo-1.1.orig.tar.gz"])
-    False
-    """
-    if args and re.match("https?://", args[0]):
-        return True
-    return False
 
 
 def main(argv):

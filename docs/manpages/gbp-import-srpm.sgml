@@ -25,7 +25,6 @@
       <arg><option>--author-is-committer</option></arg>
       <arg><option>--packaging-branch=</option><replaceable>BRANCH-NAME</replaceable></arg>
       <arg><option>--packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
-      <arg><option>--download</option></arg>
       <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--filter=</option><replaceable>PATTERN</replaceable></arg>
       <arg><option>--keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
@@ -37,17 +36,17 @@
       <arg><option>--native</option></arg>
       <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
       <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
-      <arg choice="plain"><replaceable>SRPM</replaceable></arg>
+      <group choice="plain">
+        <arg><replaceable>SRPM</replaceable></arg>
+        <arg><replaceable>DIRECTORY</replaceable></arg>
+      </group>
       <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
     <cmdsynopsis>
       &gbp-import-srpm;
       <arg><option>options</option></arg>
-      <arg choice="req"><option>--download</option></arg>
       <group choice="plain">
         <arg><replaceable>URL</replaceable></arg>
-        <arg><replaceable>SRC.RPM</replaceable></arg>
-        <arg><replaceable>DIRECTORY</replaceable></arg>
       </group>
       <arg choice="opt"><replaceable>target</replaceable></arg>
     </cmdsynopsis>
@@ -61,7 +60,8 @@
     automatically detected from the source package but you can override the
     location of the new repository by optionally specifying the
     <replaceable>target</replaceable> argument. The tool supports importing
-    both archived (src.rpm files) or unpacked (directory) source RPMs.
+    both archived (src.rpm files) or unpacked (directory) source RPMs. It also imports
+    from http(s)-URLs.
     </para>
   </refsect1>
   <refsect1>
@@ -160,18 +160,6 @@
         <listitem>
           <para>
           Generate pristine-tar delta file.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><option>--download</option>
-        </term>
-        <listitem>
-          <para>
-          Download the source package instead of looking for it in the local
-          file system.  The argument can either be a plain package name or an
-          URI. The former uses <command>yumdownloader</command> to download the
-          source while the later uses &wget;.
           </para>
         </listitem>
       </varlistentry>

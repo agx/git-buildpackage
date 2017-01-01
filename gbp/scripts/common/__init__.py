@@ -16,9 +16,25 @@
 #    <http://www.gnu.org/licenses/>
 """Parts shared between the deb and rpm commands"""
 
+import re
+
 
 class ExitCodes(object):
     ok = 0,
     failed = 1               # All other errors
     no_value = 2             # Value does not exist (gbp config only)
     parse_error = 3          # Failed to parse configuration file
+
+
+def is_download(args):
+    """
+    >>> is_download(["http://foo.example.com"])
+    True
+    >>> is_download([])
+    False
+    >>> is_download(["foo-1.1.orig.tar.gz"])
+    False
+    """
+    if args and re.match("https?://", args[0]):
+        return True
+    return False

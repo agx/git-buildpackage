@@ -36,7 +36,7 @@ from gbp.git.modifier import GitModifier
 from gbp.config import (GbpOptionParserRpm, GbpOptionGroup,
                         no_upstream_branch_msg)
 from gbp.errors import GbpError
-from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import ExitCodes, is_download
 from gbp.scripts.common import repo_setup
 import gbp.log
 from gbp.pkg import parse_archive_filename
@@ -203,6 +203,11 @@ def parse_args(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
+
+    if options.download:
+        gbp.log.warn("Passing --download explicitly is deprecated.")
+
+    options.download = is_download(args)
     return options, args
 
 
