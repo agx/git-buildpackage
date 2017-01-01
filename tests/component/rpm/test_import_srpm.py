@@ -34,6 +34,7 @@ from tests.testutils import capture_stderr
 # Disable "Method could be a function warning"
 # pylint: disable=R0201
 
+
 def mock_import(args):
     """Wrapper for import-srpm"""
     # Call import-orig-rpm with added arg0
@@ -56,8 +57,8 @@ class TestImportPacked(ComponentTestBase):
         eq_(mock_import(['--no-pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
-        files =  {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
-                  'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'}
+        files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
+                 'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'}
         self._check_repo_state(repo, 'master', ['master', 'upstream'],
                                files=files,
                                tags=['packaging/1.0-1', 'upstream/1.0'])
@@ -129,9 +130,9 @@ class TestImportPacked(ComponentTestBase):
 
     def test_multiple_versions(self):
         """Test importing of multiple versions"""
-        srpms = [ os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm'),
-                  os.path.join(DATA_DIR, 'gbp-test-1.0-1.other.src.rpm'),
-                  os.path.join(DATA_DIR, 'gbp-test-1.1-1.src.rpm') ]
+        srpms = [os.path.join(DATA_DIR, x) for x in ['gbp-test-1.0-1.src.rpm',
+                                                     'gbp-test-1.0-1.other.src.rpm',
+                                                     'gbp-test-1.1-1.src.rpm']]
         eq_(mock_import(['--no-pristine-tar', srpms[0]]), 0)
         repo = GitRepository('gbp-test')
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
@@ -186,7 +187,6 @@ class TestImportPacked(ComponentTestBase):
         eq_(mock_import(['--packaging-branch=foo', srpm]), 1)
         self._check_log(-1, 'Also check the --create-missing-branches')
 
-
     def test_filter(self):
         """Test filter option"""
         srpm = os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm')
@@ -194,7 +194,7 @@ class TestImportPacked(ComponentTestBase):
         # Check repository state
         repo = GitRepository('gbp-test')
         files = set(['Makefile', 'dummy.sh', 'bar.tar.gz', 'foo.txt',
-                 'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'])
+                     'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'])
         self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
 
     def test_misc_options(self):
@@ -202,13 +202,13 @@ class TestImportPacked(ComponentTestBase):
         srpm = os.path.join(DATA_DIR, 'gbp-test2-2.0-0.src.rpm')
 
         eq_(mock_import(['--no-pristine-tar',
-                    '--packaging-branch=pack',
-                    '--upstream-branch=orig',
-                    '--packaging-dir=packaging',
-                    '--packaging-tag=ver_%(upstreamversion)s-rel_%(release)s',
-                    '--upstream-tag=orig/%(upstreamversion)s',
-                    '--author-is-committer',
-                    srpm]), 0)
+                         '--packaging-branch=pack',
+                         '--upstream-branch=orig',
+                         '--packaging-dir=packaging',
+                         '--packaging-tag=ver_%(upstreamversion)s-rel_%(release)s',
+                         '--upstream-tag=orig/%(upstreamversion)s',
+                         '--author-is-committer',
+                         srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test2')
         files = {'Makefile', 'README', 'dummy.sh', 'packaging/bar.tar.gz',
@@ -254,7 +254,7 @@ class TestImportUnPacked(ComponentTestBase):
         # Check that importing dir with multiple spec files fails
         eq_(mock_import(['multi-unpack']), 1)
         self._check_log(-1, 'gbp:error: Failed determine spec file: '
-                               'Multiple spec files found')
+                        'Multiple spec files found')
 
     def test_import_spec(self):
         """Test importing of spec file"""
@@ -295,7 +295,7 @@ class TestDownloadImport(ComponentTestBase):
         # Do not connect to remote, mock failure
         import_srpm.urlopen = Mock()
         import_srpm.urlopen.side_effect = urllib.error.HTTPError(srpm, 404, "Not found",
-                                                            None, None)
+                                                                 None, None)
 
         eq_(mock_import(['--download', srpm]), 1)
         self._check_log(-1, "gbp:error: Download failed: HTTP Error 404")
