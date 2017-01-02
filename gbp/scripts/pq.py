@@ -157,9 +157,8 @@ def commit_patches(repo, branch, patches, options, patch_dir):
 
     vfs = gbp.git.vfs.GitVfs(repo, branch)
     try:
-        oldseries = vfs.open('debian/patches/series')
-        oldpatches = [p.strip() for p in oldseries.readlines()]
-        oldseries.close()
+        with vfs.open('debian/patches/series') as oldseries:
+            oldpatches = [p.strip() for p in oldseries.readlines()]
     except IOError:
         # No series file yet
         oldpatches = []

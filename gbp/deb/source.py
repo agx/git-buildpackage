@@ -26,7 +26,7 @@ import six
 class FileVfs(object):
     def __init__(self, dir):
         """
-        Access files in a unpaced Debian source package.
+        Access files in an unpacked Debian source package.
 
         @param dir: the toplevel of the source tree
         @type dir: C{str}
@@ -66,8 +66,8 @@ class DebianSource(object):
         Whether this is a native Debian package
         """
         try:
-            ff = self._vfs.open('debian/source/format')
-            f = DebianSourceFormat(ff.read())
+            with self._vfs.open('debian/source/format') as ff:
+                f = DebianSourceFormat(ff.read())
             if f.type:
                 return f.type == 'native'
         except IOError as e:
@@ -85,8 +85,8 @@ class DebianSource(object):
         """
         if not self._changelog:
             try:
-                clf = self._vfs.open('debian/changelog')
-                self._changelog = ChangeLog(clf.read())
+                with self._vfs.open('debian/changelog') as clf:
+                    self._changelog = ChangeLog(clf.read())
             except IOError as err:
                 raise DebianSourceError('Failed to read changelog: %s' % err)
         return self._changelog

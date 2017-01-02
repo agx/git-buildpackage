@@ -44,6 +44,12 @@ class GitVfs(object):
         def close(self):
             return self._data.close()
 
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.close()
+
     def __init__(self, repo, committish=None):
         """
         @param repo: the git repository to act on
