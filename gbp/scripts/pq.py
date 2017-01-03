@@ -169,7 +169,7 @@ def commit_patches(repo, branch, patches, options, patch_dir):
     msg = format_series_diff(added, removed, options)
 
     if not repo.is_clean(paths='debian/patches')[0]:
-        repo.add_files(PATCH_DIR)
+        repo.add_files(PATCH_DIR, force=True)
         repo.commit_staged(msg=msg)
     return added, removed
 

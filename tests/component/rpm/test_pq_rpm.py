@@ -61,7 +61,7 @@ class TestPqRpm(RpmRepoTestBase):
 
         # Test invalid cmdline options
         with assert_raises(SystemExit):
-            with capture_stderr() as c:
+            with capture_stderr():
                 mock_pq(['--invalid-arg=123'])
 
     def test_import_outside_repo(self):

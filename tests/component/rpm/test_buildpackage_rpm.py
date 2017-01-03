@@ -414,14 +414,13 @@ class TestGbpRpm(RpmRepoTestBase):
 
         sub_files = sub_repo.ls_tree('HEAD')
         master_files = ['gbp-test-native-1.0/' + path for
-                            path in repo.ls_tree('HEAD')]
+                        path in repo.ls_tree('HEAD')]
 
         # Test
         eq_(mock_gbp(['--git-submodules']), 0)
         zip_files = ls_zip('../rpmbuild/SOURCES/gbp-test-native-1.0.zip', False)
-        ref_files = master_files + \
-                    ['gbp-test-native-1.0/gbp-test-native2.repo/' + path for
-                     path in sub_files]
+        ref_files = master_files + ['gbp-test-native-1.0/gbp-test-native2.repo/' + path for
+                                    path in sub_files]
         self.check_files(ref_files, zip_files)
 
         # Test submodule failure
