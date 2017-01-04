@@ -1,6 +1,6 @@
 [submodule "tests/component/deb/data"]
 	path = tests/component/deb/data
-	url = git://honk.sigxcpu.org/git/gbp/deb-testdata.git
+	url = https://git.sigxcpu.org/cgit/gbp/deb-testdata
 [submodule "tests/component/rpm/data"]
 	path = tests/component/rpm/data
 	url = https://git.sigxcpu.org/cgit/gbp/rpm-testdata
