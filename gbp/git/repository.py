@@ -171,7 +171,7 @@ class GitRepository(object):
         cmd = ['git', command] + args
         env = cls.__build_env(extra_env)
         stderr_arg = subprocess.PIPE if capture_stderr else None
-        stdin_arg = subprocess.PIPE if input else None
+        stdin_arg = subprocess.PIPE if input is not None else None
 
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
