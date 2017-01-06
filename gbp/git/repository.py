@@ -996,19 +996,20 @@ class GitRepository(object):
 
     def make_tree(self, contents):
         """
-        Create a tree based on contents. I{contents} has the same format than
-        the I{GitRepository.list_tree} output.
+        Create a tree based on contents.
+
+        @param contents: same format as I{GitRepository.list_tree} output.
+        @type contents: C{list} of C{str}
         """
-        out = ''
+        objs = ''
         args = GitArgs('-z')
 
-        for obj in contents:
-            mode, type, sha1, name = obj
-            out += '%s %s %s\t%s\0' % (mode, type, sha1, name)
+        for mode, type, sha1, name in contents:
+            objs += '%s %s %s\t%s\0' % (mode, type, sha1, name)
 
         sha1, err, ret = self._git_inout('mktree',
                                          args.args,
-                                         out,
+                                         objs,
                                          capture_stderr=True)
         if ret:
             raise GitRepositoryError("Failed to mktree: '%s'" % err)
