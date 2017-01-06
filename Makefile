@@ -1,3 +1,5 @@
+PY_EXAMPLES=$(shell grep -l /usr/bin/python examples/*)
+
 all: syntax-check test
 
 all+net:
@@ -13,6 +15,7 @@ test:
 
 syntax-check:
 	flake8 -j1
+	flake8 -j1 $(PY_EXAMPLES)
 
 docs:
 	make -C docs

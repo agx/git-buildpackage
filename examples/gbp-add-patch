@@ -35,9 +35,10 @@ from __future__ import print_function
 
 import re
 import sys
-import os, os.path
+import os
+import os.path
 from gbp.command_wrappers import (Command)
-from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+from gbp.config import GbpOptionParserDebian
 from gbp.errors import GbpError
 from gbp.git import (GitRepositoryError, GitRepository)
 from gbp.patch_series import Patch
@@ -58,7 +59,7 @@ def build_commit_msg(repo, patch, options):
             closes += line + '\n'
 
     patch_name = os.path.basename(patch.path)
-    msg="""New patch %s
+    msg = """New patch %s
 
 %s
 %s
@@ -70,9 +71,9 @@ def main(argv):
     retval = 0
 
     parser = GbpOptionParserDebian(command=os.path.basename(argv[0]), prefix='',
-                             usage='%prog [options] - add a new patch')
+                                   usage='%prog [options] - add a new patch')
     parser.add_config_file_option(option_name="meta-closes", dest="meta_closes",
-                      help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
+                                  help="Meta tags for the bts close commands, default is '%(meta-closes)s'")
     parser.add_option("-e", "--edit", action="store_true", dest="edit", default=False,
                       help="edit commit message before committing")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -112,6 +113,7 @@ def main(argv):
         retval = 1
 
     return retval
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
