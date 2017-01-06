@@ -3,22 +3,39 @@
 #
 # (C) 2009,2012,2015,2016 Guido Guenther <agx@sigxcpu.org>
 #
-# gbp-posttag-push: post tag hook to be called by git-buildpackage to push out
-# the newly created tag and to forward the remote branch to that position
-#
-# it checks for explicit push destinations, if none are found it pushes back to
-# where the branch got merged from. Before pushing it checks if the tag is
-# signed.
-#
-# use:
-# [buildpackage]
-# posttag = gbp-posttag-push
-#
-# Options:
-# -d: dry-run
-# -u: push upstream branch too, if not on remote already
-# --verbose: verbose command output
+"""gbp-posttag-push: post tag hook to be called by 'gbp buildpackage' to push out
+the newly created tag and to forward the remote branch to that position.
 
+It checks for explicit push destinations, if none are found it pushes
+to where the branch got merged from. Before pushing it checks if the
+tag is signed.
+
+It will only push changes up to the tag and it will figure out if it
+needs to push an upstream tag and the upstream branch as well (given
+the -u option). Before performing a package upload it checks if it can
+push the changes to the repo to ensure the Debian archive and the VCS
+stay in sync (as good as possible given the async nature of the upload
+into the archive).
+
+Configuration
+-------------
+In your gbp.conf use
+
+  [buildpackage]
+  posttag = gbp-posttag-push -u
+
+to enable the hook. To also enable archive uploads configure an
+apropriate upload command:
+
+  [gbp-posttag-push]
+  upload-cmd = dput
+
+Options
+-------
+-d: dry-run
+-u: push upstream branch too, if not on remote already
+--verbose: verbose command output
+"""
 from __future__ import print_function
 
 import glob
