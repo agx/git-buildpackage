@@ -444,7 +444,8 @@ def setup_pbuilder(options, repo, native):
         options.cleaner = '/bin/true'
 
         dist = get_pbuilder_dist(options, repo, native)
-        pbd_env['GBP_PBUILDER_DIST'] = pbd_env['DIST'] = pr_dist = dist
+        pbd_env['GBP_PBUILDER_DIST'] = pbd_env['DIST'] = dist
+        pr_dist = dist or 'sid'
         if options.pbuilder_arch:
             arch = options.pbuilder_arch
             pbd_env['GBP_PBUILDER_ARCH'] = pbd_env['ARCH'] = arch
