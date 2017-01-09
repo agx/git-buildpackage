@@ -228,10 +228,7 @@ def source_vfs(repo, options, tree):
 
 def prepare_output_dir(dir):
     """Prepare the directory where the build result will be put"""
-    output_dir = dir
-    if not dir:
-        output_dir = '..'
-    output_dir = os.path.abspath(output_dir)
+    output_dir = os.path.abspath(dir or '..')
 
     try:
         os.mkdir(output_dir)
