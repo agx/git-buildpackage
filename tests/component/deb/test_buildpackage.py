@@ -147,6 +147,6 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage('hello-debhelper',
                                 'dsc-3.0',
                                 '2.8-1',
-                                ['--git-export-dir=../foo'],
+                                ['--git-export-dir=../foo/bar'],
                                 )
-        ok_(os.path.exists('../foo'))
+        ok_(os.path.exists('../foo/bar'))

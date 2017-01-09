@@ -178,7 +178,7 @@ def export_source(repo, tree, source, options, dest_dir, tarball_dir):
 def move_old_export(target):
     """move a build tree away if it exists"""
     try:
-        os.mkdir(target)
+        os.makedirs(target)
     except OSError as e:
         if e.errno == errno.EEXIST:
             os.rename(target, "%s.obsolete.%s" % (target, time.time()))
@@ -231,7 +231,7 @@ def prepare_output_dir(dir):
     output_dir = os.path.abspath(dir or '..')
 
     try:
-        os.mkdir(output_dir)
+        os.makedirs(output_dir)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise GbpError("Cannot create output dir %s" % output_dir)
