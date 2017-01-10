@@ -119,7 +119,7 @@ def repacked_tarball_name(source, name, version):
             os.path.dirname(source.path),
             os.path.basename(source.path).replace(".tar", ".gbp.tar"))
     else:
-        # Repacked sources or other archives get canonical name
+        # non tarballs (zips, unpacked dirs) get the canonical name
         name = os.path.join(
             os.path.dirname(source.path),
             "%s_%s.orig.tar.bz2" % (name, version))
@@ -130,9 +130,9 @@ def repack_source(source, name, version, tmpdir, filters):
     """Repack the source tree"""
     name = repacked_tarball_name(source, name, version)
     repacked = source.pack(name, filters)
-    if source.is_orig():  # the tarball was filtered on unpack
+    if source.is_orig():  # Orig already was a tarball so it was filtered on unpack
         repacked.unpacked = source.unpacked
-    else:  # otherwise unpack the generated tarball to get a filtered tree
+    else:  # otherwise unpack the generated tarball again to get a filtered tree
         if tmpdir:
             cleanup_tmp_tree(tmpdir)
         tmpdir = tempfile.mkdtemp(dir='../')

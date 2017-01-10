@@ -291,7 +291,7 @@ class UpstreamSource(object):
 
     def is_orig(self):
         """
-        @return: C{True} if sources are suitable as upstream source,
+        @return: C{True} if sources are suitable as orig tarball,
             C{False} otherwise
         @rtype: C{bool}
         """
