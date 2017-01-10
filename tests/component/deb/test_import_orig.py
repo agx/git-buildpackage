@@ -81,6 +81,13 @@ class TestImportOrig(ComponentTestBase):
         self._check_repo_state(repo, 'master', self.def_branches,
                                tags=['upstream/2.6'])
 
+    def _check_component_tarballs(self, repo, files):
+        for file in files:
+            ok_(file in repo.ls_tree('HEAD'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+            ok_(file in repo.ls_tree('upstream'),
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
+
     def test_update(self):
         """
         Test that importing a new version works
@@ -118,11 +125,7 @@ class TestImportOrig(ComponentTestBase):
         ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
-        for file in ['foo/test1', 'foo/test2']:
-            ok_(file in repo.ls_tree('HEAD'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
-            ok_(file in repo.ls_tree('upstream'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
+        self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
 
         dsc = DscFile.parse(self._dsc('2.8-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
@@ -146,11 +149,7 @@ class TestImportOrig(ComponentTestBase):
         ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8', 'upstream/2.9'])
-        for file in ['foo/test1', 'foo/test2', 'foo/test3']:
-            ok_(file in repo.ls_tree('HEAD'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
-            ok_(file in repo.ls_tree('upstream'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
+        self._check_component_tarballs(repo, ['foo/test1', 'foo/test2', 'foo/test3'])
 
         dsc = DscFile.parse(self._dsc('2.9-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
