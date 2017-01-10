@@ -45,17 +45,27 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('git-buildpackage')
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 1
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        ok_("git-buildpackage (0.01) unstable; urgency=low" in commitmsg)
+        ok_("git-buildpackage (0.4.14) unstable; urgency=low" in commitmsg)
 
         os.chdir('git-buildpackage')
         dsc = _dsc('0.4.15')
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 2
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        ok_("git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg)
+        ok_("git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg)
 
         dsc = _dsc('0.4.16')
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 3
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        ok_("git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg)
+        ok_("git-buildpackage (0.4.15) unstable; urgency=low" not in commitmsg)
+        ok_("git-buildpackage (0.4.16) unstable; urgency=low" in commitmsg)
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_download(self):
@@ -102,7 +112,7 @@ class TestImportDsc(ComponentTestBase):
         os.chdir('hello-debhelper')
         assert len(repo.get_commits()) == 2
         reflog, ret = repo._git_getoutput('reflog')
-        ok_("gbp: Import Debian patch" in reflog[1])
+        ok_("gbp: Import Debian changes" in reflog[1])
         ok_("gbp: Import Upstream version 2.6" in reflog[2])
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         dsc = _dsc('2.8-1')
@@ -134,6 +144,9 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
+        ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
 
         for file in ['foo/test1', 'foo/test2']:
             ok_(file in repo.ls_tree('HEAD'),
@@ -229,6 +242,9 @@ class TestImportDsc(ComponentTestBase):
         ok_("gbp: Import Debian changes" in reflog[1])
         ok_("gbp: Import Upstream version 2.6" in reflog[2])
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        ok_("hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg)
+        ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
 
         dsc = _dsc('2.8-1')
         assert import_dsc(['arg0',
@@ -239,3 +255,7 @@ class TestImportDsc(ComponentTestBase):
                            dsc]) == 0
         commits, expected = len(repo.get_commits()), 4
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
+        ok_("ello-debhelper (2.7-1) unstable; urgency=low" in commitmsg)
+        ok_("hello-debhelper (2.6-2) unstable; urgency=medium" not in commitmsg)

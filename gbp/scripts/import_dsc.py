@@ -31,6 +31,7 @@ from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
 from gbp.git.modifier import GitModifier
+from gbp.git.vfs import GitVfs
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
                         no_upstream_branch_msg)
 from gbp.errors import GbpError
@@ -142,7 +143,7 @@ def check_parents(repo, branch, tag):
     return parents
 
 
-def apply_debian_patch(repo, unpack_dir, src, options, tag):
+def apply_debian_patch(repo, unpack_dir, src, options, tag, is_empty):
     """apply the debian patch and tag appropriately"""
     try:
         os.chdir(unpack_dir)
@@ -163,8 +164,14 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag):
 
         author = get_author_from_changelog(unpack_dir)
         committer = get_committer_from_author(author, options)
+
+        changes = get_changes(unpack_dir,
+                              repo,
+                              is_empty,
+                              options.debian_branch)
+        commit_msg = "Import Debian changes %s\n%s" % (src.version, changes)
         commit = repo.commit_dir(unpack_dir,
-                                 "Import Debian patch %s" % src.version,
+                                 commit_msg,
                                  branch=options.debian_branch,
                                  other_parents=parents,
                                  author=author,
@@ -336,6 +343,20 @@ def parse_all(argv):
     return options, pkg, target
 
 
+def get_changes(dir, repo, is_empty, debian_branch):
+    if is_empty:
+        version = "0~"
+    else:
+        vfs = GitVfs(repo, debian_branch)
+        try:
+            with vfs.open('debian/changelog') as f:
+                version = ChangeLog(contents=f.read()).version
+        except IOError:
+            version = "0~"  # Use full history if debian branch has no changelog
+    cl = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
+    return cl.get_changes(version)
+
+
 def main(argv):
     dirs = dict(top=os.path.abspath(os.curdir))
     needs_repo = False
@@ -425,11 +446,16 @@ def main(argv):
             if src.native:
                 author = get_author_from_changelog(upstream.unpacked)
                 committer = get_committer_from_author(author, options)
+                commit_msg = "Import %s\n%s" % (msg, get_changes(upstream.unpacked,
+                                                                 repo,
+                                                                 is_empty,
+                                                                 options.debian_branch))
             else:
                 author = committer = {}
+                commit_msg = "Import %s" % msg
 
             commit = repo.commit_dir(upstream.unpacked,
-                                     "Import %s" % msg,
+                                     commit_msg,
                                      branch,
                                      author=author,
                                      committer=committer)
@@ -453,7 +479,7 @@ def main(argv):
         if not src.native:
             if src.diff or src.deb_tgz:
                 apply_debian_patch(repo, upstream.unpacked, src, options,
-                                   tag)
+                                   tag, is_empty)
             else:
                 gbp.log.warn("Didn't find a diff to apply.")
         if repo.get_branch() == options.debian_branch or is_empty:
