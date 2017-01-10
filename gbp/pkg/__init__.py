@@ -309,7 +309,7 @@ class UpstreamSource(object):
     def path(self):
         return self._path.rstrip('/')
 
-    def unpack(self, dir, filters=[]):
+    def unpack(self, dir, filters=None):
         """
         Unpack packed upstream sources into a given directory
         (filtering out files specified by filters) and determine the
@@ -368,7 +368,7 @@ class UpstreamSource(object):
             # unpackArchive already printed an error message
             raise GbpError
 
-    def pack(self, newarchive, filters=[]):
+    def pack(self, newarchive, filters=None):
         """
         Recreate a new archive from the current one
 
