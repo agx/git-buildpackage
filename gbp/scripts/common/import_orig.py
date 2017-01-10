@@ -42,9 +42,9 @@ def orig_needs_repack(upstream_source, options):
     We repack if
      1. we want to filter out files and use pristine tar since we want
         to make a filtered tarball available to pristine-tar
-     2. when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+     2. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
         and want to use filters
-     3. when we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+     3. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
         and want to use pristine-tar
     """
     if ((options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0)):
