@@ -223,6 +223,23 @@ def test_parse_sections():
     """
 
 
+def test_get_changes():
+    """
+    Test if we can get changes
+
+    Methods tested:
+         - L{gbp.deb.changelog.ChangeLog.__init__}
+         - L{gbp.deb.changelog.ChangeLog.get_changes}
+
+    >>> import gbp.deb.changelog
+    >>> cl = gbp.deb.changelog.ChangeLog(cl_debian)
+    >>> len(cl.get_changes().split('\\n'))
+    19
+    >>> len(cl.get_changes('0.5.31').split('\\n'))
+    7
+    """
+
+
 def test_add_section():
     """
     Test if we can add a section to an existing changelog

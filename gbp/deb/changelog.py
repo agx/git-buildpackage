@@ -91,9 +91,9 @@ class ChangeLog(object):
             self._read()
         self._parse()
 
-    def _parse(self):
-        """Parse a changelog based on the already read contents."""
-        cmd = subprocess.Popen(['dpkg-parsechangelog', '-l-'],
+    def _run_parsechangelog(self, options=None):
+        options = options if options is not None else []
+        cmd = subprocess.Popen(['dpkg-parsechangelog', '-l-'] + options,
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
@@ -101,6 +101,11 @@ class ChangeLog(object):
         if cmd.returncode:
             raise ParseChangeLogError("Failed to parse changelog. "
                                       "dpkg-parsechangelog said:\n%s" % (errors, ))
+        return output
+
+    def _parse(self):
+        """Parse a changelog based on the already read contents."""
+        output = self._run_parsechangelog()
         # Parse the result of dpkg-parsechangelog (which looks like
         # email headers)
         cp = email.message_from_string(output)
@@ -310,3 +315,6 @@ class ChangeLog(object):
         """
         self.spawn_dch(msg=msg, newversion=True, version=version, author=author,
                        email=email, distribution=distribution, dch_options=dch_options)
+
+    def get_changes(self, since='0~'):
+        return self._run_parsechangelog(['-v%s' % since, '-SChanges'])
