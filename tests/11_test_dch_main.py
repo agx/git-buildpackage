@@ -68,6 +68,8 @@ class TestScriptDch(DebianGitTestRepo):
         self.options = ["--upstream-tag=%s" % self.upstream_tag, "--debian-branch=debian",
                         "--upstream-branch=upstream", "--id-length=0", "--spawn-editor=/bin/true"]
         self.repo.create_tag(deb_tag, msg=deb_tag_msg, commit="HEAD~1")
+        self.repo.set_user_name("gbp test user")
+        self.repo.set_user_email("gbp@example.com")
 
     def tearDown(self):
         DebianGitTestRepo.tearDown(self)
@@ -387,3 +389,13 @@ class TestScriptDch(DebianGitTestRepo):
                       lines)
         self.assertIn("""  * test non-debian closes 2 (Example: EX-5678)\n""",
                       lines)
+
+    def test_dch_main_git_author(self):
+        options = ["--git-author", '-S', '-a']
+        lines = self.run_dch(options)
+        self.assertIn("-- gbp test user <gbp@example.com>", lines[9])
+
+    def test_dch_main_no_git_author(self):
+        options = ["--no-git-author", '-S', '-a']
+        lines = self.run_dch(options)
+        self.assertNotIn("-- gbp test user", "\n".join(lines))
