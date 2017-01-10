@@ -132,7 +132,7 @@ def repack_source(source, name, version, tmpdir, filters):
     repacked = source.pack(name, filters)
     if source.is_orig():  # the tarball was filtered on unpack
         repacked.unpacked = source.unpacked
-    else:  # otherwise unpack the generated tarball get a filtered tree
+    else:  # otherwise unpack the generated tarball to get a filtered tree
         if tmpdir:
             cleanup_tmp_tree(tmpdir)
         tmpdir = tempfile.mkdtemp(dir='../')
