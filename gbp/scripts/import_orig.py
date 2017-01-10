@@ -537,16 +537,18 @@ def main(argv):
         if repo.bare:
             set_bare_repo_options(options)
 
-        if not source.is_dir():
+        if not source.is_dir():  # Unpack main tarball
             tmpdir = tempfile.mkdtemp(dir='../')
             source.unpack(tmpdir, options.filters)
             gbp.log.debug("Unpacked '%s' to '%s'" % (source.path, source.unpacked))
-            for (component, tarball) in component_tarballs:
-                unpack_component_tarball(source.unpacked, component, tarball, options.filters)
 
         if orig_needs_repack(source, options):
             gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
             (source, tmpdir) = repack_source(source, sourcepackage, version, tmpdir, options.filters)
+
+        if not source.is_dir():  # Unpack component tarballs
+            for (component, tarball) in component_tarballs:
+                unpack_component_tarball(source.unpacked, component, tarball, options.filters)
 
         (pristine_orig, linked) = prepare_pristine_tar(source.path,
                                                        sourcepackage,

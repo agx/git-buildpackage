@@ -17,6 +17,8 @@
 #    <http://www.gnu.org/licenses/>
 
 import os
+import shutil
+import tarfile
 
 from mock import patch, DEFAULT
 
@@ -31,7 +33,7 @@ from gbp.deb.pristinetar import DebianPristineTar
 from gbp.deb.dscfile import DscFile
 from gbp.git.repository import GitRepository, GitRepositoryError
 
-from nose.tools import ok_, eq_
+from nose.tools import ok_, eq_, assert_raises
 
 
 def raise_if_tag_match(match):
@@ -251,3 +253,45 @@ class TestImportOrig(ComponentTestBase):
             ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 1)
 
         self._check_repo_state(repo, None, [], tags=[])
+
+    def test_filter_with_component_tarballs(self):
+        """
+        Test that using a filter works even with component tarballs (#840602)
+        """
+        dsc = self._dsc('2.6-2')
+        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
+        repo = ComponentTestGitRepository(self.pkg)
+        os.chdir(self.pkg)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+
+        # copy data since we don't want the repacked tarball to end up in DEB_TEST_DATA_DIR
+        os.mkdir('../tarballs')
+        for f in ['hello-debhelper_2.8.orig-foo.tar.gz', 'hello-debhelper_2.8.orig.tar.gz']:
+            src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0-additional-tarballs', f)
+            shutil.copy(src, '../tarballs')
+
+        ok_(import_orig(['arg0',
+                         '--component=foo',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--filter=README*',
+                         '../tarballs/hello-debhelper_2.8.orig.tar.gz']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+        self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
+
+        ok_('README' not in repo.ls_tree('HEAD'),
+            "README not filtered out of %s" % repo.ls_tree('HEAD'))
+        tar = '../hello-debhelper_2.8.orig.tar.gz'
+
+        # Check if tar got filtered properly
+        ok_(os.path.exists(tar))
+        t = tarfile.open(name=tar, mode="r:gz")
+        for f in ['hello-2.8/configure']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
