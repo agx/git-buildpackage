@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2015 Guido Günther <agx@sigxcpu.org>
+# (C) 2015,2017 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ class TestImportOrig(ComponentTestBase):
             ok_(file in repo.ls_tree('HEAD'),
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
             ok_(file in repo.ls_tree('upstream'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
 
         dsc = DscFile.parse(self._dsc('2.8-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
@@ -150,7 +150,7 @@ class TestImportOrig(ComponentTestBase):
             ok_(file in repo.ls_tree('HEAD'),
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
             ok_(file in repo.ls_tree('upstream'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
 
         dsc = DscFile.parse(self._dsc('2.9-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
