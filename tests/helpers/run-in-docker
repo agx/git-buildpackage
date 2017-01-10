@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "deb http://ftp.de.debian.org/debian sid main" > /etc/apt/sources.list
 RUN apt-get update && apt-get dist-upgrade --yes
 RUN apt-get install -y --no-install-recommends build-essential adduser
-RUN adduser gbp --disabled-password --gecos='gbp test user' --shell=/bin/bash --home /git-buildpackage
+RUN adduser gbp --disabled-password --gecos='gbp docker test user' --shell=/bin/bash --home /git-buildpackage
 
 WORKDIR /git-buildpackage
 COPY . .
