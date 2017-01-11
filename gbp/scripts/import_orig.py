@@ -520,7 +520,7 @@ def main(argv):
         else:
             source = find_source(options.uscan, args)
         if not source:
-            return ret
+            return ExitCodes.failed
 
         # The main tarball
         (sourcepackage, version) = detect_name_and_version(repo, source, options)
