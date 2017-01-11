@@ -57,6 +57,18 @@ class GbpLogTester(object):
         ok_(re.match(regex, output),
             "Log entry '%s' doesn't match '%s'" % (output, regex))
 
+    def _check_in_log(self, regex):
+        """Check that the at least one line  on log matches expectations"""
+        found = False
+        if self._log is None:
+            raise Exception("BUG in unittests: no log captured!")
+        log = self._get_log()
+        for line in log:
+            if re.match(regex, line):
+                found = True
+                break
+        ok_(found, "No line of %s matched '%s'" % (log, regex))
+
     def _clear_log(self):
         """Clear the mock strerr"""
         if self._log is not None:
