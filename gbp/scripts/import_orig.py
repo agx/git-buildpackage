@@ -18,8 +18,10 @@
 """Import a new upstream version into a Git repository"""
 
 import os
+import shutil
 import sys
 import tempfile
+import time
 import gbp.command_wrappers as gbpc
 from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
 from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
@@ -197,6 +199,10 @@ def prepare_pristine_tar(archive, pkg, version):
     if os.path.basename(archive) != os.path.basename(link):
         try:
             if not is_link_target(archive, link):
+                if os.path.exists(link):
+                    backup = "%s.%d" % (link, time.time())
+                    gbp.log.info("%s already exists, moving to %s" % (link, backup))
+                    shutil.move(link, backup)
                 os.symlink(os.path.abspath(archive), link)
                 linked = True
         except OSError as err:

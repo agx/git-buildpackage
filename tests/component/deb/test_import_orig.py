@@ -295,3 +295,41 @@ class TestImportOrig(ComponentTestBase):
             with assert_raises(KeyError):
                 t.getmember(f)
         t.close()
+
+    def test_filter_with_orig_tarball(self):
+        """
+        Test that using a filter works even with an upstream tarball
+        that has already the correct name (#558777)
+        """
+        dsc = self._dsc('2.6-2')
+        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
+        repo = ComponentTestGitRepository(self.pkg)
+        os.chdir(self.pkg)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+
+        f = 'hello-debhelper_2.8.orig.tar.gz'
+        src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
+        shutil.copy(src, '..')
+
+        ok_(import_orig(['arg0',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--filter=README*',
+                         '../hello-debhelper_2.8.orig.tar.gz']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
+        filtered = os.path.join('..', f)
+        ok_(os.path.exists(filtered))
+        eq_(os.readlink(filtered).split('/')[-1],
+            'hello-debhelper_2.8.orig.gbp.tar.gz')
+        # Check if tar got filtered properly
+        t = tarfile.open(name=filtered, mode="r:gz")
+        for f in ['hello-2.8/configure']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
