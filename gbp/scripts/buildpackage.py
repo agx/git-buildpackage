@@ -19,6 +19,7 @@
 
 import errno
 import os
+import pipes
 import shutil
 import sys
 import time
@@ -727,7 +728,9 @@ def main(argv):
                      )(dir=build_dir)
 
             # Finally build the package:
-            RunAtCommand(options.builder, dpkg_args, shell=True,
+            RunAtCommand(options.builder,
+                         [pipes.quote(arg) for arg in dpkg_args],
+                         shell=True,
                          extra_env=Hook.md(build_env,
                                            {'GBP_BUILD_DIR': build_dir})
                          )(dir=build_dir)

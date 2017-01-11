@@ -150,3 +150,24 @@ class TestBuildpackage(ComponentTestBase):
                                 ['--git-export-dir=../foo/bar'],
                                 )
         ok_(os.path.exists('../foo/bar'))
+
+    def test_argument_quoting(self):
+        """Test that we quote arguments to builder (#)"""
+        def _dsc(version):
+            return os.path.join(DEB_TEST_DATA_DIR,
+                                'dsc-native',
+                                'git-buildpackage_%s.dsc' % version)
+
+        dsc = _dsc('0.4.14')
+        assert import_dsc(['arg0', dsc]) == 0
+        os.chdir('git-buildpackage')
+        with open('../arg with spaces', 'w'):
+            pass
+        # We use ls as builder to look for a file with spaces. This
+        # will fail if build arguments are not properly quoted and
+        # therefore split up
+        ret = buildpackage(['arg0',
+                            '--git-builder=ls',
+                            '--git-cleaner=/bin/true',
+                            '../arg with spaces'])
+        ok_(ret == 0, "Building the package failed")

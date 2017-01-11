@@ -67,6 +67,9 @@ class Command(object):
     """
     Wraps a shell command, so we don't have to store any kind of command
     line options in one of the git-buildpackage commands
+
+    Note that it does not do any shell quoting even with shell=True so
+    you have to quote arguments yourself if necessary.
     """
     def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None,
                  capture_stderr=False,

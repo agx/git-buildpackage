@@ -19,6 +19,7 @@
 """Build an RPM package out of a Git repository"""
 
 import os
+import pipes
 import shutil
 import sys
 
@@ -242,9 +243,9 @@ def setup_builder(options, builder_args):
         if len(builder_args) == 0:
             builder_args.append('-ba')
         builder_args.extend([
-            '--define "_topdir %s"' % os.path.abspath(options.export_dir),
-            '--define "_specdir %%_topdir/%s"' % options.export_specdir,
-            '--define "_sourcedir %%_topdir/%s"' % options.export_sourcedir])
+            '--define', "_topdir %s" % os.path.abspath(options.export_dir),
+            '--define', "_specdir %%_topdir/%s" % options.export_specdir,
+            '--define', "_sourcedir %%_topdir/%s" % options.export_sourcedir])
 
 
 def packaging_tag_data(repo, commit, name, version, options):
@@ -580,7 +581,9 @@ def main(argv):
                                         spec.specfile))
                 else:
                     builder_args.append(spec.specfile)
-                RunAtCommand(options.builder, builder_args, shell=True,
+                RunAtCommand(options.builder,
+                             [pipes.quote(arg) for arg in builder_args],
+                             shell=True,
                              extra_env={'GBP_BUILD_DIR': export_dir}
                              )(dir=export_dir)
                 if options.postbuild:
