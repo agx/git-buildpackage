@@ -237,10 +237,8 @@ class RunAtCommand(Command):
         try:
             os.chdir(dir)
             Command.__call__(self, list(*args))
+        finally:
             os.chdir(curdir)
-        except Exception:
-            os.chdir(curdir)
-            raise
 
 
 class UnpackTarArchive(Command):
