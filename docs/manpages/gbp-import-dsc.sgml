@@ -30,7 +30,7 @@
       <arg><option>--[no-]create-missing-branches</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--[no-]sign-tags</option></arg>
-      <arg><option>--skip-debian-tag=</option></arg>
+      <arg><option>--skip-debian-tag</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>

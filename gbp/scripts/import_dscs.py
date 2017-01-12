@@ -47,7 +47,7 @@ class GitImportDsc(object):
 
 
 def fetch_snapshots(pkg, downloaddir):
-    "Fetch snapshots using debsnap von snapshots.debian.org"
+    "Fetch snapshots using debsnap from snapshots.debian.org"
     dscs = None
 
     gbp.log.info("Downloading snapshots of '%s' to '%s'..." %
