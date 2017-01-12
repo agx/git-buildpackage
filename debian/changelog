@@ -1,3 +1,31 @@
+git-buildpackage (0.8.10) unstable; urgency=medium
+
+  * [ede603e] GitRepository: properly use pipe on empty strings.
+    (Closes: #850319)
+  * [42ee784] buildpackage: print proper dist when using sid.
+  * [e9ffa80] buildpackage: create all missing dirs with --export
+    Thanks to Andrea Zagli for the suggestion
+  * [42878ff] dch: honor --no-git-author
+    Thanks to David Kalnischkies for investigating (Closes: #796913)
+  * [4086fc9] import_dsc: Store debian/changelog in commit message
+    when importing packages. (Closes: #577810)
+  * [5fb0749] import_orig: Delay unpack of component tarballs.
+    (Closes: #840602)
+  * [67d8b9f] Move default gbp.conf back to the right location.
+    Thanks to Luca Boccassi (Closes: #850937)
+  * [80a1c39] Quote arguments passed to builder.
+    Thanks to Simon McVittie for the detailed report (Closes: #850869)
+  * [4a41d49] import-orig: Move orig.tar.gz with filter-pristine-tar.
+    (Closes: #558777)
+  * [661444b] Update docs regarding --download and drop it from completions
+  * flake8 test suite and example cleanups
+  * Update test data submodule URLs to https
+  * Make gbp-posttag-push easier to use
+  * [bba1ec7] docs: changelog entry is not created after gbp import-orig.
+    Thanks to Guillaume Millet
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 12 Jan 2017 10:08:28 +0100
+
 git-buildpackage (0.8.9) unstable; urgency=medium
 
   [ Guido Günther ]
