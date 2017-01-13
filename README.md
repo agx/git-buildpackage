@@ -17,6 +17,9 @@ The mailing list is at:
   * http://lists.sigxcpu.org/mailman/listinfo/git-buildpackage
   * git-buildpackage at lists.sigxcpu.org
 
-See the HACKING document for details on contributing to gbp development.
+See the HACKING document for details on contributing to gbp development. The
+package is also available on Pypi at:
+
+  https://pypi.python.org/pypi/gbp/
 
 [![Build Status](https://travis-ci.org/agx/git-buildpackage.svg?branch=master)](https://travis-ci.org/agx/git-buildpackage)
