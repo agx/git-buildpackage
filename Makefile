@@ -1,4 +1,5 @@
 PY_EXAMPLES=$(shell grep -l /usr/bin/python examples/*)
+FLAKE_OPTS=$(shell test -w /dev/shm || echo '-j1')
 
 all: syntax-check test
 
@@ -14,8 +15,8 @@ test:
 	python setup.py nosetests --with-xcoverage
 
 syntax-check:
-	flake8 -j1
-	flake8 -j1 $(PY_EXAMPLES)
+	flake8 $(FLAKE_OPTS)
+	flake8 $(FLAKE_OPTS) $(PY_EXAMPLES)
 
 docs:
 	make -C docs
