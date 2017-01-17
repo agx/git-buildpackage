@@ -16,6 +16,7 @@
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
 
+import hashlib
 import os
 import subprocess
 
@@ -178,8 +179,18 @@ class TestBuildpackage(ComponentTestBase):
                                 'dsc-3.0',
                                 '2.8-1',
                                 ['--git-no-pristine-tar'])
-        out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
+        tarball = "../hello-debhelper_2.8.orig.tar.gz"
+        out = subprocess.check_output(["file", tarball])
         ok_("max compression" not in out)
+        m1 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
+        os.unlink(tarball)
+        eq_(buildpackage(['arg0',
+                          '--git-ignore-new',
+                          '--git-builder=/bin/true',
+                          '--git-cleaner=/bin/true',
+                          '../arg with spaces']), 0)
+        m2 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
+        eq_(m1, m2, "Regenerated tarball has different checksum")
 
     def test_tarball_max_compression(self):
         """Test that passing max compression works (#820846)"""

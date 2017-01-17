@@ -322,7 +322,7 @@ def git_archive_build_orig(repo, cp, output_dir, options):
     gbp.log.debug("Building upstream tarball with compression '%s'%s" %
                   (options.comp_type,
                    "' -%s'" % comp_level if comp_level is not None else ''))
-    main_tree = repo.tree_drop_dirs(upstream_tree, options.components)
+    main_tree = repo.tree_drop_dirs(upstream_tree, options.components) if options.components else upstream_tree
     if not git_archive(repo, cp, output_dir, main_tree,
                        options.comp_type,
                        comp_level,
