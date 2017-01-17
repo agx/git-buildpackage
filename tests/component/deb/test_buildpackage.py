@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2015,2016 Guido Günther <agx@sigxcpu.org>
+# (C) 2015-2017 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 #    <http://www.gnu.org/licenses/>
 
 import os
+import subprocess
 
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
@@ -147,8 +148,7 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage('hello-debhelper',
                                 'dsc-3.0',
                                 '2.8-1',
-                                ['--git-export-dir=../foo/bar'],
-                                )
+                                ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
 
     def test_argument_quoting(self):
@@ -171,3 +171,21 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-cleaner=/bin/true',
                             '../arg with spaces'])
         ok_(ret == 0, "Building the package failed")
+
+    def test_tarball_default_compression(self):
+        """Test that we use defaults for compression if not given (#820846)"""
+        self._test_buildpackage('hello-debhelper',
+                                'dsc-3.0',
+                                '2.8-1',
+                                ['--git-no-pristine-tar'])
+        out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
+        ok_("max compression" not in out)
+
+    def test_tarball_max_compression(self):
+        """Test that passing max compression works (#820846)"""
+        self._test_buildpackage('hello-debhelper',
+                                'dsc-3.0',
+                                '2.8-1',
+                                ['--git-no-pristine-tar', '--git-compression-level=9'])
+        out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
+        ok_("max compression" in out)

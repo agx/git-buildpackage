@@ -127,11 +127,11 @@ def test_create_tarballs():
     # Tarball with submodules
     changelog = {"Source": "test", "Upstream-Version": "0.1"}
     ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
-                                 "9", True))
+                                 9, True))
     # Tarball without submodules
     changelog = {"Source": "test", "Upstream-Version": "0.2"}
     ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
-                                 "9", False))
+                                 9, False))
 
 
 def test_create_zip_archives():
@@ -143,7 +143,7 @@ def test_create_zip_archives():
     ok_('test/test_submodule/testfile' in contents)
 
     git_archive_single('HEAD', 'without-submodules.zip', 'test',
-                       '', '', '', 'zip')
+                       '', None, '', 'zip')
     contents = ls_zip('without-submodules.zip')
     ok_('test/test_submodule/testfile' not in contents)
 

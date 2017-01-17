@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2016 Guido Günther <agx@sigxcpu.org>
+# (C) 2006-2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -318,12 +318,14 @@ def git_archive_build_orig(repo, cp, output_dir, options):
     gbp.log.info("Creating %s from '%s'" % (du.orig_file(cp,
                                                          options.comp_type),
                                             upstream_tree))
-    gbp.log.debug("Building upstream tarball with compression '%s -%s'" %
-                  (options.comp_type, options.comp_level))
+    comp_level = int(options.comp_level) if options.comp_level != '' else None
+    gbp.log.debug("Building upstream tarball with compression '%s'%s" %
+                  (options.comp_type,
+                   "' -%s'" % comp_level if comp_level is not None else ''))
     main_tree = repo.tree_drop_dirs(upstream_tree, options.components)
     if not git_archive(repo, cp, output_dir, main_tree,
                        options.comp_type,
-                       options.comp_level,
+                       comp_level,
                        options.with_submodules):
         raise GbpError("Cannot create upstream tarball at '%s'" % output_dir)
     for component in options.components:
@@ -336,7 +338,7 @@ def git_archive_build_orig(repo, cp, output_dir, options):
                         subtree))
         if not git_archive(repo, cp, output_dir, subtree,
                            options.comp_type,
-                           options.comp_level,
+                           comp_level,
                            options.with_submodules,
                            component=component):
             raise GbpError("Cannot create additional tarball %s at '%s'"

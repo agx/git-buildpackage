@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006-2011,2015,2016 Guido Günther <agx@sigxcpu.org>
+# (C) 2006-2011,2015-2017 Guido Günther <agx@sigxcpu.org>
 # (C) 2012-2015 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -207,11 +207,13 @@ def git_archive_build_orig(repo, spec, output_dir, options):
         gbp.log.info("%s does not exist, creating from '%s'" %
                      (spec.orig_src['filename'], upstream_tree))
         if spec.orig_src['compression']:
+            comp_level = int(options.comp_level) if options.comp_level != '' else None
+            comp_level_msg = "' -%s'" % comp_level if comp_level is not None else ''
             gbp.log.debug("Building upstream source archive with compression "
                           "'%s -%s'" % (spec.orig_src['compression'],
-                                        options.comp_level))
+                                        comp_level_msg))
         if not git_archive(repo, spec, output_dir, upstream_tree,
-                           orig_prefix, options.comp_level,
+                           orig_prefix, comp_level,
                            options.with_submodules):
             raise GbpError("Cannot create upstream tarball at '%s'" %
                            output_dir)
@@ -546,14 +548,16 @@ def main(argv):
                     # Just build source archive from the exported tree
                     gbp.log.info("Creating (native) source archive %s from '%s'"
                                  % (spec.orig_src['filename'], tree))
+                    comp_level = int(options.comp_level) if options.comp_level != '' else None
                     if spec.orig_src['compression']:
+                        comp_level_msg = "' -%s'" % comp_level if comp_level is not None else ''
                         gbp.log.debug("Building source archive with "
-                                      "compression '%s -%s'" %
+                                      "compression '%s%s'" %
                                       (spec.orig_src['compression'],
-                                       options.comp_level))
+                                       comp_level_msg))
                     orig_prefix = spec.orig_src['prefix']
                     if not git_archive(repo, spec, source_dir, tree,
-                                       orig_prefix, options.comp_level,
+                                       orig_prefix, comp_level,
                                        options.with_submodules):
                         raise GbpError("Cannot create source tarball at '%s'" %
                                        source_dir)

@@ -87,8 +87,12 @@ def git_archive_submodules(repo, treeish, output, prefix, comp_type, comp_level,
         if comp_type:
             # Redirect through stdout directly to the correct output file in
             # order to avoid determining the output filename of the compressor
-            ret = os.system("%s --stdout -%s %s %s > %s" %
-                            (comp_type, comp_level, comp_opts, main_archive,
+            try:
+                comp_level_opt = '-%d' % comp_level if comp_level is not None else ''
+            except TypeError as e:
+                raise GbpError("Invalid compression level '%s'" % comp_level)
+            ret = os.system("%s --stdout %s %s %s > %s" %
+                            (comp_type, comp_level_opt, comp_opts, main_archive,
                              output))
             if ret:
                 raise GbpError("Error creating %s: %d" % (output, ret))
@@ -107,8 +111,12 @@ def git_archive_single(treeish, output, prefix, comp_type, comp_level, comp_opts
     prefix = sanitize_prefix(prefix)
     pipe = pipes.Template()
     pipe.prepend("git archive --format=%s --prefix=%s %s" % (format, prefix, treeish), '.-')
+    try:
+        comp_level_opt = '-%d' % comp_level if comp_level is not None else ''
+    except TypeError as e:
+        raise GbpError("Invalid compression level '%s'" % comp_level)
     if comp_type:
-        pipe.append('%s -c -%s %s' % (comp_type, comp_level, comp_opts), '--')
+        pipe.append('%s -c %s %s' % (comp_type, comp_level_opt, comp_opts), '--')
     ret = pipe.copy('', output)
     if ret:
         raise GbpError("Error creating %s: %d" % (output, ret))

@@ -142,7 +142,7 @@ class GbpOptionParser(OptionParser):
                 'git-author': 'False',
                 'ignore-regex': '',
                 'compression': 'auto',
-                'compression-level': '9',
+                'compression-level': '',
                 'remote-url-pattern': 'ssh://git.debian.org/git/collab-maint/%(pkg)s.git',
                 'multimaint': 'True',
                 'multimaint-merge': 'False',
