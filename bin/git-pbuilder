@@ -320,11 +320,7 @@ fi
 # Add all of the additional arguments we got on the command line, but quote
 # them from the shell since they'll undergo another round of shell expansion
 # when the pbuilder runs debbuild.
-source_only=false
 for arg in "$@" ; do
-    if [ x'-S' = x"$arg" ] ; then
-        source_only=true
-    fi
     DEBBUILDOPTS+=" $(shell_quote "$arg")"
 done
 
@@ -337,11 +333,7 @@ else
     pdebuild --buildresult "$OUTPUT_DIR" --pbuilder "$BUILDER" \
         --debbuildopts "$DEBBUILDOPTS" "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
 fi
-status="$?"
-if [ -n "`ls ../*_source.changes`" ] && [ true != "$source_only" ] ; then
-    rm ../*_source.changes
-fi
-exit "$status"
+exit "$?"
 
 # Documentation.  Use a hack to hide this from the shell.  Because of the
 # above exit line, this should never be executed.
