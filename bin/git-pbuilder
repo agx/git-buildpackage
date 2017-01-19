@@ -327,13 +327,11 @@ done
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
-    pdebuild \
-        --pbuilder "$BUILDER"  "${PDEBUILDOPTS[@]}" -- \
-        --debbuildopts "$DEBBUILDOPTS" "${OPTIONS[@]}"
+    pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" \
+        "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
 else
-    pdebuild --buildresult "$OUTPUT_DIR" \
-        --pbuilder "$BUILDER" "${PDEBUILDOPTS[@]}" -- \
-        --debbuildopts "$DEBBUILDOPTS" "${OPTIONS[@]}"
+    pdebuild --buildresult "$OUTPUT_DIR" --pbuilder "$BUILDER" \
+        --debbuildopts "$DEBBUILDOPTS" "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
 fi
 exit "$?"
 
