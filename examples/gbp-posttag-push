@@ -170,7 +170,7 @@ def do_push(repo, dests, debian_tag, debian_sha1, upstream_tag, upstream_sha1, u
         gbp.log.info("%s %s to %s" % (verb, debian_tag, dest))
         repo.push_tag(dest, debian_tag, dry_run)
         gbp.log.info("%s %s to %s:%s" % (verb, debian_sha1, dest, dests[dest]))
-        repo.push(dest, debian_sha1, dests[dest])
+        repo.push(dest, debian_sha1, dests[dest], dry_run)
         if upstream_tag:
             gbp.log.info("%s %s to %s" % (verb, upstream_tag, dest))
             repo.push_tag(dest, upstream_tag, dry_run)
