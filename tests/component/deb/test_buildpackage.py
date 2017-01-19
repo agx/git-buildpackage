@@ -23,6 +23,7 @@ import subprocess
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
+from tests.component.deb.fixtures import RepoFixtures
 
 from nose.tools import ok_, eq_, assert_false, assert_true
 
@@ -39,19 +40,15 @@ class TestBuildpackage(ComponentTestBase):
                             dir,
                             '%s_%s.dsc' % (pkg, version))
 
-    def _test_buildpackage(self, pkg, dir, version, opts=[]):
-        dsc = self._dsc_name(pkg, version, dir)
-        assert import_dsc(['arg0', dsc]) == 0
-        ComponentTestGitRepository(pkg)
-        prebuild_out = os.path.join(os.path.abspath(pkg), 'prebuild.out')
-        postbuild_out = os.path.join(os.path.abspath(pkg), 'postbuild.out')
-        os.chdir(pkg)
-
+    def _test_buildpackage(self, repo, opts=[]):
+        prebuild_out = os.path.join(repo.path, 'prebuild.out')
+        postbuild_out = os.path.join(repo.path, 'postbuild.out')
         args = ['arg0',
                 '--git-prebuild=printenv > %s' % prebuild_out,
                 '--git-postbuild=printenv > %s' % postbuild_out,
                 '--git-builder=/bin/true',
                 '--git-cleaner=/bin/true'] + opts
+        os.chdir(repo.path)
         ret = buildpackage(args)
         ok_(ret == 0, "Building the package failed")
         eq_(os.path.exists(prebuild_out), True)
@@ -66,24 +63,19 @@ class TestBuildpackage(ComponentTestBase):
                                            "GBP_CHANGES_FILE",
                                            "GBP_BUILD_DIR"])
 
-    def test_debian_buildpackage(self):
+    @RepoFixtures.native
+    def test_debian_buildpackage(self, repo):
         """Test that building a native debian package works"""
-        self._test_buildpackage('git-buildpackage', 'dsc-native', '0.4.14')
+        self._test_buildpackage(repo)
 
-    def test_non_native_buildpackage(self):
+    @RepoFixtures.quilt30
+    def test_non_native_buildpackage(self, repo):
         """Test that building a source 3.0 debian package works"""
-        self._test_buildpackage('hello-debhelper', 'dsc-3.0', '2.8-1')
+        self._test_buildpackage(repo)
 
-    def test_tag_only(self):
+    @RepoFixtures.native
+    def test_tag_only(self, repo):
         """Test that only tagging a native debian package works"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-native',
-                                'git-buildpackage_%s.dsc' % version)
-
-        dsc = _dsc('0.4.14')
-        assert import_dsc(['arg0', dsc]) == 0
-        repo = ComponentTestGitRepository('git-buildpackage')
         os.chdir('git-buildpackage')
         repo.delete_tag('debian/0.4.14')  # make sure we can tag again
         ret = buildpackage(['arg0',
@@ -144,23 +136,15 @@ class TestBuildpackage(ComponentTestBase):
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
-    def test_export_dir_buildpackage(self):
+    @RepoFixtures.quilt30
+    def test_export_dir_buildpackage(self, repo):
         """Test that building with a export dir works"""
-        self._test_buildpackage('hello-debhelper',
-                                'dsc-3.0',
-                                '2.8-1',
-                                ['--git-export-dir=../foo/bar'])
+        self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
 
-    def test_argument_quoting(self):
+    @RepoFixtures.native
+    def test_argument_quoting(self, repo):
         """Test that we quote arguments to builder (#)"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-native',
-                                'git-buildpackage_%s.dsc' % version)
-
-        dsc = _dsc('0.4.14')
-        assert import_dsc(['arg0', dsc]) == 0
         os.chdir('git-buildpackage')
         with open('../arg with spaces', 'w'):
             pass
@@ -173,12 +157,10 @@ class TestBuildpackage(ComponentTestBase):
                             '../arg with spaces'])
         ok_(ret == 0, "Building the package failed")
 
-    def test_tarball_default_compression(self):
+    @RepoFixtures.quilt30
+    def test_tarball_default_compression(self, repo):
         """Test that we use defaults for compression if not given (#820846)"""
-        self._test_buildpackage('hello-debhelper',
-                                'dsc-3.0',
-                                '2.8-1',
-                                ['--git-no-pristine-tar'])
+        self._test_buildpackage(repo, ['--git-no-pristine-tar'])
         tarball = "../hello-debhelper_2.8.orig.tar.gz"
         out = subprocess.check_output(["file", tarball])
         ok_("max compression" not in out)
@@ -192,11 +174,9 @@ class TestBuildpackage(ComponentTestBase):
         m2 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
         eq_(m1, m2, "Regenerated tarball has different checksum")
 
-    def test_tarball_max_compression(self):
+    @RepoFixtures.quilt30
+    def test_tarball_max_compression(self, repo):
         """Test that passing max compression works (#820846)"""
-        self._test_buildpackage('hello-debhelper',
-                                'dsc-3.0',
-                                '2.8-1',
-                                ['--git-no-pristine-tar', '--git-compression-level=9'])
+        self._test_buildpackage(repo, ['--git-no-pristine-tar', '--git-compression-level=9'])
         out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
         ok_("max compression" in out)

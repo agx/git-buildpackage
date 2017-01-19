@@ -20,49 +20,30 @@ import os
 
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
-from tests.component.deb import DEB_TEST_DATA_DIR
+from tests.component.deb.fixtures import RepoFixtures
 
 from nose.tools import ok_
 
-from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.clone import main as clone
 
 
 class TestClone(ComponentTestBase):
     """Test cloning from a remote"""
 
-    def test_clone_nonempty(self):
+    @RepoFixtures.native
+    def test_clone_nonempty(self, repo):
         """Test that cloning into an existing dir fails"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-native',
-                                'git-buildpackage_%s.dsc' % version)
-
-        # Build up somethng we can clone from
-        dsc = _dsc('0.4.14')
-        assert import_dsc(['arg0', dsc]) == 0
-        repo = ComponentTestGitRepository('git-buildpackage')
-        self._check_repo_state(repo, 'master', ['master'])
-        assert len(repo.get_commits()) == 1
-
         ok_(clone(['arg0', repo.path]) == 1,
             "Cloning did no fail as expected")
-        self._check_log(-2, "gbp:error: Git command failed: Error running git clone: fatal: destination path 'git-buildpackage' already exists and is not an empty directory.")
+        self._check_log(-2,
+                        "gbp:error: Git command failed: Error "
+                        "running git clone: fatal: destination path "
+                        "'git-buildpackage' already exists and is not "
+                        "an empty directory.")
 
-    def test_clone_native(self):
+    @RepoFixtures.native
+    def test_clone_native(self, repo):
         """Test that cloning of debian native packages works"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-native',
-                                'git-buildpackage_%s.dsc' % version)
-
-        # Build up somethng we can clone from
-        dsc = _dsc('0.4.14')
-        assert import_dsc(['arg0', dsc]) == 0
-        repo = ComponentTestGitRepository('git-buildpackage')
-        self._check_repo_state(repo, 'master', ['master'])
-        assert len(repo.get_commits()) == 1
-
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
         clone(['arg0',
@@ -75,20 +56,10 @@ class TestClone(ComponentTestBase):
 
     def test_clone_environ(self):
         """Test that environment variables influence git configuration"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-native',
-                                'git-buildpackage_%s.dsc' % version)
-
         # Build up somethng we can clone from
-        dsc = _dsc('0.4.14')
         os.environ['DEBFULLNAME'] = 'testing tester'
         os.environ['DEBEMAIL'] = 'gbp-tester@debian.invalid'
-        assert import_dsc(['arg0', dsc]) == 0
-        repo = ComponentTestGitRepository('git-buildpackage')
-        self._check_repo_state(repo, 'master', ['master'])
-        assert len(repo.get_commits()) == 1
-
+        repo = RepoFixtures.import_native()
         got = repo.get_config("user.email")
         want = os.environ['DEBEMAIL']
         ok_(got == want, "unexpected git config user.email: got %s, want %s" % (got, want))
