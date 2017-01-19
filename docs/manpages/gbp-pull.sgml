@@ -29,6 +29,7 @@
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--depth=</option><replaceable>depth</replaceable></arg>
+      <arg><replaceable>repository</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -36,8 +37,15 @@
     <para>
     &gbp-pull; updates the <emphasis>debian</emphasis>,
     <emphasis>upstream</emphasis> and <emphasis>pristine-tar</emphasis>
-    branches from a remote repository in one go. It checks if the update is safe (would
+    branches from remote repositories in one go. It checks if the update is safe (would
     result in a <emphasis>fast-forward</emphasis> merge) and aborts otherwise.
+    </para>
+    <para>
+      If given on the command line the changes are fetched from the
+      given repository otherwise the default
+      for <replaceable>repository</replaceable> is read from
+      the <replaceable>remote</replaceable> configuration for each
+      branch (in git's configuration).
     </para>
   </refsect1>
   <refsect1>

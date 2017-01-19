@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009,2013 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009,2013,2017 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -31,7 +31,7 @@ from gbp.scripts.common import ExitCodes
 import gbp.log
 
 
-def fast_forward_branch(branch, repo, options):
+def fast_forward_branch(rem_repo, branch, repo, options):
     """
     update branch to its remote branch, fail on non fast forward updates
     unless --force is given
@@ -40,7 +40,11 @@ def fast_forward_branch(branch, repo, options):
     """
     update = False
 
-    remote = repo.get_merge_branch(branch)
+    if rem_repo:
+        remote = 'refs/remotes/%s/%s' % (rem_repo, branch)
+    else:
+        remote = repo.get_merge_branch(branch)
+
     if not remote:
         gbp.log.warn("No branch tracking '%s' found - skipping." % branch)
         return False
@@ -74,7 +78,7 @@ def fast_forward_branch(branch, repo, options):
 def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
-                                 usage='%prog [options] - safely update a repository from remote')
+                                 usage='%prog [options] [repo] - safely update a repository from remote')
     except GbpError as err:
         gbp.log.err(err)
         return None
@@ -103,18 +107,29 @@ def parse_args(argv):
     parser = build_parser(argv[0])
     if not parser:
         return None, None
-    return parser.parse_args(argv)
+    options, args = parser.parse_args(argv)
+    if len(args) > 2:
+        parser.print_help(file=sys.stderr)
+        return None, None
+    return options, args
 
 
 def main(argv):
     retval = 0
     current = None
+    rem_repo = None
 
     (options, args) = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
+
+    if len(args) == 2:
+        rem_repo = args[1]
+        gbp.log.info("Fetching from '%s'" % rem_repo)
+    else:
+        gbp.log.info("Fetching from default remote for each branch")
 
     try:
         repo = DebianGitRepository(os.path.curdir)
@@ -147,10 +162,10 @@ def main(argv):
             gbp.log.err(out)
             raise GbpError
 
-        repo.fetch(depth=options.depth)
-        repo.fetch(depth=options.depth, tags=True)
+        repo.fetch(rem_repo, depth=options.depth)
+        repo.fetch(rem_repo, depth=options.depth, tags=True)
         for branch in branches:
-            if not fast_forward_branch(branch, repo, options):
+            if not fast_forward_branch(rem_repo, branch, repo, options):
                 retval = 2
 
         if options.redo_pq:
