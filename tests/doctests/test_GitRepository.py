@@ -823,7 +823,7 @@ def test_checkout():
 
 def test_gc():
     """
-    Test garbace collection
+    Test garbage collection
 
     Methods tested:
          - L{gbp.git.GitRepository.collect_garbage}
@@ -831,6 +831,8 @@ def test_gc():
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(dirs['repo'])
     >>> repo.collect_garbage()
+    >>> repo.collect_garbage(prune=True)
+    >>> repo.collect_garbage(prune='all', aggressive=True)
     """
 
 

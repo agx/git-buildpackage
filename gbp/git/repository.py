@@ -1794,15 +1794,22 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Unable to archive %s: %s" % (treeish, err.strip()))
 
-    def collect_garbage(self, auto=False):
+    def collect_garbage(self, auto=False, prune=False, aggressive=False):
         """
         Cleanup unnecessary files and optimize the local repository
 
         param auto: only cleanup if required
         param auto: C{bool}
         """
-        args = ['--auto'] if auto else []
-        self._git_command("gc", args)
+        args = GitArgs('--quiet')
+        if prune is True:
+            args.add('--prune')
+        else:
+            args.add_true(prune, '--prune=%s' % prune)
+        args.add_true(aggressive, '--aggressive')
+        args.add_true(auto, '--auto')
+        self._git_command("gc", args.args)
+
 
 #{ Submodules
 
