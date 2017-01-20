@@ -1,3 +1,26 @@
+git-buildpackage (0.8.11) experimental; urgency=medium
+
+  * [8bd74df] command_wrappers: Simplify RunAtCommand
+  * [1140886] buildpackage: Don't set a compression level if unset and make
+    this the default.  This allows compressors to use the their default
+    compression level. Only applies when not using pristine-tar.
+    Thanks to Antoine Beaupré for investigating (Closes: #820846)
+  * [0fdff8e] buildpackage: Use commit instead of tree to create archive.
+    This makes sure we use the timestamps of the commit when creating the
+    tarball. Only applies when not using pristine-tar
+    Thanks to Ximin Luo for investigating (Closes: #851645)
+  * [3f4b9f8] make: Check if we can use parallel flake
+  * [534c055] git-pbuilder: Don't remove changes file (Closes: #850478)
+  * [b863399] pull: Allow to specify remote on the command line
+    (Closes: #851844)
+  * [d3cb4db] gbp-posttag-push: add missing dry-run for debian branch push
+  * [f9a7640] buildpackage: verify generated tarballs when using pristine-tar
+  * [b8ea662] pq: Hardcode commit abbrev to 7 when exporting patches.
+    This avoids path churn with git >= 2.11.0 (Closes: #848354)
+  * Test suite enhancements
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 20 Jan 2017 12:54:40 +0100
+
 git-buildpackage (0.8.10) unstable; urgency=medium
 
   * [ede603e] GitRepository: properly use pipe on empty strings.
