@@ -126,6 +126,8 @@ class TestBuildpackage(ComponentTestBase):
         assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
+        #  Make sure the tree object for importing the main tarball is recreated
+        repo.collect_garbage(prune='all', aggressive=True)
         ret = buildpackage(['arg0',
                             '--git-component=foo',
                             '--git-pristine-tar',
