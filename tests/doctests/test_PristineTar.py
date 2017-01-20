@@ -137,6 +137,19 @@ def test_pristine_tar_checkout():
     """
 
 
+def test_pristine_tar_verify():
+    """
+    Verify a tarball using pristine-tar
+
+    Methods tested:
+         - L{gbp.deb.pristinetar.DebianPristineTar.verify}
+
+    >>> import gbp.deb.git
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
+    >>> repo.pristine_tar.verify('../upstream_1.0.orig.tar.gz')
+    """
+
+
 def test_pristine_tar_checkout_nonexistent():
     """
     Checkout a tarball that does not exist using pristine-tar

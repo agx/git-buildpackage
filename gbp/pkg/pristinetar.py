@@ -80,3 +80,9 @@ class PristineTar(Command):
         self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr_or_reason}" %
                           (self.branch, upstream))
         self.__call__(['commit', archive, upstream])
+
+    def verify(self, archive):
+        """Verify an archive's I{archive} checksum using to the pristine tar branch"""
+
+        self.run_error = 'Pristine-tar couldn\'t verify "%s": {stderr_or_reason}' % os.path.basename(archive)
+        self.__call__(['verify', archive])
