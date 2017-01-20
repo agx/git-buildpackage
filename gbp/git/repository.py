@@ -142,7 +142,7 @@ class GitRepository(object):
         return output, popen.returncode
 
     def _git_inout(self, command, args, input=None, extra_env=None, cwd=None,
-                   capture_stderr=False):
+                   capture_stderr=False, config_args=None):
         """
         Run a git command with input and return output
 
@@ -161,14 +161,19 @@ class GitRepository(object):
         """
         if not cwd:
             cwd = self.path
-        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr)
+        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr, config_args)
 
     @classmethod
-    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr):
+    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr, config_args=None):
         """
         As _git_inout but can be used without an instance
         """
-        cmd = ['git', command] + args
+        config_opts = []
+        config_args = config_args or []
+        for arg in config_args:
+            config_opts.extend(['-c', arg])
+
+        cmd = ['git'] + config_opts + [command] + args
         env = cls.__build_env(extra_env)
         stderr_arg = subprocess.PIPE if capture_stderr else None
         stdin_arg = subprocess.PIPE if input is not None else None
