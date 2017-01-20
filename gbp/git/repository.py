@@ -85,7 +85,18 @@ class GitRepository(object):
             raise GitRepositoryError(
                 "Failed to get repository state at '%s'" % self.path)
         self._bare = False if out.strip() != 'true' else True
-        self._git_dir = '' if self._bare else '.git'
+
+    def _get_git_dir(self):
+        out, dummy, ret = self._git_inout('rev-parse', ['--git-dir'],
+                                          capture_stderr=True)
+        if ret:
+            raise GitRepositoryError(
+                "Failed to determine repos git-dir at '%s'" % self.path)
+        git_dir = out.strip()
+        if os.path.isabs(git_dir):
+            self._git_dir = git_dir
+        else:
+            self._git_dir = os.path.abspath(os.path.join(self.path, git_dir))
 
     def __init__(self, path):
         self._path = os.path.abspath(path)
@@ -100,6 +111,7 @@ class GitRepository(object):
         except:
             raise GitRepositoryError("No Git repository at '%s'" % self.path)
         self._check_bare()
+        self._get_git_dir()
 
     @staticmethod
     def __build_env(extra_env):

@@ -299,3 +299,19 @@ class TestImportOrig(ComponentTestBase):
             with assert_raises(KeyError):
                 t.getmember(f)
         t.close()
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_import_in_submodule(self, repo):
+        """
+        Test that importing works if repo is a git submodule (#674015)
+        """
+        parent_repo = GitRepository.create('../parent')
+        parent_repo.add_submodule(repo.path)
+        parent_repo.update_submodules(init=True, recursive=True)
+        submodule = GitRepository(os.path.join(parent_repo.path,
+                                               'hello-debhelper'))
+        ok_(submodule.path.endswith, 'parent/hello-debhelper')
+        os.chdir(submodule.path)
+        orig = self._orig('2.8')
+        submodule.create_branch('upstream', 'origin/upstream')
+        ok_(import_orig(['arg0', '--no-interactive', orig]) == 0)

@@ -739,7 +739,7 @@ def test_create_bare():
     >>> bare = gbp.git.GitRepository.create(dirs['bare'], bare=True, description="msg")
     >>> bare.path == dirs['bare']
     True
-    >>> bare.git_dir[:-1] == dirs['bare']
+    >>> bare.git_dir == dirs['bare']
     True
     >>> type(bare) == gbp.git.GitRepository
     True
@@ -1019,6 +1019,20 @@ def test_set_user_name_and_email():
     >>> repo = gbp.git.GitRepository(dirs['repo'])
     >>> repo.set_user_name("Michael Stapelberg")
     >>> repo.set_user_email("stapelberg@test.invalid")
+    """
+
+
+def test_git_dir():
+    """
+    Properties tested:
+        - L{gbp.git.GitRepository.git_dir}
+    >>> import os, gbp.git
+    >>> git_dir = os.path.join(dirs['repo'], '.git')
+    >>> os.environ['GIT_DIR'] = git_dir
+    >>> somewhere = gbp.git.GitRepository(os.path.join(dirs['repo'], '..'))
+    >>> somewhere.git_dir == git_dir
+    True
+    >>> del os.environ['GIT_DIR']
     """
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
