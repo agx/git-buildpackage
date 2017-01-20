@@ -111,6 +111,7 @@ def prepare_upstream_tarball(repo, cp, options, tarball_dir, output_dir):
             upstream_tree = git_archive_build_orig(repo, cp, output_dir, options)
             if options.pristine_tar_commit:
                 pristine_tar_commit(repo, cp, options, output_dir, orig_files[0], upstream_tree)
+    pristine_tar_verify_orig(repo, cp, options, output_dir, orig_files)
 
 
 def pristine_tar_commit(repo, cp, options, output_dir, orig_file, upstream_tree):
@@ -239,6 +240,21 @@ def prepare_output_dir(dir):
     return output_dir
 
 
+def pristine_tar_prepare_orig_tree(repo, cp, options):
+    """Make sure the upstream tree exists
+    In case of component tarballs we need to recreate a tree for the
+    main tarball without the component subdirs.
+    """
+    if options.components:
+        try:
+            upstream_tag = repo.version_to_tag(options.upstream_tag, cp.upstream_version)
+            tree_name = "%s^{tree}" % upstream_tag
+            repo.tree_drop_dirs(tree_name, options.components)
+        except GitRepositoryError:
+            raise GbpError("Couldn't find upstream tree '%s' to create "
+                           "orig tarball via pristine-tar" % tree_name)
+
+
 def pristine_tar_build_orig(repo, cp, output_dir, options):
     """
     Build orig tarball using pristine-tar
@@ -250,17 +266,7 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
             gbp.log.warn('Pristine-tar branch "%s" not found' %
                          repo.pristine_tar.branch)
 
-        # Make sure the upstream tree exists, it might not be there in
-        # case of components since we don't keep a ref to it
-        if options.components:
-            try:
-                upstream_tag = repo.version_to_tag(options.upstream_tag, cp.upstream_version)
-                tree_name = "%s^{tree}" % upstream_tag
-                repo.tree_drop_dirs(tree_name, options.components)
-            except GitRepositoryError:
-                raise GbpError("Couldn't find upstream tree '%s' to create "
-                               "orig tarball via pristine-tar" % tree_name)
-
+        pristine_tar_prepare_orig_tree(repo, cp, options)
         try:
             repo.pristine_tar.checkout(cp.name,
                                        cp.upstream_version,
@@ -281,6 +287,21 @@ def pristine_tar_build_orig(repo, cp, output_dir, options):
             else:
                 raise
     return False
+
+
+def pristine_tar_verify_orig(repo, cp, options, output_dir, orig_files):
+    """
+    Verify orig tarballs using prstine tar
+
+    @returns: C{True} if tarball was build, C{False} otherwise
+    """
+    if not options.pristine_tar:
+        return True
+
+    pristine_tar_prepare_orig_tree(repo, cp, options)
+    for f in orig_files:
+        repo.pristine_tar.verify(os.path.join(output_dir, f))
+    return True
 
 
 def get_upstream_tree(repo, cp, options):
