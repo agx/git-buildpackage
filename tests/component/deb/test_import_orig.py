@@ -22,12 +22,10 @@ import tarfile
 
 from mock import patch, DEFAULT
 
-from tests.component import (ComponentTestBase,
-                             ComponentTestGitRepository,
-                             skipUnless)
+from tests.component import (ComponentTestBase, skipUnless)
 from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL
+from tests.component.deb.fixtures import RepoFixtures
 
-from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.import_orig import main as import_orig
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.deb.dscfile import DscFile
@@ -44,6 +42,13 @@ def raise_if_tag_match(match):
     return wrapped
 
 
+def _dsc_file(pkg, version, dir='dsc-3.0'):
+    return os.path.join(DEB_TEST_DATA_DIR, dir, '%s_%s.dsc' % (pkg, version))
+
+
+DEFAULT_DSC = _dsc_file('hello-debhelper', '2.6-2')
+
+
 class TestImportOrig(ComponentTestBase):
     """Test importing of new upstream versions"""
     pkg = "hello-debhelper"
@@ -58,11 +63,6 @@ class TestImportOrig(ComponentTestBase):
         return os.path.join(DEB_TEST_DOWNLOAD_URL,
                             dir,
                             '%s_%s.orig.tar.gz' % (self.pkg, version))
-
-    def _dsc(self, version, dir='dsc-3.0'):
-        return os.path.join(DEB_TEST_DATA_DIR,
-                            dir,
-                            '%s_%s.dsc' % (self.pkg, version))
 
     def test_initial_import(self):
         """Test that importing into an empty repo works"""
@@ -90,16 +90,11 @@ class TestImportOrig(ComponentTestBase):
             ok_(file in repo.ls_tree('upstream'),
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
 
-    def test_update(self):
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_update(self, repo):
         """
         Test that importing a new version works
         """
-        dsc = self._dsc('2.6-2')
-        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
-        repo = ComponentTestGitRepository(self.pkg)
-        os.chdir(self.pkg)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
-
         orig = self._orig('2.8')
         ok_(import_orig(['arg0',
                          '--postimport=printenv > postimport.out',
@@ -112,16 +107,11 @@ class TestImportOrig(ComponentTestBase):
                                             ("GBP_UPSTREAM_VERSION", "2.8"),
                                             ("GBP_DEBIAN_VERSION", "2.8-1")])
 
-    def test_update_component_tarballs(self):
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_update_component_tarballs(self, repo):
         """
         Test importing new version with additional tarballs works
         """
-        dsc = self._dsc('2.6-2')
-        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
-        repo = ComponentTestGitRepository(self.pkg)
-        os.chdir(self.pkg)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
-
         # Import 2.8
         orig = self._orig('2.8', dir='dsc-3.0-additional-tarballs')
         ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
@@ -129,7 +119,7 @@ class TestImportOrig(ComponentTestBase):
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
 
-        dsc = DscFile.parse(self._dsc('2.8-1', dir='dsc-3.0-additional-tarballs'))
+        dsc = DscFile.parse(_dsc_file(self.pkg, '2.8-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
         ptars = [('hello-debhelper_2.8.orig.tar.gz', 'pristine-tar', '', dsc.tgz),
                  ('hello-debhelper_2.8.orig-foo.tar.gz', 'pristine-tar^', 'foo', dsc.additional_tarballs['foo'])]
@@ -153,7 +143,7 @@ class TestImportOrig(ComponentTestBase):
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8', 'upstream/2.9'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2', 'foo/test3'])
 
-        dsc = DscFile.parse(self._dsc('2.9-1', dir='dsc-3.0-additional-tarballs'))
+        dsc = DscFile.parse(_dsc_file(self.pkg, '2.9-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
         ptars = [('hello-debhelper_2.9.orig.tar.gz', 'pristine-tar', '', dsc.tgz),
                  ('hello-debhelper_2.9.orig-foo.tar.gz', 'pristine-tar^', 'foo', dsc.additional_tarballs['foo'])]
@@ -171,7 +161,7 @@ class TestImportOrig(ComponentTestBase):
     def test_tag_exists(self):
         """Test that importing an already imported version fails"""
         repo = GitRepository.create(self.pkg)
-        os.chdir(self.pkg)
+        os.chdir(repo.path)
         orig = self._orig('2.6')
         # First import
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
@@ -182,20 +172,13 @@ class TestImportOrig(ComponentTestBase):
         # Check that the second import didn't change any refs
         self.check_refs(repo, heads)
 
-    def test_update_fail_create_upstream_tag(self):
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_update_fail_create_upstream_tag(self, repo):
         """
         Test that we can recover from a failure to create the upstream
         tag
         """
-        repo = GitRepository.create(self.pkg)
-        os.chdir(self.pkg)
-
-        dsc = self._dsc('2.6-2')
-        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
-
         heads = self.rem_refs(repo, self.def_branches)
-
         orig = self._orig('2.8')
         with patch('gbp.git.repository.GitRepository.create_tag',
                    side_effect=GitRepositoryError('this is a create tag error mock')):
@@ -204,19 +187,12 @@ class TestImportOrig(ComponentTestBase):
                                tags=['debian/2.6-2', 'upstream/2.6'])
         self.check_refs(repo, heads)
 
-    def test_update_fail_merge(self):
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_update_fail_merge(self, repo):
         """
         Test that we can recover from a failed merge
         """
-        repo = GitRepository.create(self.pkg)
-        os.chdir(self.pkg)
-
-        dsc = self._dsc('2.6-2')
-        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
-
         heads = self.rem_refs(repo, self.def_branches)
-
         orig = self._orig('2.8')
         with patch('gbp.scripts.import_orig.debian_branch_merge',
                    side_effect=GitRepositoryError('this is a fail merge error mock')):
@@ -233,7 +209,7 @@ class TestImportOrig(ComponentTestBase):
         tag on initial import
         """
         repo = GitRepository.create(self.pkg)
-        os.chdir(self.pkg)
+        os.chdir(repo.path)
         orig = self._orig('2.6')
         ok_(import_orig(['arg0', '--no-interactive', orig]) == 1)
 
@@ -254,16 +230,11 @@ class TestImportOrig(ComponentTestBase):
 
         self._check_repo_state(repo, None, [], tags=[])
 
-    def test_filter_with_component_tarballs(self):
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_filter_with_component_tarballs(self, repo):
         """
         Test that using a filter works even with component tarballs (#840602)
         """
-        dsc = self._dsc('2.6-2')
-        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
-        repo = ComponentTestGitRepository(self.pkg)
-        os.chdir(self.pkg)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
-
         # copy data since we don't want the repacked tarball to end up in DEB_TEST_DATA_DIR
         os.mkdir('../tarballs')
         for f in ['hello-debhelper_2.8.orig-foo.tar.gz', 'hello-debhelper_2.8.orig.tar.gz']:
@@ -296,17 +267,12 @@ class TestImportOrig(ComponentTestBase):
                 t.getmember(f)
         t.close()
 
-    def test_filter_with_orig_tarball(self):
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_filter_with_orig_tarball(self, repo):
         """
         Test that using a filter works even with an upstream tarball
         that has already the correct name (#558777)
         """
-        dsc = self._dsc('2.6-2')
-        ok_(import_dsc(['arg0', '--pristine-tar', dsc]) == 0)
-        repo = ComponentTestGitRepository(self.pkg)
-        os.chdir(self.pkg)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
-
         f = 'hello-debhelper_2.8.orig.tar.gz'
         src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
         shutil.copy(src, '..')

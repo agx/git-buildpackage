@@ -31,7 +31,7 @@ from gbp.scripts.pull import main as pull
 class TestPull(ComponentTestBase):
     """Test cloning from a remote"""
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_pull_explicit_remote(self, repo):
         """Test that pulling of debian native packages works"""
         dest = os.path.join(self._tmpdir, 'cloned_repo')
@@ -41,7 +41,7 @@ class TestPull(ComponentTestBase):
         eq_(pull(['argv0', 'origin']), 0)
         assert len(repo.get_commits()) == 1
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_pull_default_remote(self, repo):
         """Test that pulling of debian native packages works"""
         dest = os.path.join(self._tmpdir, 'cloned_repo')

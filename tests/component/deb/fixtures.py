@@ -38,39 +38,51 @@ DEFAULT_QUILT30 = os.path.join(DEB_TEST_DATA_DIR,
 
 class RepoFixtures(object):
     @classmethod
-    def native(cls, fn, dsc=DEFAULT_NATIVE):
-        """Debian native test fixture"""
-        @wraps(fn)
-        def _native_repo(*args):
-            repo = cls.import_native(dsc)
-            return fn(*args, repo=repo)
-        return _native_repo
+    def native(cls, dsc=DEFAULT_NATIVE, opts=None):
+        """Docorator to be used as Debian native test fixture"""
+        def wrapper(fn):
+            @wraps(fn)
+            def _native_repo(*args):
+                repo = cls.import_native(dsc, opts)
+                return fn(*args, repo=repo)
+            return _native_repo
+        return wrapper
 
     @classmethod
-    def quilt30(cls, fn, dsc=DEFAULT_QUILT30):
-        @wraps(fn)
-        def _quilt30_repo(*args):
-            repo = cls.import_quilt30(dsc)
-            return fn(*args, repo=repo)
-        return _quilt30_repo
+    def quilt30(cls, dsc=DEFAULT_QUILT30, opts=None):
+        """Decorator to be used as 3.0 (quilt) test fixture"""
+        def wrapper(fn):
+            @wraps(fn)
+            def _quilt30_repo(*args):
+                repo = cls.import_quilt30(dsc, opts)
+                return fn(*args, repo=repo)
+            return _quilt30_repo
+        return wrapper
 
     @classmethod
-    def import_native(cls, dsc=DEFAULT_NATIVE):
-        assert import_dsc(['arg0', dsc]) == 0
+    def _import_one(cls, dsc, opts):
+        opts = opts or []
+        assert import_dsc(['arg0'] + opts + [dsc]) == 0
         parsed = DscFile(dsc)
-        repo = ComponentTestGitRepository(parsed.pkg)
+        return ComponentTestGitRepository(parsed.pkg)
+
+    @classmethod
+    def import_native(cls, dsc=DEFAULT_NATIVE, opts=None):
+        """Import a Debian native package, verify and change into repo"""
+        repo = cls._import_one(dsc, opts)
         ComponentTestBase._check_repo_state(repo, 'master', ['master'])
         eq_(len(repo.get_commits()), 1)
+        os.chdir(repo.path)
         return repo
 
     @classmethod
-    def import_quilt30(cls, dsc=DEFAULT_QUILT30):
-        assert import_dsc(['arg0', dsc]) == 0
-        parsed = DscFile(dsc)
-        repo = ComponentTestGitRepository(parsed.pkg)
-        ComponentTestBase._check_repo_state(repo, 'master', ['master',
-                                                             'upstream'])
+    def import_quilt30(cls, dsc=DEFAULT_QUILT30, opts=None):
+        """Import a 3.0 (quilt)  package, verify and change into repo"""
+        repo = cls._import_one(dsc, opts)
+        expected_branches = ['master', 'upstream']
+        if opts and '--pristine-tar' in opts:
+            expected_branches.append('pristine-tar')
+        ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
         eq_(len(repo.get_commits()), 2)
-        return repo
-        assert eq_(len(repo.get_commits()), 2)
+        os.chdir(repo.path)
         return repo

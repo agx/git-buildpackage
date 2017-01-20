@@ -63,20 +63,19 @@ class TestBuildpackage(ComponentTestBase):
                                            "GBP_CHANGES_FILE",
                                            "GBP_BUILD_DIR"])
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_debian_buildpackage(self, repo):
         """Test that building a native debian package works"""
         self._test_buildpackage(repo)
 
-    @RepoFixtures.quilt30
+    @RepoFixtures.quilt30()
     def test_non_native_buildpackage(self, repo):
         """Test that building a source 3.0 debian package works"""
         self._test_buildpackage(repo)
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_tag_only(self, repo):
         """Test that only tagging a native debian package works"""
-        os.chdir('git-buildpackage')
         repo.delete_tag('debian/0.4.14')  # make sure we can tag again
         ret = buildpackage(['arg0',
                             '--git-tag-only',
@@ -138,16 +137,15 @@ class TestBuildpackage(ComponentTestBase):
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
-    @RepoFixtures.quilt30
+    @RepoFixtures.quilt30()
     def test_export_dir_buildpackage(self, repo):
         """Test that building with a export dir works"""
         self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_argument_quoting(self, repo):
         """Test that we quote arguments to builder (#)"""
-        os.chdir('git-buildpackage')
         with open('../arg with spaces', 'w'):
             pass
         # We use ls as builder to look for a file with spaces. This
@@ -159,7 +157,7 @@ class TestBuildpackage(ComponentTestBase):
                             '../arg with spaces'])
         ok_(ret == 0, "Building the package failed")
 
-    @RepoFixtures.quilt30
+    @RepoFixtures.quilt30()
     def test_tarball_default_compression(self, repo):
         """Test that we use defaults for compression if not given (#820846)"""
         self._test_buildpackage(repo, ['--git-no-pristine-tar'])

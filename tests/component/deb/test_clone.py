@@ -30,9 +30,10 @@ from gbp.scripts.clone import main as clone
 class TestClone(ComponentTestBase):
     """Test cloning from a remote"""
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_clone_nonempty(self, repo):
         """Test that cloning into an existing dir fails"""
+        os.chdir('..')
         ok_(clone(['arg0', repo.path]) == 1,
             "Cloning did no fail as expected")
         self._check_log(-2,
@@ -41,7 +42,7 @@ class TestClone(ComponentTestBase):
                         "'git-buildpackage' already exists and is not "
                         "an empty directory.")
 
-    @RepoFixtures.native
+    @RepoFixtures.native()
     def test_clone_native(self, repo):
         """Test that cloning of debian native packages works"""
         dest = os.path.join(self._tmpdir,
