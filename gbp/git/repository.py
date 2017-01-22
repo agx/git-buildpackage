@@ -111,7 +111,7 @@ class GitRepository(object):
             ret = os.path.abspath(os.path.join(path, cdup or '.'))
         except GitRepositoryError:
             raise  # We already have a useful error message
-        except Exception as e:
+        except:
             raise GitRepositoryError("No Git repository at '%s'" % path)
         return ret
 
