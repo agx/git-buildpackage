@@ -104,7 +104,7 @@ class GitRepository(object):
         try:
             out, dummy, ret = self._git_inout('rev-parse', ['--show-cdup'],
                                               capture_stderr=True)
-            if ret or out.strip():
+            if ret:
                 raise GitRepositoryError("No Git repository at '%s': '%s'" % (self.path, out))
         except GitRepositoryError:
             raise  # We already have a useful error message
