@@ -72,6 +72,17 @@ def test_empty():
     """
 
 
+def test_subdir():
+    """
+    Make surewe can init repos froma subdir
+    >>> import gbp.git, os
+    >>> os.mkdir(os.path.join(dirs['repo'], 'subdir'))
+    >>> repo = gbp.git.GitRepository(os.path.join(dirs['repo'], 'subdir'), toplevel=False)
+    >>> repo.path == dirs['repo']
+    True
+    """
+
+
 def test_add_files():
     """
     Add some dummy data

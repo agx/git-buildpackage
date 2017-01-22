@@ -98,18 +98,33 @@ class GitRepository(object):
         else:
             self._git_dir = os.path.abspath(os.path.join(self.path, git_dir))
 
-    def __init__(self, path):
-        self._path = os.path.abspath(path)
-        self._bare = False
+    def _check_repo(self, path, toplevel):
         try:
             out, dummy, ret = self._git_inout('rev-parse', ['--show-cdup'],
+                                              cwd=path,
                                               capture_stderr=True)
-            if ret or out.strip():
-                raise GitRepositoryError("No Git repository at '%s': '%s'" % (self.path, out))
+            cdup = out.strip()
+            if ret:
+                raise GitRepositoryError("No Git repository at '%s': '%s'" % (path, cdup))
+            if toplevel and cdup:
+                raise GitRepositoryError("Not the toplevel of a Git repository at '%s': '%s'" % (path, cdup))
+            ret = os.path.abspath(os.path.join(path, cdup or '.'))
         except GitRepositoryError:
             raise  # We already have a useful error message
-        except:
-            raise GitRepositoryError("No Git repository at '%s'" % self.path)
+        except Exception as e:
+            raise GitRepositoryError("No Git repository at '%s'" % path)
+        return ret
+
+    def __init__(self, path, toplevel=True):
+        """
+        @param path: path to git repo (or subdir)
+        @type path: C{str}
+        @param toplevel: whether path points to the toplevel dir of
+            git repository
+        @type toplevel: C{bool}
+        """
+        self._bare = False
+        self._path = self._check_repo(path, toplevel)
         self._check_bare()
         self._get_git_dir()
 
@@ -132,7 +147,7 @@ class GitRepository(object):
         @type args: C{list}
         @param extra_env: extra environment variables to pass
         @type extra_env: C{dict}
-        @param cwd: directory to swith to when running the command, defaults to I{self.path}
+        @param cwd: directory to switch to when running the command, defaults to I{self.path}
         @type cwd: C{str}
         @return: stdout, return code
         @rtype: C{tuple} of C{list} of C{str} and C{int}
@@ -166,6 +181,8 @@ class GitRepository(object):
         @type args: C{list}
         @param extra_env: extra environment variables to pass
         @type extra_env: C{dict}
+        @param cwd: directory to switch to when running the command, defaults to I{self.path}
+        @type cwd: C{str}
         @param capture_stderr: whether to capture stderr
         @type capture_stderr: C{bool}
         @return: stdout, stderr, return code
