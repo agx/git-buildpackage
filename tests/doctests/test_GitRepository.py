@@ -80,6 +80,10 @@ def test_subdir():
     >>> repo = gbp.git.GitRepository(os.path.join(dirs['repo'], 'subdir'), toplevel=False)
     >>> repo.path == dirs['repo']
     True
+    >>> repo = gbp.git.GitRepository(os.path.join(dirs['repo'], 'subdir'), toplevel=True) # doctest:+ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    GitRepositoryError: Not the toplevel of a Git repository at ...
     """
 
 
