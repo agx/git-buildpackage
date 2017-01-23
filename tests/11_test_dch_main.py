@@ -81,7 +81,8 @@ class TestScriptDch(DebianGitTestRepo):
             options.extend(dch_options)
         ret = dch.main(options)
         self.assertEqual(ret, 0)
-        return open("debian/changelog").readlines()
+        cl = os.path.join(self.repo.path, 'debian/changelog')
+        return open(cl).readlines()
 
     def test_dch_main_new_upstream_version(self):
         """Test dch.py like gbp dch script does: new upstream version"""
@@ -399,3 +400,7 @@ class TestScriptDch(DebianGitTestRepo):
         options = ["--no-git-author", '-S', '-a']
         lines = self.run_dch(options)
         self.assertNotIn("-- gbp test user", "\n".join(lines))
+
+    def test_dch_subdir(self):
+        os.chdir('debian/')
+        self.run_dch()

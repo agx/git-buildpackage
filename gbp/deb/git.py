@@ -32,8 +32,8 @@ class DebianGitRepository(GitRepository):
                          '%(?P<R>([^%]|\\%))+'
                          '\)s')
 
-    def __init__(self, path):
-        super(DebianGitRepository, self).__init__(path)
+    def __init__(self, *args, **kwargs):
+        super(DebianGitRepository, self).__init__(*args, **kwargs)
         self.pristine_tar = DebianPristineTar(self)
 
     def tree_drop_dirs(self, tree, dirs):

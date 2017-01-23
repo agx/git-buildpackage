@@ -423,8 +423,10 @@ def main(argv):
         return ExitCodes.parse_error
 
     try:
+        old_cwd = os.path.abspath(os.path.curdir)
         try:
-            repo = DebianGitRepository('.')
+            repo = DebianGitRepository('.', toplevel=False)
+            os.chdir(repo.path)
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
@@ -566,6 +568,8 @@ def main(argv):
         if str(err):
             gbp.log.err(err)
         ret = 1
+    finally:
+        os.chdir(old_cwd)
     return ret
 
 
