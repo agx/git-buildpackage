@@ -1,3 +1,20 @@
+git-buildpackage (0.8.12) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [5c23d41] GitRepository: properly determine git-dir
+    instead of assuming '.git'
+    Heavily based on a patch by Markus Lehtonnen (Closes: #674015)
+  * [53b5af5] gbp dch: Allow to run from subdirectory
+  * [390d34a] git-pbuilder: print pdebuild command as executed
+    to ease debugging things like #852264
+  * Test suite improvements
+
+  [ Markus Lehtonen ]
+  * [f30bb98] buildpackage: fix exporting of working copy when .git is not a directory
+    as is the case with git submodules lately, for example
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 27 Jan 2017 14:06:33 +0100
+
 git-buildpackage (0.8.11) experimental; urgency=medium
 
   * [8bd74df] command_wrappers: Simplify RunAtCommand
