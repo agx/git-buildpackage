@@ -1,3 +1,9 @@
+git-buildpackage (0.8.12.1) unstable; urgency=medium
+
+  * Upload to unstable 
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 27 Jan 2017 14:50:30 +0100
+
 git-buildpackage (0.8.12) experimental; urgency=medium
 
   [ Guido Günther ]
