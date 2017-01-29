@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011,2014 Guido Günther <agx@sigxcpu.org>
+# (C) 2011,2014,2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -112,14 +112,14 @@ def compare_series(old, new):
     """
     Compare new pathes to lists of patches already exported
 
-    >>> compare_series(['a', 'b'], ['b', 'c'])
+    >>> compare_series(['# comment', 'a', 'b'], ['b', 'c'])
     (['c'], ['a'])
     >>> compare_series([], [])
     ([], [])
     """
     added = set(new).difference(old)
-    removed = set(old).difference(new)
-    return (list(added), list(removed))
+    removed = [l for l in set(old).difference(new) if not l.startswith('#')]
+    return (list(added), removed)
 
 
 def format_series_diff(added, removed, options):
