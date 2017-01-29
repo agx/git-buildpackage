@@ -240,6 +240,26 @@ def prepare_output_dir(dir):
     return output_dir
 
 
+def clean_working_tree(options, repo):
+    """
+    Clean the working tree.
+
+    :param options: Program run-time options, as an
+        `optparse.OptionContainer`.
+    :param repo: The Git repository, as a `DebianGitRepository`.
+    :raise GbpError: When the working tree has uncommitted
+        changes.
+    :return: None.
+    """
+    Command(options.cleaner, shell=True)()
+    if not options.ignore_new:
+        (ret, out) = repo.is_clean()
+        if not ret:
+            gbp.log.err("You have uncommitted changes in your source tree:")
+            gbp.log.err(out)
+            raise GbpError("Use --git-ignore-new to ignore.")
+
+
 def pristine_tar_prepare_orig_tree(repo, cp, options):
     """Make sure the upstream tree exists
     In case of component tarballs we need to recreate a tree for the
@@ -671,13 +691,7 @@ def main(argv):
         return 1
 
     try:
-        Command(options.cleaner, shell=True)()
-        if not options.ignore_new:
-            (ret, out) = repo.is_clean()
-            if not ret:
-                gbp.log.err("You have uncommitted changes in your source tree:")
-                gbp.log.err(out)
-                raise GbpError("Use --git-ignore-new to ignore.")
+        clean_working_tree(options, repo)
 
         try:
             branch = repo.get_branch()
