@@ -332,7 +332,8 @@ def get_upstream_tree(repo, cp, options):
         upstream_tree = repo.version_to_tag(options.upstream_tag,
                                             cp['Upstream-Version'])
     elif options.upstream_tree.upper() == 'BRANCH':
-        if not repo.has_branch(options.upstream_branch):
+        if (not repo.has_branch(options.upstream_branch) and
+            not repo.has_branch(options.upstream_branch, remote=True)):
             raise GbpError("%s is not a valid branch" % options.upstream_branch)
         upstream_tree = options.upstream_branch
     else:
