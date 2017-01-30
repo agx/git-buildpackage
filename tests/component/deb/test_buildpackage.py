@@ -174,7 +174,7 @@ class TestBuildpackage(ComponentTestBase):
         m2 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
         eq_(m1, m2, "Regenerated tarball has different checksum")
 
-    @RepoFixtures.quilt30
+    @RepoFixtures.quilt30()
     def test_tarball_max_compression(self, repo):
         """Test that passing max compression works (#820846)"""
         self._test_buildpackage(repo, ['--git-no-pristine-tar', '--git-compression-level=9'])
