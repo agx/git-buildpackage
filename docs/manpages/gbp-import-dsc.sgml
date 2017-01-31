@@ -67,7 +67,7 @@
       When given a <replaceable>URL</replaceable> &gbp-import-dsc;
       will download the source package prior to importing it. &dget;
       is used for all schemes except for the special
-      scheme <replaceable>apt://</replaceable> which uses &apt-get;
+      scheme <replaceable>apt:///</replaceable> which uses &apt-get;
       (and therefore needs <replaceable>deb-src</replaceable>
       entries in your <filename>/etc/apt/sources.list</filename>).
     </para>
@@ -259,7 +259,7 @@
       source</command> from unstable:
     </para>
     <screen>
-      &gbp-import-dsc; apt://hello/sid
+      &gbp-import-dsc; apt:///hello/sid
     </screen>
     <para>
       Import a source package in the local file system:
