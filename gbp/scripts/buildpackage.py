@@ -244,11 +244,9 @@ def clean_working_tree(options, repo):
     """
     Clean the working tree.
 
-    :param options: Program run-time options, as an
-        `optparse.OptionContainer`.
+    :param options: Program run-time options, as an `optparse.OptionContainer`.
     :param repo: The Git repository, as a `DebianGitRepository`.
-    :raise GbpError: When the working tree has uncommitted
-        changes.
+    :raise GbpError: When the working tree has uncommitted changes.
     :return: None.
     """
     Command(options.cleaner, shell=True)()
