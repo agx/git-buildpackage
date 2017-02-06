@@ -293,10 +293,7 @@ class TestRpmCh(RpmRepoTestBase):
         orig_content = self.read_file('packaging/gbp-test-native.changes')
 
         # Add new commit with known content
-        with open('new-file.txt', 'w') as fobj:
-            fobj.write('this is new content\n')
-        repo.add_files('new-file.txt')
-        repo.commit_staged('Add new file')
+        self.add_file(repo, 'new-file.txt', 'this is new content\n')
 
         # Only track a non-existent file
         eq_(mock_ch(['--since=HEAD^', 'non-existent-path']), 0)

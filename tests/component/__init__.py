@@ -239,3 +239,10 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
             if v is not None:
                 ok_(v == parsed[k],
                     "Got %s not expected value %s for %s" % (parsed[k], v, k))
+
+    @staticmethod
+    def add_file(repo, name, content=None):
+        with open(name, 'w') as f:
+            f.write(' ' or content)
+        repo.add_files(name)
+        repo.commit_files(name, 'New file %s' % name)

@@ -250,13 +250,8 @@ class TestGbpRpm(RpmRepoTestBase):
         orig_files = ['gbp-test/' + path for
                       path in repo.ls_tree(upstr_branch)] + ['gbp-test']
         repo.set_branch(upstr_branch)
-        with open('new-file', 'w') as fobj:
-            fobj.write('New file\n')
-        with open('new-file2', 'w') as fobj:
-            fobj.write('New file 2\n')
-        repo.add_files(['new-file', 'new-file2'])
-        repo.commit_files('new-file', 'New content')
-        repo.commit_files('new-file2', 'New content 2')
+        for fname in ['new-file', 'new-file2']:
+            self.add_file(repo, fname, 'new content %s' % fname)
         repo.set_branch(pkg_branch)
 
         # TAG (default) does not contain the new files
