@@ -29,6 +29,7 @@ from nose.tools import ok_, eq_, assert_false, assert_true
 
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.buildpackage import main as buildpackage
+from gbp.scripts.pq import main as pq
 
 
 class TestBuildpackage(ComponentTestBase):
@@ -180,3 +181,18 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage(repo, ['--git-no-pristine-tar', '--git-compression-level=9'])
         out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
         ok_("max compression" in out)
+
+    @RepoFixtures.quilt30()
+    def test_tag_pq_branch(self, repo):
+        ret = pq(['argv0', 'import'])
+        eq_(repo.rev_parse('master'), repo.rev_parse('debian/2.8-1^{}'))
+        eq_(ret, 0)
+        eq_(repo.branch, 'patch-queue/master')
+        self.add_file(repo, 'foo.txt')
+        ret = buildpackage(['argv0',
+                            '--git-tag-only',
+                            '--git-retag',
+                            '--git-ignore-branch'])
+        eq_(ret, 0)
+        eq_(repo.branch, 'patch-queue/master')
+        eq_(repo.rev_parse('patch-queue/master^{}^'), repo.rev_parse('debian/2.8-1^{}'))

@@ -122,7 +122,7 @@
       </listitem>
       <listitem>
         <para>
-        (Optionally) tag the tree after a successful build.
+        (Optionally) tag the current commit after a successful build.
         </para>
       </listitem>
       <listitem>
@@ -162,8 +162,14 @@
         </term>
         <listitem>
           <para>
-            Add a git tag after a successful build. This is a command line only option
-            that cannot be specified via &gbp.conf;.
+            Add a git tag after a successful build. It tags the
+            currently checked out commmit except when you're on a
+            patch-queue branch. In that case the corresponding debian
+            branch is tagged.
+	  </para>
+	  <para>
+	    This is a command line only option that cannot be
+            specified via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>

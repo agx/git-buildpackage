@@ -35,6 +35,7 @@ from gbp.format import format_str
 from gbp.git.vfs import GitVfs
 from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.errors import GbpError
+from gbp.scripts.common.pq import is_pq_branch, pq_branch_base
 import gbp.log
 import gbp.notifications
 from gbp.scripts.common.buildpackage import (index_name, wc_name,
@@ -782,6 +783,11 @@ def main(argv):
                                         'GBP_BUILD_DIR': build_dir})
                      )()
         if options.tag or options.tag_only:
+            if is_pq_branch(branch):
+                commit = repo.get_merge_base(branch, pq_branch_base(branch))
+            else:
+                commit = head
+
             tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
             gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
             if options.retag and repo.has_tag(tag):
@@ -792,8 +798,9 @@ def main(argv):
             repo.create_tag(name=tag,
                             msg=tag_msg,
                             sign=options.sign_tags,
-                            commit=head,
+                            commit=commit,
                             keyid=options.keyid)
+
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
                 Hook('Posttag', options.posttag,
