@@ -1530,7 +1530,7 @@ class GitRepository(object):
         if not commit:
             raise GitRepositoryError("Failed to commit tree")
         self.update_ref("refs/heads/%s" % branch, commit, cur,
-                        msg="gbp: %s" % msg)
+                        msg="gbp: %s" % msg.split('\n')[0])
         return commit
 
     def commit_tree(self, tree, msg, parents, author={}, committer={}):
