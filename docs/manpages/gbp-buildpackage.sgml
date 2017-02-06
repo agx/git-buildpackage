@@ -21,9 +21,9 @@
       <arg><option>--git-[no-]ignore-new</option></arg>
       <arg><option>--git-tag</option></arg>
       <arg><option>--git-verbose</option></arg>
-      <arg><option>--git-color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--git-color=</option>[auto|on|off]</arg>
       <arg><option>--git-color-scheme</option>=<replaceable>COLOR_SCHEME</replaceable></arg>
-      <arg><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--git-notify=</option>[auto|on|off]</arg>
       <arg><option>--git-upstream-branch=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-debian-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
       <arg><option>--git-ignore-branch</option></arg>
@@ -269,7 +269,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-color=</option><replaceable>[auto|on|off]</replaceable>
+        <term><option>--git-color=</option>[auto|on|off]
         </term>
         <listitem>
           <para>
@@ -278,7 +278,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-notify=</option><replaceable>[auto|on|off]</replaceable>
+        <term><option>--git-notify=</option>[auto|on|off]
         </term>
         <listitem>
           <para>

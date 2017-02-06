@@ -3,7 +3,7 @@
       <arg><option>--version</option></arg>
       <arg><option>--help</option></arg>
       <arg><option>--verbose</option></arg>
-      <arg><option>--color=</option><replaceable>[auto|on|off]</replaceable></arg>
+      <arg><option>--color=</option>[auto|on|off]</arg>
       <arg><option>--color-scheme=</option><replaceable>COLOR_SCHEME</replaceable></arg>
 "
 >
@@ -37,7 +37,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--color=</option><replaceable>[auto|on|off]</replaceable>
+        <term><option>--color=</option>[auto|on|off]
         </term>
         <listitem>
           <para>
