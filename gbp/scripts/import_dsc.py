@@ -471,10 +471,6 @@ def main(argv):
             if not src.native:
                 if is_empty:
                     repo.create_branch(options.upstream_branch, commit)
-                if options.pristine_tar:
-                    repo.create_pristinetar_commits(options.upstream_branch,
-                                                    src.tgz,
-                                                    src.additional_tarballs.items())
             if (not repo.has_branch(options.debian_branch) and
                     (is_empty or options.create_missing_branches)):
                 repo.create_branch(options.debian_branch, commit)
@@ -487,6 +483,10 @@ def main(argv):
         if repo.get_branch() == options.debian_branch or is_empty:
             # Update HEAD if we modified the checked out branch
             repo.force_head(options.debian_branch, hard=True)
+        if options.pristine_tar and not src.native:
+            repo.create_pristinetar_commits(options.upstream_branch,
+                                            src.tgz,
+                                            src.additional_tarballs.items())
     except KeyboardInterrupt:
         ret = 1
         gbp.log.err("Interrupted. Aborting.")
