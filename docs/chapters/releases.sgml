@@ -9,7 +9,7 @@
     <para>
     The simplest way is doing all the changes to the
     <option>debian-branch</option> without touching
-    <emphasis>debian/changelog</emphasis> at all. Then, when done, do:
+    <filename>debian/changelog</filename> at all. Then, when done, do:
     </para>
 <programlisting>
 &gbp-dch; <option>--release</option>
