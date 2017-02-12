@@ -29,7 +29,7 @@ from gbp.command_wrappers import (Command,
                                   RemoveTree)
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
-from gbp.deb.source import DebianSource, DebianSourceError
+from gbp.deb.source import DebianSource, DebianSourceError, FileVfs
 from gbp.deb.format import DebianSourceFormat
 from gbp.format import format_str
 from gbp.git.vfs import GitVfs
@@ -217,13 +217,10 @@ def extract_orig(orig_tarball, dest_dir):
 
 def source_vfs(repo, options, tree):
     """Init source package info either from git or from working copy"""
-    # FIXME: just init the correct vfs
+    vfs = GitVfs(repo, tree) if tree else FileVfs('.')
     try:
-        if tree:
-            source = DebianSource(GitVfs(repo, tree))
-        else:
-            source = DebianSource('.')
-            source.is_native()  # check early if this works
+        source = DebianSource(vfs)
+        source.is_native()  # check early if this works
     except Exception as e:
         raise GbpError("Can't determine package type: %s" % e)
     return source
