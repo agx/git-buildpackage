@@ -20,6 +20,9 @@ class MockOptions(object):
 
 
 class TestGetUpstreamTree(testutils.DebianGitTestRepo):
+    class source:
+        upstream_version = '1.0~rc3'
+
     def test_valid_upstream_branch(self):
         """Get upstream tree from a valid upstream branch"""
         self.add_file('foo')
@@ -62,23 +65,21 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         """Get upstream tree from a valid tag"""
         self.add_file('foo')
         self.repo.rev_parse('master')
-        cp = {'Upstream-Version': '1.0~rc3'}
         self.repo.create_tag('upstream/1.0_rc3')
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
-        tag = buildpackage.get_upstream_tree(self.repo, cp, options)
+        tag = buildpackage.get_upstream_tree(self.repo, self.source, options)
         self.assertEqual(tag, "upstream/1.0_rc3")
 
     def test_invalid_tag(self):
         """Getting upstream tree from an invalid tag must fail"""
         self.add_file('foo')
-        cp = {'Upstream-Version': '1.0~rc3'}
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
         self.assertRaises(gbp.errors.GbpError,
                           buildpackage.get_upstream_tree,
                           self.repo,
-                          cp,
+                          self.source,
                           options)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

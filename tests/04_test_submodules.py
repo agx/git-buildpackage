@@ -124,13 +124,18 @@ def test_dump_tree():
 
 def test_create_tarballs():
     """Create an upstream tarball"""
+    class source:
+        def __init__(self, version):
+            self.name = 'test'
+            self.upstream_version = version
+            self.changelog = {"Source": "test", "Upstream-Version": version}
     # Tarball with submodules
-    changelog = {"Source": "test", "Upstream-Version": "0.1"}
-    ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
+    s = source('0.1')
+    ok_(buildpackage.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
                                  9, True))
     # Tarball without submodules
-    changelog = {"Source": "test", "Upstream-Version": "0.2"}
-    ok_(buildpackage.git_archive(REPO, changelog, str(TMPDIR), "HEAD", "bzip2",
+    s = source('0.2')
+    ok_(buildpackage.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
                                  9, False))
 
 

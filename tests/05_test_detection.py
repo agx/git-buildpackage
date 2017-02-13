@@ -30,9 +30,14 @@ class MockGitRepository:
 
 
 class TestDetection(unittest.TestCase):
+    class source(object):
+        name = 'source'
+        upstream_version = '1.2'
+        changelog = {'Source': 'source', 'Upstream-Version': '1.2'}
+
     def setUp(self):
         self.tmpdir = context.new_tmpdir(__name__)
-        self.cp = {'Source': 'source', 'Upstream-Version': '1.2'}
+        self.cp = self.source.changelog
 
     def tearDown(self):
         context.teardown()
@@ -40,14 +45,14 @@ class TestDetection(unittest.TestCase):
     def test_guess_comp_type_no_pristine_tar_no_orig(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'auto', self.cp, str(self.tmpdir))
+            repo, 'auto', self.source, str(self.tmpdir))
         self.assertEqual('gzip', guessed)
 
     def test_guess_comp_type_no_pristine_tar_with_orig(self):
         open(self.tmpdir.join('source_1.2.orig.tar.bz2'), "w").close()
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'auto', self.cp, str(self.tmpdir))
+            repo, 'auto', self.source, str(self.tmpdir))
         self.assertEqual('bzip2', guessed)
 
     def test_guess_comp_type_no_pristine_tar_with_multiple_origs(self):
@@ -59,14 +64,14 @@ class TestDetection(unittest.TestCase):
             buildpackage.guess_comp_type,
             repo,
             'auto',
-            self.cp,
+            self.source,
             str(self.tmpdir))
 
     def test_guess_comp_type_auto_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
         repo = MockGitRepository(with_branch=True, subject=subject)
         guessed = buildpackage.guess_comp_type(
-            repo, 'auto', self.cp, str(self.tmpdir))
+            repo, 'auto', self.source, str(self.tmpdir))
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_single_false(self):
