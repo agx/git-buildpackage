@@ -97,3 +97,19 @@ class DebianSource(object):
         The source package's name
         """
         return self.changelog['Source']
+
+    @property
+    def name(self):
+        return self.sourcepkg
+
+    @property
+    def version(self):
+        return self.changelog.version
+
+    @property
+    def upstream_version(self):
+        return self.changelog.upstream_version
+
+    @property
+    def debian_version(self):
+        return self.changelog.debian_version
