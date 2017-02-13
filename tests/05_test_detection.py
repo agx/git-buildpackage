@@ -33,11 +33,9 @@ class TestDetection(unittest.TestCase):
     class source(object):
         name = 'source'
         upstream_version = '1.2'
-        changelog = {'Source': 'source', 'Upstream-Version': '1.2'}
 
     def setUp(self):
         self.tmpdir = context.new_tmpdir(__name__)
-        self.cp = self.source.changelog
 
     def tearDown(self):
         context.teardown()
@@ -75,56 +73,56 @@ class TestDetection(unittest.TestCase):
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_single_false(self):
-        self.assertFalse(DebianPkgPolicy.has_origs([orig_file(self.cp, 'gzip')], str(self.tmpdir)))
+        self.assertFalse(DebianPkgPolicy.has_origs([orig_file(self.source, 'gzip')], str(self.tmpdir)))
 
     def test_has_orig_single_true(self):
         open(self.tmpdir.join('source_1.2.orig.tar.gz'), "w").close()
-        self.assertTrue(DebianPkgPolicy.has_origs([orig_file(self.cp, 'gzip')], str(self.tmpdir)))
+        self.assertTrue(DebianPkgPolicy.has_origs([orig_file(self.source, 'gzip')], str(self.tmpdir)))
 
     def test_has_orig_multiple_false(self):
-        orig_files = [orig_file(self.cp, 'gzip')] + \
-                     [orig_file(self.cp, 'gzip', sub) for sub in ['foo', 'bar']]
+        orig_files = [orig_file(self.source, 'gzip')] + \
+                     [orig_file(self.source, 'gzip', sub) for sub in ['foo', 'bar']]
         self.assertFalse(DebianPkgPolicy.has_origs(orig_files, str(self.tmpdir)))
 
     def test_has_orig_multiple_true(self):
         for ext in ['', '-foo', '-bar']:
             open(self.tmpdir.join('source_1.2.orig%s.tar.gz' % ext), "w").close()
-        orig_files = [orig_file(self.cp, 'gzip')] + \
-                     [orig_file(self.cp, 'gzip', sub) for sub in ['foo', 'bar']]
+        orig_files = [orig_file(self.source, 'gzip')] + \
+                     [orig_file(self.source, 'gzip', sub) for sub in ['foo', 'bar']]
         self.assertTrue(DebianPkgPolicy.has_origs(orig_files, str(self.tmpdir)))
 
     def test_guess_comp_type_bzip2(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'bzip2', self.cp, None)
+            repo, 'bzip2', self.source, None)
         self.assertEqual("bzip2", guessed)
 
     def test_guess_comp_type_gzip(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'gzip', self.cp, None)
+            repo, 'gzip', self.source, None)
         self.assertEqual("gzip", guessed)
 
     def test_guess_comp_type_bz(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'xz', self.cp, None)
+            repo, 'xz', self.source, None)
         self.assertEqual("xz", guessed)
 
     def test_guess_comp_type_lzma(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'lzma', self.cp, None)
+            repo, 'lzma', self.source, None)
         self.assertEqual("lzma", guessed)
 
     def test_guess_comp_type_bz2(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'bz2', self.cp, None)
+            repo, 'bz2', self.source, None)
         self.assertEqual("bzip2", guessed)
 
     def test_guess_comp_type_gz(self):
         repo = MockGitRepository(with_branch=False)
         guessed = buildpackage.guess_comp_type(
-            repo, 'gz', self.cp, None)
+            repo, 'gz', self.source, None)
         self.assertEqual("gzip", guessed)

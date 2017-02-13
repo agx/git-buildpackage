@@ -128,7 +128,6 @@ def test_create_tarballs():
         def __init__(self, version):
             self.name = 'test'
             self.upstream_version = version
-            self.changelog = {"Source": "test", "Upstream-Version": version}
     # Tarball with submodules
     s = source('0.1')
     ok_(buildpackage.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",

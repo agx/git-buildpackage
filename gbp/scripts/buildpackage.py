@@ -55,7 +55,7 @@ def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_s
     except KeyError:
         raise GbpError("Unsupported compression type '%s'" % comp_type)
 
-    output = os.path.join(output_dir, du.orig_file(source.changelog, comp_type, component=component))
+    output = os.path.join(output_dir, du.orig_file(source, comp_type, component=component))
     prefix = "%s-%s" % (source.name, source.upstream_version)
 
     try:
@@ -91,9 +91,9 @@ def prepare_upstream_tarball(repo, source, options, tarball_dir, output_dir):
                                         source,
                                         options.tarball_dir)
 
-    orig_files = [du.orig_file(source.changelog, options.comp_type)]
+    orig_files = [du.orig_file(source, options.comp_type)]
     if options.components:
-        orig_files += [du.orig_file(source.changelog, options.comp_type, c) for c in options.components]
+        orig_files += [du.orig_file(source, options.comp_type, c) for c in options.components]
 
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
@@ -169,7 +169,7 @@ def export_source(repo, tree, source, options, dest_dir, tarball_dir):
         if source.is_native():
             raise GbpError("Cannot overlay Debian native package")
         extract_orig(os.path.join(tarball_dir,
-                                  du.orig_file(source.changelog,
+                                  du.orig_file(source,
                                                options.comp_type)),
                      dest_dir)
 
@@ -353,7 +353,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
     @rtype: C{str}
     """
     upstream_tree = get_upstream_tree(repo, source, options)
-    gbp.log.info("Creating %s from '%s'" % (du.orig_file(source.changelog,
+    gbp.log.info("Creating %s from '%s'" % (du.orig_file(source,
                                                          options.comp_type),
                                             upstream_tree))
     comp_level = int(options.comp_level) if options.comp_level != '' else None
@@ -372,7 +372,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
             raise GbpError("No tree for '%s' found in '%s' to create additional tarball from"
                            % (component, upstream_tree))
         gbp.log.info("Creating additional tarball '%s' from '%s'"
-                     % (du.orig_file(source.changelog, options.comp_type, component=component),
+                     % (du.orig_file(source, options.comp_type, component=component),
                         subtree))
         if not git_archive(repo, source, output_dir, subtree,
                            options.comp_type,
@@ -398,7 +398,7 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
                 tarball_dir = '..'
             detected = None
             for comp in compressor_opts.keys():
-                if du.DebianPkgPolicy.has_orig(du.orig_file(source.changelog, comp), tarball_dir):
+                if du.DebianPkgPolicy.has_orig(du.orig_file(source, comp), tarball_dir):
                     if detected is not None:
                         raise GbpError("Multiple orig tarballs found.")
                     detected = comp
@@ -767,7 +767,7 @@ def main(argv):
             if options.postbuild:
                 changes = os.path.abspath("%s/../%s_%s_%s.changes" %
                                           (build_dir,
-                                           source.sourcepkg,
+                                           source.changelog.name,
                                            source.changelog.noepoch,
                                            changes_file_suffix(dpkg_args)))
                 gbp.log.debug("Looking for changes file %s" % changes)
@@ -782,13 +782,13 @@ def main(argv):
             else:
                 commit = head
 
-            tag = repo.version_to_tag(options.debian_tag, source.changelog.version)
-            gbp.log.info("Tagging %s as %s" % (source.changelog.version, tag))
+            tag = repo.version_to_tag(options.debian_tag, source.version)
+            gbp.log.info("Tagging %s as %s" % (source.version, tag))
             if options.retag and repo.has_tag(tag):
                 repo.delete_tag(tag)
             tag_msg = format_str(options.debian_tag_msg,
                                  dict(pkg=source.sourcepkg,
-                                      version=source.changelog.version))
+                                      version=source.version))
             repo.create_tag(name=tag,
                             msg=tag_msg,
                             sign=options.sign_tags,

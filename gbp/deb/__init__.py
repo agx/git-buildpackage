@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2006,2007,2011 Guido Günther <agx@sigxcpu.org>
+# (C) 2006,2007,2011,2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -81,20 +81,13 @@ def parse_changelog_repo(repo, branch, filename):
     return ChangeLog(repo.show(sha))
 
 
-def orig_file(cp, compression, component=None):
+def orig_file(source, compression, component=None):
     """
-    The name of the orig file belonging to changelog cp
-
-    >>> orig_file({'Source': 'foo', 'Upstream-Version': '1.0'}, "bzip2")
-    'foo_1.0.orig.tar.bz2'
-    >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz")
-    'bar_0.0~git1234.orig.tar.xz'
-    >>> orig_file({'Source': 'bar', 'Upstream-Version': '0.0~git1234'}, "xz", component="sub1")
-    'bar_0.0~git1234.orig-sub1.tar.xz'
+    The name of the orig file belonging to source package I{source}
     """
-    return DebianPkgPolicy.build_tarball_name(cp['Source'],
-                                              cp['Upstream-Version'],
-                                              compression,
+    return DebianPkgPolicy.build_tarball_name(source.name,
+                                              source.upstream_version,
+                                              compression=compression,
                                               component=component)
 
 
