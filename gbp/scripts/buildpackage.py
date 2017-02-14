@@ -86,6 +86,10 @@ def prepare_upstream_tarball(repo, source, options, tarball_dir, output_dir):
     Make sure we have an upstream tarball. This involves loooking in
     tarball_dir, symlinking or building it.
     """
+    if not source.is_native() and not source.upstream_version:
+        raise GbpError("Non-native package '%s' "
+                       "has invalid version '%s'" % (source.name, source.version))
+
     options.comp_type = guess_comp_type(repo,
                                         options.comp_type,
                                         source,

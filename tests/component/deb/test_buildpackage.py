@@ -31,6 +31,8 @@ from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.buildpackage import main as buildpackage
 from gbp.scripts.pq import main as pq
 
+from gbp.deb.changelog import ChangeLog
+
 
 class TestBuildpackage(ComponentTestBase):
     """Test building a debian package"""
@@ -196,3 +198,16 @@ class TestBuildpackage(ComponentTestBase):
         eq_(ret, 0)
         eq_(repo.branch, 'patch-queue/master')
         eq_(repo.rev_parse('patch-queue/master^{}^'), repo.rev_parse('debian/2.8-1^{}'))
+
+    @RepoFixtures.quilt30()
+    def test_broken_upstream_version(self, repo):
+        cl = ChangeLog(filename='debian/changelog')
+        cl.add_section(["broken versionnumber"],
+                       "unstable",
+                       version={'version': "3.0"})
+        ret = buildpackage(['argv0',
+                            '--git-ignore-new',
+                            '--git-builder=/bin/true',
+                            '--git-tarball-dir=../tarballs'])
+        eq_(ret, 1)
+        self._check_log(-1, "gbp:error: Non-native package 'hello-debhelper' has invalid version '3.0'")
