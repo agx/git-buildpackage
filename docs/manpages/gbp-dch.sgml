@@ -565,15 +565,13 @@
 
       Gbp-Dch: Short
       Closes: #636088
-      Thanks: Raphaël Hertzog for the suggestion
-    </screen>
+      Thanks: Raphaël Hertzog for the suggestion</screen>
     <para>
     Results in this <filename>debian/changelog</filename> entry:
     </para>
     <screen>
       * Document meta tags.
-        Thanks to Raphaël Hertzog for the suggestion (Closes: #636088)
-    </screen>
+        Thanks to Raphaël Hertzog for the suggestion (Closes: #636088)</screen>
   </refsect1>
   <refsect1>
     &man.gbp.config-files;

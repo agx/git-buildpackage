@@ -169,8 +169,7 @@
       as well:
     </para>
     <screen>
-      &gbp-clone; --pristine-tar git://honk.sigxcpu.org/git/git-buildpackage.git
-    </screen>
+      &gbp-clone; --pristine-tar git://honk.sigxcpu.org/git/git-buildpackage.git</screen>
   </refsect1>
   <refsect1>
       &man.gbp.config-files;

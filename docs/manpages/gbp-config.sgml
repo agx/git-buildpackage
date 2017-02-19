@@ -74,15 +74,13 @@
     would use:</para>
     <screen>
     $ gbp config buildpackage.upstream-branch
-    buildpackage.upstream-branch=upstream
-    </screen>
+    buildpackage.upstream-branch=upstream</screen>
     <para>Print the values of all of &gbp-buildpackage; options</para>
     <screen>
     $ gbp config buildpackage
     buildpackage.upstream-branch=upstream
     buildpackage.debian-branch=master
-    ...
-    </screen>
+    ...</screen>
   </refsect1>
   <refsect1>
       &man.gbp.config-files;
