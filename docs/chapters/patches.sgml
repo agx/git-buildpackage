@@ -151,7 +151,7 @@ non fast-forward updates.
 
 
 <sect1 id="gbp.patches.30quilt">
-<title>Working with 3.0 (quilt) packges</title>
+<title>Working with 3.0 (quilt) packages</title>
 <para>
 The 3.0 (quilt) format applies the patches
 in <filename>debian/patches</filename> automatically when building a
