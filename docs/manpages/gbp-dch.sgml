@@ -80,7 +80,7 @@
       </group>
       <arg><option>--customizations=</option><replaceable>customization-file</replaceable></arg>
       <arg><option>--verbose</option></arg>
-      <arg choice="plain"><replaceable>[path1 path2]</replaceable></arg>
+      <arg choice="plain"><replaceable><optional>path1 path2</optional></replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
