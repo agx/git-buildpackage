@@ -1,27 +1,35 @@
 <chapter id="gbp.intro">
     <title>Introduction</title>
     <para>
-      Welcome to &gbp;, a system that integrates the
+      Welcome to git-buildpackage (short &gbp;), a system that integrates the
       <ulink url="http://www.debian.org/">Debian</ulink> package build
-      system with <ulink url="http://git.or.cz/">Git</ulink>. The current version of this manual can be found
-      <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage">here</ulink>.
+      system with <ulink url="http://git.or.cz/">Git</ulink>. The most
+      recent version of this manual can be found &manual;.
     </para>
     <para>
-    What can these tools do for you:
+      This is what &gbp; can do for you:
     <itemizedlist>
-    <listitem><para>Import an existing &debian; package into &git;</para></listitem>
-    <listitem><para>Import new upstream versions, NMUs etc. with optional filters</para></listitem>
-    <listitem><para>Automatic upstream tarball generation</para></listitem>
-    <listitem><para>Maintain a consistent branch and tag naming across
-    repositories or across a team of developers</para></listitem>
-    <listitem><para>Automatically sign tags</para></listitem>
-    <listitem><para>Automatically push changes to remote repositories</para></listitem>
-    <listitem><para>Make sure you have committed all changes to the right
-    branch before releasing</para></listitem>
-    <listitem><para>Export to a clean build area before building</para></listitem>
-    <listitem><para>Automatic debian/changelog generation</para></listitem>
-    <listitem><para>Automatic generation of snapshot releases for local testing</para></listitem>
-    <listitem><para>Simple patch management</para></listitem>
+      <listitem><para>Initially import an existing &debian; package into &git;</para></listitem>
+      <listitem><para>Incrementally import new versions of a Debian
+      package into &git; e.g. for importing NMUs or to maintain
+      downstream modifications</para></listitem>
+      <listitem><para>Import new upstream versions from tarballs with optionally filters applied</para></listitem>
+      <listitem><para>Recreate the upstream tarball from information stored in &git;</para></listitem>
+      <listitem><para>Maintain a consistent branch and tag naming within a &git repository, across
+	  repositories or across a team of developers</para></listitem>
+      <listitem><para>Automatically sign generated tags</para></listitem>
+      <listitem><para>Make sure you have committed all changes to the right
+	  branch before building and releasing</para>
+      </listitem>
+      <listitem><para>Execute hooks at various points of the package
+	  build process e.g. to automatically push changes to remote
+	  repositories</para>
+      </listitem>
+      <listitem><para>Integrate the build process with cowbuilder or other builders</para></listitem>
+      <listitem><para>Export to a clean build area before building the package</para></listitem>
+      <listitem><para>Generate debian/changelog automatically</para></listitem>
+      <listitem><para>Manage your quilt patches when using 3.0 (quilt)
+	  source format</para></listitem>
     </itemizedlist>
     All of this is (hopefully) being done without restricting the user to certain usage patterns.
     </para>
@@ -47,7 +55,7 @@
 	<listitem><para> The <option>upstream-branch</option> (the default
 	branch name used in the &git; repository is
 	<emphasis>upstream</emphasis>) holds the upstream releases. This can
-	either be a branch you import to or a branch of an upstream repository
+	either be a branch you import to or a branch of an upstream &git; repository
 	you pull from.</para></listitem>
 
 	<listitem><para> The <option>pristine-tar branch</option> (the default
@@ -57,8 +65,8 @@
 	<option>upstream-branch</option>. In order to use this feature, you need
 	to install the &pristine-tar; package.</para></listitem>
 
-	<listitem><para> There can be one or more <option>patch-queue
-	branches</option>. Every patch-queue branch is related to a
+	<listitem><para> There can be one or more <option>patch-queue</option> branches.
+	Every patch-queue branch is related to a
 	<option>debian-branch</option>. If the <option>debian-branch</option> is called
 	<emphasis>master</emphasis>, the corresponding patch-queue branch is
 	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is 
@@ -86,7 +94,7 @@
 	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
 	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
-	url="http://git.debian.org/">git.debian.org</ulink>; this can also be
+	url="http://git.debian.org/">git.debian.org</ulink>; this can be
 	automated with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
 </sect1>
@@ -97,7 +105,7 @@
     	A typical, simple workflow consists of the following steps:
     </para>
     <orderedlist>
-	<listitem><para>Import a new &debian; package via &gbp-import-dsc;. This
+	<listitem><para>Initially import a  &debian; package via &gbp-import-dsc;. This
 	imports the &debian; Package on the <option>debian-branch</option>
 	and the upstream sources on the <option>upstream-branch</option>.</para></listitem>
 	<listitem><para>Develop, test, commit changes. During this time, you can
@@ -116,8 +124,8 @@
 	isn't using &git;, you can import the new version via &gbp-import-orig;
 	onto the <option>upstream-branch</option>.  &gbp-import-orig; will
 	by default try to merge the new upstream version onto the
-	<option>debian-branch</option>. You can skip the merge with
-	<option>--no-merge</option>.  After resolving any potential conflicts,
+	<option>debian-branch</option> (you can skip the merge with
+	<option>--no-merge</option>).  After resolving any potential conflicts,
 	go back to the second step.</para></listitem>
     </orderedlist>
     <para>These steps will be explained in more details in the following sections.</para>
