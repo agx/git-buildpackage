@@ -123,13 +123,13 @@ EOF
 </programlisting>
       <para>
 	In order for all of the above to work you have to create a
-	base chroot first using &git-pbuilder;
+	base chroot first using &git-pbuilder;:
       </para>
 <programlisting>
   <command>git-pbuilder</command> create
 </programlisting>
       <para>
-	This can later be updated using
+	This can later be updated using:
       </para>
 <programlisting>
   <command>git-pbuilder</command> update
