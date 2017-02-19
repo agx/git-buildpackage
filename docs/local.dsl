@@ -24,6 +24,9 @@
         (normalize "set")  ;; sets are definitely chunks...
         ))
 
+(define %stylesheet%
+  "gbp.css")
+
 </style-specification-body>
 </style-specification>
 <external-specification id="gtk" document="dbstyle">

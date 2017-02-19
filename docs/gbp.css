@@ -1,0 +1,113 @@
+body {
+    font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+    font-size: large;
+}
+
+h1 {
+    font-weight: normal;
+    font-variant: small-caps;
+}
+
+h2, h3 {
+    font-weight: normal;
+}
+
+a {
+    color: #182C41 !important;
+    font-weight: normal;
+    transition: background-color 0.2s linear;
+}
+
+a:hover {
+    background-color: #eef;
+}
+
+a[name] {
+    background-color: #fff;
+}
+
+pre {
+    background: #eef;
+    border: solid 1px #aaf;
+    padding: 0.5em;
+}
+
+pre.programlisting .command, pre.programlisting .filename, pre.programlisting .option, pre.programlisting .replaceable {
+    background: none;
+}
+
+.command {
+    font-style: italic;
+    font-weight: normal;
+    padding: 1px;
+}
+
+.filename {
+    background: #eee;
+    padding: 1px;
+}
+
+.option {
+    background: rgba(150,150,150,0.2);
+    padding: 1px;
+}
+
+.replaceable {
+    background: rgba(150,150,150,0.2);
+    padding: 1px;
+}
+
+table.variablelist {
+    border: none;
+}
+
+.variablelist th,td {
+    border: solid 1px #ddd;
+}
+
+div.book div.toc {
+    background: url("gbp.svg")  no-repeat;
+    background-position: center;
+}
+
+div .titlepage table p.title {
+    font-size: 300%;
+    font-weight: normal;
+    margin: 0.5em;
+}
+
+body.chapter table.navigation th {
+    font-weight: normal;
+    margin: 0.5em;
+}
+
+body.appendix table.navigation th {
+    font-weight: normal;
+    margin: 0.5em;
+}
+
+body.refentry table.navigation th {
+    font-weight: normal;
+    margin: 0.5em;
+}
+
+body.refentry code.option, body.refentry tt.replaceable, body.refentry tt.filename {
+    background: none;
+}
+
+table.warning {
+    border-style: solid;
+    border-width: 5px;
+    border-collapse: collapse;
+    background: rgba(252, 175, 62, 0.1);
+    border-color: rgba(252, 175, 62, 0.2);
+}
+
+table.warning td {
+    border-width: 2px;
+    border-color: rgba(252, 175, 62, 0.2);
+}
+
+table.footnotes td {
+    border: none;
+}

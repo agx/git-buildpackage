@@ -44,6 +44,7 @@ else
 endif
 	sed -i 's/^CLASS="[A-Z0-9]\+"/\L&/' manual-html/*.html
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
+	cp gbp.css gbp.svg $(MANUAL)
 
 # We build manpages under 'buildxref/' just to get an updated cross-reference
 # file (manpage.refs), before building the final manpages
