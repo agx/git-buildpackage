@@ -267,21 +267,21 @@ EOE
 
     # Run the builder.
     if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
-        set -x
+        [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
         sudo "$BUILDER" "$action" "${OPTIONS[@]}" "$@"
     else
         if [ "$EXT" = '-backports' ] ; then
             OTHERMIRROR="deb $BACKPORTS $DIST$EXT main"
-            set -x
+            [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
             sudo "$BUILDER" "$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         elif [ "$EXT" = '-lts' ] ; then
             OTHERMIRROR="deb $LTS $DIST$EXT main"
-            set -x
+            [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
             sudo "$BUILDER" "$action" --distribution "$DIST" \
                 --othermirror "$OTHERMIRROR" "${OPTIONS[@]}" "$@"
         else
-            set -x
+            [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
             sudo "$BUILDER" "$action" --distribution "$DIST" \
                 "${OPTIONS[@]}" "$@"
         fi
@@ -327,12 +327,14 @@ done
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
-    set -e; set -x
+    set -e
+    [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
     pdebuild --pbuilder "$BUILDER" --debbuildopts "$DEBBUILDOPTS" \
         "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
     { set +x; } 2>/dev/null; set +e
 else
-    set -e; set -x
+    set -e
+    [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
     pdebuild --buildresult "$OUTPUT_DIR" --pbuilder "$BUILDER" \
         --debbuildopts "$DEBBUILDOPTS" "${PDEBUILDOPTS[@]}" -- "${OPTIONS[@]}"
     { set +x; } 2>/dev/null; set +e
@@ -513,6 +515,11 @@ whitespace need to be quoted in the value of the environment variable.
 Set this environment variable to change the default location for the
 pbuilder tgz files (F</var/cache/pbuilder>) when BUILDER is set to
 C<pbuilder>.
+
+=item GIT_PBUILDER_DEBUG
+
+Set this environment variable to get additional debugging output like how
+cowbuilder is invoked.
 
 =back
 
