@@ -160,7 +160,7 @@ if [ no != "$GIT_PBUILDER_AUTOCONF" ]; then
             # that and that alone, since if it's specified more than once,
             # cowbuilder will fail.
             bp_found=""
-            for opt in $@; do
+            for opt in "$@" "${OPTIONS[@]}"; do
                 case $opt in
                     --basepath|--basepath=*) bp_found="yes" ;;
                 esac
