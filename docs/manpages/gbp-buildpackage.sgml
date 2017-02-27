@@ -261,7 +261,9 @@
         </term>
         <listitem>
           <para>
-          Options to pass to pbuilder
+          Options to pass to pbuilder when using &git-pbuilder; either
+          via <option>--git-pbuilder</option> or the corresponding
+          configuration file option.
           </para>
         </listitem>
       </varlistentry>
