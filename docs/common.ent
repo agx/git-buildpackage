@@ -17,6 +17,7 @@
   <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
   <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
   <!ENTITY git-pbuilder		"<command>git-pbuilder</command>">
+  <!ENTITY git-qemubuilder	"<command>git-pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
   <!ENTITY cowbuildercmd	"<command>cowbuilder</command>">

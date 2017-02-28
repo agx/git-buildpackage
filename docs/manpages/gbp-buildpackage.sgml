@@ -92,8 +92,8 @@
       </listitem>
       <listitem>
         <para>
-	  (Optionally) run a clean command specified
-	  with <option>--git-cleaner</option>.
+          (Optionally) run a clean command specified
+          with <option>--git-cleaner</option>.
         </para>
       </listitem>
       <listitem>
@@ -166,9 +166,9 @@
             currently checked out commmit except when you're on a
             patch-queue branch. In that case the corresponding debian
             branch is tagged.
-	  </para>
-	  <para>
-	    This is a command line only option that cannot be
+          </para>
+          <para>
+            This is a command line only option that cannot be
             specified via &gbp.conf;.
           </para>
         </listitem>
@@ -198,8 +198,9 @@
         </term>
         <listitem>
           <para>
-          Build package using <command>git-pbuilder</command>. Note that this
-          overwrites any <option>--git-builder</option> and
+          Build package using <command>git-pbuilder</command> (which
+          uses <command>cowbuilder</command> by default). Note that this overwrites
+          any <option>--git-builder</option> and
           <option>--git-cleaner</option> options.
           </para>
         </listitem>
@@ -221,16 +222,20 @@
         </term>
         <listitem>
           <para>
-          Build for distribution <replaceable>DIST</replaceable> when using
-          <command>--git-pbuilder</command>. If unset build for the unstable
-          distribution. The special value <option>DEP14</option> will set
-	  the distribution to build for from the branch name. I.e. if you're
-	  starting the build from a branch named
-	  <replaceable>debian/wheezy-backports</replaceable> the
-	  distribution is set
-	  to <replaceable>wheezy-backports</replaceable>. If the branch is
-	  named <replaceable>downstream/sid</replaceable> the distribution
-	  would be set to <replaceable>downstream_sid</replaceable>.
+            Build for distribution <replaceable>DIST</replaceable>
+            when using &git-pbuilder; (either
+            via <option>--git-pbuilder</option>, <option>--git-qemubuilder</option>
+            or the corresponding configuration file options).  If
+            unset build for the unstable distribution. The special
+            value <symbol>DEP14</symbol> will set the distribution to
+            build for from the branch name. I.e. if you're starting
+            the build from a branch named
+            <replaceable>debian/wheezy-backports</replaceable> the
+            distribution is set
+            to <replaceable>wheezy-backports</replaceable>. If the
+            branch is named <replaceable>downstream/sid</replaceable>
+            the distribution would be set
+            to <replaceable>downstream_sid</replaceable>.
           </para>
         </listitem>
       </varlistentry>
@@ -239,9 +244,12 @@
         </term>
         <listitem>
           <para>
-          Build for architecture <replaceable>ARCH</replaceable> when using
-          <command>--git-pbuilder</command>. If unset no architecture is passed
-          to <command>git-pbuilder</command>.
+            Build for architecture <replaceable>ARCH</replaceable>
+            when using &git-pbuilder; (either
+            via <option>--git-pbuilder</option>, <option>--git-qemubuilder</option>
+            or the corresponding configuration file options).  If
+            unset no architecture is passed
+            to <command>git-pbuilder</command>.
           </para>
         </listitem>
       </varlistentry>
@@ -250,9 +258,11 @@
         </term>
         <listitem>
           <para>
-          Whether to try to autoconfigure <command>git-pbuilder</command> or to
-          rely on the settings in .pbuilderrc. See the
-          <command>git-pbuilder</command> manpage for details.
+          Whether to try to autoconfigure &git-pbuilder; or to rely on
+          the settings in .pbuilderrc. See the &git-pbuilder; manpage
+          for details. Only takes effect when using &git-pbuilder;
+          (either via <option>--git-pbuilder</option>, <option>--git-qemubuilder</option>
+          or the corresponding configuration file options).
           </para>
         </listitem>
       </varlistentry>
@@ -261,9 +271,9 @@
         </term>
         <listitem>
           <para>
-          Options to pass to pbuilder when using &git-pbuilder; either
-          via <option>--git-pbuilder</option> or the corresponding
-          configuration file option.
+          Options to pass to pbuilder when building via &git-pbuilder; (either
+          via <option>--git-pbuilder</option>, <option>--git-qemubuilder</option>
+          or the corresponding configuration file options).
           </para>
         </listitem>
       </varlistentry>
@@ -470,7 +480,7 @@
         </term>
         <listitem>
           <para>Use this tag message format when signing &debian; versions,
-	  default is <replaceable>%(pkg)s Debian release %(version)s</replaceable></para>
+          default is <replaceable>%(pkg)s Debian release %(version)s</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -587,18 +597,18 @@
         </term>
         <listitem>
           <para>
-	    When generating tarballs create an additional original
-	    tarball of directory <replaceable>COMPONENT</replaceable>
-	    in the source tree. Using additional original tarballs is
-	    a feature of the 3.0 (quilt) source format. See
-	    the <command>dpkg-source</command> manpage for details. Note that the
-	    <replaceable>--git-pristine-tar-commit</replaceable>
-	    option is currently incompatible with this option.
-	    </para>
-	    <para>
-	      This is considered an experimental feature and might
-	      change incompatibly.
-	    </para>
+            When generating tarballs create an additional original
+            tarball of directory <replaceable>COMPONENT</replaceable>
+            in the source tree. Using additional original tarballs is
+            a feature of the 3.0 (quilt) source format. See
+            the <command>dpkg-source</command> manpage for details. Note that the
+            <replaceable>--git-pristine-tar-commit</replaceable>
+            option is currently incompatible with this option.
+            </para>
+            <para>
+              This is considered an experimental feature and might
+              change incompatibly.
+            </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -615,8 +625,8 @@
         </term>
         <listitem>
           <para>
-	    Deprecated, use --git-no-purge instead. This is a command line only option
-	    that cannot be specified via &gbp.conf;.
+            Deprecated, use --git-no-purge instead. This is a command line only option
+            that cannot be specified via &gbp.conf;.
           </para>
         </listitem>
       </varlistentry>
