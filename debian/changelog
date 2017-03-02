@@ -1,3 +1,45 @@
+git-buildpackage (0.8.13) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [22013ad] pq: Filter out comments from series diff.
+    When creating the delta of added and dropped pachtches ignore comment
+    lines in the series file.
+    (Closes: #852817)
+  * [8103903] import_dsc: use three slashes by default for apt URLs.
+    We don't have a host part so leave that empty. Since there very likely
+    won't be any ever accept only two slashes as well.
+  * [d904b61] Use a symlink to supercomand instead of
+    pkgresources.load_entry_point. This sp:eds up startup by a factor of 10
+    and thus makes bash completion much more responsive:
+      $ gbp buildpackge --help # entrypoints
+      real	0m0,573s
+      user	0m0,532s
+      sys	0m0,036s
+      $ gbp buildpackage --help # symlink
+      real	0m0,051s
+      user	0m0,040s
+      sys	0m0,012s
+    (Closes: #853283)
+  * [d31fb0b] On a patch-queue branch tag the corresponding debian branch
+    instead.
+    (Closes: #583938)
+  * [ac34351] import_dsc: delay pristine-tar import to the very end.
+    This makes sure we have a sane debian and upstream branch already so we
+    don't leave the repo in an inconsistent state in case of failure.
+    (Closes: #851287)
+  * [0e6e23e] Improve error message for non-native packages with broken
+    version numbers
+    (Closes: #824634)
+  * [8f93dc0] git-pbuilder: don't do set -x by default to avoid spewig on
+    stderr. Use GIT_PBUILDER_DEBUG to enable it.
+  * Test suite improvements
+  * Doc updates including some CSS improvements
+
+  [ Ben Finney ]
+  * [0fc89bc] Extract a function to clean the working tree.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 02 Mar 2017 09:58:42 +0100
+
 git-buildpackage (0.8.12.2) unstable; urgency=medium
 
   * [80044e1] GitRepository: shorten reflog message.
