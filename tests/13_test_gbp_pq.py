@@ -217,6 +217,7 @@ class TestExport(testutils.DebianGitTestRepo):
         meta_closes = False
         meta_closes_bugnum = ''
         pq_from = 'DEBIAN'
+        commit = False
 
     def setUp(self):
         testutils.DebianGitTestRepo.setUp(self)
@@ -256,6 +257,31 @@ class TestExport(testutils.DebianGitTestRepo):
         self.assertEqual(repo.get_branch(), start)
         self.assertEqual(len(repo.get_commits()), 2,
                          "Export must not create another commit")
+
+    def test_commit_dropped_patches(self):
+        """Test if we commit the patch-queue branch with all patches dropped"""
+        repo = self.repo
+        start = repo.get_branch()
+        pq_branch = os.path.join('patch-queue', start)
+        opts = TestExport.Options()
+        opts.commit = True
+        patch_dir = os.path.join(repo.path, 'debian/patches')
+        os.makedirs(patch_dir)
+        with open(os.path.join(patch_dir, 'series'), 'w') as f:
+            f.write("patch1.diff\n")
+            f.write("patch2.diff\n")
+        repo.add_files('debian/patches')
+        repo.commit_all('Add series file')
+        pq.switch_pq(repo, start)
+        self.assertEqual(len(repo.get_commits()), 2)
+        self.assertEqual(repo.get_branch(), pq_branch)
+        export_patches(repo, pq_branch, opts)
+        self.assertEqual(repo.get_branch(), start)
+        self.assertTrue(repo.has_branch(pq_branch))
+        self.assertEqual(len(repo.get_commits()), 3,
+                         "Export did not create commit")
+        self.assertIn("Dropped patch1.diff:", repo.show('HEAD'))
+        self.assertIn("Dropped patch2.diff:", repo.show('HEAD'))
 
 
 class TestParseGbpCommand(unittest.TestCase):

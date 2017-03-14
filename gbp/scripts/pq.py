@@ -223,18 +223,19 @@ def export_patches(repo, branch, options):
         with open(series_file, 'w') as seriesfd:
             for patch in patches:
                 seriesfd.write(os.path.relpath(patch, patch_dir) + '\n')
-        if options.commit:
-            added, removed = commit_patches(repo, branch, patches, options, patch_dir)
-            if added:
-                what = 'patches' if len(added) > 1 else 'patch'
-                gbp.log.info("Added %s %s to patch series" % (what, ', '.join(added)))
-            if removed:
-                what = 'patches' if len(removed) > 1 else 'patch'
-                gbp.log.info("Removed %s %s from patch series" % (what, ', '.join(removed)))
+    else:
+        gbp.log.info("No patches on '%s' - nothing to export." % pq_branch)
+
+    if options.commit:
+        added, removed = commit_patches(repo, branch, patches, options, patch_dir)
+        if added:
+            what = 'patches' if len(added) > 1 else 'patch'
+            gbp.log.info("Added %s %s to patch series" % (what, ', '.join(added)))
+        if removed:
+            what = 'patches' if len(removed) > 1 else 'patch'
+            gbp.log.info("Removed %s %s from patch series" % (what, ', '.join(removed)))
         else:
             GitCommand('status', cwd=repo.path)(['--', PATCH_DIR])
-    else:
-        gbp.log.info("No patches on '%s' - nothing to do." % pq_branch)
 
     if options.drop:
         drop_pq(repo, branch)
