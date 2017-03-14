@@ -239,7 +239,8 @@ class GitRepository(object):
         except Exception as excobj:
             raise GitRepositoryError("Error running git %s: %s" % (command, excobj))
         if ret:
-            raise GitRepositoryError("Error running git %s: %s" % (command, stderr))
+            detail = stderr or stdout
+            raise GitRepositoryError("Error running git %s: %s" % (command, detail))
 
     def _cmd_has_feature(self, command, feature):
         """
