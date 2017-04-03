@@ -132,7 +132,8 @@ class ImportOrigDebianGitRepository(DebianGitRepository):
                     self.update_ref("refs/heads/%s" % name, sha, msg="gbp import-orig: failure rollback of %s" % name)
                 elif action == 'abortmerge':
                     gbp.log.info('Rolling back failed merge of %s' % name)
-                    self.abort_merge()
+                    if os.path.exists(os.path.join(self.git_dir(), 'MERGE_HEAD')):
+                        self.abort_merge()
                 else:
                     raise GitRepositoryError("Don't know how to %s %s %s" % (action, reftype, name))
             except GitRepositoryError as e:
