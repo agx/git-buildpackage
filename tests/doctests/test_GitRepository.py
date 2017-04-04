@@ -687,6 +687,8 @@ def test_merge():
     >>> repo = gbp.git.GitRepository(dirs['repo'])
     >>> repo.set_branch('master')
     >>> repo.merge('foo')
+    >>> repo.is_in_merge()
+    False
     """
 
 
