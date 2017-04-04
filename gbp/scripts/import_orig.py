@@ -24,6 +24,7 @@ import tempfile
 import time
 import gbp.command_wrappers as gbpc
 from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
+from gbp.deb.format import DebianSourceFormat
 from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
 from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
@@ -32,6 +33,7 @@ from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch
 from gbp.errors import GbpError
 from gbp.pkg import parse_archive_filename
 from gbp.format import format_str
+from gbp.git.vfs import GitVfs
 import gbp.log
 from gbp.scripts.common import ExitCodes, is_download
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
@@ -337,6 +339,22 @@ def debian_branch_merge(repo, tag, version, options):
         Hook('Postimport',
              format_str(options.postimport, info),
              extra_env=env)()
+
+
+def is_30_quilt(repo, options):
+    format_file = DebianSourceFormat.format_file
+    try:
+        content = GitVfs(repo, options.debian_branch).open(format_file).read()
+    except IOError:
+        return False
+    return str(DebianSourceFormat(content)) == "3.0 (quilt)"
+
+
+def debian_branch_merge_by_auto(repo, tag, version, options):
+    if is_30_quilt(repo, options):
+        return debian_branch_merge_by_replace(repo, tag, version, options)
+    else:
+        return debian_branch_merge_by_merge(repo, tag, version, options)
 
 
 def debian_branch_merge_by_replace(repo, tag, version, options):

@@ -4,7 +4,9 @@
 import os
 import unittest
 
-from gbp.scripts.import_orig import (ImportOrigDebianGitRepository, GbpError)
+from collections import namedtuple
+
+from gbp.scripts.import_orig import (ImportOrigDebianGitRepository, GbpError, is_30_quilt)
 from gbp.scripts.common.import_orig import download_orig
 from . testutils import DebianGitTestRepo
 
@@ -69,3 +71,37 @@ class TestImportOrigDownload(DebianGitTestRepo):
         url = "https://{host}/cgit/gbp/deb-testdata/tree/dsc-3.0/{pkg}".format(host=self.HOST,
                                                                                pkg=pkg)
         self.assertEqual(download_orig(url).path, '../%s' % pkg)
+
+
+class TestIs30Quilt(DebianGitTestRepo):
+    Options = namedtuple('Options', 'debian_branch')
+    format_file = 'debian/source/format'
+
+    def setUp(self):
+        DebianGitTestRepo.setUp(self)
+        os.chdir(self.repo.path)
+        os.makedirs('debian/source/')
+
+    def test_30_quilt(self):
+        options = self.Options(debian_branch='master')
+        with open(self.format_file, 'w') as f:
+            f.write('3.0 (quilt)\n')
+        self.repo.add_files([self.format_file])
+        self.repo.commit_all("Add %s" % self.format_file)
+        self.assertEquals(self.repo.branch, options.debian_branch)
+        self.assertTrue(is_30_quilt(self.repo, options))
+
+    def test_no_format(self):
+        options = self.Options(debian_branch='master')
+        self.assertFalse(os.path.exists(self.format_file))
+        self.assertFalse(is_30_quilt(self.repo, options))
+
+    def test_no_quilt(self):
+        options = self.Options(debian_branch='master')
+        with open(self.format_file, 'w') as f:
+            f.write('3.0 (nonexistent)')
+        self.assertFalse(is_30_quilt(self.repo, options))
+
+    def test_30_quilt_empty_repo(self):
+        options = self.Options(debian_branch='master')
+        self.assertFalse(is_30_quilt(self.repo, options))

@@ -23,7 +23,7 @@
       &man.common.options.synopsis;
       <arg><option>--upstream-version=</option><replaceable>version</replaceable></arg>
       <arg><option>--[no-]merge</option></arg>
-      <arg><option>--merge-mode=</option><replaceable>[merge|replace]</replaceable></arg>
+      <arg><option>--merge-mode=</option><replaceable>[auto|merge|replace]</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-vcs-tag=</option><replaceable>tag-format</replaceable></arg>
@@ -88,16 +88,14 @@
       The sources are placed on the upstream branch (default:
       <replaceable>upstream</replaceable>), tagged and merged onto the
       debian branch (default: <replaceable>master</replaceable>).  This
-      is either done using <command>git merge</command> in case
-      of <option>--merge-mode=</option><replaceable>merge</replaceable>
-      (the default) or by creating a new tree that consists of the new
+      is either done using plain <command>git merge</command>
+      or by creating a new tree that consists of the new
       upstream version plus the <filename>debian/</filename>
-      directory. This behaviour can be enabled via
-      the <option>--merge-mode=</option><replaceable>replace</replaceable>
-      option and is preferable for source format 3.0 (quilt) packages
-      since direct modifications of the upstream sources are not
-      allowed in that format and so a 1:1 replacement of the upstream
-      sources is almost always desired.
+      directory. The later is used for source format 3.0
+      (quilt) packages since direct modifications of the upstream
+      sources are not allowed in that format and so a 1:1 replacement
+      of the upstream sources is almost always desired. It can
+      be tweaked via the <option>--merge-mode</option>.
     </para>
     <para>In case of an error &gbp-import-orig; will rollback (undo)
       all changes it has done to the repository (see
@@ -127,14 +125,13 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--merge-mode=</option><replaceable>[merge|replace]</replaceable></term>
+        <term><option>--merge-mode=</option><replaceable>[auto|merge|replace]</replaceable></term>
         <listitem>
           <para>
             How to fold the newly imported upstream source to the
             &debian; packaging branch after import.
 	  </para>
 	  <para>
-	    The default mode
 	    <replaceable>merge</replaceable> does a
 	    &git; <command>merge</command> leaving you on your own in
 	    case of merge conflict resolution.
@@ -149,6 +146,11 @@
 	    similar to a <option>theirs</option> merge strategy while
 	    preserving <filename>debian/</filename>.
           </para>
+	  <para>
+	    The default is <replaceable>auto</replaceable> which
+	    uses <replaceable>replace</replaceable> for 3.0 (quilt) packages
+	    and <replaceable>merge</replaceable> otherwise.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>

@@ -60,10 +60,20 @@ by version number.
     This puts the upstream sources onto the <option>upstream-branch</option> and
     tags them accordingly (the default tag format is
     <replaceable>upstream/%(version)s</replaceable>).
-    The result is then merged onto the <option>debian-branch</option>.
-    You can again specify different branch names via
-    the <option>--upstream-branch</option> and
-    <option>--debian-branch</option> options.
+    </para>
+    <para>
+      The result is then placed onto
+      the <option>debian-branch</option>. The way this happens is
+      determined by the <option>--merge-mode</option> option. The
+      default mode <option>auto</option> replaces the upstream sources
+      while preserving the <filename>debian/</filename> directory for
+      3.0 (quilt) packages. A &git; merge is used for all other source
+      format versions.
+    </para>
+    <para>
+      You can again specify different branch names via
+      the <option>--upstream-branch</option> and
+      <option>--debian-branch</option> options.
     </para>
     <para>If you are using <filename>debian/watch</filename> to keep track of how to retrieve upstream sources, you can also simply use the <option>--uscan</option> option:
 <programlisting>
