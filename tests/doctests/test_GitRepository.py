@@ -654,7 +654,7 @@ def test_clone():
 
 def test_get_remotes():
     """
-    Merge a branch
+    Check remotes
 
     Methods tested:
          - L{gbp.git.GitRepository.get_remotes}
