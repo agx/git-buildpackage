@@ -364,6 +364,17 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
     repo.force_head(commit, hard=True)
 
 
+def debian_branch_merge_by_merge(repo, tag, version, options):
+    gbp.log.info("Merging to '%s'" % options.debian_branch)
+    branch = repo.get_branch()
+    repo.set_branch(options.debian_branch)
+    try:
+        repo.merge(tag)
+    except GitRepositoryError:
+        raise GbpError("Automatic merge failed.")
+    repo.set_branch(branch)
+
+
 def get_component_tarballs(name, version, tarball, components):
     """
     Figure out the paths to the component tarballs based on the main
@@ -381,17 +392,6 @@ def get_component_tarballs(name, version, tarball, components):
         if not os.path.exists(cname):
             raise GbpError("Can not find component tarball %s" % cname)
     return tarballs
-
-
-def debian_branch_merge_by_merge(repo, tag, version, options):
-    gbp.log.info("Merging to '%s'" % options.debian_branch)
-    branch = repo.get_branch()
-    repo.set_branch(options.debian_branch)
-    try:
-        repo.merge(tag)
-    except GitRepositoryError:
-        raise GbpError("Automatic merge failed.")
-    repo.set_branch(branch)
 
 
 def set_bare_repo_options(options):
