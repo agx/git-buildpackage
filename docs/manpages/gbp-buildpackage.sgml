@@ -188,8 +188,9 @@
         </term>
         <listitem>
           <para>
-          Use <replaceable>CLEAN_CMD</replaceable> instead of
-          <command>debuild clean</command>.
+            Use <replaceable>CLEAN_CMD</replaceable> to clean the
+            source tree before the build. The default
+            is <command>/bin/true</command>.
           </para>
         </listitem>
       </varlistentry>
