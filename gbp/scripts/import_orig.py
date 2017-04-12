@@ -320,6 +320,9 @@ def debian_branch_merge(repo, tag, version, options):
     except KeyError:
         raise GbpError("%s is not a valid merge mode" % options.merge_mode)
     func(repo, tag, version, options)
+
+
+def postimport_hook(repo, tag, version, options):
     if options.postimport:
         epoch = ''
         if os.access('debian/changelog', os.R_OK):
@@ -352,8 +355,10 @@ def is_30_quilt(repo, options):
 
 def debian_branch_merge_by_auto(repo, tag, version, options):
     if is_30_quilt(repo, options):
+        gbp.log.debug("3.0 (quilt) package, replacing debian/ dir")
         return debian_branch_merge_by_replace(repo, tag, version, options)
     else:
+        gbp.log.debug("not 3.0 (quilt) package, using git merge")
         return debian_branch_merge_by_merge(repo, tag, version, options)
 
 
@@ -628,6 +633,7 @@ def main(argv):
             elif options.merge:
                 repo.rrr_branch(options.debian_branch)
                 debian_branch_merge(repo, tag, version, options)
+                postimport_hook(repo, tag, version, options)
 
             # Update working copy and index if we've possibly updated the
             # checked out branch
