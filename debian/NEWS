@@ -1,4 +1,4 @@
-git-buildpackage (0.8.14) unstable; urgency=medium
+git-buildpackage (0.8.14) experimental; urgency=medium
 
   gbp import-orig's --merge-mode option now defaults to 'auto' selecting
   'replace' for 3.0 (quilt) packages and 'merge' otherwise. If you want to

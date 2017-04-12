@@ -1,3 +1,30 @@
+git-buildpackage (0.8.14) experimental; urgency=medium
+
+  * [fe821e2] GitRepository: use stdout as last resort if stderr is empty.
+    This e.g. gives:
+        GitRepositoryError: Error running git commit: On branch master
+        Untracked files:
+    	debian/
+        nothing added to commit but untracked files present
+    Instead of
+        GitRepositoryError: Error running git commit:
+  * [1dd290a] pq: unbreak --commit when patch series becomes empty.  We
+    skipped the commit when the patch series became completely empty but we
+    want to commit that change too.
+  * [75bf793] posttag-push: Use named parameter for dry_run
+  * [844e4f8] import-orig: only abort merge if it got started.
+    This isn't be the case when there are e.g. files that would be overwritten
+    by the merge in the workig copy (Closes: #859439)
+  * [3b70ad2] GitRepository: add is_in_merge()
+  * [5d414c1] buildpackage: cleaner does not default to debuild since ages
+    (Closes: #859594)
+  * [e890ce3] ipmort_orig: pick best way to import upstream tarball
+    automatically.  Add new value --merge-mode=auto that selects either
+    'replace' or 'merge' depending on the source format version.
+    (Closes: #700411)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 12 Apr 2017 13:53:52 +0200
+
 git-buildpackage (0.8.13) experimental; urgency=medium
 
   [ Guido Günther ]
