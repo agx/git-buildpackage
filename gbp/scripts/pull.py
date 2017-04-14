@@ -65,7 +65,9 @@ def fast_forward_branch(rem_repo, branch, repo, options):
             gbp.log.warn("Skipping non-fast forward of '%s' - use --force" % branch)
 
     if update:
-        gbp.log.info("Updating '%s'" % branch)
+        gbp.log.info("Updating '%s': %s..%s" % (branch,
+                                                repo.rev_parse(branch, short=12),
+                                                repo.rev_parse(remote, short=12)))
         if repo.branch == branch:
             repo.merge(remote)
         else:
