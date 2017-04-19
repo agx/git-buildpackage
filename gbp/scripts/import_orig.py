@@ -486,12 +486,10 @@ def build_parser(name):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
-
-    # Accepted for compatibility
-    parser.add_option("--no-dch", dest='no_dch', action="store_true",
-                      default=False, help="deprecated - don't use.")
     parser.add_option("--uscan", dest='uscan', action="store_true",
                       default=False, help="use uscan(1) to download the new tarball.")
+
+    # Accepted for compatibility
     parser.add_option("--download", dest='download', action="store_true",
                       default=False, help="Ignored. Accepted for compatibility.")
     return parser
@@ -508,9 +506,6 @@ def parse_args(argv):
 
     (options, args) = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
-
-    if options.no_dch:
-        gbp.log.warn("'--no-dch' passed. This is now the default, please remove this option.")
 
     if options.download:
         gbp.log.warn("Passing --download explicitly is deprecated.")
