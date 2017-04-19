@@ -233,7 +233,7 @@ class TestImportOrig(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_filter_with_component_tarballs(self, repo):
         """
-        Test that using a filter works even with component tarballs (#840602)
+        Test that using a filter works component tarballs (#840602)
         """
         # copy data since we don't want the repacked tarball to end up in DEB_TEST_DATA_DIR
         os.mkdir('../tarballs')
@@ -270,8 +270,8 @@ class TestImportOrig(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_filter_with_orig_tarball(self, repo):
         """
-        Test that using a filter works even with an upstream tarball
-        that has already the correct name (#558777)
+        Test that using a filter works with an upstream tarball that has
+        already the correct name (#558777)
         """
         f = 'hello-debhelper_2.8.orig.tar.gz'
         src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
