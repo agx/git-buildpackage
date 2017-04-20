@@ -269,14 +269,18 @@ EOF
 	  like:
 	</para>
 <programlisting>
-[buildpackage]
+[DEFAULT]
 upstream-tag = v%(version)s
 </programlisting>
 	<para>
 	  <replaceable>version</replaceable> will be replaced with the
 	  upstream version number as determined from
 	  <filename>debian/changelog</filename>. The <replaceable>%()s</replaceable>
-	  might be familiar from &pyformat;s.
+	  might be familiar from &pyformat;s. The option was placed in
+	  the <emphasis>[DEFAULT]</emphasis> section instead of
+	  the <emphasis>[buildpackage]</emphasis> section of the
+	  configuration so other tools like &gbp-dch; make use of it
+	  too.
 	</para>
 
 	<para>
@@ -289,7 +293,7 @@ upstream-tag = v%(version)s
 	  follows:
 	</para>
 <programlisting>
-[buildpackage]
+[DEFAULT]
 upstream-tag = v%(version%.%_)s
 </programlisting>
 	<para>
