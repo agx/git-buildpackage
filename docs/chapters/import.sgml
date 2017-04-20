@@ -252,18 +252,18 @@ EOF
 	  upstream's repository and create a separate packaging branch
 	  in there. You will not need &gbp-import-orig; at all with
 	  this workflow. &gbp-buildpackage; will handle creating the
-	  upstream tarballs needed the Debian source package for you.
+	  upstream tarballs needed for the Debian source package.
 	</para>
 	<para>
-	  For that to work you need to tell &gbp; how the
-	  upstream tag format looks. Therefore you either
+	  For that to work you need to tell &gbp; what the
+	  upstream tag format looks like. Therefore you either
 	  use the <option>--git-upstream-tag</option> command line option
 	  or the <option>upstream-tag</option> configuration file
 	  variable to specify upstream's tag format.
 	</para>
 
 	<para>
-	  A common upstream format is to put
+	  For example a common upstream format is to put
 	  a <replaceable>v</replaceable> in front of the version
 	  number.  In this case, the configuration option would look
 	  like:
@@ -273,8 +273,8 @@ EOF
 upstream-tag = v%(version)s
 </programlisting>
 	<para>
-	  <replaceable>version</replaceable> will be replaced with the
-	  upstream version number as determined from
+	  <replaceable>version</replaceable> will be replaced by &gbp;
+	  with the upstream version number as determined from
 	  <filename>debian/changelog</filename>. The <replaceable>%()s</replaceable>
 	  might be familiar from &pyformat;s. The option was placed in
 	  the <emphasis>[DEFAULT]</emphasis> section instead of
@@ -316,8 +316,8 @@ upstream-tag = v%(version%.%_)s
 	      Since some of the possible mangling characters
 	      like <replaceable>_</replaceable> and <replaceable>%</replaceable> are also used to denote epochs and tilde revisions
 	      these versions can't be reconstructed when mapping from &git; tags back to &debian; versions and will therefore break other tools
-	      like &gbp-dch;. So use version mangling with care. It's better to come up with a Debian compatible tag format upstream,
-	      see &dep14; for the currently used expansion rules for Debian versions.
+	      like &gbp-dch;. So use version mangling with care. It's better to come up with a Debian compatible tag format upstream.
+	      See &dep14; for the currently used expansion rules for Debian version numbers.
 	    </para>
 	  </warning>
 	</para>
