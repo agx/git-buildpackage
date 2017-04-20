@@ -158,7 +158,7 @@ class TestBuildpackage(ComponentTestBase):
 
     @RepoFixtures.native()
     def test_argument_quoting(self, repo):
-        """Test that we quote arguments to builder (#)"""
+        """Test that we quote arguments to builder (#850869)"""
         with open('../arg with spaces', 'w'):
             pass
         # We use ls as builder to look for a file with spaces. This
