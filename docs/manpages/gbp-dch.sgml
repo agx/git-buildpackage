@@ -103,25 +103,32 @@
     at which point it should start in the &git; history.
     </para>
     <para>
-    The additional path arguments can be used to restrict the repository paths
-    &gbp-dch; looks at. Setting <replaceable>path</replaceable> to
-    <emphasis>debian/</emphasis> is a good choice if upstream uses &git; and
-    all Debian packaging changes are restricted to the
-    <replaceable>debian/</replaceable> subdir. In more sophisticated cases
-    (like backports), you can use <option>--git-log</option> to restrict the
-    generated changelog entries further, e.g. by using
-    <option>--git-log=</option><replaceable>"--author=Foo Bar"</replaceable>.
+      If one ore more paths are given as arguments &gbp-dch; will only
+      include changes in <filename>debian/changelog</filename> that
+      affect these paths.  E.g. using
+      <emphasis>debian/</emphasis> is a good choice if upstream uses
+      &git; and you don't want the upstream history to end up in
+      <filename>debian/changelog</filename>.
     </para>
     <para>
-      The above relies on the <option>debian-branch</option> option
+      To restrict the selected changes even further you can use
+      use the <option>--git-log</option> option which is passed
+      on verbatim to <command>git log</command>. E.g. by using
+      <option>--git-log=</option><replaceable>"--author=Foo
+	Bar"</replaceable>.
+    </para>
+    <para>
+      The above relies on the <option>--debian-branch</option> option
       pointing to the current branch
-      and <option>upstream-branch</option> pointing to the
+      and <option>--upstream-branch</option> pointing to the
       corresponding upstream branch in order to find the right merge
       points of these branches. Furthermore &gbp-dch; must be able to
       identify git tags from upstream and Debian version numbers. If
       you're not using the defaults check
-      the <option>upstream-tag</option>
-      and <option>debian-tag</option> options.
+      the <option>--upstream-tag</option>
+      and <option>--debian-tag</option> options and make sure they match
+      the tags created by e.g. &gbp-import-orig (when using tarballs)
+      or upstream's tagging pattern (when using upstream's git directly).
     </para>
   </refsect1>
   <refsect1>
