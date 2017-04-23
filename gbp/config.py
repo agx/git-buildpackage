@@ -213,7 +213,7 @@ class GbpOptionParser(OptionParser):
             "Format string for commit message used to commit "
             "the upstream tarball, default is '%(import-msg)s'",
         'commit-msg':
-            "Format string for commit messag used to commit, "
+            "Format string for commit message used to commit, "
             "the changelog, default is '%(commit-msg)s'",
         'pristine-tar':
             "Use pristine-tar to create orig tarball, "
@@ -315,8 +315,8 @@ class GbpOptionParser(OptionParser):
         'hooks':
             "Enable running all hooks, default is %(hooks)s",
         'time-machine':
-            "don't try head commit only to apply the patch queue "
-            "but look TIME_MACHINE commits back, "
+            "don't try to apply patch queue to head commit only. "
+            "Try at most TIME_MACHINE commits back, "
             "default is '%(time-machine)d'",
         'pbuilder-autoconf':
             "Whether to configure pbuilder automatically, "
@@ -328,13 +328,13 @@ class GbpOptionParser(OptionParser):
             "Template directory used by git init, "
             "default is '%(template-dir)s'",
         'remote-config':
-            "Remote defintion in gbp.conf used to create the remote "
+            "Remote definition in gbp.conf used to create the remote "
             "repository, default is '%(remote-config)s'",
         'allow-unauthenticated':
             "Don't verify integrity of downloaded source, "
             "default is '%(allow-unauthenticated)s'",
         'symlink-orig':
-            "Whether to creat a symlink from the upstream tarball "
+            "Whether to create a symlink from the upstream tarball "
             "to the orig.tar.gz if needed, default is "
             "'%(symlink-orig)s'",
         'purge':
