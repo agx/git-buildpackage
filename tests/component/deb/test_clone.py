@@ -19,7 +19,8 @@
 import os
 
 from tests.component import (ComponentTestBase,
-                             ComponentTestGitRepository)
+                             ComponentTestGitRepository,
+                             skipUnless)
 from tests.component.deb.fixtures import RepoFixtures
 
 from nose.tools import ok_
@@ -68,3 +69,23 @@ class TestClone(ComponentTestBase):
         got = repo.get_config("user.name")
         want = os.environ['DEBFULLNAME']
         ok_(got == want, "unexpected git config user.name: got %s, want %s" % (got, want))
+
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_clone_vcsgit(self):
+        """Test that cloning from vcs-git urls works"""
+        dest = os.path.join(self._tmpdir,
+                            'cloned_repo')
+        ret = clone(['arg0', "vcsgit:libvirt-glib", dest])
+        self.assertEquals(ret, 0)
+        cloned = ComponentTestGitRepository(dest)
+        self._check_repo_state(cloned, 'debian/sid', ['debian/sid', 'upstream/latest'])
+
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_clone_github(self):
+        """Test that cloning from github urls works"""
+        dest = os.path.join(self._tmpdir,
+                            'cloned_repo')
+        ret = clone(['arg0', "github:agx/git-buildpackage", dest])
+        self.assertEquals(ret, 0)
+        cloned = ComponentTestGitRepository(dest)
+        self._check_repo_state(cloned, 'master', ['master'])

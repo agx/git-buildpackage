@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009, 2010, 2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2009, 2010, 2015, 2017 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -19,6 +19,7 @@
 #
 """Clone a Git repository and set it up for gbp"""
 
+import re
 import sys
 import os
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
@@ -28,7 +29,72 @@ from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common import repo_setup
 from gbp.scripts.common.hook import Hook
+from gbp.command_wrappers import Command, CommandExecFailed
+from gbp.deb import DpkgCompareVersions
 import gbp.log
+
+from functools import cmp_to_key
+
+
+def apt_showsrc(pkg):
+    try:
+        aptsrc = Command("apt-cache", ["showsrc", pkg], capture_stdout=True)
+        aptsrc(quiet=True)
+        return aptsrc.stdout
+    except CommandExecFailed:
+        gbp.log.err("Can't find source package for '%s'" % pkg)
+
+
+def vcs_git_url(pkg):
+    repos = {}
+
+    out = apt_showsrc(pkg)
+    vcs_re = re.compile(r'(x-)?vcs-git:\s*(?P<repo>[^ ]+)$', re.I)
+    version_re = re.compile(r'Version:\s*(?P<version>.*)$', re.I)
+    end_re = re.compile(r'\s*$')
+
+    version = repo = None
+    for line in out.split('\n'):
+        m = vcs_re.match(line)
+        if m:
+            repo = m.group('repo')
+            continue
+        m = version_re.match(line)
+        if m:
+            version = m.group('version')
+            continue
+        m = end_re.match(line)
+        if m:
+            if version and repo:
+                repos[version] = repo
+            version = repo = None
+
+    if not repos:
+        raise GbpError("Can't find a source package for '%s'" % pkg)
+
+    s = sorted(repos, key=cmp_to_key(DpkgCompareVersions()))
+    return repos[s[-1]]
+
+
+def repo_to_url(repo):
+    """
+    >>> repo_to_url("https://foo.example.com")
+    'https://foo.example.com'
+    >>> repo_to_url("github:agx/git-buildpackage")
+    'https://github.com/agx/git-buildpackage.git'
+    """
+    parts = repo.split(":", 1)
+    if len(parts) != 2:
+        return repo
+    else:
+        proto, path = parts
+
+    if proto == 'github':
+        return 'https://github.com/%s.git' % path
+    elif proto in ['vcsgit', 'vcs-git']:
+        return vcs_git_url(path)
+    else:
+        return repo
 
 
 def build_parser(name):
@@ -91,7 +157,7 @@ def main(argv):
         gbp.log.err("Need a repository to clone.")
         return 1
     else:
-        source = args[1]
+        source = repo_to_url(args[1])
 
     clone_to, auto_name = (os.path.curdir, True) if len(args) < 3 else (args[2], False)
     try:

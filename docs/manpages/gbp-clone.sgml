@@ -148,7 +148,8 @@
 	<term><replaceable>repository</replaceable></term>
 	<listitem>
           <para>
-	    The (possibly remote) repository to clone from.
+	    The (possibly remote) repository to clone from. This is
+	    usually a &git; URL but some shortcuts are supported (see below).
           </para>
 	</listitem>
       </varlistentry>
@@ -170,6 +171,16 @@
     </para>
     <screen>
       &gbp-clone; --pristine-tar git://honk.sigxcpu.org/git/git-buildpackage.git</screen>
+    <para>
+      Clone from the <emphasis>Git-Vcs</emphasis> URL of a package:
+    </para>
+    <screen>
+      &gbp-clone; vcsgit:libvirt</screen>
+    <para>
+      Clone from a github repository:
+    </para>
+    <screen>
+      &gbp-clone; github:agx/git-buildpackage</screen>
   </refsect1>
   <refsect1>
       &man.gbp.config-files;
