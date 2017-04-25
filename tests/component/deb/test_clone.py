@@ -56,20 +56,6 @@ class TestClone(ComponentTestBase):
         assert len(cloned.get_commits()) == 1
         self.check_hook_vars('postclone', ["GBP_GIT_DIR"])
 
-    def test_clone_environ(self):
-        """Test that environment variables influence git configuration"""
-        # Build up somethng we can clone from
-        os.environ['DEBFULLNAME'] = 'testing tester'
-        os.environ['DEBEMAIL'] = 'gbp-tester@debian.invalid'
-        repo = RepoFixtures.import_native()
-        got = repo.get_config("user.email")
-        want = os.environ['DEBEMAIL']
-        ok_(got == want, "unexpected git config user.email: got %s, want %s" % (got, want))
-
-        got = repo.get_config("user.name")
-        want = os.environ['DEBFULLNAME']
-        ok_(got == want, "unexpected git config user.name: got %s, want %s" % (got, want))
-
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_clone_vcsgit(self):
         """Test that cloning from vcs-git urls works"""

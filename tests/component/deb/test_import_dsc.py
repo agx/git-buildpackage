@@ -22,6 +22,7 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository,
                              skipUnless)
 from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL
+from tests.component.deb.fixtures import RepoFixtures
 
 from nose.tools import ok_, eq_
 
@@ -259,3 +260,16 @@ class TestImportDsc(ComponentTestBase):
         ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
         ok_("ello-debhelper (2.7-1) unstable; urgency=low" in commitmsg)
         ok_("hello-debhelper (2.6-2) unstable; urgency=medium" not in commitmsg)
+
+    def test_import_environ(self):
+        """Test that environment variables influence git configuration"""
+        os.environ['DEBFULLNAME'] = 'testing tester'
+        os.environ['DEBEMAIL'] = 'gbp-tester@debian.invalid'
+        repo = RepoFixtures.import_native()
+        got = repo.get_config("user.email")
+        want = os.environ['DEBEMAIL']
+        ok_(got == want, "unexpected git config user.email: got %s, want %s" % (got, want))
+
+        got = repo.get_config("user.name")
+        want = os.environ['DEBFULLNAME']
+        ok_(got == want, "unexpected git config user.name: got %s, want %s" % (got, want))
