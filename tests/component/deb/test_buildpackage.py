@@ -19,6 +19,7 @@
 import hashlib
 import os
 import subprocess
+import tarfile
 
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
@@ -139,6 +140,21 @@ class TestBuildpackage(ComponentTestBase):
         ok_(ret == 0, "Building the package failed")
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
+
+    @RepoFixtures.quilt30()
+    def test_sloppy_tarball_generation(self, repo):
+        """Test that generating tarball from Debian branch works"""
+        tarball = '../hello-debhelper_2.8.orig.tar.gz'
+        self.add_file(repo, 'foo.txt')
+        self._test_buildpackage(repo, ['--git-force-create',
+                                       '--git-upstream-tree=SLOPPY'])
+        self.assertTrue(os.path.exists(tarball))
+        t = tarfile.open(name=tarball, mode="r:gz")
+        names = t.getnames()
+        for f in ['hello-debhelper-2.8/build-aux',
+                  'hello-debhelper-2.8/foo.txt']:
+            self.assertIn(f, names)
+        self.assertNotIn('hello-debhelper-2.8/debian', names)
 
     @RepoFixtures.quilt30()
     def test_export_dir_buildpackage(self, repo):

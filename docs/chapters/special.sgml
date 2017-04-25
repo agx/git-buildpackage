@@ -170,5 +170,63 @@ EOF
    The import works incrementally; you can import new versions on top of
    already imported ones for e.g. easy review of changes.
     </para>
+
     </sect1>
+    <sect1 id="gbp.special.sloppytarball">
+    <title>Sloppy tarball creation</title>
+    <para>
+      By default &gbp-buildpackage; uses <filename>debian/changelog</filename> to detect
+      the upstream version and build the corrsponding tarball either via &pristine-tar; or
+      by using <command>git archive</command> directly. This ensures that the tarball matches
+      what's in the Debian archive already.
+    </para>
+    <para>
+      But there might be cases where you don't want to follow these
+      packaging practice and create a fresh <emphasis>dirty</emphasis>
+      tarball that contains additional changes. Such tarballs are not
+      suitable for upload into the archive but might be helpful in local testing.
+    </para>
+    <para>
+      Especially when getting started and when you first want to get a
+      package built and dive into &gbp-dch;, &git-pbuilder; and the 3.0
+      (quilt) format later to find out what exactly
+<programlisting>
+dpkg-source: info: local changes detected, the modified files are:
+ hello-debhelper/configure
+dpkg-source: error: aborting due to unexpected upstream changes, see /tmp/hello-debhelper_2.8-1.diff.har2Xx
+dpkg-source: info: you can integrate the local changes with dpkg-source --commit
+</programlisting>
+means.
+    </para>
+    <para>
+      For that you can force &gbp-buildpackage; to create a tarball
+      from the <emphasis>debian-branch</emphasis> dropping
+      the <filename>debian/</filename> directory. This will give you a
+      tarball that is very close to your current working copy except
+      for the packaging.
+    </para>
+<programlisting>
+  &gbp-buildpackage --git-ignore-new --git-force-create --git-upstream-tree=SLOPPY --git-no-pristine-tar
+</programlisting>
+    <para>
+      The important part is the <emphasis>SLOPPY</emphasis> above. The
+      other options are there to prevent &gbp-buildpackage; from using
+      &pristine-tar;, to force the creation of a new tarball and to
+      not abort if you have changes in your current working copy.
+
+      If you're still getting an error about <emphasis>unexpected
+      upstream changes</emphasis> make sure you have no uncomitted
+      changes in you workig copy (changes in
+      the <filename>debian/</filename> are o.k.) and no files that are
+      ignored by git
+      via <filename>.gitignore</filename>. A <command>git clean
+      -dfx</command> can help here.
+    </para>
+    <para>
+      Please don't use this tarball to upload to the Debian archive
+      since changes outside <filename>debian/</filename> need to be
+      represented by patches in <filename>debian/patches</filename>.
+      See the <command>dpkg-source</command> manpage for
+      details.
+   </para>
 </chapter>

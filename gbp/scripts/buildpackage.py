@@ -336,6 +336,9 @@ def get_upstream_tree(repo, source, options):
         if not repo.has_branch(options.upstream_branch):
             raise GbpError("%s is not a valid branch" % options.upstream_branch)
         upstream_tree = options.upstream_branch
+    elif options.upstream_tree.upper() == 'SLOPPY':
+        tree_name = "%s^{tree}" % options.debian_branch
+        upstream_tree = repo.tree_drop_dirs(tree_name, ["debian"])
     else:
         upstream_tree = options.upstream_tree
     if not repo.has_treeish(upstream_tree):

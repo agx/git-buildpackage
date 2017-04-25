@@ -537,18 +537,18 @@
           <replaceable>INDEX</replaceable> exports the current index whereas
           the special name <replaceable>WC</replaceable> exports the current
           working copy as is.
-	  </para>
-	  <para>
-	    Note that using <replaceable>WC</replaceable> enables the
-	    <option>--git-ignore-branch</option>
-	    and <option>--git-ignore-new</option> options as well
-	    since when exporting the working copy there's no point in
-	    enforcing any branch or modification checks.
+          </para>
+          <para>
+            Note that using <replaceable>WC</replaceable> enables the
+            <option>--git-ignore-branch</option>
+            and <option>--git-ignore-new</option> options as well
+            since when exporting the working copy there's no point in
+            enforcing any branch or modification checks.
           </para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable>
+        <term><option>--git-upstream-tree=</option><replaceable>[BRANCH|SLOPPY|TAG|TREEISH]</replaceable>
         </term>
         <listitem>
           <para>
@@ -556,8 +556,13 @@
           <replaceable>TAG</replaceable> (the default) looks at a tag corresponding to the
           version in the changelog. <replaceable>BRANCH</replaceable> looks at
           the upstream branch given via the
-          <option>--git-upstream-branch</option> option. Other values are
-          interpreted as treeishs.
+          <option>--git-upstream-branch</option> option. The <replaceable>SLOPPY</replaceable>
+	  option looks at the debian branch given via
+	  the <option>--git-debian-branch</option> and drops
+	  the <filename>debian/</filename> dir.
+	  </para>
+	  <para>
+	  Other values are interpreted as treeishs.
           </para>
           <para>
           This doesn't have any effect if <option>--git-pristine-tar</option>
