@@ -57,7 +57,7 @@ class TestClone(ComponentTestBase):
         self.check_hook_vars('postclone', ["GBP_GIT_DIR"])
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
-    def test_clone_vcsgit(self):
+    def test_clone_vcsgit_ok(self):
         """Test that cloning from vcs-git urls works"""
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
@@ -65,6 +65,13 @@ class TestClone(ComponentTestBase):
         self.assertEquals(ret, 0)
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'debian/sid', ['debian/sid', 'upstream/latest'])
+
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_clone_vcsgit_fail(self):
+        """Test that cloning from vcs-git urls fails as expected"""
+        ret = clone(['arg0', "vcsgit:doesnotexist"])
+        self.assertEquals(ret, 1)
+        self._check_log(-1, "gbp:error: Can't find a source package for 'doesnotexist'")
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_clone_github(self):

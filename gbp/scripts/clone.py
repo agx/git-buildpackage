@@ -42,7 +42,7 @@ def apt_showsrc(pkg):
         aptsrc(quiet=True)
         return aptsrc.stdout
     except CommandExecFailed:
-        gbp.log.err("Can't find source package for '%s'" % pkg)
+        return ''
 
 
 def vcs_git_url(pkg):
@@ -70,7 +70,8 @@ def vcs_git_url(pkg):
             version = repo = None
 
     if not repos:
-        raise GbpError("Can't find a source package for '%s'" % pkg)
+        gbp.log.err("Can't find a source package for '%s'" % pkg)
+        return None
 
     s = sorted(repos, key=cmp_to_key(DpkgCompareVersions()))
     return repos[s[-1]]
@@ -158,6 +159,8 @@ def main(argv):
         return 1
     else:
         source = repo_to_url(args[1])
+        if not source:
+            return 1
 
     clone_to, auto_name = (os.path.curdir, True) if len(args) < 3 else (args[2], False)
     try:
