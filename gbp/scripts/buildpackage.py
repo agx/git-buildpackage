@@ -83,7 +83,7 @@ def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_s
 
 def prepare_upstream_tarball(repo, source, options, tarball_dir, output_dir):
     """
-    Make sure we have an upstream tarball. This involves loooking in
+    Make sure we have an upstream tarball. This involves looking in
     tarball_dir, symlinking or building it.
     """
     if not source.is_native() and not source.upstream_version:
