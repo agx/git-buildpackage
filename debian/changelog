@@ -1,3 +1,32 @@
+git-buildpackage (0.8.15) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [9fa917a] pull: give more detail about what we updated
+  * [1bf6ef4] docs: use [DEFAULT] section in import example so it also fits
+    the "gbp dch" usecase
+  * [ead7157] buildpackage: make --git-export=WC simpler to use by implying
+    --git-ignore-new --git-ignore-branch. There's no point in these safety
+    checks when we export the working copy as is.  (Closes: #822823)
+  * [1832d14] Drop long deprecated --no-dch
+  * [000f924] buildpackage: add sloppy mode to build upstream tarballs.  When
+    starting with packaging people often stumble over a mismatch between what
+    dpkg-source expects to be in the tarball and the generated tarball for
+    various reasons. Give them a way to say: "Use what I have on my current
+    debian branch" as upstream source. Also helpful for snapshot builds with
+    upstream modifications. (Closes: #861004)
+  * [1113c95] clone: Add support for pseudo protocols like vcsgit: and github:
+    to make cloning simpler (Closes: #861206)
+  * [a4667c7] dockerfile: add src uri for the gbp clone network test
+
+  [ Kevin Locke ]
+  * [a03af0d] git-pbuilder: Check $OPTIONS for --basepath.
+    Previously only the arguments were checked for --basepath.  This
+    resulted in --basepath being ignored and overridden by the default when
+    passed in --git-pbuilder-options
+    (Closes: #856263)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 28 Apr 2017 08:36:16 +0200
+
 git-buildpackage (0.8.14) experimental; urgency=medium
 
   * [fe821e2] GitRepository: use stdout as last resort if stderr is empty.
