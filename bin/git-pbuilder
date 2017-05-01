@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: git-pbuilder,v 1.43 2016/12/10 18:54:05 eagle Exp $
+# $Id: git-pbuilder,v 1.48 2017/04/30 18:27:48 eagle Exp $
 #
 # Wrapper around pbuilder for gbp buildpackage
 #
@@ -489,6 +489,11 @@ suppresses setting B<--buildresult>, so the user will need to ensure that
 the configuration still puts packages where B<gbp buildpackage> expects
 them.
 
+=item GIT_PBUILDER_DEBUG
+
+Set this environment variable to get additional debugging output like how
+cowbuilder is invoked.
+
 =item GIT_PBUILDER_OPTIONS
 
 Add additional options for the builder.  These options are passed as-is to
@@ -515,11 +520,6 @@ whitespace need to be quoted in the value of the environment variable.
 Set this environment variable to change the default location for the
 pbuilder tgz files (F</var/cache/pbuilder>) when BUILDER is set to
 C<pbuilder>.
-
-=item GIT_PBUILDER_DEBUG
-
-Set this environment variable to get additional debugging output like how
-cowbuilder is invoked.
 
 =back
 
