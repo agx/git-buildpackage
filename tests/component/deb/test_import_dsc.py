@@ -34,6 +34,22 @@ from gbp.deb.dscfile import DscFile
 class TestImportDsc(ComponentTestBase):
     """Test importing of debian source packages"""
 
+    def _check_reflog(self, repo):
+        reflog, ret = repo._git_getoutput('reflog')
+        # Recent (>= 2.10) git versions create a reflog entry for "git
+        # update-ref HEAD HEAD" while older ones (2.9.4) don't so
+        # reflog[0] is either there or not.
+        if len(reflog) == 3:
+            ok_("gbp: Import Debian changes" in reflog[1])
+            ok_("gbp: Import Upstream version 2.6" in reflog[2])
+        elif len(reflog) == 2:
+            # Furthermore some older git versions (<2.10) fail to set
+            # the reflog correctly on the initial commit so only check
+            # the second
+            ok_("gbp: Import Debian changes" in reflog[0])
+        else:
+            assert ok_(len(reflog) in [2, 3])
+
     def test_import_debian_native(self):
         """Test that importing of debian native packages works"""
         def _dsc(version):
@@ -112,9 +128,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         os.chdir('hello-debhelper')
         assert len(repo.get_commits()) == 2
-        reflog, ret = repo._git_getoutput('reflog')
-        ok_("gbp: Import Debian changes" in reflog[1])
-        ok_("gbp: Import Upstream version 2.6" in reflog[2])
+        self._check_reflog(repo)
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         dsc = _dsc('2.8-1')
         assert import_dsc(['arg0',
@@ -239,9 +253,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         os.chdir('hello-debhelper')
         assert len(repo.get_commits()) == 2
-        reflog, ret = repo._git_getoutput('reflog')
-        ok_("gbp: Import Debian changes" in reflog[1])
-        ok_("gbp: Import Upstream version 2.6" in reflog[2])
+        self._check_reflog(repo)
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg)
