@@ -794,7 +794,7 @@ def main(argv):
                                         'GBP_BUILD_DIR': build_dir})
                      )()
         if options.tag or options.tag_only:
-            if is_pq_branch(branch):
+            if branch and is_pq_branch(branch):
                 commit = repo.get_merge_base(branch, pq_branch_base(branch))
             else:
                 commit = head

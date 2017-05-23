@@ -226,6 +226,22 @@ class TestBuildpackage(ComponentTestBase):
         eq_(repo.rev_parse('patch-queue/master^{}^'), repo.rev_parse('debian/2.8-1^{}'))
 
     @RepoFixtures.quilt30()
+    def test_tag_detached_head(self, repo):
+        """
+        Test that tagging works with an detached head (#863167)
+        """
+        eq_(repo.rev_parse('master^{}'), repo.rev_parse('debian/2.8-1^{}'))
+        self.add_file(repo, 'debian/foo.txt')
+        repo.checkout("HEAD~")
+        ret = buildpackage(['argv0',
+                            '--git-tag-only',
+                            '--git-retag',
+                            '--git-ignore-branch'])
+        eq_(ret, 0)
+        repo.checkout("master")
+        eq_(repo.rev_parse('master~^{}'), repo.rev_parse('debian/2.8-1^{}'))
+
+    @RepoFixtures.quilt30()
     def test_broken_upstream_version(self, repo):
         cl = ChangeLog(filename='debian/changelog')
         cl.add_section(["broken versionnumber"],
