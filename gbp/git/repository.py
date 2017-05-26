@@ -1761,7 +1761,7 @@ class GitRepository(object):
         self._git_command("apply", args)
 
     def diff(self, obj1, obj2=None, paths=None, stat=False, summary=False,
-             text=False, ignore_submodules=True, abbrev=None):
+             text=False, ignore_submodules=True, abbrev=None, renames=False):
         """
         Diff two git repository objects
 
@@ -1791,6 +1791,10 @@ class GitRepository(object):
         options.add_true(summary, '--summary')
         options.add_true(text, '--text')
         options.add_true(ignore_submodules, '--ignore-submodules=all')
+        if isinstance(renames, bool):
+            options.add('-M' if renames else '--no-renames')
+        else:
+            options.add('-M=%s', renames)
         options.add(obj1)
         options.add_true(obj2, obj2)
         if paths:
