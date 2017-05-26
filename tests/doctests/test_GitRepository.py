@@ -123,6 +123,22 @@ def test_add_files():
     """
 
 
+def test_move_file():
+    """
+    Methods tested:
+         - L{gbp.git.GitRepository.move_file}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(dirs['repo'])
+    >>> repo.rename_file("testfile", "testfile2")
+    >>> repo.rename_file("testfile2", "testfile")
+    >>> repo.rename_file("doesnotexit", "testfile2")
+    Traceback (most recent call last):
+    ...
+    GbpError: Failed to move 'doesnotexit' to 'testfile2': fatal: bad source, source=doesnotexit, destination=testfile2
+    """
+
+
 def test_branch_master():
     """
     First branch is called I{master}

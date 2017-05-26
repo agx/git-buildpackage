@@ -1431,6 +1431,17 @@ class GitRepository(object):
             return self.strip_sha1(sha1)
         else:
             raise GbpError("Failed to hash %s: %s" % (filename, stderr))
+
+    def rename_file(self, old, new):
+        """
+        Rename file, directory, or symlink
+        """
+        args = GitArgs(old, new)
+        _, stderr, ret = self._git_inout('mv',
+                                         args.args,
+                                         capture_stderr=True)
+        if ret:
+            raise GbpError("Failed to move '%s' to '%s': %s" % (old, new, stderr.rstrip()))
 #}
 
 #{ Comitting
