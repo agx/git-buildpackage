@@ -101,8 +101,8 @@ def test_add_files():
 
     >>> import gbp.git, shutil, os
     >>> repo = gbp.git.GitRepository(dirs['repo'])
-    >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"),
-    ...                                os.path.join(repo.path, "testfile"))
+    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"),
+    ...                          os.path.join(repo.path, "testfile"))
     >>> repo.is_clean()[0]
     False
     >>> repo.is_clean('doesnotexist')[0]
