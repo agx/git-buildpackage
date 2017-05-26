@@ -31,7 +31,7 @@ class TestPq(ComponentTestBase):
 
     def _test_pq(self, repo, action, opts=[]):
         args = ['arg0', action] + opts
-        os.chdir(repo.path)
+        os.chdir(os.path.abspath(repo.path))
         ret = pq(args)
         ok_(ret == 0, "Running gbp pq %s failed" % action)
 
@@ -45,3 +45,19 @@ class TestPq(ComponentTestBase):
         eq_(repo.has_branch('patch-queue/master'), True)
         self._test_pq(repo, 'drop')
         eq_(repo.has_branch('patch-queue/master'), False)
+
+    @RepoFixtures.quilt30()
+    def test_rename(self, repo):
+        patch = os.path.join(repo.path, 'debian/patches/0001-Rename.patch')
+
+        repo.set_config('diff.renames', 'true')
+        self._test_pq(repo, 'import')
+        repo.rename_file('configure.ac', 'renamed')
+        repo.commit_all("Rename")
+        self._test_pq(repo, 'export')
+        self.assertTrue(
+            os.path.exists(patch))
+        # Check the file was removed and added, not renamed
+        with open(patch) as f:
+            self.assertTrue('rename from' not in f.read())
+            self.assertTrue('rename to' not in f.read())

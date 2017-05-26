@@ -227,7 +227,7 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
     patch = None
     if paths:
         diff = repo.diff('%s^!' % commit_info['id'], paths=paths, stat=80,
-                         summary=True, text=True, abbrev=7)
+                         summary=True, text=True, abbrev=7, renames=False)
         patch = write_patch_file(filepath, commit_info, diff)
         if patch:
             series.append(patch)
@@ -252,7 +252,7 @@ def format_diff(outdir, filename, repo, start, end, path_exclude_regex=None):
     paths = patch_path_filter(file_status, path_exclude_regex)
     if paths:
         diff = repo.diff(start, end, paths=paths, stat=80, summary=True,
-                         text=True, abbrev=7)
+                         text=True, abbrev=7, renames=False)
         return write_patch_file(filename, info, diff)
     return None
 
