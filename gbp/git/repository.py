@@ -1110,6 +1110,13 @@ class GitRepository(object):
             raise KeyError
         return value[0][:-1]  # first line with \n ending removed
 
+    def set_config(self, name, value):
+        """
+        Set a git config value in this repository
+        """
+        args = GitArgs(name, value)
+        self._git_command("config", args.args)
+
     def set_user_name(self, name):
         """
         Sets the full name to use for git commits.

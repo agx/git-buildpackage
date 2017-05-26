@@ -1039,6 +1039,20 @@ def test_set_user_name_and_email():
     """
 
 
+def test_set_config_and_get_config():
+    r"""
+    Methods tested:
+        - L{gbp.git.GitRepository.set_config}
+        - L{gbp.git.GitRepository.get_config}
+
+    >>> import gbp.git
+    >>> repo = gbp.git.GitRepository(dirs['repo'])
+    >>> repo.set_config("user.email", "foo@example.com")
+    >>> repo.get_config("user.email")
+    'foo@example.com'
+    """
+
+
 def test_git_dir():
     """
     Properties tested:
