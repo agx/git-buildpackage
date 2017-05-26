@@ -1,3 +1,18 @@
+git-buildpackage (0.8.16) experimental; urgency=medium
+
+  * [2f806bc] Update to git-pbuilder 1.48
+    incorporating the changes we made since 0.8.3
+    Thanks to Russ Allbery
+  * [8ea5d6f] Don't fail tests on older git versions.
+    There are some nuances in reflog handling.
+    Thanks to jean-christophe manciot for reporting this
+  * [be6af1e] Test that we don't fail tagging when on pq branch
+    (Closes: #863167)
+  * [20ece98] pq: Disable rename tracking to always produce 'diff' compatible
+    patches even when rename tracking is enabled in the config.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 26 May 2017 16:28:41 +0200
+
 git-buildpackage (0.8.15) experimental; urgency=medium
 
   [ Guido Günther ]
