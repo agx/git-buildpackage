@@ -149,8 +149,7 @@ by version number.
     simple. You can either rename that branch to the default
     <option>upstream-branch</option> name <emphasis>upstream</emphasis> with:
 <programlisting>
-  &gitcmd; branch upstream theupstream-branch
-  &gitcmd; branch <option>-D</option> theupstream-branch
+  &gitcmd; branch -m upstream theupstream-branch
 </programlisting>
     or you can tell &gbp-buildpackage; the name of the branch to use as
     <option>upstream-branch</option>:
@@ -174,8 +173,7 @@ EOF
     point. So use &gitkcmd; or &gitcmd;-log to locate the commit-id of that commit
     and create the upstream branch from there, e.g.:
 <programlisting>
-    COMMIT_ID=`&gitcmd; log --pretty=oneline | tail -1 | awk '{ print $1 }'`
-    &gitcmd; branch upstream $COMMIT_ID
+    &gitcmd; branch upstream $(&gitcmd; log --format='%H' | tail -1)
 </programlisting>
     The important thing here is that the <envar>COMMIT_ID</envar> specifies a
     point on the master branch that carried <emphasis>only</emphasis> the
