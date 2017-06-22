@@ -1,3 +1,10 @@
+git-buildpackage (0.8.16.1) unstable; urgency=medium
+
+  * Upload to unstable
+  * [57f2c4a] docs: simplify commands
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 22 Jun 2017 15:57:41 +0200
+
 git-buildpackage (0.8.16) experimental; urgency=medium
 
   * [2f806bc] Update to git-pbuilder 1.48
