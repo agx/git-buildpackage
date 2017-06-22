@@ -142,7 +142,7 @@ EOF
     Whenever you need to work on an arbitrary &debian; package, you can check it
     right into &git; with one command:
 <programlisting>
-  &gbp-import-dsc apt:///<filename>package</filename>
+  &gbp-import-dsc apt:<filename>package</filename>
   cd <filename>package</filename>
   &gitcmd; branch debian
 </programlisting>

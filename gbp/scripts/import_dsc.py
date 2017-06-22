@@ -310,6 +310,8 @@ def is_download(pkg):
     (True, 'apackage/sid')
     >>> is_download("apt://apackage/sid")
     (True, 'apackage/sid')
+    >>> is_download("apt:apackage/sid")
+    (True, 'apackage/sid')
     >>> is_download("apt_1.0_amd64.dsc")
     (False, 'apt_1.0_amd64.dsc')
     >>> is_download("file:///foo/apackage.dsc")
@@ -317,8 +319,8 @@ def is_download(pkg):
     """
     if pkg.startswith('file://'):
         return (False, pkg[len('file://'):])
-    elif pkg.startswith('apt://'):
-        return (True, pkg[len('apt://'):].lstrip('/'))
+    elif pkg.startswith('apt:'):
+        return (True, re.match(r'apt:([/]{2,3})?(?P<pkg>.*)', pkg).group('pkg'))
     elif re.match("[a-z]{1,5}://", pkg):
         return (True, pkg)
     return (False, pkg)

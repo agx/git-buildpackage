@@ -70,6 +70,8 @@
       scheme <replaceable>apt:///</replaceable> which uses &apt-get;
       (and therefore needs <replaceable>deb-src</replaceable>
       entries in your <filename>/etc/apt/sources.list</filename>).
+      The later can be abbreviated by using the pseudo URL
+      <replaceable>apt:</replaceable>.
     </para>
   </refsect1>
   <refsect1>
@@ -259,7 +261,7 @@
       source</command> from unstable:
     </para>
     <screen>
-      &gbp-import-dsc; apt:///hello/sid
+      &gbp-import-dsc; apt:hello/sid
     </screen>
     <para>
       Import a source package in the local file system:
