@@ -37,6 +37,12 @@ shell_quote () {
     echo "$1" | sed -e "s/'/'\"'\"'/g" -e "1 s/^/'/" -e "\$ s/\$/'/"
 }
 
+# unset variables we inherited from the environment ourselfes
+# Names like DIST are very generic and can trip up other build systems
+unset_env() {
+    export -n DIST BUILDER ARCH
+}
+
 # Set default BUILDER, DIST, and ARCH based on the name we were invoked as.
 # This allows people to create symlinks like git-pbuilder-squeeze and
 # git-qemubuilder-squeeze-amd64 pointing to git-pbuilder and auto-detecting
@@ -326,6 +332,7 @@ done
 
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
+unset_env
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
     set -e
     [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
