@@ -282,7 +282,7 @@ class DebianGitRepository(GitRepository):
     def create_pristinetar_commits(self, upstream_tree, tarball, component_tarballs):
         """
         Create pristine-tar commits for a package with main tarball tarball
-        and (optionl) component tarballs based on upstream_tree
+        and (optional) component tarballs based on upstream_tree
 
         @param tarball: path to main tarball
         @param component_tarballs: C{list} of C{tuple}s of component

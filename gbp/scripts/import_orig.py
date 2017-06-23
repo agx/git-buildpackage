@@ -567,7 +567,7 @@ def main(argv):
 
         # The main tarball
         (sourcepackage, version) = detect_name_and_version(repo, source, options)
-        # Additionl tarballs we expect to exist
+        # Additional tarballs we expect to exist
         component_tarballs = get_component_tarballs(sourcepackage,
                                                     version,
                                                     source.path,
