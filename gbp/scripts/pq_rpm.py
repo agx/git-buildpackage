@@ -16,7 +16,7 @@
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
 #
-"""manage patches in a patch queue"""
+"""Manage RPM patches in a patch queue"""
 
 import bz2
 import errno
