@@ -1,3 +1,36 @@
+git-buildpackage (0.8.16.2~1.gbpf90559) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @f9055944e0ef40e38c6c84db39d444dc70bb9183 **
+
+  * [0b4a348] imort-dsc: Allow for shorter apt: pseudo URLs instead of the
+    apt:/// scheme.
+  * [021fe9d] git-pbuilder: drop environment variables that passed in our
+    config.  We don't want to pass them on to pdebuild since this can trip up
+    the invoked build system.
+  * [b70d859] Fix typos in comments
+  * [d022623] pq_rpm: clarify doc string
+    mention RPM and start with a capital letter to make
+        gbp --list-cmds
+    output consistent.
+  * [956982c] New command 'pristine-tar'
+    This allows one to run the pristine-tar import at a later point.  This
+    is useful when using component tarballs and we need to reference the
+    right trees for the commits.
+  * [f1c3a6f] DebianGitRepository: better pristine-tar errors.
+    We should not raise CommandErrors from methods on a GitRepository so
+    convert the error and suppress the output. This will make us use the
+    hander for GitRepositoryError in import_orig and pristine_tar which
+    default to printing the error message. (Closes: #829252)
+  * [f1e9d85] Don't print debsnap errors twice (Closes: #851128)
+  * [7fd6ba1] docs: merge histories when importing.
+    This is only necessary for non 3.0 (quilt) packages when not using
+    merge-mode=auto with "gbp import-orig".
+    Thanks to Sean Whitton (Closes: #864881)
+  * [f905594] docs: drop commands for ancient git versions. Even oldoldstable
+    has a more recent one.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 26 Jun 2017 13:03:30 +0200
+
 git-buildpackage (0.8.16.1) unstable; urgency=medium
 
   * Upload to unstable
