@@ -57,7 +57,7 @@ class PristineTar(Command):
             return commit
         return None
 
-    def checkout(self, archive):
+    def checkout(self, archive, quiet=False):
         """
         Checkout an orig archive from pristine-tar branch
 
@@ -65,9 +65,9 @@ class PristineTar(Command):
         @type archive: C{str}
         """
         self.run_error = 'Pristine-tar couldn\'t checkout "%s": {stderr_or_reason}' % os.path.basename(archive)
-        self.__call__(['checkout', archive])
+        self.__call__(['checkout', archive], quiet=quiet)
 
-    def commit(self, archive, upstream):
+    def commit(self, archive, upstream, quiet=False):
         """
         Commit an archive I{archive} to the pristine tar branch using upstream
         branch ${upstream}.
@@ -79,10 +79,10 @@ class PristineTar(Command):
         """
         self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr_or_reason}" %
                           (self.branch, upstream))
-        self.__call__(['commit', archive, upstream])
+        self.__call__(['commit', archive, upstream], quiet=quiet)
 
-    def verify(self, archive):
+    def verify(self, archive, quiet=False):
         """Verify an archive's I{archive} checksum using to the pristine tar branch"""
 
         self.run_error = 'Pristine-tar couldn\'t verify "%s": {stderr_or_reason}' % os.path.basename(archive)
-        self.__call__(['verify', archive])
+        self.__call__(['verify', archive], quiet=quiet)
