@@ -198,6 +198,8 @@ EOF
   <command>git rm</command> <option>-rf</option> <replaceable>.</replaceable>
   <command>git commit</command> <option>--allow-empty</option> <option>-m</option> <replaceable>'Initial upstream branch.'</replaceable>
   <command>git checkout</command> <option>-f</option> <replaceable>master</replaceable>
+  # When not using 3.0 (quilt) with the default --merge-mode=auto
+  <command>git merge</command> <option>--allow-unrelated-histories</option> <replaceable>upstream</replaceable>
 </programlisting>
     With Git versions lower than 1.7.2.3, the commands are slightly more complicated:
 <programlisting>
