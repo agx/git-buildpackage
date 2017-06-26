@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2008, 2009, 2010 Guido Guenther <agx@sigxcpu.org>
+# (C) 2008, 2009, 2010, 2017 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -55,9 +55,10 @@ def fetch_snapshots(pkg, downloaddir):
     debsnap = gbpc.Command("debsnap", ['--force', '--destdir=%s' %
                                        (downloaddir), pkg])
     try:
-        debsnap()
-    except gbpc.CommandExecFailed:
+        debsnap(quiet=True)
+    except gbpc.CommandExecFailed as e:
         if debsnap.retcode == 2:
+            gbp.log.error(e)
             gbp.log.warn("Some packages failed to download. Continuing.")
             pass
         else:
