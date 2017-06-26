@@ -17,6 +17,10 @@
 """Parts shared between the deb and rpm commands"""
 
 import re
+import os
+from gbp.errors import GbpError
+from gbp.deb import DebianPkgPolicy
+from gbp.pkg import parse_archive_filename
 
 
 class ExitCodes(object):
@@ -38,3 +42,22 @@ def is_download(args):
     if args and re.match("https?://", args[0]):
         return True
     return False
+
+
+def get_component_tarballs(name, version, tarball, components):
+    """
+    Figure out the paths to the component tarballs based on the main
+    tarball.
+    """
+    tarballs = []
+    (_, _, comp_type) = parse_archive_filename(tarball)
+    for component in components:
+        cname = DebianPkgPolicy.build_tarball_name(name,
+                                                   version,
+                                                   comp_type,
+                                                   os.path.dirname(tarball),
+                                                   component)
+        tarballs.append((component, cname))
+        if not os.path.exists(cname):
+            raise GbpError("Can not find component tarball %s" % cname)
+    return tarballs

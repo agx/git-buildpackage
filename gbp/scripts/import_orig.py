@@ -31,11 +31,10 @@ from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
 from gbp.errors import GbpError
-from gbp.pkg import parse_archive_filename
 from gbp.format import format_str
 from gbp.git.vfs import GitVfs
 import gbp.log
-from gbp.scripts.common import ExitCodes, is_download
+from gbp.scripts.common import ExitCodes, is_download, get_component_tarballs
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
                                             repack_source, is_link_target, download_orig)
@@ -396,25 +395,6 @@ def debian_branch_merge_by_merge(repo, tag, version, options):
     except GitRepositoryError:
         raise GbpError("Automatic merge failed.")
     repo.set_branch(branch)
-
-
-def get_component_tarballs(name, version, tarball, components):
-    """
-    Figure out the paths to the component tarballs based on the main
-    tarball.
-    """
-    tarballs = []
-    for component in components:
-        (_, _, comp_type) = parse_archive_filename(tarball)
-        cname = DebianPkgPolicy.build_tarball_name(name,
-                                                   version,
-                                                   comp_type,
-                                                   os.path.dirname(tarball),
-                                                   component)
-        tarballs.append((component, cname))
-        if not os.path.exists(cname):
-            raise GbpError("Can not find component tarball %s" % cname)
-    return tarballs
 
 
 def unpack_tarballs(sourcepackage, source, version, component_tarballs, options):

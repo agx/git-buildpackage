@@ -15,6 +15,7 @@
   <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
   <!ENTITY gbp-clone		"<command>gbp&nbsp;clone</command>">
   <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
+  <!ENTITY gbp-pristine-tar	"<command>gbp&nbsp;pristine-tar</command>">
   <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
   <!ENTITY git-pbuilder		"<command>git-pbuilder</command>">
   <!ENTITY git-qemubuilder	"<command>git-pbuilder</command>">
@@ -62,4 +63,4 @@
   <!ENTITY pyformat    "<ulink url='https://docs.python.org/2/library/stdtypes.html#string-formatting'><citetitle>Python format string</citetitle></ulink>">
   <!ENTITY dep14       "<ulink url='http://dep.debian.net/deps/dep14/'><citetitle>DEP-14</citetitle></ulink>">
   <!ENTITY manual      "<ulink url='https://honk.sigxcpu.org/piki/projects/git-buildpackage'>here</ulink>">
-  
+ 

@@ -16,6 +16,7 @@ class TestHelp(TestCaseWithData):
                 'dch',
                 'import_orig',
                 'import_dsc',
+                'pristine_tar',
                 'pull',
                 'pq']
 

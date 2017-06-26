@@ -11,6 +11,7 @@ MAN1S = \
         gbp-import-dscs   \
         gbp-import-orig   \
         gbp-pq            \
+        gbp-pristine-tar  \
         gbp-pull          \
         gbp-buildpackage-rpm \
         gbp-import-srpm   \

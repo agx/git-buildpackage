@@ -9,5 +9,6 @@ docs/gbp-import-dsc.1
 docs/gbp-import-dscs.1
 docs/gbp-import-orig.1
 docs/gbp-pq.1
+docs/gbp-pristine-tar.1
 docs/gbp-pull.1
 docs/git-pbuilder.1

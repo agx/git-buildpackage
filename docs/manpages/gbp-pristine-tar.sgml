@@ -1,0 +1,112 @@
+<refentry id="man.gbp.pristine.tar">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>gbp-pristine-tar</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-pristine-tar</refname>
+    <refpurpose>Manage pristine-tar commits in a git repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-pristine-tar;
+
+      &man.common.options.synopsis;
+      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
+      <group choice="plain">
+        <arg><option>commit</option></arg>
+      </group>
+      <group choice="plain">
+        <arg choice="plain"><replaceable>filename</replaceable></arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+      &gbp-pristine-tar; adds the pristine-tar commit for a given
+      upstream tarball to a &git; repository. This can be useful if a
+      original tarball has been already imported and the pristine-tar
+      commits should be added at a later time or if you're tracking
+      upstream git and want to create pristine-tar commits
+      nevertheless.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+      <varlistentry>
+        <term><option>--upstream-tag=</option><replaceable>tag-format</replaceable>
+        </term>
+        <listitem>
+          <para>
+          use this tag format when tagging upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--component=</option><replaceable>COMPONENT</replaceable>
+        </term>
+        <listitem>
+          <para>
+	    When creating the pristine-tar commits also look for an additional tarball
+	    with component name <replaceable>COMPONENT</replaceable>. E.g. in
+	    <filename>hello-debhelper_1.0.orig-foo.tar.gz</filename>
+	    the component name would be <replaceable>foo</replaceable>. The additional
+	    tarball is expected to be in the same directory than the upstream tarball
+	    and to use the same compression type. This option can be
+	    given multiple times to add multiple additional tarballs.
+	  </para>
+	  <para>
+	    Using additional original tarballs is a feature of the 3.0
+	    (quilt) source format. See
+	    the <command>dpkg-source</command> manpage for
+	    details. This is currently considered an experimental
+	    feature and might change incompatibly.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>Add pristine-tar commits for an upstream tarball:</para>
+    <screen>
+      &gbp-pristine-tar; ../upstream-tarball-0.1.tar.gz</screen>
+    <para>Same as above with an additional
+    tarball <filename>../upstream-tarball-foo-0.1.tar.gz:</filename></para>
+    <screen>
+      &gbp-pristine-tar; --component-tarball=foo ../upstream-tarball-0.1.tar.gz</screen>
+</refsect1>
+  <refsect1>
+    &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.import.orig"/>,
+      <xref linkend="man.gbp.conf"/>,
+      &man.seealso.common;
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+    &dhusername; &dhemail;
+    </para>
+  </refsect1>
+</refentry>
+<!--  LocalWords:  xz lzma bzip gzip tarball
+ -->
