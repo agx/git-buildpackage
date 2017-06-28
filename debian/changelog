@@ -1,6 +1,4 @@
-git-buildpackage (0.8.16.2~1.gbpf90559) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @f9055944e0ef40e38c6c84db39d444dc70bb9183 **
+git-buildpackage (0.8.17) unstable; urgency=medium
 
   * [0b4a348] imort-dsc: Allow for shorter apt: pseudo URLs instead of the
     apt:/// scheme.
@@ -19,7 +17,7 @@ git-buildpackage (0.8.16.2~1.gbpf90559) UNRELEASED; urgency=medium
   * [f1c3a6f] DebianGitRepository: better pristine-tar errors.
     We should not raise CommandErrors from methods on a GitRepository so
     convert the error and suppress the output. This will make us use the
-    hander for GitRepositoryError in import_orig and pristine_tar which
+    handler for GitRepositoryError in import_orig and pristine_tar which
     default to printing the error message. (Closes: #829252)
   * [f1e9d85] Don't print debsnap errors twice (Closes: #851128)
   * [7fd6ba1] docs: merge histories when importing.
@@ -29,7 +27,7 @@ git-buildpackage (0.8.16.2~1.gbpf90559) UNRELEASED; urgency=medium
   * [f905594] docs: drop commands for ancient git versions. Even oldoldstable
     has a more recent one.
 
- -- Guido Günther <agx@sigxcpu.org>  Mon, 26 Jun 2017 13:03:30 +0200
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 28 Jun 2017 19:26:50 +0200
 
 git-buildpackage (0.8.16.1) unstable; urgency=medium
 
