@@ -100,7 +100,7 @@ def main(argv):
         repo.create_pristinetar_commits(upstream_tag,
                                         tarball,
                                         component_tarballs)
-    except (GbpError, CommandExecFailed) as err:
+    except (GitRepositoryError, GbpError, CommandExecFailed) as err:
         if str(err):
             gbp.log.err(err)
         ret = 1
