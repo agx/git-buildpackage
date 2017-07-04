@@ -73,7 +73,7 @@ setup(name="gbp",
                'bin/gbp-builder-mock'],
       packages=find_packages(exclude=['tests', 'tests.*']),
       data_files=[("share/git-buildpackage/", ["gbp.conf"]), ],
-      requires=["six"],
+      requires=["six", 'dateutil'],
       setup_requires=setup_requires(),
       entry_points={
           'console_scripts': ['gbp=gbp.scripts.supercommand:supercommand'],
