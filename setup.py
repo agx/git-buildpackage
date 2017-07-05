@@ -74,6 +74,10 @@ setup(name="gbp",
       packages=find_packages(exclude=['tests', 'tests.*']),
       data_files=[("share/git-buildpackage/", ["gbp.conf"]), ],
       requires=["six", 'dateutil'],
+      install_requires=[
+          'python-dateutil',
+          'six>=1.9.0',
+      ],
       setup_requires=setup_requires(),
       entry_points={
           'console_scripts': ['gbp=gbp.scripts.supercommand:supercommand'],
