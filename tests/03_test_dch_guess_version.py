@@ -98,3 +98,22 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
                                                   upstream_branch,
                                                   cp)
         self.assertEqual(None, guessed)
+
+    def test_guess_mangled_upstream_tag(self):
+        """Guess the new version from the upstream tag using a mangled tag format"""
+        cp = testutils.MockedChangeLog('1.0-1')
+        tagformat = 'upstream/%(version%~%-)s'
+        uversion = '1.1~rc1'
+        upstream_branch = 'upstream'
+
+        self.add_file('doesnot', 'matter')
+        self.repo.create_branch('upstream')
+        tag = self.repo.version_to_tag(tagformat, uversion)
+        self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
+                             sign=False)
+        self.repo.set_branch("master")
+        guessed = dch.guess_version_from_upstream(self.repo,
+                                                  tagformat,
+                                                  upstream_branch,
+                                                  cp)
+        self.assertEqual('1.1~rc1-1', guessed)

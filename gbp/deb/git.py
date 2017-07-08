@@ -114,7 +114,7 @@ class DebianGitRepository(GitRepository):
         @returns: a new debian version
         @raises GitRepositoryError: if no upstream tag was found
         """
-        pattern = upstream_tag_format % dict(version='*')
+        pattern = self._unmangle_format(upstream_tag_format) % dict(version='*')
         tag = self.find_branch_tag(commit, upstream_branch, pattern=pattern)
         version = self.tag_to_version(tag, upstream_tag_format)
 
