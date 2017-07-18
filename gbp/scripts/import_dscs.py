@@ -58,7 +58,7 @@ def fetch_snapshots(pkg, downloaddir):
         debsnap(quiet=True)
     except gbpc.CommandExecFailed as e:
         if debsnap.retcode == 2:
-            gbp.log.error(e)
+            gbp.log.err(e)
             gbp.log.warn("Some packages failed to download. Continuing.")
             pass
         else:
