@@ -56,11 +56,6 @@ class DscStub(object):
         return cls(filename, version)
 
 
-# hook up stubs
-import_dscs.GitImportDsc = StubGitImportDsc
-import_dscs.DscFile = DscStub
-
-
 class TestImportDscs(testutils.DebianGitTestRepo):
     """Test L{gbp.scripts.import_dscs}'s """
 
@@ -69,6 +64,11 @@ class TestImportDscs(testutils.DebianGitTestRepo):
         context.chdir(self.repo.path)
         self.orig_err = gbp.log.err
         gbp.log.err = self._check_err_msg
+
+        self.safed_GitImportDsc = import_dscs.GitImportDsc
+        self.safed_DscFile = import_dscs.DscFile
+        import_dscs.GitImportDsc = StubGitImportDsc
+        import_dscs.DscFile = DscStub
 
     def _check_err_msg(self, err):
         self.assertIsInstance(err, GbpError)
@@ -97,3 +97,6 @@ class TestImportDscs(testutils.DebianGitTestRepo):
         gbp.log.err = self.orig_err
         testutils.DebianGitTestRepo.tearDown(self)
         context.teardown()
+
+        import_dscs.GitImportDsc = self.safed_GitImportDsc
+        import_dscs.DscFile = self.safed_DscFile
