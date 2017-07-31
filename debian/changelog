@@ -1,3 +1,30 @@
+git-buildpackage (0.8.18) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [4e6dd9c] Use install_requirements for dateutil to make using gbp in
+    virtualenv simpler
+    Thanks: Ken Dreyer
+  * [0388f9e] import-orig: Always raise an error if we find <error/> or
+    <warning/> when invoking uscan.
+    Older uscan does not abort with a non-zero exit status when it e.g. fails
+    to verify gpg signatures. So abort when we find a warning or error. (See
+    #841910 for reference).
+  * [561286d] Devscripts 2.17.7 properly exits on gpg signature validation
+    errors. So revert the above and depend on a fixed version. We keep the
+    above for reference since this is the right thing to do with older
+    uscan (e.g. in backports).
+  * [9fc1774] import-dscs: don't use long gone log function (Closes: #868733)
+  * [aaee8bb] tests: add initial component test for import-dscs
+  * [62ab1eb] tests: properly restore import_dscs so later testcases don't
+    break
+
+  [ Christos Trochalakis ]
+  * [61f4625] dch: unmangle upstream_tag when guessing upstream version.
+    Running `gbp dch` with a mangled upstream tag resulted in a KeyError while
+    trying to build a tag pattern.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 31 Jul 2017 18:06:21 -0300
+
 git-buildpackage (0.8.17) unstable; urgency=medium
 
   * [0b4a348] imort-dsc: Allow for shorter apt: pseudo URLs instead of the
