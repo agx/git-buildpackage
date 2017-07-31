@@ -26,7 +26,7 @@ Build-Depends:
 # For the testsuite
  bzip2,
  cpio,
- devscripts (>= 2.13.8~),
+ devscripts (>= 2.17.7~),
  git (>= 1:1.7.9.1-1~),
  pristine-tar,
  rpm,

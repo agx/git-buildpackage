@@ -129,7 +129,7 @@ class Uscan(object):
         else:
             self._uptodate = False
 
-    def _maybe_raise_error(self, out):
+    def _raise_error(self, out):
         r"""
         Parse the uscan output for errors and warnings and raise
         a L{UscanError} exception based on this. If no error detail
@@ -140,7 +140,7 @@ class Uscan(object):
         @raises UscanError: exception raised
 
         >>> u = Uscan('http://example.com/')
-        >>> u._maybe_raise_error("<warnings>uscan warning: "
+        >>> u._raise_error("<warnings>uscan warning: "
         ... "In watchfile debian/watch, reading webpage\n"
         ... "http://a.b/ failed: 500 Cant connect "
         ... "to example.com:80 (Bad hostname)</warnings>")
@@ -148,16 +148,15 @@ class Uscan(object):
         ...
         UscanError: Uscan failed: uscan warning: In watchfile debian/watch, reading webpage
         http://a.b/ failed: 500 Cant connect to example.com:80 (Bad hostname)
-        >>> u._maybe_raise_error("<errors>uscan: Can't use --verbose if "
+        >>> u._raise_error("<errors>uscan: Can't use --verbose if "
         ... "you're using --dehs!</errors>")
         Traceback (most recent call last):
         ...
         UscanError: Uscan failed: uscan: Can't use --verbose if you're using --dehs!
-        >>> u._maybe_raise_error("<warnings>OpenPGP signature did not verify.</warnings>")
+        >>> u = u._raise_error('')
         Traceback (most recent call last):
         ...
-        UscanError: Uscan failed: OpenPGP signature did not verify.
-        >>> u._maybe_raise_error('doesnotmatter')
+        UscanError: Uscan failed - debug by running 'uscan --verbose'
         """
         msg = None
 
@@ -166,8 +165,10 @@ class Uscan(object):
             if m:
                 msg = "Uscan failed: %s" % m.group(1)
                 break
-        if msg:
-            raise UscanError(msg)
+
+        if not msg:
+            msg = "Uscan failed - debug by running 'uscan --verbose'"
+        raise UscanError(msg)
 
     def scan(self, destdir='..'):
         """Invoke uscan to fetch a new upstream version"""
@@ -180,9 +181,9 @@ class Uscan(object):
         # Don't fail in the uptodate case:
         self._parse_uptodate(out)
         if not self.uptodate:
-            self._maybe_raise_error(out)
             if p.returncode:
-                raise UscanError("Uscan failed - debug by running 'uscan --verbose'")
-            self._parse(out)
+                self._raise_error(out)
+            else:
+                self._parse(out)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
