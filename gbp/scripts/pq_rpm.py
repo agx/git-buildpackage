@@ -224,7 +224,7 @@ def safe_patches(queue):
     safequeue = PatchSeries()
 
     if len(queue) > 0:
-        gbp.log.debug("Safeing patches '%s' in '%s'" %
+        gbp.log.debug("Saving patches '%s' in '%s'" %
                       (os.path.dirname(queue[0].path), tmpdir))
     for patch in queue:
         base, _archive_fmt, comp = parse_archive_filename(patch.path)
@@ -237,11 +237,11 @@ def safe_patches(queue):
             raise GbpError("Unsupported patch compression '%s', giving up"
                            % comp)
         else:
-            src = open(patch.path, 'r')
+            src = open(patch.path, 'rb')
             dst_name = os.path.join(tmpdir, os.path.basename(patch.path))
 
-        dst = open(dst_name, 'w')
-        dst.writelines(src)
+        dst = open(dst_name, 'wb')
+        dst.write(src.read())
         src.close()
         dst.close()
 
