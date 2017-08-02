@@ -128,6 +128,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
 
         parser = TestOptionParser('cmd')
         parser.add_config_file_option(option_name="withshort", dest="with_short", help="foo")
-        self.assertItemsEqual(['withshort'], parser.valid_options)
+        self.assertEquals('withshort', parser.valid_options[0])
+        self.assertEquals(len(parser.valid_options), 1)
         self.assertTrue(parser.has_option("--withshort"))
         self.assertTrue(parser.has_option("-S"))
