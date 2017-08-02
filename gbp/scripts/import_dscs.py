@@ -38,6 +38,32 @@ class DscCompareVersions(DpkgCompareVersions):
         return DpkgCompareVersions.__call__(self, dsc1.version, dsc2.version)
 
 
+def cmp_to_key(mycmp):
+    'Convert a cmp= function into a key= function'
+    class K(object):
+        def __init__(self, obj, *args):
+            self.obj = obj
+
+        def __lt__(self, other):
+            return mycmp(self.obj, other.obj) < 0
+
+        def __gt__(self, other):
+            return mycmp(self.obj, other.obj) > 0
+
+        def __eq__(self, other):
+            return mycmp(self.obj, other.obj) == 0
+
+        def __le__(self, other):
+            return mycmp(self.obj, other.obj) <= 0
+
+        def __ge__(self, other):
+            return mycmp(self.obj, other.obj) >= 0
+
+        def __ne__(self, other):
+            return mycmp(self.obj, other.obj) != 0
+    return K
+
+
 class GitImportDsc(object):
     def __init__(self, args):
         self.args = args
@@ -98,7 +124,7 @@ def main(argv):
     dscs = []
     ret = 0
     verbose = False
-    dsc_cmp = DscCompareVersions()
+    dsc_key = cmp_to_key(DscCompareVersions())
     use_debsnap = False
 
     try:
@@ -135,7 +161,7 @@ def main(argv):
             dirs['tmp'] = os.path.abspath(tempfile.mkdtemp())
             dscs = [DscFile.parse(f) for f in fetch_snapshots(pkg, dirs['tmp'])]
 
-        dscs.sort(cmp=dsc_cmp)
+        dscs.sort(key=dsc_key)
         importer = GitImportDsc(import_args)
 
         try:

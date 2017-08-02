@@ -72,7 +72,7 @@ class TestImportDscs(testutils.DebianGitTestRepo):
 
     def _check_err_msg(self, err):
         self.assertIsInstance(err, GbpError)
-        self.assertIn("Failed to import", err.message)
+        self.assertIn("Failed to import", str(err))
 
     def test_import_success(self):
         """Test importing success with stub"""
