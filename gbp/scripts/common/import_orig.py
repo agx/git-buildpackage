@@ -168,7 +168,7 @@ def download_orig(url):
     try:
         with contextlib.closing(requests.get(url, verify=True, stream=True)) as r:
             r.raise_for_status()
-            with open(target, 'w', CHUNK_SIZE) as target_fd:
+            with open(target, 'wb', CHUNK_SIZE) as target_fd:
                 for d in r.iter_content(CHUNK_SIZE):
                     target_fd.write(d)
     except Exception as e:
