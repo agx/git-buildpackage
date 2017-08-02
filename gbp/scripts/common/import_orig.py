@@ -28,7 +28,7 @@ from gbp.deb.upstreamsource import DebianUpstreamSource
 
 # Try to import readline, since that will cause raw_input to get fancy
 # line editing and history capabilities. However, if readline is not
-# available, raw_input will still work.
+# available, input() will still work.
 try:
     import readline  # noqa: F401
 except ImportError:
@@ -79,7 +79,7 @@ def ask_package_name(default, name_validator_func, err_msg):
     @param default: The default package name to suggest to the user.
     """
     while True:
-        sourcepackage = raw_input("What will be the source package name? [%s] " % default)
+        sourcepackage = input("What will be the source package name? [%s] " % default)
         if not sourcepackage:  # No input, use the default.
             sourcepackage = default
         # Valid package name, return it.
@@ -98,7 +98,7 @@ def ask_package_version(default, ver_validator_func, err_msg):
     @param default: The default package version to suggest to the user.
     """
     while True:
-        version = raw_input("What is the upstream version? [%s] " % default)
+        version = input("What is the upstream version? [%s] " % default)
         if not version:  # No input, use the default.
             version = default
         # Valid version, return it.
