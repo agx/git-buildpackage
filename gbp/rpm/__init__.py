@@ -36,6 +36,11 @@ from gbp.rpm.linkedlist import LinkedList
 from gbp.rpm.lib_rpm import librpm, get_librpm_log
 
 
+def _decode(s):
+    if s is not None:
+        return s.decode()
+
+
 class NoSpecError(Exception):
     """Spec file parsing error"""
     pass
@@ -71,8 +76,8 @@ class SrcRpmFile(object):
     @property
     def version(self):
         """Get the (downstream) version of the RPM package"""
-        version = dict(upstreamversion=self.rpmhdr[librpm.RPMTAG_VERSION],
-                       release=self.rpmhdr[librpm.RPMTAG_RELEASE])
+        version = dict(upstreamversion=self.rpmhdr[librpm.RPMTAG_VERSION].decode(),
+                       release=self.rpmhdr[librpm.RPMTAG_RELEASE].decode())
         if self.rpmhdr[librpm.RPMTAG_EPOCH] is not None:
             version['epoch'] = str(self.rpmhdr[librpm.RPMTAG_EPOCH])
         return version
@@ -80,17 +85,17 @@ class SrcRpmFile(object):
     @property
     def name(self):
         """Get the name of the RPM package"""
-        return self.rpmhdr[librpm.RPMTAG_NAME]
+        return self.rpmhdr[librpm.RPMTAG_NAME].decode()
 
     @property
     def upstreamversion(self):
         """Get the upstream version of the RPM package"""
-        return self.rpmhdr[librpm.RPMTAG_VERSION]
+        return self.rpmhdr[librpm.RPMTAG_VERSION].decode()
 
     @property
     def packager(self):
         """Get the packager of the RPM package"""
-        return self.rpmhdr[librpm.RPMTAG_PACKAGER]
+        return _decode(self.rpmhdr[librpm.RPMTAG_PACKAGER])
 
     def unpack(self, dest_dir):
         """
@@ -160,13 +165,13 @@ class SpecFile(object):
 
         # Other initializations
         source_header = self._specinfo.packages[0].header
-        self.name = source_header[librpm.RPMTAG_NAME]
-        self.upstreamversion = source_header[librpm.RPMTAG_VERSION]
-        self.release = source_header[librpm.RPMTAG_RELEASE]
+        self.name = source_header[librpm.RPMTAG_NAME].decode()
+        self.upstreamversion = source_header[librpm.RPMTAG_VERSION].decode()
+        self.release = source_header[librpm.RPMTAG_RELEASE].decode()
         # rpm-python returns epoch as 'long', convert that to string
         self.epoch = str(source_header[librpm.RPMTAG_EPOCH]) \
             if source_header[librpm.RPMTAG_EPOCH] is not None else None
-        self.packager = source_header[librpm.RPMTAG_PACKAGER]
+        self.packager = _decode(source_header[librpm.RPMTAG_PACKAGER])
         self._tags = {}
         self._special_directives = defaultdict(list)
         self._gbp_tags = defaultdict(list)
@@ -185,7 +190,7 @@ class SpecFile(object):
     def _parse_filtered_spec(self, skip_tags):
         """Parse a filtered spec file in rpm-python"""
         skip_tags = [tag.lower() for tag in skip_tags]
-        with tempfile.NamedTemporaryFile(prefix='gbp') as filtered:
+        with tempfile.NamedTemporaryFile(prefix='gbp', mode='w+') as filtered:
             filtered.writelines(str(line) for line in self._content
                                 if str(line).split(":")[0].strip().lower() not in skip_tags)
             filtered.flush()
@@ -313,6 +318,8 @@ class SpecFile(object):
             self._tags[tagname]['value'] = tagvalue
             self._tags[tagname]['lines'].append(linerecord)
         else:
+            if tagvalue and not isinstance(tagvalue, six.string_types):
+                tagvalue = tagvalue.decode()
             self._tags[tagname] = {'value': tagvalue, 'lines': [linerecord]}
 
         return tagname
@@ -851,7 +858,7 @@ def guess_spec_repo(repo, treeish, topdir='', recursive=True, preferred_name=Non
     """
     topdir = topdir.rstrip('/') + ('/') if topdir else ''
     try:
-        file_list = [nam for (mod, typ, sha, nam) in
+        file_list = [nam.decode() for (mod, typ, sha, nam) in
                      repo.list_tree(treeish, recursive, topdir) if typ == 'blob']
     except GitRepositoryError as err:
         raise NoSpecError("Cannot find spec file from treeish %s, Git error: %s"
@@ -863,7 +870,7 @@ def guess_spec_repo(repo, treeish, topdir='', recursive=True, preferred_name=Non
 def spec_from_repo(repo, treeish, spec_path):
     """Get and parse a spec file from a give Git treeish"""
     try:
-        spec = SpecFile(filedata=repo.show('%s:%s' % (treeish, spec_path)))
+        spec = SpecFile(filedata=repo.show('%s:%s' % (treeish, spec_path)).decode())
         spec.specdir = os.path.dirname(spec_path)
         spec.specfile = os.path.basename(spec_path)
         return spec
@@ -977,9 +984,9 @@ def filter_version(evr, *keys):
     @return: new version dict
     @rtype: C{dict} of C{str}
 
-    >>> filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'vendor': 'baz'}, 'vendor').keys()
+    >>> sorted(list(filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'vendor': 'baz'}, 'vendor').keys()))
     ['epoch', 'upstreamversion']
-    >>> filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'revision': 'baz'}, 'epoch', 'revision').keys()
+    >>> list(filter_version({'epoch': 'foo', 'upstreamversion': 'bar', 'revision': 'baz'}, 'epoch', 'revision').keys())
     ['upstreamversion']
     """
     return {k: evr[k] for k in evr if k not in keys}
