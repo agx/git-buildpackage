@@ -40,13 +40,13 @@ class TestImportDsc(ComponentTestBase):
         # update-ref HEAD HEAD" while older ones (2.9.4) don't so
         # reflog[0] is either there or not.
         if len(reflog) == 3:
-            ok_("gbp: Import Debian changes" in reflog[1])
-            ok_("gbp: Import Upstream version 2.6" in reflog[2])
+            ok_(b"gbp: Import Debian changes" in reflog[1])
+            ok_(b"gbp: Import Upstream version 2.6" in reflog[2])
         elif len(reflog) == 2:
             # Furthermore some older git versions (<2.10) fail to set
             # the reflog correctly on the initial commit so only check
             # the second
-            ok_("gbp: Import Debian changes" in reflog[0])
+            ok_(b"gbp: Import Debian changes" in reflog[0])
         else:
             assert ok_(len(reflog) in [2, 3])
 
@@ -163,7 +163,7 @@ class TestImportDsc(ComponentTestBase):
         ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
         ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
 
-        for file in ['foo/test1', 'foo/test2']:
+        for file in [b'foo/test1', b'foo/test2']:
             ok_(file in repo.ls_tree('HEAD'),
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
 

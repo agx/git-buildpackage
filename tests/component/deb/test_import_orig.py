@@ -30,6 +30,7 @@ from gbp.scripts.import_orig import main as import_orig
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.deb.dscfile import DscFile
 from gbp.git.repository import GitRepository, GitRepositoryError
+from gbp.paths import to_bin
 
 from nose.tools import ok_, eq_, assert_raises
 
@@ -85,9 +86,9 @@ class TestImportOrig(ComponentTestBase):
 
     def _check_component_tarballs(self, repo, files):
         for file in files:
-            ok_(file in repo.ls_tree('HEAD'),
+            ok_(to_bin(file) in repo.ls_tree('HEAD'),
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
-            ok_(file in repo.ls_tree('upstream'),
+            ok_(to_bin(file) in repo.ls_tree('upstream'),
                 "Could not find component tarball file %s in %s" % (file, repo.ls_tree('upstream')))
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
@@ -117,7 +118,7 @@ class TestImportOrig(ComponentTestBase):
         ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
-        self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
+        self._check_component_tarballs(repo, [b'foo/test1', b'foo/test2'])
 
         dsc = DscFile.parse(_dsc_file(self.pkg, '2.8-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
