@@ -57,7 +57,7 @@ Files:
 
     def setUp(self):
         with tempfile.NamedTemporaryFile(delete=False) as self.dscfile:
-            self.dscfile.write(self.content)
+            self.dscfile.write(self.content.encode())
 
     def tearDown(self):
         os.unlink(self.dscfile.name)
@@ -102,7 +102,7 @@ Files:
 
     def setUp(self):
         with tempfile.NamedTemporaryFile(delete=False) as self.dscfile:
-            self.dscfile.write(self.content)
+            self.dscfile.write(self.content.encode())
 
     def tearDown(self):
         os.unlink(self.dscfile.name)
