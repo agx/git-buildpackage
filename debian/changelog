@@ -1,3 +1,17 @@
+git-buildpackage (0.9.0~exp0) experimental; urgency=medium
+
+  * Switch to python3 (Closes: #810854)
+  * [889cf65] Use pydoctor to generate apidocs since epydoc
+    does not work with python3 files
+  * [6d8f386] spec: switch to python3 packaging for rpm
+    and adjust the smoketest accordingly
+  * [6b326e2] pristine-tar: add feature detection
+    so we can run tests with older pristine-tar not supporting verify
+  * [f4574be] travis: run test with different python versions and run at least
+    parts of the tests outside the container
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 02 Aug 2017 15:32:46 -0300
+
 git-buildpackage (0.8.18) unstable; urgency=medium
 
   [ Guido Günther ]
