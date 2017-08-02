@@ -42,25 +42,27 @@ def proxy_stdf():
     object that is not a file object (compatible) and thus causes a crash with
     Popen.
     """
-    stdout = None
-    if not hasattr(sys.stdout, 'fileno'):
-        stdout = sys.stdout
-        sys.stdout = TemporaryFile()
-    stderr = None
-    if not hasattr(sys.stderr, 'fileno'):
-        stderr = sys.stderr
-        sys.stderr = TemporaryFile()
+    tmp_stdout = sys.stdout
     try:
-        yield
+        tmp_stdout.fileno()
+    except Exception:
+        tmp_stdout = TemporaryFile()
+
+    tmp_stderr = sys.stderr
+    try:
+        tmp_stderr.fileno()
+    except Exception:
+        tmp_stderr = TemporaryFile()
+
+    try:
+        yield tmp_stdout, tmp_stderr
     finally:
-        if stdout:
-            sys.stdout.seek(0)
-            stdout.write(sys.stdout.read())
-            sys.stdout = stdout
-        if stderr:
-            sys.stderr.seek(0)
-            stderr.write(sys.stderr.read())
-            sys.stderr = stderr
+        if tmp_stdout != sys.stdout:
+            tmp_stdout.seek(0)
+            sys.stdout.write(tmp_stdout.read().decode())
+        if tmp_stderr != sys.stderr:
+            tmp_stderr.seek(0)
+            sys.stderr.write(tmp_stderr.read().decode())
 
 
 class Command(object):
@@ -107,9 +109,10 @@ class Command(object):
         if self.shell:
             # subprocess.call only cares about the first argument if shell=True
             cmd = " ".join(cmd)
-        with proxy_stdf():
-            stdout_arg = subprocess.PIPE if self.capture_stdout else sys.stdout
-            stderr_arg = subprocess.PIPE if self.capture_stderr else sys.stderr
+        with proxy_stdf() as (stdout, stderr):
+            stdout_arg = subprocess.PIPE if self.capture_stdout else stdout
+            stderr_arg = subprocess.PIPE if self.capture_stderr else stderr
+
             try:
                 popen = subprocess.Popen(cmd,
                                          cwd=self.cwd,
