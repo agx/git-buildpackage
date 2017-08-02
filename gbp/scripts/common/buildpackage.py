@@ -128,7 +128,7 @@ def dump_tree(repo, export_dir, treeish, with_submodules, recursive=True):
     if recursive:
         paths = []
     else:
-        paths = ["'%s'" % nam for _mod, typ, _sha, nam in
+        paths = ["'%s'" % nam.decode() for _mod, typ, _sha, nam in
                  repo.list_tree(treeish) if typ == 'blob']
 
     pipe = pipes.Template()
