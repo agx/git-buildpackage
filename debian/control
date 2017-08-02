@@ -11,17 +11,16 @@ Build-Depends:
  gtk-doc-tools,
  libdistro-info-perl,
  perl,
- python (>> 2.7.3),
- python-coverage,
- python-dateutil,
- python-epydoc,
- python-mock,
- python-nose,
- python-nosexcover,
- python-pkg-resources,
- python-rpm,
- python-six,
- python-setuptools,
+ python3 (>= 3.5),
+ python3-coverage,
+ python3-dateutil,
+ python3-mock,
+ python3-nose,
+ python3-nosexcover,
+ python3-pkg-resources,
+ python3-rpm,
+ python3-six,
+ python3-setuptools,
  sgml2x,
 # For the testsuite
  bzip2,
@@ -34,28 +33,28 @@ Build-Depends:
  zipmerge,
 # For the network tests
  curl,
- python-requests,
+ python3-requests,
 Standards-Version: 3.9.8
 Vcs-Git: https://git.sigxcpu.org/cgit/git-buildpackage/
 Vcs-Browser: https://git.sigxcpu.org/cgit/git-buildpackage/
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
-X-Python-Version: >= 2.7
+X-Python3-Version: >= 3.5
 
 Package: git-buildpackage
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python3:Depends},
  ${shlibs:Depends},
  ${misc:Depends},
  devscripts (>= 2.13.5~),
  git (>= 1:1.7.9.1-1~),
  man-db,
- python-dateutil,
- python-pkg-resources,
- python-six,
+ python3-dateutil,
+ python3-pkg-resources,
+ python3-six,
 Recommends: pristine-tar (>= 0.5),
  cowbuilder | pbuilder | sbuild,
- python-requests
-Suggests: python-notify, unzip, sudo
+ python3-requests
+Suggests: python3-notify, unzip, sudo
 Description: Suite to help with Debian packages in Git repositories
  This package contains the following tools:
   * gbp import-{dsc,dscs}: import existing Debian source packages into a git
@@ -70,14 +69,14 @@ Description: Suite to help with Debian packages in Git repositories
 
 Package: git-buildpackage-rpm
 Architecture: all
-Depends: ${python:Depends},
+Depends: ${python3:Depends},
  ${misc:Depends},
  cpio,
  git-buildpackage (= ${binary:Version}),
- python-rpm,
+ python3-rpm,
  rpm,
 Recommends: pristine-tar (>= 0.5)
-Suggests: python-notify, unzip, zipmerge, mock
+Suggests: python3-notify, unzip, zipmerge, mock
 Description: Suite to help with RPM packages in Git repositories
  This package contains the following tools:
   * gbp buildpackage-rpm: build a package out of a git repository, check for
