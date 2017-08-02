@@ -43,22 +43,21 @@ Source0:    %{name}_%{version}.tar.gz
 Requires:   %{name}-common = %{version}-%{release}
 Requires:   %{dpkg_pkg_name}
 Requires:   devscripts
-BuildRequires:  python
-BuildRequires:  python-setuptools
+BuildRequires:  python3
+BuildRequires:  python3-setuptools
 
 %if %{with docs}
 BuildRequires:  docbook-utils
 BuildRequires:  gtk-doc
-BuildRequires:  epydoc
 %if 0%{?fedora}
 BuildRequires:  perl-podlators
 %endif
 %endif
 
 %if 0%{?do_unittests}
-BuildRequires:  python-coverage
-BuildRequires:  python-mock
-BuildRequires:  python-nose
+BuildRequires:  python3-coverage
+BuildRequires:  python3-mock
+BuildRequires:  python3-nose
 BuildRequires:  git-core
 BuildRequires:  %{man_pkg_name}
 BuildRequires:  %{dpkg_pkg_name}
@@ -84,11 +83,11 @@ This package contains the original Debian tools.
 Summary:    Common files for git-buildpackage debian and rpm tools
 Group:      Development/Tools/Building
 Requires:   git-core
-Requires:   python-six
+Requires:   python3-six
 Requires:   %{man_pkg_name}
 Requires:   %{python_pkg_name}
-Requires:   python-setuptools
-Requires:   python-dateutil
+Requires:   python3-setuptools
+Requires:   python3-dateutil
 %if 0%{?centos_ver} && 0%{?centos_ver} <= 7
 Requires:       unzip
 Requires:       /usr/bin/zipmerge
@@ -135,13 +134,9 @@ Debian and the RPM tool set.
 
 
 %build
-WITHOUT_NOSETESTS=1 %{__python} ./setup.py build
+WITHOUT_NOSETESTS=1 %{__python3} ./setup.py build
 
 %if %{with docs}
-# Prepare apidocs
-epydoc -n git-buildpackage --no-sourcecode -o docs/apidocs/ \
-    gbp*.py git*.py gbp/
-
 # HTML docs
 HAVE_SGML2X=0 make -C docs/
 %endif
@@ -152,13 +147,14 @@ HAVE_SGML2X=0 make -C docs/
 GIT_CEILING_DIRECTORIES=%{_builddir} \
     GIT_AUTHOR_EMAIL=rpmbuild@example.com GIT_AUTHOR_NAME=rpmbuild \
     GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL \
-    %{__python} setup.py nosetests
+    %{__python3} setup.py nosetests
 %endif
 
 
 %install
 rm -rf %{buildroot}
-WITHOUT_NOSETESTS=1 %{__python} ./setup.py install --root=%{buildroot} --prefix=/usr
+WITHOUT_NOSETESTS=1 %{__python3} ./setup.py install --root=%{buildroot} --prefix=/usr --install-lib=%{python_sitelib}
+find %{buildroot} -name __pycache__ | xargs rm -r
 mkdir -p %{buildroot}/usr/share/%{name}
 mv %{buildroot}/usr/bin/gbp-builder-mock %{buildroot}/usr/share/%{name}/
 mkdir -p %{buildroot}/%{_sysconfdir}/git-buildpackage/
@@ -173,7 +169,6 @@ install docs/*.5 %{buildroot}%{_mandir}/man5/
 # Install html documentation
 mkdir -p %{buildroot}%{_docdir}/%{name}
 cp -r docs/manual-html %{buildroot}%{_docdir}/%{name}
-cp -r docs/apidocs %{buildroot}%{_docdir}/%{name}
 %endif
 
 cat > files.list << EOF
