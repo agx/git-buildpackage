@@ -57,7 +57,7 @@ class Uscan(object):
         >>> u._parse('')
         Traceback (most recent call last):
         ...
-        UscanError: Couldn't find 'upstream-url' in uscan output
+        gbp.deb.uscan.UscanError: Couldn't find 'upstream-url' in uscan output
         """
         source = None
         self._uptodate = False
@@ -146,17 +146,17 @@ class Uscan(object):
         ... "to example.com:80 (Bad hostname)</warnings>")
         Traceback (most recent call last):
         ...
-        UscanError: Uscan failed: uscan warning: In watchfile debian/watch, reading webpage
+        gbp.deb.uscan.UscanError: Uscan failed: uscan warning: In watchfile debian/watch, reading webpage
         http://a.b/ failed: 500 Cant connect to example.com:80 (Bad hostname)
         >>> u._raise_error("<errors>uscan: Can't use --verbose if "
         ... "you're using --dehs!</errors>")
         Traceback (most recent call last):
         ...
-        UscanError: Uscan failed: uscan: Can't use --verbose if you're using --dehs!
+        gbp.deb.uscan.UscanError: Uscan failed: uscan: Can't use --verbose if you're using --dehs!
         >>> u = u._raise_error('')
         Traceback (most recent call last):
         ...
-        UscanError: Uscan failed - debug by running 'uscan --verbose'
+        gbp.deb.uscan.UscanError: Uscan failed - debug by running 'uscan --verbose'
         """
         msg = None
 

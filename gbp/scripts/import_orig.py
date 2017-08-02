@@ -273,15 +273,15 @@ def find_source(use_uscan, args):
     >>> find_source(False, ['too', 'many'])
     Traceback (most recent call last):
     ...
-    GbpError: More than one archive specified. Try --help.
+    gbp.errors.GbpError: More than one archive specified. Try --help.
     >>> find_source(False, [])
     Traceback (most recent call last):
     ...
-    GbpError: No archive to import specified. Try --help.
+    gbp.errors.GbpError: No archive to import specified. Try --help.
     >>> find_source(True, ['tarball'])
     Traceback (most recent call last):
     ...
-    GbpError: you can't pass both --uscan and a filename.
+    gbp.errors.GbpError: you can't pass both --uscan and a filename.
     >>> find_source(False, ['tarball']).path
     'tarball'
     """

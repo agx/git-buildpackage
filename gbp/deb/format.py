@@ -40,7 +40,7 @@ class DebianSourceFormat(object):
     >>> d = DebianSourceFormat("1.0 broken")
     Traceback (most recent call last):
     ...
-    DebianSourceFormatError: Cannot get source format from '1.0 broken'
+    gbp.deb.format.DebianSourceFormatError: Cannot get source format from '1.0 broken'
     """
     format_file = 'debian/source/format'
 

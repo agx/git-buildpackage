@@ -458,7 +458,7 @@ class GbpOptionParser(OptionParser):
         >>> GbpOptionParser._listify('[')
         Traceback (most recent call last):
         ...
-        Error: [ is not a proper list
+        configparser.Error: [ is not a proper list
         """
         # filter can be either a list or a string, always build a list:
         if value:

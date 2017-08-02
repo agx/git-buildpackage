@@ -179,7 +179,7 @@ class Command(object):
         >>> Command("/foo/bar")(quiet=True)
         Traceback (most recent call last):
         ...
-        CommandExecFailed: '/foo/bar' failed: execution failed: [Errno 2] No such file or directory
+        gbp.command_wrappers.CommandExecFailed: '/foo/bar' failed: execution failed: [Errno 2] No such file or directory: '/foo/bar'
         """
         try:
             ret = self.__call(args)
@@ -212,7 +212,7 @@ class Command(object):
         >>> Command("/foo/bar").call(["foo", "bar"]) # doctest:+ELLIPSIS
         Traceback (most recent call last):
         ...
-        CommandExecFailed: execution failed: ...
+        gbp.command_wrappers.CommandExecFailed: execution failed: ...
         >>> c = Command("/bin/true", capture_stdout=True,
         ...             extra_env={'LC_ALL': 'C'})
         >>> c.call(["--version"])

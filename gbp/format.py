@@ -27,11 +27,11 @@ def format_str(msg, args):
     >>> format_str("%(foo)", {})
     Traceback (most recent call last):
     ...
-    GbpError: Failed to format %(foo): Missing value 'foo' in {}
+    gbp.errors.GbpError: Failed to format %(foo): Missing value 'foo' in {}
     >>> format_str("%(foo)", {'foo': 'bar'})
     Traceback (most recent call last):
     ...
-    GbpError: Failed to format %(foo) with {'foo': 'bar'}: incomplete format
+    gbp.errors.GbpError: Failed to format %(foo) with {'foo': 'bar'}: incomplete format
     >>> format_str("A %(foo)s is a %(bar)s", {'foo': 'dog', 'bar': 'mamal'})
     'A dog is a mamal'
     """
