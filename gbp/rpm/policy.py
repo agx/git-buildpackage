@@ -191,7 +191,7 @@ class RpmPkgPolicy(PkgPolicy):
                 text.extend(["  " + line for line in body if line.strip()])
 
             # Add bts tags and ids in the end
-            for tag, ids in bts_tags.iteritems():
+            for tag, ids in bts_tags.items():
                 bts_msg = " (%s: %s)" % (tag, ', '.join(ids))
                 if len(text[-1]) + len(bts_msg) >= cls.max_entry_line_length:
                     text.append(" ")
