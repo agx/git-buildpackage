@@ -251,9 +251,8 @@ def has_snapshot_banner(cp):
 
 def get_customizations(customization_file):
     if customization_file:
-        execfile(customization_file,
-                 user_customizations,
-                 user_customizations)
+        with open(customization_file) as f:
+            exec(f, user_customizations, user_customizations)
 
 
 def process_options(options, parser):

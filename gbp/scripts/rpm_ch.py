@@ -92,7 +92,8 @@ def load_customizations(customization_file):
         return
     customizations = {}
     try:
-        execfile(customization_file, customizations, customizations)
+        with open(customization_file) as f:
+            exec(f.read(), customizations, customizations)
     except Exception as err:
         raise GbpError("Failed to load customization file: %s" % err)
 
