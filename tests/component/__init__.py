@@ -1,7 +1,7 @@
 # vim: set fileencoding=utf-8 :
 #
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
-#     2013 Guido Günther <agx@sigxcpu.org>
+#     2013,2017 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class ComponentTestGitRepository(GitRepository):
             raise GitRepositoryError("Cannot get submodule status: %s" %
                                      err.strip())
         submodules = {}
-        for line in out.splitlines():
+        for line in out.decode().splitlines():
             module = line.strip()
             # Uninitialized
             status = module[0]
