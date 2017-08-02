@@ -74,7 +74,7 @@ def test_empty():
 
 def test_subdir():
     """
-    Make surewe can init repos froma subdir
+    Make surewe can init repos from a subdir
     >>> import gbp.git, os
     >>> os.mkdir(os.path.join(dirs['repo'], 'subdir'))
     >>> repo = gbp.git.GitRepository(os.path.join(dirs['repo'], 'subdir'), toplevel=False)
@@ -83,7 +83,7 @@ def test_subdir():
     >>> repo = gbp.git.GitRepository(os.path.join(dirs['repo'], 'subdir'), toplevel=True) # doctest:+ELLIPSIS
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Not the toplevel of a Git repository at ...
+    gbp.git.repository.GitRepositoryError: Not the toplevel of a Git repository at ...
     """
 
 
@@ -101,8 +101,8 @@ def test_add_files():
 
     >>> import gbp.git, shutil, os
     >>> repo = gbp.git.GitRepository(dirs['repo'])
-    >>> shutil.copy(os.path.join(repo.path, ".git/HEAD"),
-    ...                          os.path.join(repo.path, "testfile"))
+    >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"),
+    ...                                os.path.join(repo.path, "testfile"))
     >>> repo.is_clean()[0]
     False
     >>> repo.is_clean('doesnotexist')[0]
@@ -135,7 +135,7 @@ def test_move_file():
     >>> repo.rename_file("doesnotexit", "testfile2")
     Traceback (most recent call last):
     ...
-    GbpError: Failed to move 'doesnotexit' to 'testfile2': fatal: bad source, source=doesnotexit, destination=testfile2
+    gbp.errors.GbpError: Failed to move 'doesnotexit' to 'testfile2': fatal: bad source, source=doesnotexit, destination=testfile2
     """
 
 
@@ -207,7 +207,7 @@ def test_delete_branch():
     >>> repo.delete_branch("master")
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Can't delete the branch you're on
+    gbp.git.repository.GitRepositoryError: Can't delete the branch you're on
     """
 
 
@@ -263,10 +263,10 @@ def test_set_upstream_branch():
     'origin/master'
     >>> repo.set_upstream_branch('bla', 'origin/master')
     Traceback (most recent call last):
-    GitRepositoryError: Branch bla doesn't exist!
+    gbp.git.repository.GitRepositoryError: Branch bla doesn't exist!
     >>> repo.set_upstream_branch('foo', 'origin/bla')
     Traceback (most recent call last):
-    GitRepositoryError: Branch origin/bla doesn't exist!
+    gbp.git.repository.GitRepositoryError: Branch origin/bla doesn't exist!
     """
 
 
@@ -282,7 +282,7 @@ def test_get_upstream_branch():
     ''
     >>> repo.get_upstream_branch('bla')
     Traceback (most recent call last):
-    GitRepositoryError: Branch bla doesn't exist!
+    gbp.git.repository.GitRepositoryError: Branch bla doesn't exist!
     """
 
 
@@ -332,7 +332,7 @@ def test_describe():
     >>> repo.describe('HEAD', pattern='foo*')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Can't describe HEAD. Git error: fatal: No names found, cannot describe anything.
+    gbp.git.repository.GitRepositoryError: Can't describe HEAD. Git error: fatal: No names found, cannot describe anything.
     >>> repo.describe('HEAD', pattern='foo*', always=True) == sha[:7]
     True
     >>> repo.describe('HEAD', always=True, abbrev=16)
@@ -363,7 +363,7 @@ def test_find_tag():
     >>> repo.find_tag('HEAD', pattern='foo*')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Can't describe HEAD. Git error: fatal: No names found, cannot describe anything.
+    gbp.git.repository.GitRepositoryError: Can't describe HEAD. Git error: fatal: No names found, cannot describe anything.
     """
 
 
@@ -381,7 +381,7 @@ def test_find_branch_tag():
     >>> repo.find_branch_tag('HEAD', 'master', 'v*')   # doctest:+ELLIPSIS
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Can't describe .... Git error: fatal: No names found, cannot describe anything.
+    gbp.git.repository.GitRepositoryError: Can't describe .... Git error: fatal: No names found, cannot describe anything.
     """
 
 
@@ -459,16 +459,16 @@ def test_list_files():
     >>> src = os.path.join(repo.path, ".git/HEAD")
     >>> dst = os.path.join(repo.path, "testfile")
     >>> repo.list_files()
-    ['testfile']
+    [b'testfile']
     >>> repo.list_files(['modified'])
     []
     >>> repo.list_files(['modified', 'deleted'])
     []
     >>> repo.list_files(['modified', 'deleted', 'cached'])
-    ['testfile']
+    [b'testfile']
     >>> ret = shutil.copy(src, dst)
     >>> repo.list_files(['modified'])
-    ['testfile']
+    [b'testfile']
     >>> repo.add_files(dst)
     >>> repo.commit_staged(msg="foo")
     >>> repo.list_files(['modified'])
@@ -476,13 +476,13 @@ def test_list_files():
     >>> repo.list_files(['foo'])
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Unknown type 'foo'
+    gbp.git.repository.GitRepositoryError: Unknown type 'foo'
     >>> repo.force_head('HEAD^', hard=True)
     >>> repo.list_files(['modified'])
     []
     >>> ret = shutil.copy(src, dst)
     >>> repo.list_files(['modified'])
-    ['testfile']
+    [b'testfile']
     >>> repo.commit_files(dst, msg="foo")
     >>> repo.list_files(['modified'])
     []
@@ -549,7 +549,7 @@ def test_get_commit_info():
     >>> info['patchname']
     'foo'
     >>> info['files']                               # doctest:+ELLIPSIS
-    defaultdict(<... 'list'>, {'M': ['testfile']})
+    defaultdict(<class 'list'>, {'M': [b'testfile']})
     >>> repo.get_subject('HEAD')
     'foo'
     """
@@ -584,10 +584,10 @@ def test_diff_status():
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(dirs['repo'])
-    >>> repo.diff_status("HEAD", "HEAD")            # doctest:+ELLIPSIS
-    defaultdict(<... 'list'>, {})
-    >>> repo.diff_status("HEAD~1", "HEAD")          # doctest:+ELLIPSIS
-    defaultdict(<... 'list'>, {'M': ['testfile']})
+    >>> repo.diff_status("HEAD", "HEAD")
+    defaultdict(<class 'list'>, {})
+    >>> repo.diff_status("HEAD~1", "HEAD")
+    defaultdict(<class 'list'>, {'M': [b'testfile']})
     """
 
 
@@ -605,6 +605,8 @@ def test_mirror_clone():
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(dirs['repo'])
     >>> repo.set_branch('master')
+    >>> repo.branch
+    'master'
     >>> mirror = gbp.git.GitRepository.clone(dirs['mirror_clone'], repo.path, mirror=True)
     >>> mirror.is_empty()
     False
@@ -794,7 +796,7 @@ def test_nonexistent():
     >>> bare = gbp.git.GitRepository("/does/not/exist")
     Traceback (most recent call last):
     ...
-    GitRepositoryError: No Git repository at '/does/not/exist'
+    gbp.git.repository.GitRepositoryError: No Git repository at '/does/not/exist'
     """
 
 
@@ -809,7 +811,7 @@ def test_create_noperm():
     >>> gbp.git.GitRepository.create("/does/not/exist")
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Cannot create Git repository at '/does/not/exist': Permission denied
+    gbp.git.repository.GitRepositoryError: Cannot create Git repository at '/does/not/exist': [Errno 13] Permission denied: '/does'
     """
 
 
@@ -835,7 +837,7 @@ def test_checkout():
     >>> repo.rev_parse('doesnotexist')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: revision 'doesnotexist' not found
+    gbp.git.repository.GitRepositoryError: revision 'doesnotexist' not found
     >>> sha1 = repo.rev_parse('master', short=10)
     >>> len(sha1)
     10
@@ -847,7 +849,7 @@ def test_checkout():
     >>> repo.get_branch()
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Currently not on a branch
+    gbp.git.repository.GitRepositoryError: Currently not on a branch
     >>> tag = repo.tags[0]
     >>> repo.checkout(tag)
     >>> repo.branch
@@ -888,7 +890,7 @@ def test_grep_log():
     >>> repo.grep_log('foo', 'doesnotexist')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Error grepping log for foo: fatal: bad revision 'doesnotexist'
+    gbp.git.repository.GitRepositoryError: Error grepping log for foo: fatal: bad revision 'doesnotexist'
     """
 
 
@@ -942,13 +944,13 @@ def test_make_tree():
     '19af7398c894bc5e86e17259317e4db519e9241f'
     >>> head = repo.list_tree('HEAD')
     >>> head
-    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
+    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile']]
     >>> head.append(['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile2'])
     >>> newtree = repo.make_tree(head)
     >>> newtree
     '745951810c9e22fcc6de9b23f05efd6ab5512123'
     >>> repo.list_tree(newtree, recurse=False, paths='testfile')
-    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile']]
+    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile']]
     >>> repo.make_tree([])
     '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
     """
@@ -985,7 +987,7 @@ def test_get_merge_base():
     >>> repo.get_merge_base('master', 'doesnotexist')
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Failed to get common ancestor: fatal: Not a valid object name doesnotexist
+    gbp.git.repository.GitRepositoryError: Failed to get common ancestor: fatal: Not a valid object name doesnotexist
     """
 
 
@@ -999,16 +1001,16 @@ def test_status():
     >>> fname = os.path.join(repo.path, "test_status")
     >>> ret = shutil.copy(os.path.join(repo.path, ".git/HEAD"), fname)
     >>> list(repo.status().items())
-    [('??', ['test_status'])]
+    [('??', [b'test_status'])]
     >>> list(repo.status(['bla*']).items())
     []
     >>> list(repo.status(['te*']).items())
-    [('??', ['test_status'])]
+    [('??', [b'test_status'])]
     >>> repo.add_files(repo.path, force=True)
     >>> repo.commit_all(msg='added %s' % fname)
     >>> _ = repo._git_inout('mv', [fname, fname + 'new'])
     >>> list(repo.status().items())
-    [('R ', ['test_status\x00test_statusnew'])]
+    [('R ', [b'test_status\x00test_statusnew'])]
     """
 
 
@@ -1034,7 +1036,7 @@ def test_cmd_has_feature():
     >>> repo._cmd_has_feature("foobarcmd", "foobaroption")
     Traceback (most recent call last):
     ...
-    GitRepositoryError: Invalid git command 'foobarcmd': No manual entry for gitfoobarcmd
+    gbp.git.repository.GitRepositoryError: Invalid git command 'foobarcmd': No manual entry for gitfoobarcmd
     >>> repo._cmd_has_feature("show", "standard-notes")
     True
     >>> repo._cmd_has_feature("show", "no-standard-notes")
