@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8:
 #
-# (C) 2006,2007,2010-2012,2015,2016 Guido Guenther <agx@sigxcpu.org>
+# (C) 2006,2007,2010-2012,2015,2016,2017 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -664,10 +664,14 @@ class GbpOptionParser(OptionParser):
         """
         if file is None:
             file = sys.stdout
-        encoding = self._get_encoding(file)
+
+        encoding = file.encoding if hasattr(file, 'encoding') else 'utf-8'
         try:
-            file.write(self.format_help().encode(encoding, "replace"))
-        except IOError as e:
+            msg = self.format_help()
+            if hasattr(file, 'mode') and 'b' in file.mode:
+                msg = msg.encode(encoding, "replace")
+            file.write(msg)
+        except OSError as e:
             if e.errno != errno.EPIPE:
                 raise
 
