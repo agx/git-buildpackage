@@ -97,11 +97,11 @@ class ChangeLog(object):
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
-        (output, errors) = cmd.communicate(self._contents)
+        (stdout, stderr) = cmd.communicate(self._contents.encode())
         if cmd.returncode:
             raise ParseChangeLogError("Failed to parse changelog. "
-                                      "dpkg-parsechangelog said:\n%s" % (errors, ))
-        return output
+                                      "dpkg-parsechangelog said:\n%s" % stderr.decode().strip())
+        return stdout.decode()
 
     def _parse(self):
         """Parse a changelog based on the already read contents."""
@@ -124,8 +124,8 @@ class ChangeLog(object):
         self._cp = cp
 
     def _read(self):
-            with open(self.filename) as f:
-                self._contents = f.read()
+        with open(self.filename) as f:
+            self._contents = f.read()
 
     def __getitem__(self, item):
         return self._cp[item]

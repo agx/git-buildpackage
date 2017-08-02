@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007,2009,2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007,2009,2015,2017 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -119,6 +119,10 @@ class Command(object):
                                          stdout=stdout_arg,
                                          stderr=stderr_arg)
                 (self.stdout, self.stderr) = popen.communicate()
+                if self.stdout is not None:
+                    self.stdout = self.stdout.decode()
+                if self.stderr is not None:
+                    self.stderr = self.stderr.decode()
             except OSError as err:
                 self.err_reason = "execution failed: %s" % str(err)
                 self.retcode = 1
@@ -210,13 +214,13 @@ class Command(object):
         ...             extra_env={'LC_ALL': 'C'})
         >>> c.call(["--version"])
         0
-        >>> c.stdout.decode('utf-8').startswith('true')
+        >>> c.stdout.startswith('true')
         True
         >>> c = Command("/bin/false", capture_stdout=True,
         ...             extra_env={'LC_ALL': 'C'})
         >>> c.call(["--help"])
         1
-        >>> c.stdout.decode('utf-8').startswith('Usage:')
+        >>> c.stdout.startswith('Usage:')
         True
         """
         try:

@@ -9,7 +9,7 @@ from gbp.command_wrappers import Command, CommandExecFailed
 from . testutils import GbpLogTester
 
 
-def patch_popen(stdout='', stderr='', returncode=1):
+def patch_popen(stdout=b'', stderr=b'', returncode=1):
     """Decorator to easily set the return value of popen.communicate()"""
     def patch_popen_decorator(func):
         @functools.wraps(func)
@@ -32,7 +32,7 @@ class TestCommandWrapperFailures(unittest.TestCase, GbpLogTester):
     def tearDown(self):
         self.log_tester._capture_log(False)
 
-    @patch_popen(stdout='', stderr='', returncode=1)
+    @patch_popen(stdout=b'', stderr=b'', returncode=1)
     def test_log_default_error_msg(self, create_mock):
         with self.assertRaises(CommandExecFailed):
             self.false.__call__()
@@ -41,7 +41,7 @@ class TestCommandWrapperFailures(unittest.TestCase, GbpLogTester):
         self.assertEqual(self.false.stderr, '')
         self.assertEqual(self.false.stdout, '')
 
-    @patch_popen(stdout='', stderr='we have a problem', returncode=1)
+    @patch_popen(stdout=b'', stderr=b'we have a problem', returncode=1)
     def test_log_use_stderr_for_err_message(self, create_mock):
         self.false.capture_stderr = True
         self.false.run_error = "Erpel {stderr}"
@@ -52,7 +52,7 @@ class TestCommandWrapperFailures(unittest.TestCase, GbpLogTester):
         self.assertEqual(self.false.stderr, 'we have a problem')
         self.assertEqual(self.false.stdout, '')
 
-    @patch_popen(stdout='we have a problem', stderr='', returncode=1)
+    @patch_popen(stdout=b'we have a problem', stderr=b'', returncode=1)
     def test_log_use_stdout_for_err_message(self, create_mock):
         self.false.capture_stdout = True
         self.false.run_error = "Erpel {stdout}"
@@ -70,7 +70,7 @@ class TestCommandWrapperFailures(unittest.TestCase, GbpLogTester):
         self.log_tester._check_log(0, "gbp:error: AFAIK execution failed: .Errno 2. No such file or directory")
         self.assertEqual(self.false.retcode, 1)
 
-    @patch_popen(stderr='we have a problem', returncode=1)
+    @patch_popen(stderr=b'we have a problem', returncode=1)
     def test_log_use_err_or_reason_for_error_messge_error(self, create_mock):
         self.false.run_error = "Erpel {stderr_or_reason}"
         with self.assertRaises(CommandExecFailed):
