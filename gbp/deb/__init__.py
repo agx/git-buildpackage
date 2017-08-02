@@ -94,17 +94,17 @@ def orig_file(source, compression, component=None):
 def get_arch():
     pipe = subprocess.Popen(["dpkg", "--print-architecture"], shell=False, stdout=subprocess.PIPE)
     arch = pipe.stdout.readline().strip()
-    return arch
+    return arch.decode('ascii')
 
 
 def compare_versions(version1, version2):
-    """compares to Debian versionnumbers suitable for sort()"""
+    """compares to Debian version numbers suitable for sort()"""
     return DpkgCompareVersions()(version1, version2)
 
 
 def get_vendor():
     pipe = subprocess.Popen(["dpkg-vendor", "--query", "Vendor"], shell=False, stdout=subprocess.PIPE)
-    return pipe.stdout.readline().strip()
-
+    vendor = pipe.stdout.readline().strip()
+    return vendor.decode('ascii')
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

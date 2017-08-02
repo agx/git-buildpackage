@@ -3,9 +3,11 @@
 """Test L{gbp.deb}"""
 
 from . import context  # noqa: 401
+from . import testutils
 
 import os
 import tempfile
+import platform
 import unittest
 
 import gbp.deb
@@ -139,3 +141,20 @@ class TestDpkgCompareVersions(unittest.TestCase):
 
     def testBadVersion(self):
         self.assertRaises(CommandExecFailed, self.cmp, '_', '_ _')
+
+
+@unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
+class TestDeb(unittest.TestCase):
+    """Test L{gbp.deb.__init__} """
+
+    @unittest.skipUnless(platform.machine() == "x86_64", "not on amd64")
+    def test_get_arch(self):
+        arch = gbp.deb.get_arch()
+        self.assertTrue(isinstance(arch, str))
+        self.assertEquals(arch, "amd64")
+
+    @unittest.skipUnless(testutils.OsReleaseFile()['ID'] == 'debian', "not on Debian")
+    def test_get_vendor(self):
+        vendor = gbp.deb.get_vendor()
+        self.assertTrue(isinstance(vendor, str))
+        self.assertEquals(vendor, "Debian")
