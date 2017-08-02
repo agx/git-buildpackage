@@ -345,16 +345,12 @@ class TestPqRpm(RpmRepoTestBase):
         with open('my2.patch', 'w') as patch_file:
             patch_file.write('-this-does\n+not-apply\n')
         eq_(mock_pq(['import']), 1)
-        self._check_log(-2, "("
-                        "Aborting|"
-                        "Please, commit your changes or stash them|"
-                        "gbp:error: Import failed.* You have local changes"
-                        ")")
+        self._check_log(-2, "Please commit your changes or stash them")
         self._check_repo_state(repo, 'master', branches)
 
         # Now commit the changes to the patch and try again
         repo.add_files(['my2.patch'], force=True)
         repo.commit_files(['my2.patch'], msg="Mangle patch")
         eq_(mock_pq(['import']), 1)
-        self._check_log(-2, "gbp:error: Import failed: Error running git apply")
+        self._check_log(-1, "gbp:error: Import failed: Error running git apply")
         self._check_repo_state(repo, 'master', branches)
