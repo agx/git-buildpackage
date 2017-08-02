@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2011,2015 Guido Günther <agx@sigxcpu.org>
+# (C) 2011,2015,2017 Guido Günther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ def write_patch_file(filename, commit_info, diff):
         gbp.log.debug("I won't generate empty diff %s" % filename)
         return None
     try:
-        with open(filename, 'w') as patch:
+        with open(filename, 'wb') as patch:
             msg = Message()
             charset = Charset('utf-8')
             charset.body_encoding = None
@@ -148,13 +148,13 @@ def write_patch_file(filename, commit_info, diff):
             # Git compat: put name in quotes if special characters found
             if re.search("[,.@()\[\]\\\:;]", name):
                 name = '"%s"' % name
-            from_header = Header(unicode(name, 'utf-8'), charset, 77, 'from')
-            from_header.append(unicode('<%s>' % email))
+            from_header = Header(name.encode('utf-8'), charset, 77, 'from')
+            from_header.append(email.encode('utf-8'))
             msg['From'] = from_header
             date = commit_info['author'].datetime
             datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
-            msg['Date'] = Header(unicode(datestr, 'utf-8'), charset, 77, 'date')
-            msg['Subject'] = Header(unicode(commit_info['subject'], 'utf-8'),
+            msg['Date'] = Header(datestr.encode('utf-8'), charset, 77, 'date')
+            msg['Subject'] = Header(commit_info['subject'].encode('utf-8'),
                                     charset, 77, 'subject')
             # Write message body
             if commit_info['body']:
@@ -164,11 +164,11 @@ def write_patch_file(filename, commit_info, diff):
                     msg.set_payload(body.encode('ascii'))
                 except UnicodeDecodeError:
                     msg.set_payload(body, charset)
-            patch.write(msg.as_string(unixfrom=False))
+            patch.write(msg.as_string(unixfrom=False).encode('utf-8'))
 
             # Write diff
-            patch.write('---\n')
-            patch.write(diff)
+            patch.write(b'---\n')
+            patch.write(diff.encode())
     except IOError as err:
         raise GbpError('Unable to create patch file: %s' % err)
     return filename
@@ -266,7 +266,7 @@ def get_maintainer_from_control(repo):
                               stdout=subprocess.PIPE).stdout.readlines()
 
     if len(cmdout) > 0:
-        maintainer = cmdout[0].strip()
+        maintainer = cmdout[0].decode().strip()
         m = re.match('(?P<name>.*[^ ]) *<(?P<email>.*)>', maintainer)
         if m:
             return GitModifier(m.group('name'), m.group('email'))

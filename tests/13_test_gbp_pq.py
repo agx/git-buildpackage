@@ -40,7 +40,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
         pq.apply_and_commit_patch(self.repo, patch, None)
-        self.assertIn('foo', self.repo.list_files())
+        self.assertIn(b'foo', self.repo.list_files())
 
     def test_topic(self):
         """Test if setting a topic works"""
@@ -61,8 +61,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
     @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
     def test_debian_missing_author(self):
         """
-        Check if we parse the author from debian control
-        if it's missing in the patch.
+        Check if we parse the author from debian control if it's missing in the patch.
         """
         def _check_log(msg):
             self.assertEqual(msg, "Patch 'foo.patch' has no authorship "
@@ -86,7 +85,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         gbp.log.warn = orig_warn
         info = self.repo.get_commit_info('HEAD')
         self.assertEqual(info['author'].email, 'gg@godiug.net')
-        self.assertIn('foo', self.repo.list_files())
+        self.assertIn(b'foo', self.repo.list_files())
 
 
 class TestApplySinglePatch(testutils.DebianGitTestRepo):
@@ -102,7 +101,7 @@ class TestApplySinglePatch(testutils.DebianGitTestRepo):
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
         pq.apply_single_patch(self.repo, 'master', patch, None)
-        self.assertIn('foo', self.repo.list_files())
+        self.assertIn(b'foo', self.repo.list_files())
 
 
 class TestWritePatch(testutils.DebianGitTestRepo):
@@ -280,8 +279,8 @@ class TestExport(testutils.DebianGitTestRepo):
         self.assertTrue(repo.has_branch(pq_branch))
         self.assertEqual(len(repo.get_commits()), 3,
                          "Export did not create commit")
-        self.assertIn("Dropped patch1.diff:", repo.show('HEAD'))
-        self.assertIn("Dropped patch2.diff:", repo.show('HEAD'))
+        self.assertIn(b"Dropped patch1.diff:", repo.show('HEAD'))
+        self.assertIn(b"Dropped patch2.diff:", repo.show('HEAD'))
 
 
 class TestParseGbpCommand(unittest.TestCase):
