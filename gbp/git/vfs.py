@@ -16,7 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 """Make blobs in a git repository accessible as file like objects"""
 
-from six import StringIO
+import io
 from gbp.git.repository import GitRepositoryError
 
 
@@ -28,9 +28,12 @@ class GitVfs(object):
 
         @todo: We don't support any byte ranges yet.
         """
-        def __init__(self, content):
+        def __init__(self, content, binary=False):
             self._iter = iter
-            self._data = StringIO(content)
+            if binary:
+                self._data = io.BytesIO(content)
+            else:
+                self._data = io.StringIO(content.decode())
 
         def readline(self):
             return self._data.readline()
@@ -61,10 +64,12 @@ class GitVfs(object):
     def open(self, path, flags=None):
         flags = flags or 'r'
 
-        if flags != 'r':
-            raise NotImplementedError("Only reading supported so far")
+        for flag in flags:
+            if flag not in ['r', 't', 'b']:
+                raise NotImplementedError("Flag '%s' unsupported so far" % flag)
         try:
             return GitVfs._File(self._repo.show(
-                "%s:%s" % (self._committish, path)))
+                "%s:%s" % (self._committish, path)),
+                True if 'b' in flags else False)
         except GitRepositoryError as e:
-            raise IOError(e)
+            raise OSError(e)
