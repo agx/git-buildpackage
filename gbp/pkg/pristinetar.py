@@ -16,6 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 """Handle checkin and checkout of archives from the pristine-tar branch"""
 
+import re
 import os
 import gbp.log
 from gbp.command_wrappers import Command
@@ -29,6 +30,25 @@ class PristineTar(Command):
     def __init__(self, repo):
         self.repo = repo
         super(PristineTar, self).__init__(self.cmd, cwd=repo.path, capture_stderr=True)
+
+    def _has_feature(self, feature):
+        """
+        Check if pristine_tar has a certain feature enabled.
+
+        @param feature: feature / command option to check
+        @type feature: C{str}
+        @return: True if feature is supported
+        @rtype: C{bool}
+        """
+        self.call(['--help'], quiet=True)  # There's no --help so we always exit 1
+        r = re.compile('.* pristine-tar .* %s' % feature)
+        for line in self.stderr.splitlines():
+            if r.match(line):
+                return True
+        return False
+
+    def has_feature_verify(self):
+        return self._has_feature("verify")
 
     def has_commit(self, archive_regexp):
         """

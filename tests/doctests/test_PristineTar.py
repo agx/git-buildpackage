@@ -146,7 +146,8 @@ def test_pristine_tar_verify():
 
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
-    >>> repo.pristine_tar.verify('../upstream_1.0.orig.tar.gz')
+    >>> if repo.pristine_tar.has_feature_verify():
+    ...    repo.pristine_tar.verify('../upstream_1.0.orig.tar.gz')
     """
 
 
