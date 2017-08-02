@@ -39,8 +39,8 @@ def test_add_file():
     fastimport.start_commit('master', author, "a commit")
     fastimport.deleteall()
     testfile = os.path.join(repo.path, '.git', 'description')
-    fastimport.add_file('./testfile',
-                        open(testfile),
+    fastimport.add_file(b'./testfile',
+                        open(testfile, 'rb'),
                         os.path.getsize(testfile))
 
 

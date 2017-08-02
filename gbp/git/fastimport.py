@@ -20,6 +20,7 @@
 import subprocess
 import time
 from gbp.errors import GbpError
+from gbp.paths import to_bin
 
 
 class FastImport(object):
@@ -47,17 +48,17 @@ class FastImport(object):
                 "Invalid argument when spawning git fast-import: %s" % err)
 
     def _do_data(self, fd, size):
-        self._out.write("data %s\n" % size)
+        self._out.write(b"data %d\n" % size)
         while True:
             data = fd.read(self._bufsize)
             self._out.write(data)
             if len(data) != self._bufsize:
                 break
-        self._out.write("\n")
+        self._out.write(b"\n")
 
     def _do_file(self, filename, mode, fd, size):
-        name = "/".join(filename.split('/')[1:])
-        self._out.write("M %d inline %s\n" % (mode, name))
+        name = b"/".join(to_bin(filename).split(b'/')[1:])
+        self._out.write(b"M %d inline %s\n" % (mode, name))
         self._do_data(fd, size)
 
     def add_file(self, filename, fd, size, mode=m_regular):
@@ -84,9 +85,11 @@ class FastImport(object):
         @param linktarget: the target the symlink points to
         @type linktarget: C{str}
         """
-        self._out.write("M %d inline %s\n" % (self.m_symlink, linkname))
-        self._out.write("data %s\n" % len(linktarget))
-        self._out.write("%s\n" % linktarget)
+        linktarget = to_bin(linktarget)
+        linkname = to_bin(linkname)
+        self._out.write(b"M %d inline %s\n" % (self.m_symlink, linkname))
+        self._out.write(b"data %d\n" % len(linktarget))
+        self._out.write(b"%s\n" % linktarget)
 
     def start_commit(self, branch, committer, msg):
         """
@@ -109,24 +112,23 @@ class FastImport(object):
         else:
             from_ = ''
 
-        self._out.write("""commit refs/heads/%(branch)s
+        s = """commit refs/heads/%(branch)s
 committer %(name)s <%(email)s> %(time)s
 data %(length)s
-%(msg)s%(from)s""" %
-                        {'branch': branch,
-                         'name': committer.name,
-                         'email': committer.email,
-                         'time': committer.date,
-                         'length': length,
-                         'msg': msg,
-                         'from': from_,
-                         })
+%(msg)s%(from)s""" % {'branch': branch,
+                      'name': committer.name,
+                      'email': committer.email,
+                      'time': committer.date,
+                      'length': length,
+                      'msg': msg,
+                      'from': from_}
+        self._out.write(s.encode())
 
     def deleteall(self):
         """
         Issue I{deleteall} to fastimport so we start from a empty tree
         """
-        self._out.write("deleteall\n")
+        self._out.write(b"deleteall\n")
 
     def close(self):
         """
