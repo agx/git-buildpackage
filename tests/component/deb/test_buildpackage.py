@@ -192,7 +192,7 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage(repo, ['--git-no-pristine-tar'])
         tarball = "../hello-debhelper_2.8.orig.tar.gz"
         out = subprocess.check_output(["file", tarball])
-        ok_("max compression" not in out)
+        ok_(b"max compression" not in out)
         m1 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
         os.unlink(tarball)
         eq_(buildpackage(['arg0',
@@ -208,7 +208,7 @@ class TestBuildpackage(ComponentTestBase):
         """Test that passing max compression works (#820846)"""
         self._test_buildpackage(repo, ['--git-no-pristine-tar', '--git-compression-level=9'])
         out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
-        ok_("max compression" in out)
+        ok_(b"max compression" in out)
 
     @RepoFixtures.quilt30()
     def test_tag_pq_branch(self, repo):
