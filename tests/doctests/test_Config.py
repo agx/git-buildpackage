@@ -62,6 +62,15 @@ def test_tristate():
     >>> options, args= c.parse_args(['--color=auto'])
     >>> options.color
     auto
+    >>> options.color.is_off()
+    False
+    >>> c = gbp.config.GbpOptionParser('tristate')
+    >>> c.add_config_file_option(option_name="color", dest="color", type='tristate')
+    >>> options, args= c.parse_args(['--color=off'])
+    >>> options.color
+    off
+    >>> options.color.is_off()
+    True
     """
 
 

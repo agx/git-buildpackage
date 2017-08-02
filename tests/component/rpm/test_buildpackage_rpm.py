@@ -54,12 +54,15 @@ def mock_gbp(args):
 
 def mock_notify(summary, message, notify_opt):
     """Mock notification system"""
+    if notify_opt.is_off():
+        return True
     # Auto will succeed
-    if notify_opt.is_auto():
+    elif notify_opt.is_auto():
         MOCK_NOTIFICATIONS.append((summary, message))
         return True
     # Otherwise fail
-    return False
+    else:
+        return False
 
 
 class TestGbpRpm(RpmRepoTestBase):

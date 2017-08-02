@@ -630,7 +630,7 @@ def main(argv):
         del_tmpdir()
 
     if not options.tag_only:
-        if spec and options.notify:
+        if spec:
             summary = "Gbp-rpm %s" % ["failed", "successful"][not retval]
             message = ("Build of %s %s %s" % (spec.name,
                                               rpm.compose_version_str(spec.version),
