@@ -6,8 +6,15 @@ services:
   - docker
 
 python:
- - "2.7"
+  - "3.5"
+  - "3.6"
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y pristine-tar
+
 install: "pip install -r dev_requirements.txt"
 script:
   - flake8
+  - python $(which nosetests) -v tests/doctests/
   - tests/helpers/run-in-docker
