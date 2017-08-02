@@ -21,9 +21,10 @@ syntax-check:
 
 docs:
 	make -C docs
+	make apidocs
 
 apidocs:
 	mkdir -p build
-	epydoc -v --config=setup.cfg
+	pydoctor -v --config=.pydoctor.cfg
 
 .PHONY: docs
