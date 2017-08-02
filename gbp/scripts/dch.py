@@ -251,8 +251,11 @@ def has_snapshot_banner(cp):
 
 def get_customizations(customization_file):
     if customization_file:
-        with open(customization_file) as f:
-            exec(f, user_customizations, user_customizations)
+        try:
+            with open(customization_file) as f:
+                exec(f.read(), user_customizations, user_customizations)
+        except Exception as err:
+            raise GbpError("Failed to load customization file: %s" % err)
 
 
 def process_options(options, parser):
@@ -276,7 +279,6 @@ def process_options(options, parser):
     if options.force_distribution:
         dch_options.append("--force-distribution")
 
-    get_customizations(options.customization_file)
     return dch_options
 
 
@@ -429,6 +431,7 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
+        get_customizations(options.customization_file)
         try:
             branch = repo.get_branch()
         except GitRepositoryError:
