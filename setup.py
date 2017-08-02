@@ -65,7 +65,7 @@ setup(name="gbp",
       long_description=readme(),
       classifiers=[
           'Environment :: Console',
-          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 3',
           'Topic :: Software Development :: Version Control',
           'Operating System :: POSIX :: Linux',
       ],
