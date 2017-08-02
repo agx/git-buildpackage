@@ -85,9 +85,9 @@ def test_no_control_error():
     >>> cl = gbp.deb.control.Control(filename="doesnotexist")
     Traceback (most recent call last):
     ...
-    NoControlError: Control file doesnotexist does not exist
+    gbp.deb.control.NoControlError: Control file doesnotexist does not exist
     >>> cl = gbp.deb.control.Control("notparsable")
     Traceback (most recent call last):
     ...
-    ParseControlError: Empty or invalid control file or contents
+    gbp.deb.control.ParseControlError: Empty or invalid control file or contents
     """

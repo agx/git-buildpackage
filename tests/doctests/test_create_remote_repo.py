@@ -106,17 +106,17 @@ def test_parse_url():
     >>> parse_url("git://host/repo.git", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: URL must use ssh protocol.
+    gbp.errors.GbpError: URL must use ssh protocol.
     >>> parse_url("ssh://host/path/repo", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: URL needs to contain either a repository name or '%(pkg)s'
+    gbp.errors.GbpError: URL needs to contain either a repository name or '%(pkg)s'
     >>> parse_url("ssh://host:asdf/path/%(pkg)s.git", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: URL contains invalid port.
+    gbp.errors.GbpError: URL contains invalid port.
     >>> parse_url("ssh://host/~us er/path/%(pkg)s.git", "origin", "package")
     Traceback (most recent call last):
         ...
-    GbpError: URL contains invalid ~username expansion.
+    gbp.errors.GbpError: URL contains invalid ~username expansion.
     """
