@@ -178,7 +178,7 @@ class TestChangelogParser(object):
     def test_parse_changelog_file(self):
         """Basic tests for parsing a file"""
         # Create file and parse it
-        tmpfile = NamedTemporaryFile()
+        tmpfile = NamedTemporaryFile(mode='w')
         tmpfile.write(self.cl_default_style)
         tmpfile.file.flush()
         changelog = self.parser.raw_parse_file(tmpfile.name)
