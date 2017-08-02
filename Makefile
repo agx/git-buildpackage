@@ -13,7 +13,7 @@ test:
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
 	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
 	PYTHONPATH=.					\
-	python3 setup.py nosetests $(NOSE_OPTS)
+	LC_ALL=C.UTF-8 python3 setup.py nosetests $(NOSE_OPTS)
 
 syntax-check:
 	flake8 $(FLAKE_OPTS)
