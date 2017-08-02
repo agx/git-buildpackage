@@ -371,7 +371,8 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
     # Get the current debian/ tree on the debian branch
     try:
         deb_sha = [x for x in repo.list_tree("%s^{tree}" % options.debian_branch)
-                   if x[-1] == 'debian' and x[1] == 'tree'][0][2]
+                   if x[-1] == b'debian' and x[1] == 'tree'][0][2]
+        gbp.log.debug("Using %s as debian/ tree" % deb_sha)
         tree.append(['040000', 'tree', deb_sha, 'debian'])
         msg += "\n\nwith Debian dir %s" % deb_sha
     except IndexError:

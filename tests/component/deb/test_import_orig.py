@@ -102,7 +102,8 @@ class TestImportOrig(ComponentTestBase):
                          '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
-        eq_(os.path.exists('postimport.out'), True)
+        ok_(os.path.exists('debian/changelog'))
+        ok_(os.path.exists('postimport.out'))
         self.check_hook_vars('postimport', [("GBP_BRANCH", "master"),
                                             ("GBP_TAG", "upstream/2.8"),
                                             ("GBP_UPSTREAM_VERSION", "2.8"),
@@ -119,6 +120,7 @@ class TestImportOrig(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, [b'foo/test1', b'foo/test2'])
+        ok_(os.path.exists('debian/changelog'))
 
         dsc = DscFile.parse(_dsc_file(self.pkg, '2.8-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
@@ -143,6 +145,7 @@ class TestImportOrig(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8', 'upstream/2.9'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2', 'foo/test3'])
+        ok_(os.path.exists('debian/changelog'))
 
         dsc = DscFile.parse(_dsc_file(self.pkg, '2.9-1', dir='dsc-3.0-additional-tarballs'))
         # Check if we can rebuild the upstream tarball and additional tarball
