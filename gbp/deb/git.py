@@ -21,6 +21,7 @@ from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.format import format_str
+from gbp.paths import to_bin
 
 import gbp.log
 
@@ -44,6 +45,7 @@ class DebianGitRepository(GitRepository):
         """
         objs = self.list_tree(tree)
         new_tree_objs = []
+        dirs = [to_bin(d) for d in dirs]
 
         for m, t, s, n in objs:
             if not (n in dirs and t == 'tree'):
@@ -55,6 +57,7 @@ class DebianGitRepository(GitRepository):
         """
         Get the SHA1 of directory in a given tree
         """
+        dir = to_bin(dir)
         toplevel = self.list_tree(tree)
         for m, t, s, n in toplevel:
             if n == dir and t == 'tree':
