@@ -63,7 +63,7 @@ def get_push_targets(env):
     """get a list of push targets"""
     dests = {}
     cmd = "git config --get-regexp 'remote\..*\.push' '^%s(:.*)?$'" % env.branch
-    for remote in subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split("\n"):
+    for remote in subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].decode().split("\n"):
         if not len(remote):
             continue
         repo, refspec = remote.split()
@@ -79,7 +79,7 @@ def get_push_targets(env):
 def get_pull(env):
     """where did we pull from?"""
     cmd = 'git config --get branch."%s".remote' % env.branch
-    remote = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].strip()
+    remote = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].decode().strip()
     if not remote:
         remote = 'origin'
     return {remote: env.branch}
