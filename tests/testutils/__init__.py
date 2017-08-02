@@ -16,11 +16,13 @@ from gbp.deb.changelog import ChangeLog
 from . gbplogtester import GbpLogTester
 from . debiangittestrepo import DebianGitTestRepo
 from . capture import capture_stdout, capture_stderr
+from . popen import patch_popen
 
 __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
            'MockedChangeLog', 'get_dch_default_urgency',
            'capture_stderr', 'capture_stdout',
-           'ls_dir', 'ls_tar', 'ls_zip']
+           'ls_dir', 'ls_tar', 'ls_zip',
+           'patch_popen']
 
 
 class OsReleaseFile(object):
