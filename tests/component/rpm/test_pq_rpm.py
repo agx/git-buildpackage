@@ -92,7 +92,7 @@ class TestPqRpm(RpmRepoTestBase):
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
         self._check_repo_state(repo, 'master', branches, files)
-        eq_(repo.status()[' M'], ['gbp-test.spec'])
+        eq_(repo.status()[' M'], [b'gbp-test.spec'])
         self._has_patches('gbp-test.spec', patches)
 
         # Another export after removing some patches
@@ -117,7 +117,7 @@ class TestPqRpm(RpmRepoTestBase):
         eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s',
                      '--spec-file', 'packaging/gbp-test2.spec']), 0)
         self._check_repo_state(repo, 'master-orphan', branches)
-        eq_(repo.status()[' M'], ['packaging/gbp-test2.spec'])
+        eq_(repo.status()[' M'], [b'packaging/gbp-test2.spec'])
         self._has_patches('packaging/gbp-test2.spec', patches)
 
     def test_rebase(self):
@@ -184,11 +184,11 @@ class TestPqRpm(RpmRepoTestBase):
     def test_force_import(self):
         """Test force import"""
         repo = self.init_test_repo('gbp-test')
-        pkg_files = repo.list_files()
+        pkg_files = [f.decode() for f in repo.list_files()]
         repo.rename_branch('pq/master', 'patch-queue/master')
         repo.set_branch('patch-queue/master')
         branches = repo.get_local_branches()
-        pq_files = repo.list_files()
+        pq_files = [f.decode() for f in repo.list_files()]
 
         # Re-import should fail
         eq_(mock_pq(['import']), 1)
@@ -324,7 +324,7 @@ class TestPqRpm(RpmRepoTestBase):
         repo.commit_dir('.', 'Merge with master', 'patch-queue/master',
                         ['master'])
         merge_rev = repo.rev_parse('HEAD', short=7)
-        eq_(mock_pq(['apply', patches[0]]), 0)
+        eq_(mock_pq(['apply', patches[0].decode()]), 0)
         upstr_rev = repo.rev_parse('upstream', short=7)
         os.unlink(patches[0])
 

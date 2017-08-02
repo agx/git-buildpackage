@@ -282,7 +282,7 @@ class TestDownloadImport(ComponentTestBase):
         # Mock to use local files instead of really downloading
         local_fn = os.path.join(DATA_DIR, os.path.basename(srpm))
         import_srpm.urlopen = Mock()
-        import_srpm.urlopen.return_value = open(local_fn, 'r')
+        import_srpm.urlopen.return_value = open(local_fn, 'rb')
 
         eq_(mock_import(['--no-pristine-tar', srpm]), 0)
         # Check repository state

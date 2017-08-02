@@ -250,7 +250,7 @@ class TestGbpRpm(RpmRepoTestBase):
         # Dummy update to upstream branch
         pkg_branch = repo.get_branch()
         upstr_branch = 'upstream'
-        orig_files = ['gbp-test/' + path for
+        orig_files = ['gbp-test/' + path.decode() for
                       path in repo.ls_tree(upstr_branch)] + ['gbp-test']
         repo.set_branch(upstr_branch)
         for fname in ['new-file', 'new-file2']:
@@ -372,7 +372,7 @@ class TestGbpRpm(RpmRepoTestBase):
         repo.set_branch(pkg_branch)
 
         sub_files = sub_repo.ls_tree('HEAD')
-        upstr_files = ['gbp-test/' + path for
+        upstr_files = ['gbp-test/' + path.decode() for
                        path in repo.ls_tree(upstr_branch)]
 
         # Test the "no" option
@@ -386,7 +386,7 @@ class TestGbpRpm(RpmRepoTestBase):
         eq_(mock_gbp(['--git-submodules', '--git-upstream-tree=%s' %
                       upstr_branch, '--git-ignore-new']), 0)
         tar_files = ls_tar('../rpmbuild/SOURCES/gbp-test-1.1.tar.bz2', False)
-        ref_files = upstr_files + ['gbp-test/gbp-test-native.repo/' + path for
+        ref_files = upstr_files + ['gbp-test/gbp-test-native.repo/' + path.decode() for
                                    path in sub_files]
         self.check_files(ref_files, tar_files)
         shutil.rmtree('../rpmbuild')
@@ -411,7 +411,7 @@ class TestGbpRpm(RpmRepoTestBase):
         repo.commit_all('Add submodule')
 
         sub_files = sub_repo.ls_tree('HEAD')
-        master_files = ['gbp-test-native-1.0/' + path for
+        master_files = ['gbp-test-native-1.0/' + path.decode() for
                         path in repo.ls_tree('HEAD')]
 
         # Test
