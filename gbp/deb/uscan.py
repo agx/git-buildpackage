@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2012 Guido Günther <agx@sigxcpu.org>
+# (C) 2012,2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -176,7 +176,7 @@ class Uscan(object):
                               '--dehs'],
                              cwd=self._dir,
                              stdout=subprocess.PIPE)
-        out = p.communicate()[0]
+        out = p.communicate()[0].decode()
         # uscan exits with 1 in case of uptodate and when an error occurred.
         # Don't fail in the uptodate case:
         self._parse_uptodate(out)
