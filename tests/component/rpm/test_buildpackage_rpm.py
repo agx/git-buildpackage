@@ -414,7 +414,7 @@ class TestGbpRpm(RpmRepoTestBase):
         # Test
         eq_(mock_gbp(['--git-submodules']), 0)
         zip_files = ls_zip('../rpmbuild/SOURCES/gbp-test-native-1.0.zip', False)
-        ref_files = master_files + ['gbp-test-native-1.0/gbp-test-native2.repo/' + path for
+        ref_files = master_files + ['gbp-test-native-1.0/gbp-test-native2.repo/' + path.decode() for
                                     path in sub_files]
         self.check_files(ref_files, zip_files)
 
@@ -556,7 +556,7 @@ class TestGbpRpm(RpmRepoTestBase):
 
         base_args = ['--git-ignore-new', '--git-builder=true']
         # Test exporting of git index
-        foo_txt_index = repo.show('HEAD:foo.txt') + 'staged'
+        foo_txt_index = repo.show('HEAD:foo.txt').decode() + 'staged'
         eq_(mock_gbp(base_args + ['--git-export=INDEX']), 0)
         self.check_and_rm_file('../rpmbuild/SOURCES/foo.txt', foo_txt_index)
         ok_(not os.path.exists('../rpmbuild/SOURCES/untracked'))
@@ -565,7 +565,7 @@ class TestGbpRpm(RpmRepoTestBase):
 
         # Test exporting of working copy (include all files)
         eq_(mock_gbp(base_args + ['--git-export=WC']), 0)
-        foo_txt_wc = repo.show('HEAD:foo.txt') + 'staged' + 'unstaged'
+        foo_txt_wc = repo.show('HEAD:foo.txt').decode() + 'staged' + 'unstaged'
         self.check_and_rm_file('../rpmbuild/SOURCES/foo.txt', foo_txt_wc)
         self.check_and_rm_file('../rpmbuild/SOURCES/untracked', 'untracked')
         self.check_and_rm_file('../rpmbuild/SOURCES/ignored.tmp', 'ignored')

@@ -70,13 +70,13 @@ class TestRpmCh(RpmRepoTestBase):
         """Test updating changelog in spec"""
         repo = self.init_test_repo('gbp-test')
         eq_(mock_ch([]), 0)
-        eq_(repo.status(), {' M': ['gbp-test.spec']})
+        eq_(repo.status(), {' M': [b'gbp-test.spec']})
 
     def test_update_changes_file(self):
         """Test updating a separate changes file"""
         repo = self.init_test_repo('gbp-test-native')
         eq_(mock_ch([]), 0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test-native.changes']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test-native.changes']})
 
     def test_create_spec_changelog(self):
         """Test creating changelog in spec file"""
@@ -89,7 +89,7 @@ class TestRpmCh(RpmRepoTestBase):
 
         # Give starting point
         eq_(mock_ch(['--since=HEAD^']), 0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test2.spec']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test2.spec']})
         content = self.read_file('packaging/gbp-test2.spec')
         # Should contain 4 lines (%changelog, header, 1 entry and an empty line)
         eq_(len(content), len(orig_content) + 4)
@@ -104,7 +104,7 @@ class TestRpmCh(RpmRepoTestBase):
 
         # Give starting point
         eq_(mock_ch(['--since=HEAD^', '--changelog-file=CHANGES']), 0)
-        eq_(repo.status(), {'??': ['packaging/gbp-test2.changes']})
+        eq_(repo.status(), {'??': [b'packaging/gbp-test2.changes']})
         content = self.read_file('packaging/gbp-test2.changes')
         # Should contain 3 lines (header, 1 entry and an empty line)
         eq_(len(content), 3)
@@ -115,18 +115,18 @@ class TestRpmCh(RpmRepoTestBase):
 
         # Guess changelog file
         eq_(mock_ch(['--changelog-file=CHANGES']), 0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test-native.changes']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test-native.changes']})
 
         # Use spec file as changelog
         eq_(mock_ch(['--changelog-file=SPEC', '--since=HEAD^']), 0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test-native.changes',
-                                   'packaging/gbp-test-native.spec']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test-native.changes',
+                                   b'packaging/gbp-test-native.spec']})
 
         # Arbitrary name
         eq_(mock_ch(['--changelog-file=foo.changes', '--since=HEAD^']), 0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test-native.changes',
-                                   'packaging/gbp-test-native.spec'],
-                            '??': ['foo.changes']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test-native.changes',
+                                   b'packaging/gbp-test-native.spec'],
+                            '??': [b'foo.changes']})
 
     def test_option_spec_file(self):
         """Test the --spec-file cmdline option"""
@@ -140,7 +140,7 @@ class TestRpmCh(RpmRepoTestBase):
 
         eq_(mock_ch(['--spec-file=packaging/gbp-test2.spec', '--since=HEAD^']),
             0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test2.spec']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test2.spec']})
 
     def test_option_packaging_dir(self):
         """Test the --packaging-dir cmdline option"""
@@ -152,7 +152,7 @@ class TestRpmCh(RpmRepoTestBase):
         # Packaging dir should be taken from spec file if it is defined
         eq_(mock_ch(['--packaging-dir', 'foo', '--spec-file',
                      'packaging/gbp-test-native.spec']), 0)
-        eq_(repo.status(), {' M': ['packaging/gbp-test-native.changes']})
+        eq_(repo.status(), {' M': [b'packaging/gbp-test-native.changes']})
 
     def test_branch_options(self):
         """Test the --packaging-branch and --ignore-branch cmdline options"""
@@ -259,7 +259,7 @@ class TestRpmCh(RpmRepoTestBase):
         """Test the --editor-cmd and --spawn-editor cmdline options"""
         repo = self.init_test_repo('gbp-test-native')
         eq_(mock_ch(['--spawn-editor=release', '--editor-cmd=rm']), 0)
-        eq_(repo.status(), {' D': ['packaging/gbp-test-native.changes']})
+        eq_(repo.status(), {' D': [b'packaging/gbp-test-native.changes']})
 
         repo.force_head('HEAD', hard=True)
         ok_(repo.is_clean())
