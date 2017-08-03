@@ -117,7 +117,9 @@ class DebianSource(object):
 
     def upstream_tarball_name(self, compression, component=None):
         """
-        How an upstream tarball for this source package needs to be named
+        Possible upstream tarball name for this source package
+
+        Gives the name of the main tarball if component is None
         """
         if self.is_native():
             return None
@@ -125,3 +127,15 @@ class DebianSource(object):
                                          self.upstream_version,
                                          compression=compression,
                                          component=component)
+
+    def upstream_tarball_names(self, comp_type, components=None):
+        """
+        Possible upstream tarballs names for this source package
+
+        This includes component tarballs names.  with the given
+        component names
+        """
+        names = [self.upstream_tarball_name(comp_type)]
+        for component in (components or []):
+            names += [self.upstream_tarball_name(comp_type, c) for c in components]
+        return names

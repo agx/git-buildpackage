@@ -63,11 +63,7 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
                                         options.comp_type,
                                         source,
                                         options.tarball_dir)
-
-    orig_files = [source.upstream_tarball_name(options.comp_type)]
-    if options.components:
-        orig_files += [source.upstream_tarball_name(options.comp_type, c) for c in options.components]
-
+    orig_files = source.upstream_tarball_names(options.comp_type, options.components)
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
         gbp.log.debug("Looking for orig tarballs '%s' at '%s'" % (", ".join(orig_files), tarball_dir))
@@ -210,7 +206,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
 
 
 def guess_comp_type(repo, comp_type, source, tarball_dir):
-    """Guess compression type to use for to be built upstream tarball"""
+    """Guess compression type to use for the to be built upstream tarball"""
     if comp_type != 'auto':
         comp_type = Compressor.Aliases.get(comp_type, comp_type)
         if comp_type not in Compressor.Opts:

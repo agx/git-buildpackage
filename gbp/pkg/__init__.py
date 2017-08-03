@@ -100,9 +100,9 @@ archive_ext_aliases = {'tgz': ('tar', 'gzip'),
 
 def parse_archive_filename(filename):
     """
-    Given an filename return the basename (i.e. filename without the
-    archive and compression extensions), archive format and compression
-    method used.
+    Given a filename return the basename (filename without the
+    archive and compression extensions), archive format and
+    compression method used.
 
     @param filename: the name of the file
     @type filename: string
