@@ -38,6 +38,7 @@
     &man.gbp.config;
     &man.gbp.pull;
     &man.gbp.pristine.tar;
+    &man.gbp.exportorig;
     &man.gbp.pq;
     &man.gbp.create.remote.repo;
     &man.gbp.conf;

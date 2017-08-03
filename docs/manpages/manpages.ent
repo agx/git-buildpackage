@@ -4,6 +4,7 @@
 <!ENTITY man.gbp.buildpackage SYSTEM "gbp-buildpackage.sgml">
 <!ENTITY man.gbp.config SYSTEM "gbp-config.sgml">
 <!ENTITY man.gbp.dch SYSTEM "gbp-dch.sgml">
+<!ENTITY man.gbp.exportorig SYSTEM "gbp-export-orig.sgml">
 <!ENTITY man.gbp SYSTEM "gbp.sgml">
 <!ENTITY man.gbp.pristine.tar SYSTEM "gbp-pristine-tar.sgml">
 <!ENTITY man.gbp.pull SYSTEM "gbp-pull.sgml">

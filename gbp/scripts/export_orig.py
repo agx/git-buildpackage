@@ -18,12 +18,16 @@
 """Create orig tarballs from git"""
 
 import os
+import sys
 import gbp.deb as du
 from gbp.command_wrappers import CommandExecFailed
-from gbp.deb.git import GitRepositoryError
+from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
+from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
+from gbp.scripts.common import ExitCodes
 from gbp.pkg import Compressor, Archive
 
 
@@ -107,7 +111,7 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
                                                           component=component)
         return True
     except GitRepositoryError:
-        if options.pristine_tar_commit:
+        if hasattr(options, 'pristine_tar_commit') and options.pristine_tar_commit:
             gbp.log.debug("pristine-tar checkout failed, will commit tarball "
                           "due to '--pristine-tar-commit'")
         else:
@@ -219,3 +223,108 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
                     detected = comp
             comp_type = 'gzip' if detected is None else detected
     return comp_type
+
+
+def build_parser(name):
+    try:
+        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='')
+    except GbpError as err:
+        gbp.log.err(err)
+        return None
+
+    tag_group = GbpOptionGroup(parser,
+                               "tag options",
+                               "options related to git tag creation")
+    orig_group = GbpOptionGroup(parser,
+                                "orig tarball options",
+                                "options related to the creation of the orig tarball")
+    branch_group = GbpOptionGroup(parser,
+                                  "branch options",
+                                  "branch layout options")
+    for group in [tag_group, orig_group, branch_group]:
+        parser.add_option_group(group)
+
+    parser.add_option("--verbose", action="store_true", dest="verbose", default=False,
+                      help="verbose command execution")
+    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+    parser.add_config_file_option(option_name="color-scheme",
+                                  dest="color_scheme")
+    tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
+    orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    orig_group.add_config_file_option(option_name="force-create", dest="force_create",
+                                      help="force creation of orig tarball", action="store_true")
+    orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",
+                                      help="location to look for external tarballs")
+    orig_group.add_config_file_option(option_name="compression", dest="comp_type",
+                                      help="Compression type, default is '%(compression)s'")
+    orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
+                                      help="Compression level, default is '%(compression-level)s'")
+    orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
+                                      dest="components")
+    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
+    branch_group.add_boolean_config_file_option(option_name="submodules", dest="with_submodules")
+    return parser
+
+
+def parse_args(argv, prefix):
+    parser = build_parser(argv[0])
+    if not parser:
+        return None, None
+    options, args = parser.parse_args(argv[1:])
+
+    gbp.log.setup(options.color, options.verbose, options.color_scheme)
+    return options, args
+
+
+def main(argv):
+    retval = 0
+    source = None
+
+    options, args = parse_args(argv, '')
+
+    if args or not options:
+        return ExitCodes.parse_error
+
+    try:
+        repo = DebianGitRepository(os.path.curdir, toplevel=False)
+    except GitRepositoryError:
+        gbp.log.err("%s is not inside a git repository" % (os.path.abspath('.')))
+        return 1
+
+    try:
+        try:
+            source = DebianSource(repo.path)
+            source.is_native()
+        except Exception as e:
+            raise GbpError("Can't determine package type: %s" % e)
+
+        output_dir = options.tarball_dir or os.path.join(repo.path, '..')
+
+        if source.is_native():
+            gbp.log.info("Nothing to be done for native package")
+            return 0
+
+        prepare_upstream_tarballs(repo, source, options, output_dir,
+                                  output_dir)
+    except KeyboardInterrupt:
+        retval = 1
+        gbp.log.err("Interrupted. Aborting.")
+    except CommandExecFailed:
+        retval = 1
+    except (GbpError, GitRepositoryError) as err:
+        if str(err):
+            gbp.log.err(err)
+        retval = 1
+    except DebianSourceError as err:
+        gbp.log.err(err)
+        source = None
+        retval = 1
+
+    return retval
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
+
+# vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

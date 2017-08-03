@@ -11,6 +11,7 @@
   <!ENTITY gbp-import-dscs	"<command>gbp&nbsp;import-dscs</command>">
   <!ENTITY gbp-config		"<command>gbp&nbsp;config</command>">
   <!ENTITY gbp-dch		"<command>gbp&nbsp;dch</command>">
+  <!ENTITY gbp-export-orig	"<command>gbp&nbsp;export-orig</command>">
   <!ENTITY gbp		        "<command>gbp</command>">
   <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
   <!ENTITY gbp-clone		"<command>gbp&nbsp;clone</command>">

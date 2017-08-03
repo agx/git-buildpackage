@@ -7,6 +7,7 @@ MAN1S = \
         gbp-config        \
         gbp-create-remote-repo \
         gbp-dch           \
+        gbp-export-orig   \
         gbp-import-dsc    \
         gbp-import-dscs   \
         gbp-import-orig   \
