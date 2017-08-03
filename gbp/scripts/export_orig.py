@@ -27,34 +27,15 @@ import gbp.notifications
 from gbp.pkg import Compressor, Archive
 
 
-# upstream tarball preparation
-def git_archive(repo, source, output_dir, treeish, comp, with_submodules, component=None):
-    """create a compressed orig tarball in output_dir using git_archive"""
-    submodules = False
-    output = os.path.join(output_dir,
-                          source.upstream_tarball_name(comp.type, component=component))
-    prefix = "%s-%s" % (source.name, source.upstream_version)
-
-    try:
-        if repo.has_submodules() and with_submodules:
-            submodules = True
-            repo.update_submodules()
-        repo.archive_comp(treeish, output, prefix, comp, submodules=submodules)
-    except (GbpError, GitRepositoryError, CommandExecFailed) as e:
-        gbp.log.err("%s" % e)
-        return False
-    except Exception as e:
-        gbp.log.err("Error creating %s: %s" % (output, e))
-        return False
-    return True
-
-
 def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
     """
     Make sure we have the needed upstream tarballs. This involves
     looking in tarball_dir and symlinking them or building them from either
     pristine-tar or plain git.
     """
+    if hasattr(options, 'no_create_orig') and options.no_create_orig:
+        return
+
     if not source.is_native() and not source.upstream_version:
         raise GbpError("Non-native package '%s' "
                        "has invalid version '%s'" % (source.name, source.version))
@@ -64,6 +45,7 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
                                         source,
                                         options.tarball_dir)
     orig_files = source.upstream_tarball_names(options.comp_type, options.components)
+
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
         gbp.log.debug("Looking for orig tarballs '%s' at '%s'" % (", ".join(orig_files), tarball_dir))
@@ -73,18 +55,18 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
         else:
             msg = "All Orig tarballs '%s' found at '%s'" % (", ".join(orig_files), tarball_dir)
         gbp.log.info(msg)
-    # FIXME: trouble with "gbp buildpackage"
-    # if options.no_create_orig:
-    #     return
+
     # Create tarball if missing or forced
     if not du.DebianPkgPolicy.has_origs(orig_files, output_dir) or options.force_create:
-        if not pristine_tar_build_orig(repo, source, output_dir, options):
-            git_archive_build_orig(repo, source, output_dir, options)
-    pristine_tar_verify_orig(repo, source, options, output_dir, orig_files)
+        if not pristine_tar_build_origs(repo, source, output_dir, options):
+            git_archive_build_origs(repo, source, output_dir, options)
+    pristine_tar_verify_origs(repo, source, options, output_dir, orig_files)
 
 
 def pristine_tar_prepare_orig_tree(repo, source, options):
-    """Make sure the upstream tree exists
+    """
+    Make sure the upstream tree exists
+
     In case of component tarballs we need to recreate a tree for the
     main tarball without the component subdirs.
     """
@@ -99,41 +81,41 @@ def pristine_tar_prepare_orig_tree(repo, source, options):
                            "orig tarball via pristine-tar" % tree_name)
 
 
-def pristine_tar_build_orig(repo, source, output_dir, options):
+def pristine_tar_build_origs(repo, source, output_dir, options):
     """
     Build orig tarball using pristine-tar
 
     @returns: C{True} if tarball was build, C{False} otherwise
     """
-    if options.pristine_tar:
-        if not repo.has_branch(repo.pristine_tar_branch):
-            gbp.log.warn('Pristine-tar branch "%s" not found' %
-                         repo.pristine_tar.branch)
+    if not options.pristine_tar:
+        return False
 
-        pristine_tar_prepare_orig_tree(repo, source, options)
-        try:
-            repo.pristine_tar.checkout(source.name,
-                                       source.upstream_version,
-                                       options.comp_type,
-                                       output_dir)
-            for component in options.components:
-                repo.pristine_tar.checkout(source.name,
-                                           source.upstream_version,
-                                           options.comp_type,
-                                           output_dir,
-                                           component=component)
-            return True
-        except CommandExecFailed:
-            if options.pristine_tar_commit:
-                gbp.log.debug("pristine-tar checkout failed, "
-                              "will commit tarball due to "
-                              "'--pristine-tar-commit'")
-            else:
-                raise
+    if not repo.has_branch(repo.pristine_tar_branch):
+        gbp.log.warn('Pristine-tar branch "%s" not found' %
+                     repo.pristine_tar.branch)
+
+    comp = Compressor(options.comp_type)
+    pristine_tar_prepare_orig_tree(repo, source, options)
+    try:
+        repo.create_upstream_tarball_via_pristine_tar(source,
+                                                      output_dir,
+                                                      comp)
+        for component in options.components:
+            repo.create_upstream_tarball_via_pristine_tar(source,
+                                                          output_dir,
+                                                          comp,
+                                                          component=component)
+        return True
+    except GitRepositoryError:
+        if options.pristine_tar_commit:
+            gbp.log.debug("pristine-tar checkout failed, will commit tarball "
+                          "due to '--pristine-tar-commit'")
+        else:
+            raise
     return False
 
 
-def pristine_tar_verify_orig(repo, source, options, output_dir, orig_files):
+def pristine_tar_verify_origs(repo, source, options, output_dir, orig_files):
     """
     Verify orig tarballs using prstine tar
 
@@ -148,8 +130,12 @@ def pristine_tar_verify_orig(repo, source, options, output_dir, orig_files):
     return True
 
 
-def get_upstream_tree(repo, source, options):
-    """Determine the upstream tree from the given options"""
+def git_archive_get_upstream_tree(repo, source, options):
+    """
+    Determine the upstream tree from the given options
+
+    for a git archive export
+    """
     if options.upstream_tree.upper() == 'TAG':
         if source.upstream_version is None:
             raise GitRepositoryError("Can't determine upstream version from changelog")
@@ -169,7 +155,7 @@ def get_upstream_tree(repo, source, options):
     return upstream_tree
 
 
-def git_archive_build_orig(repo, source, output_dir, options):
+def git_archive_build_origs(repo, source, output_dir, options):
     """
     Build orig tarball(s) using git-archive
 
@@ -179,17 +165,14 @@ def git_archive_build_orig(repo, source, output_dir, options):
     @type output_dir: C{Str}
     @param options: the parsed options
     @type options: C{dict} of options
-    @return: the tree we built the tarball from
-    @rtype: C{str}
     """
     comp = Compressor(options.comp_type, options.comp_level)
-    upstream_tree = get_upstream_tree(repo, source, options)
+    upstream_tree = git_archive_get_upstream_tree(repo, source, options)
     gbp.log.info("Creating %s from '%s'" % (source.upstream_tarball_name(comp.type),
                                             upstream_tree))
     gbp.log.debug("Building upstream tarball with compression %s" % comp)
-    main_tree = repo.tree_drop_dirs(upstream_tree, options.components) if options.components else upstream_tree
-    if not git_archive(repo, source, output_dir, main_tree, comp, options.with_submodules):
-        raise GbpError("Cannot create upstream tarball at '%s'" % output_dir)
+    tree = repo.tree_drop_dirs(upstream_tree, options.components) if options.components else upstream_tree
+    repo.create_upstream_tarball_via_git_archive(source, output_dir, tree, comp, options.with_submodules)
     for component in options.components:
         subtree = repo.tree_get_dir(upstream_tree, component)
         if not subtree:
@@ -198,11 +181,8 @@ def git_archive_build_orig(repo, source, output_dir, options):
         gbp.log.info("Creating additional tarball '%s' from '%s'"
                      % (source.upstream_tarball_name(options.comp_type, component=component),
                         subtree))
-        if not git_archive(repo, source, output_dir, subtree, comp, options.with_submodules,
-                           component=component):
-            raise GbpError("Cannot create additional tarball %s at '%s'"
-                           % (component, output_dir))
-    return upstream_tree
+        repo.create_upstream_tarball_via_git_archive(source, output_dir, subtree, comp,
+                                                     options.with_submodules, component=component)
 
 
 def guess_comp_type(repo, comp_type, source, tarball_dir):

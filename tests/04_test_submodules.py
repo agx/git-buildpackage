@@ -14,11 +14,10 @@ import gbp.git
 import gbp.command_wrappers
 
 from gbp.deb.policy import DebianPkgPolicy as Policy
-from gbp.pkg.git import PkgGitRepository
+from gbp.deb.git import DebianGitRepository
 from gbp.pkg import Compressor
 
 from gbp.scripts import buildpackage
-from gbp.scripts import export_orig
 from tests.testutils import ls_zip
 
 REPO = None
@@ -45,7 +44,7 @@ def setup():
 
     TMPDIR = context.new_tmpdir(__name__)
     REPODIR = TMPDIR.join('test_repo')
-    REPO = PkgGitRepository.create(REPODIR)
+    REPO = DebianGitRepository.create(REPODIR)
 
     for name in SUBMODULE_NAMES:
         SUBMODULES.append(Submodule(name, str(TMPDIR)))
@@ -140,12 +139,12 @@ def test_create_tarballs():
     comp = Compressor('bzip2')
     # Tarball with submodules
     s = MockedSource('0.1')
-    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", comp,
-                                with_submodules=True))
+    ok_(REPO.create_upstream_tarball_via_git_archive(s, str(TMPDIR), "HEAD", comp,
+                                                     with_submodules=True))
     # Tarball without submodules
     s = MockedSource('0.2')
-    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", comp,
-                                with_submodules=False))
+    ok_(REPO.create_upstream_tarball_via_git_archive(s, str(TMPDIR), "HEAD", comp,
+                                                     with_submodules=False))
 
 
 def test_create_zip_archives():

@@ -16,7 +16,9 @@
 #    <http://www.gnu.org/licenses/>
 """A Git Repository that keeps a Debian Package"""
 
+import os
 import re
+
 from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
@@ -301,11 +303,55 @@ class DebianGitRepository(PkgGitRepository):
             for component, name in component_tarballs:
                 subtree = self.tree_get_dir(upstream_tree, component)
                 if not subtree:
-                    raise GitRepositoryError("No tree for '%s' found in '%s' to create pristine tar commit from" % (component, upstream_tree))
+                    raise GitRepositoryError("No tree for '%s' found in '%s' to create "
+                                             "pristine tar commit from" % (component, upstream_tree))
                 gbp.log.debug("Creating pristine tar commit '%s' from '%s'" % (component, subtree))
                 self.pristine_tar.commit(name, subtree, quiet=True)
             self.pristine_tar.commit(tarball, main_tree, quiet=True)
         except CommandExecFailed as e:
             raise GitRepositoryError(str(e))
+
+    def create_upstream_tarball_via_pristine_tar(self, source, output_dir, comp, component=None):
+        output = source.upstream_tarball_name(comp.type, component=component)
+        try:
+            self.pristine_tar.checkout(source.name, source.upstream_version, comp.type, output_dir,
+                                       component=component)
+        except Exception as e:
+            raise GitRepositoryError("Error creating %s: %s" % (output, e))
+        return True
+
+    def create_upstream_tarball_via_git_archive(self, source, output_dir, treeish,
+                                                comp, with_submodules, component=None):
+        """
+        Create a compressed orig tarball in output_dir using git archive
+
+        @param source: debian source package
+        @type source: L{DebianSource}
+        @param output_dir: output directory
+        @param type: C{str}
+        @param treeish: git treeish
+        @type treeish: C{str}
+        @param comp: compressor
+        @type comp: L{Compressor}
+        @param with_submodules: wether to add submodules
+        @type with_submodules: C{bool}
+        @param component: component to add to tarball name
+        @type component: C{str}
+
+        Raises GitRepositoryError in case of an error
+        """
+        submodules = False
+        output = os.path.join(output_dir,
+                              source.upstream_tarball_name(comp.type, component=component))
+        prefix = "%s-%s" % (source.name, source.upstream_version)
+
+        try:
+            if self.has_submodules() and with_submodules:
+                submodules = True
+                self.update_submodules()
+            self.archive_comp(treeish, output, prefix, comp, submodules=submodules)
+        except Exception as e:
+            raise GitRepositoryError("Error creating %s: %s" % (output, e))
+        return True
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

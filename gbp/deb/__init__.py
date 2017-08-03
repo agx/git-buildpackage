@@ -25,7 +25,7 @@ from gbp.git import GitRepositoryError
 
 # Make sure these are available with 'import gbp.deb'
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
-from gbp.deb.policy import DebianPkgPolicy
+from gbp.deb.policy import DebianPkgPolicy                # noqa: F401
 
 
 class DpkgCompareVersions(gbpc.Command):
