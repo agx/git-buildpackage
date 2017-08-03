@@ -315,7 +315,7 @@ class DebianGitRepository(PkgGitRepository):
         output = source.upstream_tarball_name(comp.type, component=component)
         try:
             self.pristine_tar.checkout(source.name, source.upstream_version, comp.type, output_dir,
-                                       component=component)
+                                       component=component, quiet=True)
         except Exception as e:
             raise GitRepositoryError("Error creating %s: %s" % (output, e))
         return True
