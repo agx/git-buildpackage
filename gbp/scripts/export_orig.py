@@ -64,10 +64,11 @@ def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_s
     return True
 
 
-def prepare_upstream_tarball(repo, source, options, tarball_dir, output_dir):
+def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
     """
-    Make sure we have an upstream tarball. This involves looking in
-    tarball_dir, symlinking or building it.
+    Make sure we have the needed upstream tarballs. This involves
+    looking in tarball_dir and symlinking them or building them from either
+    pristine-tar or plain git.
     """
     if not source.is_native() and not source.upstream_version:
         raise GbpError("Non-native package '%s' "
@@ -232,7 +233,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
 
 
 def guess_comp_type(repo, comp_type, source, tarball_dir):
-    """Guess compression type"""
+    """Guess compression type to use for to be built upstream tarball"""
     if comp_type != 'auto':
         comp_type = compressor_aliases.get(comp_type, comp_type)
         if comp_type not in compressor_opts:

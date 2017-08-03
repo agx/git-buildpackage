@@ -44,7 +44,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.hook import Hook
 
-from gbp.scripts.export_orig import prepare_upstream_tarball
+from gbp.scripts.export_orig import prepare_upstream_tarballs
 
 
 def pristine_tar_commit(repo, source, options, output_dir, orig_file, upstream_tree):
@@ -492,8 +492,8 @@ def main(argv):
                 if options.postexport:
                     gbp.log.info("Postexport hook set, delaying tarball creation")
                 else:
-                    prepare_upstream_tarball(repo, source, options, tarball_dir,
-                                             output_dir)
+                    prepare_upstream_tarballs(repo, source, options, tarball_dir,
+                                              output_dir)
 
             build_env, hook_env = setup_pbuilder(options, repo, source.is_native())
 
@@ -519,8 +519,8 @@ def main(argv):
 
                 # Delayed tarball creation in case a postexport hook is used:
                 if not source.is_native() and options.postexport:
-                    prepare_upstream_tarball(repo, source, options, tarball_dir,
-                                             output_dir)
+                    prepare_upstream_tarballs(repo, source, options, tarball_dir,
+                                              output_dir)
                 build_dir = export_dir
             else:
                 build_dir = repo.path
