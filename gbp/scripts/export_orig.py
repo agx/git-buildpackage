@@ -24,14 +24,13 @@ from gbp.deb.git import GitRepositoryError
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
-from gbp.scripts.common.buildpackage import (git_archive_submodules,
-                                             git_archive_single)
 from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
 
 
 # upstream tarball preparation
 def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_submodules, component=None):
-    "create a compressed orig tarball in output_dir using git_archive"
+    """create a compressed orig tarball in output_dir using git_archive"""
+    submodules = False
     try:
         comp_opts = compressor_opts[comp_type][0]
     except KeyError:
@@ -43,15 +42,13 @@ def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_s
 
     try:
         if repo.has_submodules() and with_submodules:
+            submodules = True
             repo.update_submodules()
-            git_archive_submodules(repo, treeish, output, prefix,
-                                   comp_type, comp_level, comp_opts)
 
-        else:
-            git_archive_single(treeish, output, prefix,
-                               comp_type, comp_level, comp_opts)
+        repo.archive_comp(treeish, output, prefix,
+                          comp_type, comp_level, comp_opts, submodules=submodules)
     except (GitRepositoryError, CommandExecFailed):
-        gbp.log.err("Error generating submodules' archives")
+        gbp.log.err("Error generating archives")
         return False
     except OSError as e:
         gbp.log.err("Error creating %s: %s" % (output, str(e)))

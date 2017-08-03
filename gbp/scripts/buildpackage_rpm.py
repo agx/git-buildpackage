@@ -36,9 +36,7 @@ from gbp.rpm.policy import RpmPkgPolicy
 from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.buildpackage import (index_name, wc_name,
-                                             git_archive_submodules,
-                                             git_archive_single, dump_tree,
-                                             write_wc, drop_index)
+                                             dump_tree, write_wc, drop_index)
 from gbp.scripts.pq_rpm import parse_spec
 
 
@@ -68,17 +66,15 @@ def git_archive(repo, spec, output_dir, treeish, prefix, comp_level,
     # Remove extra slashes from prefix, will be added by git_archive_x funcs
     prefix = prefix.strip('/')
     try:
+        submodules = False
         if repo.has_submodules(treeish) and with_submodules:
+            submodules = True
             repo.update_submodules()
-            git_archive_submodules(repo, treeish, output, prefix,
-                                   spec.orig_src['compression'],
-                                   comp_level, comp_opts,
-                                   spec.orig_src['archive_fmt'])
-
-        else:
-            git_archive_single(treeish, output, prefix,
-                               spec.orig_src['compression'], comp_level,
-                               comp_opts, spec.orig_src['archive_fmt'])
+        repo.archive_comp(treeish, output, prefix,
+                          spec.orig_src['compression'],
+                          comp_level, comp_opts,
+                          spec.orig_src['archive_fmt'],
+                          submodules=submodules)
     except (GitRepositoryError, CommandExecFailed) as e:
         gbp.log.err("Error generating submodules' archives: %s" % e)
         return False

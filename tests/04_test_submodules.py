@@ -14,11 +14,10 @@ import gbp.git
 import gbp.command_wrappers
 
 from gbp.deb.policy import DebianPkgPolicy as Policy
+from gbp.deb.git import DebianGitRepository
 
 from gbp.scripts import buildpackage
 from gbp.scripts import export_orig
-from gbp.scripts.common.buildpackage import (git_archive_submodules,
-                                             git_archive_single)
 from tests.testutils import ls_zip
 
 REPO = None
@@ -45,7 +44,7 @@ def setup():
 
     TMPDIR = context.new_tmpdir(__name__)
     REPODIR = TMPDIR.join('test_repo')
-    REPO = gbp.git.GitRepository.create(REPODIR)
+    REPO = DebianGitRepository.create(REPODIR)
 
     for name in SUBMODULE_NAMES:
         SUBMODULES.append(Submodule(name, str(TMPDIR)))
@@ -149,14 +148,14 @@ def test_create_tarballs():
 
 def test_create_zip_archives():
     """Create an upstream zip archive"""
-    git_archive_submodules(REPO, 'HEAD', 'with-submodules.zip', 'test',
-                           '', '', '', 'zip')
+    REPO.archive_comp('HEAD', 'with-submodules.zip', 'test',
+                      '', '', '', 'zip', submodules=True)
     # Check that submodules were included
     contents = ls_zip('with-submodules.zip')
     ok_('test/test_submodule/testfile' in contents)
 
-    git_archive_single('HEAD', 'without-submodules.zip', 'test',
-                       '', None, '', 'zip')
+    REPO.archive_comp('HEAD', 'without-submodules.zip', 'test',
+                      '', None, '', 'zip', submodules=False)
     contents = ls_zip('without-submodules.zip')
     ok_('test/test_submodule/testfile' not in contents)
 

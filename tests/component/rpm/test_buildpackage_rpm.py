@@ -534,7 +534,7 @@ class TestGbpRpm(RpmRepoTestBase):
             eq_(mock_gbp(['--git-builder=true']), 1)
         finally:
             os.chmod('../rpmbuild/SOURCES/gbp-test-native-1.0.zip', s_rwx)
-        self._check_log(-1, ".*Error creating ../rpmbuild/SOURCES/.*.zip")
+        self._check_log(-1, ".*Cannot create source tarball at '../rpmbuild/SOURCES'")
 
     def test_option_export(self):
         """Test the --git-export-option"""

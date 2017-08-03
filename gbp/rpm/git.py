@@ -18,12 +18,12 @@
 
 from gbp.format import format_str
 from gbp.errors import GbpError
-from gbp.git import GitRepository, GitRepositoryError  # noqa: F401
+from gbp.pkg.git import PkgGitRepository, GitRepositoryError  # noqa: F401
 from gbp.pkg.pristinetar import PristineTar
 from gbp.rpm import compose_version_str
 
 
-class RpmGitRepository(GitRepository):
+class RpmGitRepository(PkgGitRepository):
     """A git repository that holds the source of an RPM package"""
 
     def __init__(self, path):

@@ -18,15 +18,16 @@
 
 import re
 from gbp.command_wrappers import CommandExecFailed
-from gbp.git import GitRepository, GitRepositoryError
+from gbp.git import GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.format import format_str
 from gbp.paths import to_bin
+from gbp.pkg.git import PkgGitRepository
 
 import gbp.log
 
 
-class DebianGitRepository(GitRepository):
+class DebianGitRepository(PkgGitRepository):
     """A git repository that holds the source of a Debian package"""
 
     version_mangle_re = (r'%\(version'
