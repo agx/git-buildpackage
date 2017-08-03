@@ -81,16 +81,6 @@ def parse_changelog_repo(repo, branch, filename):
     return ChangeLog(repo.show(sha))
 
 
-def orig_file(source, compression, component=None):
-    """
-    The name of the orig file belonging to source package I{source}
-    """
-    return DebianPkgPolicy.build_tarball_name(source.name,
-                                              source.upstream_version,
-                                              compression=compression,
-                                              component=component)
-
-
 def get_arch():
     pipe = subprocess.Popen(["dpkg", "--print-architecture"], shell=False, stdout=subprocess.PIPE)
     arch = pipe.stdout.readline().strip()

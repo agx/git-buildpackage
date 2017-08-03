@@ -17,6 +17,7 @@
 """provides some debian source package related helpers"""
 
 import os
+from gbp.deb import DebianPkgPolicy as Policy
 from gbp.deb.format import DebianSourceFormat
 from gbp.deb.changelog import ChangeLog
 
@@ -113,3 +114,14 @@ class DebianSource(object):
     @property
     def debian_version(self):
         return self.changelog.debian_version
+
+    def upstream_tarball_name(self, compression, component=None):
+        """
+        How an upstream tarball for this source package needs to be named
+        """
+        if self.is_native():
+            return None
+        return Policy.build_tarball_name(self.name,
+                                         self.upstream_version,
+                                         compression=compression,
+                                         component=component)

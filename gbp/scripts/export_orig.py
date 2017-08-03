@@ -37,7 +37,8 @@ def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_s
     except KeyError:
         raise GbpError("Unsupported compression type '%s'" % comp_type)
 
-    output = os.path.join(output_dir, du.orig_file(source, comp_type, component=component))
+    output = os.path.join(output_dir,
+                          source.upstream_tarball_name(comp_type, component=component))
     prefix = "%s-%s" % (source.name, source.upstream_version)
 
     try:
@@ -77,9 +78,9 @@ def prepare_upstream_tarball(repo, source, options, tarball_dir, output_dir):
                                         source,
                                         options.tarball_dir)
 
-    orig_files = [du.orig_file(source, options.comp_type)]
+    orig_files = [source.upstream_tarball_name(options.comp_type)]
     if options.components:
-        orig_files += [du.orig_file(source, options.comp_type, c) for c in options.components]
+        orig_files += [source.upstream_tarball_name(options.comp_type, c) for c in options.components]
 
     # look in tarball_dir first, if found force a symlink to it
     if options.tarball_dir:
@@ -200,8 +201,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
     @rtype: C{str}
     """
     upstream_tree = get_upstream_tree(repo, source, options)
-    gbp.log.info("Creating %s from '%s'" % (du.orig_file(source,
-                                                         options.comp_type),
+    gbp.log.info("Creating %s from '%s'" % (source.upstream_tarball_name(options.comp_type),
                                             upstream_tree))
     comp_level = int(options.comp_level) if options.comp_level != '' else None
     gbp.log.debug("Building upstream tarball with compression '%s'%s" %
@@ -219,7 +219,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
             raise GbpError("No tree for '%s' found in '%s' to create additional tarball from"
                            % (component, upstream_tree))
         gbp.log.info("Creating additional tarball '%s' from '%s'"
-                     % (du.orig_file(source, options.comp_type, component=component),
+                     % (source.upstream_tarball_name(options.comp_type, component=component),
                         subtree))
         if not git_archive(repo, source, output_dir, subtree,
                            options.comp_type,

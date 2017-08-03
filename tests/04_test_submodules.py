@@ -13,6 +13,8 @@ import gbp.log
 import gbp.git
 import gbp.command_wrappers
 
+from gbp.deb.policy import DebianPkgPolicy as Policy
+
 from gbp.scripts import buildpackage
 from gbp.scripts import export_orig
 from gbp.scripts.common.buildpackage import (git_archive_submodules,
@@ -125,16 +127,22 @@ def test_dump_tree():
 
 def test_create_tarballs():
     """Create an upstream tarball"""
-    class source:
+    class MockedSource:
         def __init__(self, version):
             self.name = 'test'
             self.upstream_version = version
+
+        def upstream_tarball_name(self, compression, component=None):
+            return Policy.build_tarball_name(self.name,
+                                             self.upstream_version,
+                                             compression=compression)
+
     # Tarball with submodules
-    s = source('0.1')
+    s = MockedSource('0.1')
     ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
                                 9, True))
     # Tarball without submodules
-    s = source('0.2')
+    s = MockedSource('0.2')
     ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
                                 9, False))
 
