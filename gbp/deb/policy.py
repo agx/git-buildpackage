@@ -23,7 +23,8 @@ like allowed characters in version numbers, etc.
 import os
 import re
 
-from gbp.pkg import PkgPolicy, Compressor
+from gbp.pkg.pkgpolicy import PkgPolicy
+from gbp.pkg.compressor import Compressor
 
 
 class DebianPkgPolicy(PkgPolicy):

@@ -18,7 +18,7 @@
 
 import re
 
-from gbp.pkg import PkgPolicy, parse_archive_filename
+from gbp.pkg import PkgPolicy, Archive
 from gbp.scripts.common.pq import parse_gbp_commands
 
 
@@ -68,7 +68,7 @@ class RpmPkgPolicy(PkgPolicy):
         >>> RpmPkgPolicy.is_valid_orig_archive("foo.gz")
         False
         """
-        _base, arch_fmt, _compression = parse_archive_filename(filename)
+        _base, arch_fmt, _compression = Archive.parse_filename(filename)
         if arch_fmt:
             return True
         return False

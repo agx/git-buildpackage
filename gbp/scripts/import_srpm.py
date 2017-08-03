@@ -39,7 +39,7 @@ from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes, is_download
 from gbp.scripts.common import repo_setup
 import gbp.log
-from gbp.pkg import parse_archive_filename
+from gbp.pkg import Archive
 
 no_packaging_branch_msg = """
 Repository does not have branch '%s' for packaging/distribution sources.
@@ -400,7 +400,7 @@ def main(argv):
 
                 if not options.native:
                     if options.pristine_tar:
-                        archive_fmt = parse_archive_filename(orig_tarball)[1]
+                        archive_fmt = Archive.parse_filename(orig_tarball)[1]
                         if archive_fmt == 'tar':
                             repo.pristine_tar.commit(orig_tarball,
                                                      'refs/heads/%s' %

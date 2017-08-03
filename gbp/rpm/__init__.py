@@ -30,7 +30,7 @@ from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
 from gbp.patch_series import (PatchSeries, Patch)
 import gbp.log
-from gbp.pkg import (UpstreamSource, parse_archive_filename)
+from gbp.pkg import (UpstreamSource, Archive)
 from gbp.rpm.policy import RpmPkgPolicy
 from gbp.rpm.linkedlist import LinkedList
 from gbp.rpm.lib_rpm import librpm, get_librpm_log
@@ -788,7 +788,7 @@ class SpecFile(object):
             src = {'num': num, 'filename': os.path.basename(filename),
                    'uri': filename}
             src['filename_base'], src['archive_fmt'], src['compression'] = \
-                parse_archive_filename(os.path.basename(filename))
+                Archive.parse_filename(os.path.basename(filename))
             if (src['filename_base'].startswith(self.name) and
                     src['archive_fmt']):
                 # Take the first archive that starts with pkg name

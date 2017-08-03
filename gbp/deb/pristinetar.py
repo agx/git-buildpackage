@@ -16,7 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 """Handle checkin and checkout of archives from the pristine-tar branch"""
 
-from gbp.pkg import Compressor
+from gbp.pkg.compressor import Compressor
 from gbp.pkg.pristinetar import PristineTar
 from gbp.deb import DebianPkgPolicy
 

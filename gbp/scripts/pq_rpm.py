@@ -33,7 +33,7 @@ from gbp.git.modifier import GitModifier
 from gbp.command_wrappers import GitCommand, CommandExecFailed
 from gbp.errors import GbpError
 from gbp.patch_series import PatchSeries, Patch
-from gbp.pkg import parse_archive_filename
+from gbp.pkg import Archive
 from gbp.rpm import (SpecFile, NoSpecError, guess_spec, guess_spec_repo,
                      spec_from_repo)
 from gbp.scripts.common import ExitCodes
@@ -227,7 +227,7 @@ def safe_patches(queue):
         gbp.log.debug("Saving patches '%s' in '%s'" %
                       (os.path.dirname(queue[0].path), tmpdir))
     for patch in queue:
-        base, _archive_fmt, comp = parse_archive_filename(patch.path)
+        base, _archive_fmt, comp = Archive.parse_filename(patch.path)
         uncompressors = {'gzip': gzip.open, 'bzip2': bz2.BZ2File}
         if comp in uncompressors:
             gbp.log.debug("Uncompressing '%s'" % os.path.basename(patch.path))

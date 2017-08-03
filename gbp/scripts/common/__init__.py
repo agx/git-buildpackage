@@ -20,7 +20,7 @@ import re
 import os
 from gbp.errors import GbpError
 from gbp.deb import DebianPkgPolicy
-from gbp.pkg import parse_archive_filename
+from gbp.pkg import Archive
 
 
 class ExitCodes(object):
@@ -50,7 +50,7 @@ def get_component_tarballs(name, version, tarball, components):
     tarball.
     """
     tarballs = []
-    (_, _, comp_type) = parse_archive_filename(tarball)
+    (_, _, comp_type) = Archive.parse_filename(tarball)
     for component in components:
         cname = DebianPkgPolicy.build_tarball_name(name,
                                                    version,

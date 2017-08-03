@@ -24,7 +24,7 @@ from gbp.deb.git import GitRepositoryError
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
-from gbp.pkg import Compressor, parse_archive_filename
+from gbp.pkg import Compressor, Archive
 
 
 # upstream tarball preparation
@@ -223,7 +223,7 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
             else:
                 commit = repo.pristine_tar_branch
             tarball = repo.get_commit_info(commit)['subject']
-            (base_name, archive_fmt, comp_type) = parse_archive_filename(tarball)
+            (base_name, archive_fmt, comp_type) = Archive.parse_filename(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:
                 comp_type = 'gzip'
