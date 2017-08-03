@@ -6,7 +6,7 @@ from . import context  # noqa: 401
 from . import testutils
 
 import gbp.errors
-import gbp.scripts.buildpackage as buildpackage
+import gbp.scripts.export_orig as export_orig
 
 
 class MockOptions(object):
@@ -29,7 +29,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.repo.create_branch('upstream')
         options = MockOptions(upstream_tree='BRANCH',
                               upstream_branch='upstream')
-        t = buildpackage.get_upstream_tree(self.repo, None, options)
+        t = export_orig.get_upstream_tree(self.repo, None, options)
         self.assertEqual(t, 'upstream')
 
     def test_invalid_upstream_branch(self):
@@ -38,7 +38,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         options = MockOptions(upstream_tree='BRANCH',
                               upstream_branch='upstream')
         self.assertRaises(gbp.errors.GbpError,
-                          buildpackage.get_upstream_tree,
+                          export_orig.get_upstream_tree,
                           self.repo,
                           None,
                           options)
@@ -48,7 +48,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.add_file('foo')
         tree = self.repo.rev_parse('master')
         options = MockOptions(upstream_tree=tree)
-        t = buildpackage.get_upstream_tree(self.repo, None, options)
+        t = export_orig.get_upstream_tree(self.repo, None, options)
         self.assertEqual(t, tree)
 
     def test_invalid_tree(self):
@@ -56,7 +56,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.add_file('foo')
         options = MockOptions(upstream_tree='doesnotexist')
         self.assertRaises(gbp.errors.GbpError,
-                          buildpackage.get_upstream_tree,
+                          export_orig.get_upstream_tree,
                           self.repo,
                           None,
                           options)
@@ -68,7 +68,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.repo.create_tag('upstream/1.0_rc3')
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
-        tag = buildpackage.get_upstream_tree(self.repo, self.source, options)
+        tag = export_orig.get_upstream_tree(self.repo, self.source, options)
         self.assertEqual(tag, "upstream/1.0_rc3")
 
     def test_invalid_tag(self):
@@ -77,7 +77,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
         self.assertRaises(gbp.errors.GbpError,
-                          buildpackage.get_upstream_tree,
+                          export_orig.get_upstream_tree,
                           self.repo,
                           self.source,
                           options)

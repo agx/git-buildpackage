@@ -14,6 +14,7 @@ import gbp.git
 import gbp.command_wrappers
 
 from gbp.scripts import buildpackage
+from gbp.scripts import export_orig
 from gbp.scripts.common.buildpackage import (git_archive_submodules,
                                              git_archive_single)
 from tests.testutils import ls_zip
@@ -130,12 +131,12 @@ def test_create_tarballs():
             self.upstream_version = version
     # Tarball with submodules
     s = source('0.1')
-    ok_(buildpackage.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
-                                 9, True))
+    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
+                                9, True))
     # Tarball without submodules
     s = source('0.2')
-    ok_(buildpackage.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
-                                 9, False))
+    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
+                                9, False))
 
 
 def test_create_zip_archives():
