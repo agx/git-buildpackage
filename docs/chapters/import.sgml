@@ -75,7 +75,10 @@ by version number.
       the <option>--upstream-branch</option> and
       <option>--debian-branch</option> options.
     </para>
-    <para>If you are using <filename>debian/watch</filename> to keep track of how to retrieve upstream sources, you can also simply use the <option>--uscan</option> option:
+    <para>If you are using <filename>debian/watch</filename> to keep
+    track of how to retrieve upstream sources, you can simply use
+    the <option>--uscan</option> option to download and import the
+    latest upstream version:
 <programlisting>
   &gbp-import-orig; --uscan
 </programlisting>
@@ -315,10 +318,16 @@ upstream-tag = v%(version%.%_)s
 	  </warning>
 	</para>
 
-	<para>If you're using &pristine-tar;, you can make &gbp-buildpackage; commit the generated tarball back to the
-	  pristine-tar branch by using the <option>--git-pristine-tar-commit</option> option. This will make sure
-	  others building your package can exactly regenerate the
-	  tarball you created when building the &debian; package.
+	<para>If you're using &pristine-tar; you can make
+	  &gbp-buildpackage; commit the generated tarball back to the
+	  pristine-tar branch using
+	  the <option>--git-pristine-tar-commit</option> option or you
+	  can use &gbp-pristine-tar; after you've created the
+	  tarballs.
+
+	  This will make sure others building your package can exactly
+	  regenerate the tarball you created when building the
+	  &debian; package.
 	</para>
 
         <sect3>
