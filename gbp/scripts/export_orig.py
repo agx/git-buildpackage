@@ -240,20 +240,7 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
             comp_type = 'auto'
 
     if comp_type == 'auto':
-        if not repo.has_pristine_tar_branch():
-            if not tarball_dir:
-                tarball_dir = '..'
-            detected = None
-            for comp in compressor_opts.keys():
-                if du.DebianPkgPolicy.has_orig(du.orig_file(source, comp), tarball_dir):
-                    if detected is not None:
-                        raise GbpError("Multiple orig tarballs found.")
-                    detected = comp
-            if detected is not None:
-                comp_type = detected
-            else:
-                comp_type = 'gzip'
-        else:
+        if repo.has_pristine_tar_branch():
             regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (source.name, source.upstream_version)
             commits = repo.grep_log(regex, repo.pristine_tar_branch)
             if commits:
@@ -267,4 +254,14 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
             if not comp_type:
                 comp_type = 'gzip'
                 gbp.log.warn("Unknown compression type of %s, assuming %s" % (tarball, comp_type))
+        else:
+            if not tarball_dir:
+                tarball_dir = '..'
+            detected = None
+            for comp in compressor_opts.keys():
+                if du.DebianPkgPolicy.has_orig(source.upstream_tarball_name(comp), tarball_dir):
+                    if detected is not None:
+                        raise GbpError("Multiple orig tarballs found.")
+                    detected = comp
+            comp_type = 'gzip' if detected is None else detected
     return comp_type
