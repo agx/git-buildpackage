@@ -1867,7 +1867,7 @@ class GitRepository(object):
                 treeish]
         out, err, ret = self._git_inout('archive', args, cwd=cwd, capture_stderr=True)
         if ret:
-            raise GitRepositoryError("Unable to archive %s: %s" % (treeish, err.strip()))
+            raise GitRepositoryError("Unable to archive %s: %s" % (treeish, err.decode().strip()))
 
     def collect_garbage(self, auto=False, prune=False, aggressive=False):
         """
