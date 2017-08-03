@@ -52,18 +52,17 @@ class PkgGitRepository(GitRepository):
             return prefix.strip('/') + '/'
         return '/'
 
-    def archive_comp(self, treeish, output, prefix, comp_type, comp_level,
-                     comp_opts, format='tar', submodules=False):
+    def archive_comp(self, treeish, output, prefix, comp, format='tar', submodules=False):
         """Create a compressed source tree archive with the given options"""
-        if submodules:
-            return self._archive_comp_submodules(treeish, output, prefix, comp_type, comp_level,
-                                                 comp_opts, format)
-        else:
-            return self._archive_comp_single(treeish, output, prefix, comp_type, comp_level,
-                                             comp_opts, format)
+        if comp and not comp.is_known():
+            raise GitRepositoryError("Unsupported compression type '%s'" % comp.type)
 
-    def _archive_comp_submodules(self, treeish, output, prefix, comp_type, comp_level,
-                                 comp_opts, format='tar'):
+        if submodules:
+            return self._archive_comp_submodules(treeish, output, prefix, comp, format)
+        else:
+            return self._archive_comp_single(treeish, output, prefix, comp, format)
+
+    def _archive_comp_submodules(self, treeish, output, prefix, comp, format='tar'):
         """
         Create a compressed source tree archive with submodules.
 
@@ -94,16 +93,10 @@ class PkgGitRepository(GitRepository):
                     CatenateZipArchive(main_archive)(submodule_archive)
 
             # compress the output
-            if comp_type:
+            if comp and comp.type:
                 # Redirect through stdout directly to the correct output file in
                 # order to avoid determining the output filename of the compressor
-                try:
-                    comp_level_opt = '-%d' % comp_level if comp_level is not None else ''
-                except TypeError:
-                    raise GitRepositoryError("Invalid compression level '%s'" % comp_level)
-                ret = os.system("%s --stdout %s %s %s > %s" %
-                                (comp_type, comp_level_opt, comp_opts, main_archive,
-                                 output))
+                ret = os.system("%s %s > %s" % (comp.cmdline(), main_archive, output))
                 if ret:
                     raise GitRepositoryError("Error creating %s: %d" % (output, ret))
             else:
@@ -111,8 +104,7 @@ class PkgGitRepository(GitRepository):
         finally:
             shutil.rmtree(tempdir)
 
-    def _archive_comp_single(self, treeish, output, prefix, comp_type, comp_level,
-                             comp_opts, format='tar'):
+    def _archive_comp_single(self, treeish, output, prefix, comp, format='tar'):
         """
         Create a compressed source tree archive without submodules
 
@@ -121,12 +113,8 @@ class PkgGitRepository(GitRepository):
         prefix = self.sanitize_prefix(prefix)
         pipe = pipes.Template()
         pipe.prepend("git archive --format=%s --prefix=%s %s" % (format, prefix, treeish), '.-')
-        try:
-            comp_level_opt = '-%d' % comp_level if comp_level is not None else ''
-        except TypeError:
-            raise GitRepositoryError("Invalid compression level '%s'" % comp_level)
-        if comp_type:
-            pipe.append('%s -c %s %s' % (comp_type, comp_level_opt, comp_opts), '--')
+        if comp and comp.type:
+            pipe.append(comp.cmdline(), '--')
         ret = pipe.copy('', output)
         if ret:
             raise GitRepositoryError("Error creating %s: %d" % (output, ret))

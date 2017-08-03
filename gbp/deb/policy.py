@@ -23,7 +23,7 @@ like allowed characters in version numbers, etc.
 import os
 import re
 
-from gbp.pkg import (PkgPolicy, compressor_opts)
+from gbp.pkg import PkgPolicy, Compressor
 
 
 class DebianPkgPolicy(PkgPolicy):
@@ -85,7 +85,7 @@ class DebianPkgPolicy(PkgPolicy):
         @return: the tarballs name corresponding to the input parameters
         @rtype: C{str}
         """
-        ext = compressor_opts[compression][1]
+        ext = Compressor.Exts[compression]
         sub = '-{0}'.format(component) if component else ''
         tarball = "%s_%s.orig%s.tar.%s" % (name, version, sub, ext)
         if dir:

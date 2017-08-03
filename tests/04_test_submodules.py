@@ -14,7 +14,8 @@ import gbp.git
 import gbp.command_wrappers
 
 from gbp.deb.policy import DebianPkgPolicy as Policy
-from gbp.deb.git import DebianGitRepository
+from gbp.pkg.git import PkgGitRepository
+from gbp.pkg import Compressor
 
 from gbp.scripts import buildpackage
 from gbp.scripts import export_orig
@@ -44,7 +45,7 @@ def setup():
 
     TMPDIR = context.new_tmpdir(__name__)
     REPODIR = TMPDIR.join('test_repo')
-    REPO = DebianGitRepository.create(REPODIR)
+    REPO = PkgGitRepository.create(REPODIR)
 
     for name in SUBMODULE_NAMES:
         SUBMODULES.append(Submodule(name, str(TMPDIR)))
@@ -136,26 +137,27 @@ def test_create_tarballs():
                                              self.upstream_version,
                                              compression=compression)
 
+    comp = Compressor('bzip2')
     # Tarball with submodules
     s = MockedSource('0.1')
-    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
-                                9, True))
+    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", comp,
+                                with_submodules=True))
     # Tarball without submodules
     s = MockedSource('0.2')
-    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", "bzip2",
-                                9, False))
+    ok_(export_orig.git_archive(REPO, s, str(TMPDIR), "HEAD", comp,
+                                with_submodules=False))
 
 
 def test_create_zip_archives():
     """Create an upstream zip archive"""
     REPO.archive_comp('HEAD', 'with-submodules.zip', 'test',
-                      '', '', '', 'zip', submodules=True)
+                      None, format='zip', submodules=True)
     # Check that submodules were included
     contents = ls_zip('with-submodules.zip')
     ok_('test/test_submodule/testfile' in contents)
 
     REPO.archive_comp('HEAD', 'without-submodules.zip', 'test',
-                      '', None, '', 'zip', submodules=False)
+                      None, format='zip', submodules=False)
     contents = ls_zip('without-submodules.zip')
     ok_('test/test_submodule/testfile' not in contents)
 

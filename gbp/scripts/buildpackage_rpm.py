@@ -30,7 +30,7 @@ from gbp.command_wrappers import Command, RunAtCommand, CommandExecFailed
 from gbp.config import GbpOptionParserRpm, GbpOptionGroup
 from gbp.errors import GbpError
 from gbp.format import format_str
-from gbp.pkg import compressor_opts
+from gbp.pkg import Compressor
 from gbp.rpm.git import GitRepositoryError, RpmGitRepository
 from gbp.rpm.policy import RpmPkgPolicy
 from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile
@@ -54,13 +54,8 @@ def makedir(path):
     return path
 
 
-def git_archive(repo, spec, output_dir, treeish, prefix, comp_level,
-                with_submodules):
+def git_archive(repo, spec, output_dir, treeish, prefix, comp, with_submodules):
     "Create a compressed orig tarball in output_dir using git_archive"
-    comp_opts = ''
-    if spec.orig_src['compression']:
-        comp_opts = compressor_opts[spec.orig_src['compression']][0]
-
     output = os.path.join(output_dir, spec.orig_src['filename'])
 
     # Remove extra slashes from prefix, will be added by git_archive_x funcs
@@ -70,10 +65,8 @@ def git_archive(repo, spec, output_dir, treeish, prefix, comp_level,
         if repo.has_submodules(treeish) and with_submodules:
             submodules = True
             repo.update_submodules()
-        repo.archive_comp(treeish, output, prefix,
-                          spec.orig_src['compression'],
-                          comp_level, comp_opts,
-                          spec.orig_src['archive_fmt'],
+        repo.archive_comp(treeish, output, prefix, comp,
+                          format=spec.orig_src['archive_fmt'],
                           submodules=submodules)
     except (GitRepositoryError, CommandExecFailed) as e:
         gbp.log.err("Error generating submodules' archives: %s" % e)
@@ -197,20 +190,18 @@ def git_archive_build_orig(repo, spec, output_dir, options):
     @return: the tree we built the tarball from
     @rtype: C{str}
     """
+    comp = None
     try:
         orig_prefix = spec.orig_src['prefix']
         upstream_tree = get_upstream_tree(repo, spec.upstreamversion, options)
         gbp.log.info("%s does not exist, creating from '%s'" %
                      (spec.orig_src['filename'], upstream_tree))
         if spec.orig_src['compression']:
-            comp_level = int(options.comp_level) if options.comp_level != '' else None
-            comp_level_msg = "' -%s'" % comp_level if comp_level is not None else ''
-            gbp.log.debug("Building upstream source archive with compression "
-                          "'%s -%s'" % (spec.orig_src['compression'],
-                                        comp_level_msg))
+            comp = Compressor(spec.orig_src['compression'],
+                              options.comp_level)
+            gbp.log.debug("Building upstream tarball with compression %s" % comp)
         if not git_archive(repo, spec, output_dir, upstream_tree,
-                           orig_prefix, comp_level,
-                           options.with_submodules):
+                           orig_prefix, comp, options.with_submodules):
             raise GbpError("Cannot create upstream tarball at '%s'" %
                            output_dir)
     except (GitRepositoryError, GbpError) as err:
@@ -544,16 +535,15 @@ def main(argv):
                     # Just build source archive from the exported tree
                     gbp.log.info("Creating (native) source archive %s from '%s'"
                                  % (spec.orig_src['filename'], tree))
-                    comp_level = int(options.comp_level) if options.comp_level != '' else None
+                    comp = None
                     if spec.orig_src['compression']:
-                        comp_level_msg = "' -%s'" % comp_level if comp_level is not None else ''
+                        comp = Compressor(spec.orig_src['compression'],
+                                          options.comp_level)
                         gbp.log.debug("Building source archive with "
-                                      "compression '%s%s'" %
-                                      (spec.orig_src['compression'],
-                                       comp_level_msg))
+                                      "compression '%s" % comp)
                     orig_prefix = spec.orig_src['prefix']
                     if not git_archive(repo, spec, source_dir, tree,
-                                       orig_prefix, comp_level,
+                                       orig_prefix, comp,
                                        options.with_submodules):
                         raise GbpError("Cannot create source tarball at '%s'" %
                                        source_dir)

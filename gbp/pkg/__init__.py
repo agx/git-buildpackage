@@ -26,15 +26,66 @@ import six
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 
-# compression types, extra options and extensions
-compressor_opts = {'gzip': ['-n', 'gz'],
-                   'bzip2': ['', 'bz2'],
-                   'lzma': ['', 'lzma'],
-                   'xz': ['', 'xz']}
 
-# Map frequently used names of compression types to the internal ones:
-compressor_aliases = {'bz2': 'bzip2',
-                      'gz': 'gzip', }
+# compression types, extra options and extensions
+class Compressor(object):
+    # Map frequently used names of compression types to the internal ones:
+    Aliases = {'bz2': 'bzip2',
+               'gz': 'gzip', }
+
+    Opts = {'gzip': '-n',
+            'bzip2': '',
+            'lzma': '',
+            'xz': ''}
+
+    Exts = {'gzip': 'gz',
+            'bzip2': 'bz2',
+            'lzma': 'lzma',
+            'xz': 'xz'}
+
+    def __init__(self, type_, level=None):
+        self._type = type_
+        self._level = int(level) if level not in [None, ''] else None
+
+    def is_known(self):
+        return self.type in self.Opts.keys()
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def level(self):
+        return self._level
+
+    @property
+    def _level_opt(self):
+        return '-%d' % self.level if self.level is not None else ''
+
+    @property
+    def _more_opts(self):
+        return self.Opts.get(self._type, '')
+
+    def cmdline(self, stdout=True):
+        """
+        >>> Compressor('gzip', level=9).cmdline()
+        'gzip -9 -n -c'
+        >>> Compressor('gzip').cmdline(True)
+        'gzip  -n -c'
+        """
+        return "%s %s %s %s" % (self.type, self._level_opt, self._more_opts,
+                                "-c" if stdout else '')
+
+    def __repr__(self):
+        """
+        >>> Compressor('gzip').__repr__()
+        "<compressor type='gzip' >"
+        >>> Compressor('gzip', 9).__repr__()
+        "<compressor type='gzip' level=9>"
+        """
+        level_str = "level=%s" % self.level if self.level is not None else ''
+        return "<compressor type='%s' %s>" % (self.type, level_str)
+
 
 # Supported archive formats
 archive_formats = ['tar', 'zip']
@@ -44,6 +95,7 @@ archive_ext_aliases = {'tgz': ('tar', 'gzip'),
                        'tbz2': ('tar', 'bzip2'),
                        'tlz': ('tar', 'lzma'),
                        'txz': ('tar', 'xz')}
+
 
 
 def parse_archive_filename(filename):
@@ -86,8 +138,8 @@ def parse_archive_filename(filename):
             base_name = ".".join(split[:-1])
             (archive_fmt, compression) = (split[-1], None)
         else:
-            for (c, o) in six.iteritems(compressor_opts):
-                if o[1] == split[-1]:
+            for (c, ext) in six.iteritems(Compressor.Exts):
+                if ext == split[-1]:
                     base_name = ".".join(split[:-1])
                     compression = c
                     if len(split) > 2 and split[-2] in archive_formats:
@@ -283,8 +335,8 @@ class UpstreamSource(object):
             if parts[-1] == 'tgz':
                 self._orig = True
             elif parts[-2] == 'tar':
-                if (parts[-1] in compressor_opts or
-                        parts[-1] in compressor_aliases):
+                if (parts[-1] in Compressor.Opts or
+                        parts[-1] in Compressor.Aliases):
                     self._orig = True
         except IndexError:
             self._orig = False
@@ -402,7 +454,7 @@ class UpstreamSource(object):
 
     @staticmethod
     def known_compressions():
-        return [args[1][-1] for args in compressor_opts.items()]
+        return Compressor.Exts.values()
 
     def guess_version(self, extra_regex=r''):
         return self._pkg_policy.guess_upstream_src_version(self.path,

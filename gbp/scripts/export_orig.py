@@ -24,39 +24,27 @@ from gbp.deb.git import GitRepositoryError
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
-from gbp.pkg import compressor_opts, compressor_aliases, parse_archive_filename
+from gbp.pkg import Compressor, parse_archive_filename
 
 
 # upstream tarball preparation
-def git_archive(repo, source, output_dir, treeish, comp_type, comp_level, with_submodules, component=None):
+def git_archive(repo, source, output_dir, treeish, comp, with_submodules, component=None):
     """create a compressed orig tarball in output_dir using git_archive"""
     submodules = False
-    try:
-        comp_opts = compressor_opts[comp_type][0]
-    except KeyError:
-        raise GbpError("Unsupported compression type '%s'" % comp_type)
-
     output = os.path.join(output_dir,
-                          source.upstream_tarball_name(comp_type, component=component))
+                          source.upstream_tarball_name(comp.type, component=component))
     prefix = "%s-%s" % (source.name, source.upstream_version)
 
     try:
         if repo.has_submodules() and with_submodules:
             submodules = True
             repo.update_submodules()
-
-        repo.archive_comp(treeish, output, prefix,
-                          comp_type, comp_level, comp_opts, submodules=submodules)
-    except (GitRepositoryError, CommandExecFailed):
-        gbp.log.err("Error generating archives")
+        repo.archive_comp(treeish, output, prefix, comp, submodules=submodules)
+    except (GbpError, GitRepositoryError, CommandExecFailed) as e:
+        gbp.log.err("%s" % e)
         return False
-    except OSError as e:
-        gbp.log.err("Error creating %s: %s" % (output, str(e)))
-        return False
-    except GbpError:
-        raise
     except Exception as e:
-        gbp.log.err("Error creating %s: %s" % (output, str(e)))
+        gbp.log.err("Error creating %s: %s" % (output, e))
         return False
     return True
 
@@ -198,18 +186,13 @@ def git_archive_build_orig(repo, source, output_dir, options):
     @return: the tree we built the tarball from
     @rtype: C{str}
     """
+    comp = Compressor(options.comp_type, options.comp_level)
     upstream_tree = get_upstream_tree(repo, source, options)
-    gbp.log.info("Creating %s from '%s'" % (source.upstream_tarball_name(options.comp_type),
+    gbp.log.info("Creating %s from '%s'" % (source.upstream_tarball_name(comp.type),
                                             upstream_tree))
-    comp_level = int(options.comp_level) if options.comp_level != '' else None
-    gbp.log.debug("Building upstream tarball with compression '%s'%s" %
-                  (options.comp_type,
-                   "' -%s'" % comp_level if comp_level is not None else ''))
+    gbp.log.debug("Building upstream tarball with compression %s" % comp)
     main_tree = repo.tree_drop_dirs(upstream_tree, options.components) if options.components else upstream_tree
-    if not git_archive(repo, source, output_dir, main_tree,
-                       options.comp_type,
-                       comp_level,
-                       options.with_submodules):
+    if not git_archive(repo, source, output_dir, main_tree, comp, options.with_submodules):
         raise GbpError("Cannot create upstream tarball at '%s'" % output_dir)
     for component in options.components:
         subtree = repo.tree_get_dir(upstream_tree, component)
@@ -219,10 +202,7 @@ def git_archive_build_orig(repo, source, output_dir, options):
         gbp.log.info("Creating additional tarball '%s' from '%s'"
                      % (source.upstream_tarball_name(options.comp_type, component=component),
                         subtree))
-        if not git_archive(repo, source, output_dir, subtree,
-                           options.comp_type,
-                           comp_level,
-                           options.with_submodules,
+        if not git_archive(repo, source, output_dir, subtree, comp, options.with_submodules,
                            component=component):
             raise GbpError("Cannot create additional tarball %s at '%s'"
                            % (component, output_dir))
@@ -232,8 +212,8 @@ def git_archive_build_orig(repo, source, output_dir, options):
 def guess_comp_type(repo, comp_type, source, tarball_dir):
     """Guess compression type to use for to be built upstream tarball"""
     if comp_type != 'auto':
-        comp_type = compressor_aliases.get(comp_type, comp_type)
-        if comp_type not in compressor_opts:
+        comp_type = Compressor.Aliases.get(comp_type, comp_type)
+        if comp_type not in Compressor.Opts:
             gbp.log.warn("Unknown compression type - guessing.")
             comp_type = 'auto'
 
@@ -256,7 +236,7 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
             if not tarball_dir:
                 tarball_dir = '..'
             detected = None
-            for comp in compressor_opts.keys():
+            for comp in Compressor.Opts.keys():
                 if du.DebianPkgPolicy.has_orig(source.upstream_tarball_name(comp), tarball_dir):
                     if detected is not None:
                         raise GbpError("Multiple orig tarballs found.")

@@ -16,7 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 """Handle checkin and checkout of archives from the pristine-tar branch"""
 
-from gbp.pkg import compressor_opts
+from gbp.pkg import Compressor
 from gbp.pkg.pristinetar import PristineTar
 from gbp.deb import DebianPkgPolicy
 
@@ -38,7 +38,7 @@ class DebianPristineTar(PristineTar):
         if not comp_type:
             ext = '\w\+'
         else:
-            ext = compressor_opts[comp_type][1]
+            ext = Compressor.Exts[comp_type]
 
         name_regexp = '%s_%s\.orig\.tar\.%s' % (package, version, ext)
 
