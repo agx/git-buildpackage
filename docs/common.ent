@@ -19,6 +19,7 @@
   <!ENTITY gbp-pq-import	"<command>gbp&nbsp;pq&nbsp<option>import</option></command>">
   <!ENTITY gbp-pq-rebase	"<command>gbp&nbsp;pq&nbsp<option>rebase</option></command>">
   <!ENTITY gbp-pq-export	"<command>gbp&nbsp;pq&nbsp<option>export</option></command>">
+  <!ENTITY gbp-push		"<command>gbp&nbsp;push</command>">
   <!ENTITY gbp-pristine-tar	"<command>gbp&nbsp;pristine-tar</command>">
   <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
   <!ENTITY git-pbuilder		"<command>git-pbuilder</command>">

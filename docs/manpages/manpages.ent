@@ -8,6 +8,7 @@
 <!ENTITY man.gbp SYSTEM "gbp.sgml">
 <!ENTITY man.gbp.pristine.tar SYSTEM "gbp-pristine-tar.sgml">
 <!ENTITY man.gbp.pull SYSTEM "gbp-pull.sgml">
+<!ENTITY man.gbp.push SYSTEM "gbp-push.sgml">
 <!ENTITY man.gbp.clone SYSTEM "gbp-clone.sgml">
 <!ENTITY man.gbp.pq SYSTEM "gbp-pq.sgml">
 <!ENTITY man.gbp.create.remote.repo SYSTEM "gbp-create-remote-repo.sgml">

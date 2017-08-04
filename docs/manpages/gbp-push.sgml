@@ -1,0 +1,174 @@
+<refentry id="man.gbp.push">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta>
+   <refentrytitle>gbp-push</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-push</refname>
+
+    <refpurpose>Push &debian; packaging changes to a &git; remote</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-push;
+
+      &man.common.options.synopsis;
+      <arg><option>--ignore-branch</option></arg>
+      <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--dry-run</option></arg>
+      <arg><replaceable>repository</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+      &gbp-push; pushes your local changes to a remote repository. It
+      is best run after uploading a &debian; package to the archive to
+      update you &debian-branch;, &upstream-branch;, &pristine-tar;
+      branch and corresponding tags. It will in order
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Verify that it is being executed from the &debian-branch;.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Determine the debian tag from <filename>debian/changelog</filename>
+	  and add it the list of things to push if the changelog does not indicate
+	  an unreleased package.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Determine the upstream tag from <filename>debian/changelog</filename>
+	  and add it to the list of things to push if it's not a native package.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Determine if the tags correspond to the branch tips of the corresponding
+	  upstream and debian branches. If so, these branches will be added to the list
+	  of things to push. If not the changes will only be pushed up to the commit
+	  that is referenced by the corresponding tag.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Determine if the pristine-tar branch needs to be pushed and if so adds it
+	  to the list of things to push.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Finally, if not in dry-run mode, pushes the above changes to the remote side.
+        </para>
+      </listitem>
+      </itemizedlist>
+    <para>
+      If a <replaceable>remote</replaceable> is given on the command line
+      the changes are pushed to the given remote repository. By
+      default it will push to the current branchs remote and fall
+      back to <emphasis>origin</emphasis>.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+      <varlistentry>
+        <term><option>--ignore-branch</option></term>
+        <listitem>
+          <para>
+	    Don't fail if the &debian-branch; does not match the currently checked out
+	    branach and push the current branch instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--debian-branch</option>=<replaceable>branch_name</replaceable></term>
+	<listitem>
+	  <para>
+	    The branch in the Git repository the Debian package is being
+	    developed on.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--debian-tag=</option><replaceable>TAG-FORMAT</replaceable></term>
+	<listitem>
+	  <para>
+	    Use this tag format when looking for tags corresponding to a &debian;
+	    version. Default is <replaceable>debian/%(version)s</replaceable>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--upstream-branch</option>=<replaceable>branch_name</replaceable></term>
+	<listitem>
+	  <para>
+	    The branch in the &git; repository the upstream sources are put
+	    onto.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--upstream-tag=</option><replaceable>TAG-FORMAT</replaceable></term>
+	<listitem>
+	  <para>
+	    Use this tag format when looking for tags of upstream
+	    versions. Default
+	    is <replaceable>upstream/%(version)s</replaceable>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--pristine-tar</option></term>
+	<listitem>
+	  <para>Whether to update the pristine-tar branch too.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--dry-run</option></term>
+	<listitem>
+	  <para>
+	    Pass the <option>--dry-run</option> to &gitcmd; <option>push</option>. So don't
+	    push anything, only check if things are pushable.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.buildpackage"/,
+      <xref linkend="man.gbp.clone"/,
+      <xref linkend="man.gbp.pull"/,
+      <xref linkend="man.gbp.conf"/
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>&dhusername; &dhemail;</para>
+
+  </refsect1>
+</refentry>

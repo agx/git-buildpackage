@@ -312,6 +312,15 @@ class DebianGitRepository(PkgGitRepository):
         except CommandExecFailed as e:
             raise GitRepositoryError(str(e))
 
+    def get_pristine_tar_commit(self, source, component=None):
+        """
+        Get the pristine-tar commit for the given source package's latest version.
+        """
+        comp = '-%s' % component if component else ''
+        return self.pristine_tar.get_commit('%s_%s.orig%s.tar.*' % (source.sourcepkg,
+                                                                    source.upstream_version,
+                                                                    comp))
+
     def create_upstream_tarball_via_pristine_tar(self, source, output_dir, comp, component=None):
         output = source.upstream_tarball_name(comp.type, component=component)
         try:

@@ -225,6 +225,7 @@ done
 %{python_sitelib}/gbp/scripts/config.py*
 %{python_sitelib}/gbp/scripts/pristine_tar.py*
 %{python_sitelib}/gbp/scripts/pull.py*
+%{python_sitelib}/gbp/scripts/push.py*
 %{python_sitelib}/gbp/scripts/supercommand.py*
 %{python_sitelib}/gbp/scripts/common/*.py*
 %{python_sitelib}/gbp/git/*.py*
@@ -236,6 +237,7 @@ done
 %{_mandir}/man1/gbp-config.1*
 %{_mandir}/man1/gbp-pristine-tar.1*
 %{_mandir}/man1/gbp-pull.1*
+%{_mandir}/man1/gbp-push.1*
 %{_mandir}/man5/*.5*
 %endif
 
