@@ -1,3 +1,30 @@
+git-buildpackage (0.9.0~exp1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * User visible changes:
+    * [ae7ed14] export-orig: new command to export orig tarballs from git
+      (Closes: #840089)
+    * [d9b535e] Use python3-notify2.
+      Thanks to Alexandre Detiste (Closes: #870595)
+    * [cfd884f] pristine-tar: don't print checkout errors twice
+      similar to f1c3a6f4dc6ceee5be5d49b4d193da8fd36c8920
+    * [76f247e] pristine_tar_verify_origs: skip verification if pristine-tar
+      does not support it.
+      This allows us to run with pristine-tar << 1.35
+    * [961723e] docs: generate version.py if missing.
+      This makes doc builds succeed in a clean tree.
+    * [4424008] bin: drop umlaut to make setuptools happy
+    * [e7bbd65] gbp-buildpackage: Group manpage options (Closes: #824801)
+    * [ad3515a] buildpackage: drop the long deprecated --dont-purge option.
+      Use --no-purge instead
+  * Lots of internal changes to make tarball generation simpler and avoid
+    code duplication between export-orig and build-package
+
+  [ Ken Dreyer ]
+  * [e5132b1] docs: fix spelling of "sure"
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 04 Aug 2017 20:48:22 -0300
+
 git-buildpackage (0.9.0~exp0) experimental; urgency=medium
 
   * Switch to python3 (Closes: #810854)
