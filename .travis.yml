@@ -11,10 +11,10 @@ python:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y pristine-tar
+  - sudo apt-get install -y pristine-tar devscripts
 
 install: "pip install -r dev_requirements.txt"
 script:
   - flake8
-  - python $(which nosetests) -v tests/doctests/
+  - python $(which nosetests) -v tests/doctests/ tests/component/deb/
   - tests/helpers/run-in-docker
