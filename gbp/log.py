@@ -55,7 +55,7 @@ class GbpStreamHandler(logging.StreamHandler):
         super(GbpStreamHandler, self).__init__(stream)
         self._color = gbp.tristate.Tristate(color)
         self._color_scheme = DEFAULT_COLOR_SCHEME.copy()
-        msg_fmt = "%(color)s%(name)s:%(levelname)s: %(message)s%(coloroff)s"
+        msg_fmt = "%(color)s%(name)s:%(levelname)s:%(coloroff)s %(message)s"
         self.setFormatter(logging.Formatter(fmt=msg_fmt))
 
     def set_color(self, color):
