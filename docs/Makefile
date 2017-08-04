@@ -68,6 +68,9 @@ git-pbuilder.1: ../bin/git-pbuilder
 
 manual.sgml: $(VERSION_ENT)
 
+$(GBP_VERSION): ../debian/changelog
+	cd .. && python setup.py build --help >/dev/null
+
 $(VERSION_ENT): $(GBP_VERSION)
 	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' > $(VERSION_ENT)
 
