@@ -27,12 +27,15 @@ def enable_notifications():
         # Avoid GTK+ cannot open display warning:
         warnings.simplefilter("ignore")
         try:
-            import pynotify
-            notify_module = pynotify
+            import notify2
+            notify_module = notify2
         except (ImportError, RuntimeError):
             return False
 
-    return notify_module.init("git-buildpackage")
+    try:
+        return notify_module.init("git-buildpackage")
+    except Exception:
+        return False
 
 
 def build_msg(cp, success):

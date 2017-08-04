@@ -55,7 +55,7 @@ Depends: ${python3:Depends},
 Recommends: pristine-tar (>= 0.5),
  cowbuilder | pbuilder | sbuild,
  python3-requests
-Suggests: python3-notify, unzip, sudo
+Suggests: python3-notify2, unzip, sudo
 Description: Suite to help with Debian packages in Git repositories
  This package contains the following tools:
   * gbp import-{dsc,dscs}: import existing Debian source packages into a git
