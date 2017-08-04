@@ -128,6 +128,11 @@ def pristine_tar_verify_origs(repo, source, options, output_dir, orig_files):
     if not options.pristine_tar:
         return True
 
+    if not repo.pristine_tar.has_feature_verify():
+        gbp.log.warn("pristine-tar does not support verify. "
+                     "Skipping verification.")
+        return True
+
     pristine_tar_prepare_orig_tree(repo, source, options)
     for f in orig_files:
         repo.pristine_tar.verify(os.path.join(output_dir, f))
