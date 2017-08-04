@@ -412,7 +412,7 @@ upstream-tag = v%(version%.%_)s
 	      Since &git; has a single tag namespace pushing
 	      changes with <command>git push --tags</command> will
 	      push upstream's tags (and therefore it's history) too so
-	      be shure to only push dedicated tag names.
+	      be sure to only push dedicated tag names.
 	    </para>
 	  </warning>
 	</para>
