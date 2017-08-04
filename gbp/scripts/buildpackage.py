@@ -394,8 +394,6 @@ def build_parser(name, prefix=None):
                                         help="export treeish object TREEISH, "
                                              "default is '%(export)s'", metavar="TREEISH")
     export_group.add_boolean_config_file_option(option_name="purge", dest="purge")
-    export_group.add_option("--git-dont-purge", action="store_true", dest="dont_purge", default=False,
-                            help="deprecated, use --git-no-purge instead")
     export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
     return parser
 
@@ -426,11 +424,6 @@ def parse_args(argv, prefix):
     if options.overlay and not options.export_dir:
         gbp.log.err("Overlay must be used with --git-export-dir")
         return None, None, None
-
-    # --git-dont-purge is deprecated:
-    if options.dont_purge:
-        gbp.log.warn("--git-dont-purge is depreceted, use --git-no-purge instead")
-        options.purge = False
 
     if options.components and options.pristine_tar_commit:
         gbp.log.warn("Components specified, pristine-tar-commit not yet supported - disabling it.")
