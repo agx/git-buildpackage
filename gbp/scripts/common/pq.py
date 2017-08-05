@@ -284,11 +284,8 @@ def switch_to_pq_branch(repo, branch):
 
     pq_branch = pq_branch_name(branch)
     if not repo.has_branch(pq_branch):
-        try:
-            repo.create_branch(pq_branch)
-        except GitRepositoryError:
-            raise GbpError("Cannot create patch-queue branch '%s'. "
-                           "Try 'rebase' instead." % pq_branch)
+        raise GbpError("Branch '%s' does not exist, try "
+                       "'import' instead" % pq_branch)
 
     gbp.log.info("Switching to '%s'" % pq_branch)
     repo.set_branch(pq_branch)

@@ -33,7 +33,7 @@ import gbp.log
 from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                    parse_gbp_commands, format_patch,
-                                   switch_to_pq_branch, apply_single_patch,
+                                   apply_single_patch,
                                    apply_and_commit_patch, switch_pq,
                                    drop_pq, get_maintainer_from_control)
 from gbp.scripts.common import ExitCodes
@@ -353,19 +353,16 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
 
 
 def rebase_pq(repo, branch, pq_from, upstream_tag):
-
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
     else:
-        switch_to_pq_branch(repo, branch)
-        base = branch
+        raise GbpError("Rebase must be run from the patch-queue branch. "
+                       "Try 'import' instead.")
 
     if pq_on_upstream_tag(pq_from):
-        _from = find_upstream_commit(repo, base, upstream_tag)
-    else:
-        _from = base
+        base = find_upstream_commit(repo, base, upstream_tag)
 
-    GitCommand("rebase", cwd=repo.path)([_from])
+    GitCommand("rebase", cwd=repo.path)([base])
 
 
 def usage_msg():

@@ -137,54 +137,71 @@
 <sect1 id="gbp.patches.newupstream">
   <title>Importing a new upstream version</title>
 
-  <para>After importing a new upstream version you can use the following commands
-    to refresh <filename>debian/patches/</filename>:
+  <para>
+    Ideally one would import the current set of patches to the
+    patch-queue branch
+    (&gbp <option>pq</option> <option>import</option>) before
+    importing the new upstream version, then rebase these
+    (&gbp <option>pq</option> <option>rebase</option>) and finally
+    export (&gbp <option>pq</option> <option>export</option>) but
+    don't worry if you forgot to do so before importing the new version
+    (or if another team member imported the version already).
+  </para>
+
+  <para>
+    In this case you can make &gbp-pq; figure out where to apply the
+    patches by using the <option>--time-machine=</option> option. The
+    following command
+  </para>
+
+<programlisting>
+    &gbp-pq; import --force --time-machine=10
+</programlisting>
+
+  <para>
+    would drop your current patch-queue branch (if existent) and
+    create a new one by going back in your commit history as far as 10
+    commits to find a place where your patches still
+    apply <footnote><para>This is not necessarily your debian branch
+    HEAD since the new upstream version might have changed so that the
+    patches no longer apply cleanly there.</para></footnote>. If it
+    finds such a commit on your debian branch it will create the
+    patch-queue branch from there and switch you to that branch. You
+    can now rework your patches to apply to the new upstream version
+    by using &gbp-pq <option>rebase</option>:
+  </para>
+
+<programlisting>
+    &gbp-pq; rebase
+</programlisting>
+
+<para>
+  or you can invoke &gitcmd <option>rebase</option> directly:
+</para>
+
+<programlisting>
+    &gitcmd; rebase -i debian/sid
+</programlisting>
+
+  <para>
+    Should the rebase fail (e.g. because the upstream source changed
+    at the same place your patches modify the code) you can resolve
+    this by using  the options of &gitcmd; <option>rebase</option>. If
+    you simply want to abort use
+    &gitcmd; <option>rebase</option> <option>--abort</option>.
+  </para>
+
+  <para>
+    Once done you can export your commits to patch files again:
   </para>
 <programlisting>
-  &gbp-pq; rebase
   &gbp-pq; export --commit
 </programlisting>
-
-<para>
-  Should the rebase fail (e.g. because the upstream source changed at
-  the same place your patches modify the code) you can resolve this by
-  using the options of &gitcmd; <option>rebase</option>. If you simply
-  want to abort use
-  &gitcmd; <option>rebase</option> <option>--abort</option>.
-</para>
-
-<para>
-  If you forgot to create a patch-queue branch before importing the
-  new upstream version or if you're not sure if it's up to date you can
-  make &gbp-pq; figure out where to apply the patches by using
-  the <option>--time-machine=</option>. E.g:
-</para>
-
-<programlisting>
-  &gbp-pq; import --force --time-machine=10
-</programlisting>
-
-<para>
-  would drop your current patch-queue branch and create a new one by
-  going back in your commit history as far as 10 commits to find a place
-  where your patches still apply. If it finds such a place it will
-  create the patch-queue branch there and switch you to that branch.
-  You can now rework your patches to apply to the new upstream version
-  either by using &gbp-pq <option>rebase</option> or by using
-  &gitcmd; <option>rebase</option> directly. Let's do the later:
-<para>
-
-<programlisting>
-  &gitcmd; rebase -i debian/sid
-</programlisting>
-
-<para>
-  Once done you can export your commits to patches again as describe
-  above. See this in action in a
-  <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage/videos/gbp-pq-new-upstream-version.ogv">short
-  video</ulink>.
-</para>
-
+  <para>
+    See this in action in a
+    <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage/videos/gbp-pq-new-upstream-version.ogv">short
+      video</ulink>.
+  </para>
 </sect1>
 
 <sect1 id="gbp.patches.firstpatch">

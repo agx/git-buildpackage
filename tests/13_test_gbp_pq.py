@@ -100,6 +100,7 @@ class TestApplySinglePatch(testutils.DebianGitTestRepo):
 
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
+        self.repo.create_branch(pq.pq_branch_name('master'))
         pq.apply_single_patch(self.repo, 'master', patch, None)
         self.assertIn(b'foo', self.repo.list_files())
 
@@ -230,6 +231,7 @@ class TestExport(testutils.DebianGitTestRepo):
         opts = TestExport.Options()
         opts.drop = True
 
+        repo.create_branch(pq.pq_branch_name('master'))
         pq.switch_pq(repo, start)
         self.assertEqual(repo.get_branch(), pq_branch)
         export_patches(repo, pq_branch, opts)
@@ -243,6 +245,7 @@ class TestExport(testutils.DebianGitTestRepo):
         pq_branch = os.path.join('patch-queue', start)
         opts = TestExport.Options()
         opts.commit = True
+        repo.create_branch(pq.pq_branch_name('master'))
         pq.switch_pq(repo, start)
         self.assertEqual(len(repo.get_commits()), 1)
         self.assertEqual(repo.get_branch(), pq_branch)
@@ -271,6 +274,7 @@ class TestExport(testutils.DebianGitTestRepo):
             f.write("patch2.diff\n")
         repo.add_files('debian/patches')
         repo.commit_all('Add series file')
+        repo.create_branch(pq.pq_branch_name('master'))
         pq.switch_pq(repo, start)
         self.assertEqual(len(repo.get_commits()), 2)
         self.assertEqual(repo.get_branch(), pq_branch)
@@ -388,6 +392,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         self.assertTrue(os.path.exists(os.path.join(self.repo.path,
                                                     os.path.dirname(SERIES_FILE),
                                                     'added-bar.patch')))
+        pq.switch_pq(self.repo, 'master')
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   pq_from=TestFromTAG.Options.pq_from,
@@ -412,6 +417,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
             ' -- Mr. T. S. <t@example.com>  '
             'Thu, 01 Jan 1970 00:00:00 +0000\n'
         )
+        pq.switch_pq(self.repo, 'master')
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   pq_from=TestFromTAG.Options.pq_from,
