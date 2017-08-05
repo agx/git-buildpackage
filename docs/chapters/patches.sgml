@@ -254,41 +254,4 @@
   non fast-forward updates.
 </para>
   </sect1>
-
-
-  <sect1 id="gbp.patches.30quilt">
-    <title>Working with 3.0 (quilt) packages</title>
-    <para>
-      The 3.0 (quilt) format applies the patches
-      in <filename>debian/patches</filename> automatically when building a
-      source package. If you want your debian branch to contain the
-      unpatched source there are several ways to handle this:
-    </para>
-    <itemizedlist>
-
-      <listitem>
-	<para>
-	  Using <filename>debian/source/local-options</filename>:
-	  You can use <option>unapply-patches</option> in
-	  <filename>debian/source/local-options</filename> to unapply the patches after
-	  the build.
-	  <filename>/usr/share/doc/git-buildpackage/examples/gbp-configure-unpatched-source</filename>
-	  will this set up for you when run from inside a git repository of a Debian
-	  package.
-	</para>
-      </listitem>
-
-      <listitem>
-	<para>
-	  Using <option>--git-export-dir</option>: If you are using
-	  option <option>--git-export-dir</option> already there is no
-	  problem since the unpatched source tree gets exported before
-	  being built (and patched by dpkg-source). Since this implies
-	  an extra copy of the whole source tree (which might be slow
-	  for big projects) and it is not really necessary when using
-	  pbuilder the next method might be more appropriate.
-	</para>
-      </listitem>
-    </itemizedlist>
-  </sect1>
 </chapter>
