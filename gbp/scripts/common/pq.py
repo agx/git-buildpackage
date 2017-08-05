@@ -148,23 +148,31 @@ def write_patch_file(filename, commit_info, diff):
             # Git compat: put name in quotes if special characters found
             if re.search("[,.@()\[\]\\\:;]", name):
                 name = '"%s"' % name
-            from_header = Header(name.encode('utf-8'), charset, 77, 'from')
-            from_header.append(email.encode('utf-8'))
+            from_header = Header(header_name='from')
+            try:
+                from_header.append(name, 'us-ascii')
+            except UnicodeDecodeError:
+                from_header.append(name, charset)
+            from_header.append('<%s>' % email)
             msg['From'] = from_header
             date = commit_info['author'].datetime
             datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
-            msg['Date'] = Header(datestr.encode('utf-8'), charset, 77, 'date')
-            msg['Subject'] = Header(commit_info['subject'].encode('utf-8'),
-                                    charset, 77, 'subject')
+            msg['Date'] = Header(datestr, 'us-ascii', 'date')
+            subject_header = Header(header_name='subject')
+            try:
+                subject_header.append(commit_info['subject'], 'us-ascii')
+            except UnicodeDecodeError:
+                subject_header.append(commit_info['subject'], charset)
+            msg['Subject'] = subject_header
             # Write message body
             if commit_info['body']:
                 # Strip extra linefeeds
                 body = commit_info['body'].rstrip() + '\n'
                 try:
-                    msg.set_payload(body.encode('ascii'))
+                    msg.set_payload(body.encode('us-ascii'))
                 except UnicodeDecodeError:
                     msg.set_payload(body, charset)
-            patch.write(msg.as_string(unixfrom=False).encode('utf-8'))
+            patch.write(msg.as_string(unixfrom=False, maxheaderlen=77).encode('utf-8'))
 
             # Write diff
             patch.write(b'---\n')
