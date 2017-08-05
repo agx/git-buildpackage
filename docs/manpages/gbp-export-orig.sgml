@@ -211,12 +211,18 @@
   <refsect1>
     <title>EXAMPLES</title>
     <para>
-    Build a &debian; package using &git-pbuilder; which in turn invokes
-    &cowbuildercmd;.  Instruct cowbuilder to build within a Wheezy chroot for
-    i386.
+      Generate an upstream tarball of the version currently referenced
+      in the changelog using &pristine-tar;:
     </para>
     <screen>
-      &gbp-buildpackage; --pbuilder --arch=i386 --dist=wheezy
+      &gbp-export-orig; --pristine-tar
+    </screen>
+    <para>
+      Same as above but generate and additional tarball for
+      directory <filename>foo</filename>.
+    </para>
+    <screen>
+      &gbp-export-orig; --pristine-tar --component=foo
     </screen>
   </refsect1>
   <refsect1>
