@@ -180,7 +180,9 @@
 
 <para>
   Once done you can export your commits to patches again as describe
-  above.
+  above. See this in action in a
+  <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage/videos/gbp-pq-new-upstream-version.ogv">short
+  video</ulink>.
 </para>
 
 </sect1>
