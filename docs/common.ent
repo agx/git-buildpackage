@@ -41,6 +41,7 @@
   <!ENTITY gbp-builder-mock     "<command>gbp-builder-mock</command>">
   <!ENTITY wget                 "<command>wget</command>">
   <!ENTITY uscan                "<command>uscan</command>">
+  <!ENTITY quilt                "<command>quilt</command>">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY git	       "<productname>Git</productname>">
