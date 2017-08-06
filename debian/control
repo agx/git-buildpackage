@@ -24,17 +24,17 @@ Build-Depends:
  python3-setuptools,
  sgml2x,
 # For the testsuite
- bzip2,
- cpio,
- devscripts (>= 2.17.7~),
- git (>= 1:1.7.9.1-1~),
- pristine-tar,
- rpm,
- unzip,
- zipmerge,
+ bzip2 <!nocheck>,
+ cpio <!nocheck>,
+ devscripts (>= 2.17.7~) <!nocheck>,
+ git (>= 1:1.7.9.1-1~) <!nocheck>,
+ pristine-tar <!nocheck>,
+ rpm <!nocheck>,
+ unzip <!nocheck>,
+ zipmerge <!nocheck>,
 # For the network tests
- curl,
- python3-requests,
+ curl <!nocheck>,
+ python3-requests <!nocheck>,
 Standards-Version: 3.9.8
 Vcs-Git: https://git.sigxcpu.org/cgit/git-buildpackage/
 Vcs-Browser: https://git.sigxcpu.org/cgit/git-buildpackage/
