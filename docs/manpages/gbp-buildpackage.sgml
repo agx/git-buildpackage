@@ -657,7 +657,7 @@
               source formats.
             </para>
 	    <para>
-	      This optios allows to keep only the debian/ dir in the version
+	      This optios allows one to keep only the debian/ dir in the version
 	      control system.
 	    </para>
           </listitem>
@@ -668,7 +668,8 @@
       <title>Safety options</title>
       <para>
 	In order to make sure what you build is what you upload
-	&gbp-buildpackage; performs several safety checks. These options allow to configure and disable them:
+	&gbp-buildpackage; performs several safety checks. These
+	options allow one to configure and disable them:
       </para>
       <variablelist>
 	<varlistentry>
