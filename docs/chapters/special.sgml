@@ -217,8 +217,8 @@ means.
       If you're still getting an error about <emphasis>unexpected
       upstream changes</emphasis> make sure you have no uncomitted
       changes in you workig copy (changes in
-      the <filename>debian/</filename> are o.k.) and no files that are
-      ignored by git
+      the <filename>debian/</filename> directory are o.k.) and no
+      files that are ignored by git
       via <filename>.gitignore</filename>. A <command>git clean
       -dfx</command> can help here.
     </para>

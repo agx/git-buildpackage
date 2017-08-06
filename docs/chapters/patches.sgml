@@ -8,8 +8,9 @@
     3.0 (quilt) format source packages.
   </para>
 
-  <para>The basic idea is that patches are imported from you debian
-    branch to a patch-queue branch with one patch file
+  <para>
+    The basic idea is that patches are imported from you
+    &debian-branch; to a patch-queue branch with one patch file
     in <filename>debian/patches/</filename> becoming one commit on the
     the patch-queue branch.  The created branch will be named after
     the branch you imported from
@@ -48,7 +49,7 @@
     The main drawback of this workflow is the lack of history on the
     patch-queue branch since it is frequently droppend and
     recreated. But there is full history on
-    the your debian branch, of course.
+    the your &debian-branch;, of course.
   </para>
 
   <sect1 id="gbp.patches.workflow">
@@ -68,7 +69,7 @@
 		   </imageobject>
       <caption>
 	<para>
-	  The debian branch we start from.
+	  The &debian-branch; we start from.
 	</para>
       </caption>
     </mediaobject>
@@ -209,13 +210,14 @@
     would drop your current patch-queue branch (if existent) and
     create a new one by going back in your commit history as far as 10
     commits to find a place where your patches still
-    apply <footnote><para>This is not necessarily your debian branch
-    HEAD since the new upstream version might have changed so that the
-    patches no longer apply cleanly there.</para></footnote>. If it
-    finds such a commit on your debian branch it will create the
-    patch-queue branch from there and switch you to that branch. You
-    can now rework your patches to apply to the new upstream version
-    by using &gbp-pq-rebase;:
+    apply <footnote><para>This is not necessarily
+    your debian-branch; HEAD since the new upstream
+    version might have changed so that the patches no longer apply
+    cleanly there.</para></footnote>. If it finds such a commit on
+    your &debian-branch; it will create the patch-queue branch from
+    there and switch you to that branch. You can now rework your
+    patches to apply to the new upstream version by using
+    &gbp-pq-rebase;:
   </para>
 
   <mediaobject>
@@ -224,7 +226,7 @@
 		 </imageobject>
     <caption>
       <para>
-	The patch-queue branch and debian branch after importing the
+	The patch-queue branch and &debian-branch; after importing the
 	patches.
       </para>
     </caption>
@@ -270,7 +272,7 @@
 </programlisting>
 
   <para>
-    The export will also switch you back to the debian branch.
+    The export will also switch you back to the &debian-branch;.
   </para>
   <mediaobject>
     <imageobject>
@@ -278,7 +280,7 @@
 		 </imageobject>
     <caption>
       <para>
-	The debian branch after exporting the patches and committing the changes.
+	The &debian-branch; after exporting the patches and committing the changes.
       </para>
     </caption>
   </mediaobject>
@@ -320,7 +322,7 @@
   &gbp-pq-export; --commit
 </programlisting>
 <para>
-  This will switch you back to your debian branch branch, generate the
+  This will switch you back to your &debian-branch; branch, generate the
   patches and commit them right away to this branch.
 </para>
 

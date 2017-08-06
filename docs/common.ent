@@ -46,6 +46,9 @@
   <!ENTITY uscan                "<command>uscan</command>">
   <!ENTITY quilt                "<command>quilt</command>">
 
+  <!ENTITY debian-branch        "<option>debian-branch</option>">
+  <!ENTITY upstream-branch      "<option>upstream-branch</option>">
+
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY git	       "<productname>Git</productname>">
   <!ENTITY dch	       "<productname>dch</productname>">
