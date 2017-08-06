@@ -31,12 +31,16 @@ GBP_VERSION=../gbp/version.py
 DEB_VERSION=$(shell sed -ne 's/^gbp_version\s\+=\s\+"\([.a-z0-9~-]\+\)"/\1/p' $(GBP_VERSION))
 CHANGELOG=../debian/changelog
 MAN_DATE=$(shell dpkg-parsechangelog -l ../debian/changelog -SDate | TZ=UTC LC_ALL=C date -f- +'%d %B %Y')
+IMAGES=$(wildcard images/*png)
+DEST_IMAGES=$(subst images/,$(MANUAL)/images/,$(IMAGES))
 
 # Stuff to build docs outside Debian
 HAVE_SGML2X ?= 1
 GTK_DOC_CATALOG_FILE ?= /usr/share/sgml/gtk-doc/gtk-doc.cat
 
-all: $(MANUAL) $(MANPAGES)
+all: manual $(MANPAGES)
+
+manual: $(MANUAL) html_images css
 
 $(MANUAL): manual.sgml chapters/*.sgml manpages/*.sgml common.ent $(VERSION_ENT)
 ifeq ($(HAVE_SGML2X),1)
@@ -46,7 +50,14 @@ else
 endif
 	sed -i 's/^CLASS="[A-Z0-9]\+"/\L&/' manual-html/*.html
 	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
+
+css: gbp.css gbp.svg
 	cp gbp.css gbp.svg $(MANUAL)
+
+html_images: $(DEST_IMAGES)
+$(MANUAL)/images/%.png: images/%.png
+	mkdir -p -p $(basename $@)
+	install $< $@
 
 # We build manpages under 'buildxref/' just to get an updated cross-reference
 # file (manpage.refs), before building the final manpages
@@ -78,4 +89,3 @@ clean:
 	-rm -r manual-html/
 	-rm *.1 *.5 manpage.* $(VERSION_ENT)
 	-rm -r buildxref
-

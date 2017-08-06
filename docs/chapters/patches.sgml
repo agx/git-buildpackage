@@ -62,6 +62,17 @@
       currently checked out is named <filename>debian/sid</filename>.
     </para>
 
+    <mediaobject>
+      <imageobject>
+	<imagedata fileref="images/pq-unapplied.png" format="PNG"/
+		   </imageobject>
+      <caption>
+	<para>
+	  The debian branch we start from.
+	</para>
+      </caption>
+    </mediaobject>
+
     <para>Let's first create the patch-queue branch and import the
       contents of <filename>debian/patches</filename> onto it using
       &gbp-pq;
@@ -82,6 +93,18 @@
   you to the newly created patch-queue branch
   (<filename>patch-queue/debian/sid</filename>) automatically.
 </para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/pq-applied.png" format="PNG"/
+    </imageobject>
+    <caption>
+      <para>
+	The patch-queue branch with patches
+	from <filename>debian/patches</filename> applied.
+      </para>
+    </caption>
+  </mediaobject>
 
 <para>
   Now you can work on the patch-queue branch (add, remove, rebase,
@@ -138,14 +161,38 @@
   <title>Importing a new upstream version</title>
 
   <para>
-    Ideally one would import the current set of patches to the
-    patch-queue branch
-    (&gbp <option>pq</option> <option>import</option>) before
-    importing the new upstream version, then rebase these
-    (&gbp <option>pq</option> <option>rebase</option>) and finally
-    export (&gbp <option>pq</option> <option>export</option>) but
-    don't worry if you forgot to do so before importing the new version
-    (or if another team member imported the version already).
+    To update your patches for a new upstream version one
+  </para>
+  <orderedlist>
+    <listitem>
+      <para>
+	Imports the current patches onto the patch-queue branch (if
+	not done already) using &gbp-pq-import;.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	Imports the new upstream version with
+	&gbp-import-orig; <option>--uscan</option>.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	Rebases the patches onto the new upstream version using
+	&gbp-pq-rebase;.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	Exports the patches to <filename>debian/patches</filename> using
+	&gbp-pq-export;.
+      </para>
+    </listitem>
+  </orderedlist>
+
+  <para>
+    But don't worry if you forgot to do so before importing the new
+    version (or if another team member imported the version already).
   </para>
 
   <para>
@@ -155,7 +202,7 @@
   </para>
 
 <programlisting>
-    &gbp-pq; import --force --time-machine=10
+    &gbp-pq-import; --force --time-machine=10
 </programlisting>
 
   <para>
@@ -168,11 +215,23 @@
     finds such a commit on your debian branch it will create the
     patch-queue branch from there and switch you to that branch. You
     can now rework your patches to apply to the new upstream version
-    by using &gbp-pq <option>rebase</option>:
+    by using &gbp-pq-rebase;:
   </para>
 
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/pq-time-machine.png" format="PNG"/
+		 </imageobject>
+    <caption>
+      <para>
+	The patch-queue branch and debian branch after importing the
+	patches.
+      </para>
+    </caption>
+  </mediaobject>
+
 <programlisting>
-    &gbp-pq; rebase
+    &gbp-pq-rebase;
 </programlisting>
 
 <para>
@@ -186,24 +245,51 @@
   <para>
     Should the rebase fail (e.g. because the upstream source changed
     at the same place your patches modify the code) you can resolve
-    this by using  the options of &gitcmd; <option>rebase</option>. If
+    this by using  the options of &gitcmd; <option>rebase</option> (if
     you simply want to abort use
-    &gitcmd; <option>rebase</option> <option>--abort</option>.
+    &gitcmd; <option>rebase</option> <option>--abort</option>).
   </para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/pq-rebase.png" format="PNG"/
+		 </imageobject>
+    <caption>
+      <para>
+	The patch-queue branch after rebasing the patches. Patches
+	that were merged upstream were dropped.
+      </para>
+    </caption>
+  </mediaobject>
 
   <para>
     Once done you can export your commits to patch files again:
   </para>
 <programlisting>
-  &gbp-pq; export --commit
+  &gbp-pq-export; --commit
 </programlisting>
+
+  <para>
+    The export will also switch you back to the debian branch.
+  </para>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/pq-export.png" format="PNG"/
+		 </imageobject>
+    <caption>
+      <para>
+	The debian branch after exporting the patches and committing the changes.
+      </para>
+    </caption>
+  </mediaobject>
+
   <para>
     See this in action in a
     <ulink url="https://honk.sigxcpu.org/piki/projects/git-buildpackage/videos/gbp-pq-new-upstream-version.ogv">short
       video</ulink>.
   </para>
-</sect1>
 
+</sect1>
 <sect1 id="gbp.patches.firstpatch">
   <title>Adding your first patch</title>
 
@@ -216,7 +302,7 @@
       <para>Launch an import. If there's nothing to import &gbp-pq; will just
 	create an empty branch and switch your working copy to it:
 <programlisting>
-  &gbp-pq; import
+  &gbp-pq-import;
 </programlisting>
       </para>
     </listitem>
@@ -231,7 +317,7 @@
 	To generate the new Quilt patch set use
       </para>
 <programlisting>
-  &gbp-pq; export --commit
+  &gbp-pq-export; --commit
 </programlisting>
 <para>
   This will switch you back to your debian branch branch, generate the
@@ -255,7 +341,7 @@
       They can be recreated by any team member easily by using</para>
 
 <programlisting>
-  &gbp-pq; import --force
+  &gbp-pq-import; --force
 </programlisting>
 
 <para>
