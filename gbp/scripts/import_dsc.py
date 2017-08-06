@@ -271,7 +271,7 @@ def build_parser(name):
                                                 dest="pristine_tar")
     import_group.add_option("--allow-same-version", action="store_true",
                             dest="allow_same_version", default=False,
-                            help="allow to import already imported version")
+                            help="allow import of already imported version")
     import_group.add_boolean_config_file_option(option_name="author-is-committer",
                                                 dest="author_committer")
     import_group.add_boolean_config_file_option(option_name="author-date-is-committer-date",
