@@ -79,6 +79,14 @@ class DebianSource(object):
         except IOError as e:
             raise DebianSourceError("Failed to determine source format: %s" % e)
 
+    def is_releasable(self):
+        """
+        Check if package is releasable
+
+        Debian's current practive is to check for UNRELEASED in the distribution.
+        """
+        return self.changelog.distribution != 'UNRELEASED'
+
     @property
     def changelog(self):
         """

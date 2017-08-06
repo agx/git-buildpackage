@@ -84,3 +84,31 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         self._commit_format('3.0', 'quilt')
         source = DebianSource(GitVfs(self.repo))
         self.assertFalse(source.is_native())
+
+    def test_is_releasable(self):
+        source = DebianSource('.')
+        os.makedirs('debian/')
+        with open('debian/changelog', 'w') as f:
+            f.write("""git-buildpackage (0.2.3) unstable; urgency=low
+
+  * git doesn't like '~' in tag names so replace this with a dot when tagging
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon,  2 Oct 2006 18:30:20 +0200
+""")
+        source = DebianSource('.')
+        self.assertEquals(source.changelog.distribution, "unstable")
+        self.assertTrue(source.is_releasable())
+
+    def test_is_not_releasable(self):
+        source = DebianSource('.')
+        os.makedirs('debian/')
+        with open('debian/changelog', 'w') as f:
+            f.write("""git-buildpackage (0.2.3) UNRELEASED; urgency=low
+
+  * git doesn't like '~' in tag names so replace this with a dot when tagging
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon,  2 Oct 2006 18:30:20 +0200
+""")
+        source = DebianSource('.')
+        self.assertEquals(source.changelog.distribution, "UNRELEASED")
+        self.assertFalse(source.is_releasable())
