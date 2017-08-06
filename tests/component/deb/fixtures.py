@@ -39,7 +39,7 @@ DEFAULT_QUILT30 = os.path.join(DEB_TEST_DATA_DIR,
 class RepoFixtures(object):
     @classmethod
     def native(cls, dsc=DEFAULT_NATIVE, opts=None):
-        """Docorator to be used as Debian native test fixture"""
+        """Decorator to be used as Debian native test fixture"""
         def wrapper(fn):
             @wraps(fn)
             def _native_repo(*args):
