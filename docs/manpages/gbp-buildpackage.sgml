@@ -436,7 +436,7 @@
     <refsect2>
       <title>Hook options</title>
       <para>
-	Hooks allow to run arbitrary commands at different stages of the
+	Hooks allow you to run arbitrary commands at different stages of the
 	build. These options configure what will be run:
       </para>
       <variablelist>
