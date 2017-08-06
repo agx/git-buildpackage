@@ -119,6 +119,8 @@ def test_parse_no_eopch():
     '1.0'
     >>> cl.has_epoch()
     False
+    >>> cl.distribution
+    'unstable'
     """
 
 

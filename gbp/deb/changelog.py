@@ -149,6 +149,10 @@ class ChangeLog(object):
         return self._cp['Version']
 
     @property
+    def distribution(self):
+        return self._cp['Distribution']
+
+    @property
     def upstream_version(self):
         """The upstream version"""
         return self._cp['Upstream-Version']
