@@ -95,6 +95,7 @@ class DebianGitRepository(PkgGitRepository):
             if ret:
                 return None
             for line in out:
+                line = line.decode()
                 if line.endswith(" %s\n" % version):
                     # dereference to a commit object
                     return self.rev_parse("%s^0" % legacy_tag)
