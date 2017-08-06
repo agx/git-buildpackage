@@ -2,7 +2,7 @@
   <title>Working with patches</title>
 
   <para>
-    &gbp-pq; can be used to manage patches that modify the ustream
+    &gbp-pq; can be used to manage patches that modify the upstream
     source inside
     <filename>debian/patches/</filename>. This is mostly intended for
     3.0 (quilt) format source packages.
@@ -19,7 +19,7 @@
     a
   </para>
 <programlisting>
-    &gbp; pq imort
+    &gbp-pq-import;
 </programlisting>
   <para>
     then the newly created branch will be
@@ -168,7 +168,8 @@
     <listitem>
       <para>
 	Imports the current patches onto the patch-queue branch (if
-	not done already) using &gbp-pq-import;.
+	not done already) using &gbp-pq-import;. This will allow you
+	to rebase the patches on the new upstream version later.
       </para>
     </listitem>
     <listitem>
@@ -180,7 +181,10 @@
     <listitem>
       <para>
 	Rebases the patches onto the new upstream version using
-	&gbp-pq-rebase;.
+	&gbp-pq-rebase;. This will bring the patches up to date
+	regarding the new upstream version. Patches already applied
+	upstream can be dropped and remaining patches can be modified
+	to apply to the new version.
       </para>
     </listitem>
     <listitem>
