@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007, 2008, 2009, 2010, 2013, 2015 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007,2008,2009,2010,2013,2015,2017 Guido Guenther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -279,7 +279,7 @@ def process_options(options, parser):
     if options.force_distribution:
         dch_options.append("--force-distribution")
 
-    return dch_options
+    return dch_options + options.dch_opts
 
 
 def process_editor_option(options):
@@ -388,6 +388,11 @@ def build_parser(name):
                                   dest="commit_msg")
     parser.add_option("-c", "--commit", action="store_true", dest="commit", default=False,
                       help="commit changelog file after generating")
+    parser.add_config_file_option(option_name="dch-opt",
+                                  dest="dch_opts", action="append",
+                                  help="option to pass to dch verbatim, "
+                                  "can be given multiple times",
+                                  metavar="DCH_OPT")
 
     help_msg = ('Load Python code from CUSTOMIZATION_FILE.  At the moment,'
                 ' the only useful thing the code can do is define a custom'

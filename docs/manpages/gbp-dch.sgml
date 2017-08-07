@@ -79,6 +79,7 @@
 	<arg><option>--commit</option></arg>
       </group>
       <arg><option>--customizations=</option><replaceable>customization-file</replaceable></arg>
+      <arg rep='repeat'><option>--dch-opt=</option><replaceable>dch-options</replaceable></arg>
       <arg><option>--verbose</option></arg>
       <arg choice="plain"><replaceable><optional>path1 path2</optional></replaceable></arg>
     </cmdsynopsis>
@@ -483,6 +484,19 @@
           </para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>--dch-opt=</option><replaceable>dch-option</replaceable>
+        </term>
+        <listitem>
+          <para>
+	    Pass option to &dch; verbatim. Note that &gbp-dch; invokes &dch;
+	    multiple times and the option is passed to all invocations so not all
+	    &dch; options make sense here. Options may also conflict
+	    with options picked by &gbp-dch;.
+          </para>
+        </listitem>
+      </varlistentry>
+
     </variablelist>
   </refsect1>
   <refsect1>

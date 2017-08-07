@@ -116,6 +116,7 @@ class GbpOptionParser(OptionParser):
                 'compression-level': '',
                 'create-missing-branches': 'False',
                 'customizations': '',
+                'dch-opt': [],
                 'debian-branch': 'master',
                 'debian-tag': 'debian/%(version)s',
                 'debian-tag-msg': '%(pkg)s Debian release %(version)s',
