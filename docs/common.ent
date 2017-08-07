@@ -1,75 +1,75 @@
+  <!ENTITY dhconfsection  	"<manvolnum>5</manvolnum>">
+  <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
+  <!ENTITY rpm-mansection       "<manvolnum>1</manvolnum>">
+
+  <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhfirstname 		"<firstname>Guido</firstname>">
   <!ENTITY dhsurname   		"<surname>Guenther</surname>">
-  <!ENTITY dhsection   		"<manvolnum>1</manvolnum>">
-  <!ENTITY dhconfsection  	"<manvolnum>5</manvolnum>">
-  <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhusername  		"Guido Guenther">
+  <!ENTITY rpm-email            "<email>markus.lehtonen@linux.intel.com</email>">
+  <!ENTITY rpm-firstname        "<firstname>Markus</firstname>">
+  <!ENTITY rpm-surname          "<surname>Lehtonen</surname>">
+  <!ENTITY rpm-username         "Markus Lehtonen">
 
+  <!ENTITY cowbuildercmd	"<command>cowbuilder</command>">
+  <!ENTITY debuildcmd		"<command>debuild</command>">
+  <!ENTITY gbp		        "<command>gbp</command>">
+  <!ENTITY gbp-builder-mock     "<command>gbp-builder-mock</command>">
   <!ENTITY gbp-buildpackage 	"<command>gbp&nbsp;buildpackage</command>">
-  <!ENTITY gbp-import-orig	"<command>gbp&nbsp;import-orig</command>">
-  <!ENTITY gbp-import-dsc	"<command>gbp&nbsp;import-dsc</command>">
-  <!ENTITY gbp-import-dscs	"<command>gbp&nbsp;import-dscs</command>">
+  <!ENTITY gbp-buildpackage-rpm "<command>gbp&nbsp;buildpackage-rpm</command>">
+  <!ENTITY gbp-clone		"<command>gbp&nbsp;clone</command>">
   <!ENTITY gbp-config		"<command>gbp&nbsp;config</command>">
+  <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
   <!ENTITY gbp-dch		"<command>gbp&nbsp;dch</command>">
   <!ENTITY gbp-export-orig	"<command>gbp&nbsp;export-orig</command>">
-  <!ENTITY gbp		        "<command>gbp</command>">
-  <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
-  <!ENTITY gbp-clone		"<command>gbp&nbsp;clone</command>">
+  <!ENTITY gbp-import-dsc	"<command>gbp&nbsp;import-dsc</command>">
+  <!ENTITY gbp-import-dscs	"<command>gbp&nbsp;import-dscs</command>">
+  <!ENTITY gbp-import-orig	"<command>gbp&nbsp;import-orig</command>">
+  <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
   <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
+  <!ENTITY gbp-pq-export	"<command>gbp&nbsp;pq&nbsp<option>export</option></command>">
   <!ENTITY gbp-pq-import	"<command>gbp&nbsp;pq&nbsp<option>import</option></command>">
   <!ENTITY gbp-pq-rebase	"<command>gbp&nbsp;pq&nbsp<option>rebase</option></command>">
-  <!ENTITY gbp-pq-export	"<command>gbp&nbsp;pq&nbsp<option>export</option></command>">
-  <!ENTITY gbp-push		"<command>gbp&nbsp;push</command>">
+  <!ENTITY gbp-pq-rpm           "<command>gbp&nbsp;pq-rpm</command>">
   <!ENTITY gbp-pristine-tar	"<command>gbp&nbsp;pristine-tar</command>">
-  <!ENTITY gbp-create-remote-repo "<command>gbp&nbsp;create-remote-repo</command>">
+  <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
+  <!ENTITY gbp-push		"<command>gbp&nbsp;push</command>">
+  <!ENTITY gbp-rpm-ch           "<command>gbp rpm-ch</command>">
+  <!ENTITY gbp.conf		"<filename>gbp.conf</filename>">
   <!ENTITY git-pbuilder		"<command>git-pbuilder</command>">
   <!ENTITY git-qemubuilder	"<command>git-pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
-  <!ENTITY cowbuildercmd	"<command>cowbuilder</command>">
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">
   <!ENTITY pdebuildcmd		"<command>pdebuild</command>">
-  <!ENTITY debuildcmd		"<command>debuild</command>">
-  <!ENTITY gbp.conf		"<filename>gbp.conf</filename>">
-
-  <!ENTITY rpm-firstname        "<firstname>Markus</firstname>">
-  <!ENTITY rpm-surname          "<surname>Lehtonen</surname>">
-  <!ENTITY rpm-email            "<email>markus.lehtonen@linux.intel.com</email>">
-  <!ENTITY rpm-username         "Markus Lehtonen">
-  <!ENTITY rpm-mansection       "<manvolnum>1</manvolnum>">
-  <!ENTITY gbp-buildpackage-rpm "<command>gbp&nbsp;buildpackage-rpm</command>">
-  <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
-  <!ENTITY gbp-pq-rpm           "<command>gbp&nbsp;pq-rpm</command>">
-  <!ENTITY gbp-rpm-ch           "<command>gbp rpm-ch</command>">
-  <!ENTITY rpmbuild             "<command>rpmbuild</command>">
-  <!ENTITY gbp-builder-mock     "<command>gbp-builder-mock</command>">
-  <!ENTITY wget                 "<command>wget</command>">
-  <!ENTITY uscan                "<command>uscan</command>">
   <!ENTITY quilt                "<command>quilt</command>">
+  <!ENTITY rpmbuild             "<command>rpmbuild</command>">
+  <!ENTITY uscan                "<command>uscan</command>">
+  <!ENTITY wget                 "<command>wget</command>">
 
   <!ENTITY debian-branch        "<option>debian-branch</option>">
   <!ENTITY upstream-branch      "<option>upstream-branch</option>">
 
-  <!ENTITY debian      "<productname>Debian</productname>">
-  <!ENTITY git	       "<productname>Git</productname>">
-  <!ENTITY dch	       "<productname>dch</productname>">
-  <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
+  <!ENTITY apt-get     "<productname>apt-get</productname>">
   <!ENTITY cowbuilder  "<productname>Cowbuilder</productname>">
-  <!ENTITY gitloaddirs "<productname>Git_load_dirs</productname>">
+  <!ENTITY dch	       "<productname>dch</productname>">
+  <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY debuild     "<productname>Debuild</productname>">
-  <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
-  <!ENTITY gpg 	       "<productname>GPG</productname>">
+  <!ENTITY dget        "<productname>dget</productname>">
   <!ENTITY dpkg-buildpackage "<productname>Dpkg-buildpackage</productname>">
   <!ENTITY dpkg-source "<productname>Dpkg-source</productname>">
-  <!ENTITY pristine-tar "<productname>pristine-tar</productname>">
-  <!ENTITY apt-get     "<productname>apt-get</productname>">
-  <!ENTITY dget        "<productname>dget</productname>">
+  <!ENTITY git	       "<productname>Git</productname>">
+  <!ENTITY gitloaddirs "<productname>Git_load_dirs</productname>">
+  <!ENTITY gnu         "<acronym>GNU</acronym>">
+  <!ENTITY gpg 	       "<productname>GPG</productname>">
+  <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
   <!ENTITY lintian     "<productname>lintian</productname>">
   <!ENTITY mock        "<productname>mock</productname>">
-  <!ENTITY gnu         "<acronym>GNU</acronym>">
-  <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
+  <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
+  <!ENTITY pristine-tar "<productname>pristine-tar</productname>">
+  <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
 
-  <!ENTITY pyformat    "<ulink url='https://docs.python.org/2/library/stdtypes.html#string-formatting'><citetitle>Python format string</citetitle></ulink>">
   <!ENTITY dep14       "<ulink url='http://dep.debian.net/deps/dep14/'><citetitle>DEP-14</citetitle></ulink>">
   <!ENTITY manual      "<ulink url='https://honk.sigxcpu.org/piki/projects/git-buildpackage'>here</ulink>">
+  <!ENTITY pyformat    "<ulink url='https://docs.python.org/2/library/stdtypes.html#string-formatting'><citetitle>Python format string</citetitle></ulink>">
  
