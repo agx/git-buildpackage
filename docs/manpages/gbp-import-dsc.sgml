@@ -25,7 +25,7 @@
       <arg><option>--author-is-committer</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
-      <arg><option>--filter=</option><replaceable>pattern</replaceable></arg>
+      <arg rep='repeat'><option>--filter=</option><replaceable>pattern</replaceable></arg>
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--[no-]create-missing-branches</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
