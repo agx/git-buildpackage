@@ -1,3 +1,40 @@
+git-buildpackage (0.9.0~exp2) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [cbacdfb] push: new command to push changes in one go (Closes: #733639)
+  * [3d4d011] export-orig: fix manpage example
+  * [2320e19] pq: don't create empty pq branch on rebase and switch.  We
+    always want to start from an imported series.
+    Thanks to Chris Lamb for the reproducer
+  * [c4bc656] pq: don't eagerly encode email headers.
+    Python3 changed behaviour and does not try us-ascii before the given
+    encoding so open code this in pq to avoid patch churn due to changed email
+    header encodings.
+  * [48076da] docs: expand the working with patches section
+  * [fb2e083] docs: drop the section about how to unapply patches
+    dpkg since 1.16.5 does this automatically and even oldoldstable has this
+    version.
+  * [f8c429f] docs: add images to explain pq workflow
+  * [5b3fcd6] docs: spell debian-branch consistently
+  * [f145e1d] docs: drop trailing '>' from xrefs
+  * [698e7bf] docs: add some more explanations
+    after feedback from Chris Lamb.
+  * [705f571] docs: Fix allow(s) one to spelling.
+    Thanks to lintian
+  * [4bad3c5] d/manpages: drop unused file
+  * [a5f22cb] Bump standards version
+
+  [ Chris Lamb ]
+  * [7cbe658] Correct "allow to" typos.
+  * [dff2864] Use build profiles to avoid unconditional installation of test
+    dependencies.
+
+  [ Maximiliano Curia ]
+  * [b7455ad] find_version: add a missing decode _git_getoutput returns a list
+    of bytes, that we need to decode
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 06 Aug 2017 22:55:10 -0300
+
 git-buildpackage (0.9.0~exp1) experimental; urgency=medium
 
   [ Guido Günther ]
