@@ -366,7 +366,7 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
 
     tree = [x for x in repo.list_tree("%s^{tree}" % tag)
             if x[-1] != 'debian']
-    msg = "Updated version %s from '%s'" % (version, tag)
+    msg = "Update upstream source from tag '%s'" % (tag)
 
     # Get the current debian/ tree on the debian branch
     try:
@@ -374,7 +374,7 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
                    if x[-1] == b'debian' and x[1] == 'tree'][0][2]
         gbp.log.debug("Using %s as debian/ tree" % deb_sha)
         tree.append(['040000', 'tree', deb_sha, 'debian'])
-        msg += "\n\nwith Debian dir %s" % deb_sha
+        msg += "\n\nUpdate to upstream version '%s'\nwith Debian dir %s" % (version, deb_sha)
     except IndexError:
         pass  # no debian/ dir is fine
 
