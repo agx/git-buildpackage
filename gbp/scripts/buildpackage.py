@@ -101,8 +101,8 @@ def export_source(repo, tree, source, options, dest_dir, tarball_dir):
         if source.is_native():
             raise GbpError("Cannot overlay Debian native package")
         extract_orig(os.path.join(tarball_dir,
-                                  du.orig_file(source,
-                                               options.comp_type)),
+                                  source.upstream_tarball_name(
+                                      options.comp_type)),
                      dest_dir)
 
     gbp.log.info("Exporting '%s' to '%s'" % (options.export, dest_dir))
