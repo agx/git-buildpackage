@@ -24,6 +24,8 @@ from tests.component.deb import DEB_TEST_DATA_DIR
 
 from nose.tools import eq_
 
+from gbp.command_wrappers import UnpackTarArchive
+from gbp.git import GitRepository
 from gbp.deb.dscfile import DscFile
 from gbp.scripts.import_dsc import main as import_dsc
 
@@ -34,6 +36,10 @@ DEFAULT_NATIVE = os.path.join(DEB_TEST_DATA_DIR,
 DEFAULT_QUILT30 = os.path.join(DEB_TEST_DATA_DIR,
                                'dsc-3.0',
                                'hello-debhelper_%s.dsc' % '2.8-1')
+
+DEFAULT_OVERLAY = os.path.join(DEB_TEST_DATA_DIR,
+                               'dsc-3.0',
+                               'hello-debhelper_%s.debian.tar.gz' % '2.8-1')
 
 
 class RepoFixtures(object):
@@ -57,6 +63,17 @@ class RepoFixtures(object):
                 repo = cls.import_quilt30(dsc, opts)
                 return fn(*args, repo=repo)
             return _quilt30_repo
+        return wrapper
+
+    @classmethod
+    def overlay(cls, debian=DEFAULT_OVERLAY, opts=None):
+        """Decorator to be used as overay mode test fixture"""
+        def wrapper(fn):
+            @wraps(fn)
+            def _overlay_mode_repo(*args):
+                repo = cls.import_debian_tarball(debian, opts)
+                return fn(*args, repo=repo)
+            return _overlay_mode_repo
         return wrapper
 
     @classmethod
@@ -84,5 +101,18 @@ class RepoFixtures(object):
             expected_branches.append('pristine-tar')
         ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
         eq_(len(repo.get_commits()), 2)
+        os.chdir(repo.path)
+        return repo
+
+    @classmethod
+    def import_debian_tarball(cls, debian=DEFAULT_OVERLAY, opts=None):
+        """Import a 3.0 (quilt) debian dir for overlay mode"""
+        repo = GitRepository.create(os.path.split('/')[-1].split('_')[0])
+        UnpackTarArchive(debian, repo.path)()
+        repo.add_files('.')
+        repo.commit_files('.', msg="debian dir")
+        expected_branches = ['master']
+        ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
+        eq_(len(repo.get_commits()), 1)
         os.chdir(repo.path)
         return repo

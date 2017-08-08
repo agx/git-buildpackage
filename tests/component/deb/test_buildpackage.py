@@ -24,7 +24,8 @@ import tarfile
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
-from tests.component.deb.fixtures import RepoFixtures
+from tests.component.deb.fixtures import (RepoFixtures,
+                                          DEFAULT_OVERLAY)
 
 from nose.tools import ok_, eq_, assert_false, assert_true
 
@@ -161,6 +162,18 @@ class TestBuildpackage(ComponentTestBase):
         """Test that building with a export dir works"""
         self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
+
+    @RepoFixtures.overlay()
+    def test_export_dir_overlay(self, repo):
+        """Test that building in overlay mode with export dir works"""
+        tarball_dir = os.path.dirname(DEFAULT_OVERLAY)
+        self._test_buildpackage(repo, ['--git-overlay',
+                                       '--git-compression=gzip',
+                                       '--git-tarball-dir=%s' % tarball_dir,
+                                       '--git-no-purge',
+                                       '--git-export-dir=../foo'])
+        ok_(os.path.exists('../foo/hello-debhelper-2.8/configure'))
+        ok_(os.path.exists('../foo/hello-debhelper-2.8/debian/changelog'))
 
     @RepoFixtures.quilt30()
     def test_export_wc_buildpackage(self, repo):
