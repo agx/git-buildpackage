@@ -23,6 +23,7 @@ like allowed characters in version numbers, etc.
 import os
 import re
 
+from gbp.errors import GbpError
 from gbp.pkg.pkgpolicy import PkgPolicy
 from gbp.pkg.compressor import Compressor
 
@@ -86,7 +87,10 @@ class DebianPkgPolicy(PkgPolicy):
         @return: the tarballs name corresponding to the input parameters
         @rtype: C{str}
         """
-        ext = Compressor.Exts[compression]
+        try:
+            ext = Compressor.Exts[compression]
+        except KeyError:
+            raise GbpError("Unknown compression type '%s'" % compression)
         sub = '-{0}'.format(component) if component else ''
         tarball = "%s_%s.orig%s.tar.%s" % (name, version, sub, ext)
         if dir:
