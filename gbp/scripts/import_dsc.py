@@ -143,15 +143,15 @@ def check_parents(repo, branch, tag):
     return parents
 
 
-def apply_debian_patch(repo, unpack_dir, src, options, tag, is_empty):
+def apply_debian_patch(repo, unpack_dir, dsc, options, tag, is_empty):
     """apply the debian patch and tag appropriately"""
     try:
         os.chdir(unpack_dir)
 
-        if src.diff and not apply_patch(src.diff):
+        if dsc.diff and not apply_patch(dsc.diff):
             raise GbpError
 
-        if src.deb_tgz and not apply_deb_tgz(src.deb_tgz):
+        if dsc.deb_tgz and not apply_deb_tgz(dsc.deb_tgz):
             raise GbpError
 
         if os.path.exists('debian/rules'):
@@ -169,7 +169,7 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag, is_empty):
                               repo,
                               is_empty,
                               options.debian_branch)
-        commit_msg = "Import Debian changes %s\n%s" % (src.version, changes)
+        commit_msg = "Import Debian changes %s\n%s" % (dsc.version, changes)
         commit = repo.commit_dir(unpack_dir,
                                  commit_msg,
                                  branch=options.debian_branch,
@@ -177,8 +177,8 @@ def apply_debian_patch(repo, unpack_dir, src, options, tag, is_empty):
                                  author=author,
                                  committer=committer)
         if not options.skip_debian_tag:
-            repo.create_tag(repo.version_to_tag(options.debian_tag, src.version),
-                            msg="Debian release %s" % src.version,
+            repo.create_tag(repo.version_to_tag(options.debian_tag, dsc.version),
+                            msg="Debian release %s" % dsc.version,
                             commit=commit,
                             sign=options.sign_tags,
                             keyid=options.keyid)
@@ -386,20 +386,20 @@ def main(argv):
             is_empty = True
 
         if options.download:
-            dsc = download_source(pkg,
-                                  dirs=dirs,
-                                  unauth=options.allow_unauthenticated)
+            dscfile = download_source(pkg,
+                                      dirs=dirs,
+                                      unauth=options.allow_unauthenticated)
         else:
-            dsc = pkg
+            dscfile = pkg
 
-        src = DscFile.parse(dsc)
-        if src.pkgformat not in ['1.0', '3.0']:
-            raise GbpError("Importing %s source format not yet supported." % src.pkgformat)
+        dsc = DscFile.parse(dscfile)
+        if dsc.pkgformat not in ['1.0', '3.0']:
+            raise GbpError("Importing %s source format not yet supported." % dsc.pkgformat)
         if options.verbose:
-            print_dsc(src)
+            print_dsc(dsc)
 
         if needs_repo:
-            target = target or src.pkg
+            target = target or dsc.pkg
             if os.path.exists(target):
                 raise GbpError("Directory '%s' already exists. If you want to import into it, "
                                "please change into this directory otherwise move it away first."
@@ -413,31 +413,31 @@ def main(argv):
             disable_pristine_tar(options, "Bare repository")
 
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
-        upstream = DebianUpstreamSource(src.tgz)
+        upstream = DebianUpstreamSource(dsc.tgz)
         upstream.unpack(dirs['tmp'], options.filters)
-        for (component, tarball) in src.additional_tarballs.items():
+        for (component, tarball) in dsc.additional_tarballs.items():
             gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball))
             unpack_component_tarball(upstream.unpacked, component, tarball, options.filters)
 
-        format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][src.native]
-        tag = repo.version_to_tag(format[0], src.upstream_version)
-        msg = "%s version %s" % (format[1], src.upstream_version)
+        format = [(options.upstream_tag, "Upstream"), (options.debian_tag, "Debian")][dsc.native]
+        tag = repo.version_to_tag(format[0], dsc.upstream_version)
+        msg = "%s version %s" % (format[1], dsc.upstream_version)
 
-        if repo.find_version(options.debian_tag, src.version):
-            gbp.log.warn("Version %s already imported." % src.version)
+        if repo.find_version(options.debian_tag, dsc.version):
+            gbp.log.warn("Version %s already imported." % dsc.version)
             if options.allow_same_version:
-                gbp.log.info("Moving tag of version '%s' since import forced" % src.version)
-                move_tag_stamp(repo, options.debian_tag, src.version)
+                gbp.log.info("Moving tag of version '%s' since import forced" % dsc.version)
+                move_tag_stamp(repo, options.debian_tag, dsc.version)
             else:
                 raise SkipImport
 
-        if not repo.find_version(format[0], src.upstream_version):
+        if not repo.find_version(format[0], dsc.upstream_version):
             gbp.log.info("Tag %s not found, importing %s tarball" % (tag, format[1]))
             if is_empty:
                 branch = None
             else:
                 branch = [options.upstream_branch,
-                          options.debian_branch][src.native]
+                          options.debian_branch][dsc.native]
                 if not repo.has_branch(branch):
                     if options.create_missing_branches:
                         gbp.log.info("Creating missing branch '%s'" % branch)
@@ -447,7 +447,7 @@ def main(argv):
                                     "\nAlso check the --create-missing-branches option.")
                         raise GbpError
 
-            if src.native:
+            if dsc.native:
                 author = get_author_from_changelog(upstream.unpacked)
                 committer = get_committer_from_author(author, options)
                 commit_msg = "Import %s\n%s" % (msg, get_changes(upstream.unpacked,
@@ -464,31 +464,31 @@ def main(argv):
                                      author=author,
                                      committer=committer)
 
-            if not (src.native and options.skip_debian_tag):
+            if not (dsc.native and options.skip_debian_tag):
                 repo.create_tag(name=tag,
                                 msg=msg,
                                 commit=commit,
                                 sign=options.sign_tags,
                                 keyid=options.keyid)
-            if not src.native:
+            if not dsc.native:
                 if is_empty:
                     repo.create_branch(options.upstream_branch, commit)
             if (not repo.has_branch(options.debian_branch) and
                     (is_empty or options.create_missing_branches)):
                 repo.create_branch(options.debian_branch, commit)
-        if not src.native:
-            if src.diff or src.deb_tgz:
-                apply_debian_patch(repo, upstream.unpacked, src, options,
+        if not dsc.native:
+            if dsc.diff or dsc.deb_tgz:
+                apply_debian_patch(repo, upstream.unpacked, dsc, options,
                                    tag, is_empty)
             else:
                 gbp.log.warn("Didn't find a diff to apply.")
         if repo.get_branch() == options.debian_branch or is_empty:
             # Update HEAD if we modified the checked out branch
             repo.force_head(options.debian_branch, hard=True)
-        if options.pristine_tar and not src.native:
+        if options.pristine_tar and not dsc.native:
             repo.create_pristinetar_commits(options.upstream_branch,
-                                            src.tgz,
-                                            src.additional_tarballs.items())
+                                            dsc.tgz,
+                                            dsc.additional_tarballs.items())
     except KeyboardInterrupt:
         ret = 1
         gbp.log.err("Interrupted. Aborting.")
@@ -511,7 +511,7 @@ def main(argv):
             gbpc.RemoveTree(dirs[d])()
 
     if not ret and not skipped:
-        gbp.log.info("Version '%s' imported under '%s'" % (src.version, repo.path))
+        gbp.log.info("Version '%s' imported under '%s'" % (dsc.version, repo.path))
     return ret
 
 
