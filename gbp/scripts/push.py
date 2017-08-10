@@ -23,6 +23,7 @@ import sys
 import gbp.log
 from gbp.config import GbpOptionParserDebian
 from gbp.deb.git import DebianGitRepository, GitRepositoryError
+from gbp.deb.source import DebianSourceError
 from gbp.deb.source import DebianSource
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes
@@ -156,7 +157,7 @@ def main(argv):
                 to_push,
                 dry_run=options.dryrun)
         retval = 0
-    except (GbpError, GitRepositoryError) as err:
+    except (GbpError, GitRepositoryError, DebianSourceError) as err:
         if str(err):
             gbp.log.err(err)
 
