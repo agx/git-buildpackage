@@ -106,7 +106,7 @@ def main(argv):
         ret = 1
 
     if not ret:
-        comp_msg = ('with additional tarballs for %s'
+        comp_msg = (' with additional tarballs for %s'
                     % ", ".join([os.path.basename(t[1]) for t in component_tarballs])) if component_tarballs else ''
         gbp.log.info("Successfully committed pristine-tar data for version %s of %s%s" % (source.version,
                                                                                           tarball,
