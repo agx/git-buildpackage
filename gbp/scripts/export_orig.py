@@ -101,10 +101,16 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
     comp = Compressor(options.comp_type)
     pristine_tar_prepare_orig_tree(repo, source, options)
     try:
+        gbp.log.info("Creating %s/%s" %
+                     (output_dir,
+                      source.upstream_tarball_name(comp.type)))
         repo.create_upstream_tarball_via_pristine_tar(source,
                                                       output_dir,
                                                       comp)
         for component in options.components:
+            gbp.log.info("Creating %s/%s" %
+                         (output_dir,
+                          source.upstream_tarball_name(comp.type, component)))
             repo.create_upstream_tarball_via_pristine_tar(source,
                                                           output_dir,
                                                           comp,
