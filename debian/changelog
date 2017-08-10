@@ -1,3 +1,30 @@
+git-buildpackage (0.9.0~exp3) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * [ce76320] doc: properly mark filter as repeatable in the gbp-import-dsc
+    synopsis
+  * [01a4a7f] dch: support passing arbitrary dch command line options
+    (Closes: #596513, #682854)
+  * [f208a0b] import_orig: use a more gittish commit message.
+    When replacing the debian/ dir don't used past tense and
+    keep the subject more like git-merge. (Closes: #867214)
+  * [3e4e795] buildpackage: don't prepare any tarballs in overlay mode.
+    They're not in git so we fail otherwise
+  * [66138d9] buildpackage: pass the proper tarball dir for overlays.
+    We want to look for tarballs in tarball dir (if specified) not the output
+    dir
+  * [da42f70] buildpackge: add test for overlay mode
+  * [b71a89e] export: print names of generated tarballs when using
+    pristine-tar so we get as much information as with git-archive.
+  * [3ff0fc7] pristine-tar: properly separate additional tarballs by spaces
+
+  [ Maximiliano Curia ]
+  * [a20047b] export_source: replace orig_file with
+    source.upstream_tarball_name orig_file was dropped in
+    8edd16022d75967a8fe54ef99a0733400a287bc2
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 10 Aug 2017 14:57:39 -0300
+
 git-buildpackage (0.9.0~exp2) experimental; urgency=medium
 
   [ Guido Günther ]
