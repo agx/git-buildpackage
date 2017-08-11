@@ -196,6 +196,27 @@ def check_tag(options, repo, source):
             raise GbpError("Tag '%s' already exists" % tag)
 
 
+def create_debian_tag(repo, source, commit, options):
+    """
+    Create the debian tag
+
+    returns: the created tag
+    """
+    tag = repo.version_to_tag(options.debian_tag, source.version)
+    gbp.log.info("Tagging %s as %s" % (source.version, tag))
+    if options.retag and repo.has_tag(tag):
+        repo.delete_tag(tag)
+    tag_msg = format_str(options.debian_tag_msg,
+                         dict(pkg=source.sourcepkg,
+                              version=source.version))
+    repo.create_tag(name=tag,
+                    msg=tag_msg,
+                    sign=options.sign_tags,
+                    commit=commit,
+                    keyid=options.keyid)
+    return tag
+
+
 def get_pbuilder_dist(options, repo, native=False):
     """
     Determin the dist to build for with pbuilder/cowbuilder
@@ -550,19 +571,7 @@ def main(argv):
             else:
                 commit = head
 
-            tag = repo.version_to_tag(options.debian_tag, source.version)
-            gbp.log.info("Tagging %s as %s" % (source.version, tag))
-            if options.retag and repo.has_tag(tag):
-                repo.delete_tag(tag)
-            tag_msg = format_str(options.debian_tag_msg,
-                                 dict(pkg=source.sourcepkg,
-                                      version=source.version))
-            repo.create_tag(name=tag,
-                            msg=tag_msg,
-                            sign=options.sign_tags,
-                            commit=commit,
-                            keyid=options.keyid)
-
+            tag = create_debian_tag(repo, source, commit, options)
             if options.posttag:
                 sha = repo.rev_parse("%s^{}" % tag)
                 Hook('Posttag', options.posttag,
