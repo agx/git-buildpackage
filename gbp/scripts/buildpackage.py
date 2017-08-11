@@ -327,6 +327,27 @@ def changes_file_name(source, build_dir, dpkg_args):
                             changes_file_suffix(dpkg_args)))
 
 
+def check_branch(repo, options):
+    """
+    Check if we're on the right branch and bail out otherwise
+
+    returns: the current branch or C{None} if in detached head mode
+    """
+    branch = None
+    try:
+        branch = repo.get_branch()
+    except GitRepositoryError:
+        # Not being on any branch is o.k. with --git-ignore-branch
+        if not options.ignore_branch:
+            raise
+
+    ignore = options.ignore_new or options.ignore_branch
+    if branch != options.debian_branch and not ignore:
+            gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
+            raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
+    return branch
+
+
 def build_parser(name, prefix=None):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
@@ -482,19 +503,7 @@ def main(argv):
 
     try:
         clean_working_tree(options, repo)
-
-        try:
-            branch = repo.get_branch()
-        except GitRepositoryError:
-            # Not being on any branch is o.k. with --git-ignore-branch
-            if not options.ignore_branch:
-                raise
-
-        if not options.ignore_new and not options.ignore_branch:
-            if branch != options.debian_branch:
-                gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
-                raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
-
+        branch = check_branch(repo, options)
         head = repo.head
         tree = maybe_write_tree(repo, options)
         source = source_vfs(repo, options, tree)
