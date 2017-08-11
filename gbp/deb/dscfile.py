@@ -112,7 +112,8 @@ class DscFile(object):
             raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
         self.additional_tarballs = dict(add_tars)
 
-    def _get_version(self):
+    @property
+    def version(self):
         version = ["", self.epoch + ":"][len(self.epoch) > 0]
         if self.native:
             version += self.upstream_version
@@ -122,8 +123,6 @@ class DscFile(object):
             else:   # possible in 1.0
                 version += "%s" % self.upstream_version
         return version
-
-    version = property(_get_version)
 
     def __str__(self):
         return "<%s object %s>" % (self.__class__.__name__, self.dscfile)
