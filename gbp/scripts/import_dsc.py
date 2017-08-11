@@ -364,7 +364,7 @@ def get_changes(dir, repo, is_empty, debian_branch):
 def main(argv):
     dirs = dict(top=os.path.abspath(os.curdir))
     needs_repo = False
-    ret = 0
+    ret = 1
     skipped = False
 
     options, pkg, target = parse_all(argv)
@@ -489,20 +489,19 @@ def main(argv):
             repo.create_pristinetar_commits(options.upstream_branch,
                                             dsc.tgz,
                                             dsc.additional_tarballs.items())
+        ret = 0
     except KeyboardInterrupt:
-        ret = 1
         gbp.log.err("Interrupted. Aborting.")
     except gbpc.CommandExecFailed:
-        ret = 1
+        pass  # command itself printed an error
     except GitRepositoryError as msg:
         gbp.log.err("Git command failed: %s" % msg)
-        ret = 1
     except GbpError as err:
         if str(err):
             gbp.log.err(err)
-        ret = 1
     except SkipImport:
         skipped = True
+        ret = 0
     finally:
         os.chdir(dirs['top'])
 
