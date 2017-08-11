@@ -417,7 +417,24 @@
             <para>
               Options to pass to pbuilder when building via &git-pbuilder; (either
               via <option>--git-pbuilder</option>, <option>--git-qemubuilder</option>
-              or the corresponding configuration file options).
+              or the corresponding configuration file options). It does so by
+              using the <envar>GIT_PBUILDER_OPTIONS</envar> environment
+              variable to pass options to &git-pbuilder;.
+            </para>
+            <para>
+	      As an example, to tell pbuilder to use an alternate
+              .pbuilderrc file, you may run &gbp-buildpackage; with
+              <option>--git-pbuilder-options=<replaceable>"--configfile
+		  /tmp/my/pbuilderrc"</replaceable></option>. See
+	      <citerefentry>
+		<refentrytitle>pbuilder</refentrytitle>
+		<manvolnum>8</manvolnum>
+	      </citerefentry>
+	      for more options to pass through here.
+            </para>
+            <para>
+              If unset the <envar>GIT_PBUILDER_OPTIONS</envar> environment
+              variable will be left untouched.
             </para>
           </listitem>
 	</varlistentry>
