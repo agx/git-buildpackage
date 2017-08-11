@@ -298,6 +298,14 @@ def changes_file_suffix(dpkg_args):
         return os.getenv('ARCH', None) or du.get_arch()
 
 
+def changes_file_name(source, build_dir, dpkg_args):
+    return os.path.abspath("%s/../%s_%s_%s.changes" %
+                           (build_dir,
+                            source.changelog.name,
+                            source.changelog.noepoch,
+                            changes_file_suffix(dpkg_args)))
+
+
 def build_parser(name, prefix=None):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
@@ -475,6 +483,13 @@ def main(argv):
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
             tarball_dir = options.tarball_dir or output_dir
+            tmp_dir = os.path.join(output_dir, "%s-tmp" % source.sourcepkg)
+            build_env, hook_env = setup_pbuilder(options, repo, source.is_native())
+            major = (source.debian_version if source.is_native()
+                     else source.upstream_version)
+            export_dir = os.path.join(output_dir, "%s-%s" % (source.sourcepkg, major))
+            build_dir = export_dir if options.export_dir else repo.path
+            changes_file = changes_file_name(source, build_dir, dpkg_args)
 
             # Get/build the upstream tarball if necessary. We delay this in
             # case of a postexport hook so the hook gets a chance to modify the
@@ -488,11 +503,8 @@ def main(argv):
                     prepare_upstream_tarballs(repo, source, options, tarball_dir,
                                               output_dir)
 
-            build_env, hook_env = setup_pbuilder(options, repo, source.is_native())
-
             # Export to another build dir if requested:
             if options.export_dir:
-                tmp_dir = os.path.join(output_dir, "%s-tmp" % source.sourcepkg)
                 export_source(repo, tree, source, options, tmp_dir, tarball_dir)
 
                 # Run postexport hook
@@ -503,9 +515,6 @@ def main(argv):
                                             'GBP_TMP_DIR': tmp_dir})
                          )(dir=tmp_dir)
 
-                major = (source.debian_version if source.is_native()
-                         else source.upstream_version)
-                export_dir = os.path.join(output_dir, "%s-%s" % (source.sourcepkg, major))
                 gbp.log.info("Moving '%s' to '%s'" % (tmp_dir, export_dir))
                 move_old_export(export_dir)
                 os.rename(tmp_dir, export_dir)
@@ -514,10 +523,6 @@ def main(argv):
                 if not source.is_native() and options.postexport:
                     prepare_upstream_tarballs(repo, source, options, tarball_dir,
                                               output_dir)
-                build_dir = export_dir
-            else:
-                build_dir = repo.path
-
             if options.prebuild:
                 Hook('Prebuild', options.prebuild,
                      extra_env=Hook.md(hook_env,
@@ -533,15 +538,10 @@ def main(argv):
                                            {'GBP_BUILD_DIR': build_dir})
                          )(dir=build_dir)
             if options.postbuild:
-                changes = os.path.abspath("%s/../%s_%s_%s.changes" %
-                                          (build_dir,
-                                           source.changelog.name,
-                                           source.changelog.noepoch,
-                                           changes_file_suffix(dpkg_args)))
-                gbp.log.debug("Looking for changes file %s" % changes)
+                gbp.log.debug("Looking for changes file %s" % changes_file)
                 Hook('Postbuild', options.postbuild,
                      extra_env=Hook.md(hook_env,
-                                       {'GBP_CHANGES_FILE': changes,
+                                       {'GBP_CHANGES_FILE': changes_file,
                                         'GBP_BUILD_DIR': build_dir})
                      )()
         if options.tag or options.tag_only:
