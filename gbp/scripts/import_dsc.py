@@ -80,12 +80,9 @@ def apply_patch(diff):
     try:
         ret = pipe.copy('', '')
         if ret:
-            gbp.log.err("Error import %s: %d" % (diff, ret))
-            return False
+            raise GbpError("Error import %s: %d" % (diff, ret))
     except OSError as err:
-        gbp.log.err("Error importing %s: %s" % (diff, err[0]))
-        return False
-    return True
+        raise GbpError("Error importing %s: %s" % (diff, err[0]))
 
 
 def apply_deb_tgz(deb_tgz):
@@ -94,7 +91,6 @@ def apply_deb_tgz(deb_tgz):
     if os.path.isdir('debian'):
         shutil.rmtree('debian')
     gbpc.UnpackTarArchive(deb_tgz, ".")()
-    return True
 
 
 def get_author_from_changelog(dir):
@@ -148,11 +144,12 @@ def apply_debian_patch(repo, unpack_dir, dsc, options, tag, is_empty):
     try:
         os.chdir(unpack_dir)
 
-        if dsc.diff and not apply_patch(dsc.diff):
-            raise GbpError
-
-        if dsc.deb_tgz and not apply_deb_tgz(dsc.deb_tgz):
-            raise GbpError
+        if dsc.diff:
+            apply_patch(dsc.diff)
+        elif dsc.deb_tgz:
+            apply_deb_tgz(dsc.deb_tgz)
+        else:
+            raise GbpError("Neither a Debian diff nor tarball found")
 
         if os.path.exists('debian/rules'):
             os.chmod('debian/rules', 0o755)
@@ -184,8 +181,7 @@ def apply_debian_patch(repo, unpack_dir, dsc, options, tag, is_empty):
                             keyid=options.keyid)
     except (gbpc.CommandExecFailed, GitRepositoryError) as err:
         msg = str(err) or 'Unknown error, please report a bug'
-        gbp.log.err("Failed to import Debian package: %s" % msg)
-        raise GbpError
+        raise GbpError("Failed to import Debian package: %s" % msg)
     finally:
         os.chdir(repo.path)
 
@@ -378,8 +374,7 @@ def main(argv):
 
             (clean, out) = repo.is_clean()
             if not clean and not is_empty:
-                gbp.log.err("Repository has uncommitted changes, commit these first: ")
-                raise GbpError(out)
+                raise GbpError("Repository has uncommitted changes, commit these first: %s" % out)
         except GitRepositoryError:
             # no repo found, create one
             needs_repo = True
@@ -443,9 +438,8 @@ def main(argv):
                         gbp.log.info("Creating missing branch '%s'" % branch)
                         repo.create_branch(branch)
                     else:
-                        gbp.log.err(no_upstream_branch_msg % branch +
-                                    "\nAlso check the --create-missing-branches option.")
-                        raise GbpError
+                        raise GbpError(no_upstream_branch_msg % branch +
+                                       "\nAlso check the --create-missing-branches option.")
 
             if dsc.native:
                 author = get_author_from_changelog(upstream.unpacked)
