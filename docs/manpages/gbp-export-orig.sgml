@@ -120,7 +120,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--upstream-tree=</option><replaceable>[BRANCH|SLOPPY|TAG|TREEISH]</replaceable>
+        <term><option>--upstream-tree=</option><replaceable>[BRANCH|TAG|TREEISH]</replaceable>
         </term>
         <listitem>
           <para>
@@ -128,10 +128,7 @@
           <replaceable>TAG</replaceable> (the default) looks at a tag corresponding to the
           version in the changelog. <replaceable>BRANCH</replaceable> looks at
           the upstream branch given via the
-          <option>--upstream-branch</option> option. The <replaceable>SLOPPY</replaceable>
-	  option looks at the debian branch given via
-	  the <option>--debian-branch</option> and drops
-	  the <filename>debian/</filename> dir.
+          <option>--upstream-branch</option> option.
 	  </para>
 	  <para>
 	  Other values are interpreted as treeishs.
