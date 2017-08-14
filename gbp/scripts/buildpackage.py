@@ -44,7 +44,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.hook import Hook
 
-from gbp.scripts.export_orig import prepare_upstream_tarballs
+from gbp.scripts.export_orig import guess_comp_type, prepare_upstream_tarballs
 
 
 def pristine_tar_commit(repo, source, options, output_dir, orig_file, upstream_tree):
@@ -96,10 +96,13 @@ def export_source(repo, tree, source, options, dest_dir, tarball_dir):
     @param tarball_dir: where to fetch the tarball from in overlay mode
     @returns: the temporary directory
     """
+    print ("export_source",  tree, source, options, dest_dir, tarball_dir)
     # Extract orig tarball if git-overlay option is selected:
     if options.overlay:
         if source.is_native():
             raise GbpError("Cannot overlay Debian native package")
+        # comp_type is not guessed yet
+        options.comp_type = guess_comp_type(repo, options.comp_type, source, tarball_dir)
         extract_orig(os.path.join(tarball_dir,
                                   source.upstream_tarball_name(
                                       options.comp_type)),
