@@ -273,7 +273,7 @@ class ChangeLog(object):
         else:
             args.append('')
         dch = Command('debchange', args, extra_env=env)
-        dch.call([])
+        dch([], quiet=True)
         if msg:
             old_cl = open("debian/changelog", "r")
             new_cl = open("debian/changelog.bak", "w")
