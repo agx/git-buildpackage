@@ -374,7 +374,7 @@ class GbpOptionParser(OptionParser):
                         ('%(top_dir)s/debian/gbp.conf', 'debian'),
                         ('%(git_dir)s/gbp.conf', None)]
 
-    list_opts = ['filter', 'component']
+    list_opts = ['filter', 'component', 'dch-opt']
 
     @classmethod
     def get_config_files(cls, no_local=False):
