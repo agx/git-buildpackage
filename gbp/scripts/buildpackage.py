@@ -526,7 +526,7 @@ def main(argv):
             # sources and create different tarballs (#640382)
             # We don't delay it in general since we want to fail early if the
             # tarball is missing.
-            if not source.is_native() and not options.overlay:
+            if not source.is_native():
                 if options.postexport:
                     gbp.log.info("Postexport hook set, delaying tarball creation")
                 else:
