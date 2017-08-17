@@ -98,7 +98,8 @@ def generate_patches(repo, start, end, outdir, options):
             if 'topic' in cmds:
                 topic = cmds['topic']
             name = cmds.get('name', None)
-            format_patch(outdir, repo, info, patches, options.patch_numbers,
+            format_patch(outdir, repo, info, patches, options.abbrev,
+                         numbered=options.patch_numbers,
                          topic=topic, name=name,
                          renumber=options.renumber,
                          patch_num_prefix_format=options.patch_num_format)
@@ -396,6 +397,7 @@ def build_parser(name):
     parser.add_config_file_option(option_name="time-machine", dest="time_machine", type="int")
     parser.add_boolean_config_file_option("drop", dest='drop')
     parser.add_boolean_config_file_option(option_name="commit", dest="commit")
+    parser.add_config_file_option(option_name="abbrev", dest="abbrev", type="int")
     parser.add_option("--force", dest="force", action="store_true", default=False,
                       help="in case of import even import if the branch already exists")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')

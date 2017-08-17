@@ -101,7 +101,8 @@ class GbpOptionParser(OptionParser):
     @cvar def_config_files: config files we parse
     @type def_config_files: dict (type, path)
     """
-    defaults = {'allow-unauthenticated': 'False',
+    defaults = {'abbrev': 7,
+                'allow-unauthenticated': 'False',
                 'arch': '',
                 'author-date-is-committer-date': 'False',
                 'author-is-committer': 'False',
@@ -343,6 +344,8 @@ class GbpOptionParser(OptionParser):
         'drop':
             "In case of 'export' drop the patch-queue branch "
             "after export. Default is '%(drop)s'",
+        'abbrev':
+            "abbreviate commits to this length. default is '%(abbrev)s'",
         'commit':
             "commit changes after export, Default is '%(commit)s'",
         'rollback':

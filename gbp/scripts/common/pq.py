@@ -185,7 +185,7 @@ def write_patch_file(filename, commit_info, diff):
 DEFAULT_PATCH_NUM_PREFIX_FORMAT = "%04d-"
 
 
-def format_patch(outdir, repo, commit_info, series, numbered=True,
+def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
                  path_exclude_regex=None, topic='', name=None, renumber=False,
                  patch_num_prefix_format=DEFAULT_PATCH_NUM_PREFIX_FORMAT):
     """Create patch of a single commit"""
@@ -235,14 +235,14 @@ def format_patch(outdir, repo, commit_info, series, numbered=True,
     patch = None
     if paths:
         diff = repo.diff('%s^!' % commit_info['id'], paths=paths, stat=80,
-                         summary=True, text=True, abbrev=7, renames=False)
+                         summary=True, text=True, abbrev=abbrev, renames=False)
         patch = write_patch_file(filepath, commit_info, diff)
         if patch:
             series.append(patch)
     return patch
 
 
-def format_diff(outdir, filename, repo, start, end, path_exclude_regex=None):
+def format_diff(outdir, filename, repo, start, end, abbrev, path_exclude_regex=None):
     """Create a patch of diff between two repository objects"""
 
     info = {'author': repo.get_author_info()}
@@ -260,7 +260,7 @@ def format_diff(outdir, filename, repo, start, end, path_exclude_regex=None):
     paths = patch_path_filter(file_status, path_exclude_regex)
     if paths:
         diff = repo.diff(start, end, paths=paths, stat=80, summary=True,
-                         text=True, abbrev=7, renames=False)
+                         text=True, abbrev=abbrev, renames=False)
         return write_patch_file(filename, info, diff)
     return None
 

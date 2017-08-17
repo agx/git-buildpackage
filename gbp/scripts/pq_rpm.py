@@ -86,9 +86,9 @@ def generate_patches(repo, start, end, outdir, options):
     merges = repo.get_commits(start, end_commit, options=['--merges'])
     if merges:
         # Shorten SHA1s
-        start_sha1 = repo.rev_parse(start, short=7)
-        merge_sha1 = repo.rev_parse(merges[0], short=7)
-        patch_fn = format_diff(outdir, None, repo, start_sha1, merge_sha1)
+        start_sha1 = repo.rev_parse(start, short=options.abbrev)
+        merge_sha1 = repo.rev_parse(merges[0], short=options.abbrev)
+        patch_fn = format_diff(outdir, None, repo, start_sha1, merge_sha1, options.abbrev)
         if patch_fn:
             gbp.log.info("Merge commits found! Diff between %s..%s written "
                          "into one monolithic diff" % (start_sha1, merge_sha1))
@@ -382,6 +382,7 @@ def build_parser(name):
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
     parser.add_config_file_option(option_name="tmp-dir", dest="tmp_dir")
+    parser.add_config_file_option(option_name="abbrev", dest="abbrev", type="int")
     parser.add_config_file_option(option_name="upstream-tag",
                                   dest="upstream_tag")
     parser.add_config_file_option(option_name="spec-file", dest="spec_file")
