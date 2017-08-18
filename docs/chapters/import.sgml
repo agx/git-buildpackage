@@ -347,7 +347,7 @@ upstream-tag = v%(version%.%_)s
 </programlisting>
 	  The above makes sure we have <replaceable>debian/sid</replaceable> for the &debian; packaging. We didn't create
 	  any <replaceable>upstream/*</replaceable> branches; they're not needed for the packaging and only need to be
-	  kept up to date.
+	  kept up to date. We started the branch at the commit corresponding to the tag <replaceable>v1.0</replaceable>.
       </para>
 
       <para>After adding the &debian; packaging, we build the package. This assumes you're using &pristine-tar;
