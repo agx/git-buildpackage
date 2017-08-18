@@ -347,7 +347,10 @@ upstream-tag = v%(version%.%_)s
 </programlisting>
 	  The above makes sure we have <replaceable>debian/sid</replaceable> for the &debian; packaging. We didn't create
 	  any <replaceable>upstream/*</replaceable> branches; they're not needed for the packaging and only need to be
-	  kept up to date. After adding the &debian; packaging, we build the package. This assumes you're using &pristine-tar;
+	  kept up to date.
+      </para>
+
+      <para>After adding the &debian; packaging, we build the package. This assumes you're using &pristine-tar;
 	  and upstream uses a version number format as described above:
 <programlisting>
   <command>gbp buildpackage</command> --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s' --git-debian-branch=debian/sid
