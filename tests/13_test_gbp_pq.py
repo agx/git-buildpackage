@@ -283,8 +283,8 @@ class TestExport(testutils.DebianGitTestRepo):
         self.assertTrue(repo.has_branch(pq_branch))
         self.assertEqual(len(repo.get_commits()), 3,
                          "Export did not create commit")
-        self.assertIn(b"Dropped patch1.diff:", repo.show('HEAD'))
-        self.assertIn(b"Dropped patch2.diff:", repo.show('HEAD'))
+        self.assertIn(b"Drop patch1.diff:", repo.show('HEAD'))
+        self.assertIn(b"Drop patch2.diff:", repo.show('HEAD'))
 
 
 class TestParseGbpCommand(unittest.TestCase):

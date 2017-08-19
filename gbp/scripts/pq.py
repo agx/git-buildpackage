@@ -127,7 +127,7 @@ def format_series_diff(added, removed, options):
     Format the patch differences into a suitable commit message
 
     >>> format_series_diff(['a'], ['b'], None)
-    'Rediff patches\\n\\nAdded a: <REASON>\\nDropped b: <REASON>\\n'
+    'Rediff patches\\n\\nAdd a: <REASON>\\nDrop b: <REASON>\\n'
     """
     if len(added) == 1 and not removed:
         # Single patch added, create a more thorough commit message
@@ -141,9 +141,9 @@ def format_series_diff(added, removed, options):
     else:
         msg = "Rediff patches\n\n"
         for p in added:
-            msg += 'Added %s: <REASON>\n' % p
+            msg += 'Add %s: <REASON>\n' % p
         for p in removed:
-            msg += 'Dropped %s: <REASON>\n' % p
+            msg += 'Drop %s: <REASON>\n' % p
     return msg
 
 
