@@ -149,6 +149,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
             patch_numbers = False
             renumber = False
             patch_num_format = '%04d-'
+            abbrev = 7
 
         expected_patches = ['gbptest/added-foo.patch',
                             'gbptest/patchname.diff']
@@ -168,6 +169,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
             patch_numbers = True
             renumber = True
             patch_num_format = '%02d_'
+            abbrev = 7
 
         expected_patches = ['gbptest/01_added-foo.patch',
                             'gbptest/02_patchname.diff']
@@ -187,6 +189,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
             patch_numbers = False
             renumber = True
             patch_num_format = '%02d_'
+            abbrev = 7
 
         expected_patches = ['gbptest/added-foo.patch',
                             'gbptest/patchname.diff',
@@ -218,6 +221,7 @@ class TestExport(testutils.DebianGitTestRepo):
         meta_closes_bugnum = ''
         pq_from = 'DEBIAN'
         commit = False
+        abbrev = 7
 
     def setUp(self):
         testutils.DebianGitTestRepo.setUp(self)
@@ -326,6 +330,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         pq_from = 'TAG'
         renumber = False
         upstream_tag = 'upstream/%(version)s'
+        abbrev = 7
 
     def git_create_empty_branch(self, branch):
         GitCommand('checkout', cwd=self.repo.path)(['-q', '--orphan', branch])

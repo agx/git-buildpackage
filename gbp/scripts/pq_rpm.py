@@ -88,7 +88,8 @@ def generate_patches(repo, start, end, outdir, options):
         # Shorten SHA1s
         start_sha1 = repo.rev_parse(start, short=options.abbrev)
         merge_sha1 = repo.rev_parse(merges[0], short=options.abbrev)
-        patch_fn = format_diff(outdir, None, repo, start_sha1, merge_sha1, options.abbrev)
+        patch_fn = format_diff(outdir, None, repo, start_sha1, merge_sha1,
+                               abbrev=options.abbrev)
         if patch_fn:
             gbp.log.info("Merge commits found! Diff between %s..%s written "
                          "into one monolithic diff" % (start_sha1, merge_sha1))
@@ -104,7 +105,8 @@ def generate_patches(repo, start, end, outdir, options):
                                                   ('if', 'ifarch'))
         if 'ignore' not in cmds:
             patch_fn = format_patch(outdir, repo, info, patches,
-                                    options.patch_numbers)
+                                    numbered=options.patch_numbers,
+                                    abbrev=options.abbrev)
             if patch_fn:
                 commands[os.path.basename(patch_fn)] = cmds
         else:
@@ -114,7 +116,8 @@ def generate_patches(repo, start, end, outdir, options):
     if end_commit != end:
         gbp.log.info("Generating diff file %s..%s" % (end_commit, end))
         patch_fn = format_diff(outdir, None, repo, end_commit, end,
-                               options.patch_export_ignore_path)
+                               options.patch_export_ignore_path,
+                               abbrev=options.abbrev)
         if patch_fn:
             patches.append(patch_fn)
 
