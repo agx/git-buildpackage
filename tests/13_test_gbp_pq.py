@@ -28,6 +28,14 @@ import gbp.scripts.common.pq as pq
 import gbp.patch_series
 
 
+class TestPqOptions(object):
+    abbrev = 7
+    drop = False
+    patch_num_format = '%04d-'
+    patch_numbers = False
+    renumber = False
+
+
 class TestApplyAndCommit(testutils.DebianGitTestRepo):
     """Test L{gbp.pq}'s apply_and_commit"""
 
@@ -145,12 +153,6 @@ class TestWritePatch(testutils.DebianGitTestRepo):
     def test_generate_patches(self):
         """Test generation of patches"""
 
-        class opts:
-            patch_numbers = False
-            renumber = False
-            patch_num_format = '%04d-'
-            abbrev = 7
-
         expected_patches = ['gbptest/added-foo.patch',
                             'gbptest/patchname.diff']
 
@@ -160,16 +162,12 @@ class TestWritePatch(testutils.DebianGitTestRepo):
                                    "Gbp-Pq: Topic gbptest\n"
                                    "Gbp-Pq: Name patchname.diff"))]
 
+        opts = TestPqOptions()
+        opts.patch_num_format = '%04d-'
         self._test_generate_patches(changes, expected_patches, opts)
 
     def test_generate_renumbered_patches(self):
         """Test generation of renumbered patches"""
-
-        class opts:
-            patch_numbers = True
-            renumber = True
-            patch_num_format = '%02d_'
-            abbrev = 7
 
         expected_patches = ['gbptest/01_added-foo.patch',
                             'gbptest/02_patchname.diff']
@@ -180,16 +178,14 @@ class TestWritePatch(testutils.DebianGitTestRepo):
                                    "Gbp-Pq: Topic gbptest\n"
                                    "Gbp-Pq: Name 099-patchname.diff"))]
 
+        opts = TestPqOptions()
+        opts.patch_num_format = '%02d_'
+        opts.renumber = True
+        opts.patch_numbers = True
         self._test_generate_patches(changes, expected_patches, opts)
 
     def test_generate_patches_with_name_clashes(self):
         """Test generation of patches which have name clashes"""
-
-        class opts:
-            patch_numbers = False
-            renumber = True
-            patch_num_format = '%02d_'
-            abbrev = 7
 
         expected_patches = ['gbptest/added-foo.patch',
                             'gbptest/patchname.diff',
@@ -208,20 +204,18 @@ class TestWritePatch(testutils.DebianGitTestRepo):
                                      "Gbp-Pq: Topic gbptest\n"
                                      "Gbp-Pq: Name 101-patchname.diff"))]
 
+        opts = TestPqOptions()
+        opts.renumber = True
+        opts.patch_num_format = '%02d_'
         self._test_generate_patches(changes, expected_patches, opts)
 
 
 class TestExport(testutils.DebianGitTestRepo):
-    class Options(object):
-        drop = False
-        patch_numbers = False
-        renumber = False
-        patch_num_format = ''
+    class Options(TestPqOptions):
+        commit = False
         meta_closes = False
         meta_closes_bugnum = ''
         pq_from = 'DEBIAN'
-        commit = False
-        abbrev = 7
 
     def setUp(self):
         testutils.DebianGitTestRepo.setUp(self)
@@ -319,18 +313,13 @@ class TestParseGbpCommand(unittest.TestCase):
 class TestFromTAG(testutils.DebianGitTestRepo):
     """Test L{gbp.pq}'s pq-from=TAG"""
 
-    class Options(object):
+    class Options(TestPqOptions):
         commit = True
-        drop = False
         force = False
         meta_closes = 'Closes|LP'
         meta_closes_bugnum = r'(?:bug|issue)?\#?\s?\d+'
-        patch_num_format = '%04d-'
-        patch_numbers = False
         pq_from = 'TAG'
-        renumber = False
         upstream_tag = 'upstream/%(version)s'
-        abbrev = 7
 
     def git_create_empty_branch(self, branch):
         GitCommand('checkout', cwd=self.repo.path)(['-q', '--orphan', branch])
