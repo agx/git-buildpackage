@@ -287,7 +287,7 @@ class DebianGitRepository(PkgGitRepository):
         """
         return True if self.has_branch(self.pristine_tar_branch) else False
 
-    def create_pristinetar_commits(self, upstream_tree, tarball, component_tarballs):
+    def create_pristine_tar_commits(self, upstream_tree, tarball, component_tarballs):
         """
         Create pristine-tar commits for a package with main tarball tarball
         and (optional) component tarballs based on upstream_tree

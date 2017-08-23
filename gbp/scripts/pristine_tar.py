@@ -97,9 +97,9 @@ def main(argv):
                                                     options.components)
         upstream_tag = repo.version_to_tag(options.upstream_tag,
                                            source.upstream_version)
-        repo.create_pristinetar_commits(upstream_tag,
-                                        tarball,
-                                        component_tarballs)
+        repo.create_pristine_tar_commits(upstream_tag,
+                                         tarball,
+                                         component_tarballs)
     except (GitRepositoryError, GbpError, CommandExecFailed) as err:
         if str(err):
             gbp.log.err(err)

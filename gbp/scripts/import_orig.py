@@ -596,9 +596,9 @@ def main(argv):
             if options.pristine_tar:
                 if pristine_orig:
                     repo.rrr_branch('pristine-tar')
-                    repo.create_pristinetar_commits(import_branch,
-                                                    pristine_orig,
-                                                    component_tarballs)
+                    repo.create_pristine_tar_commits(import_branch,
+                                                     pristine_orig,
+                                                     component_tarballs)
                 else:
                     gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
 

@@ -480,9 +480,9 @@ def main(argv):
             # Update HEAD if we modified the checked out branch
             repo.force_head(options.debian_branch, hard=True)
         if options.pristine_tar and not dsc.native:
-            repo.create_pristinetar_commits(options.upstream_branch,
-                                            dsc.tgz,
-                                            dsc.additional_tarballs.items())
+            repo.create_pristine_tar_commits(options.upstream_branch,
+                                             dsc.tgz,
+                                             dsc.additional_tarballs.items())
         ret = 0
     except KeyboardInterrupt:
         gbp.log.err("Interrupted. Aborting.")
