@@ -25,7 +25,8 @@ import time
 import gbp.command_wrappers as gbpc
 from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
 from gbp.deb.format import DebianSourceFormat
-from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
+from gbp.deb.upstreamsource import (DebianUpstreamSource,
+                                    DebianAdditionalTarball)
 from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import GitRepositoryError
@@ -265,20 +266,24 @@ def debian_branch_merge_by_merge(repo, tag, version, options):
     repo.set_branch(branch)
 
 
-def unpack_tarballs(sourcepackage, source, version, component_tarballs, options):
+def unpack_tarballs(name, sources, version, options):
     tmpdir = tempfile.mkdtemp(dir='../')
-    if not source.is_dir():  # Unpack main tarball
-        source.unpack(tmpdir, options.filters)
-        gbp.log.debug("Unpacked '%s' to '%s'" % (source.path, source.unpacked))
+    if not sources[0].is_dir():  # Unpack main tarball
+        sources[0].unpack(tmpdir, options.filters)
+        gbp.log.debug("Unpacked '%s' to '%s'" % (sources[0].path, sources[0].unpacked))
 
-    if orig_needs_repack(source, options):
-        gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
-        (source, tmpdir) = repack_upstream(source, sourcepackage, version, tmpdir, options.filters)
+    if orig_needs_repack(sources[0], options):
+        gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (sources[0].path,
+                                                                         sources[0].unpacked))
+        # FIXME: we should repack the other tarballs here too (See #860457)
+        # Then we better move around sources instead of source[0]
+        (source, tmpdir) = repack_upstream(sources[0], name, version, tmpdir, options.filters)
+        sources[0] = source
 
-    if not source.is_dir():  # Unpack component tarballs
-        for (component, tarball) in component_tarballs:
-            unpack_component_tarball(source.unpacked, component, tarball, options.filters)
-    return (source, tmpdir)
+    if not sources[0].is_dir():  # Unpack component tarballs
+        for s in sources[1:]:
+            s.unpack(sources[0].unpacked, options.filters)
+    return (sources, tmpdir)
 
 
 def set_bare_repo_options(options):
@@ -420,19 +425,16 @@ def main(argv):
 
         # Download the main tarball
         if options.download:
-            upstream = download_orig(args[0])
+            sources = [download_orig(args[0])]
         else:
-            upstream = find_upstream(options.uscan, args, options.version)
-            if not upstream:
+            sources = [find_upstream(options.uscan, args)]
+            if not sources[0]:
                 return ExitCodes.uscan_up_to_date
 
         # The main tarball
-        (name, version) = detect_name_and_version(repo, upstream, options)
+        (name, version) = detect_name_and_version(repo, sources[0], options)
         # Additional tarballs we expect to exist
-        component_tarballs = get_component_tarballs(name,
-                                                    version,
-                                                    upstream.path,
-                                                    options.components)
+        sources += get_component_tarballs(name, version, sources[0].path, options.components)
 
         tag = repo.version_to_tag(options.upstream_tag, version)
         if repo.has_tag(tag):
@@ -441,15 +443,15 @@ def main(argv):
         if repo.bare:
             set_bare_repo_options(options)
 
-        upstream, tmpdir = unpack_tarballs(name, upstream, version, component_tarballs, options)
+        sources, tmpdir = unpack_tarballs(name, sources, version, options)
 
-        (pristine_orig, linked) = prepare_pristine_tar(upstream.path,
+        (pristine_orig, linked) = prepare_pristine_tar(sources[0].path,
                                                        name,
                                                        version)
 
         # Don't mess up our repo with git metadata from an upstream tarball
         try:
-            if os.path.isdir(os.path.join(upstream.unpacked, '.git/')):
+            if os.path.isdir(os.path.join(sources[0].unpacked, '.git/')):
                 raise GbpError("The orig tarball contains .git metadata - giving up.")
         except OSError:
             pass
@@ -458,7 +460,7 @@ def main(argv):
             import_branch = options.upstream_branch
             filter_msg = ["", " (filtering out %s)"
                               % options.filters][len(options.filters) > 0]
-            gbp.log.info("Importing '%s' to branch '%s'%s..." % (upstream.path,
+            gbp.log.info("Importing '%s' to branch '%s'%s..." % (sources[0].path,
                                                                  import_branch,
                                                                  filter_msg))
             gbp.log.info("Source package is %s" % name)
@@ -466,7 +468,7 @@ def main(argv):
 
             msg = upstream_import_commit_msg(options, version)
 
-            commit = repo.commit_dir(upstream.unpacked,
+            commit = repo.commit_dir(sources[0].unpacked,
                                      msg=msg,
                                      branch=import_branch,
                                      other_parents=repo.vcs_tag_parent(options.vcs_tag, version),
@@ -476,11 +478,12 @@ def main(argv):
             if options.pristine_tar:
                 if pristine_orig:
                     repo.rrr_branch('pristine-tar')
-                    repo.create_pristine_tar_commits(import_branch,
-                                                     pristine_orig,
-                                                     component_tarballs)
+                    # FIXME: This used pristine_orig before, this is
+                    # not necessarily identictal to sources[0].path
+                    # so we need to have both names
+                    repo.create_pristine_tar_commits(import_branch, sources)
                 else:
-                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % upstream.path)
+                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % sources[0].path)
 
             repo.create_tag(name=tag,
                             msg="Upstream version %s" % version,
@@ -512,9 +515,9 @@ def main(argv):
             postimport_hook(repo, tag, version, options)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = str(err) or 'Unknown error, please report a bug'
-            raise GbpError("Import of %s failed: %s" % (upstream.path, msg))
+            raise GbpError("Import of %s failed: %s" % (sources[0].path, msg))
         except KeyboardInterrupt:
-            raise GbpError("Import of %s failed: aborted by user" % (upstream.path))
+            raise GbpError("Import of %s failed: aborted by user" % (sources[0].path))
     except GbpError as err:
         if str(err):
             gbp.log.err(err)
@@ -528,7 +531,7 @@ def main(argv):
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        gbp.log.info("Successfully imported version %s of %s" % (version, upstream.path))
+        gbp.log.info("Successfully imported version %s of %s" % (version, sources[0].path))
     return ret
 
 

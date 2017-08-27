@@ -282,28 +282,30 @@ class DebianGitRepository(PkgGitRepository):
         """
         return True if self.has_branch(self.pristine_tar_branch) else False
 
-    def create_pristine_tar_commits(self, upstream_tree, tarball, component_tarballs):
+    def create_pristine_tar_commits(self, upstream_tree, sources):
         """
         Create pristine-tar commits for a package with main tarball
         and (optional) component tarballs based on upstream_tree
 
-        @param tarball: path to main tarball
-        @param component_tarballs: C{list} of C{tuple}s of component
-            name and path to additional tarball
         @param upstream_tree: the treeish in the git repo to create the commits against
+        @param soures: C{list} of tarball as I{UpstreamSource}. First one being the main
+                       tarball the other ones additional tarballs.
         """
-        components = [c for (c, t) in component_tarballs]
+        components = [t.component for t in sources[1:]]
         main_tree = self.tree_drop_dirs(upstream_tree, components)
 
         try:
-            for component, name in component_tarballs:
-                subtree = self.tree_get_dir(upstream_tree, component)
+            for source in sources[1:]:
+                subtree = self.tree_get_dir(upstream_tree, source.component)
                 if not subtree:
                     raise GitRepositoryError("No tree for '%s' found in '%s' to create "
-                                             "pristine tar commit from" % (component, upstream_tree))
-                gbp.log.debug("Creating pristine tar commit '%s' from '%s'" % (component, subtree))
-                self.pristine_tar.commit(name, subtree, quiet=True)
-            self.pristine_tar.commit(tarball, main_tree, quiet=True)
+                                             "pristine tar commit from" % (source.component,
+                                                                           upstream_tree))
+                gbp.log.debug("Creating pristine tar commit '%s' from '%s'" % (source.path, subtree))
+                # FIXME: add signaatures
+                self.pristine_tar.commit(source.path, subtree, quiet=True)
+            # FIXME: add signatures
+            self.pristine_tar.commit(sources[0].path, main_tree, quiet=True)
         except CommandExecFailed as e:
             raise GitRepositoryError(str(e))
 

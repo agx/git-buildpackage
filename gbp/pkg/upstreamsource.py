@@ -39,7 +39,7 @@ class UpstreamSource(object):
     @cvar _unpacked: path to the unpacked source tree
     @type _unpacked: string
     """
-    def __init__(self, name, unpacked=None, pkg_policy=PkgPolicy):
+    def __init__(self, name, unpacked=None, pkg_policy=PkgPolicy, sig=None):
         self._orig = False
         self._pkg_policy = pkg_policy
         self._path = name

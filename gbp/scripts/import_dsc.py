@@ -26,7 +26,8 @@ import pipes
 import time
 import gbp.command_wrappers as gbpc
 from gbp.deb.dscfile import DscFile
-from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
+from gbp.deb.upstreamsource import (DebianUpstreamSource,
+                                    DebianAdditionalTarball)
 from gbp.deb.git import (DebianGitRepository, GitRepositoryError)
 from gbp.deb.changelog import ChangeLog
 from gbp.git import rfc822_date_to_git
@@ -483,11 +484,13 @@ def main(argv):
 
         # unpack
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
-        source = DebianUpstreamSource(dsc.tgz)
-        source.unpack(dirs['tmp'], options.filters)
-        for (component, tarball) in dsc.additional_tarballs.items():
-            gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball))
-            unpack_component_tarball(source.unpacked, component, tarball, options.filters)
+        # FIXME: need to add signatures to DebianUpstreamSource later here
+        sources = [DebianUpstreamSource(dsc.tgz)]
+        sources += [DebianAdditionalTarball(t[1], t[0]) for t in dsc.additional_tarballs.items()]
+        sources[0].unpack(dirs['tmp'], options.filters)
+        for tarball in sources[1:]:
+            gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball.path))
+            tarball.unpack(sources[0].unpacked, options.filters)
 
         if repo.find_version(options.debian_tag, dsc.version):
             gbp.log.warn("Version %s already imported." % dsc.version)
@@ -499,12 +502,12 @@ def main(argv):
 
         # import
         if dsc.native:
-            import_native(repo, source, dsc, options)
+            import_native(repo, sources[0], dsc, options)
         else:
             imported = False
             commit = repo.find_version(options.upstream_tag, dsc.upstream_version)
             if not repo.find_version(options.upstream_tag, dsc.upstream_version):
-                commit = import_upstream(repo, source, dsc, options)
+                commit = import_upstream(repo, sources[0], dsc, options)
                 imported = True
 
             if not repo.has_branch(options.debian_branch):
@@ -515,15 +518,12 @@ def main(argv):
                                    options.debian_branch)
 
             if dsc.diff or dsc.deb_tgz:
-                apply_debian_patch(repo, source, dsc, commit, options)
+                apply_debian_patch(repo, sources[0], dsc, commit, options)
             else:
                 gbp.log.warn("Didn't find a diff to apply.")
 
             if imported and options.pristine_tar:
-                repo.create_pristine_tar_commits(commit,
-                                                 dsc.tgz,
-                                                 dsc.additional_tarballs.items())
-
+                repo.create_pristine_tar_commits(commit, sources)
         if repo.get_branch() == options.debian_branch or repo.empty:
             # Update HEAD if we modified the checked out branch
             repo.force_head(options.debian_branch, hard=True)
