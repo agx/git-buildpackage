@@ -76,9 +76,9 @@ class Patch(object):
         try:
             self.long_desc = "".join([l.decode() for l in body])
             body.close()
-        except IOError as msg:
+        except (IOError, UnicodeDecodeError) as msg:
             raise GbpError("Failed to read patch header of '%s': %s" %
-                           (self.patch, msg))
+                           (self.path, msg))
         finally:
             if os.path.exists(body.name):
                 os.unlink(body.name)
