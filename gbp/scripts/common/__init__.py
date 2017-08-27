@@ -22,6 +22,7 @@ import traceback
 from gbp.errors import GbpError
 from gbp.deb import DebianPkgPolicy
 from gbp.pkg import Archive
+from gbp.deb.upstreamsource import DebianAdditionalTarball
 
 
 class ExitCodes(object):
@@ -51,6 +52,7 @@ def is_download(args):
     return False
 
 
+# FIXME: this could become a method of DebianUpstreamSource
 def get_component_tarballs(name, version, tarball, components):
     """
     Figure out the paths to the component tarballs based on the main
@@ -64,7 +66,7 @@ def get_component_tarballs(name, version, tarball, components):
                                                    comp_type,
                                                    os.path.dirname(tarball),
                                                    component)
-        tarballs.append((component, cname))
+        tarballs.append(DebianAdditionalTarball(cname, component))
         if not os.path.exists(cname):
             raise GbpError("Can not find component tarball %s" % cname)
     return tarballs

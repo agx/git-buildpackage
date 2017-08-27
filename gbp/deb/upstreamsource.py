@@ -28,29 +28,43 @@ import tempfile
 
 class DebianUpstreamSource(UpstreamSource):
     """Upstream source class for Debian"""
-    def __init__(self, name, unpacked=None):
+    def __init__(self, name, unpacked=None, sig=None):
         super(DebianUpstreamSource, self).__init__(name,
-                                                   unpacked,
-                                                   DebianPkgPolicy)
+                                                   unpacked=unpacked,
+                                                   sig=sig,
+                                                   pkg_policy=DebianPkgPolicy)
 
 
-def unpack_component_tarball(dest, component, tarball, filters):
-    """
-    Unpack the tarball I{tarball} into dest naming it I{component}.
-    Apply filters during unpack.
-    """
-    olddir = os.path.abspath(os.path.curdir)
-    tmpdir = None
-    try:
-        tmpdir = os.path.abspath(tempfile.mkdtemp(dir=os.path.join(dest, '..')))
-        source = DebianUpstreamSource(tarball)
-        source.unpack(tmpdir, filters)
+class DebianAdditionalTarball(DebianUpstreamSource):
+    """Upstream source class for additional tarballs"""
+    def __init__(self, name, component, unpacked=None, sig=None):
+        self.component = component
+        super(DebianAdditionalTarball, self).__init__(name,
+                                                      unpacked=unpacked,
+                                                      sig=sig)
 
-        newdest = os.path.join(dest, component)
-        if os.path.exists(newdest):
-            shutil.rmtree(newdest)
-        shutil.move(source.unpacked, newdest)
-    finally:
-        os.chdir(olddir)
-        if tmpdir is not None:
-            gbp.command_wrappers.RemoveTree(tmpdir)()
+    def unpack(self, dest, filters):
+        """
+        Unpack the additional tarball into {dir} naming it
+        I{component}.  Apply filters during unpack.
+
+        @param dir: the main tarball dir
+        @param filters: filters to apply
+
+        We can't simply use unpack since we need to remove any preexisting dirs and
+        name the target directory after the component name.
+        """
+        olddir = os.path.abspath(os.path.curdir)
+        tmpdir = None
+        try:
+            tmpdir = os.path.abspath(tempfile.mkdtemp(dir=os.path.join(dest, '..')))
+            super(DebianAdditionalTarball, self).unpack(tmpdir, filters)
+
+            newdest = os.path.join(dest, self.component)
+            if os.path.exists(newdest):
+                shutil.rmtree(newdest)
+            shutil.move(self.unpacked, newdest)
+        finally:
+            os.chdir(olddir)
+            if tmpdir is not None:
+                gbp.command_wrappers.RemoveTree(tmpdir)()

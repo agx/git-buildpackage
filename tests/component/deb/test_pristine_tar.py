@@ -47,7 +47,7 @@ class TestPristineTar(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--no-pristine-tar'])
     def test_run(self, repo):
         """
-        Test that adding pristine-tar commit wotks
+        Test that adding pristine-tar commit works
         """
         orig = self._orig('2.6')
         ok_(pristine_tar(['arg0', 'commit', orig]) == 0)

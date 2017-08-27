@@ -33,7 +33,7 @@ from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError, FileVfs
 from gbp.deb.format import DebianSourceFormat
 from gbp.git.vfs import GitVfs
-from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarball
+from gbp.deb.upstreamsource import DebianUpstreamSource, DebianAdditionalTarball
 from gbp.errors import GbpError
 import gbp.log
 import gbp.notifications
@@ -139,10 +139,13 @@ def overlay_extract_origs(source, tarball_dir, dest_dir, options):
 
     # Unpack additional tarballs
     for c in options.components:
-        tarball = os.path.join(tarball_dir, source.upstream_tarball_name(
-            comp_type, component=c))
-        gbp.log.info("Extracting '%s' to '%s/%s'" % (os.path.basename(tarball), dest_dir, c))
-        unpack_component_tarball(dest_dir, c, tarball, [])
+        tarball = DebianAdditionalTarball(os.path.join(tarball_dir,
+                                                       source.upstream_tarball_name(
+                                                           comp_type, component=c)),
+                                          component=c)
+        gbp.log.info("Extracting '%s' to '%s/%s'" % (os.path.basename(tarball.path),
+                                                     dest_dir, c))
+        tarball.unpack(dest_dir, [])
 
 
 def source_vfs(repo, options, tree):
