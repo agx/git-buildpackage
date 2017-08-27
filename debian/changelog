@@ -1,3 +1,49 @@
+git-buildpackage (0.9.0~exp4) experimental; urgency=medium
+
+  [ Ken Dreyer ]
+  * [0ca5283] doc: expand --git-pbuilder-options docs.
+    Give an example of how to use the --git-pbuilder-options option, and
+    explain how it interacts with git-pbuilder.
+
+  [ Guido Günther ]
+  * [b7c34cc] export-orig: drop sloppy mode from the docs since it's not
+    useful here
+  * [dab6761] import-dsc: cleanup error printing and exceptions.
+    Raise exceptions with the error message instead of printing these first.
+  * [a7b96a7] export-orig: print absolute path of created tarball.
+    To avoid paths like '/a/b/../c'
+  * [d5c3101] config: make dch-opt a list option.
+    This unbreaks dch-opt when used in gbp.conf (Closes: #872141)
+  * [5032688] spawn_dch: fail if dch failed.  We pass quiet=True to avoid
+    duplicate error messages
+  * [40b1883] gbp.conf: drop --noconf since it needs to be dch's first option
+  * [ec643d9] Revert "buildpackage: don't prepare any tarballs in overlay mode"
+    This breaks workflows where people have a detache debian/ dir
+    but keep upstream VCS and pristine-tar in the same repo.
+    This reverts commit 3e4e7950d2b0e81a8821f60e9a6d842c88e8b7fb.
+    Thanks to Maximiliano Curia for the report
+  * [d76834c] pq: use more gittish commit message in --commit.  Use present
+    instead of past tense
+  * [5d40d44] pq-rpm: Correctly pass abbrev to format-patch
+    broken by 75e18fc5bb4831df924bc708130b0a6ab311a230
+  * [b23e958] tests: remove duplication in test options
+  * [f8714dc] log: don't color the log message, only the marker
+    to improve readability
+  * [40acd04] tests: Move pristine-tar test data to tests/data as well
+  * [19310dc] Spell pristine_tar consistently
+  * [9dc2129] pq: properly retry non-ascii charset on patch body encode.
+    The current code tried to catch the wrong exception
+  * [6d3e34c] patch_series: report decoding errors when reading patch files
+
+  [ mci156 ]
+  * [d115b67] docs: Add paragraph break
+  * [e5be602] docs: Explain the v1.0 <starting point> (Closes: #872524)
+
+  [ Chris Lamb ]
+  * [f97b910] pq: make --abbrev= configurable (Closes: #872351)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 27 Aug 2017 17:38:19 +0200
+
 git-buildpackage (0.9.0~exp3) experimental; urgency=medium
 
   [ Guido Günther ]
