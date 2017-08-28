@@ -126,7 +126,7 @@ def main(argv):
         if not options.ignore_branch:
             if branch != options.debian_branch:
                 gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
-                raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
+                raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
 
         if not dest:
             dest = get_remote(repo, branch)
