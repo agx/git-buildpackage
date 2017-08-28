@@ -148,7 +148,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         self.repo.commit_all("foo")
         diff = self.repo.diff('master', 'testapply')
         # Branches must be identical afterwards
-        self.assertEqual('', diff)
+        self.assertEqual(b'', diff)
 
     def test_generate_patches(self):
         """Test generation of patches"""
@@ -352,24 +352,24 @@ class TestFromTAG(testutils.DebianGitTestRepo):
                              pq_from=TestFromTAG.Options.pq_from,
                              upstream_tag=TestFromTAG.Options.upstream_tag)
         diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
-        self.assertEqual('', diff)
+        self.assertEqual(b'', diff)
         diff = self.repo.diff(self.repo.get_branch(), 'master')
-        self.assertNotEqual('', diff)
+        self.assertNotEqual(b'', diff)
 
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   pq_from=TestFromTAG.Options.pq_from,
                   upstream_tag=TestFromTAG.Options.upstream_tag)
         diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
-        self.assertEqual('', diff)
+        self.assertEqual(b'', diff)
         diff = self.repo.diff(self.repo.get_branch(), 'master')
-        self.assertNotEqual('', diff)
+        self.assertNotEqual(b'', diff)
 
         export_patches(self.repo,
                        branch=self.repo.get_branch(),
                        options=TestFromTAG.Options())
         diff = self.repo.diff(self.repo.get_branch(), self.repo.head)
-        self.assertEqual('', diff)
+        self.assertEqual(b'', diff)
 
     def test_adding_patch(self):
         import_quilt_patches(self.repo,

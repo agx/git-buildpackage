@@ -170,13 +170,13 @@ def write_patch_file(filename, commit_info, diff):
                 body = commit_info['body'].rstrip() + '\n'
                 try:
                     msg.set_payload(body.encode('us-ascii'))
-                except UnicodeEncodeError:
+                except (UnicodeEncodeError):
                     msg.set_payload(body, charset)
             patch.write(msg.as_string(unixfrom=False, maxheaderlen=77).encode('utf-8'))
 
             # Write diff
             patch.write(b'---\n')
-            patch.write(diff.encode())
+            patch.write(diff)
     except IOError as err:
         raise GbpError('Unable to create patch file: %s' % err)
     return filename

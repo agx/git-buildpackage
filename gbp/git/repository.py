@@ -1790,7 +1790,7 @@ class GitRepository(object):
         @param ignore_submodules: ignore changes to submodules
         @type ignore_submodules: C{bool}
         @return: diff
-        @rtype: C{str}
+        @rtype: C{binary}
         """
         options = GitArgs('-p', '--no-ext-diff')
         config_args = GitArgs()
@@ -1816,7 +1816,7 @@ class GitRepository(object):
                                               config_args=config_args.args)
         if ret:
             raise GitRepositoryError("Git diff failed")
-        return output.decode()
+        return output
 
     def diff_status(self, obj1, obj2):
         """
