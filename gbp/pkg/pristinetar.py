@@ -24,12 +24,14 @@ from gbp.command_wrappers import Command
 
 class PristineTar(Command):
     """The pristine-tar branch in a git repository"""
-    cmd = '/usr/bin/pristine-tar'
     branch = 'pristine-tar'
 
     def __init__(self, repo):
         self.repo = repo
-        super(PristineTar, self).__init__(self.cmd, cwd=repo.path, capture_stderr=True)
+        super(PristineTar, self).__init__('pristine-tar',
+                                          cwd=repo.path,
+                                          capture_stderr=True,
+                                          check_path=True)
 
     def _has_feature(self, feature):
         """
