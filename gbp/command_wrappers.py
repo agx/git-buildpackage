@@ -75,8 +75,9 @@ class Command(object):
     """
     def __init__(self, cmd, args=[], shell=False, extra_env=None, cwd=None,
                  capture_stderr=False,
-                 capture_stdout=False):
-        self.cmd = cmd
+                 capture_stdout=False,
+                 check_path=False):
+        self.cmd = self._find_in_path(cmd) if check_path else cmd
         self.args = args
         self.run_error = "'%s' failed: {err_reason}" % (" ".join([self.cmd] + self.args))
         self.shell = shell
@@ -89,6 +90,13 @@ class Command(object):
         else:
             self.env = None
         self._reset_state()
+
+    def _find_in_path(self, exe):
+        for p in os.getenv("PATH", "/usr/bin:/bin"):
+            path = os.path.join(p, exe)
+            if os.path.exists(path):
+                return path
+        return exe
 
     def _reset_state(self):
         self.retcode = 1
