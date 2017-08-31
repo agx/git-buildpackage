@@ -50,6 +50,15 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         pq.apply_and_commit_patch(self.repo, patch, None)
         self.assertIn(b'foo', self.repo.list_files())
 
+    def test_apply_and_commit_patch_preserve_subject(self):
+        """Test applying a patch preserves the subject"""
+        patch = gbp.patch_series.Patch(_patch_path('brackets-in-subject.patch'))
+
+        pq.apply_and_commit_patch(self.repo, patch, None)
+        self.assertIn(b'foo', self.repo.list_files())
+        info = self.repo.get_commit_info('HEAD')
+        self.assertEquals('[text] foobar', info['subject'])
+
     def test_topic(self):
         """Test if setting a topic works"""
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))

@@ -109,7 +109,7 @@ class TestPqRpm(RpmRepoTestBase):
         # Import
         eq_(mock_pq(['import']), 0)
         files = ['dummy.sh', 'Makefile', 'README', 'mydir/myfile.txt']
-        patches = ['packaging/0001-My-modification.patch', 'my.patch']
+        patches = ['packaging/0001-PATCH-My-modification.patch', 'my.patch']
         self._check_repo_state(repo, 'patch-queue/master-orphan', branches,
                                files)
 
