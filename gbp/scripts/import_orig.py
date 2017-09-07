@@ -298,7 +298,7 @@ def find_source(use_uscan, args):
 
         if not uscan.uptodate:
             if uscan.tarball:
-                gbp.log.info("using %s" % uscan.tarball)
+                gbp.log.info("Using uscan downloaded tarball %s" % uscan.tarball)
                 args.append(uscan.tarball)
             else:
                 raise GbpError("uscan didn't download anything, and no source was found in ../")
