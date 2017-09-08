@@ -42,18 +42,27 @@ Package-List:
  python-libvirt deb python optional
 Checksums-Sha1:
  3743dc4f3e58d5912a98f568c3e854d97d81f216 20054618 libvirt_0.9.12.orig.tar.gz
+ 7dc0f3bfe8a63a0259affe4fe3d3cc5b3180a72b 240 libvirt_0.9.12.orig.tar.gz.asc
  3743dc4f3e58d5912a98f568c3e854d97d81f123 20054618 libvirt_0.9.12.orig-foo.tar.gz
+ 7dc0f3bfe8a63a0259affe4fe3d3cc5b3180a72b 240 libvirt_0.9.12.orig-foo.tar.gz.asc
  3743dc4f3e58d5912a98f568c3e854d97d81f123 20054618 libvirt_0.9.12.orig-bar.tar.gz
+ 7dc0f3bfe8a63a0259affe4fe3d3cc5b3180a72b 240 libvirt_0.9.12.orig-bar.tar.gz.asc
  a7ffa64c18a5ee448c98b1dc894a0a27e1670357 35935 libvirt_0.9.12-4.debian.tar.gz
 Checksums-Sha256:
  298ffc7f2a6d6e78aae46f11a0980f4bc17fa2928f5de6cd9e8abaf5990336e7 20054618 libvirt_0.9.12.orig.tar.gz
+ 2496f435c029673dd7cad49cdf27935d261ef1b3b245118a431556b7f40a7967 240 libvirt_0.9.12.orig.tar.gz.asc
  298ffc7f2a6d6e78aae46f11a0980f4bc17fa2928f5de6cd9e8abaf599033123 20054618 libvirt_0.9.12.orig-foo.tar.gz
+ 2496f435c029673dd7cad49cdf27935d261ef1b3b245118a431556b7f40a7967 240 libvirt_0.9.12.orig-foo.tar.gz.asc
  298ffc7f2a6d6e78aae46f11a0980f4bc17fa2928f5de6cd9e8abaf599033123 20054618 libvirt_0.9.12.orig-bar.tar.gz
+ 2496f435c029673dd7cad49cdf27935d261ef1b3b245118a431556b7f40a7967 240 libvirt_0.9.12.orig-bar.tar.gz.asc
  e75110c493995ba5366e751f20f3842f30674c3918357fa6eb83175d0afbec31 35935 libvirt_0.9.12-4.debian.tar.gz
 Files:
  5e842bc55733ceba60c64767580ff3e4 20054618 libvirt_0.9.12.orig.tar.gz
+ ddfefbf64ffa1b1d7e0819501d096544 240 libvirt_0.9.12.orig.tar.gz.asc
  5e842bc55733ceba60c64767580ff123 20054618 libvirt_0.9.12.orig-foo.tar.gz
+ ddfefbf64ffa1b1d7e0819501d096544 240 libvirt_0.9.12.orig-foo.tar.gz.asc
  5e842bc55733ceba60c64767580ff123 20054618 libvirt_0.9.12.orig-bar.tar.gz
+ ddfefbf64ffa1b1d7e0819501d096544 240 libvirt_0.9.12.orig-bar.tar.gz.asc
  f328960d25e7c843f3ac5f9ba5064251 35935 libvirt_0.9.12-4.debian.tar.gz
 """
 
@@ -75,6 +84,9 @@ Files:
         for s in ['foo', 'bar']:
             self.assertEqual(os.path.basename(dsc.additional_tarballs[s]),
                              'libvirt_0.9.12.orig-%s.tar.gz' % s)
+        self.assertEquals(sorted(dsc.sigs), ['/tmp/libvirt_0.9.12.orig-bar.tar.gz.asc',
+                                             '/tmp/libvirt_0.9.12.orig-foo.tar.gz.asc',
+                                             '/tmp/libvirt_0.9.12.orig.tar.gz.asc'])
 
 
 class Test10DscNonNativeFile(unittest.TestCase):
@@ -118,6 +130,7 @@ Files:
         self.assertEqual(os.path.basename(dsc.deb_tgz), '')
         self.assertEqual(os.path.basename(dsc.diff), 'latencytop_0.5.diff.gz')
         self.assertEqual(dsc.additional_tarballs, {}),
+        self.assertEquals(dsc.sigs, [])
 
 
 @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
