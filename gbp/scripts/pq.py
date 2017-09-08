@@ -236,7 +236,7 @@ def export_patches(repo, branch, options):
             what = 'patches' if len(removed) > 1 else 'patch'
             gbp.log.info("Removed %s %s from patch series" % (what, ', '.join(removed)))
         else:
-            GitCommand('status', cwd=repo.path)(['--', PATCH_DIR])
+            gbp.log.info("Updated existing patches.")
 
     if options.drop:
         drop_pq(repo, branch)
