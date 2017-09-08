@@ -1,3 +1,21 @@
+git-buildpackage (0.9.0~exp5) experimental; urgency=medium
+
+  * [67cdeac] push: fix option names in error output.  Only buildpackage uses
+    the '--git-' prefix
+  * [04ae7d5] git: Don't decode diff output.
+    The output can be in any encoding so assuming utf-8 is plain wrong
+  * [0f84a0d] patch_series: Make sure we close the temp file
+  * [4c6f8fc] command_wrappers: allow one to look up executables in $PATH
+  * [2ca3e37] pristine-tar: look for binary in $PATH
+    to help the Ubuntu git importer that run's pristine-tar inside a snap.
+  * [b2092c1] patch_series: don't let "git mailinfo" sanitize the subject.
+    This would strip away text in []. This improves the import/export round
+    trip. (Closes: #872354)
+  * import_orig: be more descripte what we're "using"
+  * pq: Be clearer what '--commit' did instead of a confusing "git status".
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 08 Sep 2017 11:19:36 +0200
+
 git-buildpackage (0.9.0~exp4) experimental; urgency=medium
 
   [ Ken Dreyer ]
