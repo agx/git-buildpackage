@@ -32,13 +32,13 @@ class DscFile(object):
                             '(?P<version>[%s]+)\s*$'
                             % DebianPkgPolicy.debianversion_chars)
     tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                        '(\.orig)?\.tar\.%s)' % compressions)
+                        '(\.orig)?\.tar\.%s)$' % compressions)
     add_tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                            '\.orig-(?P<dir>[a-z0-9-]+)\.tar\.%s)' % compressions)
+                            '\.orig-(?P<dir>[a-z0-9-]+)\.tar\.%s)$' % compressions)
     diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+'
-                         '\.diff.(gz|bz2))')
+                         '\.diff.(gz|bz2))$')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
-                            '\.debian.tar.%s)' % compressions)
+                            '\.debian.tar.%s)$' % compressions)
     format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*')
 
     def __init__(self, dscfile):
