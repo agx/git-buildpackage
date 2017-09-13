@@ -16,7 +16,7 @@ a nice git commit message that can then end up in the changelog.
 
 It is recommended to build the package with pbuilder using:
 
-    gbp builpackage --git-pbuilder
+    gbp buildpackage --git-pbuilder
 
 For information on how to set up a pbuilder environment see the
 git-pbuilder(1) manpage. In short:
