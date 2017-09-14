@@ -144,7 +144,7 @@ def main(argv):
         try:
             current = repo.get_branch()
         except GitRepositoryError:
-            # Not being on any branch is o.k. with --git-ignore-branch
+            # Not being on any branch is o.k. with --ignore-branch
             if options.ignore_branch:
                 current = repo.head
                 gbp.log.info("Found detached head at '%s'" % current)
