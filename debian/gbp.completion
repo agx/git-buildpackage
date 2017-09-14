@@ -67,39 +67,41 @@ _gbp_comp ()
         cur=""
     fi
 
-    if [[ "${branch_opts}" == *$prev* ]]; then
-	local refs=$(_gbp_branches)
-        COMPREPLY=( $(compgen -W "$refs" -- $cur ) )
-        return 0
-    fi
+    if [[ ${prev} == --* ]]; then
+      if [[ "${branch_opts}" == *$prev* && "${prev}" == --* ]]; then
+          local refs=$(_gbp_branches)
+          COMPREPLY=( $(compgen -W "$refs" -- $cur ) )
+          return 0
+      fi
 
-    if [[ "${tag_opts}" == *$prev* ]]; then
-	local refs=$(_gbp_tags)
-        COMPREPLY=( $(compgen -W "$refs" -- $cur ) )
-        return 0
-    fi
+      if [[ "${tag_opts}" == *$prev* && "${prev}" == --* ]]; then
+          local refs=$(_gbp_tags)
+          COMPREPLY=( $(compgen -W "$refs" -- $cur ) )
+          return 0
+      fi
 
-    if [[ "${tristate_opts}" == *$prev* ]]; then
-        COMPREPLY=( $(compgen -W 'on off auto' -- $cur ) )
-        return 0
-    fi
+      if [[ "${tristate_opts}" == *$prev* ]]; then
+          COMPREPLY=( $(compgen -W 'on off auto' -- $cur ) )
+          return 0
+      fi
 
-    if [[ "${cbdist_opts}" == *$prev* ]]; then
-        local BASE="/var/cache/pbuilder/base-"
-        COMPREPLY=( $( compgen -o dirnames -G "${BASE}${cur}*.cow" \
-                       | sed -e "s,${BASE}\(.*\)\.cow,\1,g" ) )
-        return 0
-    fi
+      if [[ "${cbdist_opts}" == *$prev* ]]; then
+          local BASE="/var/cache/pbuilder/base-"
+          COMPREPLY=( $( compgen -o dirnames -G "${BASE}${cur}*.cow" \
+                         | sed -e "s,${BASE}\(.*\)\.cow,\1,g" ) )
+          return 0
+      fi
 
-    if [[ "${remote_config_opts}" == *$prev* ]]; then
-        local remote_configs=$(_gbp_remote_configs)
-        COMPREPLY=( $(compgen -W "$remote_configs" -- $cur ) )
-        return 0
-    fi
+      if [[ "${remote_config_opts}" == *$prev* ]]; then
+          local remote_configs=$(_gbp_remote_configs)
+          COMPREPLY=( $(compgen -W "$remote_configs" -- $cur ) )
+          return 0
+      fi
 
-    if [[ "${file_opts}" == *$prev* ]]; then
-        COMPREPLY=( $(compgen -f -- $cur ) )
-        return 0
+      if [[ "${file_opts}" == *$prev* ]]; then
+          COMPREPLY=( $(compgen -f -- $cur ) )
+          return 0
+      fi
     fi
 
     # separate opts by tab so we can append a space to all options not ending
