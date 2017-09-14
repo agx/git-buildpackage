@@ -48,14 +48,15 @@ _gbp_comp ()
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD - 1]}"
     local options=$1
-    local branch_opts=${2:-"--debian-branch\= --upstream-branch\="}
+    local branch_opts=${2:-"--debian-branch\= --upstream-branch\= --upstream-tree\="}
     local tag_opts=${3:-"--debian-tag\= --upstream-tag\= --upstream-vcs-tag\="}
     local tristate_opts=${4:-"--color\="}
     local cbdist_opts=${5:-"--git-dist\="}
     local remote_config_opts="--remote-config\="
     local file_opts="--postimport\= --git-builder\= --git-cleaner\= \
                      --git-export-dir\= --git-postbuild\= --git-postexport\= \
-                     --git-posttag\= --git-prebuild\= --git-tarball-dir\="
+                     --git-posttag\= --git-prebuild\= --git-tarball-dir\= \
+                     --posttag\= --tarball-dir\="
     local start_opt=""
 
 # COMPREPLY considers '=' as a word. For $prev we prefer the word before the actual "="
