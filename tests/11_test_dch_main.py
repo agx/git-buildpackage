@@ -394,7 +394,7 @@ class TestScriptDch(DebianGitTestRepo):
     def test_dch_main_git_author(self):
         options = ["--git-author", '-S', '-a']
         lines = self.run_dch(options)
-        self.assertIn("-- gbp test user <gbp@example.com>", lines[9])
+        self.assertIn("-- gbp test user <gbp@example.com>", lines[7] + lines[9])
 
     def test_dch_main_no_git_author(self):
         options = ["--no-git-author", '-S', '-a']
