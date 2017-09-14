@@ -1,0 +1,197 @@
+<refentry id="man.gbp.tag">
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+  </refentryinfo>
+  <refmeta><refentrytitle>gbp-tag</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-tag</refname>
+    <refpurpose>Tag a &debian; packages in a &git; repository</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-tag;
+
+      &man.common.options.synopsis;
+      <arg><option>--ignore-branch</option></arg>
+      <arg><option>--[no-]ignore-new</option></arg>
+      <arg><option>--[no-]sign-tags</option></arg>
+      <arg><option>--keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
+      <arg><option>--debian-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
+      <arg><option>--debian-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--debian-tag-msg=</option><replaceable>tag-msg-format</replaceable></arg>
+      <arg><option>--posttag=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--retag</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+      &gbp-tag; tags the current head commit appropriately. It will in order:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Verify that it is being executed from the Debian branch.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Verify that the repository doesn't contain any uncommitted source
+          changes.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+	  Create a git tag using the information from <filename>debian/changelog</filename>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          (Optionally) call a post tag hook.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+      <varlistentry>
+        <term><option>--posttag=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+            Execute <replaceable>COMMAND</replaceable> after creating the tag.
+          </para>
+          <para>
+            Exported environment variables are: <envar>GBP_TAG</envar> (the name
+            of the generated tag), <envar>GBP_BRANCH</envar> (the branch the
+            package was build from) and <envar>GBP_SHA1</envar> (the sha1 of the
+            commit the tag was created at).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]sign-tags</option>
+        </term>
+        <listitem>
+          <para>
+            GPG sign all created tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--keyid=</option><replaceable>GPG-KEYID</replaceable>
+        </term>
+        <listitem>
+          <para>
+            Use this keyid for gpg signing tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--debian-tag=</option><replaceable>TAG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+            Use this tag format when tagging &debian; versions, default is
+            <replaceable>debian/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--debian-tag-msg=</option><replaceable>tag-msg-format</replaceable>
+        </term>
+        <listitem>
+          <para>Use this tag message format when signing &debian; versions,
+            default is <replaceable>%(pkg)s Debian release %(version)s</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--retag</option>
+        </term>
+        <listitem>
+          <para>
+            Don't fail tag operations if a tag with the same version
+            already exists. This is a command line only option that
+            cannot be specified via &gbp.conf;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--debian-branch</option>=<replaceable>BRANCH_NAME</replaceable>
+        </term>
+        <listitem>
+          <para>
+            If you're not on this branch when invoking &gbp-tag; it will
+            fail. Default is <replaceable>master</replaceable>. This is done to
+            make sure you don't accidentally tag on the wrong branch.  Not
+            being on this branch will be ignored when using
+            <option>--ignore-branch</option>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--ignore-branch</option>
+        </term>
+        <listitem>
+          <para>
+            Don't check if the current branch matches
+            <replaceable>DEBIAN-BRANCH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]ignore-new</option>
+        </term>
+        <listitem>
+          <para>
+            Don't abort if there are uncommitted changes in the source tree or
+            the current branch doesn't match the
+            <replaceable>DEBIAN-BRANCH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+      Create a tag with the current defaults
+    </para>
+    <screen>
+      &gbp-tag;
+    </screen>
+    <para>
+      Create using a more upstreamish tag format:
+    </para>
+    <screen>
+      &gbp-tag; --debian-tag='v%(version)s'
+    </screen>
+  </refsect1>
+  <refsect1>
+    &man.gbp.config-files;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.buildpackage"/,
+      <xref linkend="man.gbp.push"/,
+      <xref linkend="man.gbp.conf"/,
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+      &dhusername; &dhemail;
+    </para>
+  </refsect1>
+</refentry>

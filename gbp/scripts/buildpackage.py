@@ -31,11 +31,9 @@ from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError, FileVfs
 from gbp.deb.format import DebianSourceFormat
-from gbp.format import format_str
 from gbp.git.vfs import GitVfs
 from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.errors import GbpError
-from gbp.scripts.common.pq import is_pq_branch, pq_branch_base
 import gbp.log
 import gbp.notifications
 from gbp.scripts.common.buildpackage import (index_name, wc_name,
@@ -45,6 +43,7 @@ from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.hook import Hook
 
 from gbp.scripts.export_orig import prepare_upstream_tarballs
+from gbp.scripts.tag import perform_tagging
 
 
 def pristine_tar_commit(repo, source, options, output_dir, orig_file, upstream_tree):
@@ -194,27 +193,6 @@ def check_tag(options, repo, source):
     if (options.tag or options.tag_only) and not options.retag:
         if repo.has_tag(tag):
             raise GbpError("Tag '%s' already exists" % tag)
-
-
-def create_debian_tag(repo, source, commit, options):
-    """
-    Create the debian tag
-
-    returns: the created tag
-    """
-    tag = repo.version_to_tag(options.debian_tag, source.version)
-    gbp.log.info("Tagging %s as %s" % (source.version, tag))
-    if options.retag and repo.has_tag(tag):
-        repo.delete_tag(tag)
-    tag_msg = format_str(options.debian_tag_msg,
-                         dict(pkg=source.sourcepkg,
-                              version=source.version))
-    repo.create_tag(name=tag,
-                    msg=tag_msg,
-                    sign=options.sign_tags,
-                    commit=commit,
-                    keyid=options.keyid)
-    return tag
 
 
 def get_pbuilder_dist(options, repo, native=False):
@@ -487,7 +465,6 @@ def main(argv):
     retval = 0
     prefix = "git-"
     source = None
-    branch = None
     hook_env = {}
 
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
@@ -503,8 +480,7 @@ def main(argv):
 
     try:
         clean_working_tree(options, repo)
-        branch = check_branch(repo, options)
-        head = repo.head
+        check_branch(repo, options)
         tree = maybe_write_tree(repo, options)
         source = source_vfs(repo, options, tree)
 
@@ -575,20 +551,8 @@ def main(argv):
                                         'GBP_BUILD_DIR': build_dir})
                      )()
         if options.tag or options.tag_only:
-            if branch and is_pq_branch(branch):
-                commit = repo.get_merge_base(branch, pq_branch_base(branch))
-            else:
-                commit = head
+            perform_tagging(repo, source, options, hook_env)
 
-            tag = create_debian_tag(repo, source, commit, options)
-            if options.posttag:
-                sha = repo.rev_parse("%s^{}" % tag)
-                Hook('Posttag', options.posttag,
-                     extra_env=Hook.md(hook_env,
-                                       {'GBP_TAG': tag,
-                                        'GBP_BRANCH': branch or '(no branch)',
-                                        'GBP_SHA1': sha})
-                     )()
     except KeyboardInterrupt:
         retval = 1
         gbp.log.err("Interrupted. Aborting.")

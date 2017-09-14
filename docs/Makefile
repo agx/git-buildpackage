@@ -15,6 +15,7 @@ MAN1S = \
         gbp-pristine-tar  \
         gbp-pull          \
         gbp-push          \
+        gbp-tag           \
         gbp-buildpackage-rpm \
         gbp-import-srpm   \
         gbp-pq-rpm        \

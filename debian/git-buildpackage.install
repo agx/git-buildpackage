@@ -30,6 +30,7 @@ usr/lib/python3.?/dist-packages/gbp/scripts/pristine_tar.py usr/lib/python3/dist
 usr/lib/python3.?/dist-packages/gbp/scripts/pull.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/push.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/supercommand.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.?/dist-packages/gbp/scripts/tag.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/tmpfile.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.?/dist-packages/gbp/tristate.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.?/dist-packages/gbp/version.py usr/lib/python3/dist-packages/gbp/
