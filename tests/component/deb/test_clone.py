@@ -71,7 +71,7 @@ class TestClone(ComponentTestBase):
         """Test that cloning from vcs-git urls fails as expected"""
         ret = clone(['arg0', "vcsgit:doesnotexist"])
         self.assertEquals(ret, 1)
-        self._check_log(-1, "gbp:error: Can't find a source package for 'doesnotexist'")
+        self._check_log(-1, "gbp:error: Can't find any vcs-git URL for 'doesnotexist'")
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_clone_github(self):
