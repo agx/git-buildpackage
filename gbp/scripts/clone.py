@@ -70,7 +70,7 @@ def vcs_git_url(pkg):
             version = repo = None
 
     if not repos:
-        gbp.log.err("Can't find a source package for '%s'" % pkg)
+        gbp.log.err("Can't find any vcs-git URL for '%s'" % pkg)
         return None
 
     s = sorted(repos, key=cmp_to_key(DpkgCompareVersions()))
