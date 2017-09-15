@@ -1,3 +1,29 @@
+git-buildpackage (0.9.0~exp6) experimental; urgency=medium
+
+  * [23b334c] README.source example: fix typo.
+    Thanks to Roel van Meer
+  * [db5c670] Add tag command by splitting out the code from buildpackage
+    This is shorter than running
+         gbp buildpackage --git-tag-only
+    Closes: #797086
+  * [01ee027] bash completion: add some missing branch and file opts.
+    This unbreaks completion of options on some of the newer commands such
+    as gbp export-orig --tarball-dir=<tab>
+  * [0c6cbfa] bash completion: don't accidentally match subcommands as options.
+    We match on option first so we need to make sure we don't accidentally
+    match on subcommands. This unbreaks command completion for e.g. "gbp
+    tag"
+  * [84596ab] Unbreak dch tests with newer devscripts.
+    Due to #842468 debchange now produces shorter output omitting empty
+    blocks if there weren't any changes by the maintainer invoking
+    debchange (which is nice). So check for the matching lines in both the old
+    and new location.
+  * [6abb9e8] buildpackage: don't require debian/ prefix for --git-dist=DEP14
+    to work
+  * [d5c4804] Add id-length to gbp.conf
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 15 Sep 2017 12:51:52 +0200
+
 git-buildpackage (0.9.0~exp5) experimental; urgency=medium
 
   * [67cdeac] push: fix option names in error output.  Only buildpackage uses
