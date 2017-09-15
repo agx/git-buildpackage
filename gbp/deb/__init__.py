@@ -28,6 +28,25 @@ from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.policy import DebianPkgPolicy                # noqa: F401
 
 
+Releases = ("buzz",
+            "rez",
+            "bo",
+            "hamm",
+            "slink",
+            "potato",
+            "woody",
+            "sarge",
+            "etch",
+            "lenny",
+            "squeeze",
+            "wheezy",
+            "jessie",
+            "stretch",
+            "buster",
+            "bullseye",
+            "sid")
+
+
 class DpkgCompareVersions(gbpc.Command):
     dpkg = '/usr/bin/dpkg'
 
