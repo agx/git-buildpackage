@@ -74,7 +74,7 @@ class Patch(object):
                 header = rfc_header[:-1].lower()
                 self.info[header] = value.strip()
         try:
-            self.long_desc = "".join([l.decode() for l in body])
+            self.long_desc = "".join([l.decode("utf-8", "backslashreplace") for l in body])
         except (IOError, UnicodeDecodeError) as msg:
             raise GbpError("Failed to read patch header of '%s': %s" %
                            (self.path, msg))
