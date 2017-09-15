@@ -199,6 +199,7 @@ def get_pbuilder_dist(options, repo, native=False):
     """
     Determin the dist to build for with pbuilder/cowbuilder
     """
+    dist = None
     if options.pbuilder_dist == 'DEP14':
         vendor = du.get_vendor().lower()
         branch = repo.branch
@@ -206,15 +207,20 @@ def get_pbuilder_dist(options, repo, native=False):
             raise GbpError("Failed to setup DIST for %s. "
                            "Can't determine current branch." % options.builder)
         parts = branch.rsplit('/')
-        if len(parts) == 2:
+        if len(parts) == 2:  # e.g. debian/stretch
             suite = parts[1]
             if vendor == parts[0]:
                 dist = '' if suite in ['sid', 'master'] else suite
             else:
                 dist = '%s_%s' % (parts[0], suite)
-        elif len(parts) == 1 and native and branch in ['master', 'sid']:
-            dist = ''
-        else:
+        # Branches in Debian often omit the debian/ prefix
+        elif len(parts) == 1 and vendor.lower() == "debian":
+            if branch in ['master', 'sid']:
+                dist = ''
+            elif branch in du.Releases:
+                dist = branch
+
+        if dist is None:
             raise GbpError("DEP14 DIST: Current branch '%s' does not match vendor/suite" % branch)
     else:
         dist = options.pbuilder_dist

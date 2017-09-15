@@ -69,13 +69,20 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         self.assertEqual(get_pbuilder_dist(self.options, self.repo), 'downstream_mies-lts')
 
     @patch('gbp.deb.get_vendor', return_value='Debian')
-    def test_get_pbuilder_dist_dep14_no_vendor(self, patch):
+    def test_get_pbuilder_dist_dep14_no_vendor_sid(self, patch):
         branch = 'sid'
         self.repo.create_branch(branch)
         self.repo.set_branch(branch)
-        with self.assertRaisesRegexp(GbpError,
-                                     "DEP14 DIST: Current branch 'sid' does not match vendor/suite"):
-            get_pbuilder_dist(self.options, self.repo)
+        self.assertEqual(get_pbuilder_dist(self.options, self.repo), '')
+        patch.assert_called_once_with()
+
+    @patch('gbp.deb.get_vendor', return_value='Debian')
+    def test_get_pbuilder_dist_dep14_no_vendor(self, patch):
+        branch = 'wheezy'
+        self.repo.create_branch(branch)
+        self.repo.set_branch(branch)
+        self.assertEqual(get_pbuilder_dist(self.options, self.repo), 'wheezy')
+        patch.assert_called_once_with()
 
     def test_get_pbuilder_dist_dep14_too_many_slashes(self):
         branch = 'too/many/slashes'
