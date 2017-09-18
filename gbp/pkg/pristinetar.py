@@ -30,8 +30,7 @@ class PristineTar(Command):
         self.repo = repo
         super(PristineTar, self).__init__('pristine-tar',
                                           cwd=repo.path,
-                                          capture_stderr=True,
-                                          check_path=True)
+                                          capture_stderr=True)
 
     def _has_feature(self, feature):
         """
