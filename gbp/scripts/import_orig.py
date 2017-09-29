@@ -625,6 +625,8 @@ def main(argv):
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = str(err) or 'Unknown error, please report a bug'
             raise GbpError("Import of %s failed: %s" % (source.path, msg))
+        except KeyboardInterrupt:
+            raise GbpError("Import of %s failed: aborted by user" % (source.path))
     except GbpError as err:
         if str(err):
             gbp.log.err(err)
