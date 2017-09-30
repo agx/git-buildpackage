@@ -122,7 +122,7 @@ def repacked_tarball_name(upstream, name, version):
         # non tarballs (zips, unpacked dirs) get the canonical name
         name = os.path.join(
             os.path.dirname(upstream.path),
-            "%s_%s.orig.tar.bz2" % (name, version))
+            "%s_%s.orig.tar.gz" % (name, version))
     return name
 
 

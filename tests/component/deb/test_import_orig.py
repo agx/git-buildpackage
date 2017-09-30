@@ -31,6 +31,7 @@ from gbp.deb.pristinetar import DebianPristineTar
 from gbp.deb.dscfile import DscFile
 from gbp.git.repository import GitRepository, GitRepositoryError
 from gbp.paths import to_bin
+from gbp.command_wrappers import UnpackTarArchive
 
 from nose.tools import ok_, eq_, assert_raises
 
@@ -294,6 +295,39 @@ class TestImportOrig(ComponentTestBase):
         ok_(os.path.exists(filtered))
         eq_(os.readlink(filtered).split('/')[-1],
             'hello-debhelper_2.8.orig.gbp.tar.gz')
+        # Check if tar got filtered properly
+        t = tarfile.open(name=filtered, mode="r:gz")
+        for f in ['hello-2.8/configure']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_filter_unpacked_dir(self, repo):
+        """
+        Test that importing and filtering unpacked upstream source works.
+        """
+        f = 'hello-debhelper_2.8.orig.tar.gz'
+        src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
+
+        # Create an unpacked tarball we can import
+        UnpackTarArchive(src, '..')()
+        ok_(os.path.exists('../hello-2.8'))
+
+        ok_(import_orig(['arg0',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--filter=README*',
+                         '../hello-2.8']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
+        filtered = os.path.join('..', f)
+        ok_(os.path.exists(filtered))
         # Check if tar got filtered properly
         t = tarfile.open(name=filtered, mode="r:gz")
         for f in ['hello-2.8/configure']:
