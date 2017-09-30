@@ -237,7 +237,7 @@ class TestImportOrig(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_filter_with_component_tarballs(self, repo):
         """
-        Test that using a filter works component tarballs (#840602)
+        Test that using a filter works with component tarballs (#840602)
         """
         # copy data since we don't want the repacked tarball to end up in DEB_TEST_DATA_DIR
         os.mkdir('../tarballs')

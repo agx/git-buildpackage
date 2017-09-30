@@ -37,7 +37,7 @@ import gbp.log
 from gbp.scripts.common import ExitCodes, is_download, get_component_tarballs
 from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             ask_package_name, ask_package_version,
-                                            repack_source, is_link_target, download_orig)
+                                            repack_upstream, is_link_target, download_orig)
 from gbp.scripts.common.hook import Hook
 
 
@@ -264,25 +264,25 @@ def detect_name_and_version(repo, source, options):
     return (sourcepackage, version)
 
 
-def find_source(use_uscan, args):
+def find_upstream(use_uscan, args):
     """Find the main tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
     @rtype: string
     @raise GbpError: raised on all detected errors
 
-    >>> find_source(False, ['too', 'many'])
+    >>> find_upstream(False, ['too', 'many'])
     Traceback (most recent call last):
     ...
     gbp.errors.GbpError: More than one archive specified. Try --help.
-    >>> find_source(False, [])
+    >>> find_upstream(False, [])
     Traceback (most recent call last):
     ...
     gbp.errors.GbpError: No archive to import specified. Try --help.
-    >>> find_source(True, ['tarball'])
+    >>> find_upstream(True, ['tarball'])
     Traceback (most recent call last):
     ...
     gbp.errors.GbpError: you can't pass both --uscan and a filename.
-    >>> find_source(False, ['tarball']).path
+    >>> find_upstream(False, ['tarball']).path
     'tarball'
     """
     if use_uscan:
@@ -406,7 +406,7 @@ def unpack_tarballs(sourcepackage, source, version, component_tarballs, options)
 
     if orig_needs_repack(source, options):
         gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (source.path, source.unpacked))
-        (source, tmpdir) = repack_source(source, sourcepackage, version, tmpdir, options.filters)
+        (source, tmpdir) = repack_upstream(source, sourcepackage, version, tmpdir, options.filters)
 
     if not source.is_dir():  # Unpack component tarballs
         for (component, tarball) in component_tarballs:
@@ -540,18 +540,18 @@ def main(argv):
 
         # Download the main tarball
         if options.download:
-            source = download_orig(args[0])
+            upstream = download_orig(args[0])
         else:
-            source = find_source(options.uscan, args)
-        if not source:
+            upstream = find_upstream(options.uscan, args)
+        if not upstream:
             return ExitCodes.failed
 
         # The main tarball
-        (sourcepackage, version) = detect_name_and_version(repo, source, options)
+        (sourcepackage, version) = detect_name_and_version(repo, upstream, options)
         # Additional tarballs we expect to exist
         component_tarballs = get_component_tarballs(sourcepackage,
                                                     version,
-                                                    source.path,
+                                                    upstream.path,
                                                     options.components)
 
         tag = repo.version_to_tag(options.upstream_tag, version)
@@ -561,15 +561,15 @@ def main(argv):
         if repo.bare:
             set_bare_repo_options(options)
 
-        source, tmpdir = unpack_tarballs(sourcepackage, source, version, component_tarballs, options)
+        upstream, tmpdir = unpack_tarballs(sourcepackage, upstream, version, component_tarballs, options)
 
-        (pristine_orig, linked) = prepare_pristine_tar(source.path,
+        (pristine_orig, linked) = prepare_pristine_tar(upstream.path,
                                                        sourcepackage,
                                                        version)
 
         # Don't mess up our repo with git metadata from an upstream tarball
         try:
-            if os.path.isdir(os.path.join(source.unpacked, '.git/')):
+            if os.path.isdir(os.path.join(upstream.unpacked, '.git/')):
                 raise GbpError("The orig tarball contains .git metadata - giving up.")
         except OSError:
             pass
@@ -578,7 +578,7 @@ def main(argv):
             import_branch = options.upstream_branch
             filter_msg = ["", " (filtering out %s)"
                               % options.filters][len(options.filters) > 0]
-            gbp.log.info("Importing '%s' to branch '%s'%s..." % (source.path,
+            gbp.log.info("Importing '%s' to branch '%s'%s..." % (upstream.path,
                                                                  import_branch,
                                                                  filter_msg))
             gbp.log.info("Source package is %s" % sourcepackage)
@@ -586,7 +586,7 @@ def main(argv):
 
             msg = upstream_import_commit_msg(options, version)
 
-            commit = repo.commit_dir(source.unpacked,
+            commit = repo.commit_dir(upstream.unpacked,
                                      msg=msg,
                                      branch=import_branch,
                                      other_parents=repo.vcs_tag_parent(options.vcs_tag, version),
@@ -600,7 +600,7 @@ def main(argv):
                                                      pristine_orig,
                                                      component_tarballs)
                 else:
-                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % source.path)
+                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % upstream.path)
 
             repo.create_tag(name=tag,
                             msg="Upstream version %s" % version,
@@ -624,9 +624,9 @@ def main(argv):
                 repo.force_head(current_branch, hard=True)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = str(err) or 'Unknown error, please report a bug'
-            raise GbpError("Import of %s failed: %s" % (source.path, msg))
+            raise GbpError("Import of %s failed: %s" % (upstream.path, msg))
         except KeyboardInterrupt:
-            raise GbpError("Import of %s failed: aborted by user" % (source.path))
+            raise GbpError("Import of %s failed: aborted by user" % (upstream.path))
     except GbpError as err:
         if str(err):
             gbp.log.err(err)
@@ -649,7 +649,7 @@ def main(argv):
         cleanup_tmp_tree(tmpdir)
 
     if not ret:
-        gbp.log.info("Successfully imported version %s of %s" % (version, source.path))
+        gbp.log.info("Successfully imported version %s of %s" % (version, upstream.path))
     return ret
 
 
