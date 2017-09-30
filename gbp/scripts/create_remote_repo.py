@@ -334,7 +334,7 @@ def do_create(options):
             print(cmd)
 
         proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
-        proc.communicate(remote_script)
+        proc.communicate(remote_script.encode())
         if proc.returncode:
             raise GbpError("Error creating remote repository")
 
