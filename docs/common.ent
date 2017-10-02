@@ -4,8 +4,8 @@
 
   <!ENTITY dhemail     		"<email>agx@sigxcpu.org</email>">
   <!ENTITY dhfirstname 		"<firstname>Guido</firstname>">
-  <!ENTITY dhsurname   		"<surname>Guenther</surname>">
-  <!ENTITY dhusername  		"Guido Guenther">
+  <!ENTITY dhsurname   		"<surname>Günther</surname>">
+  <!ENTITY dhusername  		"Guido Günther">
   <!ENTITY rpm-email            "<email>markus.lehtonen@linux.intel.com</email>">
   <!ENTITY rpm-firstname        "<firstname>Markus</firstname>">
   <!ENTITY rpm-surname          "<surname>Lehtonen</surname>">
