@@ -1,4 +1,5 @@
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
   <!ENTITY % COMMON SYSTEM "common.ent">
   %COMMON;
   <!ENTITY % VERSION SYSTEM "version.ent">
