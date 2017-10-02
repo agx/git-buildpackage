@@ -22,7 +22,9 @@ MAN1S = \
         gbp-rpm-ch        \
         $(NULL)
 
-MAN5S = gbp.conf
+MAN5S = \
+	gbp.conf \
+	$(NULL)
 
 MANUAL=manual-html
 XML_MANPAGES=$(patsubst %,%.1,$(MAN1S)) $(patsubst %,%.5,$(MAN5S))
@@ -36,50 +38,33 @@ MAN_DATE=$(shell dpkg-parsechangelog -l ../debian/changelog -SDate | TZ=UTC LC_A
 IMAGES=$(wildcard images/*png)
 DEST_IMAGES=$(subst images/,$(MANUAL)/images/,$(IMAGES))
 
-# Stuff to build docs outside Debian
-HAVE_XML2X ?= 1
-GTK_DOC_CATALOG_FILE ?= /usr/share/xml/gtk-doc/gtk-doc.cat
-
 all: manual $(MANPAGES)
 
-manual: $(MANUAL) html_images css
+manual: $(MANUAL)/index.html $(DEST_IMAGES) css
 
-$(MANUAL): manual.xml chapters/*.xml manpages/*.xml common.ent $(VERSION_ENT)
-ifeq ($(HAVE_XML2X),1)
-	docbook-2-html -s local $<
-else
-	docbook2html -d local-noxml2x.dsl -c $(GTK_DOC_CATALOG_FILE) -o $(MANUAL) $<
-endif
-	sed -i 's/^CLASS="[A-Z0-9]\+"/\L&/' manual-html/*.html
-	cp /usr/share/gtk-doc/data/*.png $(MANUAL)
+$(MANUAL)/index.html: manual.xml chapters/*.xml manpages/*.xml common.ent $(VERSION_ENT)
+	mkdir -p $(MANUAL)
+	xsltproc -o $(MANUAL)/ /usr/share/gtk-doc/data/gtk-doc.xsl $<
+	cp /usr/share/gtk-doc/data/*.png \
+	   /usr/share/gtk-doc/data/*.css \
+	   $(MANUAL)
 
-css: gbp.css gbp.svg
-	cp gbp.css gbp.svg $(MANUAL)
+css: $(MANUAL)/gbp.css $(MANUAL)/gbp.svg
+$(MANUAL)/gbp.css $(MANUAL)/gbp.svg: gbp.css gbp.svg
+	cp gbp.css gbp.svg $(MANUAL)/
 
 html_images: $(DEST_IMAGES)
 $(MANUAL)/images/%.png: images/%.png
-	mkdir -p -p $(basename $@)
+	mkdir -p $(basename $@)
 	install $< $@
 
-# We build manpages under 'buildxref/' just to get an updated cross-reference
-# file (manpage.refs), before building the final manpages
-BUILD_MAN_XREF_PAGES=$(patsubst %,buildxref/%,$(XML_MANPAGES))
-
-buildxref/%.1 buildxref/%.5: man.%.xml manpages/%.xml
-	docbook2x-man -o buildxref $<
-	sed -i -r "s/\"[^\"]+\"/\"$(MAN_DATE)\"/3" $@
-
-manpage.refs: $(BUILD_MAN_XREF_PAGES)
-	cp buildxref/$@ $@
-
-%.1 %.5: manpage.refs
-	docbook2x-man -o . man.$*.xml
-	sed -i -r "s/\"[^\"]+\"/\"$(MAN_DATE)\"/3" $@
+%.1 %.5: man.gbp.xml manpages/%.xml
+	docbook2x-man -o . $<
 
 git-pbuilder.1: ../bin/git-pbuilder
 	pod2man $< $@
 
-manual.sgml: $(VERSION_ENT)
+manual.xml: $(VERSION_ENT)
 
 $(GBP_VERSION): ../debian/changelog
 	cd .. && python setup.py build --help >/dev/null
@@ -88,6 +73,5 @@ $(VERSION_ENT): $(GBP_VERSION)
 	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' > $(VERSION_ENT)
 
 clean:
-	-rm -r manual-html/
-	-rm *.1 *.5 manpage.* $(VERSION_ENT)
-	-rm -r buildxref
+	-rm -r $(MANUAL)
+	-rm *.1 *.5 $(VERSION_ENT)
