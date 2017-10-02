@@ -7,7 +7,7 @@
   %MANPAGES;
   <!ENTITY % CHAPTERS SYSTEM "chapters/chapters.ent">
   %CHAPTERS;
-  <!ENTITY gbp.copyright SYSTEM "copyright.sgml">
+  <!ENTITY gbp.copyright SYSTEM "copyright.xml">
 ]>
 
 <book id="gbp">
