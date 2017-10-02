@@ -504,7 +504,7 @@ class GbpOptionParser(OptionParser):
         self.config = dict(self.__class__.defaults)
         config_files = self.get_config_files()
         try:
-            repo = GitRepository(".")
+            repo = GitRepository(".", toplevel=False)
         except GitRepositoryError:
             repo = None
         # Read all config files
