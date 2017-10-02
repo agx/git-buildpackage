@@ -274,10 +274,10 @@
     <title>SEE ALSO</title>
 
     <para>
-      <xref linkend="man.gbp.import.dscs"/,
-      <xref linkend="man.gbp.buildpackage"/,
-      <xref linkend="man.gbp.import.orig"/,
-      <xref linkend="man.gbp.dch"/,
+      <xref linkend="man.gbp.import.dscs"/>,
+      <xref linkend="man.gbp.buildpackage"/>,
+      <xref linkend="man.gbp.import.orig"/>,
+      <xref linkend="man.gbp.dch"/>,
       <citerefentry>
         <refentrytitle>apt-get</refentrytitle>
         <manvolnum>1</manvolnum>
@@ -290,7 +290,7 @@
         <refentrytitle>dget</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
-      <xref linkend="man.gbp.conf"/,
+      <xref linkend="man.gbp.conf"/>,
       &man.seealso.common;
     </para>
   </refsect1>

@@ -637,8 +637,8 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-    <xref linkend="man.gbp.import.srpm"/,
-    <xref linkend="man.gbp.pq.rpm"/,
+    <xref linkend="man.gbp.import.srpm"/>,
+    <xref linkend="man.gbp.pq.rpm"/>,
     <xref linkend="man.gbp.rpm.ch">,
     <citerefentry>
       <refentrytitle>rpmbuild</refentrytitle>
@@ -648,7 +648,7 @@
       <refentrytitle>mock</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry>,
-    <xref linkend="man.gbp.conf"/,
+    <xref linkend="man.gbp.conf"/>,
     &man.seealso.common;
     </para>
   </refsect1>

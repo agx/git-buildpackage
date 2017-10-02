@@ -65,7 +65,7 @@
 
     <mediaobject>
       <imageobject>
-	<imagedata fileref="images/pq-unapplied.png" format="PNG"/
+	<imagedata fileref="images/pq-unapplied.png" format="PNG"/>
 		   </imageobject>
       <caption>
 	<para>
@@ -97,7 +97,7 @@
 
   <mediaobject>
     <imageobject>
-      <imagedata fileref="images/pq-applied.png" format="PNG"/
+      <imagedata fileref="images/pq-applied.png" format="PNG"/>
     </imageobject>
     <caption>
       <para>
@@ -226,7 +226,7 @@
 
   <mediaobject>
     <imageobject>
-      <imagedata fileref="images/pq-time-machine.png" format="PNG"/
+      <imagedata fileref="images/pq-time-machine.png" format="PNG"/>
 		 </imageobject>
     <caption>
       <para>
@@ -258,7 +258,7 @@
 
   <mediaobject>
     <imageobject>
-      <imagedata fileref="images/pq-rebase.png" format="PNG"/
+      <imagedata fileref="images/pq-rebase.png" format="PNG"/>
 		 </imageobject>
     <caption>
       <para>
@@ -280,7 +280,7 @@
   </para>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="images/pq-export.png" format="PNG"/
+      <imagedata fileref="images/pq-export.png" format="PNG"/>
 		 </imageobject>
     <caption>
       <para>

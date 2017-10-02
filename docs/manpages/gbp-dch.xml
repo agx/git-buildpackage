@@ -600,11 +600,11 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <xref linkend="man.gbp.buildpackage"/,
-      <xref linkend="man.gbp.import.dsc"/,
-      <xref linkend="man.gbp.import.dscs"/,
-      <xref linkend="man.gbp.import.orig"/,
-      <xref linkend="man.gbp.conf"/,
+      <xref linkend="man.gbp.buildpackage"/>,
+      <xref linkend="man.gbp.import.dsc"/>,
+      <xref linkend="man.gbp.import.dscs"/>,
+      <xref linkend="man.gbp.import.orig"/>,
+      <xref linkend="man.gbp.conf"/>,
       &man.seealso.common;
       <ulink url="https://honk.sigxcpu.org/cl2vcs">
       <citetitle>Cl2vcs</citetitle></ulink>,

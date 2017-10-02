@@ -154,24 +154,24 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
-      <xref linkend="man.gbp.buildpackage"/,
-      <xref linkend="man.gbp.clone"/,
-      <xref linkend="man.gbp.create.remote.repo"/,
-      <xref linkend="man.gbp.dch"/,
-      <xref linkend="man.gbp.export.orig"/,
-      <xref linkend="man.gbp.import.dsc"/,
-      <xref linkend="man.gbp.import.dscs"/,
-      <xref linkend="man.gbp.import.orig"/,
-      <xref linkend="man.gbp.pq"/,
-      <xref linkend="man.gbp.pristine.tar"/,
-      <xref linkend="man.gbp.pull"/,
-      <xref linkend="man.gbp.push"/,
-      <xref linkend="man.gbp.tag"/,
+      <xref linkend="man.gbp.buildpackage"/>,
+      <xref linkend="man.gbp.clone"/>,
+      <xref linkend="man.gbp.create.remote.repo"/>,
+      <xref linkend="man.gbp.dch"/>,
+      <xref linkend="man.gbp.export.orig"/>,
+      <xref linkend="man.gbp.import.dsc"/>,
+      <xref linkend="man.gbp.import.dscs"/>,
+      <xref linkend="man.gbp.import.orig"/>,
+      <xref linkend="man.gbp.pq"/>,
+      <xref linkend="man.gbp.pristine.tar"/>,
+      <xref linkend="man.gbp.pull"/>,
+      <xref linkend="man.gbp.push"/>,
+      <xref linkend="man.gbp.tag"/>,
       <citerefentry>
         <refentrytitle>git-pbuilder</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
-      <xref linkend="man.gbp.conf"/,
+      <xref linkend="man.gbp.conf"/>,
       &man.seealso.common;
     </para>
   </refsect1>
