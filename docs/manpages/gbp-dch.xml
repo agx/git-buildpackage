@@ -128,7 +128,7 @@
       you're not using the defaults check
       the <option>--upstream-tag</option>
       and <option>--debian-tag</option> options and make sure they match
-      the tags created by e.g. &gbp-import-orig (when using tarballs)
+      the tags created by e.g. &gbp-import-orig; (when using tarballs)
       or upstream's tagging pattern (when using upstream's git directly).
     </para>
   </refsect1>

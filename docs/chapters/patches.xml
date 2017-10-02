@@ -158,6 +158,7 @@
   build the package as usual.
 </para>
 
+</sect1>
 <sect1 id="gbp.patches.newupstream">
   <title>Importing a new upstream version</title>
 
@@ -241,7 +242,7 @@
 </programlisting>
 
 <para>
-  or you can invoke &gitcmd <option>rebase</option> directly:
+  or you can invoke &gitcmd; <option>rebase</option> directly:
 </para>
 
 <programlisting>
@@ -360,7 +361,7 @@
 
 <para>
   Note that you can you can push out patch-queue branches. Other team
-  members must just be aware that that branches in the patch-queue/
+  members must just be aware that branches in the patch-queue/
   namespace are being rebased frequently and therefore cause
   non fast-forward updates.
 </para>

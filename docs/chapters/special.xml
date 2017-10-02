@@ -142,7 +142,7 @@ EOF
     Whenever you need to work on an arbitrary &debian; package, you can check it
     right into &git; with one command:
 <programlisting>
-  &gbp-import-dsc apt:<filename>package</filename>
+  &gbp-import-dsc; apt:<filename>package</filename>
   cd <filename>package</filename>
   &gitcmd; branch debian
 </programlisting>
@@ -164,7 +164,7 @@ EOF
     fetch the source package from a URL:
 
 <programlisting>
-  &gbp-import-dsc <filename>http://mentors.debian.net/debian/pool/main/i/ipsec-tools/ipsec-tools_0.7.3-9.dsc</filename>
+  &gbp-import-dsc; <filename>http://mentors.debian.net/debian/pool/main/i/ipsec-tools/ipsec-tools_0.7.3-9.dsc</filename>
 </programlisting>
 
    The import works incrementally; you can import new versions on top of
@@ -206,7 +206,7 @@ means.
       for the packaging.
     </para>
 <programlisting>
-  &gbp-buildpackage --git-ignore-new --git-force-create --git-upstream-tree=SLOPPY --git-no-pristine-tar
+  &gbp-buildpackage; --git-ignore-new --git-force-create --git-upstream-tree=SLOPPY --git-no-pristine-tar
 </programlisting>
     <para>
       The important part is the <emphasis>SLOPPY</emphasis> above. The
@@ -229,4 +229,5 @@ means.
       See the <command>dpkg-source</command> manpage for
       details.
    </para>
+   </sect1>
 </chapter>

@@ -609,12 +609,13 @@
               &gbp.conf;.
             </para>
           </listitem>
+	</varlistentry>
       </variablelist>
     </refsect2>
     <refsect2>
       <title>Build area options</title>
       <para>
-	&gbp-buildpackage can export the source tree to a different
+	&gbp-buildpackage; can export the source tree to a different
 	build-area before performing the build. This options specify
 	if and how this is done:
       </para>

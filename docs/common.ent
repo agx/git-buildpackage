@@ -27,9 +27,9 @@
   <!ENTITY gbp-import-orig	"<command>gbp&nbsp;import-orig</command>">
   <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
   <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
-  <!ENTITY gbp-pq-export	"<command>gbp&nbsp;pq&nbsp<option>export</option></command>">
-  <!ENTITY gbp-pq-import	"<command>gbp&nbsp;pq&nbsp<option>import</option></command>">
-  <!ENTITY gbp-pq-rebase	"<command>gbp&nbsp;pq&nbsp<option>rebase</option></command>">
+  <!ENTITY gbp-pq-export	"<command>gbp&nbsp;pq&nbsp;<option>export</option></command>">
+  <!ENTITY gbp-pq-import	"<command>gbp&nbsp;pq&nbsp;<option>import</option></command>">
+  <!ENTITY gbp-pq-rebase	"<command>gbp&nbsp;pq&nbsp;<option>rebase</option></command>">
   <!ENTITY gbp-pq-rpm           "<command>gbp&nbsp;pq-rpm</command>">
   <!ENTITY gbp-pristine-tar	"<command>gbp&nbsp;pristine-tar</command>">
   <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
