@@ -6,7 +6,7 @@ Build-Depends:
  bash-completion (>= 1:2.1-4.2~),
  debhelper (>= 9~),
  dh-python,
- docbook-utils,
+ docbook2x,
  flake8,
  gtk-doc-tools,
  libdistro-info-perl,
@@ -22,7 +22,7 @@ Build-Depends:
  python3-rpm,
  python3-six,
  python3-setuptools,
- sgml2x,
+ xsltproc,
 # For the testsuite
  bzip2 <!nocheck>,
  cpio <!nocheck>,
