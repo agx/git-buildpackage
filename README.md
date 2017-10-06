@@ -22,4 +22,6 @@ package is also available on Pypi at:
 
   https://pypi.python.org/pypi/gbp/
 
+![gbp logo](docs/gbp.svg)
+
 [![Build Status](https://travis-ci.org/agx/git-buildpackage.svg?branch=master)](https://travis-ci.org/agx/git-buildpackage)
