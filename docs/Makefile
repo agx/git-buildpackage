@@ -49,6 +49,9 @@ $(MANUAL)/index.html: manual.xml chapters/*.xml manpages/*.xml common.ent $(VERS
 	   /usr/share/gtk-doc/data/*.css \
 	   $(MANUAL)
 
+$(MANUAL)/gbp.pdf: manual.xml chapters/*.xml manpages/*.xml common.ent $(VERSION_ENT)
+	xsltproc -o $(MANUAL)/ /usr/share/gtk-doc/data/gtk-doc.xsl $<
+
 css: $(MANUAL)/gbp.css $(MANUAL)/gbp.svg
 $(MANUAL)/gbp.css $(MANUAL)/gbp.svg: gbp.css gbp.svg
 	cp gbp.css gbp.svg $(MANUAL)/

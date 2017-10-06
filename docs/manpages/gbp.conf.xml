@@ -58,152 +58,151 @@
       <option>remote-config</option> sections.  Comments start with a
       hash sign (<option>#</option>). The overall layout is:
     </para>
-<programlisting>
-    [DEFAULT]
-    # This section is for global settings. Affects all commands.
-    # Options set here have the lowest priority.
-    key = value
+    <programlisting>
+      # This section is for global settings. Affects all commands.
+      # Options set here have the lowest priority.
+      key = value
 
-    [&lt;command&gt;]
-    # Specific sections for each command, like <command>buildpackage</command>
-    # Options set here have lower priority than command line options
-    key = value
 
-    [remote-config &lt;name&gt;]
-    # Specific sections for a remote configuration. This can be used several
-    # times to set up remote configuration for <command>gbp create-remote-repo</command>
-    key = value
-</programlisting>
-<para>
-  The sections for each command are named like the command (without &gbp;) surrounded
-  by square brackets (e.g. <option>[buildpackage]</option>).
-  For backwards compatibility, command sections starting with <filename>git-</filename> or
-  <filename>gbp-</filename> are also supported but will provoke a warning when parsed by
-  &gbp;.
-</para>
+      # Specific sections for each command, like <command>buildpackage</command>
+      # Options set here have lower priority than command line options
+      key = value
 
-<para>
-  The keys in the
-  <option>key</option>=<parameter>value</parameter> pairs are named
-  like the command-line options of the corresponding command (with the
-  '--' stripped off) and can hold the same values, but see below for
-  details. In case of &gbp-buildpackage; and &gbp-buildpackage-rpm;
-  the key needs '--git-' instead of '--' stripped off.
-</para>
-<para>
-  For example,
-  the <xref linkend="man.gbp.buildpackage"/> manual page documents
-  the <option>--git-export-dir</option>=<parameter>directory</parameter>
-  option which can be turned into configuration file setting by
-  dropping the
-  <option>--git-</option> prefix:
-</para>
+      [remote-config &lt;name&gt;]
+      # Specific sections for a remote configuration. This can be used several
+      # times to set up remote configuration for <command>gbp create-remote-repo</command>
+      key = value
+    </programlisting>
+    <para>
+      The sections for each command are named like the command (without &gbp;) surrounded
+      by square brackets (e.g. <option>[buildpackage]</option>).
+      For backwards compatibility, command sections starting with <filename>git-</filename> or
+      <filename>gbp-</filename> are also supported but will provoke a warning when parsed by
+      &gbp;.
+    </para>
 
-<programlisting>
-    [buildpackage]
-    export-dir = directory
-</programlisting>
+    <para>
+      The keys in the
+      <option>key</option>=<parameter>value</parameter> pairs are named
+      like the command-line options of the corresponding command (with the
+      '--' stripped off) and can hold the same values, but see below for
+      details. In case of &gbp-buildpackage; and &gbp-buildpackage-rpm;
+      the key needs '--git-' instead of '--' stripped off.
+    </para>
+    <para>
+      For example,
+      the <xref linkend="man.gbp.buildpackage"/> manual page documents
+      the <option>--git-export-dir</option>=<parameter>directory</parameter>
+      option which can be turned into configuration file setting by
+      dropping the
+      <option>--git-</option> prefix:
+    </para>
 
-<para>
-  Options that can be repeated on the command line take Python-like
-  lists in the config file. For example,
-  the <xref linkend="man.gbp.import.orig"/> command has the
-  <option>--filter</option>=<parameter>pattern</parameter> option
-  which can be turned into a configuration file option like this:
-</para>
+    <programlisting>
+      [buildpackage]
+      export-dir = directory
+    </programlisting>
 
-<programlisting>
-    [import-orig]
-    filter = [ '.svn', '.hg' ]
-</programlisting>
+    <para>
+      Options that can be repeated on the command line take Python-like
+      lists in the config file. For example,
+      the <xref linkend="man.gbp.import.orig"/> command has the
+      <option>--filter</option>=<parameter>pattern</parameter> option
+      which can be turned into a configuration file option like this:
+    </para>
 
-<para>
-Boolean options can be either <option>True</option> or <option>False</option>. For example,
-<xref linkend="man.gbp.import.orig"/> has the <option>--pristine-tar</option> and
-<option>--no-pristine-tar</option> options which translate to:
-</para>
-<programlisting>
-    [import-orig]
-    pristine-tar = True
-</programlisting>
+    <programlisting>
+      [import-orig]
+      filter = [ '.svn', '.hg' ]
+    </programlisting>
 
-<para>and</para>
+    <para>
+      Boolean options can be either <option>True</option> or <option>False</option>. For example,
+      <xref linkend="man.gbp.import.orig"/> has the <option>--pristine-tar</option> and
+      <option>--no-pristine-tar</option> options which translate to:
+    </para>
+    <programlisting>
+      [import-orig]
+      pristine-tar = True
+    </programlisting>
 
-<programlisting>
-    [import-orig]
-    pristine-tar = False
-</programlisting>
-<para>respectively.</para>
-<note>
-<para>
-  To see the current set of values that would be applied after parsing the
-  configuration files, use <xref linkend="man.gbp.config"/>.
-</para>
-</note>
-<note>
-<para>
- <command>gbp import-dscs</command> and <command>git-pbuilder</command>
-can't be configured via <filename>gbp.conf</filename>.
-</para>
-</note>
+    <para>and</para>
 
-<para>
-<xref linkend="man.gbp.create.remote.repo"/> can additionally parse remote site
-configurations from <filename>gbp.conf</filename>. For example, a configuration like:
-</para>
+    <programlisting>
+      [import-orig]
+      pristine-tar = False
+    </programlisting>
+    <para>respectively.</para>
+    <note>
+      <para>
+	To see the current set of values that would be applied after parsing the
+	configuration files, use <xref linkend="man.gbp.config"/>.
+      </para>
+    </note>
+    <note>
+      <para>
+	<command>gbp import-dscs</command> and <command>git-pbuilder</command>
+	can't be configured via <filename>gbp.conf</filename>.
+      </para>
+    </note>
 
-<programlisting>
-[remote-config pkg-libvirt]
-# Location of the repository
-remote-url-pattern = ssh://git.debian.org/git/pkg-libvirt/%(pkg)s
-# Template dir to passed to git-init
-template-dir = /srv/alioth.debian.org/chroot/home/groups/pkg-libvirt/git-template
-</programlisting>
+    <para>
+      <xref linkend="man.gbp.create.remote.repo"/> can additionally parse remote site
+      configurations from <filename>gbp.conf</filename>. For example, a configuration like:
+    </para>
 
-<para>
-can be used to create remote repositories for the pkg-libvirt project using:
-</para>
+    <programlisting>
+      [remote-config pkg-libvirt]
+      # Location of the repository
+      remote-url-pattern = ssh://git.debian.org/git/pkg-libvirt/%(pkg)s
+      # Template dir to passed to git-init
+      template-dir = /srv/alioth.debian.org/chroot/home/groups/pkg-libvirt/git-template
+    </programlisting>
 
-<programlisting>
-gbp-create-remote-repo --remote-config=pkg-libvirt
-</programlisting>
+    <para>
+      can be used to create remote repositories for the pkg-libvirt project using:
+    </para>
 
-<para>
-This can be useful if you're often creating new remote repositories for
-different projects.
-</para>
+    <programlisting>
+      gbp-create-remote-repo --remote-config=pkg-libvirt
+    </programlisting>
+
+    <para>
+      This can be useful if you're often creating new remote repositories for
+      different projects.
+    </para>
 
   </refsect1>
   <refsect1>
     <title>EXAMPLES</title>
-<para>
-An example set up for packaging work:
-</para>
+    <para>
+      An example set up for packaging work:
+    </para>
 
-<programlisting>
- # $HOME/.gbp.conf
+    <programlisting>
+      # $HOME/.gbp.conf
 
- [DEFAULT]
- pristine-tar = True
- cleaner = fakeroot debian/rules clean
+      [DEFAULT]
+      pristine-tar = True
+      cleaner = fakeroot debian/rules clean
 
- [buildpackage]
- export-dir  = ../build-area/
+      [buildpackage]
+      export-dir  = ../build-area/
 
- [import-orig]
- dch = False
- filter = [
+      [import-orig]
+      dch = False
+        filter = [
         '.svn',
         '.hg',
         '.bzr',
         'CVS',
         'debian/*',
         '*/debian/*'
-        ]
- filter-pristine-tar = True
+      ]
+      filter-pristine-tar = True
 
- [import-dsc]
- filter = [
+      [import-dsc]
+      filter = [
         'CVS',
         '.cvsignore',
         '.hg',
@@ -211,59 +210,59 @@ An example set up for packaging work:
         '.bzr',
         '.bzrignore',
         '.gitignore'
-        ]
+      ]
 
- # End of file
-</programlisting>
-</refsect1>
+      # End of file
+    </programlisting>
+  </refsect1>
 
-<refsect1>
-  <title>ENVIRONMENT</title>
-   <variablelist>
+  <refsect1>
+    <title>ENVIRONMENT</title>
+    <variablelist>
       <varlistentry>
-      <term><envar>GBP_CONF_FILES</envar></term>
-      <listitem><para>Colon separated list of files to parse. The default is
-the above list of configuration files.</para></listitem>
+	<term><envar>GBP_CONF_FILES</envar></term>
+	<listitem><para>Colon separated list of files to parse. The default is
+	the above list of configuration files.</para></listitem>
       </varlistentry>
       <varlistentry>
 	<term><envar>GBP_DISABLE_SECTION_DEPRECTATION</envar></term>
 	<listitem><para>Don't print a deprecation warning when &gbp;
-	    encounters a section starting
-	    with <emphasis>git-</emphasis>
-	    or <emphasis>gbp-</emphasis>.
+	encounters a section starting
+	with <emphasis>git-</emphasis>
+	or <emphasis>gbp-</emphasis>.
 	</para></listitem>
       </varlistentry>
-   </variablelist>
-</refsect1>
+    </variablelist>
+  </refsect1>
 
-<refsect1>
-  <title>FILES</title>
-  <para>
-    See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
-  </para>
-</refsect1>
+  <refsect1>
+    <title>FILES</title>
+    <para>
+      See <filename>/etc/git-buildpackage/gbp.conf</filename> for an example.
+    </para>
+  </refsect1>
 
-<refsect1>
-  <title>SEE ALSO</title>
-  <para>
-    <xref linkend="man.gbp.clone"/>,
-    <xref linkend="man.gbp.create.remote.repo"/>,
-    <xref linkend="man.gbp.pq"/>,
-    <xref linkend="man.gbp.pull"/>,
-    <xref linkend="man.gbp.dch"/>,
-    <xref linkend="man.gbp.import.dsc"/>,
-    <xref linkend="man.gbp.import.orig"/>,
-    <xref linkend="man.gbp.buildpackage"/>,
-    <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
-    <citetitle>The Git-Buildpackage Manual</citetitle></ulink>
-  </para>
-</refsect1>
-<refsect1>
-  <title>AUTHORS</title>
-  <para>&dhusername; &dhemail;</para>
-  <para>This manual page is based on a POD version by Jari Aalto <email>jari.aalto@cante.net</email>.
-	Released under license GNU GPL version 2 or (at your option) any later.
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.clone"/>,
+      <xref linkend="man.gbp.create.remote.repo"/>,
+      <xref linkend="man.gbp.pq"/>,
+      <xref linkend="man.gbp.pull"/>,
+      <xref linkend="man.gbp.dch"/>,
+      <xref linkend="man.gbp.import.dsc"/>,
+      <xref linkend="man.gbp.import.orig"/>,
+      <xref linkend="man.gbp.buildpackage"/>,
+      <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
+      <citetitle>The Git-Buildpackage Manual</citetitle></ulink>
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHORS</title>
+    <para>&dhusername; &dhemail;</para>
+    <para>This manual page is based on a POD version by Jari Aalto <email>jari.aalto@cante.net</email>.
+    Released under license GNU GPL version 2 or (at your option) any later.
     version.
-  </para>
+    </para>
   </refsect1>
 </refentry>
