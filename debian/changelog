@@ -1,3 +1,26 @@
+git-buildpackage (0.9.0~exp7) experimental; urgency=medium
+
+  * [fdf2720] Don't fail on unicode errors when importing patches.  Use
+    backslashreplace not lose data.
+  * [252c102] clone: clarify what we're looking for when using vcsgit:
+  * [4e6c4cf] command_wrappers: fix path lookups.
+    Python3 performs path lookups by itself when no path is given so remove
+    our path lookup code.
+    Thanks to Nish Aravamudan
+  * [2c7a5c5] import-orig: roll back on CTRL-C too
+  * [4761cf9] import-orig: Use gz compression when repackaging non tarball
+    filtered upstream source.  This makes it consistent with
+    export_orig:guess_comp_type when no compressor could be detected.
+  * [80189f2] create_remote_repo: another missing python3 string conversion
+  * [0259fd5] config: Don't require the command to be started from toplevel
+    dir.  At least dch, push, tag and export-orig don't require to be run from
+    the toplevel of the git repo. Make sure we pick up debian/gbp.conf
+    nevertheless.
+  * [d75fbd4] docs: Switch to docbook-xml
+    (Closes: #877322)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 06 Oct 2017 12:03:21 +0200
+
 git-buildpackage (0.9.0~exp6) experimental; urgency=medium
 
   * [23b334c] README.source example: fix typo.
