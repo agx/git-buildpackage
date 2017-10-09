@@ -366,6 +366,16 @@ def rebase_pq(repo, branch, pq_from, upstream_tag):
     GitCommand("rebase", cwd=repo.path)([base])
 
 
+def import_pq(repo, branch, options):
+    series = SERIES_FILE
+    tries = options.time_machine if (options.time_machine > 0) else 1
+    num = import_quilt_patches(repo, branch, series, tries,
+                               options.force, options.pq_from,
+                               options.upstream_tag)
+    gbp.log.info("%d patches listed in '%s' imported on '%s'" %
+                 (num, series, repo.get_branch()))
+
+
 def usage_msg():
     return """%prog [options] action - maintain patches on a patch queue branch
 Actions:
@@ -455,14 +465,7 @@ def main(argv):
         if action == "export":
             export_patches(repo, current, options)
         elif action == "import":
-            series = SERIES_FILE
-            tries = options.time_machine if (options.time_machine > 0) else 1
-            num = import_quilt_patches(repo, current, series, tries,
-                                       options.force, options.pq_from,
-                                       options.upstream_tag)
-            current = repo.get_branch()
-            gbp.log.info("%d patches listed in '%s' imported on '%s'" %
-                         (num, series, current))
+            import_pq(repo, current, options)
         elif action == "drop":
             drop_pq(repo, current)
         elif action == "rebase":
