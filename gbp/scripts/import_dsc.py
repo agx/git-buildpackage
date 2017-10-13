@@ -508,13 +508,14 @@ def main(argv):
             else:
                 gbp.log.warn("Didn't find a diff to apply.")
 
+            if options.pristine_tar:
+                repo.create_pristine_tar_commits(commit,
+                                                 dsc.tgz,
+                                                 dsc.additional_tarballs.items())
+
         if repo.get_branch() == options.debian_branch or repo.empty:
             # Update HEAD if we modified the checked out branch
             repo.force_head(options.debian_branch, hard=True)
-        if options.pristine_tar and not dsc.native:
-            repo.create_pristine_tar_commits(options.upstream_branch,
-                                             dsc.tgz,
-                                             dsc.additional_tarballs.items())
         ret = 0
     except KeyboardInterrupt:
         gbp.log.err("Interrupted. Aborting.")
