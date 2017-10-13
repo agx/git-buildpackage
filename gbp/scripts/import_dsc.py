@@ -496,9 +496,11 @@ def main(argv):
         if dsc.native:
             import_native(repo, source, dsc, options)
         else:
+            imported = False
             commit = repo.find_version(options.upstream_tag, dsc.upstream_version)
             if not repo.find_version(options.upstream_tag, dsc.upstream_version):
                 commit = import_upstream(repo, source, dsc, options)
+                imported = True
 
             if (options.create_missing_branches and not repo.has_branch(options.debian_branch)):
                 repo.create_branch(options.debian_branch, commit)
@@ -508,7 +510,7 @@ def main(argv):
             else:
                 gbp.log.warn("Didn't find a diff to apply.")
 
-            if options.pristine_tar:
+            if imported and options.pristine_tar:
                 repo.create_pristine_tar_commits(commit,
                                                  dsc.tgz,
                                                  dsc.additional_tarballs.items())
