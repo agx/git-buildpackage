@@ -93,6 +93,20 @@ def apply_deb_tgz(deb_tgz):
     gbpc.UnpackTarArchive(deb_tgz, ".")()
 
 
+def get_changes(dir, repo, debian_branch):
+    if repo.empty:
+        version = "0~"
+    else:
+        vfs = GitVfs(repo, debian_branch)
+        try:
+            with vfs.open('debian/changelog') as f:
+                version = ChangeLog(contents=f.read()).version
+        except IOError:
+            version = "0~"  # Use full history if debian branch has no changelog
+    cl = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
+    return cl.get_changes(version)
+
+
 def get_author_from_changelog(dir):
     """
     Get author from debian/changelog
@@ -181,6 +195,77 @@ def apply_debian_patch(repo, source, dsc, upstream_commit, options):
         raise GbpError("Failed to import Debian package: %s" % msg)
     finally:
         os.chdir(repo.path)
+
+
+def create_missing_branch(repo, branch, options):
+    if not repo.has_branch(branch):
+        if options.create_missing_branches:
+            gbp.log.info("Creating missing branch '%s'" % branch)
+            repo.create_branch(branch)
+        else:
+            raise GbpError(no_upstream_branch_msg % branch +
+                           "\nAlso check the --create-missing-branches option.")
+
+
+def import_native(repo, source, dsc, options):
+    tag = repo.version_to_tag(options.debian_tag, dsc.upstream_version)
+    msg = "Debian version %s" % dsc.upstream_version
+
+    gbp.log.info("Tag %s not found, importing Debian tarball" % tag)
+    if repo.empty:
+        branch = None
+    else:
+        branch = options.debian_branch
+        create_missing_branch(repo, branch, options)
+
+    author = get_author_from_changelog(source.unpacked)
+    committer = get_committer_from_author(author, options)
+    commit_msg = "Import %s\n%s" % (msg, get_changes(source.unpacked,
+                                                     repo,
+                                                     options.debian_branch))
+    commit = repo.commit_dir(source.unpacked,
+                             commit_msg,
+                             branch,
+                             author=author,
+                             committer=committer)
+    if not options.skip_debian_tag:
+        repo.create_tag(name=tag,
+                        msg=msg,
+                        commit=commit,
+                        sign=options.sign_tags,
+                        keyid=options.keyid)
+    if repo.empty and not repo.has_branch(options.debian_branch):
+        repo.create_branch(options.debian_branch, commit)
+    return commit
+
+
+def import_upstream(repo, source, dsc, options):
+    tag = repo.version_to_tag(options.upstream_tag, dsc.upstream_version)
+    msg = "Upstream version %s" % dsc.upstream_version
+
+    if repo.empty:
+        branch = None
+    else:
+        branch = options.upstream_branch
+        create_missing_branch(repo, branch, options)
+
+    author = committer = {}
+    commit_msg = "Import %s" % msg
+
+    commit = repo.commit_dir(source.unpacked,
+                             commit_msg,
+                             branch,
+                             author=author,
+                             committer=committer)
+
+    repo.create_tag(name=tag,
+                    msg=msg,
+                    commit=commit,
+                    sign=options.sign_tags,
+                    keyid=options.keyid)
+    if repo.empty and not repo.has_branch(options.upstream_branch):
+        repo.create_branch(options.upstream_branch, commit)
+    return commit
 
 
 def print_dsc(dsc):
@@ -338,91 +423,6 @@ def parse_all(argv):
     # honor options.download until removed
     options.download = download or options.download
     return options, pkg, target
-
-
-def get_changes(dir, repo, debian_branch):
-    if repo.empty:
-        version = "0~"
-    else:
-        vfs = GitVfs(repo, debian_branch)
-        try:
-            with vfs.open('debian/changelog') as f:
-                version = ChangeLog(contents=f.read()).version
-        except IOError:
-            version = "0~"  # Use full history if debian branch has no changelog
-    cl = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
-    return cl.get_changes(version)
-
-
-def create_missing_branch(repo, branch, options):
-    if not repo.has_branch(branch):
-        if options.create_missing_branches:
-            gbp.log.info("Creating missing branch '%s'" % branch)
-            repo.create_branch(branch)
-        else:
-            raise GbpError(no_upstream_branch_msg % branch +
-                           "\nAlso check the --create-missing-branches option.")
-
-
-def import_native(repo, source, dsc, options):
-    tag = repo.version_to_tag(options.debian_tag, dsc.upstream_version)
-    msg = "Debian version %s" % dsc.upstream_version
-
-    gbp.log.info("Tag %s not found, importing Debian tarball" % tag)
-    if repo.empty:
-        branch = None
-    else:
-        branch = options.debian_branch
-        create_missing_branch(repo, branch, options)
-
-    author = get_author_from_changelog(source.unpacked)
-    committer = get_committer_from_author(author, options)
-    commit_msg = "Import %s\n%s" % (msg, get_changes(source.unpacked,
-                                                     repo,
-                                                     options.debian_branch))
-    commit = repo.commit_dir(source.unpacked,
-                             commit_msg,
-                             branch,
-                             author=author,
-                             committer=committer)
-    if not options.skip_debian_tag:
-        repo.create_tag(name=tag,
-                        msg=msg,
-                        commit=commit,
-                        sign=options.sign_tags,
-                        keyid=options.keyid)
-    if repo.empty and not repo.has_branch(options.debian_branch):
-        repo.create_branch(options.debian_branch, commit)
-    return commit
-
-
-def import_upstream(repo, source, dsc, options):
-    tag = repo.version_to_tag(options.upstream_tag, dsc.upstream_version)
-    msg = "Upstream version %s" % dsc.upstream_version
-
-    if repo.empty:
-        branch = None
-    else:
-        branch = options.upstream_branch
-        create_missing_branch(repo, branch, options)
-
-    author = committer = {}
-    commit_msg = "Import %s" % msg
-
-    commit = repo.commit_dir(source.unpacked,
-                             commit_msg,
-                             branch,
-                             author=author,
-                             committer=committer)
-
-    repo.create_tag(name=tag,
-                    msg=msg,
-                    commit=commit,
-                    sign=options.sign_tags,
-                    keyid=options.keyid)
-    if repo.empty and not repo.has_branch(options.upstream_branch):
-        repo.create_branch(options.upstream_branch, commit)
-    return commit
 
 
 def main(argv):
