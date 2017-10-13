@@ -217,7 +217,7 @@
         </term>
         <listitem>
           <para>
-          Create missing upstream and debian branch if missing.
+          Create upstream and debian branch if missing.
           </para>
         </listitem>
       </varlistentry>
