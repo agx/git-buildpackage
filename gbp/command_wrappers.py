@@ -178,10 +178,10 @@ class Command(object):
         @type quiet: C{bool}
 
         >>> Command("/bin/true")(["foo", "bar"])
-        >>> Command("/foo/bar")(quiet=True)
+        >>> Command("/foo/bar")(quiet=True) # doctest: +IGNORE_EXCEPTION_DETAIL
         Traceback (most recent call last):
         ...
-        gbp.command_wrappers.CommandExecFailed: '/foo/bar' failed: execution failed: [Errno 2] No such file or directory: '/foo/bar'
+        gbp.command_wrappers.CommandExecFailed
         """
         try:
             ret = self.__call(args)
