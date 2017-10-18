@@ -367,8 +367,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
 
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
-                  pq_from=TestFromTAG.Options.pq_from,
-                  upstream_tag=TestFromTAG.Options.upstream_tag)
+                  options=TestFromTAG.Options)
         diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
         self.assertEqual(b'', diff)
         diff = self.repo.diff(self.repo.get_branch(), 'master')
@@ -398,8 +397,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         pq.switch_pq(self.repo, 'master')
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
-                  pq_from=TestFromTAG.Options.pq_from,
-                  upstream_tag=TestFromTAG.Options.upstream_tag)
+                  options=TestFromTAG.Options())
         export_patches(self.repo,
                        branch=self.repo.get_branch(),
                        options=TestFromTAG.Options())
@@ -423,8 +421,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         pq.switch_pq(self.repo, 'master')
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
-                  pq_from=TestFromTAG.Options.pq_from,
-                  upstream_tag=TestFromTAG.Options.upstream_tag)
+                  options=TestFromTAG.Options())
         export_patches(self.repo,
                        branch=self.repo.get_branch(),
                        options=TestFromTAG.Options())

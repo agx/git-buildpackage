@@ -36,13 +36,24 @@ class TestPq(ComponentTestBase):
         ok_(ret == 0, "Running gbp pq %s failed" % action)
 
     @RepoFixtures.quilt30()
+    def test_rebase_import(self, repo):
+        """Test if rebase imports patches first"""
+        eq_(repo.has_branch('patch-queue/master'), False)
+        self._test_pq(repo, 'rebase')
+        eq_(repo.has_branch('patch-queue/master'), True)
+
+    @RepoFixtures.quilt30()
     def test_empty_cycle(self, repo):
         eq_(repo.has_branch('patch-queue/master'), False)
+        eq_(repo.branch, 'master')
         self._test_pq(repo, 'import')
         eq_(repo.has_branch('patch-queue/master'), True)
+        eq_(repo.branch, 'patch-queue/master')
         self._test_pq(repo, 'rebase')
+        eq_(repo.branch, 'patch-queue/master')
         self._test_pq(repo, 'export')
         eq_(repo.has_branch('patch-queue/master'), True)
+        eq_(repo.branch, 'master')
         self._test_pq(repo, 'drop')
         eq_(repo.has_branch('patch-queue/master'), False)
 

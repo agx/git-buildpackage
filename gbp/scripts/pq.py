@@ -35,7 +35,8 @@ from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                    parse_gbp_commands, format_patch,
                                    apply_single_patch,
                                    apply_and_commit_patch, switch_pq,
-                                   drop_pq, get_maintainer_from_control)
+                                   drop_pq, get_maintainer_from_control,
+                                   switch_to_pq_branch)
 from gbp.scripts.common import ExitCodes
 from gbp.dch import extract_bts_cmds
 
@@ -353,15 +354,18 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
     return len(queue)
 
 
-def rebase_pq(repo, branch, pq_from, upstream_tag):
-    if is_pq_branch(branch):
-        base = pq_branch_base(branch)
-    else:
-        raise GbpError("Rebase must be run from the patch-queue branch. "
-                       "Try 'import' instead.")
+def rebase_pq(repo, branch, options):
+    # Import patches if not yet done
+    if not repo.has_branch(pq_branch_name(branch)):
+        gbp.log.info("No pq branch found, importing patches")
+        import_pq(repo, branch, options)
 
-    if pq_on_upstream_tag(pq_from):
-        base = find_upstream_commit(repo, base, upstream_tag)
+    # Make sure we're on the pq branch
+    switch_to_pq_branch(repo, branch)
+    if pq_on_upstream_tag(options.pq_from):
+        base = find_upstream_commit(repo, branch, options.upstream_tag)
+    else:
+        base = pq_branch_base(repo.branch)
 
     GitCommand("rebase", cwd=repo.path)([base])
 
@@ -469,7 +473,7 @@ def main(argv):
         elif action == "drop":
             drop_pq(repo, current)
         elif action == "rebase":
-            rebase_pq(repo, current, options.pq_from, options.upstream_tag)
+            rebase_pq(repo, current, options)
         elif action == "apply":
             patch = Patch(patchfile)
             maintainer = get_maintainer_from_control(repo)
