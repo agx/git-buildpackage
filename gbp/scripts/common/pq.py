@@ -52,23 +52,29 @@ def pq_branch_name(branch):
     get the patch queue branch corresponding to branch
 
     >>> pq_branch_name("patch-queue/master")
+    'patch-queue/master'
     >>> pq_branch_name("foo")
     'patch-queue/foo'
     """
     if not is_pq_branch(branch):
         return PQ_BRANCH_PREFIX + branch
+    else:
+        return branch
 
 
-def pq_branch_base(pq_branch):
+def pq_branch_base(branch):
     """
     get the branch corresponding to the given patch queue branch
 
     >>> pq_branch_base("patch-queue/master")
     'master'
     >>> pq_branch_base("foo")
+    'foo'
     """
-    if is_pq_branch(pq_branch):
-        return pq_branch[len(PQ_BRANCH_PREFIX):]
+    if is_pq_branch(branch):
+        return branch[len(PQ_BRANCH_PREFIX):]
+    else:
+        return branch
 
 
 def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
