@@ -142,6 +142,37 @@ class TestImportDsc(ComponentTestBase):
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
+    def test_import_30_pristine_tar(self):
+        dscfile = self._dsc30('2.6-1')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           dscfile]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        commits, expected = len(repo.get_commits()), 2
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        eq_("hello-debhelper (2.6-1) unstable; urgency=low", commitmsg.split('\n')[0])
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+        os.chdir(repo.path)
+        dscfile = self._dsc30('2.6-2')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           dscfile]) == 0
+        commits, expected = len(repo.get_commits()), 3
+        commitmsg = repo.get_commit_info('HEAD')['body']
+        eq_("hello-debhelper (2.6-2) unstable; urgency=medium", commitmsg.split('\n')[0])
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+        commits, expected = len(repo.get_commits(until='pristine-tar')), 1
+        ok_(commits == expected, "Found %d pristine-tar commits instead of %d" % (commits, expected))
+
     def test_import_30_additional_tarball_pristine_tar(self):
         """Test if importing a package with additional tarballs works"""
         def _dsc(version):
