@@ -34,6 +34,11 @@ from gbp.deb.dscfile import DscFile
 class TestImportDsc(ComponentTestBase):
     """Test importing of debian source packages"""
 
+    def _dsc30(self, version):
+        return os.path.join(DEB_TEST_DATA_DIR,
+                            'dsc-3.0',
+                            'hello-debhelper_%s.dsc' % version)
+
     def _check_reflog(self, repo):
         reflog, ret = repo._git_getoutput('reflog')
         # Recent (>= 2.10) git versions create a reflog entry for "git
@@ -113,12 +118,7 @@ class TestImportDsc(ComponentTestBase):
 
     def test_create_branches(self):
         """Test if creating missing branches works"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-3.0',
-                                'hello-debhelper_%s.dsc' % version)
-
-        dsc = _dsc('2.6-2')
+        dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
@@ -130,7 +130,7 @@ class TestImportDsc(ComponentTestBase):
         assert len(repo.get_commits()) == 2
         self._check_reflog(repo)
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
-        dsc = _dsc('2.8-1')
+        dsc = self._dsc30('2.8-1')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
@@ -142,8 +142,8 @@ class TestImportDsc(ComponentTestBase):
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
-    def test_import_multiple_pristine_tar(self):
-        """Test if importing a multiple tarball package works"""
+    def test_import_30_additional_tarball_pristine_tar(self):
+        """Test if importing a package with additional tarballs works"""
         def _dsc(version):
             return os.path.join(DEB_TEST_DATA_DIR,
                                 'dsc-3.0-additional-tarballs',
@@ -189,14 +189,10 @@ class TestImportDsc(ComponentTestBase):
         Importing outside of git repository with existing target
         dir must fail
         """
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-3.0',
-                                'hello-debhelper_%s.dsc' % version)
 
         # Create directory we should stumble upon
         os.makedirs('hello-debhelper')
-        dsc = _dsc('2.8-1')
+        dsc = self._dsc30('2.8-1')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
@@ -222,11 +218,7 @@ class TestImportDsc(ComponentTestBase):
 
     def test_target_dir(self):
         """Test if setting the target dir works"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-3.0',
-                                'hello-debhelper_%s.dsc' % version)
-        dsc = _dsc('2.6-2')
+        dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--no-pristine-tar',
@@ -238,12 +230,7 @@ class TestImportDsc(ComponentTestBase):
 
     def test_bare(self):
         """Test if importing into bare repository"""
-        def _dsc(version):
-            return os.path.join(DEB_TEST_DATA_DIR,
-                                'dsc-3.0',
-                                'hello-debhelper_%s.dsc' % version)
-
-        dsc = _dsc('2.6-2')
+        dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
@@ -259,7 +246,7 @@ class TestImportDsc(ComponentTestBase):
         ok_("hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg)
         ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
 
-        dsc = _dsc('2.8-1')
+        dsc = self._dsc30('2.8-1')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
