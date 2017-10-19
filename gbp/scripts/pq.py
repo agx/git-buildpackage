@@ -177,9 +177,9 @@ def commit_patches(repo, branch, patches, options, patch_dir):
 
 def find_upstream_commit(repo, branch, upstream_tag):
     """
-    Find commit corresponding upstream version based on changelog
+    Find commit corresponding to upstream version based on changelog
     """
-    vfs = gbp.git.vfs.GitVfs(repo, branch)
+    vfs = gbp.git.vfs.GitVfs(repo, pq_branch_base(branch))
     cl = DebianSource(vfs).changelog
     upstream_commit = repo.find_version(upstream_tag, cl.upstream_version)
     if not upstream_commit:
