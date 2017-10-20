@@ -83,7 +83,6 @@ This package contains the original Debian tools.
 Summary:    Common files for git-buildpackage debian and rpm tools
 Group:      Development/Tools/Building
 Requires:   git-core
-Requires:   python3-six
 Requires:   %{man_pkg_name}
 Requires:   %{python_pkg_name}
 Requires:   python3-setuptools

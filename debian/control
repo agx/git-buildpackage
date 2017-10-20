@@ -20,7 +20,6 @@ Build-Depends:
  python3-nosexcover,
  python3-pkg-resources,
  python3-rpm,
- python3-six,
  python3-setuptools,
  xsltproc,
 # For the testsuite
@@ -51,7 +50,6 @@ Depends: ${python3:Depends},
  man-db,
  python3-dateutil,
  python3-pkg-resources,
- python3-six,
 Recommends: pristine-tar (>= 0.5),
  cowbuilder | pbuilder | sbuild,
  python3-requests
