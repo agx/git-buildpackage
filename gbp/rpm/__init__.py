@@ -23,8 +23,6 @@ import tempfile
 from optparse import OptionParser
 from collections import defaultdict
 
-import six
-
 import gbp.command_wrappers as gbpc
 from gbp.errors import GbpError
 from gbp.git import GitRepositoryError
@@ -318,7 +316,7 @@ class SpecFile(object):
             self._tags[tagname]['value'] = tagvalue
             self._tags[tagname]['lines'].append(linerecord)
         else:
-            if tagvalue and not isinstance(tagvalue, six.string_types):
+            if tagvalue and not isinstance(tagvalue, str):
                 tagvalue = tagvalue.decode()
             self._tags[tagname] = {'value': tagvalue, 'lines': [linerecord]}
 

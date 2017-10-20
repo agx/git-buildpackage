@@ -16,7 +16,6 @@
 #    <http://www.gnu.org/licenses/>
 """A Git repository"""
 
-import six
 import subprocess
 import os.path
 import re
@@ -42,7 +41,7 @@ class GitRemote(object):
     def __init__(self, name, fetch_url, push_urls):
         self._name = name
         self._fetch_url = fetch_url
-        if isinstance(push_urls, six.string_types):
+        if isinstance(push_urls, str):
             self._push_urls = [push_urls]
         else:
             self._push_urls = [url for url in push_urls]
@@ -837,7 +836,7 @@ class GitRepository(object):
 
         if paths is None:
             paths = []
-        elif isinstance(paths, six.string_types):
+        elif isinstance(paths, str):
             paths = [paths]
 
         out, ret = self._git_getoutput('status',
@@ -1360,7 +1359,7 @@ class GitRepository(object):
         """
         extra_env = {}
 
-        if isinstance(paths, six.string_types):
+        if isinstance(paths, str):
             paths = [paths]
 
         args = ['-f'] if force else []
@@ -1382,7 +1381,7 @@ class GitRepository(object):
         @param verbose: be verbose
         @type verbose: C{bool}
         """
-        if isinstance(paths, six.string_types):
+        if isinstance(paths, str):
             paths = [paths]
 
         args = [] if verbose else ['--quiet']
@@ -1493,7 +1492,7 @@ class GitRepository(object):
         @param author_info: authorship information
         @type author_info: L{GitModifier}
         """
-        if isinstance(files, six.string_types):
+        if isinstance(files, str):
             files = [files]
         self._commit(msg=msg, args=files, author_info=author_info)
 
@@ -1623,7 +1622,7 @@ class GitRepository(object):
             args.add(until)
         args.add_cond(options, options)
         args.add("--")
-        if isinstance(paths, six.string_types):
+        if isinstance(paths, str):
             paths = [paths]
         args.add_cond(paths, paths)
 

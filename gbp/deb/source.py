@@ -21,8 +21,6 @@ from gbp.deb import DebianPkgPolicy as Policy
 from gbp.deb.format import DebianSourceFormat
 from gbp.deb.changelog import ChangeLog
 
-import six
-
 
 class FileVfs(object):
     def __init__(self, dir):
@@ -57,7 +55,7 @@ class DebianSource(object):
         """
         self._changelog = None
 
-        if isinstance(vfs, six.string_types):
+        if isinstance(vfs, str):
             self._vfs = FileVfs(vfs)
         else:
             self._vfs = vfs

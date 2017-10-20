@@ -20,7 +20,6 @@ Someone who modifiers something in git
 like committing changes or authoring a patch
 """
 
-import six
 import calendar
 import datetime
 
@@ -64,7 +63,7 @@ class GitModifier(object):
         self._date = None
         tz = GitTz(0)
 
-        if isinstance(date, six.string_types):
+        if isinstance(date, str):
             timestamp, offset = date.split()
             offset_h = int(offset[:-2])
             offset_m = int(offset[-2:])
