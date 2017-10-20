@@ -301,7 +301,7 @@ class SpecFile(object):
             tagvalue = None
         # We don't support "multivalue" tags like "Provides:" or "SourceX:"
         # Rpm python doesn't support many of these, thus the explicit list
-        if isinstance(tagvalue, six.integer_types):
+        if isinstance(tagvalue, int):
             tagvalue = str(tagvalue)
         elif type(tagvalue) is list or tagname in self._listtags:
             tagvalue = None
