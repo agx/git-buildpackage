@@ -8,8 +8,6 @@ import os
 import tarfile
 import unittest
 
-import six
-
 import gbp.pkg
 
 
@@ -49,7 +47,7 @@ class TestUnpack(unittest.TestCase):
         context.teardown()
 
     def test_upstream_source_type(self):
-        for (comp, archive) in six.iteritems(self.archives):
+        for (comp, archive) in self.archives.items():
             source = gbp.pkg.UpstreamSource(archive[0])
             assert source.is_orig() is True
             assert source.is_dir() is False
@@ -60,13 +58,13 @@ class TestUnpack(unittest.TestCase):
             assert type(source.unpacked) == str
 
     def test_upstream_source_unpack(self):
-        for (comp, archive) in six.iteritems(self.archives):
+        for (comp, archive) in self.archives.items():
             source = gbp.pkg.UpstreamSource(archive[0])
             source.unpack(".")
             self._check_files(archive[1], comp)
 
     def test_upstream_source_unpack_no_filter(self):
-        for (comp, archive) in six.iteritems(self.archives):
+        for (comp, archive) in self.archives.items():
             source = gbp.pkg.UpstreamSource(archive[0])
             source.unpack(".", [])
             self._check_files(archive[1], comp)
@@ -74,7 +72,7 @@ class TestUnpack(unittest.TestCase):
     def test_upstream_source_unpack_filtered(self):
         exclude = "README.md"
 
-        for (comp, archive) in six.iteritems(self.archives):
+        for (comp, archive) in self.archives.items():
             source = gbp.pkg.UpstreamSource(archive[0])
             source.unpack(".", [exclude])
             archive[1].remove(exclude)

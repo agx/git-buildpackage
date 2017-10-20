@@ -15,8 +15,6 @@
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
 
-
-import six
 from .compressor import Compressor
 
 
@@ -71,7 +69,7 @@ class Archive(object):
                 base_name = ".".join(split[:-1])
                 (archive_fmt, compression) = (split[-1], None)
             else:
-                for (c, ext) in six.iteritems(Compressor.Exts):
+                for (c, ext) in Compressor.Exts.items():
                     if ext == split[-1]:
                         base_name = ".".join(split[:-1])
                         compression = c
