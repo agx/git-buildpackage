@@ -2,7 +2,7 @@
 """
 Test pristine-tar related methods in
 
-    - L{gbp.deb.DebianPristineTar}
+    - L{gbp.deb.pristinetar.DebianPristineTar}
 
 and
 

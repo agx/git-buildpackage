@@ -123,10 +123,10 @@ def test_add_files():
     """
 
 
-def test_move_file():
+def test_rename_file():
     """
     Methods tested:
-         - L{gbp.git.GitRepository.move_file}
+         - L{gbp.git.GitRepository.rename_file}
 
     >>> import gbp.git
     >>> repo = gbp.git.GitRepository(dirs['repo'])
