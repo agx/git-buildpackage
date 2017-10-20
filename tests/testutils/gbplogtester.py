@@ -1,7 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
 import re
-from six import StringIO
+from io import StringIO
 from nose.tools import ok_, assert_less
 
 import gbp.log
