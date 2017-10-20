@@ -1,3 +1,27 @@
+git-buildpackage (0.9.0) unstable; urgency=medium
+
+  * Upload to unstable
+  * [dbb9290,9c1bd13] README: use https, shorter URLs and add image
+  * [ce7ff21] d/control: mentions new commands in packaging description
+  * [44b4e2b] import-dsc: split import of tarballs out of main.  The current
+    logic tried to force native and non-native packages into the same code
+    path leading to hardly readable if-else-maybe code paths.
+  * [4b9789a] import-dsc: Look for pristine-tar reference by commit.  The
+    upstream branch tip is up to date at this point already but this makes
+    sure things don't get wired if we move code around.
+  * [d0ee56b] import-dsc: don't create pristine-tar commits on every import.
+    We must not create pristine-tar commits if no new upstream sources were
+    imported. Othewise we'd create them on every Debian revision.  This hardly
+    wastes space since commits are identical but does waste time.
+  * [680784b] pq: import patches before rebase if the pq branch doesn't exist
+    yet. (Closes: #876800)
+  * [c1c7fa7] pq: recommend 'rebase' and 'switch' when pq branch already
+    exists
+  * [1551051] pq: import pq branch on switch (Closes: #761166)
+  * [02978fb] pq: let drop work when pq branch is currently checked out
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 20 Oct 2017 11:41:53 +0200
+
 git-buildpackage (0.9.0~exp7) experimental; urgency=medium
 
   * [fdf2720] Don't fail on unicode errors when importing patches.  Use
