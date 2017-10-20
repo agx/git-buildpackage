@@ -165,10 +165,21 @@ class TestPqRpm(RpmRepoTestBase):
         repo.set_branch('patch-queue/master')
         branches = repo.get_local_branches()
 
-        # Drop pq should fail when on pq branch
-        eq_(mock_pq(['drop']), 1)
-        self._check_log(-1, "gbp:error: On a patch-queue branch, can't drop it")
-        self._check_repo_state(repo, 'patch-queue/master', branches)
+        # Switch to master
+        eq_(mock_pq(['switch']), 0)
+        self._check_repo_state(repo, 'master', branches)
+
+        # Drop should succeed when on master branch
+        eq_(mock_pq(['drop']), 0)
+        branches.remove('patch-queue/master')
+        self._check_repo_state(repo, 'master', branches)
+
+    def test_drop_pq(self):
+        """drop action should work on pq branch"""
+        repo = self.init_test_repo('gbp-test')
+        repo.rename_branch('pq/master', 'patch-queue/master')
+        repo.set_branch('patch-queue/master')
+        branches = repo.get_local_branches()
 
         # Switch to master
         eq_(mock_pq(['switch']), 0)

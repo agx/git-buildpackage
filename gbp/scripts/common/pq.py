@@ -343,12 +343,8 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
 
 
 def drop_pq(repo, branch):
-    if is_pq_branch(branch):
-        gbp.log.err("On a patch-queue branch, can't drop it.")
-        raise GbpError
-    else:
-        pq_branch = pq_branch_name(branch)
-
+    repo.checkout(pq_branch_base(branch))
+    pq_branch = pq_branch_name(branch)
     if repo.has_branch(pq_branch):
         repo.delete_branch(pq_branch)
         gbp.log.info("Dropped branch '%s'." % pq_branch)
