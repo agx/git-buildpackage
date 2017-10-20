@@ -22,12 +22,12 @@ from __future__ import print_function
 
 import sys
 import os
-from six.moves import urllib
+import urllib
 import subprocess
 import tty
 import termios
 import re
-from six.moves import configparser
+import configparser
 
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.command_wrappers import (CommandExecFailed, GitCommand)

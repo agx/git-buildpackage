@@ -24,8 +24,8 @@ import glob
 import time
 import shutil
 import errno
-from six.moves.urllib.request import urlopen
-from six.moves import urllib
+from urllib.request import urlopen
+import urllib
 
 import gbp.command_wrappers as gbpc
 from gbp.tmpfile import init_tmpdir, del_tmpdir, tempfile

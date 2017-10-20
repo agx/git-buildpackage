@@ -18,7 +18,7 @@
 
 import os
 import shutil
-from six.moves import urllib
+import urllib
 from nose.plugins.skip import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 from mock import Mock
