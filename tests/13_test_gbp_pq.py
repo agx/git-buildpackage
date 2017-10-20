@@ -23,7 +23,9 @@ import unittest
 
 from gbp.command_wrappers import GitCommand
 from gbp.scripts.pq import (generate_patches, export_patches,
-                            import_quilt_patches, rebase_pq, SERIES_FILE)
+                            import_quilt_patches, rebase_pq,
+                            switch_pq,
+                            SERIES_FILE)
 import gbp.scripts.common.pq as pq
 import gbp.patch_series
 
@@ -239,7 +241,7 @@ class TestExport(testutils.DebianGitTestRepo):
         opts.drop = True
 
         repo.create_branch(pq.pq_branch_name('master'))
-        pq.switch_pq(repo, start)
+        switch_pq(repo, start, opts)
         self.assertEqual(repo.get_branch(), pq_branch)
         export_patches(repo, pq_branch, opts)
         self.assertEqual(repo.get_branch(), start)
@@ -253,7 +255,7 @@ class TestExport(testutils.DebianGitTestRepo):
         opts = TestExport.Options()
         opts.commit = True
         repo.create_branch(pq.pq_branch_name('master'))
-        pq.switch_pq(repo, start)
+        switch_pq(repo, start, opts)
         self.assertEqual(len(repo.get_commits()), 1)
         self.assertEqual(repo.get_branch(), pq_branch)
         self.add_file('foo', 'foo')
@@ -282,7 +284,7 @@ class TestExport(testutils.DebianGitTestRepo):
         repo.add_files('debian/patches')
         repo.commit_all('Add series file')
         repo.create_branch(pq.pq_branch_name('master'))
-        pq.switch_pq(repo, start)
+        switch_pq(repo, start, opts)
         self.assertEqual(len(repo.get_commits()), 2)
         self.assertEqual(repo.get_branch(), pq_branch)
         export_patches(repo, pq_branch, opts)
@@ -394,7 +396,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         self.assertTrue(os.path.exists(os.path.join(self.repo.path,
                                                     os.path.dirname(SERIES_FILE),
                                                     'added-bar.patch')))
-        pq.switch_pq(self.repo, 'master')
+        switch_pq(self.repo, 'master', TestFromTAG.Options)
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   options=TestFromTAG.Options())
@@ -418,7 +420,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
             ' -- Mr. T. S. <t@example.com>  '
             'Thu, 01 Jan 1970 00:00:00 +0000\n'
         )
-        pq.switch_pq(self.repo, 'master')
+        switch_pq(self.repo, 'master', TestFromTAG.Options())
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   options=TestFromTAG.Options())

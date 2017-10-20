@@ -34,7 +34,7 @@ from gbp.patch_series import (PatchSeries, Patch)
 from gbp.scripts.common.pq import (is_pq_branch, pq_branch_name, pq_branch_base,
                                    parse_gbp_commands, format_patch,
                                    apply_single_patch,
-                                   apply_and_commit_patch, switch_pq,
+                                   apply_and_commit_patch,
                                    drop_pq, get_maintainer_from_control,
                                    switch_to_pq_branch)
 from gbp.scripts.common import ExitCodes
@@ -292,8 +292,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
             pq_branch = pq_branch_name(branch)
             repo.checkout(branch)
         else:
-            gbp.log.err("Already on a patch-queue branch '%s' - doing nothing." % branch)
-            raise GbpError
+            raise GbpError("Already on a patch-queue branch '%s' - doing nothing." % branch)
     else:
         pq_branch = pq_branch_name(branch)
 
@@ -355,11 +354,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
 
 
 def rebase_pq(repo, branch, options):
-    # Import patches if not yet done
-    if not repo.has_branch(pq_branch_name(branch)):
-        gbp.log.info("No pq branch found, importing patches")
-        import_pq(repo, branch, options)
-
+    maybe_import_pq(repo, branch, options)
     # Make sure we're on the pq branch
     switch_to_pq_branch(repo, branch)
     if pq_on_upstream_tag(options.pq_from):
@@ -371,6 +366,7 @@ def rebase_pq(repo, branch, options):
 
 
 def import_pq(repo, branch, options):
+    """Import quilt patches onto pq branch"""
     series = SERIES_FILE
     tries = options.time_machine if (options.time_machine > 0) else 1
     num = import_quilt_patches(repo, branch, series, tries,
@@ -378,6 +374,26 @@ def import_pq(repo, branch, options):
                                options.upstream_tag)
     gbp.log.info("%d patches listed in '%s' imported on '%s'" %
                  (num, series, repo.get_branch()))
+
+
+def maybe_import_pq(repo, branch, options):
+    """Import quilt patches onto pq branch if pq branch does not exist yet"""
+    if not repo.has_branch(pq_branch_name(branch)):
+        gbp.log.info("No pq branch found, importing patches")
+        import_pq(repo, branch, options)
+        return True
+    return False
+
+
+def switch_pq(repo, branch, options):
+    """Switch to patch-queue branch if on base branch and vice versa"""
+    if is_pq_branch(branch):
+        base = pq_branch_base(branch)
+        gbp.log.info("Switching to %s" % base)
+        repo.checkout(base)
+    else:
+        maybe_import_pq(repo, branch, options)
+        switch_to_pq_branch(repo, branch)
 
 
 def usage_msg():
@@ -479,7 +495,7 @@ def main(argv):
             maintainer = get_maintainer_from_control(repo)
             apply_single_patch(repo, current, patch, maintainer, options.topic)
         elif action == "switch":
-            switch_pq(repo, current)
+            switch_pq(repo, current, options)
     except KeyboardInterrupt:
         retval = 1
         gbp.log.err("Interrupted. Aborting.")
