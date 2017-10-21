@@ -427,9 +427,9 @@ def main(argv):
                 return ExitCodes.uscan_up_to_date
 
         # The main tarball
-        (sourcepackage, version) = detect_name_and_version(repo, upstream, options)
+        (name, version) = detect_name_and_version(repo, upstream, options)
         # Additional tarballs we expect to exist
-        component_tarballs = get_component_tarballs(sourcepackage,
+        component_tarballs = get_component_tarballs(name,
                                                     version,
                                                     upstream.path,
                                                     options.components)
@@ -441,10 +441,10 @@ def main(argv):
         if repo.bare:
             set_bare_repo_options(options)
 
-        upstream, tmpdir = unpack_tarballs(sourcepackage, upstream, version, component_tarballs, options)
+        upstream, tmpdir = unpack_tarballs(name, upstream, version, component_tarballs, options)
 
         (pristine_orig, linked) = prepare_pristine_tar(upstream.path,
-                                                       sourcepackage,
+                                                       name,
                                                        version)
 
         # Don't mess up our repo with git metadata from an upstream tarball
@@ -461,7 +461,7 @@ def main(argv):
             gbp.log.info("Importing '%s' to branch '%s'%s..." % (upstream.path,
                                                                  import_branch,
                                                                  filter_msg))
-            gbp.log.info("Source package is %s" % sourcepackage)
+            gbp.log.info("Source package is %s" % name)
             gbp.log.info("Upstream version is %s" % version)
 
             msg = upstream_import_commit_msg(options, version)
