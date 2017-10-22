@@ -10,6 +10,7 @@ EXAMPLE_SCRIPTS=\
 DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
 ZSH_COMPDIR = /usr/share/zsh/vendor-completions/
+PK4_DIR = /usr/share/pk4/hooks-available/unpack/
 
 PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 
@@ -33,6 +34,9 @@ override_dh_auto_install:
 	mkdir -p debian/git-buildpackage/$(ZSH_COMPDIR)
 	install -m644 debian/git-buildpackage.zsh-completion \
 		debian/git-buildpackage/$(ZSH_COMPDIR)/_gbp
+	mkdir -p debian/git-buildpackage/$(PK4_DIR)
+	install -m755 debian/pk4 \
+		debian/git-buildpackage/$(PK4_DIR)/gbp
 	chmod a+x debian/tmp/usr/lib/python3.?/dist-packages/gbp/scripts/supercommand.py
 
 override_dh_auto_clean:

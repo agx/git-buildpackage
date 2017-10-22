@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+if [ ! -d "$2" ]; then
+  git init "$2"
+
+  # Add local gbp.conf to override any branch settings in 'debian/gbp.conf'
+  # (since this checkout wasn't created by "gbp clone"). We want to be sure the
+  # branches exist so we can build the package right away.
+  cat <<EOF > "$2"/.git/gbp.conf
+[DEFAULT]
+upstream-branch = upstream
+debian-branch = pk4
+EOF
+fi
+
+cd "$2"
+gbp import-dsc "$1"
+
