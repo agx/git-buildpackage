@@ -43,7 +43,7 @@ from gbp.scripts.common.hook import Hook
 
 class RollbackError(GitRepositoryError):
     """
-    An error raised if the actual rollback failed
+    Error raised if the rollback failed
     """
     def __init__(self, errors):
         self.msg = "Automatic rollback failed"
