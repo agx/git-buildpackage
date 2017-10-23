@@ -29,6 +29,7 @@ from nose.tools import ok_, eq_
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.deb.dscfile import DscFile
+from gbp.git.repository import GitRepository
 
 
 class TestImportDsc(ComponentTestBase):
@@ -53,7 +54,8 @@ class TestImportDsc(ComponentTestBase):
             # the second
             ok_(b"gbp: Import Debian changes" in reflog[0])
         else:
-            assert ok_(len(reflog) in [2, 3])
+            ok_(len(reflog) > 3, "Reflog %s has too many lines" % reflog)
+            ok_(len(reflog) < 2, "Reflog %s has too few lines" % reflog)
 
     def test_import_debian_native(self):
         """Test that importing of debian native packages works"""
@@ -303,3 +305,47 @@ class TestImportDsc(ComponentTestBase):
         got = repo.get_config("user.name")
         want = os.environ['DEBFULLNAME']
         ok_(got == want, "unexpected git config user.name: got %s, want %s" % (got, want))
+
+    def test_debian_branch_not_master(self):
+        """Make sure we only have debian-branch and upstream-branch after an initial import"""
+        dsc = self._dsc30('2.6-2')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--no-pristine-tar',
+                           '--debian-branch=pk4',
+                           '--upstream-branch=upstream',
+                           dsc]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'pk4', ['pk4', 'upstream'])
+        commits, expected = len(repo.get_commits()), 2
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+    def test_empty_repo(self):
+        """Make sure we can import into an empty repository"""
+        dsc = self._dsc30('2.6-2')
+        repo = GitRepository.create("hello-debhelper")
+        self._check_repo_state(repo, None, [])
+        os.chdir('hello-debhelper')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--no-pristine-tar',
+                           '--debian-branch=pk4',
+                           '--upstream-branch=upstream',
+                           dsc]) == 0
+        self._check_repo_state(repo, 'pk4', ['pk4', 'upstream'])
+        commits, expected = len(repo.get_commits()), 2
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+    def test_upstream_branch_is_master(self):
+        """Make sure we can import when upstream-branch == master (#750962)"""
+        dsc = self._dsc30('2.6-2')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--no-pristine-tar',
+                           '--debian-branch=debian',
+                           '--upstream-branch=master',
+                           dsc]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'debian', ['debian', 'master'])
+        commits, expected = len(repo.get_commits()), 2
+        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))

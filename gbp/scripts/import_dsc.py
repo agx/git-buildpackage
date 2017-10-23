@@ -258,13 +258,18 @@ def import_upstream(repo, source, dsc, options):
                              author=author,
                              committer=committer)
 
+    # if the repo was just created make sure debian branch is in .git/HEAD
+    # and upstream points to the first commit
+    if repo.empty:
+        if repo.branch != options.debian_branch:
+            repo.rename_branch(repo.branch, options.debian_branch)
+        repo.create_branch(options.upstream_branch, options.debian_branch)
+
     repo.create_tag(name=tag,
                     msg=msg,
                     commit=commit,
                     sign=options.sign_tags,
                     keyid=options.keyid)
-    if repo.empty and not repo.has_branch(options.upstream_branch):
-        repo.create_branch(options.upstream_branch, commit)
     return commit
 
 
