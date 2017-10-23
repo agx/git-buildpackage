@@ -45,6 +45,10 @@
     &man.gbp.push;
     &man.gbp.tag;
     &man.gbp.conf;
+    &man.gbp.buildpackage.rpm;
+    &man.gbp.import.srpm;
+    &man.gbp.pq.rpm;
+    &man.gbp.rpm.ch;
   </appendix>
   <appendix id="gbp.copyleft">
     <title>Copyright</title>
