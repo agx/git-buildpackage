@@ -502,8 +502,12 @@ def main(argv):
                 commit = import_upstream(repo, source, dsc, options)
                 imported = True
 
-            if (options.create_missing_branches and not repo.has_branch(options.debian_branch)):
-                repo.create_branch(options.debian_branch, commit)
+            if not repo.has_branch(options.debian_branch):
+                if options.create_missing_branches:
+                    repo.create_branch(options.debian_branch, commit)
+                else:
+                    raise GbpError("Branch %s does not exist, use --create-missing-branches" %
+                                   options.debian_branch)
 
             if dsc.diff or dsc.deb_tgz:
                 apply_debian_patch(repo, source, dsc, commit, options)
