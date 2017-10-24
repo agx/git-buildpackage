@@ -67,6 +67,7 @@
   <!ENTITY lintian     "<productname>lintian</productname>">
   <!ENTITY mock        "<productname>mock</productname>">
   <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
+  <!ENTITY pk4         "<productname>pk4</productname>">
   <!ENTITY pristine-tar "<productname>pristine-tar</productname>">
   <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
 

@@ -229,5 +229,22 @@ means.
       See the <command>dpkg-source</command> manpage for
       details.
    </para>
-   </sect1>
+    </sect1>
+
+    <sect1 id="gbp.special.pk4">
+      <title>Integrating with pk4</title>
+      <para>
+	&pk4; provides an easy way to fetch the sources of packages
+	currently installed on the system. In order to let pk4 provide
+	these packages as &git; repositories you can enable &gbp;'s
+	unpack hook:
+      </para>
+      <programlisting>
+mkdir -p ~/.config/pk4/hooks-enabled/unpack/
+ln -s /usr/share/pk4/hooks-available/unpack/gbp ~/.config/pk4/hooks-enabled/unpack/
+      </programlisting>
+      <para>
+	This will make sure packages are imported into a git respository after download.
+      </para>
+    </sect1>
 </chapter>
