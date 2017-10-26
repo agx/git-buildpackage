@@ -228,10 +228,10 @@ class Command(object):
         >>> c.stdout.startswith('Usage:')
         True
         """
+        ret = 1
         try:
             ret = self.__call(args)
         except OSError:
-            ret = 1
             raise CommandExecFailed(self.err_reason)
         finally:
             if ret and not quiet:
