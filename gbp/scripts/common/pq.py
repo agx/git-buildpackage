@@ -20,7 +20,6 @@
 
 import re
 import os
-import subprocess
 import datetime
 import time
 from email.message import Message
@@ -275,16 +274,12 @@ def get_maintainer_from_control(repo):
     """Get the maintainer from the control file"""
     control = os.path.join(repo.path, 'debian', 'control')
 
-    cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" %s' % control
-    cmdout = subprocess.Popen(cmd, shell=True,
-                              stdout=subprocess.PIPE).stdout.readlines()
-
-    if len(cmdout) > 0:
-        maintainer = cmdout[0].decode().strip()
-        m = re.match('(?P<name>.*[^ ]) *<(?P<email>.*)>', maintainer)
-        if m:
-            return GitModifier(m.group('name'), m.group('email'))
-
+    maint_re = re.compile('Maintainer: +(?P<name>.*[^ ]) *<(?P<email>.*)>')
+    with open(control, encoding='utf-8') as f:
+        for line in f:
+            m = maint_re.match(line)
+            if m:
+                return GitModifier(m.group('name'), m.group('email'))
     return GitModifier()
 
 
