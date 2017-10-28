@@ -86,7 +86,13 @@ class PristineTar(Command):
         @type archive: C{str}
         """
         self.run_error = 'Pristine-tar couldn\'t checkout "%s": {stderr_or_reason}' % os.path.basename(archive)
-        self.__call__(['checkout', archive], quiet=quiet)
+        signature_file = "%s.asc" % (archive)
+        if self.repo.list_tree(self.branch, paths=[os.path.basename(signature_file)]):
+            call_options = ['--signature-file', signature_file, 'checkout', archive]
+        else:
+            call_options = ['checkout', archive]
+
+        self.__call__(call_options, quiet=quiet)
 
     def commit(self, archive, upstream, quiet=False):
         """
@@ -100,7 +106,13 @@ class PristineTar(Command):
         """
         self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr_or_reason}" %
                           (self.branch, upstream))
-        self.__call__(['commit', archive, upstream], quiet=quiet)
+        signature_file = "%s.asc" % (archive)
+        if os.path.isfile(signature_file):
+            call_options = ['--signature-file', signature_file, 'commit', archive, upstream]
+        else:
+            call_options = ['commit', archive, upstream]
+
+        self.__call__(call_options, quiet=quiet)
 
     def verify(self, archive, quiet=False):
         """Verify an archive's I{archive} checksum using to the pristine tar branch"""
