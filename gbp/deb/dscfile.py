@@ -34,7 +34,7 @@ class DscFile(object):
     tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
                         '(\.orig)?\.tar\.%s)$' % compressions)
     add_tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                            '\.orig-(?P<dir>[a-z0-9-]+)\.tar\.%s)$' % compressions)
+                            '\.orig-(?P<dir>[a-zA-Z0-9-]+)\.tar\.%s)$' % compressions)
     diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+'
                          '\.diff.(gz|bz2))$')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
