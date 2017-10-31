@@ -1,3 +1,35 @@
+git-buildpackage (0.9.1) unstable; urgency=medium
+
+  * Kill use of six.*
+  * Add gbp import-dsc hook for pk4.
+    Can be enabled via
+        mkdir -p ~/.config/pk4/hooks-enabled/unpack/
+        ln -s /usr/share/pk4/hooks-available/unpack/gbp \
+              ~/.config/pk4/hooks-enabled/unpack/
+  * [f18d6b4] import-dsc: improve error message when Debian branch does not exist
+  * [01da1e6] import-dsc: make sure we don't create 'master' if not needed.
+    This way we only get the debian- and upstream-branch in empty repos and
+    not a pointless 'master' if debian-branch != master.
+    It also makes sure we don't need --create-missing-branches on empty
+    repos where it is pointless. (Closes: #750962)
+  * [cec2123] docs: Add rpm tool manpages to manual too.
+    On non-Debian platform it's sometimes cumbersome to build the manpages
+    so make sure we have them available on the web at least.
+  * [8e67334] Lock flake8 version.
+    We don't want to play catchup with new flake8 checks but rather
+    update and fix things in a controlled manner.
+  * [f1bf7c3] command_wrappers: report proper exception on bad process arguments.
+    If subprocess.communicate raised a TypeError due to bad arguments 'ret'
+    was undefined and therefore the real error reason got masked.
+    Closes parts of #879495
+  * [280f4c9] pq: kill useless use of sed. This also broke paths containing
+    spaces. Thanks to André Althaus for a proposed fix.
+  * [ca273d9] dscfile: parse out upstream signatures as well
+  * [5db9f15] dscfile: Make sure we match on additional tarballs containing
+    uppercase (Closes: #880228)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 31 Oct 2017 12:48:53 +0100
+
 git-buildpackage (0.9.0) unstable; urgency=medium
 
   * Upload to unstable
