@@ -25,3 +25,4 @@ package is also available on Pypi at:
 ![gbp logo](docs/gbp.svg)
 
 [![Build Status](https://travis-ci.org/agx/git-buildpackage.svg?branch=master)](https://travis-ci.org/agx/git-buildpackage)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1311/badge)](https://bestpractices.coreinfrastructure.org/projects/1311)
