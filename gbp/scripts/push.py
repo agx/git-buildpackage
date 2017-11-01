@@ -67,13 +67,23 @@ def parse_args(argv):
 
 def do_push(repo, dests, to_push, dry_run):
     verb = "Dry-run: Pushing" if dry_run else "Pushing"
+    success = True
     for dest in dests:
         for tag in to_push['tags']:
             gbp.log.info("%s %s to %s" % (verb, tag, dest))
-            repo.push_tag(dest, tag, dry_run=dry_run)
+            try:
+                repo.push_tag(dest, tag, dry_run=dry_run)
+            except GitRepositoryError as e:
+                gbp.log.err(e)
+                success = False
         for k, v in to_push['refs'].items():
             gbp.log.info("%s %s to %s:%s" % (verb, v, dest, k))
-            repo.push(dest, v, k, dry_run=dry_run)
+            try:
+                repo.push(dest, v, k, dry_run=dry_run)
+            except GitRepositoryError as e:
+                gbp.log.err(e)
+                success = False
+    return success
 
 
 def get_push_src(repo, ref, tag):
@@ -152,11 +162,11 @@ def main(argv):
                     ref = 'refs/heads/pristine-tar'
                     to_push['refs'][ref] = get_push_src(repo, ref, commit)
 
-        do_push(repo,
-                [dest],
-                to_push,
-                dry_run=options.dryrun)
-        retval = 0
+        if do_push(repo, [dest], to_push, dry_run=options.dryrun):
+            retval = 0
+        else:
+            gbp.log.err("Failed to push some refs.")
+            retval = 1
     except (GbpError, GitRepositoryError, DebianSourceError) as err:
         if str(err):
             gbp.log.err(err)
