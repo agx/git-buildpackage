@@ -34,6 +34,9 @@ mailing list or add it to a bug report against git-buildpackage on
 
     http://bugs.debian.org/src:git-buildpackage
 
+If you fix a regression or add a new feature please make sure this is covered
+by either a unittest (tests/*.py) or a component test that exercises one of the
+scripts (tests/component/{deb,rpm}/*.py.
 
 Layout
 ------
