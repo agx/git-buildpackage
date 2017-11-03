@@ -64,6 +64,7 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
     if not du.DebianPkgPolicy.has_origs(orig_files, output_dir) or options.force_create:
         if not pristine_tar_build_origs(repo, source, output_dir, options):
             git_archive_build_origs(repo, source, output_dir, options)
+    maybe_pristine_tar_commit(repo, source, options, output_dir, orig_files)
     pristine_tar_verify_origs(repo, source, options, output_dir, orig_files)
 
 
@@ -143,6 +144,21 @@ def pristine_tar_verify_origs(repo, source, options, output_dir, orig_files):
     for f in orig_files:
         repo.pristine_tar.verify(os.path.join(output_dir, f))
     return True
+
+
+def maybe_pristine_tar_commit(repo, source, options, output_dir, orig_files):
+    if not (hasattr(options, 'pristine_tar_commit') and options.pristine_tar_commit):
+        return
+
+    if repo.pristine_tar.has_commit(source.name,
+                                    source.upstream_version,
+                                    options.comp_type):
+        gbp.log.debug("%s already on pristine tar branch" % orig_files[0])
+    else:
+        upstream_tree = git_archive_get_upstream_tree(repo, source, options)
+        archive = os.path.join(output_dir, orig_files[0])
+        gbp.log.debug("Adding %s to pristine-tar branch" % archive)
+        repo.pristine_tar.commit(archive, upstream_tree)
 
 
 def git_archive_get_upstream_tree(repo, source, options):

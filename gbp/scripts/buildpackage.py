@@ -46,19 +46,6 @@ from gbp.scripts.export_orig import prepare_upstream_tarballs
 from gbp.scripts.tag import perform_tagging
 
 
-def pristine_tar_commit(repo, source, options, output_dir, orig_file, upstream_tree):
-    if repo.pristine_tar.has_commit(source.name,
-                                    source.upstream_version,
-                                    options.comp_type):
-        gbp.log.debug("%s already on pristine tar branch" %
-                      orig_file)
-    else:
-        archive = os.path.join(output_dir, orig_file)
-        gbp.log.debug("Adding %s to pristine-tar branch" %
-                      archive)
-        repo.pristine_tar.commit(archive, upstream_tree)
-
-
 # Functions to handle export-dir
 def maybe_write_tree(repo, options):
     """

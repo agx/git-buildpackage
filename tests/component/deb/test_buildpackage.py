@@ -143,6 +143,18 @@ class TestBuildpackage(ComponentTestBase):
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
     @RepoFixtures.quilt30()
+    def test_pristine_tar_commit(self, repo):
+        """Test that committing to pristine-tar branch after building tarballs works"""
+        assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch must not exist")
+        ret = buildpackage(['arg0',
+                            '--git-builder=/bin/true',
+                            '--git-pristine-tar-commit'])
+        ok_(ret == 0, "Building the package failed")
+        assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
+        eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.id',
+                                           b'hello-debhelper_2.8.orig.tar.gz.delta'})
+
+    @RepoFixtures.quilt30()
     def test_sloppy_tarball_generation(self, repo):
         """Test that generating tarball from Debian branch works"""
         tarball = '../hello-debhelper_2.8.orig.tar.gz'
