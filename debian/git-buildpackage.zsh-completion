@@ -181,7 +181,7 @@ _gbp-import-dsc() {
 
 _gbp-import-dscs() {
 	# same options
-	_gbp-import_dsc
+	_gbp-import-dsc
 	_arguments \
 		'--debsnap[Fetch snapshots from snapshots.debian.org]' \
 		'--ignore-repo-config[Ignore options in gbp.conf]'
@@ -375,7 +375,7 @@ _gbp-dch () {
 	__gbp_tag_format_options
 
 	_arguments \
-		'--git-ignore-branch[build although debian-branch != current branch]' \
+		'--ignore-branch[build although debian-branch != current branch]' \
 		'--since=-[Start point for reading commits]:commitish:' \
 		'--auto[Guess the last commit documented in the changelog]' \
 		'(--meta --no-meta)--meta[Parse meta tags]' \
