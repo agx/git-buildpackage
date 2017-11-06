@@ -81,4 +81,7 @@ def test_dict():
     ['date', 'email', 'name']
     >>> sorted(modifier.items())
     [('date', '1 +0000'), ('email', 'bar'), ('name', 'foo')]
+    >>> modifier.get('name')
+    'foo'
+    >>> modifier.get('doesnotexist')
     """

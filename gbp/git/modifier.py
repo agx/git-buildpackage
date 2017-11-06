@@ -149,6 +149,12 @@ class GitModifier(object):
         """
         return self._get_env('committer')
 
+    def get(self, key, default=None):
+        if key in self.keys():
+            return self.__getitem__(key)
+        else:
+            return default
+
     def __getitem__(self, key):
         if key == 'date':
             return self.date
