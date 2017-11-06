@@ -56,7 +56,7 @@ class DscFile(object):
         sigs = []
         add_tars = []
 
-        f = open(self.dscfile)
+        f = open(self.dscfile, encoding='utf-8')
         fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
             m = self.version_re.match(line)
