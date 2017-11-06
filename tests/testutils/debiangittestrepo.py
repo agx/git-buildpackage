@@ -25,7 +25,7 @@ class DebianGitTestRepo(unittest.TestCase):
     def tearDown(self):
         context.teardown()
 
-    def add_file(self, name, content=None, msg=None):
+    def add_file(self, name, content=None, msg=None, mode=None):
         """
         Add a single file with name I{name} and content I{content}. If
         I{content} is C{none} the content of the file is undefined.
@@ -41,7 +41,7 @@ class DebianGitTestRepo(unittest.TestCase):
         if not os.path.exists(d):
             os.makedirs(d)
 
-        with open(path, 'w+') as f:
+        with open(path, mode or 'w+') as f:
             content is None or f.write(content)
         self.repo.add_files(name, force=True)
         self.repo.commit_files(path, msg or "added %s" % name)
