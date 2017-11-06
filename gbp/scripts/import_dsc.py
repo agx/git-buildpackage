@@ -112,7 +112,7 @@ def get_author_from_changelog(dir):
     Get author from debian/changelog
     """
     dch = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
-    date = rfc822_date_to_git(dch.date)
+    date = rfc822_date_to_git(dch.date, fuzzy=True)
     if not (dch.author or dch.email):
         gbp.log.warn("Failed to parse maintainer")
 

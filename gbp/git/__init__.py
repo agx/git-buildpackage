@@ -29,7 +29,7 @@ from gbp.git.args import GitArgs           # noqa: F401
 from gbp.git.vfs import GitVfs             # noqa: F401
 
 
-def rfc822_date_to_git(rfc822_date):
+def rfc822_date_to_git(rfc822_date, fuzzy=False):
     """Parse a date in RFC822 format, and convert to a 'seconds tz' C{str}ing.
 
     >>> rfc822_date_to_git('Thu, 1 Jan 1970 00:00:01 +0000')
@@ -38,8 +38,14 @@ def rfc822_date_to_git(rfc822_date):
     '1206000777 -0700'
     >>> rfc822_date_to_git('Sat, 5 Apr 2008 17:01:32 +0200')
     '1207407692 +0200'
+    >>> rfc822_date_to_git('So, 26 Feb 1998 8:50:00 +0100')
+    Traceback (most recent call last):
+    ...
+    ValueError: Unknown string format
+    >>> rfc822_date_to_git('So, 26 Feb 1998 8:50:00 +0100', fuzzy=True)
+    '888479400 +0100'
     """
-    d = dateutil.parser.parse(rfc822_date)
+    d = dateutil.parser.parse(rfc822_date, fuzzy=fuzzy)
     seconds = calendar.timegm(d.utctimetuple())
     tz = d.strftime("%z")
     return '%d %s' % (seconds, tz)
