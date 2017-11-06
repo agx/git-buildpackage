@@ -82,7 +82,7 @@ class TestScriptDch(DebianGitTestRepo):
         ret = dch.main(options)
         self.assertEqual(ret, 0)
         cl = os.path.join(self.repo.path, 'debian/changelog')
-        return open(cl).readlines()
+        return open(cl, encoding='utf-8').readlines()
 
     def test_dch_main_new_upstream_version(self):
         """Test dch.py like gbp dch script does: new upstream version"""

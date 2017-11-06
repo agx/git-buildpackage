@@ -85,7 +85,7 @@ def get_dch_default_urgency():
         pass
     else:
         if ret == 0:
-            with open(tmp_dch_name) as dchfile:
+            with open(tmp_dch_name, encoding='utf-8') as dchfile:
                 header = dchfile.readline().strip()
                 urgency = header.split()[-1].replace('urgency=', '')
     finally:

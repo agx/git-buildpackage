@@ -57,7 +57,7 @@ class TestDch(ComponentTestBase):
         repo.commit_all(msg="test customizations")
         ok_(dch(['arg0', '-S', '-a', '--customizations=customizations.py']) == 0,
             "dch did no succeed as expected")
-        with open("debian/changelog") as f:
+        with open("debian/changelog", encoding='utf-8') as f:
             cl = f.read()
         ok_('* testentry\n' in cl)
         del gbp.scripts.dch.user_customizations['format_changelog_entry']
