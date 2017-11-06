@@ -78,6 +78,7 @@ setup(name="gbp",
           'python-dateutil',
       ],
       setup_requires=setup_requires(),
+      python_requires='>=3.5',
       entry_points={
           'console_scripts': ['gbp=gbp.scripts.supercommand:supercommand'],
       },
