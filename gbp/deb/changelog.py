@@ -259,9 +259,9 @@ class ChangeLog(object):
             msg = None
 
         if author:
-            env['DEBFULLNAME'] = author
+            env['DEBFULLNAME'] = author.encode('utf-8')
         if email:
-            env['DEBEMAIL'] = email
+            env['DEBEMAIL'] = email.encode('utf-8')
 
         if distribution:
             args.append("--distribution=%s" % distribution)
