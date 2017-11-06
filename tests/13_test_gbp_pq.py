@@ -95,7 +95,8 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
         # Fake a control file
         self.add_file("debian/control",
-                      "Maintainer: Guido Günther <gg@godiug.net>")
+                      "Maintainer: Guido Günther <gg@godiug.net>".encode('utf-8'),
+                      mode='wb+')
 
         maintainer = pq.get_maintainer_from_control(self.repo)
         orig_warn = gbp.log.warn

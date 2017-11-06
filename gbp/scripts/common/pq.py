@@ -315,7 +315,9 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
     patch_fn = os.path.basename(patch.path)
     if not (author['name'] and author['email']):
         if fallback_author and fallback_author['name']:
-            author = fallback_author
+            author = {}
+            for key in 'name', 'email', 'date':
+                author[key] = fallback_author.get(key)
             gbp.log.warn("Patch '%s' has no authorship information, using "
                          "'%s <%s>'" % (patch_fn, author['name'],
                                         author['email']))
@@ -333,6 +335,8 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
         msg += "\nGbp-Pq: Topic %s" % topic
     if name:
         msg += "\nGbp-Pq: Name %s" % name
+    if author['name']:
+        author['name'] = author['name'].encode('utf-8')
     commit = repo.commit_tree(tree, msg, [repo.head], author=author)
     repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch.path)
 
