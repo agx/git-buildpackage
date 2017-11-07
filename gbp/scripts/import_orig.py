@@ -192,7 +192,7 @@ def prepare_pristine_tar(archive, pkg, version):
     """
     linked = False
     if os.path.isdir(archive):
-        return None
+        return None, None
 
     ext = os.path.splitext(archive)[1]
     if ext in ['.tgz', '.tbz2', '.tlz', '.txz']:
