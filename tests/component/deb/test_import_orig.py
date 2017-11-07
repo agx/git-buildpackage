@@ -180,7 +180,7 @@ class TestImportOrig(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_update_fail_create_upstream_tag(self, repo):
         """
-        Test that we can recover from a failure to create the upstream
+        Test that we can rollback from a failure to create the upstream
         tag
         """
         heads = self.rem_refs(repo, self.def_branches)
@@ -195,7 +195,7 @@ class TestImportOrig(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_update_fail_merge(self, repo):
         """
-        Test that we can recover from a failed merge
+        Test that we can rollback from a failed merge
         """
         heads = self.rem_refs(repo, self.def_branches)
         orig = self._orig('2.8')
@@ -210,7 +210,7 @@ class TestImportOrig(ComponentTestBase):
            side_effect=raise_if_tag_match('upstream/'))
     def test_initial_import_fail_create_upstream_tag(self, RepoMock):
         """
-        Test that we can recover from a failure to create the upstream
+        Test that we can rollback from a failure to create the upstream
         tag on initial import
         """
         repo = GitRepository.create(self.pkg)
@@ -222,7 +222,7 @@ class TestImportOrig(ComponentTestBase):
 
     def test_initial_import_fail_create_debian_branch(self):
         """
-        Test that we can recover from creating the Debian branch on
+        Test that we can rollback from creating the Debian branch on
         initial import
         """
         repo = GitRepository.create(self.pkg)
