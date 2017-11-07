@@ -627,7 +627,6 @@ def main(argv):
             elif options.merge:
                 repo.rrr_branch(options.debian_branch)
                 debian_branch_merge(repo, tag, version, options)
-                postimport_hook(repo, tag, version, options)
 
             # Update working copy and index if we've possibly updated the
             # checked out branch
@@ -635,6 +634,8 @@ def main(argv):
             if current_branch in [options.upstream_branch,
                                   repo.pristine_tar_branch]:
                 repo.force_head(current_branch, hard=True)
+
+            postimport_hook(repo, tag, version, options)
         except (gbpc.CommandExecFailed, GitRepositoryError) as err:
             msg = str(err) or 'Unknown error, please report a bug'
             raise GbpError("Import of %s failed: %s" % (upstream.path, msg))
