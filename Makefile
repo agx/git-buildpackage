@@ -21,8 +21,8 @@ syntax-check:
 	flake8 $(FLAKE_OPTS) $(PY_EXAMPLES)
 
 docs:
-	make -C docs
-	make apidocs
+	$(MAKE) -C docs
+	$(MAKE) apidocs
 
 apidocs:
 	mkdir -p build
