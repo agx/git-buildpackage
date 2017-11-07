@@ -624,6 +624,13 @@ def main(argv):
             if is_empty:
                 repo.create_branch(branch=options.debian_branch, rev=commit)
                 repo.force_head(options.debian_branch, hard=True)
+                # In an empty repo avoid master branch defaulted to by
+                # git and check out debian branch instead.
+                if not repo.bare:
+                    cur = repo.branch
+                    if cur != options.debian_branch:
+                        repo.set_branch(options.debian_branch)
+                        repo.delete_branch(cur)
             elif options.merge:
                 repo.rrr_branch(options.debian_branch)
                 debian_branch_merge(repo, tag, version, options)
