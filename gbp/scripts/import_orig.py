@@ -424,6 +424,19 @@ def set_bare_repo_options(options):
         options.merge = False
 
 
+def rollback(repo, options):
+    if repo and repo.has_rollbacks() and options.rollback:
+        gbp.log.err("Error detected, Will roll back changes.")
+        try:
+            repo.rollback()
+            # Make sure the very last line as an error message
+            gbp.log.err("Rolled back changes after import error.")
+        except Exception as e:
+            gbp.log.err("%s" % e)
+            gbp.log.err("Clean up manually and please report a bug: %s" %
+                        repo.rollback_errors)
+
+
 def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
@@ -631,16 +644,7 @@ def main(argv):
         if str(err):
             gbp.log.err(err)
         ret = 1
-        if repo and repo.has_rollbacks() and options.rollback:
-            gbp.log.err("Error detected, Will roll back changes.")
-            try:
-                repo.rollback()
-                # Make sure the very last line as an error message
-                gbp.log.err("Rolled back changes after import error.")
-            except Exception as e:
-                gbp.log.err("%s" % e)
-                gbp.log.err("Clean up manually and please report a bug: %s" %
-                            repo.rollback_errors)
+        rollback(repo, options)
 
     if pristine_orig and linked and not options.symlink_orig:
         os.unlink(pristine_orig)
