@@ -1,7 +1,7 @@
 PY_EXAMPLES=$(shell grep -l /usr/bin/python examples/*)
 FLAKE_OPTS=$(shell test -w /dev/shm || echo '-j1')
 NOSE_OPTS=--with-xcoverage
-TEST_LOCALE=C.UTF-8
+TEST_LOCALE?=C.UTF-8
 
 all: syntax-check test
 
