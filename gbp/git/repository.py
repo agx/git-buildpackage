@@ -823,11 +823,10 @@ class GitRepository(object):
             ref = "refs/heads/%s" % self.get_branch()
             self._git_command("update-ref", [ref, commit])
         else:
-            args = ['--quiet']
-            if hard:
-                args += ['--hard']
-            args += [commit, '--']
-            self._git_command("reset", args)
+            args = GitArgs('--quiet')
+            args.add_true(hard, '--hard')
+            args.add(commit, '--')
+            self._git_command("reset", args.args)
 
     def _status(self, porcelain, ignore_untracked, paths):
         args = GitArgs()
