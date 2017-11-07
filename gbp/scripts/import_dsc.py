@@ -542,10 +542,9 @@ def main(argv):
         ret = 0
     finally:
         os.chdir(dirs['top'])
-
-    for d in ['tmp', 'download']:
-        if d in dirs:
-            gbpc.RemoveTree(dirs[d])()
+        for d in ['tmp', 'download']:
+            if d in dirs:
+                gbpc.RemoveTree(dirs[d])()
 
     if not ret and not skipped:
         gbp.log.info("Version '%s' imported under '%s'" % (dsc.version, repo.path))
