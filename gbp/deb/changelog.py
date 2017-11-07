@@ -118,6 +118,12 @@ class ChangeLog(object):
                 cp['Upstream-Version'], cp['Debian-Version'] = cp['NoEpoch-Version'].rsplit('-', 1)
             else:
                 cp['Debian-Version'] = cp['NoEpoch-Version']
+
+            # py3's email.message_from_string() saves dpkg-parsechangelog's
+            # first newline from the "Changes" field.
+            changes = cp['Changes'].lstrip("\n")
+            del cp['Changes']
+            cp['Changes'] = changes
         except TypeError:
             raise ParseChangeLogError(output.split('\n')[0])
 
