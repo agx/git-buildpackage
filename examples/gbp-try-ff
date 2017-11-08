@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Try to update a package to a new upstream version
+
+set -e
+
+git checkout debian/sid
+gbp pq import --force
+git checkout debian/sid
+gbp import-orig --uscan --no-interactive
+
+if ! gbp pq rebase; then
+    echo "Automatic rebase failed"
+    git rebase --abort
+    exit 1
+fi
+
+gbp pq export --commit
+gbp dch -S -a
+gbp buildpackage --git-ignore-new
