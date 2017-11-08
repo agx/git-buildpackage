@@ -48,7 +48,7 @@
       <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
-      <arg><option>--git-upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable></arg>
+      <arg><option>--git-upstream-tree=</option><replaceable>[BRANCH|SLOPPY|TAG|TREEISH]</replaceable></arg>
       <arg><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-compression=</option><replaceable>TYPE</replaceable></arg>
       <arg><option>--git-compression-level=</option><replaceable>LEVEL</replaceable></arg>
