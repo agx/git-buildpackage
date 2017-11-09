@@ -22,7 +22,7 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 
 from gbp.command_wrappers import UnpackTarArchive
 from gbp.git import GitRepository
@@ -37,10 +37,13 @@ DEFAULT_QUILT30 = os.path.join(DEB_TEST_DATA_DIR,
                                'dsc-3.0',
                                'hello-debhelper_%s.dsc' % '2.8-1')
 
+DEFAULT_ADDITIONAL_TAR = os.path.join(DEB_TEST_DATA_DIR,
+                                      'dsc-3.0-additional-tarballs',
+                                      'hello-debhelper_%s.dsc' % '2.8-1')
+
 DEFAULT_OVERLAY = os.path.join(DEB_TEST_DATA_DIR,
                                'dsc-3.0',
                                'hello-debhelper_%s.debian.tar.gz' % '2.8-1')
-
 
 class RepoFixtures(object):
     @classmethod
@@ -63,6 +66,17 @@ class RepoFixtures(object):
                 repo = cls.import_quilt30(dsc, opts)
                 return fn(*args, repo=repo)
             return _quilt30_repo
+        return wrapper
+
+    @classmethod
+    def quilt30_additional_tarball(cls, dsc=DEFAULT_ADDITIONAL_TAR, opts=None):
+        """Decorator to be used as 3.0 (quilt) with additional tarball test fixture"""
+        def wrapper(fn):
+            @wraps(fn)
+            def _quilt30_additional_tar_repo(*args):
+                repo = cls.import_quilt30_additional_tarball(dsc, opts)
+                return fn(*args, repo=repo)
+            return _quilt30_additional_tar_repo
         return wrapper
 
     @classmethod
@@ -102,6 +116,19 @@ class RepoFixtures(object):
         ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
         eq_(len(repo.get_commits()), 2)
         os.chdir(repo.path)
+        return repo
+
+    @classmethod
+    def import_quilt30_additional_tarball(cls, dsc=DEFAULT_ADDITIONAL_TAR, opts=None):
+        """Import a 3.0 (quilt) package with additional tarball, verify and change into repo"""
+        repo = cls._import_one(dsc, opts)
+        expected_branches = ['master', 'upstream']
+        if opts and '--pristine-tar' in opts:
+            expected_branches.append('pristine-tar')
+        ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
+        eq_(len(repo.get_commits()), 2)
+        os.chdir(repo.path)
+        ok_(os.path.exists('./foo'))
         return repo
 
     @classmethod

@@ -16,6 +16,7 @@
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
 
+import glob
 import hashlib
 import os
 import subprocess
@@ -174,6 +175,19 @@ class TestBuildpackage(ComponentTestBase):
         """Test that building with a export dir works"""
         self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
+
+    @RepoFixtures.quilt30_additional_tarball()
+    def test_export_dir_additional_tar(self, repo):
+        """Test that building with a export dir and additional tarball works"""
+        self._test_buildpackage(repo, ['--git-export-dir=../foo/bar',
+                                       '--git-no-purge',
+                                       '--git-component=foo'])
+        # Check that all needed tarballs end up in the build-area
+        eq_(sorted(glob.glob('../foo/bar/*')), ['../foo/bar/hello-debhelper-2.8',
+                                                '../foo/bar/hello-debhelper_2.8.orig-foo.tar.gz',
+                                                '../foo/bar/hello-debhelper_2.8.orig.tar.gz'])
+        # Check that directories from additional tarballs get exported too
+        ok_(os.path.exists('../foo/bar/hello-debhelper-2.8/foo'))
 
     @RepoFixtures.overlay()
     def test_export_dir_overlay(self, repo):
