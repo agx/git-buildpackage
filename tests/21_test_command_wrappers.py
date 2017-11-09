@@ -36,6 +36,17 @@ class TestCommandWrapperFailures(unittest.TestCase, GbpLogTester):
         self.assertEqual(self.false.stderr, 'we have a problem')
         self.assertEqual(self.false.stdout, '')
 
+    @patch_popen(stdout=b'', stderr=b'we have a problem', returncode=1)
+    def test_log_quote_format(self, create_mock):
+        self.false = Command('/does/{not}/matter')
+        self.false.capture_stderr = True
+        with self.assertRaises(CommandExecFailed):
+            self.false.__call__()
+        self.log_tester._check_log(0, "gbp:error: '/does/{not}/matter' failed: it exited with 1")
+        self.assertEqual(self.false.retcode, 1)
+        self.assertEqual(self.false.stderr, 'we have a problem')
+        self.assertEqual(self.false.stdout, '')
+
     @patch_popen(stdout=b'we have a problem', stderr=b'', returncode=1)
     def test_log_use_stdout_for_err_message(self, create_mock):
         self.false.capture_stdout = True

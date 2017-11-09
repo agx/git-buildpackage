@@ -80,7 +80,8 @@ class Command(object):
                  capture_stdout=False):
         self.cmd = cmd
         self.args = args
-        self.run_error = "'%s' failed: {err_reason}" % (" ".join([self.cmd] + self.args))
+        self.run_error = self._f("'%s' failed: {err_reason}",
+                                 (" ".join([self.cmd] + self.args)))
         self.shell = shell
         self.capture_stdout = capture_stdout
         self.capture_stderr = capture_stderr
@@ -91,6 +92,28 @@ class Command(object):
         else:
             self.env = None
         self._reset_state()
+
+    @staticmethod
+    def _f(format, *args):
+        """Build error string template
+
+        '%' expansion is performed while curly braces in args are
+        quoted so we don't accidentally try to expand them when
+        printing an error message later that uses one of our
+        predefined error variables stdout, stderr, stderr_or_reason
+        and self.err_reason.
+
+        >>> Command._f("foo %s", "bar")
+        'foo bar'
+        >>> Command._f("{foo} %s %s", "bar", "baz")
+        '{foo} bar baz'
+        >>> Command._f("{foo} bar")
+        '{foo} bar'
+
+        """
+        def _q(arg):
+            return arg.replace('{', '{{').replace('}', '}}')
+        return format % tuple([_q(arg) for arg in args])
 
     def _reset_state(self):
         self.retcode = 1
@@ -262,7 +285,7 @@ class UnpackTarArchive(Command):
 
         Command.__init__(self, 'tar', exclude +
                          ['-C', dir, compression, '-xf', archive])
-        self.run_error = "Couldn't unpack '%s': {err_reason}" % self.archive
+        self.run_error = self._f("Couldn't unpack '%s': {err_reason}", self.archive)
 
 
 class PackTarArchive(Command):
@@ -277,7 +300,7 @@ class PackTarArchive(Command):
 
         Command.__init__(self, 'tar', exclude +
                          ['-C', dir, compression, '-cf', archive, dest])
-        self.run_error = "Couldn't repack '%s': {err_reason}" % self.archive
+        self.run_error = self._f("Couldn't repack '%s': {err_reason}", self.archive)
 
 
 class CatenateTarArchive(Command):
@@ -295,7 +318,7 @@ class RemoveTree(Command):
     def __init__(self, tree):
         self.tree = tree
         Command.__init__(self, 'rm', ['-rf', tree])
-        self.run_error = "Couldn't remove '%s': {err_reason}" % self.tree
+        self.run_error = self._f("Couldn't remove '%s': {err_reason}", self.tree)
 
 
 class Dch(Command):
@@ -305,19 +328,19 @@ class Dch(Command):
         if msg:
             args.append(msg)
         Command.__init__(self, 'debchange', args)
-        self.run_error = "Dch failed: {err_reason}"
+        self.run_error = self._f("Dch failed: {err_reason}")
 
 
 class DpkgSourceExtract(Command):
     """
     Wrap dpkg-source to extract a Debian source package into a certain
-    directory, this needs
+    directory
     """
     def __init__(self):
         Command.__init__(self, 'dpkg-source', ['-x'])
 
     def __call__(self, dsc, output_dir):
-        self.run_error = "Couldn't extract '%s': {err_reason}" % dsc
+        self.run_error = self._f("Couldn't extract '%s': {err_reason}", dsc)
         Command.__call__(self, [dsc, output_dir])
 
 
@@ -328,7 +351,7 @@ class UnpackZipArchive(Command):
         self.dir = dir
 
         Command.__init__(self, 'unzip', ["-q", archive, '-d', dir])
-        self.run_error = "Couldn't unpack '%s': {err_reason}" % self.archive
+        self.run_error = self._f("Couldn't unpack '%s': {err_reason}", self.archive)
 
 
 class CatenateZipArchive(Command):
@@ -338,8 +361,8 @@ class CatenateZipArchive(Command):
         Command.__init__(self, 'zipmerge', [archive], **kwargs)
 
     def __call__(self, target):
-        self.run_error = "Couldn't append '%s' to '%s': {err_reason}" % (
-            target, self.archive)
+        self.run_error = self._f("Couldn't append '%s' to '%s': {err_reason}",
+                                 target, self.archive)
         Command.__call__(self, [target])
 
 
@@ -347,7 +370,7 @@ class GitCommand(Command):
     "Mother/Father of all git commands"
     def __init__(self, cmd, args=[], **kwargs):
         Command.__init__(self, 'git', [cmd] + args, **kwargs)
-        self.run_error = "Couldn't run git %s: {err_reason}" % cmd
+        self.run_error = self._f("Couldn't run git %s: {err_reason}", cmd)
 
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
