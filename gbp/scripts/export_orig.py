@@ -33,9 +33,14 @@ from gbp.pkg import Compressor, Archive
 
 def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
     """
-    Make sure we have the needed upstream tarballs. This involves
-    looking in tarball_dir and symlinking them or building them from either
-    pristine-tar or plain git.
+    Make sure we have the needed upstream tarballs. The default order is:
+    - look in tarball_dir and if found symlink to it
+    - create tarball using pristine-tar
+    - create tarball using git-archive
+
+    Afterwards
+    - create pristine-tar commmits if pristine-tar-commit is in use
+    - verify tarball checksums if pristine-tar is in use
     """
     if hasattr(options, 'no_create_orig') and options.no_create_orig:
         return
@@ -217,7 +222,11 @@ def git_archive_build_origs(repo, source, output_dir, options):
 
 
 def guess_comp_type(comp_type, source, repo, tarball_dir):
-    """Guess compression type to use for the to be built upstream tarball"""
+    """Guess compression type to use for the to be built upstream tarball
+
+    We prefer pristine-tar over everything else since this is what's carried around with
+    the repo and might be more reliable than what a user has in tarball_dir.
+    """
     if comp_type != 'auto':
         comp_type = Compressor.Aliases.get(comp_type, comp_type)
         if comp_type not in Compressor.Opts:
