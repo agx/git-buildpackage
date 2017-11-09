@@ -86,10 +86,7 @@ def export_source(repo, tree, source, options, dest_dir, tarball_dir):
     if options.overlay:
         if source.is_native():
             raise GbpError("Cannot overlay Debian native package")
-        extract_orig(os.path.join(tarball_dir,
-                                  source.upstream_tarball_name(
-                                      options.comp_type)),
-                     dest_dir)
+        overlay_extract_orig(source, tarball_dir, dest_dir, options)
 
     gbp.log.info("Exporting '%s' to '%s'" % (options.export, dest_dir))
     if not dump_tree(repo, dest_dir, tree, options.with_submodules):
@@ -105,12 +102,14 @@ def move_old_export(target):
             os.rename(target, "%s.obsolete.%s" % (target, time.time()))
 
 
-def extract_orig(orig_tarball, dest_dir):
-    """extract orig tarball to export dir before exporting from git"""
-    gbp.log.info("Extracting %s to '%s'" % (os.path.basename(orig_tarball), dest_dir))
+def overlay_extract_orig(source, tarball_dir, dest_dir, options):
+    """Overlay extract orig tarballs to export dir before exporting debian dir from git"""
+
+    tarball = os.path.join(tarball_dir, source.upstream_tarball_name(options.comp_type))
+    gbp.log.info("Extracting %s to '%s'" % (os.path.basename(tarball), dest_dir))
 
     move_old_export(dest_dir)
-    upstream = DebianUpstreamSource(orig_tarball)
+    upstream = DebianUpstreamSource(tarball)
     upstream.unpack(dest_dir)
 
     # Check if tarball extracts into a single folder:
