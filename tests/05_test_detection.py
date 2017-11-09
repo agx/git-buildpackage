@@ -58,14 +58,14 @@ class TestDetection(unittest.TestCase):
     def test_guess_comp_type_no_pristine_tar_no_orig(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'auto', self.source, str(self.tmpdir))
+            'auto', self.source, repo, str(self.tmpdir))
         self.assertEqual('gzip', guessed)
 
     def test_guess_comp_type_no_pristine_tar_with_orig(self):
         open(self.tmpdir.join('source_1.2.orig.tar.bz2'), "w").close()
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'auto', self.source, str(self.tmpdir))
+            'auto', self.source, repo, str(self.tmpdir))
         self.assertEqual('bzip2', guessed)
 
     def test_guess_comp_type_no_pristine_tar_with_multiple_origs(self):
@@ -75,16 +75,16 @@ class TestDetection(unittest.TestCase):
         self.assertRaises(
             GbpError,
             export_orig.guess_comp_type,
-            repo,
             'auto',
             self.source,
+            repo,
             str(self.tmpdir))
 
     def test_guess_comp_type_auto_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'
         repo = MockGitRepository(with_branch=True, subject=subject)
         guessed = export_orig.guess_comp_type(
-            repo, 'auto', self.source, str(self.tmpdir))
+            'auto', self.source, repo, str(self.tmpdir))
         self.assertEqual("bzip2", guessed)
 
     def test_has_orig_single_false(self):
@@ -109,35 +109,35 @@ class TestDetection(unittest.TestCase):
     def test_guess_comp_type_bzip2(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'bzip2', self.source, None)
+            'bzip2', self.source, repo, None)
         self.assertEqual("bzip2", guessed)
 
     def test_guess_comp_type_gzip(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'gzip', self.source, None)
+            'gzip', self.source, repo, None)
         self.assertEqual("gzip", guessed)
 
     def test_guess_comp_type_bz(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'xz', self.source, None)
+            'xz', self.source, repo, None)
         self.assertEqual("xz", guessed)
 
     def test_guess_comp_type_lzma(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'lzma', self.source, None)
+            'lzma', self.source, repo, None)
         self.assertEqual("lzma", guessed)
 
     def test_guess_comp_type_bz2(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'bz2', self.source, None)
+            'bz2', self.source, repo, None)
         self.assertEqual("bzip2", guessed)
 
     def test_guess_comp_type_gz(self):
         repo = MockGitRepository(with_branch=False)
         guessed = export_orig.guess_comp_type(
-            repo, 'gz', self.source, None)
+            'gz', self.source, repo, None)
         self.assertEqual("gzip", guessed)

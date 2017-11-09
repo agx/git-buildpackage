@@ -194,7 +194,7 @@ class TestBuildpackage(ComponentTestBase):
         """Test that building in overlay mode with export dir works"""
         tarball_dir = os.path.dirname(DEFAULT_OVERLAY)
         self._test_buildpackage(repo, ['--git-overlay',
-                                       '--git-compression=gzip',
+                                       '--git-compression=auto',
                                        '--git-tarball-dir=%s' % tarball_dir,
                                        '--git-no-purge',
                                        '--git-component=foo',

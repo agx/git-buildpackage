@@ -44,9 +44,9 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
         raise GbpError("Non-native package '%s' "
                        "has invalid version '%s'" % (source.name, source.version))
 
-    options.comp_type = guess_comp_type(repo,
-                                        options.comp_type,
+    options.comp_type = guess_comp_type(options.comp_type,
                                         source,
+                                        repo,
                                         options.tarball_dir)
     orig_files = source.upstream_tarball_names(options.comp_type, options.components)
 
@@ -216,7 +216,7 @@ def git_archive_build_origs(repo, source, output_dir, options):
                                                      options.with_submodules, component=component)
 
 
-def guess_comp_type(repo, comp_type, source, tarball_dir):
+def guess_comp_type(comp_type, source, repo, tarball_dir):
     """Guess compression type to use for the to be built upstream tarball"""
     if comp_type != 'auto':
         comp_type = Compressor.Aliases.get(comp_type, comp_type)
@@ -225,7 +225,7 @@ def guess_comp_type(repo, comp_type, source, tarball_dir):
             comp_type = 'auto'
 
     if comp_type == 'auto':
-        if repo.has_pristine_tar_branch():
+        if repo and repo.has_pristine_tar_branch():
             regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (source.name, source.upstream_version)
             commits = repo.grep_log(regex, repo.pristine_tar_branch)
             if commits:

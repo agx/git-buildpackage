@@ -42,7 +42,7 @@ from gbp.scripts.common.buildpackage import (index_name, wc_name,
 from gbp.scripts.common import ExitCodes
 from gbp.scripts.common.hook import Hook
 
-from gbp.scripts.export_orig import prepare_upstream_tarballs
+from gbp.scripts.export_orig import prepare_upstream_tarballs, guess_comp_type
 from gbp.scripts.tag import perform_tagging
 
 
@@ -105,7 +105,11 @@ def move_old_export(target):
 def overlay_extract_origs(source, tarball_dir, dest_dir, options):
     """Overlay extract orig tarballs to export dir before exporting debian dir from git"""
 
-    tarball = os.path.join(tarball_dir, source.upstream_tarball_name(options.comp_type))
+    comp_type = guess_comp_type(options.comp_type,
+                                source,
+                                repo=None,
+                                tarball_dir=tarball_dir)
+    tarball = os.path.join(tarball_dir, source.upstream_tarball_name(comp_type))
     gbp.log.info("Extracting %s to '%s'" % (os.path.basename(tarball), dest_dir))
 
     move_old_export(dest_dir)
@@ -134,7 +138,7 @@ def overlay_extract_origs(source, tarball_dir, dest_dir, options):
     # Unpack additional tarballs
     for c in options.components:
         tarball = os.path.join(tarball_dir, source.upstream_tarball_name(
-            options.comp_type, component=c))
+            comp_type, component=c))
         gbp.log.info("Unpacking '%s' to '%s'" % (os.path.basename(tarball), dest_dir))
         unpack_component_tarball(dest_dir, c, tarball, [])
 
