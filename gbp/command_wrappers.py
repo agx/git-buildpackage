@@ -262,7 +262,7 @@ class UnpackTarArchive(Command):
 
         Command.__init__(self, 'tar', exclude +
                          ['-C', dir, compression, '-xf', archive])
-        self.run_error = 'Couldn\'t unpack "%s": {err_reason}' % self.archive
+        self.run_error = "Couldn't unpack '%s': {err_reason}" % self.archive
 
 
 class PackTarArchive(Command):
@@ -277,7 +277,7 @@ class PackTarArchive(Command):
 
         Command.__init__(self, 'tar', exclude +
                          ['-C', dir, compression, '-cf', archive, dest])
-        self.run_error = 'Couldn\'t repack "%s": {err_reason}' % self.archive
+        self.run_error = "Couldn't repack '%s': {err_reason}" % self.archive
 
 
 class CatenateTarArchive(Command):
@@ -295,7 +295,7 @@ class RemoveTree(Command):
     def __init__(self, tree):
         self.tree = tree
         Command.__init__(self, 'rm', ['-rf', tree])
-        self.run_error = 'Couldn\'t remove "%s": {err_reason}' % self.tree
+        self.run_error = "Couldn't remove '%s': {err_reason}" % self.tree
 
 
 class Dch(Command):
@@ -317,7 +317,7 @@ class DpkgSourceExtract(Command):
         Command.__init__(self, 'dpkg-source', ['-x'])
 
     def __call__(self, dsc, output_dir):
-        self.run_error = 'Couldn\'t extract "%s": {err_reason}' % dsc
+        self.run_error = "Couldn't extract '%s': {err_reason}" % dsc
         Command.__call__(self, [dsc, output_dir])
 
 
@@ -328,7 +328,7 @@ class UnpackZipArchive(Command):
         self.dir = dir
 
         Command.__init__(self, 'unzip', ["-q", archive, '-d', dir])
-        self.run_error = 'Couldn\'t unpack "%s": {err_reason}' % self.archive
+        self.run_error = "Couldn't unpack '%s': {err_reason}" % self.archive
 
 
 class CatenateZipArchive(Command):
@@ -338,8 +338,8 @@ class CatenateZipArchive(Command):
         Command.__init__(self, 'zipmerge', [archive], **kwargs)
 
     def __call__(self, target):
-        self.run_error = 'Couldn\'t append "%s" to "%s": {err_reason}' % \
-                         (target, self.archive)
+        self.run_error = "Couldn't append '%s' to '%s': {err_reason}" % (
+            target, self.archive)
         Command.__call__(self, [target])
 
 
