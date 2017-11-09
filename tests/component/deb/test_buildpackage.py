@@ -199,9 +199,16 @@ class TestBuildpackage(ComponentTestBase):
                                        '--git-no-purge',
                                        '--git-component=foo',
                                        '--git-export-dir=../overlay'])
+        # Check if main tarball got unpacked
         ok_(os.path.exists('../overlay/hello-debhelper-2.8/configure'))
+        # Check if debian dir is there
         ok_(os.path.exists('../overlay/hello-debhelper-2.8/debian/changelog'))
+        # Check if additional tarball got unpacked
         ok_(os.path.exists('../overlay/hello-debhelper-2.8/foo/test1'))
+        # Check if upstream tarballs is in export_dir
+        eq_(sorted(glob.glob('../overlay/*')), ['../overlay/hello-debhelper-2.8',
+                                                '../overlay/hello-debhelper_2.8.orig-foo.tar.gz',
+                                                '../overlay/hello-debhelper_2.8.orig.tar.gz'])
 
     @RepoFixtures.quilt30()
     def test_export_wc_buildpackage(self, repo):
