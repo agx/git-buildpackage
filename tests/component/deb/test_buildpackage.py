@@ -197,9 +197,11 @@ class TestBuildpackage(ComponentTestBase):
                                        '--git-compression=gzip',
                                        '--git-tarball-dir=%s' % tarball_dir,
                                        '--git-no-purge',
-                                       '--git-export-dir=../foo'])
-        ok_(os.path.exists('../foo/hello-debhelper-2.8/configure'))
-        ok_(os.path.exists('../foo/hello-debhelper-2.8/debian/changelog'))
+                                       '--git-component=foo',
+                                       '--git-export-dir=../overlay'])
+        ok_(os.path.exists('../overlay/hello-debhelper-2.8/configure'))
+        ok_(os.path.exists('../overlay/hello-debhelper-2.8/debian/changelog'))
+        ok_(os.path.exists('../overlay/hello-debhelper-2.8/foo/test1'))
 
     @RepoFixtures.quilt30()
     def test_export_wc_buildpackage(self, repo):

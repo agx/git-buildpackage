@@ -42,8 +42,9 @@ DEFAULT_ADDITIONAL_TAR = os.path.join(DEB_TEST_DATA_DIR,
                                       'hello-debhelper_%s.dsc' % '2.8-1')
 
 DEFAULT_OVERLAY = os.path.join(DEB_TEST_DATA_DIR,
-                               'dsc-3.0',
+                               'dsc-3.0-additional-tarballs',
                                'hello-debhelper_%s.debian.tar.gz' % '2.8-1')
+
 
 class RepoFixtures(object):
     @classmethod
