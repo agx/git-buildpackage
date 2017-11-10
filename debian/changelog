@@ -1,3 +1,60 @@
+git-buildpackage (0.9.2) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [5b05ead] push: Don't abort on first failure.  Push as many refs as
+    possible instead of aborting on the first error.
+  * Unbreak running in non-UTF8 locales
+    Thanks to Nico Schlömer for the report (Closes: #880964)
+  * [5b1614d] travis: run tests under C locale too
+  * [79d4340] setup.py: add python_requires so pip doesn't use the gbp module
+    for python2
+    Thanks to Nico Schlömer for the proposed solution
+  * [d656cbd] import-dsc: Fuzzy parse changelog date.
+    Especially older changelogs aren't 100% policy conformant (e.g. using a
+    localized day of week like).  This allows us to better import older
+    histories. (Closes: #880878)
+  * [577ca32] import-orig: Run postimport hook on all successful imports.
+    So far we would skip it on initial imports which is pointless.
+  * [7d6f61a] import-orig: don't fail when importing unpacked dirs.
+  * [34b2390] import-orig: avoid master branch when importing into empty repo.
+    We don't want a master branch if debian-branch != 'master'.
+  * [c135ad4] Make import-orig-rpm tests work with import-orig.
+    We use the Debian version to import RPMs since there's currently no
+    separate import-orig-rpm needed.  The tests also cover cases we were
+    currently not testing in components/deb/test_import_orig.py.
+  * [fe0022b] import-dsc: cleanup temp dirs on unexpected exceptions too
+  * [486cbfd] examples: drop gbp-posttag-push.  We have "gbp push" now.
+  * [3efd339] examples: Add gbp-try-ff.  Helper to fetch new upstream source,
+    refresh patches and do a test build.
+  * [1b5a344] buildpackage: Add back --git-pristine-tar-commit support.
+    The call got lost when we split out export-orig. (Closes: #880624)
+  * [4378eae] command_wrapper: quote error strings so we don't accidentally
+    try to expand values in error messages. (Closes: #881254)
+  * [e5df7d0] buildpackage: unpack additional tarballs as well in
+    --git-overlay mode. (Closes: #881253)
+  * [75273ee,53c0e7c] buildpackage: Expand --git-comp-type auto again in
+    --git-overlay mode.
+    Thanks to Maximiliano Curia for the detailed analysis (Closes: #879781)
+  * [d9fb2df] import-dsc: Apply filters on debian tarballs too
+    (Closes: #881311)
+  * Several testsuite and documentation improvements
+
+  [ Felipe Sateler ]
+  * [7f85a0d] zsh: Fix delegation of dscs options to dsc
+  * [9d276b5] zsh: dch does not use git prefix for ignore-branch option
+    (Closes: #787005)
+
+  [ Ken Dreyer ]
+  * [3d084fd] DebianChangelog: Strip trailing newlines from changes.
+    Python3's message_from_string passes on a trailing newline from
+    dpkg-parsechangelog but the consumer of the output shouldn't need to
+    bother.
+
+  [ Markus Lehtonen ]
+  * [34c22d4] tests: add tests for gbp import-orig-rpm.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 10 Nov 2017 08:08:25 +0100
+
 git-buildpackage (0.9.1) unstable; urgency=medium
 
   * Kill use of six.*
