@@ -153,7 +153,14 @@
         </term>
         <listitem>
           <para>
-          filter out files glob-matching pattern. Can be given multiple times.
+          Filter out files glob-matching
+          <option><replaceable>pattern</replaceable></option> from
+          upstream tarballs and the debian tarball of 3.0(quilt)
+          packages. Note that the <emphasis>.diff.gz</emphasis> of 1.0
+          source format packages is currently not filtered.
+	  </para>
+	  <para>
+	  This option can be given multiple times.
           </para>
         </listitem>
       </varlistentry>

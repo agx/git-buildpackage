@@ -85,12 +85,12 @@ def apply_patch(diff):
         raise GbpError("Error importing %s: %s" % (diff, err[0]))
 
 
-def apply_deb_tgz(deb_tgz):
+def apply_deb_tgz(deb_tgz, filters):
     """Apply .debian.tar.gz (V3 source format)"""
     # Remove any existing data in debian/ as dpkg-source -x does
     if os.path.isdir('debian'):
         shutil.rmtree('debian')
-    gbpc.UnpackTarArchive(deb_tgz, ".")()
+    gbpc.UnpackTarArchive(deb_tgz, ".", filters)()
 
 
 def get_changes(dir, repo, debian_branch):
@@ -162,7 +162,7 @@ def apply_debian_patch(repo, source, dsc, upstream_commit, options):
         if dsc.diff:
             apply_patch(dsc.diff)
         elif dsc.deb_tgz:
-            apply_deb_tgz(dsc.deb_tgz)
+            apply_deb_tgz(dsc.deb_tgz, options.filters)
         else:
             raise GbpError("Neither a Debian diff nor tarball found")
 

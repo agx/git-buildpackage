@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2013,2014,2015 Guido Günther <agx@sigxcpu.org>
+# (C) 2013,2014,2015,2017 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -349,3 +349,21 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'debian', ['debian', 'master'])
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+
+    def test_import_30_filters(self):
+        dscfile = self._dsc30('2.6-1')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--no-pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           '--filter=debian/patches/*',
+                           '--filter=AUTHORS',
+                           dscfile]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        os.chdir('hello-debhelper')
+        ok_(os.path.exists("./debian/changelog"))
+        ok_(os.path.exists("./configure.ac"))
+        ok_(not os.path.exists("./debian/patches/series"))
+        ok_(not os.path.exists("./debian/patches/AUTHORS"))
