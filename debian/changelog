@@ -175,7 +175,7 @@ git-buildpackage (0.9.0~exp5) experimental; urgency=medium
   * [b2092c1] patch_series: don't let "git mailinfo" sanitize the subject.
     This would strip away text in []. This improves the import/export round
     trip. (Closes: #872354)
-  * import_orig: be more descripte what we're "using"
+  * import_orig: be more descriptive what we're "using"
   * pq: Be clearer what '--commit' did instead of a confusing "git status".
 
  -- Guido Günther <agx@sigxcpu.org>  Fri, 08 Sep 2017 11:19:36 +0200
@@ -200,7 +200,7 @@ git-buildpackage (0.9.0~exp4) experimental; urgency=medium
     duplicate error messages
   * [40b1883] gbp.conf: drop --noconf since it needs to be dch's first option
   * [ec643d9] Revert "buildpackage: don't prepare any tarballs in overlay mode"
-    This breaks workflows where people have a detache debian/ dir
+    This breaks workflows where people have a detached debian/ dir
     but keep upstream VCS and pristine-tar in the same repo.
     This reverts commit 3e4e7950d2b0e81a8821f60e9a6d842c88e8b7fb.
     Thanks to Maximiliano Curia for the report
