@@ -43,6 +43,25 @@ unset_env() {
     export -n DIST BUILDER ARCH
 }
 
+case $1 in
+    -h|--help|-?)
+    cat <<EOF
+git-pbuilder - Wrapper around cowbuilder/qemubuilder for gbp buildpackage
+
+Usage
+
+  DIST=distribution ARCH=architecture [BUILDER=(pbuilder|qemubuilder)] \
+ git-pbuilder debbuild-options
+
+  DIST=distribution ARCH=architecture [BUILDER=(pbuilder|qemubuilder)] \
+ git-pbuilder (update | create | login) cowbuilder-options
+
+See git-pbuilder(1) for details.
+EOF
+    exit 0
+    ;;
+esac
+
 # Set default BUILDER, DIST, and ARCH based on the name we were invoked as.
 # This allows people to create symlinks like git-pbuilder-squeeze and
 # git-qemubuilder-squeeze-amd64 pointing to git-pbuilder and auto-detecting
