@@ -162,7 +162,7 @@
         </term>
         <listitem>
           <para>
-            use this tag format when looking for tags of upstream versions,
+            Use this tag format when looking for tags of upstream versions,
             default is <replaceable>upstream/%(version)s</replaceable>.
           </para>
         </listitem>
@@ -182,7 +182,7 @@
         </term>
         <listitem>
           <para>
-          tag format used, when tagging debian versions,
+          Tag format used, when tagging debian versions,
           default is <replaceable>debian/%(version)s</replaceable>
           </para>
         </listitem>
@@ -457,7 +457,7 @@
         </term>
         <listitem>
           <para>
-          use this format string for the commit message when committing the
+          Use this format string for the commit message when committing the
           generated changelog file (when <option>--commit</option> is given).
           Default is
           <replaceable>Update changelog for %(version)s release</replaceable>

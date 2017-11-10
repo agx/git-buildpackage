@@ -57,7 +57,7 @@
       <varlistentry>
         <term><option>--force</option></term>
         <listitem>
-	  <para>force a branch update even if this results in a non fast
+	  <para>Force a branch update even if this results in a non fast
 	  forward update. <warning><para>Forcing a branch update
 	  makes you lose your modifications.</para></warning></para>
         </listitem>
@@ -65,7 +65,7 @@
       <varlistentry>
         <term><option>--redo-pq</option></term>
         <listitem>
-	  <para>also rebuild the corresponding patch-queue using &gbp-pq;.
+	  <para>Also rebuild the corresponding patch-queue using &gbp-pq;.
 	  <warning><para>This drops the patch-queue branch if it exists.</para></warning></para>
         </listitem>
       </varlistentry>

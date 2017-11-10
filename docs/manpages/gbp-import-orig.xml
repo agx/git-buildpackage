@@ -193,7 +193,7 @@
         </term>
         <listitem>
           <para>
-          GPG sign all created tags
+          GPG sign all created tags.
           </para>
         </listitem>
       </varlistentry>
@@ -202,7 +202,8 @@
         </term>
         <listitem>
           <para>
-          use this keyid for gpg signing tags
+          Use this <option><replaceable>keyid</replaceable></option>
+          for gpg signing tags.
           </para>
         </listitem>
       </varlistentry>
@@ -211,8 +212,8 @@
         </term>
         <listitem>
           <para>
-          use this tag format when tagging upstream versions,
-          default is <replaceable>upstream/%(version)s</replaceable>
+          Use this tag format when tagging upstream versions,
+          default is <replaceable>upstream/%(version)s</replaceable>.
           </para>
         </listitem>
       </varlistentry>
@@ -221,9 +222,9 @@
         </term>
         <listitem>
           <para>
-          use this format string for the commit message when importing upstream
+          Use this format string for the commit message when importing upstream
           versions, default is
-          <replaceable>New upstream version %(version)s</replaceable>
+          <replaceable>New upstream version %(version)s</replaceable>.
           </para>
         </listitem>
       </varlistentry>
@@ -232,7 +233,9 @@
         </term>
         <listitem>
           <para>
-          filter out files glob-matching pattern. Can be given multiple times.
+          Filter out files glob-matching
+          <option><replaceable>pattern</replaceable></option>. This
+          option can be given multiple times.
           </para>
         </listitem>
       </varlistentry>
@@ -262,7 +265,7 @@
         </term>
         <listitem>
           <para>
-          generate <command>pristine-tar</command> delta file
+          Generate <command>pristine-tar</command> delta file.
           </para>
         </listitem>
       </varlistentry>
@@ -271,8 +274,8 @@
         </term>
         <listitem>
           <para>
-          if using a filter, also filter the files out of the tarball
-          passed to <command>pristine-tar</command>
+          If using a filter, also filter the files out of the tarball
+          passed to <command>pristine-tar</command>.
           </para>
         </listitem>
       </varlistentry>
