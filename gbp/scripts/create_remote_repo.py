@@ -18,8 +18,6 @@
 # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
 """Create a remote Git repository based on the current one"""
 
-from __future__ import print_function
-
 import sys
 import os
 import urllib

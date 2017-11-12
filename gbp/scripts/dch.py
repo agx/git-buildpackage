@@ -17,8 +17,6 @@
 #
 """Generate Debian changelog entries from Git commit messages"""
 
-from __future__ import print_function
-
 import os.path
 import re
 import sys

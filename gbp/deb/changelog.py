@@ -16,8 +16,6 @@
 #    <http://www.gnu.org/licenses/>
 """A Debian Changelog"""
 
-from __future__ import print_function
-
 import email
 import os
 import subprocess

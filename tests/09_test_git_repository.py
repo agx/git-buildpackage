@@ -7,8 +7,6 @@ Test things here that don't fit nicely into the doctests that
 also make up the API documentation.
 """
 
-from __future__ import print_function
-
 from . import context  # noqa: 401
 from . import testutils
 

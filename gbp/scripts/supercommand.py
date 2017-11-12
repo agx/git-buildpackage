@@ -17,8 +17,6 @@
 #    <http://www.gnu.org/licenses/>
 """Supercommand for all gbp commands"""
 
-from __future__ import print_function
-
 import glob
 import os
 import re
