@@ -190,14 +190,15 @@ class ChangeLog(object):
         """
         The author of the last modification
         """
-        return email.utils.parseaddr(self._cp['Maintainer'])[0]
+
+        return self._parse_maint(self._cp['Maintainer'])[0]
 
     @property
     def email(self):
         """
         The author's email
         """
-        return email.utils.parseaddr(self._cp['Maintainer'])[1]
+        return self._parse_maint(self._cp['Maintainer'])[1]
 
     @property
     def date(self):
@@ -326,3 +327,19 @@ class ChangeLog(object):
 
     def get_changes(self, since='0~'):
         return self._run_parsechangelog(['-v%s' % since, '-SChanges'])
+
+    @staticmethod
+    def _parse_maint(maintainer):
+        """
+        Parse maintainer
+
+        Mostly rfc822 but we allow for commas
+        """
+        def _quote(u):
+            return u.replace(',', '##comma##')
+
+        def _unquote(q):
+            return q.replace('##comma##', ',')
+
+        name, mail = email.utils.parseaddr(_quote(maintainer or ''))
+        return (_unquote(name), _unquote(mail))
