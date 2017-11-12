@@ -70,4 +70,14 @@ class TestWriteTree(testutils.DebianGitTestRepo):
         with self.assertRaises(gbp.errors.GbpError):
             self.repo.commit_tree(sha1, "failed commit", ['doesnotexist'])
 
+
+class TestHasBranch(testutils.DebianGitTestRepo):
+    def test_has_branch(self):
+        self.add_file('whatever')
+        self.repo.create_branch("foo")
+        self.assertTrue(self.repo.has_branch("foo"))
+        # Don't be too sloppy on (#813298)
+        self.repo.create_branch("refs/heads/bar")
+        self.assertFalse(self.repo.has_branch("bar"))
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

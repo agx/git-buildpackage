@@ -402,12 +402,12 @@ class GitRepository(object):
         @return: C{True} if the repository has this branch, C{False} otherwise
         @rtype: C{bool}
         """
-        if remote:
-            ref = 'refs/remotes/%s' % branch
-        else:
-            ref = 'refs/heads/%s' % branch
+        args = GitArgs('--verify')
+
+        branch_pattern = 'refs/remotes/%s' if remote else 'refs/heads/%s'
+        args.add(branch_pattern % branch)
         try:
-            self._git_command('show-ref', [ref])
+            self._git_command('show-ref', args.args)
         except GitRepositoryError:
             return False
         return True
