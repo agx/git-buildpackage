@@ -37,11 +37,8 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.add_file('foo')
         options = MockOptions(upstream_tree='BRANCH',
                               upstream_branch='upstream')
-        self.assertRaises(gbp.errors.GbpError,
-                          export_orig.git_archive_get_upstream_tree,
-                          self.repo,
-                          None,
-                          options)
+        with self.assertRaises(gbp.errors.GbpError):
+            export_orig.git_archive_get_upstream_tree(self.repo, None, options)
 
     def test_valid_tree(self):
         """Get upstream tree from a valid upstream tree"""
@@ -55,11 +52,8 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         """Getting upstream tree from an invalid tree must fail"""
         self.add_file('foo')
         options = MockOptions(upstream_tree='doesnotexist')
-        self.assertRaises(gbp.errors.GbpError,
-                          export_orig.git_archive_get_upstream_tree,
-                          self.repo,
-                          None,
-                          options)
+        with self.assertRaises(gbp.errors.GbpError):
+            export_orig.git_archive_get_upstream_tree(self.repo, None, options)
 
     def test_valid_tag(self):
         """Get upstream tree from a valid tag"""
@@ -76,10 +70,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
         self.add_file('foo')
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")
-        self.assertRaises(gbp.errors.GbpError,
-                          export_orig.git_archive_get_upstream_tree,
-                          self.repo,
-                          self.source,
-                          options)
+        with self.assertRaises(gbp.errors.GbpError):
+            export_orig.git_archive_get_upstream_tree(self.repo, self.source, options)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

@@ -29,8 +29,7 @@ class TestHelp(TestCaseWithData):
     def testHelp(self, script):
         module = 'gbp.scripts.%s' % script
         m = __import__(module, globals(), locals(), ['main'], 0)
-        self.assertRaises(SystemExit,
-                          m.main,
-                          ['doesnotmatter', '--help'])
+        with self.assertRaises(SystemExit):
+            m.main(['doesnotmatter', '--help'])
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

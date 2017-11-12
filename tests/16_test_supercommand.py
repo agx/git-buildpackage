@@ -25,15 +25,12 @@ class TestSuperCommand(unittest.TestCase):
 
     def test_import(self):
         """Test the importer itself"""
-        self.assertRaises(ImportError,
-                          gbp.scripts.supercommand.import_command,
-                          'not.allowed')
-        self.assertRaises(ImportError,
-                          gbp.scripts.supercommand.import_command,
-                          'not/allowed')
-        self.assertRaises(ImportError,
-                          gbp.scripts.supercommand.import_command,
-                          '0notallowed')
+        with self.assertRaises(ImportError):
+            gbp.scripts.supercommand.import_command('not.allowed')
+        with self.assertRaises(ImportError):
+            gbp.scripts.supercommand.import_command('not/allowed')
+        with self.assertRaises(ImportError):
+            gbp.scripts.supercommand.import_command('0notallowed')
         self.assertIsNotNone(gbp.scripts.supercommand.import_command('pq'))
 
     def test_invalid_command(self):

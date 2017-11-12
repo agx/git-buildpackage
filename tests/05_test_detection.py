@@ -72,13 +72,8 @@ class TestDetection(unittest.TestCase):
         open(self.tmpdir.join('source_1.2.orig.tar.gz'), "w").close()
         open(self.tmpdir.join('source_1.2.orig.tar.xz'), "w").close()
         repo = MockGitRepository(with_branch=False)
-        self.assertRaises(
-            GbpError,
-            export_orig.guess_comp_type,
-            'auto',
-            self.source,
-            repo,
-            str(self.tmpdir))
+        with self.assertRaises(GbpError):
+            export_orig.guess_comp_type('auto', self.source, repo, str(self.tmpdir))
 
     def test_guess_comp_type_auto_bzip2(self):
         subject = 'pristine-tar data for source_1.2-3.orig.tar.bz2'

@@ -36,8 +36,8 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         """Test native package of format 3"""
         source = DebianSource('.')
         os.makedirs('debian/source')
-        self.assertRaises(DebianSourceError,
-                          source.is_native)
+        with self.assertRaises(DebianSourceError):
+            source.is_native()
 
         dsf = DebianSourceFormat.from_content("3.0", "native")
         self.assertEqual(dsf.type, 'native')
@@ -51,8 +51,8 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         """Test native package without a debian/source/format file"""
         source = DebianSource('.')
         os.makedirs('debian/')
-        self.assertRaises(DebianSourceError,
-                          source.is_native)
+        with self.assertRaises(DebianSourceError):
+            source.is_native()
 
         with open('debian/changelog', 'w') as f:
             f.write("""git-buildpackage (0.2.3) git-buildpackage; urgency=low

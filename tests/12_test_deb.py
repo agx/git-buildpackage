@@ -156,7 +156,8 @@ class TestDpkgCompareVersions(unittest.TestCase):
         self.assertEqual(ret, 0)
 
     def testBadVersion(self):
-        self.assertRaises(CommandExecFailed, self.cmp, '_', '_ _')
+        with self.assertRaises(CommandExecFailed):
+            self.cmp('_', '_ _')
 
 
 @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')

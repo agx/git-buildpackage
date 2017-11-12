@@ -29,9 +29,8 @@ class TestWriteTree(testutils.DebianGitTestRepo):
         """Write out index file to non-existent dir"""
         paths = self._write_testtree()
         self.repo.add_files(paths)
-        self.assertRaises(gbp.git.GitRepositoryError,
-                          self.repo.write_tree,
-                          '/does/not/exist')
+        with self.assertRaises(gbp.git.GitRepositoryError):
+            self.repo.write_tree('/does/not/exist')
 
     def test_write_tree(self):
         """Write out index file to alternate index file"""
@@ -63,10 +62,7 @@ class TestWriteTree(testutils.DebianGitTestRepo):
         # commit the same tree again using the previous commit as parent
         self.repo.commit_tree(sha1, "second commit", parents=[commit])
         # commit the same tree again using a non-existent parent
-        self.assertRaises(gbp.errors.GbpError,
-                          self.repo.commit_tree,
-                          sha1,
-                          "failed commit",
-                          ['doesnotexist'])
+        with self.assertRaises(gbp.errors.GbpError):
+            self.repo.commit_tree(sha1, "failed commit", ['doesnotexist'])
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
