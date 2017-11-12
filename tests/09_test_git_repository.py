@@ -1,6 +1,11 @@
 # vim: set fileencoding=utf-8 :
 
-"""Test  L{GitRepository}'s write_tree method"""
+"""
+Test  L{GitRepository}
+
+Test things here that don't fit nicely into the doctests that
+also make up the API documentation.
+"""
 
 from __future__ import print_function
 
