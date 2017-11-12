@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
-"""Tests for the git-import-orig-rpm tool"""
+"""Test importing RPMs with git-import-orig"""
 
 import os
 import shutil
