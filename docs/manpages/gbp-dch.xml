@@ -26,6 +26,10 @@
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--ignore-branch</option></arg>
       <group>
+	<arg><option>-s</option> <replaceable>commitish</replaceable></arg>
+        <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+      </group>
+      <group>
 	<group>
 	  <arg><option>-S</option></arg>
           <arg><option>--snapshot</option></arg>
@@ -33,16 +37,6 @@
 	<group>
 	  <arg><option>-R</option></arg>
           <arg><option>--release</option></arg>
-	</group>
-      </group>
-      <group>
-	<group>
-	  <arg><option>-a</option></arg>
-          <arg><option>--auto</option></arg>
-	</group>
-	<group>
-	  <arg><option>-s</option> <replaceable>commitish</replaceable></arg>
-          <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
 	</group>
       </group>
       <group>
@@ -87,21 +81,33 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-dch; reads git commit messages and generates the &debian;
-    changelog from it. If no arguments are given, &gbp-dch; starts
-    from the commit corresponding to the last tagged Debian package
-    version up to the current tip of the current branch. If the
-    distribution of the topmost section in
-    <filename>debian/changelog</filename>
-    is <emphasis>UNRELEASED</emphasis>, the changelog entries will be
-    inserted into this section. Otherwise, a new section will be
-    created.
+      &gbp-dch; reads git commit messages and generates the &debian;
+      changelog from it. It starts at a given commit specified by the
+      <option>--since</option> option up to the current
+      <emphasis>HEAD</emphasis>.  For each commit found it adds the
+      commit message to the changelog. If <option>--since</option> is
+      not given the commit to start from is determined by the
+      following rules (first one matches):
+    </para>
+
+    <orderedlist numeration="arabic">
+      <listitem><para>The start commit is read from the snapshot banner (see below for
+      details)</para></listitem>
+      <listitem><para>If the topmost version of the
+      <filename>debian/changelog</filename> is alread tagged. Use the commit
+      the tag points to as start commit.</para></listitem>
+      <listitem><para>The last commit that modified <filename>debian/changelog</filename> is
+      used as start commit.</para></listitem>
+    </orderedlist>
+    <para>
+      This is called automatic mode.
     </para>
     <para>
-    If <option>--auto</option> is given &gbp-dch;, tries to guess the
-    last &git; commit documented in the changelog - this only works in snapshot
-    mode. Otherwise, <option>--since</option> can be used to tell &gbp-dch;
-    at which point it should start in the &git; history.
+      If the distribution of the topmost section in
+      <filename>debian/changelog</filename> is
+      <emphasis>UNRELEASED</emphasis>, the changelog entries will be
+      inserted into this section. Otherwise a new section will be
+      created.
     </para>
     <para>
       If one ore more paths are given as arguments &gbp-dch; will only
@@ -120,16 +126,16 @@
     </para>
     <para>
       The above relies on the <option>--debian-branch</option> option
-      pointing to the current branch
-      and <option>--upstream-branch</option> pointing to the
-      corresponding upstream branch in order to find the right merge
-      points of these branches. Furthermore &gbp-dch; must be able to
-      identify git tags from upstream and Debian version numbers. If
-      you're not using the defaults check
-      the <option>--upstream-tag</option>
-      and <option>--debian-tag</option> options and make sure they match
+      pointing to the current branch and
+      <option>--upstream-branch</option> pointing to the corresponding
+      upstream branch in order to find the right merge points of these
+      branches. Furthermore &gbp-dch; must be able to identify git
+      tags from upstream and Debian version numbers. If you're not
+      using the defaults check the <option>--upstream-tag</option> and
+      <option>--debian-tag</option> options and make sure they match
       the tags created by e.g. &gbp-import-orig; (when using tarballs)
-      or upstream's tagging pattern (when using upstream's git directly).
+      or upstream's tagging pattern (when using upstream's git
+      directly).
     </para>
   </refsect1>
   <refsect1>
@@ -203,9 +209,8 @@
           <option>-a</option></term>
         <listitem>
           <para>
-            Guess the last commit documented in the changelog from the
-            snapshot banner (or from the last tag if no snapshot banner exists).
-            This option can't be set via &gbp.conf;.
+	    This option is ignored for compatiblity with older
+	    versions. It used to trigger automatic mode.
           </para>
         </listitem>
       </varlistentry>
@@ -268,11 +273,18 @@
               <option>-S</option></term>
         <listitem>
           <para>
-          Create a snapshot release entry. This adds a snapshot release
-          number and a warning banner to the changelog entry. The release
-          version number is being auto incremented with every new snapshot
-          release to avoid packages downgrades during snapshot testing.
+            Create a snapshot release entry. It uses a snapshot
+            release number which is smaller than the final release
+            number and adds a warning banner to the changelog
+            entry. The version number is being auto incremented with
+            every new snapshot release.
           </para>
+	  <para>
+	    The snapshot banner is also used by &gbp-dch; to determine which
+	    entries are already in the changelog. This prevents duplicated
+	    entries in  <filename>debian/changelog</filename> when you did
+	    not commit the changelog yet.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -289,10 +301,12 @@
               <option>-R</option></term>
         <listitem>
           <para>
-            Remove any snapshot release banners and version suffixes, set
-            the current distribution to <replaceable>unstable</replaceable>, and
-            open the changelog for final tweaking.
-            This option can't be set via &gbp.conf;.
+            Remove any snapshot release banners and version suffixes
+            (if any), set the current distribution to
+            <replaceable>unstable</replaceable>, and open the
+            changelog for final tweaking.  This option can't be set
+            via &gbp.conf;. It's usually used to finalize the
+            changelog before making a release.
           </para>
         </listitem>
       </varlistentry>
