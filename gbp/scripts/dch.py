@@ -263,6 +263,9 @@ def process_options(options, parser):
     if options.since and options.auto:
         parser.error("'--since' and '--auto' are incompatible options")
 
+    if not options.since and not options.auto:
+        options.auto = True
+
     dch_options = []
     if options.multimaint_merge:
         dch_options.append("--multimaint-merge")
@@ -452,19 +455,13 @@ def main(argv):
         if options.since:
             since = options.since
         else:
-            since = ''
-            if options.auto:
-                since = guess_documented_commit(cp, repo, options.debian_tag)
-                if since:
-                    msg = "Continuing from commit '%s'" % since
-                else:
-                    msg = "Starting from first commit"
+            since = guess_documented_commit(cp, repo, options.debian_tag)
+            if since:
+                msg = "Continuing from commit '%s'" % since
+            else:
+                msg = "Starting from first commit"
                 gbp.log.info(msg)
-                found_snapshot_banner = has_snapshot_banner(cp)
-            else:  # Fallback: continue from last tag
-                since = repo.find_version(options.debian_tag, cp['Version'])
-                if not since:
-                    raise GbpError("Version %s not found" % cp['Version'])
+            found_snapshot_banner = has_snapshot_banner(cp)
 
         if args:
             gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
