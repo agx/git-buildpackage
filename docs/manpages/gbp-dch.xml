@@ -209,7 +209,7 @@
           <option>-a</option></term>
         <listitem>
           <para>
-	    This option is ignored for compatiblity with older
+	    This option is ignored for compatibility with older
 	    versions. It used to trigger automatic mode.
           </para>
         </listitem>
