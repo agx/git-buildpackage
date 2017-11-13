@@ -62,13 +62,18 @@ class SrcRpmFile(object):
     """Keeps all needed data read from a source rpm"""
     def __init__(self, srpmfile):
         # Do not required signed packages to be able to import
-        ts_vsflags = (librpm.RPMVSF_NOMD5HEADER | librpm.RPMVSF_NORSAHEADER |
-                      librpm.RPMVSF_NOSHA1HEADER | librpm.RPMVSF_NODSAHEADER |
-                      librpm.RPMVSF_NOMD5 | librpm.RPMVSF_NORSA |
-                      librpm.RPMVSF_NOSHA1 | librpm.RPMVSF_NODSA)
-        srpmfp = open(srpmfile)
-        self.rpmhdr = librpm.ts(vsflags=ts_vsflags).hdrFromFdno(srpmfp.fileno())
-        srpmfp.close()
+        ts_vsflags = 0
+        for flag in ['RPMVSF_NOMD5HEADER', 'RPMVSF_NORSAHEADER',
+                     'RPMVSF_NOSHA1HEADER', 'RPMVSF_NODSAHEADER',
+                     'RPMVSF_NOMD5', 'RPMVSF_NORSA', 'RPMVSF_NOSHA1',
+                     'RPMVSF_NODSA']:
+            try:
+                # Ignore flags not present in different librpm versions
+                ts_vsflags |= getattr(librpm, flag)
+            except AttributeError:
+                pass
+        with open(srpmfile) as srpmfp:
+            self.rpmhdr = librpm.ts(vsflags=ts_vsflags).hdrFromFdno(srpmfp.fileno())
         self.srpmfile = os.path.abspath(srpmfile)
 
     @property
