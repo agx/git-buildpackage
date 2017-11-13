@@ -1,5 +1,5 @@
     <chapter id="gbp.special">
-    <title>Special use cases</title>
+    <title>Special Use Cases</title>
     <sect1 id="gbp.special.dfsgfree">
     <title>Handling non-DFSG clean upstream sources</title>
     <para>If you have to handle non-DFSG clean upstream sources, you can use a

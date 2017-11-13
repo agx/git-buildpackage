@@ -1,5 +1,5 @@
 <chapter id="gbp.cfgfile">
-    <title>Configuration files</title>
+    <title>Configuration Files</title>
     <para>The configuration files are parsed in this order:
     <variablelist>
       <varlistentry>

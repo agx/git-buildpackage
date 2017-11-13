@@ -1,5 +1,5 @@
 <chapter id="gbp.patches">
-  <title>Working with patches</title>
+  <title>Working with Patches</title>
 
   <para>
     &gbp-pq; can be used to manage patches that modify the upstream

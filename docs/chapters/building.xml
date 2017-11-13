@@ -1,5 +1,5 @@
 <chapter id="gbp.building">
-    <title>Building packages from the &git; repository</title>
+    <title>Building Packages from the &git; Repository</title>
     <para>
     In order to build a &debian; package from the &git; repository, you use:
     &gbp-buildpackage;. This builds the upstream tarball (as will be described below) and
