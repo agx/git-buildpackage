@@ -119,7 +119,7 @@ class TestImportDsc(ComponentTestBase):
         self._check_log(-1, "gbp:error: Did not find a dsc file at")
 
     def test_create_branches(self):
-        """Test if creating missing branches works"""
+        """Test that creating missing branches works"""
         dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',
@@ -176,7 +176,7 @@ class TestImportDsc(ComponentTestBase):
         ok_(commits == expected, "Found %d pristine-tar commits instead of %d" % (commits, expected))
 
     def test_import_30_additional_tarball_pristine_tar(self):
-        """Test if importing a package with additional tarballs works"""
+        """Test that importing a package with additional tarballs works"""
         def _dsc(version):
             return os.path.join(DEB_TEST_DATA_DIR,
                                 'dsc-3.0-additional-tarballs',
@@ -236,7 +236,7 @@ class TestImportDsc(ComponentTestBase):
                         "please change into this directory otherwise move it away first")
 
     def test_import_10(self):
-        """Test if importing a 1.0 source format package works"""
+        """Test that importing a 1.0 source format package works"""
         def _dsc(version):
             return os.path.join(DEB_TEST_DATA_DIR,
                                 'dsc-1.0',
@@ -250,7 +250,7 @@ class TestImportDsc(ComponentTestBase):
         assert len(repo.get_commits()) == 2
 
     def test_target_dir(self):
-        """Test if setting the target dir works"""
+        """Test that setting the target dir works"""
         dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',
@@ -262,7 +262,7 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
 
     def test_bare(self):
-        """Test if importing into bare repository"""
+        """Test that importing into bare repository works"""
         dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',

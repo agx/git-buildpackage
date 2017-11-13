@@ -80,7 +80,7 @@ class TestExportOrig(ComponentTestBase):
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
     def test_git_archive_tree_non_existent(self):
-        """Test that we're tarball generation when commits are missing"""
+        """Test that we're failing tarball generation when commits are missing"""
         pkg = 'hello-debhelper'
         dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0-additional-tarballs')
 

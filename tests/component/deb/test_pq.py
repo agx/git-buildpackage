@@ -37,7 +37,7 @@ class TestPq(ComponentTestBase):
 
     @RepoFixtures.quilt30()
     def test_rebase_import(self, repo):
-        """Test if rebase imports patches first"""
+        """Test that rebase imports patches first"""
         eq_(repo.branch, 'master')
         eq_(repo.has_branch('patch-queue/master'), False)
         self._test_pq(repo, 'rebase')
@@ -45,7 +45,7 @@ class TestPq(ComponentTestBase):
 
     @RepoFixtures.quilt30()
     def test_switch_import(self, repo):
-        """Test if switch imports patches first"""
+        """Test that switch imports patches first"""
         eq_(repo.branch, 'master')
         eq_(repo.has_branch('patch-queue/master'), False)
         self._test_pq(repo, 'switch')
