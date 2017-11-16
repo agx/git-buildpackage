@@ -365,7 +365,7 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
     gbp.log.info("Replacing upstream source on '%s'" % options.debian_branch)
 
     tree = [x for x in repo.list_tree("%s^{tree}" % tag)
-            if x[-1] != 'debian']
+            if x[-1] != b'debian']
     msg = "Update upstream source from tag '%s'" % (tag)
 
     # Get the current debian/ tree on the debian branch
