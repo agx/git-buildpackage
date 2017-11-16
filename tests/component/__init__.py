@@ -159,7 +159,7 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
 
     @classmethod
     def _check_repo_state(cls, repo, current_branch, branches, files=None,
-                          dirs=None, tags=None):
+                          dirs=None, tags=None, clean=True):
         """
         Check that repository is clean and given branches, tags, files
         and dirs exist
@@ -192,6 +192,9 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
                 cls.check_files(dirs, local_d)
         if tags is not None:
             cls.check_tags(repo, tags)
+        if clean:
+            clean, files = repo.is_clean()
+            ok_(clean, "Repo has uncommitted files %s" % files)
 
     @classmethod
     def rem_refs(cls, repo, refs):

@@ -91,14 +91,14 @@ class TestPqRpm(RpmRepoTestBase):
         eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s']), 0)
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
-        self._check_repo_state(repo, 'master', branches, files)
+        self._check_repo_state(repo, 'master', branches, files, clean=False)
         eq_(repo.status()[' M'], [b'gbp-test.spec'])
         self._has_patches('gbp-test.spec', patches)
 
         # Another export after removing some patches
         os.unlink('0001-my-gz.patch')
         eq_(mock_pq(['export']), 0)
-        self._check_repo_state(repo, 'master', branches, files)
+        self._check_repo_state(repo, 'master', branches, files, clean=False)
         self._has_patches('gbp-test.spec', patches)
 
     def test_import_export2(self):
@@ -116,7 +116,7 @@ class TestPqRpm(RpmRepoTestBase):
         # Test export
         eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s',
                      '--spec-file', 'packaging/gbp-test2.spec']), 0)
-        self._check_repo_state(repo, 'master-orphan', branches)
+        self._check_repo_state(repo, 'master-orphan', branches, clean=False)
         eq_(repo.status()[' M'], [b'packaging/gbp-test2.spec'])
         self._has_patches('packaging/gbp-test2.spec', patches)
 
@@ -264,7 +264,7 @@ class TestPqRpm(RpmRepoTestBase):
         patches = ['my-gz.patch', 'my-bzip2.patch', 'my2.patch', 'my.patch']
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
-        self._check_repo_state(repo, 'master', branches, files)
+        self._check_repo_state(repo, 'master', branches, files, clean=False)
         self._has_patches('gbp-test.spec', patches)
 
     def test_option_tmp_dir(self):
@@ -343,7 +343,7 @@ class TestPqRpm(RpmRepoTestBase):
                    '%s-to-%s.diff' % (upstr_rev, merge_rev), '0002-my2.patch']
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
-        self._check_repo_state(repo, 'master', branches, files)
+        self._check_repo_state(repo, 'master', branches, files, clean=False)
         self._has_patches('gbp-test.spec', patches)
 
     def test_import_unapplicable_patch(self):
@@ -355,11 +355,11 @@ class TestPqRpm(RpmRepoTestBase):
             patch_file.write('-this-does\n+not-apply\n')
         eq_(mock_pq(['import']), 1)
         self._check_log(-2, "Please commit your changes or stash them")
-        self._check_repo_state(repo, 'master', branches)
+        self._check_repo_state(repo, 'master', branches, clean=False)
 
         # Now commit the changes to the patch and try again
         repo.add_files(['my2.patch'], force=True)
         repo.commit_files(['my2.patch'], msg="Mangle patch")
         eq_(mock_pq(['import']), 1)
         self._check_log(-1, "gbp:error: Import failed: Error running git apply")
-        self._check_repo_state(repo, 'master', branches)
+        self._check_repo_state(repo, 'master', branches, clean=False)

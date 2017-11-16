@@ -47,8 +47,8 @@ class TestBuildpackage(ComponentTestBase):
                             '%s_%s.dsc' % (pkg, version))
 
     def _test_buildpackage(self, repo, opts=[]):
-        prebuild_out = os.path.join(repo.path, 'prebuild.out')
-        postbuild_out = os.path.join(repo.path, 'postbuild.out')
+        prebuild_out = os.path.join(repo.path, '..', 'prebuild.out')
+        postbuild_out = os.path.join(repo.path, '..', 'postbuild.out')
         args = ['arg0',
                 '--git-prebuild=printenv > %s' % prebuild_out,
                 '--git-postbuild=printenv > %s' % postbuild_out,
@@ -60,14 +60,14 @@ class TestBuildpackage(ComponentTestBase):
         eq_(os.path.exists(prebuild_out), True)
         eq_(os.path.exists(postbuild_out), True)
 
-        self.check_hook_vars('prebuild', ["GBP_BUILD_DIR",
-                                          "GBP_GIT_DIR",
-                                          "GBP_BUILD_DIR"])
+        self.check_hook_vars('../prebuild', ["GBP_BUILD_DIR",
+                                             "GBP_GIT_DIR",
+                                             "GBP_BUILD_DIR"])
 
-        self.check_hook_vars('postbuild', ["GBP_CHANGES_FILE",
-                                           "GBP_BUILD_DIR",
-                                           "GBP_CHANGES_FILE",
-                                           "GBP_BUILD_DIR"])
+        self.check_hook_vars('../postbuild', ["GBP_CHANGES_FILE",
+                                              "GBP_BUILD_DIR",
+                                              "GBP_CHANGES_FILE",
+                                              "GBP_BUILD_DIR"])
 
     @RepoFixtures.native()
     def test_debian_buildpackage(self, repo):
@@ -85,15 +85,15 @@ class TestBuildpackage(ComponentTestBase):
         repo.delete_tag('debian/0.4.14')  # make sure we can tag again
         ret = buildpackage(['arg0',
                             '--git-tag-only',
-                            '--git-posttag=printenv > posttag.out',
-                            '--git-builder=touch builder-run.stamp',
+                            '--git-posttag=printenv > ../posttag.out',
+                            '--git-builder=touch ../builder-run.stamp',
                             '--git-cleaner=/bin/true'])
         ok_(ret == 0, "Building the package failed")
-        eq_(os.path.exists('posttag.out'), True)
-        eq_(os.path.exists('builder-run.stamp'), False)
-        self.check_hook_vars('posttag', [("GBP_TAG", "debian/0.4.14"),
-                                         ("GBP_BRANCH", "master"),
-                                         "GBP_SHA1"])
+        eq_(os.path.exists('../posttag.out'), True)
+        eq_(os.path.exists('../builder-run.stamp'), False)
+        self.check_hook_vars('../posttag', [("GBP_TAG", "debian/0.4.14"),
+                                            ("GBP_BRANCH", "master"),
+                                            "GBP_SHA1"])
 
     def test_component_generation(self):
         """Test that generating tarball and additional tarball works without pristine-tar"""

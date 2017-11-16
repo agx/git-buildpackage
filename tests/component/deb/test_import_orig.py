@@ -99,16 +99,16 @@ class TestImportOrig(ComponentTestBase):
         """
         orig = self._orig('2.8')
         ok_(import_orig(['arg0',
-                         '--postimport=printenv > postimport.out',
+                         '--postimport=printenv > ../postimport.out',
                          '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         ok_(os.path.exists('debian/changelog'))
-        ok_(os.path.exists('postimport.out'))
-        self.check_hook_vars('postimport', [("GBP_BRANCH", "master"),
-                                            ("GBP_TAG", "upstream/2.8"),
-                                            ("GBP_UPSTREAM_VERSION", "2.8"),
-                                            ("GBP_DEBIAN_VERSION", "2.8-1")])
+        ok_(os.path.exists('../postimport.out'))
+        self.check_hook_vars('../postimport', [("GBP_BRANCH", "master"),
+                                               ("GBP_TAG", "upstream/2.8"),
+                                               ("GBP_UPSTREAM_VERSION", "2.8"),
+                                               ("GBP_DEBIAN_VERSION", "2.8-1")])
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_update_component_tarballs(self, repo):

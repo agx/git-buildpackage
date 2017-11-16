@@ -49,12 +49,12 @@ class TestClone(ComponentTestBase):
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
         clone(['arg0',
-               '--postclone=printenv > postclone.out',
+               '--postclone=printenv > ../postclone.out',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'master', ['master'])
         assert len(cloned.get_commits()) == 1
-        self.check_hook_vars('postclone', ["GBP_GIT_DIR"])
+        self.check_hook_vars('../postclone', ["GBP_GIT_DIR"])
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_clone_vcsgit_ok(self):

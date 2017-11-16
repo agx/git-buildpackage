@@ -264,11 +264,11 @@ class TestImportOrig(ImportOrigTestBase):
         repo = ComponentTestGitRepository.create('.')
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
 
-        script = ("echo -n branch: $GBP_BRANCH > hook.txt")
+        script = ("echo -n branch: $GBP_BRANCH > ../hook.txt")
         eq_(mock_import(['--postimport', script, '--merge', orig]), 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
         eq_(repo.get_tags(), ['upstream/1.0'])
-        with open('hook.txt', 'r') as hookout:
+        with open('../hook.txt', 'r') as hookout:
             data = hookout.read()
         eq_(data, 'branch: master')
 
