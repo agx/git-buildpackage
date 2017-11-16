@@ -41,7 +41,7 @@ def create_debian_tag(repo, source, commit, options):
     returns: the created tag
     """
     tag = repo.version_to_tag(options.debian_tag, source.version)
-    gbp.log.info("Tagging %s as %s" % (source.version, tag))
+    gbp.log.info("Tagging Debian package %s as %s in git" % (source.version, tag))
     if options.retag and repo.has_tag(tag):
         repo.delete_tag(tag)
     tag_msg = format_str(options.debian_tag_msg,
