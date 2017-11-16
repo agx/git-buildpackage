@@ -1,3 +1,28 @@
+git-buildpackage (0.9.3) unstable; urgency=medium
+
+  * [9a2c5e6] import_orig: drop debian/ again in --merge-mode=replace.
+    Another fallout of the Python3 conversion.
+    Thanks to Víctor Cuadrado Juan for providing a nice reproducer
+    (Closes: #881750)
+  * [876ebb3] git-pbuilder: handle --help (Closes: #734862)
+  * [ff03bec] GitRepository: require an exact ref path when looking for
+    branches. Otherwise we might match on
+       refs/heads/refs/heads/foo instead of refs/heads/foo
+    when looking for  branch named 'foo' (Closes: #813298)
+  * [3b5a7dd] changelog: handle comma in maintainers name.
+    Thanks to Andreas Beckmann for the proposed fix (Closes: #737623)
+  * [e74b40a] rpm: conditionally check for librpm flags.  Not all of them are
+    in newer librpm and this way we can add new ones as needed as well.
+    This unbreaks the tests with new python3-rpm in sid.
+  * [c429d97] dch: make --auto the default.  The current default mode of
+    looking at the version in the changelog only leads to problems when people
+    build up the changelog incrementally.  --auto handles this since many
+    years so make this the default. There's still --since for finer control
+    where to start from. (Closes: #880552, #552624)
+  * [43d5587] docs: better explain dch operation (also addresses #880552)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 15 Nov 2017 15:33:20 +0100
+
 git-buildpackage (0.9.2) unstable; urgency=medium
 
   [ Guido Günther ]
