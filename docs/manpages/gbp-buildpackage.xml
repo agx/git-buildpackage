@@ -30,6 +30,7 @@
       <arg><option>--git-[no-]submodules</option></arg>
       <arg><option>--git-builder=</option><replaceable>BUILD_CMD</replaceable></arg>
       <arg><option>--git-cleaner=</option><replaceable>CLEAN_CMD</replaceable></arg>
+      <arg><option>--git-[no-]overlay</option></arg>
       <arg><option>--git-[no-]pbuilder</option></arg>
       <arg><option>--git-[no-]qemubuilder</option></arg>
       <arg><option>--git-dist=</option><replaceable>DIST</replaceable></arg>
@@ -664,7 +665,7 @@
           </listitem>
 	</varlistentry>
 	<varlistentry>
-          <term><option>--git-overlay</option>
+          <term><option>--git-[no-]overlay</option>
           </term>
           <listitem>
             <para>
