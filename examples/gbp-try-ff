@@ -4,9 +4,12 @@
 
 set -e
 
-git checkout debian/sid
+DB=$(gbp config buildpackage.debian-branch | sed 's/\(.*debian-branch=\)\(.*\)/\2/')
+
+git checkout "${DB}"
 gbp pq import --force
-git checkout debian/sid
+git checkout "${DB}"
+
 set +e
 gbp import-orig --uscan --no-interactive --no-pristine-tar
 ret=$?
