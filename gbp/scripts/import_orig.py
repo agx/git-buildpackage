@@ -296,15 +296,15 @@ def find_upstream(use_uscan, args):
         except UscanError as e:
             raise GbpError("%s" % e)
 
-        if not uscan.uptodate:
+        if uscan.uptodate:
+            gbp.log.info("package is up to date, nothing to do.")
+            return None
+        else:
             if uscan.tarball:
                 gbp.log.info("Using uscan downloaded tarball %s" % uscan.tarball)
                 args.append(uscan.tarball)
             else:
                 raise GbpError("uscan didn't download anything, and no source was found in ../")
-        else:
-            gbp.log.info("package is up to date, nothing to do.")
-            return None
     if len(args) > 1:  # source specified
         raise GbpError("More than one archive specified. Try --help.")
     elif len(args) == 0:
