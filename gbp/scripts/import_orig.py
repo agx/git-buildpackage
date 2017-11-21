@@ -556,8 +556,8 @@ def main(argv):
             upstream = download_orig(args[0])
         else:
             upstream = find_upstream(options.uscan, args)
-        if not upstream:
-            return ExitCodes.failed
+            if not upstream:
+                return ExitCodes.uscan_up_to_date
 
         # The main tarball
         (sourcepackage, version) = detect_name_and_version(repo, upstream, options)

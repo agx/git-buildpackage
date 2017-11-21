@@ -28,6 +28,7 @@ class ExitCodes(object):
     failed = 1               # All other errors
     no_value = 2             # Value does not exist (gbp config only)
     parse_error = 3          # Failed to parse configuration file
+    uscan_up_to_date = 4     # Uscan up to date (import-orig only)
 
 
 def is_download(args):
