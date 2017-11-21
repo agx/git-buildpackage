@@ -7,7 +7,13 @@ set -e
 git checkout debian/sid
 gbp pq import --force
 git checkout debian/sid
-gbp import-orig --uscan --no-interactive
+set +e
+gbp import-orig --uscan --no-interactive --no-pristine-tar
+ret=$?
+set -e
+if [ $ret = 4 ]; then
+    exit 0
+fi
 
 if ! gbp pq rebase; then
     echo "Automatic rebase failed"
@@ -17,4 +23,10 @@ fi
 
 gbp pq export --commit
 gbp dch -S -a
-gbp buildpackage --git-ignore-new
+gbp buildpackage --git-pbuilder \
+                 --git-ignore-new \
+                 --git-no-pristine-tar \
+                 --git-postbuild='lintian $GBP_CHANGES_FILE' \
+                 -nc \
+                 ${GBP_BUILDPACKAGE_ARGS}
+
