@@ -30,3 +30,9 @@ gbp buildpackage --git-pbuilder \
                  -nc \
                  ${GBP_BUILDPACKAGE_ARGS}
 
+NEW_VERSION=$(dpkg-parsechangelog -SVersion)
+MAINTAINER=$(dpkg-parsechangelog -SMaintainer)
+echo "New version ${NEW_VERSION} importet and built"
+
+mail -s "Imported new version ${NEW_VERSION}" "${MAINTAINER}" < /dev/null
+
