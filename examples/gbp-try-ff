@@ -5,6 +5,9 @@
 set -e
 
 DB=$(gbp config buildpackage.debian-branch | sed 's/\(.*debian-branch=\)\(.*\)/\2/')
+MAINTAINER=$(dpkg-parsechangelog -SMaintainer)
+SOURCE=$(dpkg-parsechangelog -SSource)
+OLD_VERSION=$(dpkg-parsechangelog -SVersion)
 
 git checkout "${DB}"
 gbp pq import --force
@@ -30,16 +33,17 @@ fi
 
 gbp pq export --commit
 gbp dch -S -a
+
+NEW_VERSION=$(dpkg-parsechangelog -SVersion)
+git commit -m"Snapshot build of ${SOURCE} $NEW_VERSION" debian/changelog
+
 gbp buildpackage --git-pbuilder \
-                 --git-ignore-new \
                  --git-no-pristine-tar \
                  --git-postbuild='lintian $GBP_CHANGES_FILE' \
                  -nc \
                  ${GBP_BUILDPACKAGE_ARGS}
 
-NEW_VERSION=$(dpkg-parsechangelog -SVersion)
-MAINTAINER=$(dpkg-parsechangelog -SMaintainer)
-echo "New version ${NEW_VERSION} importet and built"
-
-mail -s "Imported new version ${NEW_VERSION}" "${MAINTAINER}" < /dev/null
-
+MSG="Fast forward of ${SOURCE} from ${OLD_VERSION} to ${NEW_VERSION} successful"
+echo "${MSG}"
+MAILADDR=$(echo $MAINTAINER | sed -e 's/.*<\(.*\)>/\1/')
+echo "$MSG" | mail -s "Update of ${SOURCE} to ${NEW_VERSION}" "${MAILADDR}"
