@@ -39,6 +39,6 @@ gpgv:                 aka "Richard W.M. Jones <rich@annexia.org>"
     def test_uscan(self, uscan_mock):
         """Test parsing a valid uscan file"""
         uscan = Uscan()
-        self.assertIsNone(uscan.scan())
+        self.assertTrue(uscan.scan())
         self.assertFalse(uscan.uptodate)
         self.assertEquals(uscan.tarball, '../virt-what_1.18.orig.tar.gz')

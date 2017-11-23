@@ -113,13 +113,16 @@ class Uscan(object):
 
         @param out: uscan output
         @type out: string
+        @returns: C{True} if package is uptodate
 
         >>> u = Uscan('http://example.com/')
         >>> u._parse_uptodate('<status>up to date</status>')
+        True
         >>> u.tarball
         >>> u.uptodate
         True
         >>> u._parse_uptodate('')
+        False
         >>> u.tarball
         >>> u.uptodate
         False
@@ -128,6 +131,7 @@ class Uscan(object):
             self._uptodate = True
         else:
             self._uptodate = False
+        return self._uptodate
 
     def _raise_error(self, out):
         r"""
@@ -171,7 +175,11 @@ class Uscan(object):
         raise UscanError(msg)
 
     def scan(self, destdir='..'):
-        """Invoke uscan to fetch a new upstream version"""
+        """
+        Invoke uscan to fetch a new upstream version
+
+        @returns: C{True} if a new version was downloaded
+        """
         p = subprocess.Popen(['uscan', '--symlink', '--destdir=%s' % destdir,
                               '--dehs'],
                              cwd=self._dir,
@@ -179,11 +187,13 @@ class Uscan(object):
         out = p.communicate()[0].decode()
         # uscan exits with 1 in case of uptodate and when an error occurred.
         # Don't fail in the uptodate case:
-        self._parse_uptodate(out)
-        if not self.uptodate:
-            if p.returncode:
-                self._raise_error(out)
-            else:
-                self._parse(out)
+        if self._parse_uptodate(out):
+            return False
+
+        if p.returncode:
+            self._raise_error(out)
+
+        self._parse(out)
+        return True
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
