@@ -321,16 +321,6 @@ class RemoveTree(Command):
         self.run_error = self._f("Couldn't remove '%s': {err_reason}", self.tree)
 
 
-class Dch(Command):
-    """Wrap dch and set a specific version"""
-    def __init__(self, version, msg):
-        args = ['-v', version]
-        if msg:
-            args.append(msg)
-        Command.__init__(self, 'debchange', args)
-        self.run_error = self._f("Dch failed: {err_reason}")
-
-
 class DpkgSourceExtract(Command):
     """
     Wrap dpkg-source to extract a Debian source package into a certain
