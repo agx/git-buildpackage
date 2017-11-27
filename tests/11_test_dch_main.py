@@ -404,4 +404,11 @@ class TestScriptDch(DebianGitTestRepo):
 
     def test_dch_subdir(self):
         os.chdir('debian/')
-        self.run_dch()
+        lines = self.run_dch()
+        self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=%s\n" % default_urgency, lines[0])
+        self.assertIn("""  * added debian/control\n""", lines)
+
+    def test_dch_create_changelog(self):
+        os.unlink('debian/changelog')
+        lines = self.run_dch()
+        self.assertEqual("test-package (1.0-1) UNRELEASED; urgency=%s\n" % default_urgency, lines[0])

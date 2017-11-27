@@ -304,6 +304,26 @@ def changelog_commit_msg(options, version):
     return options.commit_msg % dict(version=version)
 
 
+def create_changelog(repo, source, options):
+    try:
+        name = source.control.name
+    except DebianSourceError:
+        raise GbpError("Did not find debian/changelog or debian/source. Is this a Debian package?")
+    version = guess_version_from_upstream(repo, options.upstream_tag,
+                                          options.upstream_branch, None)
+    return ChangeLog.create(name, version)
+
+
+def maybe_create_changelog(repo, source, options):
+    """
+    Get the changelog or create a new one if it does not exist yet
+    """
+    try:
+        return source.changelog
+    except DebianSourceError:
+        return create_changelog(repo, source, options)
+
+
 def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name),
@@ -452,7 +472,7 @@ def main(argv):
             raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
 
         source = DebianSource('.')
-        cp = source.changelog
+        cp = maybe_create_changelog(repo, source, options)
 
         if options.since:
             since = options.since

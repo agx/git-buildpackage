@@ -137,6 +137,10 @@
       or upstream's tagging pattern (when using upstream's git
       directly).
     </para>
+    <para>
+      If not changelog exists yet it is created and the version number
+      is derived from the last upstream tag if found.
+    </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
