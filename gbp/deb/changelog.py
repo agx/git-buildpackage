@@ -230,7 +230,7 @@ class ChangeLog(object):
 
     @staticmethod
     def spawn_dch(msg=[], author=None, email=None, newversion=False, version=None,
-                  release=False, distribution=None, dch_options=[]):
+                  release=False, distribution=None, dch_options=None):
         """
         Spawn dch
 
@@ -271,7 +271,7 @@ class ChangeLog(object):
         if distribution:
             args.append("--distribution=%s" % distribution)
 
-        args.extend(dch_options)
+        args.extend(dch_options or [])
         args.append('--')
         if msg:
             args.append('[[[insert-git-dch-commit-message-here]]]')
