@@ -78,7 +78,7 @@ class ChangeLog(object):
 
         # Check that either contents or filename is passed (but not both)
         if (not filename and not contents) or (filename and contents):
-            raise Exception("Either filename or contents must be passed")
+            raise ValueError("Either filename or contents must be passed")
 
         if filename and not os.access(filename, os.F_OK):
             raise NoChangeLogError("Changelog %s not found" % (filename, ))
