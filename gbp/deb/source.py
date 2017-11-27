@@ -20,6 +20,7 @@ import os
 from gbp.deb import DebianPkgPolicy as Policy
 from gbp.deb.format import DebianSourceFormat
 from gbp.deb.changelog import ChangeLog
+from gbp.deb.control import Control
 
 
 class FileVfs(object):
@@ -56,6 +57,7 @@ class DebianSource(object):
              package.
         """
         self._changelog = None
+        self._control = None
 
         if isinstance(vfs, str):
             self._vfs = FileVfs(vfs)
@@ -99,6 +101,19 @@ class DebianSource(object):
             except IOError as err:
                 raise DebianSourceError('Failed to read changelog: %s' % err)
         return self._changelog
+
+    @property
+    def control(self):
+        """
+        Return the L{gbp.deb.Control}
+        """
+        if not self._control:
+            try:
+                with self._vfs.open('debian/control', 'rb') as cf:
+                    self._control = Control(cf.read().decode('utf-8'))
+            except IOError as err:
+                raise DebianSourceError('Failed to read control file: %s' % err)
+        return self._control
 
     @property
     def sourcepkg(self):

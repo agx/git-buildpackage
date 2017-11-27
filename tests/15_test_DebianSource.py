@@ -110,3 +110,11 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         source = DebianSource('.')
         self.assertEquals(source.changelog.distribution, "UNRELEASED")
         self.assertFalse(source.is_releasable())
+
+    def test_control(self):
+        os.makedirs('debian/')
+        with open('debian/control', 'w') as f:
+            f.write("Source: foo")
+        source = DebianSource('.')
+        self.assertIsNotNone(source.control)
+        self.assertEquals(source.control.name, "foo")
