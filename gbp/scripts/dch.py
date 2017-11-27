@@ -30,7 +30,7 @@ from gbp.deb import compare_versions
 from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.deb.git import GitRepositoryError, DebianGitRepository
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
-from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import ExitCodes, maybe_debug_raise
 
 user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -570,6 +570,7 @@ def main(argv):
         if str(err):
             gbp.log.err(err)
         ret = 1
+        maybe_debug_raise()
     finally:
         os.chdir(old_cwd)
     return ret

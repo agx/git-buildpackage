@@ -31,6 +31,11 @@ class ExitCodes(object):
     uscan_up_to_date = 4     # Uscan up to date (import-orig only)
 
 
+def maybe_debug_raise():
+    if 'raise' in os.getenv("GBP_DEBUG", '').split(','):
+        raise
+
+
 def is_download(args):
     """
     >>> is_download(["http://foo.example.com"])
