@@ -117,3 +117,20 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
                                                   upstream_branch,
                                                   cp)
         self.assertEqual('1.1~rc1-1', guessed)
+
+    def test_no_changelog(self):
+        tagformat = 'upstream/%(version)s'
+        uversion = '1.1'
+        upstream_branch = 'upstream'
+
+        self.add_file('doesnot', 'matter')
+        self.repo.create_branch('upstream')
+        tag = self.repo.version_to_tag(tagformat, uversion)
+        self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
+                             sign=False)
+        self.repo.set_branch("master")
+        guessed = dch.guess_version_from_upstream(self.repo,
+                                                  tagformat,
+                                                  upstream_branch,
+                                                  None)
+        self.assertEqual('1.1-1', guessed)
