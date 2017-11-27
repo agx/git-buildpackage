@@ -51,7 +51,9 @@ class DebianSource(object):
     def __init__(self, vfs):
         """
         @param vfs: a class that implemented GbpVFS interface or
-             a directory (which will use the I{FileVFS} class.
+             a directory (which will use the I{FileVFS} class. The
+             directory must be the toplevel of a Debian source
+             package.
         """
         self._changelog = None
 

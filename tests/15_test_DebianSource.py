@@ -86,7 +86,6 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         self.assertFalse(source.is_native())
 
     def test_is_releasable(self):
-        source = DebianSource('.')
         os.makedirs('debian/')
         with open('debian/changelog', 'w') as f:
             f.write("""git-buildpackage (0.2.3) unstable; urgency=low
@@ -100,7 +99,6 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         self.assertTrue(source.is_releasable())
 
     def test_is_not_releasable(self):
-        source = DebianSource('.')
         os.makedirs('debian/')
         with open('debian/changelog', 'w') as f:
             f.write("""git-buildpackage (0.2.3) UNRELEASED; urgency=low
