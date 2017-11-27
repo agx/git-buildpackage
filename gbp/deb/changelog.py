@@ -272,6 +272,10 @@ class ChangeLog(object):
             args.append("--distribution=%s" % distribution)
 
         args.extend(dch_options or [])
+
+        if '--create' in args:
+            env['EDITOR'] = env['VISUAL'] = '/bin/true'
+
         args.append('--')
         if msg:
             args.append('[[[insert-git-dch-commit-message-here]]]')
@@ -344,3 +348,17 @@ class ChangeLog(object):
 
         name, mail = email.utils.parseaddr(_quote(maintainer or ''))
         return (_unquote(name), _unquote(mail))
+
+    @classmethod
+    def create(cls, package=None, version=None):
+        """
+        Create a new, empty changelog
+        """
+        dch_options = ['--create']
+        if package:
+            dch_options.extend(['--package', package])
+        if version:
+            dch_options.extend(['--newversion', version])
+
+        cls.spawn_dch(dch_options=dch_options)
+        return cls(filename='debian/changelog')
