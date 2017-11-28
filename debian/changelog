@@ -1,3 +1,16 @@
+git-buildpackage (0.9.4) unstable; urgency=medium
+
+  * [868e8ae] Bump standards version
+  * [5c078f7] docs: Add --git-overlay to synopsis
+  * [015f1a7] import-orig: use separate exit code when uscan did not find
+    anything new
+  * [45a0652] dch: Create changelog if missing.
+    Thanks to Daniel Dehennin for the groundwork on this (Closes: #669171)
+  * [c90cb78] git-pbuilder: properly escape -? (Closes: #882984)
+  * gbp-try-ff improvements
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 28 Nov 2017 12:32:01 +0100
+
 git-buildpackage (0.9.3) unstable; urgency=medium
 
   * [9a2c5e6] import_orig: drop debian/ again in --merge-mode=replace.
