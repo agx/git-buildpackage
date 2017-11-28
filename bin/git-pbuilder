@@ -44,7 +44,7 @@ unset_env() {
 }
 
 case $1 in
-    -h|--help|-?)
+    -h|--help|-\?)
     cat <<EOF
 git-pbuilder - Wrapper around cowbuilder/qemubuilder for gbp buildpackage
 
