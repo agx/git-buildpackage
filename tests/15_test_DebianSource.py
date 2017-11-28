@@ -118,3 +118,26 @@ class TestDebianSource(testutils.DebianGitTestRepo):
         source = DebianSource('.')
         self.assertIsNotNone(source.control)
         self.assertEquals(source.control.name, "foo")
+
+    def test_cur_dir_not_toplevel(self):
+        """
+        Check if we can parse files if workdir != debian toplevel dir
+        """
+        os.makedirs('debian/')
+        with open('debian/changelog', 'w') as f:
+            f.write("""foo (0.2.3) unstable; urgency=low
+
+  * git doesn't like '~' in tag names so replace this with a dot when tagging
+
+ -- Guido Guenther <agx@sigxcpu.org>  Mon,  2 Oct 2006 18:30:20 +0200
+""")
+        with open('debian/control', 'w') as f:
+            f.write("Source: foo")
+        os.chdir('debian/')
+        source = DebianSource('..')
+        self.assertEquals(source.changelog.name, "foo")
+        self.assertEquals(source.control.name, "foo")
+
+        source = DebianSource(os.path.abspath('..'))
+        self.assertEquals(source.changelog.name, "foo")
+        self.assertEquals(source.control.name, "foo")
