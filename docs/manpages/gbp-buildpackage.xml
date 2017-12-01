@@ -268,7 +268,8 @@
           </term>
           <listitem>
             <para>
-              Don't try to create any upstream tarballs.
+              Don't try to create any upstream tarballs or to create
+              symlinks to existing tarballs in <option>tarball-dir</option>.
             </para>
           </listitem>
 	</varlistentry>
