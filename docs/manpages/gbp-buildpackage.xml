@@ -39,10 +39,10 @@
       <arg><option>--git-pbuilder-options</option>=<replaceable>PBUILDER_OPTIONS</replaceable></arg>
       <arg><option>--git-[no-]sign-tags</option></arg>
       <arg><option>--git-keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
-      <arg><option>--git-posttag=</option><replaceable>COMMAND</replaceable></arg>
-      <arg><option>--git-postbuild=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-postexport=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-postbuild=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-posttag=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-[no-]hooks</option></arg>
       <arg><option>--git-debian-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-debian-tag-msg=</option><replaceable>tag-msg-format</replaceable></arg>
@@ -460,37 +460,6 @@
       </para>
       <variablelist>
 	<varlistentry>
-          <term><option>--git-posttag=</option><replaceable>COMMAND</replaceable>
-          </term>
-          <listitem>
-            <para>
-              Execute <replaceable>COMMAND</replaceable> after tagging a new
-              version.
-            </para>
-            <para>
-              Exported environment variables are: <envar>GBP_TAG</envar> (the name
-              of the generated tag), <envar>GBP_BRANCH</envar> (the branch the
-              package was build from) and <envar>GBP_SHA1</envar> (the sha1 of the
-              commit the tag was created at).
-            </para>
-          </listitem>
-	</varlistentry>
-	<varlistentry>
-          <term><option>--git-postbuild=</option><replaceable>COMMAND</replaceable>
-          </term>
-          <listitem>
-            <para>
-              Execute <replaceable>COMMAND</replaceable> after successful
-              build.
-            </para>
-            <para>
-              Exported environment variables are: <envar>GBP_CHANGES_FILE</envar>
-              (the name of the generated changes file),
-              <envar>GBP_BUILD_DIR</envar> (the build dir).
-            </para>
-          </listitem>
-	</varlistentry>
-	<varlistentry>
           <term><option>--git-postexport=</option><replaceable>COMMAND</replaceable>
           </term>
           <listitem>
@@ -519,6 +488,37 @@
               Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
               repository the package is being built from),
               <envar>GBP_BUILD_DIR</envar> (the build dir).
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--git-postbuild=</option><replaceable>COMMAND</replaceable>
+          </term>
+          <listitem>
+            <para>
+              Execute <replaceable>COMMAND</replaceable> after successful
+              build.
+            </para>
+            <para>
+              Exported environment variables are: <envar>GBP_CHANGES_FILE</envar>
+              (the name of the generated changes file),
+              <envar>GBP_BUILD_DIR</envar> (the build dir).
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--git-posttag=</option><replaceable>COMMAND</replaceable>
+          </term>
+          <listitem>
+            <para>
+              Execute <replaceable>COMMAND</replaceable> after tagging a new
+              version.
+            </para>
+            <para>
+              Exported environment variables are: <envar>GBP_TAG</envar> (the name
+              of the generated tag), <envar>GBP_BRANCH</envar> (the branch the
+              package was build from) and <envar>GBP_SHA1</envar> (the sha1 of the
+              commit the tag was created at).
             </para>
           </listitem>
 	</varlistentry>
