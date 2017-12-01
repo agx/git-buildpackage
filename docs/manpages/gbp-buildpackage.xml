@@ -465,7 +465,9 @@
           <listitem>
             <para>
               Execute <replaceable>COMMAND</replaceable> after exporting the source
-              tree - valid only if --git-export-dir has been specified.
+              tree. Valid only if --git-export-dir has been specified. The working
+              directory of this hook is the toplevel directory of
+              the exported source tree.
             </para>
             <para>
               Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
@@ -497,7 +499,8 @@
           <listitem>
             <para>
               Execute <replaceable>COMMAND</replaceable> after successful
-              build.
+              build. The working directory of this hook is the
+              directory the package was built in.
             </para>
             <para>
               Exported environment variables are: <envar>GBP_CHANGES_FILE</envar>
@@ -512,7 +515,8 @@
           <listitem>
             <para>
               Execute <replaceable>COMMAND</replaceable> after tagging a new
-              version.
+              version. The working directory of this hook is the
+              toplevel directory of the &git; repository.
             </para>
             <para>
               Exported environment variables are: <envar>GBP_TAG</envar> (the name
