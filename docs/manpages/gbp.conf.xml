@@ -134,19 +134,9 @@
       pristine-tar = False
     </programlisting>
     <para>respectively.</para>
-    <note>
-      <para>
-	To see the current set of values that would be applied after parsing the
-	configuration files, use <xref linkend="man.gbp.config"/>.
-      </para>
-    </note>
-    <note>
-      <para>
-	<command>gbp import-dscs</command> and <command>git-pbuilder</command>
-	can't be configured via <filename>gbp.conf</filename>.
-      </para>
-    </note>
 
+    <refsect2>
+      <title>Remote site configuration</title>
     <para>
       <xref linkend="man.gbp.create.remote.repo"/> can additionally parse remote site
       configurations from <filename>gbp.conf</filename>. For example, a configuration like:
@@ -172,6 +162,24 @@
       This can be useful if you're often creating new remote repositories for
       different projects.
     </para>
+    </refsect2>
+
+    <refsect2>
+      <title>Notes</title>
+      <note>
+	<para>
+	  To see the current set of values that would be applied after parsing the
+	  configuration files, use <xref linkend="man.gbp.config"/>.
+	</para>
+      </note>
+
+      <note>
+	<para>
+	  <command>gbp import-dscs</command> and <command>git-pbuilder</command>
+	  can't be configured via <filename>gbp.conf</filename>.
+	</para>
+      </note>
+    </refsect2>
 
   </refsect1>
   <refsect1>
