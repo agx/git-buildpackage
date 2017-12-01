@@ -59,11 +59,12 @@
       hash sign (<option>#</option>). The overall layout is:
     </para>
     <programlisting>
+      [DEFAULTS]
       # This section is for global settings. Affects all commands.
       # Options set here have the lowest priority.
       key = value
 
-
+      [&lt;command&gt;]
       # Specific sections for each command, like <command>buildpackage</command>
       # Options set here have lower priority than command line options
       key = value
@@ -245,6 +246,7 @@
   <refsect1>
     <title>SEE ALSO</title>
     <para>
+      <xref linkend="man.gbp.config"/>,
       <xref linkend="man.gbp.clone"/>,
       <xref linkend="man.gbp.create.remote.repo"/>,
       <xref linkend="man.gbp.pq"/>,
