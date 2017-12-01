@@ -147,6 +147,24 @@
         </listitem>
       </varlistentry>
     </variablelist>
+    <variablelist>
+      <varlistentry>
+        <term>tag
+        </term>
+        <listitem>
+          <para>Tag a &debian; release in a &git; repository</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <variablelist>
+      <varlistentry>
+        <term>push
+        </term>
+        <listitem>
+          <para>Push packaging branches to a remote &git; repository</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
   </refsect1>
   <refsect1>
       &man.gbp.config-files;
