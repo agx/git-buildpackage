@@ -539,6 +539,7 @@ def main(argv):
                      )(dir=build_dir)
 
             # Finally build the package:
+            gbp.log.info("Performing the build")
             RunAtCommand(options.builder,
                          [pipes.quote(arg) for arg in dpkg_args],
                          shell=True,

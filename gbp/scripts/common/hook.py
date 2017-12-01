@@ -17,13 +17,19 @@
 """Common code for runniing hooks"""
 
 from gbp.command_wrappers import RunAtCommand
+import gbp.log
 
 
 class Hook(RunAtCommand):
     "A hook run by one of the scripts"
     def __init__(self, name, cmd, extra_env):
         RunAtCommand.__init__(self, cmd, shell=True, extra_env=extra_env)
+        self.name = name
         self.run_error = '%s-hook %s' % (name, self.run_error)
+
+    def __call__(self, *args, **kwargs):
+        gbp.log.info("Running %s hook" % self.name)
+        return RunAtCommand.__call__(self, *args, **kwargs)
 
     @staticmethod
     def md(a, b):
