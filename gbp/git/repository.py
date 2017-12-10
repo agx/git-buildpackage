@@ -112,7 +112,7 @@ class GitRepository(object):
             ret = os.path.abspath(os.path.join(path, cdup or '.'))
         except GitRepositoryError:
             raise  # We already have a useful error message
-        except:
+        except Exception:
             raise GitRepositoryError("No Git repository at '%s'" % path)
         return ret
 
@@ -981,11 +981,11 @@ class GitRepository(object):
         maxlen = 40
         s = sha1.strip()
 
-        l = length or maxlen
+        sl = length or maxlen
 
-        if len(s) < l or len(s) > maxlen:
+        if len(s) < sl or len(s) > maxlen:
             raise GitRepositoryError("'%s' is not a valid sha1%s" %
-                                     (s, " of length %d" % l if length else ""))
+                                     (s, " of length %d" % sl if length else ""))
         return s
 
 #{ Trees

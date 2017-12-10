@@ -52,7 +52,7 @@ def send_notification(summary, msg):
     try:
         if not n.show():
             return False
-    except:
+    except Exception:
         return False
     return True
 
