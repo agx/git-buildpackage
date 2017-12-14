@@ -360,7 +360,7 @@
 </programlisting>
 
 <para>
-  Note that you can you can push out patch-queue branches. Other team
+  Note that you can push out patch-queue branches. Other team
   members must just be aware that branches in the patch-queue/
   namespace are being rebased frequently and therefore cause
   non fast-forward updates.
