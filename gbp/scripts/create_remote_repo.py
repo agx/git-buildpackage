@@ -371,7 +371,7 @@ def do_list(sections):
         for n in names:
             print("    %s" % n)
     else:
-        gbp.log.info("No remot config templates found.")
+        gbp.log.info("No remote config templates found.")
     return 0
 
 
