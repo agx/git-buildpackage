@@ -24,6 +24,7 @@ from collections import defaultdict
 
 import gbp.log as log
 from gbp.errors import GbpError
+from gbp.format import format_b
 from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit
 from gbp.git.errors import GitError
@@ -1044,7 +1045,7 @@ class GitRepository(object):
 
         for mode, type_, sha1, name in contents:
             name = to_bin(name)
-            objs += b'%s %s %s\t%s\0' % (mode.encode(), type_.encode(), sha1.encode(), name)
+            objs += format_b(b'%s %s %s\t%s\0', mode.encode(), type_.encode(), sha1.encode(), name)
 
         sha1, err, ret = self._git_inout('mktree',
                                          args.args,
