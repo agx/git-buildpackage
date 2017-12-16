@@ -21,6 +21,8 @@
 import re
 import os
 import datetime
+import pwd
+import socket
 import time
 from email.message import Message
 from email.header import Header
@@ -250,7 +252,7 @@ def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
 def format_diff(outdir, filename, repo, start, end, abbrev, path_exclude_regex=None):
     """Create a patch of diff between two repository objects"""
 
-    info = {'author': repo.get_author_info()}
+    info = {'author': get_author(repo)}
     now = datetime.datetime.now().replace(tzinfo=GitTz(-time.timezone))
     info['author'].set_date(now)
     info['subject'] = "Raw diff %s..%s" % (start, end)
@@ -268,6 +270,28 @@ def format_diff(outdir, filename, repo, start, end, abbrev, path_exclude_regex=N
                          text=True, abbrev=abbrev, renames=False)
         return write_patch_file(filename, info, diff)
     return None
+
+
+def get_author(repo):
+    """Determine author name and email"""
+    author = GitModifier()
+    if repo:
+        author = repo.get_author_info()
+
+    passwd_data = pwd.getpwuid(os.getuid())
+    if not author.name:
+        # On some distros (Ubuntu, at least) the gecos field has it's own
+        # internal structure of comma-separated fields
+        author.name = passwd_data.pw_gecos.split(',')[0].strip()
+        if not author.name:
+            author.name = passwd_data.pw_name
+    if not author.email:
+        if 'EMAIL' in os.environ:
+            author.email = os.environ['EMAIL']
+        else:
+            author.email = "%s@%s" % (passwd_data.pw_name, socket.getfqdn())
+
+    return author
 
 
 def get_maintainer_from_control(repo):
