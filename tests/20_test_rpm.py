@@ -334,6 +334,18 @@ class TestSpecFile(RpmTestBase):
         eq_(len(series), 2)
         eq_(os.path.basename(series[-1].path), '1.patch')
 
+    def test_patch_series_autosetup(self):
+        """Check patch series functionalitu with %autostup"""
+        spec_filepath = os.path.join(SPEC_DIR, 'gbp-test3.spec')
+        spec = SpecFileTester(spec_filepath)
+
+        eq_(len(spec.patchseries()), 2)
+        eq_(len(spec.patchseries(ignored=True)), 3)
+        spec.update_patches(['1.patch'], {})
+        eq_(len(spec.patchseries()), 1)
+        eq_(len(spec.patchseries(ignored=True)), 2)
+        eq_(spec.protected('_special_directives')['patch'], [])
+
     def test_patch_series_quirks(self):
         """Patches are applied in order different from the patch numbering"""
         spec_filepath = os.path.join(SPEC_DIR, 'gbp-test-quirks.spec')
