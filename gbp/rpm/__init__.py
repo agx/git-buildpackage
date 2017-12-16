@@ -382,7 +382,8 @@ class SpecFile(object):
                 directiveid = -1
 
         # Record special directive/scriptlet/macro locations
-        if directivename in self.section_identifiers + ('setup', 'patch'):
+        if directivename in self.section_identifiers + ('setup', 'patch',
+                                                        'autosetup'):
             linerecord = {'line': lineobj,
                           'id': directiveid,
                           'args': matchobj.group('args')}
@@ -666,7 +667,10 @@ class SpecFile(object):
             tag_line = self._tags['name']['lines'][-1]['line']
 
         # Determine where to add %patch macro lines
-        if 'patch-macros' in self._gbp_tags:
+        if self._special_directives['autosetup']:
+            gbp.log.debug("Found '%autosetup, skip adding %patch macros")
+            macro_line = None
+        elif 'patch-macros' in self._gbp_tags:
             gbp.log.debug("Adding '%patch' macros after the start marker")
             macro_line = self._gbp_tags['patch-macros'][-1]['line']
         elif macro_prev:
@@ -697,48 +701,55 @@ class SpecFile(object):
             cmds = commands[patch] if patch in commands else {}
             patchnum = startnum + ind
             tag_line = self._set_tag("Patch", patchnum, patch, tag_line)
+
             # Add '%patch' macro and a preceding comment line
-            comment_text = "# %s\n" % patch
-            macro_line = self._content.insert_after(macro_line, comment_text)
-            macro_line = self._set_special_macro('patch', patchnum, '-p1',
-                                                 macro_line)
-            for cmd, args in cmds.items():
-                if cmd in ('if', 'ifarch'):
-                    self._content.insert_before(macro_line, '%%%s %s\n' %
-                                                (cmd, args))
-                    macro_line = self._content.insert_after(macro_line,
-                                                            '%endif\n')
-                    # We only support one command per patch, for now
-                    break
+            if macro_line is not None:
+                comment_text = "# %s\n" % patch
+                macro_line = self._content.insert_after(macro_line, comment_text)
+                macro_line = self._set_special_macro('patch', patchnum, '-p1',
+                                                     macro_line)
+                for cmd, args in cmds.items():
+                    if cmd in ('if', 'ifarch'):
+                        self._content.insert_before(macro_line, '%%%s %s\n' %
+                                                    (cmd, args))
+                        macro_line = self._content.insert_after(macro_line,
+                                                                '%endif\n')
+                        # We only support one command per patch, for now
+                        break
 
     def patchseries(self, unapplied=False, ignored=False):
         """Return non-ignored patches of the RPM as a gbp patchseries"""
         series = PatchSeries()
-        if 'patch' in self._tags:
-            tags = self._patches()
+
+        ignored = set() if ignored else set(self.ignorepatches)
+        tags = dict([(k, v) for k, v in self._patches().items() if k not in ignored])
+
+        if self._special_directives['autosetup']:
+            # Return all patchses if %autosetup is used
+            for num in sorted(tags):
+                filename = os.path.basename(tags[num]['linevalue'])
+                series.append(Patch(os.path.join(self.specdir, filename)))
+        else:
             applied = []
             for macro in self._special_directives['patch']:
                 if macro['id'] in tags:
                     applied.append((macro['id'], macro['args']))
-            ignored = set() if ignored else set(self.ignorepatches)
 
             # Put all patches that are applied first in the series
             for num, args in applied:
-                if num not in ignored:
-                    opts = self._patch_macro_opts(args)
-                    strip = int(opts.strip) if opts.strip else 0
-                    filename = os.path.basename(tags[num]['linevalue'])
-                    series.append(Patch(os.path.join(self.specdir, filename),
-                                        strip=strip))
+                opts = self._patch_macro_opts(args)
+                strip = int(opts.strip) if opts.strip else 0
+                filename = os.path.basename(tags[num]['linevalue'])
+                series.append(Patch(os.path.join(self.specdir, filename),
+                                    strip=strip))
             # Finally, append all unapplied patches to the series, if requested
             if unapplied:
                 applied_nums = set([num for num, _args in applied])
                 unapplied = set(tags.keys()).difference(applied_nums)
                 for num in sorted(unapplied):
-                    if num not in ignored:
-                        filename = os.path.basename(tags[num]['linevalue'])
-                        series.append(Patch(os.path.join(self.specdir,
-                                                         filename), strip=0))
+                    filename = os.path.basename(tags[num]['linevalue'])
+                    series.append(Patch(os.path.join(self.specdir, filename),
+                                        strip=0))
         return series
 
     def _guess_orig_prefix(self, orig):
