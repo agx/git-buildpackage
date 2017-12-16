@@ -109,7 +109,7 @@ by version number.
     your message to get the imported upstream version).
     </para>
 
-    <sect2>
+    <sect2 id="gbp.import.error.recovery">
       <title>Recovering from errors</title>
       <para>In case of an error &gbp-import-orig; will by default
 	rollback (undo) all changes it has done to the repository so far:
@@ -145,7 +145,7 @@ by version number.
     If the &git; repository wasn't created with &gbp-import-dsc;, you have to
     tell &gbp-buildpackage; and friends where to find the upstream sources.
     </para>
-    <sect2>
+    <sect2 id="gbp.import.upstream.on.branch">
     <title>Upstream sources on a branch</title>
     <para>
     If the upstream sources are already on a separate branch, things are pretty
@@ -168,7 +168,7 @@ EOF
     merged to the <option>debian-branch</option>.
     </para>
     </sect2>
-    <sect2>
+    <sect2 id="gbp.import.upstream.not.on.branch">
     <title>Upstream sources not on a branch</title>
     <para>
     If you don't have an upstream branch but started your repository with only

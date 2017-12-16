@@ -20,9 +20,9 @@
     commits. Invocations of &dch; and &gbp-dch; can be mixed.
   </para>
 
-  <sect1>
+  <sect1 id="gbp.maintaining.changelog">
     <title>Maintaining <filename>debian/changelog</filename></title>
-    <sect2>
+    <sect2 id="gbp.changelog.release">
       <title>Creating &changelog; just before the release</title>
       <para>
 	The simplest way is doing all the changes to the
@@ -39,7 +39,7 @@
 	finally spawns an editor for final changelog editing.
       </para>
     </sect2>
-    <sect2>
+    <sect2 id="gbp.incremental.changelog">
       <title>Incrementally filling &changelog;</title>
       <para>
 	You can run &gbp-dch; without any options to make it add all
@@ -60,7 +60,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="gbp.snapshots">
     <title>Creating snapshots with increasing version numbers</title>
     <para>
       The downside of the above methods is that you either have the
