@@ -179,7 +179,7 @@
         </term>
         <listitem>
           <para>
-          Use the author identity as the comitter when importing upstream
+          Use the author identity as the committer when importing upstream
           sources and packaging files.
           </para>
         </listitem>

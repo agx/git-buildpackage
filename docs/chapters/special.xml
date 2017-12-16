@@ -215,7 +215,7 @@ means.
       not abort if you have changes in your current working copy.
 
       If you're still getting an error about <emphasis>unexpected
-      upstream changes</emphasis> make sure you have no uncomitted
+      upstream changes</emphasis> make sure you have no uncommitted
       changes in you workig copy (changes in
       the <filename>debian/</filename> directory are o.k.) and no
       files that are ignored by git

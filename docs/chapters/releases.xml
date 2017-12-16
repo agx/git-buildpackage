@@ -68,9 +68,9 @@
       have a changelog entry with <emphasis>UNRELEASED</emphasis> that
       has the same version number for all commits you do during the
       development cycle of your package. Although this is common
-      practice in &debian; is means that also all your test builds
+      practice in &debian; it means that also all your test builds
       have the same version number which makes them hard to
-      distinguish in e.g. continous integration pipelines.
+      distinguish in e.g. continuous integration pipelines.
     </para>
 
     <para>
@@ -98,7 +98,7 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
     version number will continue to increase. Since the snapshot
     banner contains the commit id of the current branch HEAD,
     &gbp-dch; can figure out what to append to the changelog by itself
-    (even without comitting the changelog first):
+    (even without committing the changelog first):
 <programlisting>
 &gbp-dch; <option>--snapshot</option>
 </programlisting>

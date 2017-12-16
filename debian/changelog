@@ -1594,7 +1594,7 @@ git-buildpackage (0.6.14) unstable; urgency=medium
   * [949ce84] Slightly improve usage output
   * [045e607] gbp pq: document --force
   * [817976e] Handle version format errors more gracefully.
-  * [b0390d1] Fix comitter vs committer typos.
+  * [b0390d1] Fix committer vs committer typos.
     Thanks to Sandro Tosi (Closes: #748339)
   * [dc231f2] Document that the patches must apply without fuzz
   * [de77df7] pq: Print proper error message if we fail to apply the tree
@@ -2543,7 +2543,7 @@ git-buildpackage (0.6.0~git20120315) unstable; urgency=low
 
   * [3cac77f] docs: Fix path to gbp-configure-unpatched-source. Thanks to
     Tobias Frost (Closes: #664063)
-  * [2f08cbd] Parse author and comitter from changelog for native package too
+  * [2f08cbd] Parse author and committer from changelog for native package too
     (Closes: #662993)
 
  -- Guido Günther <agx@sigxcpu.org>  Thu, 15 Mar 2012 22:39:00 +0100
@@ -2991,7 +2991,7 @@ git-buildpackage (0.5.18) experimental; urgency=low
     level.
   * [9054ae1] git.force_head: quiet git reset so we don't see pointless 'HEAD
     is now at ...' messages during imports.
-  * [d36077c] Add --author-is-comitter and --author-date-is-comitter-date
+  * [d36077c] Add --author-is-committer and --author-date-is-committer-date
     commandline options (Closes: #610381)
 
   [ Jonathan Nieder ]
