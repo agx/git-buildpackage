@@ -52,6 +52,24 @@
     the your &debian-branch;, of course.
   </para>
 
+  <para>
+    Also, beware that &gbp-pq; currently has incomplete support for
+    <ulink url="http://dep.debian.net/deps/dep3/">DEP3</ulink> headers.
+    Initially, parsing with <command>git-mailinfo(1)</command> is attempted,
+    which supports only the <computeroutput>From</computeroutput> and
+    <computeroutput>Subject</computeroutput> fields. If neither of these are
+    present, &gbp-pq; will attempt to convert the patch from DEP3 format into
+    a <command>git-mailinfo(1)</command> compatible format. This involves first
+    loading <computeroutput>From</computeroutput> using the
+    <computeroutput>Author</computeroutput> field and
+    <computeroutput>Subject</computeroutput> using the first line of the
+    <computeroutput>Description</computeroutput> field. Then,  any additional
+    fields (such as <computeroutput>Origin</computeroutput> and
+    <computeroutput>Forwarded</computeroutput>), and the remainder of the
+    <computeroutput>Description</computeroutput> (if any), will be appended to
+    the body.
+  </para>
+
   <sect1 id="gbp.patches.workflow">
     <title>Basic Workflow</title>
 
