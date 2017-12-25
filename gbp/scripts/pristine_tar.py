@@ -71,7 +71,7 @@ def parse_args(argv):
 
 
 def main(argv):
-    ret = 0
+    ret = 1
     repo = None
 
     (options, args) = parse_args(argv)
@@ -100,10 +100,12 @@ def main(argv):
         repo.create_pristine_tar_commits(upstream_tag,
                                          tarball,
                                          component_tarballs)
+        ret = 0
     except (GitRepositoryError, GbpError, CommandExecFailed) as err:
         if str(err):
             gbp.log.err(err)
-        ret = 1
+    except KeyboardInterrupt:
+        gbp.log.err("Interrupted. Aborting.")
 
     if not ret:
         comp_msg = (' with additional tarballs for %s'

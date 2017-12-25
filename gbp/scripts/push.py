@@ -170,6 +170,8 @@ def main(argv):
     except (GbpError, GitRepositoryError, DebianSourceError) as err:
         if str(err):
             gbp.log.err(err)
+    except KeyboardInterrupt:
+        gbp.log.err("Interrupted. Aborting.")
 
     return retval
 

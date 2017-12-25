@@ -445,6 +445,9 @@ def main(argv):
         if len(err.__str__()):
             gbp.log.err(err)
         return 1
+    except KeyboardInterrupt:
+        gbp.log.err("Interrupted. Aborting.")
+        return 1
     finally:
         del_tmpdir()
 
