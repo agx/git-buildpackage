@@ -1,3 +1,50 @@
+git-buildpackage (0.9.5) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [6b43cfe] docs: gbp.conf: bring back section names.
+    These got lost in f6e360f6ca0b4e3b510f82546a1daada592b18b6.
+  * [d7739b8] docs: gbp: mention push and tag
+  * [3cbdc3a] docs: gbp-buildpackage: clarify --git-no-create-orig
+  * [7bb8758] docs: gbp-buildpackage: list hooks in execution order
+  * [59f82d8] docs: gbp-buildpackage: clarify hook working directories
+  * [22d40a4] hooks: print hook name prior to execution.
+    This makes it simpler to identify build steps
+  * [56d630b] pristine-tar: print upstream version number on import.
+    Printing the debian version might be confusing
+  * [06bbc70] Fix complaints of flake8 3.5
+  * [e51358f] docs: drop duplicate "you can"
+    Thanks to Ludovic Rousseau
+  * [5aaec4f] Typo fixes.
+    Thanks to Ludovic Rousseau
+  * [4312e54] docs: Add ids to all sections
+    so we get nicer link names
+  * [13cd3b4] Handle KeyboardInterrupt in pristine_tar, push, rpm_ch and tag
+    to avoid python exceptions on the console. The other commands handle it
+    already.
+
+  [ Markus Lehtonen ]
+  * [f50069a] rpm packaging: update dependency on rpm-build.
+    Most RPM-based distribution now support weak dependencies. Make rpm-build
+    a weak dependency as it's not strictly needed by buildpackage-rpm: in
+    Fedora people probably use 'mock' and in openSUSE they use 'osc' for
+    building packages, for example.
+  * [3661127] create_remote_repo: fix typo
+  * [d9a5319] rpm.SpecFile: support %autosetup.
+    Try to do "the right thing" when %autosetup macro is used in the spec
+    file. That is, do not examine/manage %patch macros at all, but, assume
+    that patches are handled by %autosetup which was introduced in RPM
+    v4.11.
+
+  [ Maximiliano Curia ]
+  * [17a471d] pq: Parse DEP3 headers.
+    (Closes: #785274)
+
+  [ Chris West (Faux) ]
+  * [3003d07] docs: pq: Document how DEP3 headers are parsed and added to the
+    commit message.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 29 Dec 2017 20:17:01 +0100
+
 git-buildpackage (0.9.4) unstable; urgency=medium
 
   * [868e8ae] Bump standards version
