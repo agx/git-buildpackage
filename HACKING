@@ -17,8 +17,9 @@ other tests use:
 
     make all+net
 
-You can run the tests in a debian/sid docker container by using
-tests/helpers/run-in-docker.
+You can run the tests in a `debian:sid` docker container by using
+
+    packaging/run-in-docker
 
 Building the API Docs
 ---------------------

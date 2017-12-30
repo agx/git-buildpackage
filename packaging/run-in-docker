@@ -1,0 +1,127 @@
+#!/bin/sh
+
+set -eu
+
+this="$(readlink -e ${0})"
+
+# assign defaults
+project_dir="$(dirname $(dirname ${this}))"
+debian_tag="${DEBIAN_TAG:-sid}"
+
+usage() {
+    cat << EOF
+Usage: $(basename ${this}) [OPTION]... [ACTION]
+Run tests or create package in a docker container
+
+Options:
+    -h                print this usage and exit
+    -C PROJECT_DIR    change to PROJECT_DIR (default: ${project_dir})
+    -t DEBIAN_TAG     debian release tag (default: ${debian_tag})
+
+Actions:
+    help       print this usage and exit
+    package    create debian package artifacts
+    test       run tests (default)
+
+Example:
+    $(basename ${this}) -C ~/code/git-buildpackage -t stretch package
+EOF
+}
+
+die() { { echo "ERROR: ${@}"; usage; } >&2; exit 1; }
+
+# convenience wrapper
+docker_build() {
+    docker build \
+        --force-rm=${DOCKER_BUILD_FORCE_RM:-false} \
+        --no-cache=${DOCKER_BUILD_NO_CACHE:-false} \
+        ${@}
+}
+
+# take path to project dir; build docker image for base
+base_build() {
+    (
+        cd ${project_dir}
+        [ -f .gitignore ] && cat .gitignore
+        [ -f .gitmodules ] && sed -nr 's|\s+path = (.+)|\1|gp' .gitmodules
+        cat <<EOF
+${this##${PWD}/}
+*.buildinfo
+*.changes
+*.deb
+*.dsc
+*.tar.xz
+.dockerignore
+.git*
+EOF
+    ) >${project_dir}/.dockerignore
+    docker_build \
+        --pull=${DOCKER_BUILD_PULL:-false} \
+        --build-arg=FROM_IMAGE=debian:${debian_tag} \
+        -t gbp-base:${debian_tag} -f- ${project_dir} <<'EOF'
+arg FROM_IMAGE
+from ${FROM_IMAGE}
+env DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
+workdir /workdir/project
+run set -euvx \
+  && apt-get update -y \
+  && apt-get -y --no-install-recommends install \
+       build-essential devscripts equivs
+copy . .
+run yes | mk-build-deps -ir
+run groupadd luser && useradd -g luser luser && chown -R luser:luser ..
+user luser
+EOF
+    rm -vf ${project_dir}/.dockerignore
+}
+
+
+# run tests
+gbp_test() {
+    base_build
+    for L in C.UTF-8 C; do
+        docker run --rm -ie"TEST_LOCALE=${L}" gbp-base:${debian_tag} sh <<'EOF'
+set -euvx
+make all+net
+EOF
+    done
+}
+
+# create debian package artifacts, copy to host
+gbp_package() {
+    base_build
+    docker_build \
+        --build-arg=FROM_IMAGE=gbp-base:${debian_tag} \
+        -t gbp-package:${debian_tag} -f- ${project_dir} <<'EOF'
+arg FROM_IMAGE
+from ${FROM_IMAGE}
+run dpkg-buildpackage -j$(nproc) -sa -us -uc
+EOF
+    docker run --rm -iu0:0 \
+        --mount type=bind,source="${PWD}",target=/mnt/host-volume \
+        gbp-package:${debian_tag} sh <<EOF
+set -euvx
+find .. -maxdepth 1 -mindepth 1 -type f \
+    -exec chown -v $(id -u):$(id -g) {} + \
+    -a -exec cp -vat /mnt/host-volume {} +
+EOF
+}
+
+while getopts ":hC:t:" opt; do
+    case $opt in
+        h) usage; exit 0;;
+        C) project_dir="$(readlink -e ${OPTARG})"
+            [ -d "${project_dir}" ] || die "bad project dir ${OPTARG}";;
+        t) debian_tag="${OPTARG}";;
+        :) die "missing argument: -${OPTARG}";;
+        \?) die "bad option: -${OPTARG}";;
+    esac
+done
+
+shift $((${OPTIND} - 1))
+case "${1:-test}" in
+    'help') usage; exit 0;;
+    'test') gbp_test; exit ${?};;
+    'package') gbp_package; exit ${?};;
+    \?) die "bad action: ${1}";;
+esac
