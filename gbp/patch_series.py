@@ -253,60 +253,6 @@ class Dep3Patch(Patch):
                     break
         self._dep3_to_info(headers)
 
-    def _get_subject_from_filename(self):
-        """
-        Determine the patch's subject based on the its filename
-
-        >>> p = Patch('debian/patches/foo.patch')
-        >>> p._get_subject_from_filename()
-        'foo'
-        >>> Patch('foo.patch')._get_subject_from_filename()
-        'foo'
-        >>> Patch('debian/patches/foo.bar')._get_subject_from_filename()
-        'foo.bar'
-        >>> p = Patch('debian/patches/foo')
-        >>> p._get_subject_from_filename()
-        'foo'
-        >>> Patch('0123-foo.patch')._get_subject_from_filename()
-        'foo'
-        >>> Patch('0123.patch')._get_subject_from_filename()
-        '0123'
-        >>> Patch('0123-foo-0123.patch')._get_subject_from_filename()
-        'foo-0123'
-
-        @return: the patch's subject
-        @rtype: C{str}
-        """
-        subject = os.path.basename(self.path)
-        # Strip of .diff or .patch from patch name
-        try:
-            base, ext = subject.rsplit('.', 1)
-            if ext in self.patch_exts:
-                subject = base
-        except ValueError:
-                pass  # No ext so keep subject as is
-        return subject.lstrip('0123456789-') or subject
-
-    def _get_info_field(self, key, get_val=None):
-        """
-        Return the key I{key} from the info C{dict}
-        or use val if I{key} is not a valid key.
-
-        Fill self.info if not already done.
-
-        @param key: key to fetch
-        @type key: C{str}
-        @param get_val: alternate value if key is not in info dict
-        @type get_val: C{str}
-        """
-        if self.info is None:
-            self._read_info()
-
-        if key in self.info:
-            return self.info[key]
-        else:
-            return get_val() if get_val else None
-
 
 class PatchSeries(list):
     """
