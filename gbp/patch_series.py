@@ -168,7 +168,7 @@ class Patch(object):
 
 class Dep3Patch(Patch):
     def _read_info(self):
-        self._read_git_mailinfo()
+        super(Dep3Patch, self)._read_info()
         if not self.info:
             self._check_dep3()
 
