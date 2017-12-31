@@ -7,7 +7,7 @@ from . import context  # noqa: 401
 import os
 import unittest
 
-from gbp.patch_series import Patch
+from gbp.patch_series import Patch, Dep3Patch
 
 
 class TestPatch(unittest.TestCase):
@@ -38,3 +38,17 @@ class TestPatch(unittest.TestCase):
                          "It can span several lines.\n",
                          p.long_desc)
         self.assertEqual('Sat, 24 Dec 2011 12:05:53 +0100', p.date)
+
+
+class TestDep3Patch(unittest.TestCase):
+    data_dir = os.path.splitext(__file__)[0] + '_data'
+
+    def test_encoding(self):
+        """Make sure broken encoding does no affect import"""
+        patchfile = os.path.join(self.data_dir, "dep3-iso8859-1.patch")
+        self.assertTrue(os.path.exists(patchfile))
+        p = Dep3Patch(patchfile)
+        self.assertEqual('Replace all -- in man page by \-\- to make lintian happy.', p.subject)
+        self.assertEqual("Roland Rosenfeld", p.author)
+        self.assertEqual("roland@debian.org", p.email)
+        self.assertEqual("", p.long_desc)

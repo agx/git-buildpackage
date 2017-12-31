@@ -236,7 +236,7 @@ class Dep3Patch(Patch):
         # header and diff stat
         headers = collections.OrderedDict()
         current = 'long_desc'
-        with open(self.path) as file:
+        with open(self.path, errors='replace') as file:
             for line in file:
                 if VALID_DEP3_ENDS.search(line):
                     break
@@ -252,6 +252,7 @@ class Dep3Patch(Patch):
                     # everything else in the long_desc, nothing else to do
                     break
         self._dep3_to_info(headers)
+
 
 
 class PatchSeries(list):
