@@ -301,8 +301,6 @@ class Dep3Patch(Patch):
         """
         if self.info is None:
             self._read_info()
-        if not self.info:
-            self._check_dep3()
 
         if key in self.info:
             return self.info[key]
