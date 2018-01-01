@@ -254,7 +254,6 @@ class Dep3Patch(Patch):
         self._dep3_to_info(headers)
 
 
-
 class PatchSeries(list):
     """
     A series of L{Patch}es as read from a quilt series file).
