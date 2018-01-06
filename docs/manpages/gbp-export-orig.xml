@@ -21,7 +21,7 @@
       <arg><option>--verbose</option></arg>
       <arg><option>--color=</option>[auto|on|off]</arg>
       <arg><option>--color-scheme</option>=<replaceable>COLOR_SCHEME</replaceable></arg>
-      <arg><option>--upstream-branch=</option><replaceable>TREEISH</replaceable></arg>
+      <arg><option>--upstream-branch=</option><replaceable>BRANCH_NAME</replaceable></arg>
       <arg><option>--[no-]submodules</option></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--upstream-tree=</option><replaceable>[TAG|BRANCH|TREEISH]</replaceable></arg>
