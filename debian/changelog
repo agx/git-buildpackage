@@ -1,3 +1,18 @@
+git-buildpackage (0.9.6) unstable; urgency=medium
+
+  * [89495f7] patch_series: Properly chain up to parent class.
+    Insted of duplicating the logic use the parent classes _read_info.
+  * [28838b9] patch_series: don't read dep3 info multiple times
+  * [7b0660a] patch_series: Remove duplicate functions.
+    No need to repeat them in Dep3Patch since the parent class Patch already
+    has them.
+  * [0730a57] patch_series: Don't fail on decoding errors when looking for
+    DEP3 headers
+    (Closes: #885929)
+  * [6979250] export-orig: fix --upstream-branch argument name in manpage
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 06 Jan 2018 20:43:18 +0100
+
 git-buildpackage (0.9.5) unstable; urgency=medium
 
   [ Guido Günther ]
