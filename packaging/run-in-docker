@@ -107,12 +107,13 @@ find .. -maxdepth 1 -mindepth 1 -type f \
 EOF
 }
 
-while getopts "hC:t:" opt; do
+while getopts ":hC:t:" opt; do
     case $opt in
         h) usage; exit 0;;
         C) project_dir="$(readlink -e ${OPTARG})"
             [ -d "${project_dir}" ] || die "bad project dir ${OPTARG}";;
         t) debian_tag="${OPTARG}";;
+        :) die "missing argument: -${OPTARG}";;
         \?) die "bad option: -${OPTARG}";;
     esac
 done
