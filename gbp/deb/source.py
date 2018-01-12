@@ -51,10 +51,9 @@ class DebianSource(object):
     """
     def __init__(self, vfs):
         """
-        @param vfs: a class that implements I{GitVfs} interface or
-             a directory (which will use the I{FileVfs} class. The
-             directory must be the toplevel of a Debian source
-             package.
+        @param vfs: a class that implements L{GitVfs} interface or a directory
+            (which will use the L{FileVfs} class. The directory must be the
+            toplevel of a Debian source package.
         """
         self._changelog = None
         self._control = None
@@ -85,7 +84,7 @@ class DebianSource(object):
         """
         Check if package is releasable
 
-        Debian's current practive is to check for UNRELEASED in the distribution.
+        Debian's current practice is to check for UNRELEASED in the distribution.
         """
         return self.changelog.distribution != 'UNRELEASED'
 
