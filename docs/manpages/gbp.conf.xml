@@ -19,26 +19,55 @@
   <refsynopsisdiv>
    <variablelist>
       <varlistentry>
-      <term>/etc/git-buildpackage/gbp.conf</term>
-      <listitem><para>system wide</para></listitem>
+	<term>
+	  /etc/git-buildpackage/gbp.conf
+	</term>
+	<listitem>
+	  <para>
+	    system wide
+	  </para>
+	</listitem>
       </varlistentry>
       <varlistentry>
-      <term>~/.gbp.conf</term>
-      <listitem><para>per user</para></listitem>
+	<term>
+	  ~/.gbp.conf
+	</term>
+	<listitem>
+	  <para>
+	    per user
+	  </para>
+	</listitem>
       </varlistentry>
       <varlistentry>
-      <term>.gbp.conf</term>
-      <listitem><para>per branch, can be published with the
-      repository (deprecated)</para></listitem>
+	<term>
+	  .gbp.conf
+	</term>
+	<listitem>
+	  <para>
+	    per branch, can be published with the repository
+            (deprecated)
+	  </para>
+	</listitem>
       </varlistentry>
       <varlistentry>
-      <term>debian/gbp.conf</term>
-      <listitem><para>per branch, can be published with the
-      repository</para></listitem>
+	<term>
+	  debian/gbp.conf
+	</term>
+	<listitem>
+	  <para>
+	    per branch, can be published with the repository
+	  </para>
+	</listitem>
       </varlistentry>
       <varlistentry>
-      <term>.git/gbp.conf</term>
-      <listitem><para>per repository</para></listitem>
+	<term>
+	  .git/gbp.conf
+	</term>
+	<listitem>
+	  <para>
+	    per repository
+	  </para>
+	</listitem>
       </varlistentry>
     </variablelist>
   </refsynopsisdiv>
@@ -49,7 +78,7 @@
       default global options and specific options for individual &gbp;
       commands.  All files have the same format as described below and
       are parsed in the above order from top to bottom with increasing
-      precedence.
+      precedence. Non existing files will be skipped.
     </para>
     <para>
       Each file consists of either zero or one default section, and
@@ -227,19 +256,39 @@
 
   <refsect1>
     <title>ENVIRONMENT</title>
+    <para>
+      The following environment variables can be used to modify &gbp;'s
+      configuration file handling:
+    </para>
     <variablelist>
       <varlistentry>
 	<term><envar>GBP_CONF_FILES</envar></term>
-	<listitem><para>Colon separated list of files to parse. The default is
-	the above list of configuration files.</para></listitem>
+	<listitem>
+	  <para>
+	    A colon separated list of configuration files to parse. If
+            unset or empty the default list of files is parsed (see above).
+	  </para>
+	</listitem>
       </varlistentry>
       <varlistentry>
 	<term><envar>GBP_DISABLE_SECTION_DEPRECTATION</envar></term>
-	<listitem><para>Don't print a deprecation warning when &gbp;
-	encounters a section starting
-	with <emphasis>git-</emphasis>
-	or <emphasis>gbp-</emphasis>.
-	</para></listitem>
+	<listitem>
+	  <para>
+	    When set to a non-empty value don't print a deprecation
+	    warning in case &gbp; encounters a section starting with
+	    <emphasis>git-</emphasis> or <emphasis>gbp-</emphasis>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><envar>GBP_DISABLE_GBP_CONF_DEPRECTATION</envar></term>
+	<listitem>
+	  <para>
+	    When set to a non-empty value don't print a deprecation
+	    warning in case &gbp; encounters a configration file in
+	    a deprecated location.
+	  </para>
+	</listitem>
       </varlistentry>
     </variablelist>
   </refsect1>
