@@ -29,7 +29,7 @@ from gbp.scripts.pull import main as pull
 
 
 class TestPull(ComponentTestBase):
-    """Test cloning from a remote"""
+    """Test pulling from a remote"""
 
     @RepoFixtures.native()
     def test_pull_explicit_remote(self, repo):
