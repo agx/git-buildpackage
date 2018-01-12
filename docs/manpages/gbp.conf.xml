@@ -271,7 +271,7 @@
 	</listitem>
       </varlistentry>
       <varlistentry>
-	<term><envar>GBP_DISABLE_SECTION_DEPRECTATION</envar></term>
+	<term><envar>GBP_DISABLE_SECTION_DEPRECATION</envar></term>
 	<listitem>
 	  <para>
 	    When set to a non-empty value don't print a deprecation
@@ -281,7 +281,7 @@
 	</listitem>
       </varlistentry>
       <varlistentry>
-	<term><envar>GBP_DISABLE_GBP_CONF_DEPRECTATION</envar></term>
+	<term><envar>GBP_DISABLE_GBP_CONF_DEPRECATION</envar></term>
 	<listitem>
 	  <para>
 	    When set to a non-empty value don't print a deprecation

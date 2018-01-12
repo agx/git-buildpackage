@@ -434,12 +434,12 @@ class GbpOptionParser(OptionParser):
         self.config_parser.read(filename)
 
     def _warn_old_config_section(self, oldcmd, cmd):
-        if not os.getenv("GBP_DISABLE_SECTION_DEPRECTATION"):
+        if not os.getenv("GBP_DISABLE_SECTION_DEPRECATION"):
             gbp.log.warn("Old style config section [%s] found "
                          "please rename to [%s]" % (oldcmd, cmd))
 
     def _warn_old_gbp_conf(self, gbp_conf):
-        if (not os.getenv("GBP_DISABLE_GBP_CONF_DEPRECTATION") and
+        if (not os.getenv("GBP_DISABLE_GBP_CONF_DEPRECATION") and
                 not self._warned_old_gbp_conf):
             gbp.log.warn("Deprecated configuration file found at %s, "
                          "check gbp.conf(5) for alternatives" % gbp_conf)
