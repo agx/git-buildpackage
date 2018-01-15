@@ -352,33 +352,31 @@ def build_parser(name, prefix=None):
     export_group = parser.add_argument_group("export build-tree options",
                                              "alternative build tree related options")
 
-    parser.add_bool_conf_file_arg("--ignore-new", dest="ignore_new")
-    parser.add_arg("--verbose", action="store_true", dest="verbose",
+    parser.add_bool_conf_file_arg("--ignore-new")
+    parser.add_arg("--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    parser.add_conf_file_arg("--notify", dest="notify", type='tristate')
-    tag_group.add_arg("--tag", action="store_true", dest="tag",
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_conf_file_arg("--notify", type='tristate')
+    tag_group.add_arg("--tag", action="store_true",
                       help="create a tag after a successful build")
-    tag_group.add_arg("--tag-only", action="store_true", dest="tag_only",
+    tag_group.add_arg("--tag-only", action="store_true",
                       help="don't build, only tag and run the posttag hook")
-    tag_group.add_arg("--retag", action="store_true", dest="retag",
+    tag_group.add_arg("--retag", action="store_true",
                       help="don't fail if the tag already exists")
-    tag_group.add_bool_conf_file_arg("--sign-tags", dest="sign_tags")
-    tag_group.add_conf_file_arg("--keyid", dest="keyid")
-    tag_group.add_conf_file_arg("--debian-tag", dest="debian_tag")
-    tag_group.add_conf_file_arg("--debian-tag-msg", dest="debian_tag_msg")
-    tag_group.add_conf_file_arg("--upstream-tag", dest="upstream_tag")
-    orig_group.add_conf_file_arg("--upstream-tree", dest="upstream_tree")
-    orig_group.add_bool_conf_file_arg("--pristine-tar", dest="pristine_tar")
-    orig_group.add_bool_conf_file_arg("--pristine-tar-commit",
-                                      dest="pristine_tar_commit")
-    orig_group.add_conf_file_arg("--force-create", dest="force_create",
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--debian-tag")
+    tag_group.add_conf_file_arg("--debian-tag-msg")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    orig_group.add_conf_file_arg("--upstream-tree")
+    orig_group.add_bool_conf_file_arg("--pristine-tar")
+    orig_group.add_bool_conf_file_arg("--pristine-tar-commit")
+    orig_group.add_conf_file_arg("--force-create",
                                  help="force creation of orig tarball", action="store_true")
-    orig_group.add_conf_file_arg("--no-create-orig", dest="no_create_orig",
+    orig_group.add_conf_file_arg("--no-create-orig",
                                  help="don't create orig tarball", action="store_true")
-    orig_group.add_conf_file_arg("--tarball-dir", dest="tarball_dir", type="path",
+    orig_group.add_conf_file_arg("--tarball-dir", type="path",
                                  help="location to look for external tarballs")
     orig_group.add_conf_file_arg("--compression", dest="comp_type",
                                  help="Compression type")
@@ -386,38 +384,37 @@ def build_parser(name, prefix=None):
                                  help="Compression level")
     orig_group.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
                                  dest="components")
-    branch_group.add_conf_file_arg("--upstream-branch", dest="upstream_branch")
-    branch_group.add_conf_file_arg("--debian-branch", dest="debian_branch")
-    branch_group.add_bool_conf_file_arg("--ignore-branch", dest="ignore_branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_bool_conf_file_arg("--ignore-branch")
     branch_group.add_bool_conf_file_arg("--submodules", dest="with_submodules")
-    cmd_group.add_conf_file_arg("--builder", dest="builder",
+    cmd_group.add_conf_file_arg("--builder",
                                 help="command to build the Debian package")
-    cmd_group.add_conf_file_arg("--cleaner", dest="cleaner",
+    cmd_group.add_conf_file_arg("--cleaner",
                                 help="command to clean the working copy")
-    cmd_group.add_conf_file_arg("--prebuild", dest="prebuild",
+    cmd_group.add_conf_file_arg("--prebuild",
                                 help="hook to run before a build")
-    cmd_group.add_conf_file_arg("--postexport", dest="postexport",
+    cmd_group.add_conf_file_arg("--postexport",
                                 help="hook to run after exporting the source tree")
-    cmd_group.add_conf_file_arg("--postbuild", dest="postbuild",
+    cmd_group.add_conf_file_arg("--postbuild",
                                 help="hook run after a successful build")
-    cmd_group.add_conf_file_arg("--posttag", dest="posttag",
+    cmd_group.add_conf_file_arg("--posttag",
                                 help="hook run after a successful tag operation")
     cmd_group.add_bool_conf_file_arg("--pbuilder", dest="use_pbuilder")
     cmd_group.add_bool_conf_file_arg("--qemubuilder", dest="use_qemubuilder")
     cmd_group.add_conf_file_arg("--dist", dest="pbuilder_dist")
     cmd_group.add_conf_file_arg("--arch", dest="pbuilder_arch")
-    cmd_group.add_bool_conf_file_arg("--pbuilder-autoconf",
-                                     dest="pbuilder_autoconf")
-    cmd_group.add_conf_file_arg("--pbuilder-options", dest="pbuilder_options")
-    cmd_group.add_bool_conf_file_arg("--hooks", dest="hooks")
-    export_group.add_conf_file_arg("--export-dir", dest="export_dir", type="path",
+    cmd_group.add_bool_conf_file_arg("--pbuilder-autoconf")
+    cmd_group.add_conf_file_arg("--pbuilder-options")
+    cmd_group.add_bool_conf_file_arg("--hooks")
+    export_group.add_conf_file_arg("--export-dir", type="path",
                                    help="before building the package export "
                                    "the source into EXPORT_DIR")
-    export_group.add_conf_file_arg("--export", dest="export",
+    export_group.add_conf_file_arg("--export",
                                    help="export treeish object TREEISH",
                                    metavar="TREEISH")
-    export_group.add_bool_conf_file_arg("--purge", dest="purge")
-    export_group.add_bool_conf_file_arg("--overlay", dest="overlay")
+    export_group.add_bool_conf_file_arg("--purge")
+    export_group.add_bool_conf_file_arg("--overlay")
     return parser
 
 

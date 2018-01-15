@@ -109,27 +109,25 @@ def build_parser(name):
     branch_group = parser.add_argument_group("branch options", "branch tracking and layout options")
     cmd_group = parser.add_argument_group("external command options", "how and when to invoke hooks")
 
-    branch_group.add_arg("--all", action="store_true", dest="all",
+    branch_group.add_arg("--all", action="store_true",
                          help="track all branches, not only debian and upstream")
-    branch_group.add_conf_file_arg("--upstream-branch", dest="upstream_branch")
-    branch_group.add_conf_file_arg("--debian-branch", dest="debian_branch")
-    branch_group.add_bool_conf_file_arg("--pristine-tar", dest="pristine_tar")
-    branch_group.add_arg("--depth", action="store", dest="depth", default=0,
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_bool_conf_file_arg("--pristine-tar")
+    branch_group.add_arg("--depth", action="store", default=0,
                          help="git history depth (for creating shallow clones)")
-    branch_group.add_arg("--reference", action="store", dest="reference", default=None,
+    branch_group.add_arg("--reference", action="store", default=None,
                          help="git reference repository (use local copies where possible)")
-    cmd_group.add_conf_file_arg("--postclone", dest="postclone",
+    cmd_group.add_conf_file_arg("--postclone",
                                 help="hook to run after cloning the source tree")
-    cmd_group.add_bool_conf_file_arg("--hooks", dest="hooks")
+    cmd_group.add_bool_conf_file_arg("--hooks")
 
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme", dest="color_scheme")
-    parser.add_conf_file_arg("--repo-user", dest="repo_user",
-                             choices=['DEBIAN', 'GIT'])
-    parser.add_conf_file_arg("--repo-email", dest="repo_email",
-                             choices=['DEBIAN', 'GIT'])
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_conf_file_arg("--repo-user", choices=['DEBIAN', 'GIT'])
+    parser.add_conf_file_arg("--repo-email", choices=['DEBIAN', 'GIT'])
     parser.add_argument("repository", metavar="REPOSITORY",
                         help="repository to clone")
     parser.add_argument("directory", metavar="DIRECTORY", nargs="?",

@@ -232,33 +232,23 @@ def build_parser(name, sections=[]):
                                              "branch layout and tracking options")
     branch_group.add_conf_file_arg("--remote-url-pattern",
                                    dest="remote_url")
-    branch_group.add_conf_file_arg("--upstream-branch",
-                                   dest="upstream_branch")
-    branch_group.add_conf_file_arg("--debian-branch",
-                                   dest="debian_branch")
-    branch_group.add_bool_conf_file_arg("--pristine-tar",
-                                        dest="pristine_tar")
-    branch_group.add_bool_conf_file_arg("--track",
-                                        dest='track')
-    branch_group.add_bool_conf_file_arg("--bare",
-                                        dest='bare')
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_bool_conf_file_arg("--pristine-tar")
+    branch_group.add_bool_conf_file_arg("--track")
+    branch_group.add_bool_conf_file_arg("--bare")
     parser.add_arg("-v", "--verbose",
                    action="store_true",
-                   dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color",
-                             dest="color",
                              type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
+    parser.add_conf_file_arg("--color-scheme")
     parser.add_arg("--remote-name",
                    dest="name",
                    default="origin",
                    help="The name of the remote, default is 'origin'")
-    parser.add_conf_file_arg("--template-dir",
-                             dest="template_dir")
-    parser.add_conf_file_arg("--remote-config",
-                             dest="remote_config")
+    parser.add_conf_file_arg("--template-dir")
+    parser.add_conf_file_arg("--remote-config")
     parser.add_argument("action", metavar="ACTION", nargs="?",
                         default="create", choices=('create', 'list'),
                         help="action to take")

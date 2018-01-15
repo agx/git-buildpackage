@@ -412,16 +412,15 @@ def build_parser(name):
         return None
 
     # Add common arguments
-    _parent.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    _parent.add_arg("-v", "--verbose", action="store_true",
                     help="verbose command execution")
-    _parent.add_conf_file_arg("--color", dest="color", type='tristate')
-    _parent.add_conf_file_arg("--color-scheme",
-                              dest="color_scheme")
-    _parent.add_conf_file_arg("--pq-from", dest="pq_from", choices=['DEBIAN', 'TAG'])
-    _parent.add_conf_file_arg("--upstream-tag", dest="upstream_tag")
-    _parent.add_arg("--force", dest="force", action="store_true",
+    _parent.add_conf_file_arg("--color", type='tristate')
+    _parent.add_conf_file_arg("--color-scheme")
+    _parent.add_conf_file_arg("--pq-from", choices=['DEBIAN', 'TAG'])
+    _parent.add_conf_file_arg("--upstream-tag")
+    _parent.add_arg("--force", action="store_true",
                     help="in case of import even import if the branch already exists")
-    _parent.add_conf_file_arg("--time-machine", dest="time_machine", type=int)
+    _parent.add_conf_file_arg("--time-machine", type=int)
 
     # Add subcommands
     subparsers = parser.add_subparsers(title='actions', dest='action')
@@ -431,14 +430,14 @@ def build_parser(name):
                                     help="export the patch queue associated to the current "
                                          "branch into a quilt patch series in debian/patches/ "
                                          "and update the series file.")
-    _parser.add_bool_conf_file_arg("--patch-numbers", dest="patch_numbers")
-    _parser.add_conf_file_arg("--patch-num-format", dest="patch_num_format")
-    _parser.add_bool_conf_file_arg("--renumber", dest="renumber")
-    _parser.add_bool_conf_file_arg("--drop", dest='drop')
-    _parser.add_bool_conf_file_arg("--commit", dest="commit")
-    _parser.add_conf_file_arg("--abbrev", dest="abbrev", type=int)
-    _parser.add_conf_file_arg("--meta-closes", dest="meta_closes")
-    _parser.add_conf_file_arg("--meta-closes-bugnum", dest="meta_closes_bugnum")
+    _parser.add_bool_conf_file_arg("--patch-numbers")
+    _parser.add_conf_file_arg("--patch-num-format")
+    _parser.add_bool_conf_file_arg("--renumber")
+    _parser.add_bool_conf_file_arg("--drop")
+    _parser.add_bool_conf_file_arg("--commit")
+    _parser.add_conf_file_arg("--abbrev", type=int)
+    _parser.add_conf_file_arg("--meta-closes")
+    _parser.add_conf_file_arg("--meta-closes-bugnum")
     # Import
     _parser = subparsers.add_parser('import', parents=[_parent],
                                     help="create a patch queue branch from"
@@ -454,7 +453,7 @@ def build_parser(name):
     # Apply
     _parser = subparsers.add_parser('apply', parents=[_parent],
                                     help="apply a patch")
-    _parser.add_arg("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")
+    _parser.add_arg("--topic", help="in case of 'apply' topic (subdir) to put patch into")
     _parser.add_argument("patch", metavar="PATCH", help="Patch to apply")
     # Switch
     _parser = subparsers.add_parser('switch', parents=[_parent],

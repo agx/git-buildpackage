@@ -321,100 +321,76 @@ def build_parser(name, prefix=None, git_treeish=None):
     export_group = parser.add_argument_group("export build-tree options",
                                              "alternative build tree related options")
 
-    parser.add_bool_conf_file_arg("--ignore-new",
-                                  dest="ignore_new")
-    parser.add_arg("--verbose", action="store_true", dest="verbose",
+    parser.add_bool_conf_file_arg("--ignore-new")
+    parser.add_arg("--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--tmp-dir", dest="tmp_dir")
-    parser.add_conf_file_arg("--color", dest="color",
+    parser.add_conf_file_arg("--tmp-dir")
+    parser.add_conf_file_arg("--color",
                              type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    parser.add_conf_file_arg("--notify", dest="notify",
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_conf_file_arg("--notify",
                              type='tristate')
-    parser.add_conf_file_arg("--vendor", action="store",
-                             dest="vendor")
-    parser.add_conf_file_arg("--native", dest="native",
+    parser.add_conf_file_arg("--vendor", action="store")
+    parser.add_conf_file_arg("--native",
                              type='tristate')
-    tag_group.add_arg("--tag", action="store_true", dest="tag",
+    tag_group.add_arg("--tag", action="store_true",
                       help="create a tag after a successful build")
-    tag_group.add_arg("--tag-only", action="store_true", dest="tag_only",
+    tag_group.add_arg("--tag-only", action="store_true",
                       help="don't build, only tag and run the posttag hook")
-    tag_group.add_arg("--retag", action="store_true", dest="retag",
+    tag_group.add_arg("--retag", action="store_true",
                       help="don't fail if the tag already exists")
-    tag_group.add_bool_conf_file_arg("--sign-tags",
-                                     dest="sign_tags")
-    tag_group.add_conf_file_arg("--keyid", dest="keyid")
-    tag_group.add_conf_file_arg("--packaging-tag",
-                                dest="packaging_tag")
-    tag_group.add_conf_file_arg("--packaging-tag-msg",
-                                dest="packaging_tag_msg")
-    tag_group.add_conf_file_arg("--upstream-tag",
-                                dest="upstream_tag")
-    orig_group.add_conf_file_arg("--upstream-tree",
-                                 dest="upstream_tree")
-    orig_group.add_bool_conf_file_arg("--pristine-tar",
-                                      dest="pristine_tar")
-    orig_group.add_bool_conf_file_arg("--pristine-tar-commit",
-                                      dest="pristine_tar_commit")
-    orig_group.add_conf_file_arg("--force-create",
-                                 dest="force_create", action="store_true",
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--packaging-tag")
+    tag_group.add_conf_file_arg("--packaging-tag-msg")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    orig_group.add_conf_file_arg("--upstream-tree")
+    orig_group.add_bool_conf_file_arg("--pristine-tar")
+    orig_group.add_bool_conf_file_arg("--pristine-tar-commit")
+    orig_group.add_conf_file_arg("--force-create", action="store_true",
                                  help="force creation of upstream source tarball")
-    orig_group.add_conf_file_arg("--no-create-orig",
-                                 dest="no_create_orig", action="store_true",
+    orig_group.add_conf_file_arg("--no-create-orig", action="store_true",
                                  help="don't create upstream source tarball")
-    orig_group.add_conf_file_arg("--tarball-dir",
-                                 dest="tarball_dir", type="path",
+    orig_group.add_conf_file_arg("--tarball-dir", type="path",
                                  help="location to look for external tarballs")
     orig_group.add_conf_file_arg("--compression-level",
                                  dest="comp_level",
                                  help="Compression level")
-    branch_group.add_conf_file_arg("--upstream-branch",
-                                   dest="upstream_branch")
-    branch_group.add_conf_file_arg("--packaging-branch",
-                                   dest="packaging_branch")
-    branch_group.add_bool_conf_file_arg("--ignore-branch",
-                                        dest="ignore_branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--packaging-branch")
+    branch_group.add_bool_conf_file_arg("--ignore-branch")
     branch_group.add_bool_conf_file_arg("--submodules",
                                         dest="with_submodules")
-    cmd_group.add_conf_file_arg("--builder", dest="builder",
+    cmd_group.add_conf_file_arg("--builder",
                                 help="command to build the package")
-    cmd_group.add_conf_file_arg("--cleaner", dest="cleaner",
+    cmd_group.add_conf_file_arg("--cleaner",
                                 help="command to clean the working copy")
-    cmd_group.add_conf_file_arg("--prebuild", dest="prebuild",
+    cmd_group.add_conf_file_arg("--prebuild",
                                 help="command to run before a build")
     cmd_group.add_conf_file_arg("--postexport",
-                                dest="postexport",
                                 help="command to run after exporting the source tree")
-    cmd_group.add_conf_file_arg("--postbuild", dest="postbuild",
+    cmd_group.add_conf_file_arg("--postbuild",
                                 help="hook run after a successful build")
-    cmd_group.add_conf_file_arg("--posttag", dest="posttag",
+    cmd_group.add_conf_file_arg("--posttag",
                                 help="hook run after a successful tag operation")
     cmd_group.add_bool_conf_file_arg("--mock", dest="use_mock")
     cmd_group.add_conf_file_arg("--dist", dest="mock_dist")
     cmd_group.add_conf_file_arg("--arch", dest="mock_arch")
-    cmd_group.add_conf_file_arg("--mock-root", dest="mock_root")
-    cmd_group.add_conf_file_arg("--mock-options", dest="mock_options")
-    cmd_group.add_bool_conf_file_arg("--hooks", dest="hooks")
+    cmd_group.add_conf_file_arg("--mock-root")
+    cmd_group.add_conf_file_arg("--mock-options")
+    cmd_group.add_bool_conf_file_arg("--hooks")
     export_group.add_arg("--no-build", action="store_true",
-                         dest="no_build",
                          help="Don't run builder or the associated hooks")
-    export_group.add_conf_file_arg("--export-dir",
-                                   dest="export_dir", type="path",
+    export_group.add_conf_file_arg("--export-dir", type="path",
                                    help="Build topdir, also export the sources under "
                                    "EXPORT_DIR")
-    export_group.add_conf_file_arg("--export-specdir",
-                                   dest="export_specdir", type="path")
-    export_group.add_conf_file_arg("--export-sourcedir",
-                                   dest="export_sourcedir", type="path")
-    export_group.add_conf_file_arg("--export", dest="export",
-                                   metavar="TREEISH",
+    export_group.add_conf_file_arg("--export-specdir", type="path")
+    export_group.add_conf_file_arg("--export-sourcedir", type="path")
+    export_group.add_conf_file_arg("--export", metavar="TREEISH",
                                    help="export treeish object TREEISH")
-    export_group.add_conf_file_arg("--packaging-dir",
-                                   dest="packaging_dir")
-    export_group.add_conf_file_arg("--spec-file",
-                                   dest="spec_file")
-    export_group.add_conf_file_arg("--spec-vcs-tag", dest="spec_vcs_tag")
+    export_group.add_conf_file_arg("--packaging-dir")
+    export_group.add_conf_file_arg("--spec-file")
+    export_group.add_conf_file_arg("--spec-vcs-tag")
     return parser
 
 

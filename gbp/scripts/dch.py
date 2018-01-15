@@ -343,63 +343,62 @@ def build_parser(name):
     custom_group = parser.add_argument_group("customization",
                                              "options for customization")
 
-    parser.add_bool_conf_file_arg("--ignore-branch", dest="ignore_branch")
-    naming_group.add_conf_file_arg("--upstream-branch", dest="upstream_branch")
-    naming_group.add_conf_file_arg("--debian-branch", dest="debian_branch")
-    naming_group.add_conf_file_arg("--upstream-tag", dest="upstream_tag")
-    naming_group.add_conf_file_arg("--debian-tag", dest="debian_tag")
-    naming_group.add_conf_file_arg("--snapshot-number", dest="snapshot_number",
+    parser.add_bool_conf_file_arg("--ignore-branch")
+    naming_group.add_conf_file_arg("--upstream-branch")
+    naming_group.add_conf_file_arg("--debian-branch")
+    naming_group.add_conf_file_arg("--upstream-tag")
+    naming_group.add_conf_file_arg("--debian-tag")
+    naming_group.add_conf_file_arg("--snapshot-number",
                                    help="expression to determine the next snapshot number")
-    parser.add_conf_file_arg("--git-log", dest="git_log",
+    parser.add_conf_file_arg("--git-log",
                              help="options to pass to git-log")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme", dest="color_scheme")
-    range_group.add_arg("-s", "--since", dest="since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
-    range_group.add_arg("-a", "--auto", action="store_true", dest="auto",
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    range_group.add_arg("-s", "--since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
+    range_group.add_arg("-a", "--auto", action="store_true",
                         help="autocomplete changelog from last snapshot or tag")
-    version_group.add_arg("-R", "--release", action="store_true", dest="release",
+    version_group.add_arg("-R", "--release", action="store_true",
                           help="mark as release")
-    version_group.add_arg("-S", "--snapshot", action="store_true", dest="snapshot",
+    version_group.add_arg("-S", "--snapshot", action="store_true",
                           help="mark as snapshot build")
-    version_group.add_arg("-D", "--distribution", dest="distribution", help="Set distribution")
-    version_group.add_arg("--force-distribution", action="store_true", dest="force_distribution",
+    version_group.add_arg("-D", "--distribution", help="Set distribution")
+    version_group.add_arg("--force-distribution", action="store_true",
                           help="Force the provided distribution to be used, "
                           "even if it doesn't match the list of known distributions")
-    version_group.add_arg("-N", "--new-version", dest="new_version",
+    version_group.add_arg("-N", "--new-version",
                           help="use this as base for the new version number")
-    version_group.add_conf_file_arg("--urgency", dest="urgency")
-    version_group.add_arg("--bpo", dest="bpo", action="store_true",
+    version_group.add_conf_file_arg("--urgency")
+    version_group.add_arg("--bpo", action="store_true",
                           help="Increment the Debian release number for an upload to backports, "
                           "and add a backport upload changelog comment.")
-    version_group.add_arg("--nmu", dest="nmu", action="store_true",
+    version_group.add_arg("--nmu", action="store_true",
                           help="Increment the Debian release number for a non-maintainer upload")
-    version_group.add_arg("--qa", dest="qa", action="store_true",
+    version_group.add_arg("--qa", action="store_true",
                           help="Increment the Debian release number for a Debian QA Team upload, "
                           "and add a QA upload changelog comment.")
-    version_group.add_arg("--team", dest="team", action="store_true",
+    version_group.add_arg("--team", action="store_true",
                           help="Increment the Debian release number for a Debian Team upload, "
                           "and add a Team upload changelog comment.")
-    version_group.add_arg("--security", dest="security", action="store_true",
+    version_group.add_arg("--security", action="store_true",
                           help="Increment the Debian release number for a security upload and "
                           "add a security upload changelog comment.")
     version_group.add_bool_conf_file_arg("--git-author", dest="use_git_author")
-    commit_group.add_bool_conf_file_arg("--meta", dest="meta")
-    commit_group.add_conf_file_arg("--meta-closes", dest="meta_closes")
-    commit_group.add_conf_file_arg("--meta-closes-bugnum", dest="meta_closes_bugnum")
-    commit_group.add_bool_conf_file_arg("--full", dest="full")
+    commit_group.add_bool_conf_file_arg("--meta")
+    commit_group.add_conf_file_arg("--meta-closes")
+    commit_group.add_conf_file_arg("--meta-closes-bugnum")
+    commit_group.add_bool_conf_file_arg("--full")
     commit_group.add_conf_file_arg("--id-length", dest="idlen",
                                    help="include N digits of the commit id in the changelog entry",
                                    type=int, metavar="N")
-    commit_group.add_conf_file_arg("--ignore-regex", dest="ignore_regex",
+    commit_group.add_conf_file_arg("--ignore-regex",
                                    help="Ignore commit lines matching regex")
-    commit_group.add_bool_conf_file_arg("--multimaint", dest="multimaint")
-    commit_group.add_bool_conf_file_arg("--multimaint-merge", dest="multimaint_merge")
-    commit_group.add_conf_file_arg("--spawn-editor", dest="spawn_editor")
-    parser.add_conf_file_arg("--commit-msg",
-                             dest="commit_msg")
-    parser.add_arg("-c", "--commit", action="store_true", dest="commit",
+    commit_group.add_bool_conf_file_arg("--multimaint")
+    commit_group.add_bool_conf_file_arg("--multimaint-merge")
+    commit_group.add_conf_file_arg("--spawn-editor")
+    parser.add_conf_file_arg("--commit-msg")
+    parser.add_arg("-c", "--commit", action="store_true",
                    help="commit changelog file after generating")
     parser.add_conf_file_arg("--dch-opt", dest="dch_opts", action="append",
                              help="option to pass to dch verbatim, "

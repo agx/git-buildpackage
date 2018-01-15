@@ -316,47 +316,35 @@ def build_parser(name):
 
     branch_group.add_arg("-u", "--upstream-version", dest="version",
                          help="Upstream Version")
-    branch_group.add_conf_file_arg("--debian-branch",
-                                   dest="debian_branch")
-    branch_group.add_conf_file_arg("--upstream-branch",
-                                   dest="upstream_branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
     branch_group.add_conf_file_arg("--upstream-vcs-tag", dest="vcs_tag",
                                    help="Upstream VCS tag add to the merge commit")
-    branch_group.add_bool_conf_file_arg("--merge", dest="merge")
-    branch_group.add_conf_file_arg("--merge-mode", dest="merge_mode")
+    branch_group.add_bool_conf_file_arg("--merge")
+    branch_group.add_conf_file_arg("--merge-mode")
 
-    tag_group.add_bool_conf_file_arg("--sign-tags",
-                                     dest="sign_tags")
-    tag_group.add_conf_file_arg("--keyid",
-                                dest="keyid")
-    tag_group.add_conf_file_arg("--upstream-tag",
-                                dest="upstream_tag")
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--upstream-tag")
     import_group.add_conf_file_arg("--filter",
                                    dest="filters", action="append")
-    import_group.add_bool_conf_file_arg("--pristine-tar",
-                                        dest="pristine_tar")
-    import_group.add_bool_conf_file_arg("--filter-pristine-tar",
-                                        dest="filter_pristine_tar")
-    import_group.add_conf_file_arg("--import-msg",
-                                   dest="import_msg")
-    import_group.add_bool_conf_file_arg("--symlink-orig",
-                                        dest="symlink_orig")
+    import_group.add_bool_conf_file_arg("--pristine-tar")
+    import_group.add_bool_conf_file_arg("--filter-pristine-tar")
+    import_group.add_conf_file_arg("--import-msg")
+    import_group.add_bool_conf_file_arg("--symlink-orig")
     import_group.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
                                    dest="components")
-    cmd_group.add_conf_file_arg("--postimport", dest="postimport")
+    cmd_group.add_conf_file_arg("--postimport")
 
-    parser.add_bool_conf_file_arg("--interactive",
-                                  dest='interactive')
-    parser.add_bool_conf_file_arg("--rollback",
-                                  dest="rollback")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_bool_conf_file_arg("--interactive")
+    parser.add_bool_conf_file_arg("--rollback")
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
 
     # Accepted for compatibility
-    parser.add_arg("--download", dest='download', action="store_true",
+    parser.add_arg("--download", action="store_true",
                    help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-orig(1).")
 
     src_group = parser.add_mutually_exclusive_group(required=True)

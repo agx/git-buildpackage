@@ -85,23 +85,20 @@ def build_parser(name):
         gbp.log.err(err)
         return None
 
-    parser.add_arg("--retag", action="store_true", dest="retag",
+    parser.add_arg("--retag", action="store_true",
                    help="don't fail if the tag already exists")
-    parser.add_conf_file_arg("--debian-branch",
-                             dest="debian_branch")
-    parser.add_conf_file_arg("--debian-tag",
-                             dest="debian_tag")
-    parser.add_conf_file_arg("--debian-tag-msg", dest="debian_tag_msg")
-    parser.add_bool_conf_file_arg("--sign-tags", dest="sign_tags")
-    parser.add_conf_file_arg("--keyid", dest="keyid")
-    parser.add_conf_file_arg("--posttag", dest="posttag",
+    parser.add_conf_file_arg("--debian-branch")
+    parser.add_conf_file_arg("--debian-tag")
+    parser.add_conf_file_arg("--debian-tag-msg")
+    parser.add_bool_conf_file_arg("--sign-tags")
+    parser.add_conf_file_arg("--keyid")
+    parser.add_conf_file_arg("--posttag",
                              help="hook run after a successful tag operation")
-    parser.add_bool_conf_file_arg("--ignore-branch", dest="ignore_branch")
-    parser.add_bool_conf_file_arg("--ignore-new", dest="ignore_new")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    parser.add_arg("--verbose", action="store_true", dest="verbose",
+    parser.add_bool_conf_file_arg("--ignore-branch")
+    parser.add_bool_conf_file_arg("--ignore-new")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_arg("--verbose", action="store_true",
                    help="verbose command execution")
     return parser
 

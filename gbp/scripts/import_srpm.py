@@ -133,61 +133,44 @@ def build_parser(name):
     branch_group = parser.add_argument_group("version and branch naming options",
                                              "version number and branch layout options")
 
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color",
+    parser.add_conf_file_arg("--color",
                              type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    parser.add_conf_file_arg("--tmp-dir", dest="tmp_dir")
-    parser.add_conf_file_arg("--vendor", action="store",
-                             dest="vendor")
-    parser.add_arg("--download", action="store_true", dest="download",
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_conf_file_arg("--tmp-dir")
+    parser.add_conf_file_arg("--vendor", action="store")
+    parser.add_arg("--download", action="store_true",
                    help="download source package")
-    branch_group.add_conf_file_arg("--packaging-branch",
-                                   dest="packaging_branch")
-    branch_group.add_conf_file_arg("--upstream-branch",
-                                   dest="upstream_branch")
+    branch_group.add_conf_file_arg("--packaging-branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
     branch_group.add_arg("--upstream-vcs-tag", dest="vcs_tag",
                          help="Upstream VCS tag on top of which to import "
                          "the orig sources")
-    branch_group.add_bool_conf_file_arg("--create-missing-branches",
-                                        dest="create_missing_branches")
+    branch_group.add_bool_conf_file_arg("--create-missing-branches")
     branch_group.add_arg("--orphan-packaging", action="store_true",
-                         dest="orphan_packaging",
                          help="The packaging branch doesn't base on upstream")
-    branch_group.add_arg("--native", action="store_true", dest="native",
+    branch_group.add_arg("--native", action="store_true",
                          help="This is a dist native package, no separate "
                          "upstream branch")
 
-    tag_group.add_bool_conf_file_arg("--sign-tags",
-                                     dest="sign_tags")
-    tag_group.add_conf_file_arg("--keyid",
-                                dest="keyid")
-    tag_group.add_conf_file_arg("--packaging-tag",
-                                dest="packaging_tag")
-    tag_group.add_conf_file_arg("--upstream-tag",
-                                dest="upstream_tag")
-    tag_group.add_arg("--skip-packaging-tag", dest="skip_packaging_tag",
-                      action="store_true",
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--packaging-tag")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    tag_group.add_arg("--skip-packaging-tag", action="store_true",
                       help="Don't add a tag after importing packaging files")
 
     import_group.add_conf_file_arg("--filter",
                                    dest="filters", action="append")
-    import_group.add_bool_conf_file_arg("--pristine-tar",
-                                        dest="pristine_tar")
+    import_group.add_bool_conf_file_arg("--pristine-tar")
     import_group.add_arg("--allow-same-version", action="store_true",
-                         dest="allow_same_version",
                          help="allow import of already imported version")
-    import_group.add_bool_conf_file_arg("--author-is-committer",
-                                        dest="author_is_committer")
-    import_group.add_conf_file_arg("--packaging-dir",
-                                   dest="packaging_dir")
+    import_group.add_bool_conf_file_arg("--author-is-committer")
+    import_group.add_conf_file_arg("--packaging-dir")
 
-    parser.add_conf_file_arg("--repo-user", dest="repo_user",
-                             choices=['DEBIAN', 'GIT'])
-    parser.add_conf_file_arg("--repo-email", dest="repo_email",
-                             choices=['DEBIAN', 'GIT'])
+    parser.add_conf_file_arg("--repo-user", choices=['DEBIAN', 'GIT'])
+    parser.add_conf_file_arg("--repo-email", choices=['DEBIAN', 'GIT'])
     parser.add_argument("package", metavar="PACKAGE", help="package to import")
     parser.add_argument("target_dir", metavar="TARGET_DIR", nargs="?",
                         help="target directory where to import")

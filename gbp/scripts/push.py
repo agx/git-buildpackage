@@ -38,21 +38,15 @@ def build_parser(name):
 
     parser.add_arg("-d", "--dry-run", dest="dryrun",
                    action="store_true", help="dry run, don't push.")
-    parser.add_conf_file_arg("--upstream-branch",
-                             dest="upstream_branch")
-    parser.add_conf_file_arg("--upstream-tag",
-                             dest="upstream_tag")
-    parser.add_conf_file_arg("--debian-branch",
-                             dest="debian_branch")
-    parser.add_conf_file_arg("--debian-tag",
-                             dest="debian_tag")
-    parser.add_bool_conf_file_arg("--pristine-tar",
-                                  dest="pristine_tar")
-    parser.add_bool_conf_file_arg("--ignore-branch", dest="ignore_branch")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    parser.add_arg("--verbose", action="store_true", dest="verbose",
+    parser.add_conf_file_arg("--upstream-branch")
+    parser.add_conf_file_arg("--upstream-tag")
+    parser.add_conf_file_arg("--debian-branch")
+    parser.add_conf_file_arg("--debian-tag")
+    parser.add_bool_conf_file_arg("--pristine-tar")
+    parser.add_bool_conf_file_arg("--ignore-branch")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_arg("--verbose", action="store_true",
                    help="verbose command execution")
     parser.add_argument("remote", metavar="REMOTE", nargs="?",
                         help="remote where to push")

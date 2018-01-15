@@ -275,17 +275,16 @@ def build_parser(name):
     branch_group = parser.add_argument_group("branch options",
                                              "branch layout options")
 
-    parser.add_arg("--verbose", action="store_true", dest="verbose",
+    parser.add_arg("--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    tag_group.add_conf_file_arg("--upstream-tag", dest="upstream_tag")
-    orig_group.add_conf_file_arg("--upstream-tree", dest="upstream_tree")
-    orig_group.add_bool_conf_file_arg("--pristine-tar", dest="pristine_tar")
-    orig_group.add_conf_file_arg("--force-create", dest="force_create",
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    orig_group.add_conf_file_arg("--upstream-tree")
+    orig_group.add_bool_conf_file_arg("--pristine-tar")
+    orig_group.add_conf_file_arg("--force-create",
                                  help="force creation of orig tarball", action="store_true")
-    orig_group.add_conf_file_arg("--tarball-dir", dest="tarball_dir", type="path",
+    orig_group.add_conf_file_arg("--tarball-dir", type="path",
                                  help="location to look for external tarballs")
     orig_group.add_conf_file_arg("--compression", dest="comp_type",
                                  help="Compression type")
@@ -293,7 +292,7 @@ def build_parser(name):
                                  help="Compression level")
     orig_group.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
                                  dest="components")
-    branch_group.add_conf_file_arg("--upstream-branch", dest="upstream_branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
     branch_group.add_bool_conf_file_arg("--submodules", dest="with_submodules")
     return parser
 

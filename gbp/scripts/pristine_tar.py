@@ -49,15 +49,13 @@ def build_parser(name):
         gbp.log.err(err)
         return None
 
-    parser.add_conf_file_arg("--upstream-tag",
-                             dest="upstream_tag")
+    parser.add_conf_file_arg("--upstream-tag")
     parser.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
                              dest="components")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
     parser.add_argument("action", metavar="ACTION", choices=('commit',),
                         help="action to take")
     parser.add_argument("tarball", metavar="TARBALL",

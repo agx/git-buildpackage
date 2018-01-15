@@ -323,19 +323,16 @@ def build_parser(name):
                                            "branch names, tag formats, directory and file naming")
 
     # Non-grouped options
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color",
+    parser.add_conf_file_arg("--color",
                              type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    parser.add_conf_file_arg("--tmp-dir", dest="tmp_dir")
-    parser.add_conf_file_arg("--vendor", action="store",
-                             dest="vendor")
-    parser.add_conf_file_arg("--git-log", dest="git_log",
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_conf_file_arg("--tmp-dir")
+    parser.add_conf_file_arg("--vendor", action="store")
+    parser.add_conf_file_arg("--git-log",
                              help="options to pass to git-log")
-    parser.add_bool_conf_file_arg("--ignore-branch",
-                                  dest="ignore_branch")
+    parser.add_bool_conf_file_arg("--ignore-branch")
     parser.add_conf_file_arg("--customizations",
                              dest="customization_file",
                              help="Load Python code from CUSTOMIZATION_FILE. At the "
@@ -343,38 +340,29 @@ def build_parser(name):
                              "custom ChangelogEntryFormatter class.")
 
     # Naming group options
-    naming_grp.add_conf_file_arg("--packaging-branch",
-                                 dest="packaging_branch")
-    naming_grp.add_conf_file_arg("--packaging-tag",
-                                 dest="packaging_tag")
-    naming_grp.add_conf_file_arg("--packaging-dir",
-                                 dest="packaging_dir")
-    naming_grp.add_conf_file_arg("--changelog-file",
-                                 dest="changelog_file")
-    naming_grp.add_conf_file_arg("--spec-file", dest="spec_file")
+    naming_grp.add_conf_file_arg("--packaging-branch")
+    naming_grp.add_conf_file_arg("--packaging-tag")
+    naming_grp.add_conf_file_arg("--packaging-dir")
+    naming_grp.add_conf_file_arg("--changelog-file")
+    naming_grp.add_conf_file_arg("--spec-file")
     # Range group options
-    range_grp.add_arg("-s", "--since", dest="since",
+    range_grp.add_arg("-s", "--since",
                       help="commit to start from (e.g. HEAD^^^, release/0.1.2)")
     # Formatting group options
     format_grp.add_arg("--no-release", action="store_false",
                        dest="release",
                        help="no release, just update the last changelog section")
-    format_grp.add_bool_conf_file_arg("--git-author",
-                                      dest="git_author")
-    format_grp.add_bool_conf_file_arg("--full", dest="full")
+    format_grp.add_bool_conf_file_arg("--git-author")
+    format_grp.add_bool_conf_file_arg("--full")
     format_grp.add_conf_file_arg("--id-length", dest="idlen",
                                  help="include N digits of the commit id in "
                                  "the changelog entry",
                                  type=int, metavar="N")
     format_grp.add_conf_file_arg("--ignore-regex",
-                                 dest="ignore_regex",
                                  help="Ignore lines in commit message matching regex,")
-    format_grp.add_conf_file_arg("--changelog-revision",
-                                 dest="changelog_revision")
-    format_grp.add_conf_file_arg("--spawn-editor",
-                                 dest="spawn_editor")
-    format_grp.add_conf_file_arg("--editor-cmd",
-                                 dest="editor_cmd")
+    format_grp.add_conf_file_arg("--changelog-revision")
+    format_grp.add_conf_file_arg("--spawn-editor")
+    format_grp.add_conf_file_arg("--editor-cmd")
 
     parser.add_argument("path", metavar="PATH", nargs="*",
                         help="path(s) to look for changes")

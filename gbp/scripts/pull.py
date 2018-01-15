@@ -102,7 +102,7 @@ def build_parser(name):
     branch_group.add_conf_file_arg("--upstream-branch")
     branch_group.add_conf_file_arg("--debian-branch")
     branch_group.add_bool_conf_file_arg("--pristine-tar")
-    branch_group.add_bool_conf_file_arg("--track-missing", dest="track_missing")
+    branch_group.add_bool_conf_file_arg("--track-missing")
     branch_group.add_arg("--depth", action="store", default=0,
                          help="git history depth (for deepening shallow clones)")
     parser.add_arg("-v", "--verbose", action="store_true",

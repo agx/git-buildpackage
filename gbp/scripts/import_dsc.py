@@ -320,49 +320,35 @@ def build_parser(name):
     branch_group = parser.add_argument_group("version and branch naming options",
                                              "version number and branch layout options")
 
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
-    branch_group.add_conf_file_arg("--debian-branch",
-                                   dest="debian_branch")
-    branch_group.add_conf_file_arg("--upstream-branch",
-                                   dest="upstream_branch")
-    branch_group.add_bool_conf_file_arg("--create-missing-branches",
-                                        dest="create_missing_branches")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_bool_conf_file_arg("--create-missing-branches")
 
-    tag_group.add_bool_conf_file_arg("--sign-tags",
-                                     dest="sign_tags")
-    tag_group.add_conf_file_arg("--keyid",
-                                dest="keyid")
-    tag_group.add_conf_file_arg("--debian-tag",
-                                dest="debian_tag")
-    tag_group.add_conf_file_arg("--upstream-tag",
-                                dest="upstream_tag")
-    tag_group.add_arg("--skip-debian-tag", dest="skip_debian_tag",
-                      action="store_true",
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--debian-tag")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    tag_group.add_arg("--skip-debian-tag", action="store_true",
                       help="Don't add a tag after importing the Debian patch")
 
     import_group.add_conf_file_arg("--filter",
                                    dest="filters", action="append")
-    import_group.add_bool_conf_file_arg("--pristine-tar",
-                                        dest="pristine_tar")
+    import_group.add_bool_conf_file_arg("--pristine-tar")
     import_group.add_arg("--allow-same-version", action="store_true",
-                         dest="allow_same_version",
                          help="allow import of already imported version")
     import_group.add_bool_conf_file_arg("--author-is-committer",
                                         dest="author_committer")
     import_group.add_bool_conf_file_arg("--author-date-is-committer-date",
                                         dest="author_committer_date")
-    import_group.add_bool_conf_file_arg("--allow-unauthenticated",
-                                        dest="allow_unauthenticated")
+    import_group.add_bool_conf_file_arg("--allow-unauthenticated")
 
-    parser.add_conf_file_arg("--repo-user", dest="repo_user",
-                             choices=['DEBIAN', 'GIT'])
-    parser.add_conf_file_arg("--repo-email", dest="repo_email",
-                             choices=['DEBIAN', 'GIT'])
-    parser.add_arg("--download", dest='download', action="store_true",
+    parser.add_conf_file_arg("--repo-user", choices=['DEBIAN', 'GIT'])
+    parser.add_conf_file_arg("--repo-email", choices=['DEBIAN', 'GIT'])
+    parser.add_arg("--download", action="store_true",
                    help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-dsc(1).")
     parser.add_argument("package", metavar="PACKAGE",
                         help="package to import")

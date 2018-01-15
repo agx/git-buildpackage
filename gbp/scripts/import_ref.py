@@ -75,33 +75,24 @@ def build_parser(name):
     branch_group.add_arg("-u", "--upstream-version", dest="version",
                          help="The version number to use for the new version, "
                          "default is ''", default='')
-    branch_group.add_conf_file_arg("--debian-branch",
-                                   dest="debian_branch")
-    branch_group.add_conf_file_arg("--upstream-branch",
-                                   dest="upstream_branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
     branch_group.add_conf_file_arg("--upstream-tree",
-                                   dest="upstream_tree",
                                    help="Where to merge the upstream changes from.",
                                    default="VERSION")
-    branch_group.add_conf_file_arg("--merge-mode", dest="merge_mode")
+    branch_group.add_conf_file_arg("--merge-mode")
 
-    tag_group.add_bool_conf_file_arg("--sign-tags",
-                                     dest="sign_tags")
-    tag_group.add_conf_file_arg("--keyid",
-                                dest="keyid")
-    tag_group.add_conf_file_arg("--upstream-tag",
-                                dest="upstream_tag")
-    import_group.add_conf_file_arg("--import-msg",
-                                   dest="import_msg")
-    cmd_group.add_conf_file_arg("--postimport", dest="postimport")
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    import_group.add_conf_file_arg("--import-msg")
+    cmd_group.add_conf_file_arg("--postimport")
 
-    parser.add_bool_conf_file_arg("--rollback",
-                                  dest="rollback")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    parser.add_bool_conf_file_arg("--rollback")
+    parser.add_arg("-v", "--verbose", action="store_true",
                    help="verbose command execution")
-    parser.add_conf_file_arg("--color", dest="color", type='tristate')
-    parser.add_conf_file_arg("--color-scheme",
-                             dest="color_scheme")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
     return parser
 
 

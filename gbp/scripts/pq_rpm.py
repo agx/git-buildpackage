@@ -380,18 +380,14 @@ def build_parser(name):
         return None
 
     # Add common arguments
-    _parent.add_arg("-v", "--verbose", action="store_true", dest="verbose",
+    _parent.add_arg("-v", "--verbose", action="store_true",
                     help="Verbose command execution")
-    _parent.add_conf_file_arg("--color", dest="color",
-                              type='tristate')
-    _parent.add_conf_file_arg("--color-scheme",
-                              dest="color_scheme")
-    _parent.add_conf_file_arg("--tmp-dir", dest="tmp_dir")
-    _parent.add_conf_file_arg("--upstream-tag",
-                              dest="upstream_tag")
-    _parent.add_conf_file_arg("--spec-file", dest="spec_file")
-    _parent.add_conf_file_arg("--packaging-dir",
-                              dest="packaging_dir")
+    _parent.add_conf_file_arg("--color", type='tristate')
+    _parent.add_conf_file_arg("--color-scheme")
+    _parent.add_conf_file_arg("--tmp-dir")
+    _parent.add_conf_file_arg("--upstream-tag")
+    _parent.add_conf_file_arg("--spec-file")
+    _parent.add_conf_file_arg("--packaging-dir")
 
     # Add subcommands
     subparsers = parser.add_subparsers(title='actions', dest='action')
@@ -401,15 +397,14 @@ def build_parser(name):
                                     help="Export the patch queue / devel branch associated to the "
                                          "current branch into a patch series in and update the spec "
                                          "file")
-    _parser.add_bool_conf_file_arg("--patch-numbers",
-                                   dest="patch_numbers")
-    _parser.add_conf_file_arg("--abbrev", dest="abbrev", type=int)
-    _parser.add_bool_conf_file_arg("--drop", dest="drop")
+    _parser.add_bool_conf_file_arg("--patch-numbers")
+    _parser.add_conf_file_arg("--abbrev", type=int)
+    _parser.add_bool_conf_file_arg("--drop")
     # Import
     _parser = subparsers.add_parser('import', parents=[_parent],
                                     help="Create a patch queue / devel branch from spec file "
                                     "and patches in current dir.")
-    _parser.add_arg("--force", dest="force", action="store_true",
+    _parser.add_arg("--force", action="store_true",
                     help="In case of import even import if the branch already exists")
     # Rebase
     _parser = subparsers.add_parser('rebase', parents=[_parent],
