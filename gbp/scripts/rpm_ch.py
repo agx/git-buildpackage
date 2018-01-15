@@ -356,7 +356,7 @@ def build_parser(name):
     range_grp.add_arg("-s", "--since", dest="since",
                       help="commit to start from (e.g. HEAD^^^, release/0.1.2)")
     # Formatting group options
-    format_grp.add_arg("--no-release", action="store_false", default=True,
+    format_grp.add_arg("--no-release", action="store_false",
                        dest="release",
                        help="no release, just update the last changelog section")
     format_grp.add_bool_conf_file_arg("--git-author",

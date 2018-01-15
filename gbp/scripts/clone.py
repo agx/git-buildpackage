@@ -109,7 +109,7 @@ def build_parser(name):
     branch_group = parser.add_argument_group("branch options", "branch tracking and layout options")
     cmd_group = parser.add_argument_group("external command options", "how and when to invoke hooks")
 
-    branch_group.add_arg("--all", action="store_true", dest="all", default=False,
+    branch_group.add_arg("--all", action="store_true", dest="all",
                          help="track all branches, not only debian and upstream")
     branch_group.add_conf_file_arg("--upstream-branch", dest="upstream_branch")
     branch_group.add_conf_file_arg("--debian-branch", dest="debian_branch")
@@ -122,7 +122,7 @@ def build_parser(name):
                                 help="hook to run after cloning the source tree")
     cmd_group.add_bool_conf_file_arg("--hooks", dest="hooks")
 
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme", dest="color_scheme")

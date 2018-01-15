@@ -352,36 +352,36 @@ def build_parser(name):
                                    help="expression to determine the next snapshot number")
     parser.add_conf_file_arg("--git-log", dest="git_log",
                              help="options to pass to git-log")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme", dest="color_scheme")
     range_group.add_arg("-s", "--since", dest="since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
-    range_group.add_arg("-a", "--auto", action="store_true", dest="auto", default=False,
+    range_group.add_arg("-a", "--auto", action="store_true", dest="auto",
                         help="autocomplete changelog from last snapshot or tag")
-    version_group.add_arg("-R", "--release", action="store_true", dest="release", default=False,
+    version_group.add_arg("-R", "--release", action="store_true", dest="release",
                           help="mark as release")
-    version_group.add_arg("-S", "--snapshot", action="store_true", dest="snapshot", default=False,
+    version_group.add_arg("-S", "--snapshot", action="store_true", dest="snapshot",
                           help="mark as snapshot build")
     version_group.add_arg("-D", "--distribution", dest="distribution", help="Set distribution")
-    version_group.add_arg("--force-distribution", action="store_true", dest="force_distribution", default=False,
+    version_group.add_arg("--force-distribution", action="store_true", dest="force_distribution",
                           help="Force the provided distribution to be used, "
                           "even if it doesn't match the list of known distributions")
     version_group.add_arg("-N", "--new-version", dest="new_version",
                           help="use this as base for the new version number")
     version_group.add_conf_file_arg("--urgency", dest="urgency")
-    version_group.add_arg("--bpo", dest="bpo", action="store_true", default=False,
+    version_group.add_arg("--bpo", dest="bpo", action="store_true",
                           help="Increment the Debian release number for an upload to backports, "
                           "and add a backport upload changelog comment.")
-    version_group.add_arg("--nmu", dest="nmu", action="store_true", default=False,
+    version_group.add_arg("--nmu", dest="nmu", action="store_true",
                           help="Increment the Debian release number for a non-maintainer upload")
-    version_group.add_arg("--qa", dest="qa", action="store_true", default=False,
+    version_group.add_arg("--qa", dest="qa", action="store_true",
                           help="Increment the Debian release number for a Debian QA Team upload, "
                           "and add a QA upload changelog comment.")
-    version_group.add_arg("--team", dest="team", action="store_true", default=False,
+    version_group.add_arg("--team", dest="team", action="store_true",
                           help="Increment the Debian release number for a Debian Team upload, "
                           "and add a Team upload changelog comment.")
-    version_group.add_arg("--security", dest="security", action="store_true", default=False,
+    version_group.add_arg("--security", dest="security", action="store_true",
                           help="Increment the Debian release number for a security upload and "
                           "add a security upload changelog comment.")
     version_group.add_bool_conf_file_arg("--git-author", dest="use_git_author")
@@ -399,7 +399,7 @@ def build_parser(name):
     commit_group.add_conf_file_arg("--spawn-editor", dest="spawn_editor")
     parser.add_conf_file_arg("--commit-msg",
                              dest="commit_msg")
-    parser.add_arg("-c", "--commit", action="store_true", dest="commit", default=False,
+    parser.add_arg("-c", "--commit", action="store_true", dest="commit",
                    help="commit changelog file after generating")
     parser.add_conf_file_arg("--dch-opt", dest="dch_opts", action="append",
                              help="option to pass to dch verbatim, "

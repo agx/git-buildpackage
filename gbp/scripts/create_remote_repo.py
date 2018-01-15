@@ -245,7 +245,6 @@ def build_parser(name, sections=[]):
     parser.add_arg("-v", "--verbose",
                    action="store_true",
                    dest="verbose",
-                   default=False,
                    help="verbose command execution")
     parser.add_conf_file_arg("--color",
                              dest="color",

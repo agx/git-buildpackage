@@ -324,7 +324,7 @@ def build_parser(name, prefix=None, git_treeish=None):
     parser.add_bool_conf_file_arg("--ignore-new",
                                   dest="ignore_new")
     parser.add_arg("--verbose", action="store_true", dest="verbose",
-                   default=False, help="verbose command execution")
+                   help="verbose command execution")
     parser.add_conf_file_arg("--tmp-dir", dest="tmp_dir")
     parser.add_conf_file_arg("--color", dest="color",
                              type='tristate')
@@ -337,13 +337,11 @@ def build_parser(name, prefix=None, git_treeish=None):
     parser.add_conf_file_arg("--native", dest="native",
                              type='tristate')
     tag_group.add_arg("--tag", action="store_true", dest="tag",
-                      default=False,
                       help="create a tag after a successful build")
     tag_group.add_arg("--tag-only", action="store_true", dest="tag_only",
-                      default=False,
                       help="don't build, only tag and run the posttag hook")
     tag_group.add_arg("--retag", action="store_true", dest="retag",
-                      default=False, help="don't fail if the tag already exists")
+                      help="don't fail if the tag already exists")
     tag_group.add_bool_conf_file_arg("--sign-tags",
                                      dest="sign_tags")
     tag_group.add_conf_file_arg("--keyid", dest="keyid")

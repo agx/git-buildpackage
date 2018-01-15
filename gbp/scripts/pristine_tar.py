@@ -53,7 +53,7 @@ def build_parser(name):
                              dest="upstream_tag")
     parser.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
                              dest="components")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme",

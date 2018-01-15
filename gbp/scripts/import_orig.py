@@ -349,7 +349,7 @@ def build_parser(name):
                                   dest='interactive')
     parser.add_bool_conf_file_arg("--rollback",
                                   dest="rollback")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme",
@@ -357,7 +357,7 @@ def build_parser(name):
 
     # Accepted for compatibility
     parser.add_arg("--download", dest='download', action="store_true",
-                   default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-orig(1).")
+                   help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-orig(1).")
 
     src_group = parser.add_mutually_exclusive_group(required=True)
     src_group.add_arg("--uscan", action="store_true",

@@ -381,7 +381,7 @@ def build_parser(name):
 
     # Add common arguments
     _parent.add_arg("-v", "--verbose", action="store_true", dest="verbose",
-                    default=False, help="Verbose command execution")
+                    help="Verbose command execution")
     _parent.add_conf_file_arg("--color", dest="color",
                               type='tristate')
     _parent.add_conf_file_arg("--color-scheme",
@@ -410,7 +410,6 @@ def build_parser(name):
                                     help="Create a patch queue / devel branch from spec file "
                                     "and patches in current dir.")
     _parser.add_arg("--force", dest="force", action="store_true",
-                    default=False,
                     help="In case of import even import if the branch already exists")
     # Rebase
     _parser = subparsers.add_parser('rebase', parents=[_parent],

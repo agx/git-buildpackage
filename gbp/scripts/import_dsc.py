@@ -320,7 +320,7 @@ def build_parser(name):
     branch_group = parser.add_argument_group("version and branch naming options",
                                              "version number and branch layout options")
 
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme",
@@ -341,7 +341,7 @@ def build_parser(name):
     tag_group.add_conf_file_arg("--upstream-tag",
                                 dest="upstream_tag")
     tag_group.add_arg("--skip-debian-tag", dest="skip_debian_tag",
-                      action="store_true", default=False,
+                      action="store_true",
                       help="Don't add a tag after importing the Debian patch")
 
     import_group.add_conf_file_arg("--filter",
@@ -349,7 +349,7 @@ def build_parser(name):
     import_group.add_bool_conf_file_arg("--pristine-tar",
                                         dest="pristine_tar")
     import_group.add_arg("--allow-same-version", action="store_true",
-                         dest="allow_same_version", default=False,
+                         dest="allow_same_version",
                          help="allow import of already imported version")
     import_group.add_bool_conf_file_arg("--author-is-committer",
                                         dest="author_committer")
@@ -363,7 +363,7 @@ def build_parser(name):
     parser.add_conf_file_arg("--repo-email", dest="repo_email",
                              choices=['DEBIAN', 'GIT'])
     parser.add_arg("--download", dest='download', action="store_true",
-                   default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-dsc(1).")
+                   help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-dsc(1).")
     parser.add_argument("package", metavar="PACKAGE",
                         help="package to import")
     parser.add_argument("target_dir", metavar="TARGET_DIR", nargs="?",

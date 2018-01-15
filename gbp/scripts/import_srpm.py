@@ -134,7 +134,7 @@ def build_parser(name):
                                              "version number and branch layout options")
 
     parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
-                   default=False, help="verbose command execution")
+                   help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color",
                              type='tristate')
     parser.add_conf_file_arg("--color-scheme",
@@ -143,7 +143,7 @@ def build_parser(name):
     parser.add_conf_file_arg("--vendor", action="store",
                              dest="vendor")
     parser.add_arg("--download", action="store_true", dest="download",
-                   default=False, help="download source package")
+                   help="download source package")
     branch_group.add_conf_file_arg("--packaging-branch",
                                    dest="packaging_branch")
     branch_group.add_conf_file_arg("--upstream-branch",
@@ -154,10 +154,9 @@ def build_parser(name):
     branch_group.add_bool_conf_file_arg("--create-missing-branches",
                                         dest="create_missing_branches")
     branch_group.add_arg("--orphan-packaging", action="store_true",
-                         dest="orphan_packaging", default=False,
+                         dest="orphan_packaging",
                          help="The packaging branch doesn't base on upstream")
-    branch_group.add_arg("--native", action="store_true",
-                         dest="native", default=False,
+    branch_group.add_arg("--native", action="store_true", dest="native",
                          help="This is a dist native package, no separate "
                          "upstream branch")
 
@@ -178,7 +177,7 @@ def build_parser(name):
     import_group.add_bool_conf_file_arg("--pristine-tar",
                                         dest="pristine_tar")
     import_group.add_arg("--allow-same-version", action="store_true",
-                         dest="allow_same_version", default=False,
+                         dest="allow_same_version",
                          help="allow import of already imported version")
     import_group.add_bool_conf_file_arg("--author-is-committer",
                                         dest="author_is_committer")

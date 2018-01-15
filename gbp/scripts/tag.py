@@ -85,7 +85,7 @@ def build_parser(name):
         gbp.log.err(err)
         return None
 
-    parser.add_arg("--retag", action="store_true", dest="retag", default=False,
+    parser.add_arg("--retag", action="store_true", dest="retag",
                    help="don't fail if the tag already exists")
     parser.add_conf_file_arg("--debian-branch",
                              dest="debian_branch")
@@ -102,7 +102,7 @@ def build_parser(name):
     parser.add_conf_file_arg("--color-scheme",
                              dest="color_scheme")
     parser.add_arg("--verbose", action="store_true", dest="verbose",
-                   default=False, help="verbose command execution")
+                   help="verbose command execution")
     return parser
 
 

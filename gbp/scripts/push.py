@@ -36,7 +36,7 @@ def build_parser(name):
         gbp.log.err(err)
         return None
 
-    parser.add_arg("-d", "--dry-run", dest="dryrun", default=False,
+    parser.add_arg("-d", "--dry-run", dest="dryrun",
                    action="store_true", help="dry run, don't push.")
     parser.add_conf_file_arg("--upstream-branch",
                              dest="upstream_branch")
@@ -53,7 +53,7 @@ def build_parser(name):
     parser.add_conf_file_arg("--color-scheme",
                              dest="color_scheme")
     parser.add_arg("--verbose", action="store_true", dest="verbose",
-                   default=False, help="verbose command execution")
+                   help="verbose command execution")
     parser.add_argument("remote", metavar="REMOTE", nargs="?",
                         help="remote where to push")
     return parser

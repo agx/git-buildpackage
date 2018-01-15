@@ -353,17 +353,17 @@ def build_parser(name, prefix=None):
                                              "alternative build tree related options")
 
     parser.add_bool_conf_file_arg("--ignore-new", dest="ignore_new")
-    parser.add_arg("--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme",
                              dest="color_scheme")
     parser.add_conf_file_arg("--notify", dest="notify", type='tristate')
-    tag_group.add_arg("--tag", action="store_true", dest="tag", default=False,
+    tag_group.add_arg("--tag", action="store_true", dest="tag",
                       help="create a tag after a successful build")
-    tag_group.add_arg("--tag-only", action="store_true", dest="tag_only", default=False,
+    tag_group.add_arg("--tag-only", action="store_true", dest="tag_only",
                       help="don't build, only tag and run the posttag hook")
-    tag_group.add_arg("--retag", action="store_true", dest="retag", default=False,
+    tag_group.add_arg("--retag", action="store_true", dest="retag",
                       help="don't fail if the tag already exists")
     tag_group.add_bool_conf_file_arg("--sign-tags", dest="sign_tags")
     tag_group.add_conf_file_arg("--keyid", dest="keyid")

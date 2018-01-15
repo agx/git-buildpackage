@@ -275,7 +275,7 @@ def build_parser(name):
     branch_group = parser.add_argument_group("branch options",
                                              "branch layout options")
 
-    parser.add_arg("--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme",

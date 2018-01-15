@@ -412,14 +412,14 @@ def build_parser(name):
         return None
 
     # Add common arguments
-    _parent.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    _parent.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                     help="verbose command execution")
     _parent.add_conf_file_arg("--color", dest="color", type='tristate')
     _parent.add_conf_file_arg("--color-scheme",
                               dest="color_scheme")
     _parent.add_conf_file_arg("--pq-from", dest="pq_from", choices=['DEBIAN', 'TAG'])
     _parent.add_conf_file_arg("--upstream-tag", dest="upstream_tag")
-    _parent.add_arg("--force", dest="force", action="store_true", default=False,
+    _parent.add_arg("--force", dest="force", action="store_true",
                     help="in case of import even import if the branch already exists")
     _parent.add_conf_file_arg("--time-machine", dest="time_machine", type=int)
 

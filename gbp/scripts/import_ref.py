@@ -97,7 +97,7 @@ def build_parser(name):
 
     parser.add_bool_conf_file_arg("--rollback",
                                   dest="rollback")
-    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_arg("-v", "--verbose", action="store_true", dest="verbose",
                    help="verbose command execution")
     parser.add_conf_file_arg("--color", dest="color", type='tristate')
     parser.add_conf_file_arg("--color-scheme",
