@@ -142,7 +142,7 @@
 	    identical to the newly imported tree but preserves the
 	    content of the <filename>debian/</filename> directory
 	    while keeping the current head as well as the newly
-	    important trees as parents of the generated commit. This is
+	    imported tree as parents of the generated commit. This is
 	    similar to a <option>theirs</option> merge strategy while
 	    preserving <filename>debian/</filename>.
           </para>
