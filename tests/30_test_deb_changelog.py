@@ -8,6 +8,7 @@ also make up the API documentation.
 """
 
 from . import context  # noqa: 401
+from . testutils import skip_without_cmd
 import os
 import unittest
 
@@ -29,6 +30,7 @@ class TestQuoting(unittest.TestCase):
         self.assertEquals(cl.email, 'agx@sigxcpu.org')
 
 
+@skip_without_cmd('debchange')
 class Test(unittest.TestCase):
     def setUp(self):
         self.tmpdir = context.new_tmpdir(__name__)

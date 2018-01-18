@@ -22,6 +22,7 @@ import subprocess
 from tests.component import ComponentTestBase
 
 from tests.component.deb.fixtures import RepoFixtures
+from tests.testutils import skip_without_cmd
 
 from gbp.git import GitRepository
 from gbp.scripts.push import main as push
@@ -91,6 +92,7 @@ class TestPush(ComponentTestBase):
         self.assertEquals(push(['argv0']), 1)
         self._check_log(-2, ".*You are not on branch 'master' but on 'foo'")
 
+    @skip_without_cmd('debchange')
     @RepoFixtures.quilt30()
     def test_dont_push_unreleased(self, repo):
         repo.add_remote_repo('origin', self.target.path)
