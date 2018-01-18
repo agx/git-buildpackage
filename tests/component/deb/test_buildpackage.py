@@ -27,6 +27,7 @@ from tests.component import (ComponentTestBase,
 from tests.component.deb import DEB_TEST_DATA_DIR
 from tests.component.deb.fixtures import (RepoFixtures,
                                           DEFAULT_OVERLAY)
+from tests.testutils import skip_without_cmd
 
 from nose.tools import ok_, eq_, assert_false, assert_true
 
@@ -289,6 +290,7 @@ class TestBuildpackage(ComponentTestBase):
         repo.checkout("master")
         eq_(repo.rev_parse('master~^{}'), repo.rev_parse('debian/2.8-1^{}'))
 
+    @skip_without_cmd('debchange')
     @RepoFixtures.quilt30()
     def test_broken_upstream_version(self, repo):
         cl = ChangeLog(filename='debian/changelog')

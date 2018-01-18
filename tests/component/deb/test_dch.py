@@ -21,6 +21,7 @@ import os
 from tests.component import ComponentTestBase
 from tests.component.deb import DEB_TEST_DATA_DIR
 from tests.component.deb.fixtures import RepoFixtures
+from tests.testutils import skip_without_cmd
 
 import gbp.scripts.dch
 from gbp.scripts.dch import main as dch
@@ -35,6 +36,7 @@ def _dsc_file(pkg, version, dir='dsc-3.0'):
 DEFAULT_DSC = _dsc_file('hello-debhelper', '2.6-2')
 
 
+@skip_without_cmd('debchange')
 class TestDch(ComponentTestBase):
     """Test importing of new upstream versions"""
     pkg = "hello-debhelper"
