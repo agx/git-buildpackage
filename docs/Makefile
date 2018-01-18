@@ -38,6 +38,13 @@ MAN_DATE=$(shell dpkg-parsechangelog -l ../debian/changelog -SDate | TZ=UTC LC_A
 IMAGES=$(wildcard images/*png)
 DEST_IMAGES=$(subst images/,$(MANUAL)/images/,$(IMAGES))
 
+# Set name of the docbook-to-man tool, depending on the host distro
+ifeq ($(shell which docbook2x-man), )
+	DOCBOOK_TO_MAN=docbook-to-man
+else
+	DOCBOOK_TO_MAN=docbook2x-man
+endif
+
 all: manual $(MANPAGES)
 
 manual: $(MANUAL)/index.html $(DEST_IMAGES) css
@@ -62,7 +69,7 @@ $(MANUAL)/images/%.png: images/%.png
 	install $< $@
 
 %.1 %.5: man.gbp.xml manpages/%.xml
-	docbook2x-man -o . $<
+	$(DOCBOOK_TO_MAN) -o . $<
 
 git-pbuilder.1: ../bin/git-pbuilder
 	pod2man $< $@
