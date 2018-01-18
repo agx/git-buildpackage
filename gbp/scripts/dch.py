@@ -31,6 +31,7 @@ from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.deb.git import GitRepositoryError, DebianGitRepository
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.scripts.common import ExitCodes, maybe_debug_raise
+from gbp.scripts.common.hook import Hook
 
 user_customizations = {}
 snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
@@ -423,6 +424,9 @@ def build_parser(name):
     custom_group.add_config_file_option(option_name="customizations",
                                         dest="customization_file",
                                         help=help_msg)
+    custom_group.add_config_file_option(option_name="postedit", dest="postedit",
+                                        help="Hook to run after changes to the changelog file"
+                                        "have been finalized default is '%(postedit)s'")
     return parser
 
 
@@ -571,6 +575,11 @@ def main(argv):
 
         if editor_cmd:
             gbpc.Command(editor_cmd, ["debian/changelog"])()
+
+        if options.postedit:
+            cp = ChangeLog(filename=changelog)
+            Hook('Postimport', options.postedit,
+                 extra_env={'GBP_DEBIAN_VERSION': cp.version})()
 
         if options.commit:
             # Get the version from the changelog file (since dch might

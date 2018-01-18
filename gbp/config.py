@@ -156,6 +156,7 @@ class GbpOptionParser(OptionParser):
                 'pbuilder-options': '',
                 'postbuild': '',
                 'postclone': '',
+                'postedit': '',
                 'postexport': '',
                 'postimport': '',
                 'posttag': '',
