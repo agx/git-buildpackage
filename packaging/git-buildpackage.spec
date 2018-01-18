@@ -47,8 +47,9 @@ BuildRequires:  python3
 BuildRequires:  python3-setuptools
 
 %if %{with docs}
-BuildRequires:  docbook-utils
+BuildRequires:  docbook2x
 BuildRequires:  gtk-doc
+BuildRequires:  libxslt-tools
 %if 0%{?fedora}
 BuildRequires:  perl-podlators
 %endif
