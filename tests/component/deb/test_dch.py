@@ -25,7 +25,7 @@ from tests.component.deb.fixtures import RepoFixtures
 import gbp.scripts.dch
 from gbp.scripts.dch import main as dch
 
-from nose.tools import ok_
+from nose.tools import eq_, ok_
 
 
 def _dsc_file(pkg, version, dir='dsc-3.0'):
@@ -61,3 +61,10 @@ class TestDch(ComponentTestBase):
             cl = f.read()
         ok_('* testentry\n' in cl)
         del gbp.scripts.dch.user_customizations['format_changelog_entry']
+
+    @RepoFixtures.native()
+    def test_postedit_hook(self, repo):
+        os.chdir(repo.path)
+        eq_(dch(['arg0', '-N', '1.2.3', '--postedit', 'echo $GBP_DEBIAN_VERSION > foo.txt']), 0)
+        with open('foo.txt') as f:
+            eq_(f.read(), '1.2.3\n')

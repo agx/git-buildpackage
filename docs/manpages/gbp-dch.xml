@@ -73,6 +73,7 @@
 	<arg><option>--commit</option></arg>
       </group>
       <arg><option>--customizations=</option><replaceable>customization-file</replaceable></arg>
+      <arg><option>--postedit=</option><replaceable>COMMAND</replaceable></arg>
       <arg rep='repeat'><option>--dch-opt=</option><replaceable>dch-options</replaceable></arg>
       <arg><option>--verbose</option></arg>
       <arg choice="plain"><replaceable><optional>path1 path2</optional></replaceable></arg>
@@ -499,6 +500,18 @@
           Load Python code from <replaceable>customization-file</replaceable>.
           At the moment, the only useful thing the code can do is define a
           custom format_changelog_entry() function.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--postedit=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+              Run<replaceable>COMMAND</replaceable> after changes to the changelog
+              file have been finalized, That is, after dch has been run and
+              possible text editor has been exited, but, before changes are
+              (possibly) committed to git.
           </para>
         </listitem>
       </varlistentry>
