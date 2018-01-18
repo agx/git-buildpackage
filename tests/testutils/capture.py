@@ -7,7 +7,7 @@ from io import StringIO
 
 class _StderrCapture(StringIO):
     def save(self):
-        self.safed = sys.stdout
+        self.safed = sys.stderr
         sys.stderr = self
 
     def restore(self):
