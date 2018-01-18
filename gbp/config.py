@@ -696,6 +696,18 @@ class GbpConfArgParser(object):
         return self._wrap_generator('add_mutually_exclusive_group',
                                     *args, **kwargs)
 
+    def add_subparsers(self, *args, **kwargs):
+        """Add subparsers"""
+        return self._wrap_generator('add_subparsers', *args, **kwargs)
+
+    def add_parser(self, *args, **kwargs):
+        """Add parser. Only valid for subparser instances!"""
+        if 'parents' in kwargs:
+            for parser in kwargs['parents']:
+                self.conf_file_args.update(parser.conf_file_args)
+        return self._wrap_generator('add_parser',
+                                    *args, **kwargs)
+
     def __getattr__(self, name):
         return self.wrapped.__getattribute__(name)
 

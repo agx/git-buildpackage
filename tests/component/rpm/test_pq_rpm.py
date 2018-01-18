@@ -18,7 +18,7 @@
 
 import os
 import tempfile
-from nose.tools import eq_, ok_  # pylint: disable=E0611
+from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 from gbp.scripts.pq_rpm import main as pq
 from gbp.git import GitRepository
@@ -49,20 +49,21 @@ class TestPqRpm(RpmRepoTestBase):
     def test_invalid_args(self):
         """See that pq-rpm fails gracefully when called with invalid args"""
         GitRepository.create('.')
-        # Test empty args
-        eq_(mock_pq([]), 1)
-        self._check_log(0, 'gbp:error: No action given.')
-        self._clear_log()
-
-        # Test invalid command
-        eq_(mock_pq(['mycommand']), 1)
-        self._check_log(0, "gbp:error: Unknown action 'mycommand'")
-        self._clear_log()
-
-        # Test invalid cmdline options
         with capture_stderr():
-            eq_(mock_pq(['export', '--invalid-arg=123']), 1)
-        self._check_log(0, "gbp:error: Invalid options: --invalid-arg=123")
+            # Test empty args
+            with assert_raises(SystemExit) as err:
+                eq_(mock_pq([]), 1)
+                eq_(err.code, 2)
+
+            # Test invalid command
+            with assert_raises(SystemExit) as err:
+                eq_(mock_pq(['mycommand']), 1)
+                eq_(err.code, 2)
+
+            # Test invalid cmdline options
+            with assert_raises(SystemExit) as err:
+                eq_(mock_pq(['export', '--invalid-arg=123']), 1)
+                eq_(err.code, 2)
 
     def test_import_outside_repo(self):
         """Run pq-rpm when not in a git repository"""
@@ -234,8 +235,10 @@ class TestPqRpm(RpmRepoTestBase):
         branches = repo.get_local_branches() + ['patch-queue/master']
 
         # No patch given
-        eq_(mock_pq(['apply']), 1)
-        self._check_log(-1, "gbp:error: No patch name given.")
+        with capture_stderr():
+            with assert_raises(SystemExit) as err:
+                eq_(mock_pq(['apply']), 1)
+                eq_(err.code, 2)
 
         # Create a pristine pq-branch
         repo.create_branch('patch-queue/master', 'upstream')
