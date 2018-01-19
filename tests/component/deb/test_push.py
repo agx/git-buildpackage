@@ -61,6 +61,17 @@ class TestPush(ComponentTestBase):
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEquals(repo.head, self.target.head)
 
+    @RepoFixtures.quilt30(opts=['--pristine-tar'])
+    def test_push_detached_head(self, repo):
+        repo.checkout("HEAD^{commit}")
+        repo.add_remote_repo('origin', self.target.path)
+        self.assertEquals(push(['argv0', '--ignore-branch']), 0)
+        # Since branch head is detached we don't push it but upstream
+        # branch and tags must be there:
+        self._check_repo_state(self.target, None,
+                               ['upstream'],
+                               tags=['debian/2.8-1', 'upstream/2.8'])
+
     @RepoFixtures.native()
     def test_push_tag_ne_branch(self, repo):
         repo.add_remote_repo('origin', self.target.path)

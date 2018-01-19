@@ -132,10 +132,12 @@ def main(argv):
 
     try:
         source = DebianSource(repo.path)
-        branch = repo.get_branch()
+        branch = repo.branch
         if not options.ignore_branch:
             if branch != options.debian_branch:
-                gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
+                gbp.log.err("You are not on branch '%s' but %s" %
+                            (options.debian_branch,
+                             "on '%s'" % branch if branch else 'in detached HEAD state'))
                 raise GbpError("Use --ignore-branch to ignore or --debian-branch to set the branch name.")
 
         if not dest:
