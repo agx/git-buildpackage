@@ -21,6 +21,7 @@ import errno
 import os
 import pipes
 import shutil
+import shlex
 import sys
 import time
 import gbp.deb as du
@@ -282,29 +283,34 @@ def disable_hooks(options):
             setattr(options, hook, '')
 
 
-def changes_file_suffix(dpkg_args):
+def changes_file_suffix(builder, dpkg_args):
     """
-    >>> changes_file_suffix(['-A'])
+    >>> changes_file_suffix('debuild', ['-A'])
     'all'
-    >>> changes_file_suffix(['-S'])
+    >>> changes_file_suffix('debuild', ['-S'])
     'source'
-    >>> changes_file_suffix([]) == du.get_arch()
+    >>> changes_file_suffix('debuild -A', ['-uc', '-us'])
+    'all'
+    >>> changes_file_suffix('debuild -S', ['-uc', '-us'])
+    'source'
+    >>> changes_file_suffix('debuild', []) == du.get_arch()
     True
     """
-    if '-S' in dpkg_args:
+    args = shlex.split(builder) + dpkg_args
+    if '-S' in args:
         return 'source'
-    elif '-A' in dpkg_args:
+    elif '-A' in args:
         return 'all'
     else:
         return os.getenv('ARCH', None) or du.get_arch()
 
 
-def changes_file_name(source, build_dir, dpkg_args):
+def changes_file_name(source, build_dir, builder, dpkg_args):
     return os.path.abspath("%s/../%s_%s_%s.changes" %
                            (build_dir,
                             source.changelog.name,
                             source.changelog.noepoch,
-                            changes_file_suffix(dpkg_args)))
+                            changes_file_suffix(builder, dpkg_args)))
 
 
 def check_branch(repo, options):
@@ -497,7 +503,7 @@ def main(argv):
                      else source.upstream_version)
             export_dir = os.path.join(output_dir, "%s-%s" % (source.sourcepkg, major))
             build_dir = export_dir if options.export_dir else repo.path
-            changes_file = changes_file_name(source, build_dir, dpkg_args)
+            changes_file = changes_file_name(source, build_dir, options.builder, dpkg_args)
 
             # Get/build the upstream tarball if necessary. We delay this in
             # case of a postexport hook so the hook gets a chance to modify the
