@@ -285,6 +285,22 @@ class TestImportPacked(ComponentTestBase):
         eq_(info['author'].name, info['committer'].name)
         eq_(info['author'].email, info['committer'].email)
 
+        # Create a new commit by committing an empty tree
+        commit = repo.commit_tree('4b825dc642cb6eb9a060e54bf8d69288fbee4904',
+                                  msg="Empty commit", parents=[])
+        repo.create_tag('foo/1.0', msg="New tag", commit=commit)
+        # Just blindly import another package on top of this to test more options
+        os.chdir('gbp-test2')
+        srpm = os.path.join(DATA_DIR, 'gbp-test-1.0-1.src.rpm')
+        eq_(mock_import(['--upstream-vcs-tag=foo/%(version)s',
+                         '--upstream-branch=orig',
+                         '--packaging-branch=pack',
+                         srpm]), 0)
+        parents = repo.get_commits(until='orig', num=1, options='--format=%P')[0].split()
+        eq_(len(parents), 2)
+        ok_(commit in parents)
+        ok_(repo.rev_parse('orig/2.0^{}') in parents)
+
 
 class TestImportUnPacked(ComponentTestBase):
     """Test importing of unpacked source rpms"""

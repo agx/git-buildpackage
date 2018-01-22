@@ -155,6 +155,9 @@ def build_parser(name):
                                         dest="packaging_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                                         dest="upstream_branch")
+    branch_group.add_option("--upstream-vcs-tag", dest="vcs_tag",
+                            help="Upstream VCS tag on top of which to import "
+                            "the orig sources")
     branch_group.add_boolean_config_file_option(
         option_name="create-missing-branches",
         dest="create_missing_branches")
@@ -387,9 +390,15 @@ def main(argv):
                 upstream_vendor = "Native" if options.native else "Upstream"
                 upstream_version = full_version if options.native else spec.upstreamversion
                 msg = "%s version %s" % (upstream_vendor, upstream_version)
+                if options.vcs_tag:
+                    vcs_tag = repo.version_to_tag(options.vcs_tag, upstream_str_fields)
+                    parents = [repo.rev_parse("%s^{}" % vcs_tag)]
+                else:
+                    parents = None
                 upstream_commit = repo.commit_dir(sources.unpacked,
                                                   "Import %s" % msg,
                                                   branch,
+                                                  other_parents=parents,
                                                   author=author,
                                                   committer=committer,
                                                   create_missing_branch=options.create_missing_branches)
