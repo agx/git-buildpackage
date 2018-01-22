@@ -382,7 +382,8 @@ def main(argv):
                                     "Also check the --create-missing-branches option.")
                         raise GbpError
                 upstream_vendor = "Native" if options.native else "Upstream"
-                msg = "%s version %s" % (upstream_vendor, spec.upstreamversion)
+                upstream_version = full_version if options.native else spec.upstreamversion
+                msg = "%s version %s" % (upstream_vendor, upstream_version)
                 upstream_commit = repo.commit_dir(sources.unpacked,
                                                   "Import %s" % msg,
                                                   branch,
