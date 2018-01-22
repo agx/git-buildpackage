@@ -331,23 +331,20 @@ def main(argv):
 
         tag_str_fields = dict(spec.version, vendor=options.vendor.lower())
         if options.native:
-            src_tag_format = options.packaging_tag
-            src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
-            upstream_tag = src_tag
+            upstream_tag_format = options.packaging_tag
             upstream_str_fields = tag_str_fields
         else:
-            src_tag_format = options.upstream_tag
-            src_tag = repo.version_to_tag(src_tag_format, tag_str_fields)
+            upstream_tag_format = options.upstream_tag
             upstream_str_fields = filter_version(tag_str_fields, 'release', 'epoch')
-            upstream_tag = repo.version_to_tag(src_tag_format, upstream_str_fields)
+        upstream_tag = repo.version_to_tag(upstream_tag_format, upstream_str_fields)
 
-        ver_str = compose_version_str(spec.version)
-
+        full_version = compose_version_str(spec.version)
         if repo.find_version(options.packaging_tag, tag_str_fields):
-            gbp.log.warn("Version %s already imported." % ver_str)
+            gbp.log.warn("Version %s already imported." % full_version)
+
             if options.allow_same_version:
                 gbp.log.info("Moving tag of version '%s' since import forced" %
-                             ver_str)
+                             full_version)
                 move_tag_stamp(repo, options.packaging_tag, tag_str_fields)
             else:
                 raise SkipImport
@@ -370,9 +367,9 @@ def main(argv):
 
         # Import sources
         if sources:
-            src_commit = repo.find_version(src_tag_format, upstream_str_fields)
-            if not src_commit:
-                gbp.log.info("Tag %s not found, importing sources" % src_tag)
+            upstream_commit = repo.find_version(upstream_tag_format, upstream_str_fields)
+            if not upstream_commit:
+                gbp.log.info("Tag %s not found, importing sources" % upstream_tag)
 
                 branch = [options.upstream_branch,
                           options.packaging_branch][options.native]
@@ -384,17 +381,17 @@ def main(argv):
                         gbp.log.err(no_upstream_branch_msg % branch + "\n"
                                     "Also check the --create-missing-branches option.")
                         raise GbpError
-                src_vendor = "Native" if options.native else "Upstream"
-                msg = "%s version %s" % (src_vendor, spec.upstreamversion)
-                src_commit = repo.commit_dir(sources.unpacked,
-                                             "Import %s" % msg,
-                                             branch,
-                                             author=author,
-                                             committer=committer,
-                                             create_missing_branch=options.create_missing_branches)
-                repo.create_tag(name=src_tag if options.native else upstream_tag,
+                upstream_vendor = "Native" if options.native else "Upstream"
+                msg = "%s version %s" % (upstream_vendor, spec.upstreamversion)
+                upstream_commit = repo.commit_dir(sources.unpacked,
+                                                  "Import %s" % msg,
+                                                  branch,
+                                                  author=author,
+                                                  committer=committer,
+                                                  create_missing_branch=options.create_missing_branches)
+                repo.create_tag(name=upstream_tag,
                                 msg=msg,
-                                commit=src_commit,
+                                commit=upstream_commit,
                                 sign=options.sign_tags,
                                 keyid=options.keyid)
 
@@ -426,7 +423,7 @@ def main(argv):
                     raise GbpError
 
             tag = repo.version_to_tag(options.packaging_tag, tag_str_fields)
-            msg = "%s release %s" % (options.vendor, ver_str)
+            msg = "%s release %s" % (options.vendor, full_version)
 
             if options.orphan_packaging or not sources:
                 commit = repo.commit_dir(dirs['packaging_base'],
@@ -450,7 +447,7 @@ def main(argv):
                 commit = repo.commit_dir(sources.unpacked,
                                          "Import %s" % msg,
                                          branch,
-                                         other_parents=[src_commit],
+                                         other_parents=[upstream_commit],
                                          author=author,
                                          committer=committer,
                                          create_missing_branch=options.create_missing_branches)
@@ -489,7 +486,7 @@ def main(argv):
         del_tmpdir()
 
     if not ret and not skipped:
-        gbp.log.info("Version '%s' imported under '%s'" % (ver_str, repo.path))
+        gbp.log.info("Version '%s' imported under '%s'" % (full_version, repo.path))
     return ret
 
 
