@@ -134,7 +134,7 @@ class GitRepository(object):
     def __build_env(extra_env):
         """Prepare environment for subprocess calls"""
         env = None
-        if extra_env is not None:
+        if extra_env:
             env = os.environ.copy()
             env.update(extra_env)
         return env
