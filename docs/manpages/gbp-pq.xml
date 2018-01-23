@@ -28,6 +28,7 @@
       <arg><option>--[no-]drop</option></arg>
       <arg><option>--abbrev=</option><replaceable>num</replaceable></arg>
       <arg><option>--force</option></arg>
+      <arg><option>--commit</option></arg>
       <arg><option>--meta-closes=bug-close-tags</option></arg>
       <arg><option>--meta-closes-bugnum=bug-number-format</option></arg>
       <arg><option>--pq-from=</option><replaceable>[DEBIAN|TAG]</replaceable></arg>
@@ -219,6 +220,16 @@
           <para>In case of <option>import</option>, import even if the
             patch-queue branch already exists and overwrite its
             content with <filename>debian/patches</filename>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--export</option></term>
+        <listitem>
+          <para>
+	    In case of <option>export</option>, commit
+            <filename>debian/patches</filename>the changes to &git; after
+	    exporting the patches.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
