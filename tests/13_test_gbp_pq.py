@@ -77,7 +77,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         info = self.repo.get_commit_info('HEAD')
         self.assertIn('Gbp-Pq: Name foobar', info['body'])
 
-    @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
+    @testutils.skip_without_cmd('dpkg')
     def test_debian_missing_author(self):
         """
         Check if we parse the author from debian control if it's missing in the patch.

@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+import unittest
 import zipfile
 
 import gbp.log
@@ -22,7 +23,7 @@ __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
            'MockedChangeLog', 'get_dch_default_urgency',
            'capture_stderr', 'capture_stdout',
            'ls_dir', 'ls_tar', 'ls_zip',
-           'patch_popen']
+           'patch_popen', 'have_cmd', 'skip_without_cmd']
 
 
 class OsReleaseFile(object):
@@ -127,3 +128,16 @@ def ls_zip(archive, directories=True):
         return ls_dir(tmpdir, directories)
     finally:
         shutil.rmtree(tmpdir)
+
+
+def have_cmd(cmd):
+    """Check if a command is available"""
+    return True if shutil.which(cmd) else False
+
+
+def skip_without_cmd(cmd):
+    """Skip if a command is not available"""
+    if have_cmd(cmd):
+        return lambda func: func
+    else:
+        return unittest.skip("Command '%s' not found" % cmd)

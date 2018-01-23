@@ -1,9 +1,10 @@
 # vim: set fileencoding=utf-8 :
 from gbp.scripts.clone import vcs_git_url
 
-import os
 import unittest
 from mock import patch
+
+from . testutils import skip_without_cmd
 
 
 class TestGbpClone(unittest.TestCase):
@@ -26,7 +27,7 @@ Vcs-Git: git://honk.sigxcpu.org/git/git-buildpackage.git
 
 """
 
-    @unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
+    @skip_without_cmd('dpkg')
     @patch('gbp.scripts.clone.apt_showsrc', return_value=show_src)
     def test_vcs_git_url(self, patch):
         self.assertEqual(vcs_git_url('git-buildpackage'),
