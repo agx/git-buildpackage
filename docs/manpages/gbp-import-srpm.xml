@@ -133,7 +133,7 @@
         </term>
         <listitem>
           <para>
-          Do not create &packaging; tag after importing the packaging files.
+          Do not create packaging tag after importing the packaging files.
           </para>
         </listitem>
       </varlistentry>
