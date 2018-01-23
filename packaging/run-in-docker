@@ -83,6 +83,7 @@ gbp_test() {
         docker run --rm -ie"TEST_LOCALE=${L}" gbp-base:${debian_tag} sh <<'EOF'
 set -euvx
 make all+net
+make -C docs
 EOF
     done
 }
