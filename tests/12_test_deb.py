@@ -136,7 +136,7 @@ Files:
         self.assertEquals(dsc.sigs, [])
 
 
-@unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
+@testutils.skip_without_cmd('dpkg')
 class TestDpkgCompareVersions(unittest.TestCase):
     """Test L{gbp.deb.DpkgCompareVersions}"""
 
@@ -160,7 +160,7 @@ class TestDpkgCompareVersions(unittest.TestCase):
             self.cmp('_', '_ _')
 
 
-@unittest.skipIf(not os.path.exists('/usr/bin/dpkg'), 'Dpkg not found')
+@testutils.skip_without_cmd('dpkg')
 class TestDeb(unittest.TestCase):
     """Test L{gbp.deb.__init__} """
 

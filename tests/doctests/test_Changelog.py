@@ -4,7 +4,8 @@
 Test L{gbp.deb.changelog.ChangeLog}
 """
 from .. import context  # noqa: 401
-import os
+from .. testutils import have_cmd
+
 import nose
 
 cl_debian = """git-buildpackage (0.5.32) unstable; urgency=low
@@ -48,7 +49,7 @@ cl_epoch = """xserver-xorg-video-nv (1:1.2.0-3) unstable; urgency=low
 
 def setup():
     """Setup test module"""
-    if not os.path.exists('/usr/bin/debchange'):
+    if not have_cmd('debchange'):
         raise nose.SkipTest('debchange tool not present')
 
 

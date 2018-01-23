@@ -3,12 +3,11 @@
 """Test L{gbp.scripts.dch} main"""
 
 from . import context
-from .testutils import (DebianGitTestRepo, OsReleaseFile,
+from .testutils import (DebianGitTestRepo, OsReleaseFile, skip_without_cmd,
                         get_dch_default_urgency, capture_stderr)
 
 from gbp.scripts import dch
 
-import unittest
 import os
 import re
 
@@ -46,7 +45,7 @@ cl_debian = """test-package (0.9-1) unstable; urgency=%s
 """ % default_urgency
 
 
-@unittest.skipIf(not os.path.exists('/usr/bin/debchange'), "Dch not found")
+@skip_without_cmd('debchange')
 class TestScriptDch(DebianGitTestRepo):
     """Test git-dch"""
 
