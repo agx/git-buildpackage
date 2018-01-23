@@ -1475,17 +1475,20 @@ class GitRepository(object):
         self._commit(msg=msg, args=args.args, author_info=author_info,
                      committer_info=committer_info)
 
-    def commit_all(self, msg, author_info=None, edit=False):
+    def commit_all(self, msg, author_info=None, edit=False, committer_info=None):
         """
         Commit all changes to the repository
         @param msg: commit message
         @type msg: C{str}
         @param author_info: authorship information
         @type author_info: L{GitModifier}
+        @param committer_info: committer information
+        @type committer_info: L{GitModifier}
         """
         args = GitArgs('-a')
         args.add_true(edit, '--edit')
-        self._commit(msg=msg, args=args.args, author_info=author_info)
+        self._commit(msg=msg, args=args.args, author_info=author_info,
+                     committer_info=committer_info)
 
     def commit_files(self, files, msg, author_info=None, committer_info=None):
         """
