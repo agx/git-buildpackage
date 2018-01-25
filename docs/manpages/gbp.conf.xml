@@ -88,7 +88,7 @@
       hash sign (<option>#</option>). The overall layout is:
     </para>
     <programlisting>
-      [DEFAULTS]
+      [DEFAULT]
       # This section is for global settings. Affects all commands.
       # Options set here have the lowest priority.
       key = value
