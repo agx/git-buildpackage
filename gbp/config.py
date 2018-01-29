@@ -787,6 +787,7 @@ class GbpOptionParserRpm(GbpOptionParser):
         'changelog-revision': '',
         'spawn-editor': 'always',
         'editor-cmd': 'vim',
+        'spec-vcs-tag': '',
     })
 
     help = dict(GbpOptionParser.help)
@@ -848,6 +849,9 @@ class GbpOptionParserRpm(GbpOptionParser):
             'git-author':
                 "Use name and email from git-config for the changelog header, "
                 "default is '%(git-author)s'",
+            'spec-vcs-tag':
+                "Set/update the 'VCS:' tag in the spec file, empty value "
+                "removes the tag entirely, default is '%(spec-vcs-tag)s'",
         })
 
     def _warn_old_gbp_conf(self, gbp_conf):

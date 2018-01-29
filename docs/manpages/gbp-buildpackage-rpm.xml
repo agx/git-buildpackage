@@ -63,6 +63,7 @@
       <arg><option>--git-arch</option>=<replaceable>ARCHITECTURE</replaceable></arg>
       <arg><option>--git-mock-options</option>=<replaceable>OPTIONS</replaceable></arg>
       <arg><option>--git-mock-root</option>=<replaceable>ROOT</replaceable></arg>
+      <arg><option>--git-spec-vcs-tag</option>=<replaceable>TAG_FORMAT</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -607,6 +608,22 @@
           <para>
 	    Additional options to pass to mock. Default is to pass no
 	    additional options.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--git-spec-vcs-tag</option>=<replaceable>TAG_FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          &gbp-buildpackage-rpm; always automatically sets/updates the 'VCS:'
+          tag in the spec file after exporting.  This option defines the format
+          string for the 'VCS:' tag. An empty value causes no 'VCS:' tag to be
+          inserted and possible old 'VCS:' tag to be removed. Otherwise, the
+          old 'VCS:' tag is updated or a new 'VCS:' tag is added if one does
+          not exist. In the format string '%(tagname)s' expands to the long tag
+          name (from git-describe) and '%(commit)s' expans to the sha1 of the
+          exported commit.
           </para>
         </listitem>
       </varlistentry>
