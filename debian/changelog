@@ -1,3 +1,58 @@
+git-buildpackage (0.9.7) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [d686024] deb.source: Fix class names in doc string.
+    Thanks to Nish Aravamudan
+  * [e36592d] gbp.conf: clarify environment variables.
+    Thanks to Nish Aravamudan
+  * [74ca1fa] Enable Python3.4 in travis
+  * [c782a29] Fix typo in env var names.
+    Thanks to Nish Aravamudan for pointing this out
+  * [17914a9] docs: Although imported trees are important we mean the former.
+    Fix typo. Thanks to Ferenc Wágner (Closes: #887499)
+  * [e1aacbb] push: allow to push from detached heads
+  * [6903232] buildpackage: look at builder as well when determining the
+    changes file name
+    (Closes: #887779)
+  * [da84b60] config: strip '.py' suffix from commands.
+    This makes sure we parse config sections correctly even when running from
+    the source tree like: PYTHONPATH=. python3 "gbp/scripts/dch.py"
+  * [362f793] docs: document pq export --commit
+  * [3576ee8] tests: build docs too.
+    When running in travis build the docs too to catch errors there as well.
+  * [a708096] docs: fix section names for defaults.
+    Thanks to Christoph Berg (Closes: #888415)
+
+  [ rubicks ]
+  * [f1694df] Rework docker script to allow to build packages as well.
+
+  [ Markus Lehtonen ]
+  * [4868442] gbp.git: Python 3.4 compatibility
+  * [c8dbfe1] pq-rpm: implement --drop option.
+    Counterpart for the --drop option of gbp-pq.
+  * [5e9ab95] docs: dynamically select the DocBook-to-man tool to use to ease
+    building on other distros.
+  * [3011490] dch: implement postedit hooks.
+    Add new --postedit command line option for defining a custom hook that
+    will be run after changes to the changelog file has been finalized.
+  * [5a8bbe9] debian/gbp.conf: dch hook to automatically update version in
+    spec file.
+  * [c3e1beb] rpm packaging: update build deps of docs.  Needed after docs
+    were changed to xml.
+  * [fb9cf84] import-srpm: change commit message of native sources.  Include
+    the full package version in the commit message for native packages.
+  * [cb5754b] tests: add more tagging tests for import-srpm
+  * [972db70] import-srpm: implement --skip-packaging-tag option.
+    Corresponding the --skip-debian-tag options of import-dsc.
+  * [8515181] import-srpm: support --upstream-vcs-tag cmdline option.
+    Similar to what the option does in gbp import-orig.
+  * [d8ed8bd] gbp-pull: implement --all cmdline option.
+    This updates all remote-tracking branches (for the remote that is fetched
+    from) whose local branch name is identical to the remote branch name.
+  * [393edba] buildpackage-rpm: support setting the 'VCS:' tag in spec.
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 29 Jan 2018 10:46:01 +0100
+
 git-buildpackage (0.9.6) unstable; urgency=medium
 
   * [89495f7] patch_series: Properly chain up to parent class.
