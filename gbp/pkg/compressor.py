@@ -26,14 +26,21 @@ class Compressor(object):
             'lzma': '',
             'xz': ''}
 
+    ParallelOpts = {'lzma': '-T0',
+                    'xz': '-T0'}
+
     Exts = {'gzip': 'gz',
             'bzip2': 'bz2',
             'lzma': 'lzma',
             'xz': 'xz'}
 
-    def __init__(self, type_, level=None):
+    def __init__(self, type_, level=None, parallel=False):
         self._type = type_
         self._level = int(level) if level not in [None, ''] else None
+        self._more_opts = self.Opts.get(self._type, '')
+        self._parallel = parallel
+        if parallel:
+            self._more_opts += self.ParallelOpts.get(self._type, '')
 
     def is_known(self):
         return self.type in self.Opts.keys()
@@ -47,12 +54,12 @@ class Compressor(object):
         return self._level
 
     @property
-    def _level_opt(self):
-        return '-%d' % self.level if self.level is not None else ''
+    def parallel(self):
+        return self._parallel
 
     @property
-    def _more_opts(self):
-        return self.Opts.get(self._type, '')
+    def _level_opt(self):
+        return '-%d' % self.level if self.level is not None else ''
 
     def cmdline(self, stdout=True):
         """
@@ -67,9 +74,12 @@ class Compressor(object):
     def __repr__(self):
         """
         >>> Compressor('gzip').__repr__()
-        "<compressor type='gzip' >"
+        "<compressor type='gzip'>"
         >>> Compressor('gzip', 9).__repr__()
         "<compressor type='gzip' level=9>"
+        >>> Compressor('xz', 9, True).__repr__()
+        "<compressor type='xz' level=9 parallel=True>"
         """
-        level_str = "level=%s" % self.level if self.level is not None else ''
-        return "<compressor type='%s' %s>" % (self.type, level_str)
+        opts_str = " level=%s" % self.level if self.level is not None else ""
+        opts_str += " parallel=True" if self.parallel else ""
+        return "<compressor type='%s'%s>" % (self.type, opts_str)
