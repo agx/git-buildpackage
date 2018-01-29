@@ -195,7 +195,7 @@ def git_archive_build_origs(repo, source, output_dir, options):
     """
     Build orig tarball(s) using git-archive
 
-    @param source: the changelog of the package we're acting on
+    @param source: the source of the package we're acting on
     @type source: L{DebianSource}
     @param output_dir: where to put the tarball
     @type output_dir: C{Str}
