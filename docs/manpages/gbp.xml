@@ -85,6 +85,15 @@
     </variablelist>
     <variablelist>
       <varlistentry>
+        <term>export-orig
+        </term>
+        <listitem>
+          <para>Recreate upstream tarballs from a &git; repository</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <variablelist>
+      <varlistentry>
         <term>import-dsc
         </term>
         <listitem>
