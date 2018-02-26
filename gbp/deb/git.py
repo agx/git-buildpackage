@@ -364,4 +364,12 @@ class DebianGitRepository(PkgGitRepository):
             raise GitRepositoryError("Error creating %s: %s" % (output, e))
         return True
 
+    def vcs_tag_parent(self, vcs_tag_format, version):
+        """If linking to the upstream VCS get the commit id"""
+        if vcs_tag_format:
+            return [self.rev_parse("%s^{}" % self.version_to_tag(vcs_tag_format, version))],
+        else:
+            return None
+
+
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
