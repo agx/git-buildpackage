@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2007, 2008, 2009, 2010, 2013 Guido Guenther <agx@sigxcpu.org>
+# (C) 2007, 2008, 2009, 2010, 2013 Guido Günther <agx@sigxcpu.org>
 # (C) 2014-2015 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

@@ -17,7 +17,7 @@
 #  <http://www.gnu.org/licenses/>
 #
 #  Copyright (C) 2015 Tzafrir Cohen
-#            (C) 2015 Guido Guenther
+#            (C) 2015 Guido Günther
 
 set -e
 

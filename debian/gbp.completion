@@ -3,7 +3,7 @@
 # Bash tab auto-completion rules for git-buildpackage.
 #
 # Copyright (C) 2010  Siegfried-Angel Gevatter Pujals <siegfried@gevatter.com>
-# Copyright (C) 2010,2013,2015  Guido Guenther <agx@sigxcpu.org>
+# Copyright (C) 2010,2013,2015  Guido Günther <agx@sigxcpu.org>
 #
 # Distributed under the GNU General Public License, version 2.0.
 
