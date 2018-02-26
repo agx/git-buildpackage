@@ -47,5 +47,5 @@ class TestRollbackGitRepository(DebianGitTestRepo):
         self.assertEquals(self.repo.rollback_errors, [])
 
     def test_rrr_unknown_action(self):
-        with self.assertRaisesRegexp(GitRepositoryError, "Unknown action unknown for tag doesnotmatter"):
+        with self.assertRaisesRegexp(GitRepositoryError, "Unknown action 'unknown' for tag 'doesnotmatter'"):
             self.repo.rrr('doesnotmatter', 'unknown', 'tag')

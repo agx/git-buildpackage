@@ -49,13 +49,13 @@ class RollbackDebianGitRepository(DebianGitRepository):
             try:
                 sha = self.rev_parse(refname)
             except GitRepositoryError as err:
-                log.warn("Failed to rev-parse %s: %s" % (refname, err))
+                log.warn("Failed to rev-parse '%s': %s" % (refname, err))
         elif action == 'delete':
             pass
         elif action == 'abortmerge':
             pass
         else:
-            raise GitRepositoryError("Unknown action %s for %s %s" % (action, reftype, refname))
+            raise GitRepositoryError("Unknown action '%s' for %s '%s'" % (action, reftype, refname))
         self.rollbacks.append((refname, reftype, action, sha))
 
     def rrr_branch(self, branchname, action='reset-or-delete'):
@@ -82,13 +82,13 @@ class RollbackDebianGitRepository(DebianGitRepository):
         for (name, reftype, action, sha) in self.rollbacks:
             try:
                 if action == 'delete':
-                    log.info('Rolling back %s %s by deleting it' % (reftype, name))
+                    log.info("Rolling back %s '%s' by deleting it" % (reftype, name))
                     if reftype == 'tag':
                         self.delete_tag(name)
                     elif reftype == 'branch':
                         self.delete_branch(name)
                     else:
-                        raise GitRepositoryError("Don't know how to delete %s %s" % (reftype, name))
+                        raise GitRepositoryError("Don't know how to delete %s '%s'" % (reftype, name))
                 elif action == 'reset' and reftype == 'branch':
                     log.info('Rolling back branch %s by resetting it to %s' % (name, sha))
                     self.update_ref("refs/heads/%s" % name, sha, msg="gbp import-orig: failure rollback of %s" % name)
@@ -99,7 +99,7 @@ class RollbackDebianGitRepository(DebianGitRepository):
                     else:
                         log.info("Nothing to rollback for merge of '%s'" % name)
                 else:
-                    raise GitRepositoryError("Don't know how to %s %s %s" % (action, reftype, name))
+                    raise GitRepositoryError("Don't know how to %s %s '%s'" % (action, reftype, name))
             except GitRepositoryError as e:
                 self.rollback_errors.append((name, reftype, action, sha, e))
         if self.rollback_errors:
