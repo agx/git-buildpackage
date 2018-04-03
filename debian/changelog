@@ -1,3 +1,33 @@
+git-buildpackage (0.9.8) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [c5b5d4f] Bump standards version
+  * [5f2120b] gbplogtaster: capture INFO and DEBUG log levels too.
+    This allows one to test for certain features more easily and to use it not
+    only in the error case.
+  * [e9942bd] docs: add export-orig to list of available commands
+  * [23874c2] 8bit Guido
+  * [5301692] Move rollback code out of import_orig so it can be reused in
+    'gbp import-ref'
+  * [99b3811] RollbackDebianGitRepository: quote refs for readability
+  * [29eafbc] Makefile: Run tests verbosely by default so we see which test
+    fails / is skipped right away
+
+  [ Markus Lehtonen ]
+  * [f1b878c,042f422] tests: enable unittests without devscripts.
+    Add some additional skipIf statements, checking for the existence of the
+    debchange tool. Makes it possible to run unit tests in an environment that
+    doesn't have devscripts installed.
+
+  [ Simon McVittie ]
+  * [c159d0b] pq export: Write out patches as UTF-8 if necessary.
+    Due to behaviour changes in Python, 'gbp pq export' would previously
+    write the commit message in the base64 Content-Transfer-Encoding, which
+    is not very readable. Now it uses 8bit.
+    Based on a patch from Carlos Maddela. (Closes: #883541)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 03 Apr 2018 13:06:47 +0200
+
 git-buildpackage (0.9.7) unstable; urgency=medium
 
   [ Guido Günther ]
