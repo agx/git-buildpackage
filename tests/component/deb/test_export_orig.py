@@ -44,19 +44,16 @@ class TestExportOrig(ComponentTestBase):
         tarballs = ["../%s_2.8.orig-foo.tar.gz" % pkg,
                     "../%s_2.8.orig.tar.gz" % pkg]
 
-        assert import_dsc(['arg0', '--no-pristine-tar', '--verbose', dsc]) == 0
+        assert import_dsc(['arg0', '--no-pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
         assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch must not exist")
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         ret = export_orig(['arg0',
-                           '--verbose',
                            '--component=foo',
                            '--no-pristine-tar'])
         ok_(ret == 0, "Exporting tarballs failed")
-        self._check_in_info_log(".*Building upstream tarball with compression "
-                                "<compressor type='gzip' parallel=True>")
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 

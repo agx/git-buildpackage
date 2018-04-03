@@ -202,8 +202,7 @@ def git_archive_build_origs(repo, source, output_dir, options):
     @param options: the parsed options
     @type options: C{dict} of options
     """
-    parallel = not options.pristine_tar
-    comp = Compressor(options.comp_type, options.comp_level, parallel)
+    comp = Compressor(options.comp_type, options.comp_level)
     upstream_tree = git_archive_get_upstream_tree(repo, source, options)
     gbp.log.info("Creating %s from '%s'" % (source.upstream_tarball_name(comp.type),
                                             upstream_tree))
