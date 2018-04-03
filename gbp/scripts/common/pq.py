@@ -25,6 +25,7 @@ import time
 from email.message import Message
 from email.header import Header
 from email.charset import Charset, QP
+from email.policy import Compat32
 
 from gbp.git import GitRepositoryError
 from gbp.git.modifier import GitModifier, GitTz
@@ -177,7 +178,8 @@ def write_patch_file(filename, commit_info, diff):
                     msg.set_payload(body.encode('us-ascii'))
                 except (UnicodeEncodeError):
                     msg.set_payload(body, charset)
-            patch.write(msg.as_string(unixfrom=False, maxheaderlen=77).encode('utf-8'))
+            policy = Compat32(max_line_length=77)
+            patch.write(msg.as_bytes(unixfrom=False, policy=policy))
 
             # Write diff
             patch.write(b'---\n')
