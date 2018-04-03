@@ -285,7 +285,7 @@
 	<listitem>
 	  <para>
 	    When set to a non-empty value don't print a deprecation
-	    warning in case &gbp; encounters a configration file in
+	    warning in case &gbp; encounters a configuration file in
 	    a deprecated location.
 	  </para>
 	</listitem>

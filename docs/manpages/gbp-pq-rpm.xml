@@ -184,7 +184,7 @@
         <term><option>--[no-]drop</option></term>
         <listitem>
           <para>
-          Whether to drop (delete) the patch queue branch after a succesful
+          Whether to drop (delete) the patch queue branch after a successful
           export.
           </para>
         </listitem>
