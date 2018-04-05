@@ -27,8 +27,9 @@
     <variablelist>
       <varlistentry>
       <term>[DEFAULT]</term>
-      <listitem><para>Options in this section apply to &gbp-buildpackage;,
-      &gbp-import-orig;, &gbp-import-dsc; and &gbp-dch;.</para></listitem>
+      <listitem>
+	<para>Options in this section apply to all &gbp; commands.</para>
+      </listitem>
       </varlistentry>
       <varlistentry>
       <term>[buildpackage]</term>
