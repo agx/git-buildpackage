@@ -367,7 +367,11 @@ class DebianGitRepository(PkgGitRepository):
     def vcs_tag_parent(self, vcs_tag_format, version):
         """If linking to the upstream VCS get the commit id"""
         if vcs_tag_format:
-            return [self.rev_parse("%s^{}" % self.version_to_tag(vcs_tag_format, version))],
+            try:
+                tag = "%s^{}" % self.version_to_tag(vcs_tag_format, version)
+                return [self.rev_parse(tag)]
+            except GitRepositoryError:
+                raise GitRepositoryError("Can't find upstream vcs tag at '%s'" % tag)
         else:
             return None
 
