@@ -69,7 +69,7 @@ def build_cmd_parser(section):
 def print_single_option(parser, option, printer):
     value = parser.get_config_file_value(option)
     if value is not None:
-        printer("%s.%s=%s" % (parser.command, option, value))
+        printer("%s" % value)
     else:
         return 2
     return 0

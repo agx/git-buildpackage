@@ -62,7 +62,7 @@ class TestGbpConfigCommand(unittest.TestCase):
         printstub = self.SingleValuePrintStub()
         query = 'config.color'
         ret = gbp.scripts.config.print_cmd_values(query, printstub)
-        self.assertEqual(printstub.result, '%s=auto' % query)
+        self.assertEqual(printstub.result, 'auto')
         self.assertEqual(ret, 0)
 
     def test_print_cmd_single_value_empty_default(self):
@@ -70,7 +70,7 @@ class TestGbpConfigCommand(unittest.TestCase):
         printstub = self.SingleValuePrintStub()
         query = 'buildpackage.keyid'
         ret = gbp.scripts.config.print_cmd_values(query, printstub)
-        self.assertEqual(printstub.result, '%s=' % query)
+        self.assertEqual(printstub.result, '')
         self.assertEqual(ret, 0)
 
     def test_print_cmd_single_value_override(self):
@@ -78,7 +78,7 @@ class TestGbpConfigCommand(unittest.TestCase):
         printstub = self.SingleValuePrintStub()
         query = 'config.color-scheme'
         ret = gbp.scripts.config.print_cmd_values(query, printstub)
-        self.assertEqual(printstub.result, '%s=checkcheck' % query)
+        self.assertEqual(printstub.result, 'checkcheck')
         self.assertEqual(ret, 0)
 
     def test_print_cmd_all_values(self):
