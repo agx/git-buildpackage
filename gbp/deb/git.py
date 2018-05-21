@@ -289,7 +289,7 @@ class DebianGitRepository(PkgGitRepository):
 
     def create_pristine_tar_commits(self, upstream_tree, tarball, component_tarballs):
         """
-        Create pristine-tar commits for a package with main tarball tarball
+        Create pristine-tar commits for a package with main tarball
         and (optional) component tarballs based on upstream_tree
 
         @param tarball: path to main tarball
