@@ -1,97 +1,97 @@
 <chapter id="gbp.cfgfile">
-    <title>Configuration Files</title>
-    <para>The configuration files are parsed in this order:
-    <variablelist>
-      <varlistentry>
+  <title>Configuration Files</title>
+  <para>The configuration files are parsed in this order:
+  <variablelist>
+    <varlistentry>
       <term>/etc/git-buildpackage/gbp.conf</term>
       <listitem><para>system wide configuration</para></listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>~/.gbp.conf</term>
       <listitem><para>per user configuration</para></listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>.gbp.conf</term>
-      <listitem><para>per repository/branch configuration (deprecated)</para></listitem> 
-      </varlistentry> 
-      <varlistentry>
+      <listitem><para>per repository/branch configuration (deprecated)</para></listitem>
+    </varlistentry>
+    <varlistentry>
       <term>debian/gbp.conf</term>
-      <listitem><para>per repository/branch configuration</para></listitem> 
-      </varlistentry> 
-      <varlistentry>
+      <listitem><para>per repository/branch configuration</para></listitem>
+    </varlistentry>
+    <varlistentry>
       <term>.git/gbp.conf</term>
-      <listitem><para>per (local) repository configuration</para></listitem> 
-      </varlistentry> 
-    </variablelist>
-    All have the same format. They consist of several sections, all of them are optional:
-    <variablelist>
-      <varlistentry>
+      <listitem><para>per (local) repository configuration</para></listitem>
+    </varlistentry>
+  </variablelist>
+  All have the same format. They consist of several sections, all of them are optional:
+  <variablelist>
+    <varlistentry>
       <term>[DEFAULT]</term>
       <listitem>
 	<para>Options in this section apply to all &gbp; commands.</para>
       </listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>[buildpackage]</term>
       <listitem><para>Options in this section apply to &gbp-buildpackage; only and override options from the
       [DEFAULT] section.</para></listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>[import-orig]</term>
       <listitem><para>Options in this section apply to &gbp-import-orig; only and override options from the
       [DEFAULT] section.</para></listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>[import-dsc]</term>
       <listitem><para>Options in this section apply to &gbp-import-dsc; only and override options from the
       [DEFAULT] section.</para></listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>[dch]</term>
       <listitem><para>Options in this section apply to &gbp-dch; only and override options from the
       [DEFAULT] section.</para></listitem>
-      </varlistentry>
-      <varlistentry>
+    </varlistentry>
+    <varlistentry>
       <term>...</term>
       <listitem><para>Same for the other &gbp; commands</para></listitem>
-      </varlistentry>
-    </variablelist>
-    The actual options in these sections are the command line options without
-    the '--' prefix. So <option>--upstream-branch=</option><replaceable>dfsgfree</replaceable> would read:
-    </para>
-<screen>
-<option>upstream-branch</option>=<replaceable>dfsgfree</replaceable>
-</screen>
-<para>
+    </varlistentry>
+  </variablelist>
+  The actual options in these sections are the command line options without
+  the '--' prefix. So <option>--upstream-branch=</option><replaceable>dfsgfree</replaceable> would read:
+  </para>
+  <screen>
+    <option>upstream-branch</option>=<replaceable>dfsgfree</replaceable>
+  </screen>
+  <para>
     in the config file. In the special case of &gbp-buildpackage;, the stripped
     prefix is not '--' but '--git-'. Here's a more complete example:
-</para>
-<programlisting>
-[DEFAULT]
-# the default build command
-builder=debuild -i\.git -I.git
-# the default branch for upstream sources
-upstream-branch=upstream
-# the default branch for the debian patch
-debian-branch=master
+  </para>
+  <programlisting>
+    [DEFAULT]
+    # the default build command
+    builder=debuild -i\.git -I.git
+    # the default branch for upstream sources
+    upstream-branch=upstream
+    # the default branch for the debian patch
+    debian-branch=master
 
-[buildpackage]
-upstream-branch=dfsgclean
-# Sign tags with GPG:
-sign-tags = True
-# Keyid to sign tags with
-#keyid = 0xdeadbeef
+    [buildpackage]
+    upstream-branch=dfsgclean
+    # Sign tags with GPG:
+    sign-tags = True
+    # Keyid to sign tags with
+    #keyid = 0xdeadbeef
 
-[import-orig]
-upstream-branch=notdfsgclean
+    [import-orig]
+    upstream-branch=notdfsgclean
 
-[import-dsc]
-upstream-branch=notdfsgclean
+    [import-dsc]
+    upstream-branch=notdfsgclean
 
-[dch]
-git-log=--no-merges
-</programlisting>
-<para>
-For more details, see the <xref linkend="man.gbp.conf"/> manual page.
-</para>
+    [dch]
+    git-log=--no-merges
+  </programlisting>
+  <para>
+    For more details, see the <xref linkend="man.gbp.conf"/> manual page.
+  </para>
 </chapter>
