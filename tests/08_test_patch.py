@@ -52,3 +52,18 @@ class TestDep3Patch(unittest.TestCase):
         self.assertEqual("Roland Rosenfeld", p.author)
         self.assertEqual("roland@debian.org", p.email)
         self.assertEqual("", p.long_desc)
+
+    def test_pseudo_headers(self):
+        """Convert extra DEP-3 header into a git pseudo-header"""
+        patchfile = os.path.join(self.data_dir, "dep3-longdesc-bug.patch")
+        self.assertTrue(os.path.exists(patchfile))
+        p = Dep3Patch(patchfile)
+        self.assertEqual('Summary', p.subject)
+        self.assertEqual("Ben Hutchings", p.author)
+        self.assertEqual("ben@decadent.org.uk", p.email)
+        self.assertEqual("""\
+Bug: https://bugs.example.org/123456
+
+Long description
+""",
+                         p.long_desc)

@@ -1,0 +1,9 @@
+Author: Ben Hutchings <ben@decadent.org.uk>
+Description: Summary
+ Long description
+Bug: https://bugs.example.org/123456
+
+--- /dev/null
++++ b/foo
+@@ -0,0 +1,1 @@
++foo
