@@ -1,3 +1,23 @@
+git-buildpackage (0.9.9) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [0a6e73f] Fix typos spotted by lintian
+  * [e730865] docs: options in [DEFAULT] apply to all gbp commands
+  * [3da92ba] import-orig: Better error message when vcs-tag is not found
+    (Closes: #896654)
+  * [a6ceb00] config: when printing a single value only print the value.  This
+    is more in line with what `git config` does and eases usage in scripts.
+  * [a1f4af5] docs: document how to use GBP_CONF_FILES to override
+    debian/gbp.conf
+    (Closes: #898613)
+
+  [ Ken Dreyer ]
+  * [ba32efc] bin: drop umlaut again for setuptools.
+    Setuptools cannot handle non-ascii characters in files declared in
+    "scripts". See https://github.com/pypa/setuptools/issues/761
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 21 May 2018 13:27:17 +0200
+
 git-buildpackage (0.9.8) unstable; urgency=medium
 
   [ Guido Günther ]
