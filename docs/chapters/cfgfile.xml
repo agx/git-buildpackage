@@ -94,4 +94,44 @@
   <para>
     For more details, see the <xref linkend="man.gbp.conf"/> manual page.
   </para>
+
+  <sect1 id="gbp.cfgfile.order">
+    <title>Overriding Parsing Order</title>
+    <para>
+      The environment variable <envar>GBP_CONF_FILES</envar> can be
+      used to override the order in which configuration files are
+      parsed. The following example parses two configuration files in the
+      users home directory (<filename>~/.gbp.conf</filename> and
+      <filename>~/.gbp.late.conf</filename>) and in the debian
+      directory (<filename>debian/gbp.conf</filename>).
+      The file are parsed from left to right.  Since <filename>
+      ~/.gbp.late.conf</filename> is at the very end of the list it
+      can be used to override configuration entries shipped by the
+      package. This can be useful if packages set
+      e.g. <option>export-dir</option> or
+      <option>tarball-dir</option> and you perfer different locations:
+      <programlisting>
+	$ cat &lt;&lt;EOF &gt;~/.gbp.late.conf
+	[DEFAULT]
+	export-dir = ../build-area
+	tarball-dir = ../tarballs
+	EOF
+
+	$ export GBP_CONF_FILES=~/.gbp.conf:debian/gbp.conf:~/.gbp.late.conf
+	$ cd  &lt;mypkg&gt;
+	$ gbp config buildpackage.export-dir
+	../build-area
+      </programlisting>
+    </para>
+    <para>
+      If you want all configuration files to be skipped, set
+      <envar>GBP_CONF_FILES</envar> to a non existing location.  This way
+      only default values and options from the command line will be used:
+      <programlisting>
+	$ export GBP_CONFI_FILES=/does/not/exist
+	$ gbp config buildpackage.debian-branch
+	master
+      </programlisting>
+    </para>
+  </sect1>
 </chapter>
