@@ -216,7 +216,7 @@ class DebianGitRepository(PkgGitRepository):
     def _sanitize_version(version):
         """sanitize a version so git accepts it as a tag
 
-        as descirbed in DEP14
+        as described in DEP14
 
         >>> DebianGitRepository._sanitize_version("0.0.0")
         '0.0.0'
@@ -238,7 +238,7 @@ class DebianGitRepository(PkgGitRepository):
     def _unsanitize_version(tag):
         """Reverse _sanitize_version
 
-        as descirbed in DEP14
+        as described in DEP14
 
         >>> DebianGitRepository._unsanitize_version("1%0_bpo3")
         '1:0~bpo3'
