@@ -104,7 +104,7 @@
 	<listitem>
 	  <para>
 	    The branch in the Git repository the Debian package is being
-	    developed on.
+	    developed on. If set to the empty value the branch will not be pushed.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -114,6 +114,7 @@
 	  <para>
 	    Use this tag format when looking for tags corresponding to a &debian;
 	    version. Default is <replaceable>debian/%(version)s</replaceable>.
+	    If set to the empty value the tag will not be pushed.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -122,7 +123,7 @@
 	<listitem>
 	  <para>
 	    The branch in the &git; repository the upstream sources are put
-	    onto.
+	    onto. If set to the empty value the branch will not be pushed.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -133,6 +134,7 @@
 	    Use this tag format when looking for tags of upstream
 	    versions. Default
 	    is <replaceable>upstream/%(version)s</replaceable>.
+	    If set to the empty value the tag will not be pushed.
 	  </para>
 	</listitem>
       </varlistentry>

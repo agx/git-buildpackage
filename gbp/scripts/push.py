@@ -143,18 +143,23 @@ def main(argv):
         if not dest:
             dest = get_remote(repo, branch)
 
-        dtag = repo.version_to_tag(options.debian_tag, source.version)
-        if repo.has_tag(dtag):
-            to_push['tags'].append(dtag)
-            if source.is_releasable() and branch:
-                ref = 'refs/heads/%s' % branch
-                to_push['refs'][ref] = get_push_src(repo, ref, dtag)
+        if options.debian_tag != '':
+            dtag = repo.version_to_tag(options.debian_tag, source.version)
+            if repo.has_tag(dtag):
+                to_push['tags'].append(dtag)
+
+        if source.is_releasable() and branch:
+            ref = 'refs/heads/%s' % branch
+            to_push['refs'][ref] = get_push_src(repo, ref, dtag)
 
         if not source.is_native():
-            utag = repo.version_to_tag(options.upstream_tag,
-                                       source.upstream_version)
-            if repo.has_tag(utag):
-                to_push['tags'].append(utag)
+            if options.upstream_tag != '':
+                utag = repo.version_to_tag(options.upstream_tag,
+                                           source.upstream_version)
+                if repo.has_tag(utag):
+                    to_push['tags'].append(utag)
+
+            if options.upstream_branch != '':
                 ref = 'refs/heads/%s' % options.upstream_branch
                 to_push['refs'][ref] = get_push_src(repo, ref, utag)
 

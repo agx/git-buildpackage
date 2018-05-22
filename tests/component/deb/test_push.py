@@ -73,6 +73,15 @@ class TestPush(ComponentTestBase):
                                ['upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
 
+    @RepoFixtures.quilt30()
+    def test_push_skip_upstream(self, repo):
+        repo.add_remote_repo('origin', self.target.path)
+        self.assertEquals(push(['argv0', '--upstream-branch=']), 0)
+        self._check_repo_state(self.target, 'master',
+                               ['master'],
+                               tags=['debian/2.8-1', 'upstream/2.8'])
+        self.assertEquals(repo.head, self.target.head)
+
     @RepoFixtures.native()
     def test_push_tag_ne_branch(self, repo):
         repo.add_remote_repo('origin', self.target.path)
