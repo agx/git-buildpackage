@@ -23,6 +23,7 @@ usr/lib/python3.?/dist-packages/gbp/scripts/dch.py usr/lib/python3/dist-packages
 usr/lib/python3.?/dist-packages/gbp/scripts/import_dsc.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/import_dscs.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/import_orig.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.?/dist-packages/gbp/scripts/import_ref.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/export_orig.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/__init__.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.?/dist-packages/gbp/scripts/pq.py usr/lib/python3/dist-packages/gbp/scripts/

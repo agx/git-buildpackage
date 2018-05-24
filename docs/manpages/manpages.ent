@@ -12,6 +12,7 @@
 <!ENTITY man.gbp.importdsc SYSTEM "gbp-import-dsc.xml">
 <!ENTITY man.gbp.importdscs SYSTEM "gbp-import-dscs.xml">
 <!ENTITY man.gbp.importorig SYSTEM "gbp-import-orig.xml">
+<!ENTITY man.gbp.importref SYSTEM "gbp-import-ref.xml">
 <!ENTITY man.gbp.pq SYSTEM "gbp-pq.xml">
 <!ENTITY man.gbp.pq.rpm SYSTEM "gbp-pq-rpm.xml">
 <!ENTITY man.gbp.pristine.tar SYSTEM "gbp-pristine-tar.xml">
