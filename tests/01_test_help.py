@@ -18,7 +18,10 @@ class TestHelp(TestCaseWithData):
                 'import_dsc',
                 'pristine_tar',
                 'pull',
-                'pq']
+                'push',
+                'pq',
+                'tag',
+    ]
 
     rpm_cmds = ['buildpackage_rpm',
                 'import_srpm',
