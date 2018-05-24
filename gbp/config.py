@@ -642,8 +642,11 @@ class GbpOptionParser(OptionParser):
         if not help:
             help = self.help[option_name]
         opt_names = self.get_opt_names(option_name)
+        default = kwargs.pop('default', None)
+        if default is None:
+            default = self.get_default(option_name, **kwargs)
         OptionParser.add_option(self, *opt_names, dest=dest,
-                                default=self.get_default(option_name, **kwargs),
+                                default=default,
                                 help=help % self.config, **kwargs)
 
     def add_boolean_config_file_option(self, option_name, dest):
@@ -736,8 +739,11 @@ class GbpOptionGroup(OptionGroup):
         if not help:
             help = self.parser.help[option_name]
         opt_names = self.parser.get_opt_names(option_name)
+        default = kwargs.pop('default', None)
+        if default is None:
+            default = self.parser.get_default(option_name, **kwargs)
         OptionGroup.add_option(self, *opt_names, dest=dest,
-                               default=self.parser.get_default(option_name, **kwargs),
+                               default=default,
                                help=help % self.parser.config, **kwargs)
 
     def add_boolean_config_file_option(self, option_name, dest):
