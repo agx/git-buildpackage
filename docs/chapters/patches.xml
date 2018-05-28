@@ -9,7 +9,7 @@
   </para>
 
   <para>
-    The basic idea is that patches are imported from you
+    The basic idea is that patches are imported from your
     &debian-branch; to a patch-queue branch with one patch file
     in <filename>debian/patches/</filename> becoming one commit on the
     the patch-queue branch.  The created branch will be named after
