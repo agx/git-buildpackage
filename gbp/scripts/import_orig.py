@@ -368,7 +368,7 @@ def build_parser(name):
 
     # Accepted for compatibility
     parser.add_option("--download", dest='download', action="store_true",
-                      default=False, help="Ignored. Accepted for compatibility.")
+                      default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-orig(1).")
     return parser
 
 

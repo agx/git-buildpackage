@@ -367,7 +367,7 @@ def build_parser(name):
     parser.add_config_file_option(option_name="repo-email", dest="repo_email",
                                   choices=['DEBIAN', 'GIT'])
     parser.add_option("--download", dest='download', action="store_true",
-                      default=False, help="Ignored. Accepted for compatibility.")
+                      default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-dsc(1).")
     return parser
 
 
