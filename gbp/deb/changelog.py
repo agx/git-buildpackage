@@ -128,8 +128,12 @@ class ChangeLog(object):
         self._cp = cp
 
     def _read(self):
-        with open(self.filename, encoding='utf-8') as f:
-            self._contents = f.read()
+        try:
+            with open(self.filename, encoding='utf-8') as f:
+                self._contents = f.read()
+        except UnicodeDecodeError:
+            with open(self.filename, encoding='iso-8859-1') as f:
+                self._contents = f.read()
 
     def __getitem__(self, item):
         return self._cp[item]

@@ -33,7 +33,10 @@ class GitVfs(object):
             if binary:
                 self._data = io.BytesIO(content)
             else:
-                self._data = io.StringIO(content.decode())
+                try:
+                    self._data = io.StringIO(content.decode())
+                except UnicodeDecodeError:
+                    self._data = io.StringIO(content.decode("iso-8859-1"))
 
         def readline(self):
             return self._data.readline()
