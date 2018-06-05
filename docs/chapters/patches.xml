@@ -54,7 +54,7 @@
 
   <para>
     Also, beware that &gbp-pq; currently has incomplete support for
-    <ulink url="http://dep.debian.net/deps/dep3/">DEP3</ulink> headers.
+    <ulink url="https://dep-team.pages.debian.net/deps/dep3/">DEP3</ulink> headers.
     Initially, parsing with <command>git-mailinfo(1)</command> is attempted,
     which supports only the <computeroutput>From</computeroutput> and
     <computeroutput>Subject</computeroutput> fields. If neither of these are
