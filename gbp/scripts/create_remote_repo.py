@@ -20,7 +20,7 @@
 
 import sys
 import os
-import urllib
+import urllib.parse
 import subprocess
 import tty
 import termios
