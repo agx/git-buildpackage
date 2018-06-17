@@ -94,8 +94,6 @@ class RpmPkgPolicy(PkgPolicy):
 
         # Maximum length for a changelog entry line
         max_entry_line_length = 76
-        # Bug tracking system related meta tags recognized from git commit msg
-        bts_meta_tags = ("Close", "Closes", "Fixes", "Fix")
         # Regexp for matching bug tracking system ids (e.g. "bgo#123")
         bug_id_re = r'[A-Za-z0-9#_\-]+'
 
@@ -107,15 +105,18 @@ class RpmPkgPolicy(PkgPolicy):
 
             @param lines: commit message
             @type lines: C{list} of C{str}
-            @param meta_tags: meta tags to look for
-            @type meta_tags: C{tuple} of C{str}
+            @param meta_tags: meta tags (regexp) to look for
+            @type meta_tags: C{str}
             @return: bts-ids per meta tag and the non-mathced lines
             @rtype: (C{dict}, C{list} of C{str})
             """
+            if not meta_tags:
+                return ({}, lines[:])
+
             tags = {}
             other_lines = []
-            bts_re = re.compile(r'^(?P<tag>%s):\s*(?P<ids>.*)' %
-                                ('|'.join(meta_tags)), re.I)
+            bts_re = re.compile(r'^(?P<tag>%s):\s*(?P<ids>.*)' % meta_tags,
+                                re.I)
             bug_id_re = re.compile(cls.bug_id_re)
             for line in lines:
                 match = bts_re.match(line)
@@ -172,7 +173,7 @@ class RpmPkgPolicy(PkgPolicy):
                 return None
 
             # Parse and filter out bts-related meta-tags
-            bts_tags, body = cls._parse_bts_tags(body, cls.bts_meta_tags)
+            bts_tags, body = cls._parse_bts_tags(body, kwargs['meta_bts'])
 
             # Additional filtering
             body = cls._extra_filter(body, kwargs['ignore_re'])
@@ -191,7 +192,7 @@ class RpmPkgPolicy(PkgPolicy):
                 text.extend(["  " + line for line in body if line.strip()])
 
             # Add bts tags and ids in the end
-            for tag, ids in bts_tags.items():
+            for tag, ids in sorted(bts_tags.items()):
                 bts_msg = " (%s: %s)" % (tag, ', '.join(ids))
                 if len(text[-1]) + len(bts_msg) >= cls.max_entry_line_length:
                     text.append(" ")

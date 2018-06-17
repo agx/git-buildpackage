@@ -171,7 +171,7 @@ class GitRepository(object):
         return output, popen.returncode
 
     def _git_inout(self, command, args, input=None, extra_env=None, cwd=None,
-                   capture_stderr=False, config_args=None):
+                   capture_stderr=False, capture_stdout=True, config_args=None):
         """
         Run a git command with input and return output
 
@@ -192,10 +192,12 @@ class GitRepository(object):
         """
         if not cwd:
             cwd = self.path
-        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr, config_args)
+        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr,
+                                capture_stdout, config_args)
 
     @classmethod
-    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr, config_args=None):
+    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr,
+                    capture_stdout, config_args=None):
         """
         As _git_inout but can be used without an instance
         """
@@ -206,13 +208,14 @@ class GitRepository(object):
 
         cmd = ['git'] + config_opts + [command] + args
         env = cls.__build_env(extra_env)
+        stdout_arg = subprocess.PIPE if capture_stdout else None
         stderr_arg = subprocess.PIPE if capture_stderr else None
         stdin_arg = subprocess.PIPE if input is not None else None
 
         log.debug(cmd)
         popen = subprocess.Popen(cmd,
                                  stdin=stdin_arg,
-                                 stdout=subprocess.PIPE,
+                                 stdout=stdout_arg,
                                  stderr=stderr_arg,
                                  env=env,
                                  close_fds=True,
@@ -220,7 +223,7 @@ class GitRepository(object):
         (stdout, stderr) = popen.communicate(input)
         return stdout, stderr, popen.returncode
 
-    def _git_command(self, command, args=[], extra_env=None):
+    def _git_command(self, command, args=[], extra_env=None, interactive=False):
         """
         Execute git command with arguments args and environment env
         at path.
@@ -232,12 +235,14 @@ class GitRepository(object):
         @param extra_env: extra environment variables to set when running command
         @type extra_env: C{dict}
         """
+        capture_stdout = not interactive
         try:
             stdout, stderr, ret = self._git_inout(command=command,
                                                   args=args,
                                                   input=None,
                                                   extra_env=extra_env,
-                                                  capture_stderr=True)
+                                                  capture_stderr=True,
+                                                  capture_stdout=capture_stdout)
         except Exception as excobj:
             raise GitRepositoryError("Error running git %s: %s" % (command, excobj))
         if ret:
@@ -1450,11 +1455,17 @@ class GitRepository(object):
 
 #{ Comitting
 
-    def _commit(self, msg, args=[], author_info=None):
+    def _commit(self, msg, args=[], author_info=None,
+                committer_info=None, edit=False):
         extra_env = author_info.get_author_env() if author_info else None
-        self._git_command("commit", ['-q', '-m', msg] + args, extra_env=extra_env)
+        if committer_info:
+            extra_env.update(committer_info.get_committer_env())
+        default_args = ['-q', '-m', msg] + (['--edit'] if edit else [])
+        self._git_command("commit", default_args + args, extra_env=extra_env,
+                          interactive=edit)
 
-    def commit_staged(self, msg, author_info=None, edit=False):
+    def commit_staged(self, msg, author_info=None, edit=False,
+                      committer_info=None):
         """
         Commit currently staged files to the repository
 
@@ -1464,10 +1475,11 @@ class GitRepository(object):
         @type author_info: L{GitModifier}
         @param edit: whether to spawn an editor to edit the commit info
         @type edit: C{bool}
+        @param committer_info: committer information
+        @type committer_info: L{GitModifier}
         """
-        args = GitArgs()
-        args.add_true(edit, '--edit')
-        self._commit(msg=msg, args=args.args, author_info=author_info)
+        self._commit(msg=msg, author_info=author_info,
+                     committer_info=committer_info, edit=edit)
 
     def commit_all(self, msg, author_info=None, edit=False):
         """
@@ -1477,11 +1489,9 @@ class GitRepository(object):
         @param author_info: authorship information
         @type author_info: L{GitModifier}
         """
-        args = GitArgs('-a')
-        args.add_true(edit, '--edit')
-        self._commit(msg=msg, args=args.args, author_info=author_info)
+        self._commit(msg=msg, args=['-a'], author_info=author_info, edit=edit)
 
-    def commit_files(self, files, msg, author_info=None):
+    def commit_files(self, files, msg, author_info=None, committer_info=None):
         """
         Commit the given files to the repository
 
@@ -1491,10 +1501,13 @@ class GitRepository(object):
         @type msg: C{str}
         @param author_info: authorship information
         @type author_info: L{GitModifier}
+        @param committer_info: committer information
+        @type committer_info: L{GitModifier}
         """
         if isinstance(files, str):
             files = [files]
-        self._commit(msg=msg, args=files, author_info=author_info)
+        self._commit(msg=msg, args=files, author_info=author_info,
+                     committer_info=committer_info)
 
     def commit_dir(self, unpack_dir, msg, branch, other_parents=None,
                    author={}, committer={}, create_missing_branch=False):
@@ -2007,7 +2020,8 @@ class GitRepository(object):
                                                       input=None,
                                                       extra_env=None,
                                                       cwd=abspath,
-                                                      capture_stderr=True)
+                                                      capture_stderr=True,
+                                                      capture_stdout=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git init: %s" % excobj)
             if ret:
@@ -2073,7 +2087,8 @@ class GitRepository(object):
                                                       input=None,
                                                       extra_env=None,
                                                       cwd=abspath,
-                                                      capture_stderr=True)
+                                                      capture_stderr=True,
+                                                      capture_stdout=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git clone: %s" % excobj)
             if ret:

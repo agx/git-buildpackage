@@ -28,7 +28,12 @@
       <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--changelog-file=</option><replaceable>FILEPATH</replaceable></arg>
       <arg><option>--spec-file=</option><replaceable>FILEPATH</replaceable></arg>
-      <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
+      <group>
+        <arg><option>--all</option></arg>
+        <arg><option>--message=</option><replaceable>MESSAGE</replaceable></arg>
+        <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
+      </group>
+      <arg><option>--meta-bts=</option><replaceable>META_TAGS</replaceable></arg>
       <arg><option>--no-release</option></arg>
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]full</option></arg>
@@ -38,6 +43,13 @@
       <arg><option>--git-log=</option><replaceable>GIT-LOG-OPTIONS</replaceable></arg>
       <arg><option>--spawn-editor=<replaceable>[always|release|no]</replaceable></option></arg>
       <arg><option>--editor-cmd=</option><replaceable>EDITOR</replaceable></arg>
+      <arg><option>--commit</option></arg>
+      <arg><option>--commit-msg</option><replaceable>MSG-FORMAT</replaceable></arg>
+      <arg><option>--tag</option></arg>
+      <arg><option>--retag</option></arg>
+      <arg><option>--packaging-tag-msg</option><replaceable>MSG-FORMAT</replaceable></arg>
+      <arg><option>--[no-]sign-tags</option></arg>
+      <arg><option>--keyid=</option><replaceable>GPG-KEYID</replaceable></arg>
       <arg><option>--customizations=</option><replaceable>CUSTOMIZATION-FILE</replaceable></arg>
       <arg choice="plain"><replaceable>[PATH1 PATH2]</replaceable></arg>
     </cmdsynopsis>
@@ -152,12 +164,35 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--all</option>
+        </term>
+        <listitem>
+          <para>
+          Use all commits from the Git history, overrides
+          <option>--since</option>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--since=</option><replaceable>COMMITTISH</replaceable>
         </term>
         <listitem>
           <para>
           Start reading commit messages at
           <replaceable>COMMITTISH</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--meta-bts=</option><replaceable>META_TAGS</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Meta tags in the commit messages that are interpreted as bug tracking
+          system related references. The recognized bts references are added in
+          the generated changelog entries. See the META TAGS section below for
+          more information. The bts meta tag tracking feature can be disabled
+          by defining an empty string.
           </para>
         </listitem>
       </varlistentry>
@@ -264,6 +299,91 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--message=<replaceable>MESSAGE</replaceable></option>
+        </term>
+        <listitem>
+          <para>
+          Text to use for new changelog entries. Git history and the commit
+          messages, including <option>--since</option> and
+          <option>--all</option> options are ignored in this case.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--commit</option>
+        </term>
+        <listitem>
+          <para>
+          Commit changes to git after modifying changelog. Importantly, in
+          addition to the changelog modifications all other staged changes are
+          committed, too, making it possible to update other files in the same
+          commit.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--commit-msg=</option><replaceable>MSG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Format string for the commit message when committing changes
+          (when <option>--commit</option> is given).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--tag</option>
+        </term>
+        <listitem>
+          <para>
+          Commit the changes and create a packaging (release) tag. Similarly to
+          <option>--commit</option>, all staged changes are committed to git
+          before creating the tag. This option makes it possible to create a
+          release and correctly document the the tag name in the rpm changelog
+          (by using %(tagname)s in the <option>--changelog-revision</option>
+          string).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--retag</option>
+        </term>
+        <listitem>
+          <para>
+          Don't fail tag operations if a tag with the same version already
+          exists, but, overwrite the existing tag, instead.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--packaging-tag-msg=</option><replaceable>MSG-FORMAT</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Format string for the tag message
+          (when <option>--tag</option> is given).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]sign-tags</option>
+        </term>
+        <listitem>
+          <para>
+          GPG sign all created tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--keyid=</option><replaceable>GPG-KEYID</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Use this keyid for gpg signing tags.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--customizations=</option><replaceable>CUSTOMIZATION-FILE</replaceable>
         </term>
         <listitem>
@@ -310,6 +430,8 @@
           <para>
           Indicate in the changelog entry that bug
           <replaceable>BUGNUMBER</replaceable> was addressed in this commit.
+          The bts meta tags recognized by &gbp-rpm-ch; is actually defined by
+          the <option>--meta-bts</option> option.
           </para>
         </listitem>
       </varlistentry>

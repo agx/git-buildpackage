@@ -29,11 +29,13 @@ import gbp.command_wrappers as gbpc
 import gbp.log
 from gbp.config import GbpOptionParserRpm, GbpOptionGroup
 from gbp.errors import GbpError
+from gbp.git.modifier import GitModifier
 from gbp.rpm import (guess_spec, NoSpecError, SpecFile, split_version_str,
                      compose_version_str)
 from gbp.rpm.changelog import Changelog, ChangelogParser, ChangelogError
 from gbp.rpm.git import GitRepositoryError, RpmGitRepository
 from gbp.rpm.policy import RpmPkgPolicy
+from gbp.scripts.buildpackage_rpm import packaging_tag_data
 from gbp.scripts.common import ExitCodes
 from gbp.tmpfile import init_tmpdir, del_tmpdir
 
@@ -122,8 +124,9 @@ def determine_editor(options):
         return 'vi'
 
 
-def check_branch(repo, options):
-    """Check the current git branch"""
+def check_repo_state(repo, options):
+    """Check that the repository is in good state"""
+    # Check branch
     try:
         branch = repo.get_branch()
     except GitRepositoryError:
@@ -133,6 +136,18 @@ def check_branch(repo, options):
                     (options.packaging_branch, branch))
         raise GbpError("Use --ignore-branch to ignore or "
                        "--packaging-branch to set the branch name.")
+    # Check unstaged changes
+    if options.commit:
+        unstaged = []
+        status = repo.status()
+        for group, files in status.items():
+            if group != '??' and group[1] != ' ':
+                unstaged.extend([f.decode() for f in files])
+        if unstaged:
+            gbp.log.err("Unstaged changes in:\n    %s" %
+                        '\n    '.join(unstaged))
+            raise GbpError("Please commit or stage your changes before using "
+                           "the --commit or --tag option")
 
 
 def parse_spec_file(repo, options):
@@ -223,7 +238,9 @@ def guess_commit(section, repo, options):
 
 def get_start_commit(changelog, repo, options):
     """Get the start commit from which to generate new entries"""
-    if options.since:
+    if options.all:
+        since = None
+    elif options.since:
         since = options.since
     else:
         if changelog.sections:
@@ -232,7 +249,7 @@ def get_start_commit(changelog, repo, options):
             since = None
         if not since:
             raise GbpError("Couldn't determine starting point from "
-                           "changelog, please use the '--since' option")
+                           "changelog, please use the '--since' or '--all'")
         gbp.log.info("Continuing from commit '%s'" % since)
     return since
 
@@ -269,10 +286,42 @@ def entries_from_commits(changelog, repo, commits, options):
         info = repo.get_commit_info(commit)
         entry_text = ChangelogEntryFormatter.compose(info, full=options.full,
                                                      ignore_re=options.ignore_regex,
-                                                     id_len=options.idlen)
+                                                     id_len=options.idlen,
+                                                     meta_bts=options.meta_bts)
         if entry_text:
             entries.append(changelog.create_entry(author=info['author'].name,
                                                   text=entry_text))
+    return entries
+
+
+def entries_from_text(changelog, text, author):
+    """Generate a list of changelog entries from a string"""
+    entries = []
+    # Use current user as the author for all entries
+    for line in text.splitlines():
+        if line.strip():
+            entry_text = "- %s" % line.strip()
+            entries.append(changelog.create_entry(author=author,
+                                                  text=entry_text))
+    return entries
+
+
+def generate_new_entries(changelog, repo, options, args):
+    """Generate new entries to be appended to changelog"""
+    if options.message:
+        author = get_author(repo, options.git_author)[0]
+        entries = entries_from_text(changelog, options.message, author)
+    else:
+        # Get range of commits from where to generate changes
+        since = get_start_commit(changelog, repo, options)
+        if args:
+            gbp.log.info("Only looking for changes in '%s'" % ", ".join(args))
+        commits = repo.get_commits(since=since, until='HEAD', paths=args,
+                                   options=options.git_log.split(" "))
+        commits.reverse()
+        if not commits:
+            gbp.log.info("No changes detected from %s to %s." % (since, 'HEAD'))
+        entries = entries_from_commits(changelog, repo, commits, options)
     return entries
 
 
@@ -281,11 +330,21 @@ def update_changelog(changelog, entries, repo, spec, options):
     # Get info for section header
     now = datetime.now()
     name, email = get_author(repo, options.git_author)
+    author = None
+    committer = None
     rev_str_fields = dict(spec.version,
                           version=compose_version_str(spec.version),
-                          vendor=options.vendor,
-                          tagname=repo.describe('HEAD', longfmt=True,
-                                                always=True))
+                          vendor=options.vendor)
+    if options.tag:
+        # Get fake information for the to-be-created git commit
+        author = committer = GitModifier(date=now)
+        tag, msg = packaging_tag_data(repo, 'HEAD', spec.name, spec.version,
+                                      options)
+    else:
+        tag = repo.describe('HEAD', longfmt=True, always=True)
+        msg = None
+    rev_str_fields['tagname'] = tag
+
     try:
         revision = options.changelog_revision % rev_str_fields
     except KeyError as err:
@@ -305,6 +364,27 @@ def update_changelog(changelog, entries, repo, spec, options):
     # Add new entries to the topmost section
     for entry in entries:
         top_section.append_entry(entry)
+    return (tag, msg, author, committer)
+
+
+def create_commit_message(spec, options):
+    """Generate commit message"""
+    fields = spec.version
+    fields['version'] = compose_version_str(spec.version)
+    fields['vendor'] = options.vendor
+    fields['pkg'] = spec.name
+    try:
+        return options.commit_msg % fields
+    except KeyError as err:
+        raise GbpError("Unknown key %s in commit-msg string, "
+                       "only %s are accepted" % (err, fields.keys()))
+
+
+def commit_changelog(repo, changelog, message, author, committer, edit):
+    """Commit changelog to Git"""
+    repo.add_files(changelog.path)
+    repo.commit_staged(message, author_info=author, committer_info=committer,
+                       edit=edit)
 
 
 def build_parser(name):
@@ -322,9 +402,12 @@ def build_parser(name):
                                 "how to format the changelog entries")
     naming_grp = GbpOptionGroup(parser, "naming",
                                 "branch names, tag formats, directory and file naming")
+    commit_grp = GbpOptionGroup(parser, "commit",
+                                "automatic committing and tagging")
     parser.add_option_group(range_grp)
     parser.add_option_group(format_grp)
     parser.add_option_group(naming_grp)
+    parser.add_option_group(commit_grp)
 
     # Non-grouped options
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
@@ -351,6 +434,8 @@ def build_parser(name):
                                       dest="packaging_branch")
     naming_grp.add_config_file_option(option_name="packaging-tag",
                                       dest="packaging_tag")
+    naming_grp.add_config_file_option(option_name="packaging-tag-msg",
+                                      dest="packaging_tag_msg")
     naming_grp.add_config_file_option(option_name="packaging-dir",
                                       dest="packaging_dir")
     naming_grp.add_config_file_option(option_name="changelog-file",
@@ -359,7 +444,11 @@ def build_parser(name):
     # Range group options
     range_grp.add_option("-s", "--since", dest="since",
                          help="commit to start from (e.g. HEAD^^^, release/0.1.2)")
+    range_grp.add_option("--all", action="store_true",
+                         help="use all commits from the Git history, overrides "
+                         "--since")
     # Formatting group options
+    format_grp.add_config_file_option(option_name="meta-bts", dest="meta_bts")
     format_grp.add_option("--no-release", action="store_false", default=True,
                           dest="release",
                           help="no release, just update the last changelog section")
@@ -380,6 +469,22 @@ def build_parser(name):
                                       dest="spawn_editor")
     format_grp.add_config_file_option(option_name="editor-cmd",
                                       dest="editor_cmd")
+    format_grp.add_option("-m", '--message',
+                          help="text to use as new changelog entries - git commit "
+                          "messages and the --since are ignored in this case")
+    # Commit/tag group options
+    commit_grp.add_option("-c", "--commit", action="store_true",
+                          help="commit changes")
+    commit_grp.add_config_file_option(option_name="commit-msg",
+                                      dest="commit_msg")
+    commit_grp.add_option("--tag", action="store_true",
+                          help="commit the changes and create a"
+                          "packaging/release tag")
+    commit_grp.add_option("--retag", action="store_true",
+                          help="Overwrite packaging tag if it already exists")
+    commit_grp.add_boolean_config_file_option(option_name="sign-tags",
+                                              dest="sign_tags")
+    commit_grp.add_config_file_option(option_name="keyid", dest="keyid")
     return parser
 
 
@@ -391,6 +496,8 @@ def parse_args(argv):
 
     options, args = parser.parse_args(argv[1:])
 
+    if options.tag:
+        options.commit = True
     if not options.changelog_revision:
         options.changelog_revision = RpmPkgPolicy.Changelog.header_rev_format
 
@@ -412,34 +519,36 @@ def main(argv):
         editor_cmd = determine_editor(options)
 
         repo = RpmGitRepository('.')
-        check_branch(repo, options)
+        check_repo_state(repo, options)
 
         # Find and parse spec file
         spec = parse_spec_file(repo, options)
 
         # Find and parse changelog file
         ch_file = parse_changelog_file(repo, spec, options)
-        since = get_start_commit(ch_file.changelog, repo, options)
 
-        # Get range of commits from where to generate changes
-        if args:
-            gbp.log.info("Only looking for changes in '%s'" % ", ".join(args))
-        commits = repo.get_commits(since=since, until='HEAD', paths=args,
-                                   options=options.git_log.split(" "))
-        commits.reverse()
-        if not commits:
-            gbp.log.info("No changes detected from %s to %s." % (since, 'HEAD'))
+        # Get new entries
+        entries = generate_new_entries(ch_file.changelog, repo, options, args)
 
         # Do the actual update
-        entries = entries_from_commits(ch_file.changelog, repo, commits,
-                                       options)
-        update_changelog(ch_file.changelog, entries, repo, spec, options)
-
+        tag, tag_msg, author, committer = update_changelog(ch_file.changelog,
+                                                           entries, repo, spec,
+                                                           options)
         # Write to file
         ch_file.write()
 
-        if editor_cmd:
+        if editor_cmd and not options.message:
             gbpc.Command(editor_cmd, [ch_file.path])()
+
+        if options.commit:
+            edit = True if editor_cmd else False
+            msg = create_commit_message(spec, options)
+            commit_changelog(repo, ch_file, msg, author, committer, edit)
+            if options.tag:
+                if options.retag and repo.has_tag(tag):
+                    repo.delete_tag(tag)
+                repo.create_tag(tag, tag_msg, 'HEAD', options.sign_tags,
+                                options.keyid)
 
     except (GbpError, GitRepositoryError, ChangelogError, NoSpecError) as err:
         if len(err.__str__()):

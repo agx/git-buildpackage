@@ -109,6 +109,16 @@ class TestRpmCh(RpmRepoTestBase):
         # Should contain 3 lines (header, 1 entry and an empty line)
         eq_(len(content), 3)
 
+    def test_option_all(self):
+        """Test the --all cmdline option"""
+        repo = self.init_test_repo('gbp-test2')
+
+        eq_(mock_ch(['--changelog-file=CHANGES', '--all']), 0)
+        content = self.read_file('packaging/gbp-test2.changes')
+        # Should contain N+2 lines (header, N commits and an empty line)
+        commit_cnt = len(repo.get_commits(since=None, until='master'))
+        eq_(len(content), commit_cnt + 2)
+
     def test_option_changelog_file(self):
         """Test the --changelog-file cmdline option"""
         repo = self.init_test_repo('gbp-test-native')
@@ -162,6 +172,26 @@ class TestRpmCh(RpmRepoTestBase):
         self._check_log(-2, "gbp:error: You are not on branch 'foo'")
 
         eq_(mock_ch(['--packaging-branch=foo', '--ignore-branch']), 0)
+
+    def test_option_meta_bts(self):
+        """Test parsing of the bts meta tags"""
+        repo = self.init_test_repo('gbp-test-native')
+
+        # Create a dummy commit that references bts
+        with open('new-file', 'w') as fobj:
+            fobj.write('foobar\n')
+        repo.add_files('new-file')
+        repo.commit_all('Fix\n\nCloses: #123\nFixes: #456\n Fixes: #789')
+
+        eq_(mock_ch(['--since=HEAD^']), 0)
+        content = self.read_file('packaging/gbp-test-native.changes')
+        # rpm-ch shouldn't have picked the ref with leading whitespace
+        eq_(content[1], '- Fix (Closes: #123) (Fixes: #456)\n')
+
+        # Check the --meta-bts option
+        eq_(mock_ch(['--since=HEAD^', '--meta-bts=Fixes']), 0)
+        content = self.read_file('packaging/gbp-test-native.changes')
+        eq_(content[1], '- Fix (Fixes: #456)\n')
 
     def test_option_no_release(self):
         """Test the --no-release cmdline option"""
@@ -255,6 +285,81 @@ class TestRpmCh(RpmRepoTestBase):
         header = self.read_file('packaging/gbp-test-native.changes')[0]
         ok_(re.match(r'.+ foobar$', header))
 
+    def test_option_commit(self):
+        """Test the --commit cmdline option"""
+        repo = self.init_test_repo('gbp-test')
+
+        # Check unclean repo
+        with open('untracked-file', 'w') as fobj:
+            fobj.write('this file is not tracked\n')
+        with open('foo.txt', 'a') as fobj:
+            fobj.write('new stuff\n')
+
+        # Unstaged file (foo.txt) -> failure
+        eq_(mock_ch(['--commit', '--since=HEAD^']), 1)
+        self._check_log(-1, 'gbp:error: Please commit or stage your changes')
+
+        # Add file, update and commit, untracked file should be ignored
+        repo.add_files('foo.txt')
+        sha = repo.rev_parse('HEAD')
+        eq_(mock_ch(['--commit', '--since=HEAD^']), 0)
+        eq_(sha, repo.rev_parse('HEAD^'))
+        eq_(repo.get_commit_info('HEAD')['files'],
+            {'M': [b'foo.txt', b'gbp-test.spec']})
+
+    def test_option_commit_msg(self):
+        """Test the --commit-msg cmdline option"""
+        repo = self.init_test_repo('gbp-test2')
+
+        eq_(mock_ch(['--commit', '--since=HEAD^', '--commit-msg=Foo']), 0)
+        eq_(repo.get_commit_info('HEAD')['subject'], 'Foo')
+
+        # Unknown key in format string causes failure
+        eq_(mock_ch(['--commit', '--since=HEAD^', '--commit-msg=%(foo)s']), 1)
+        self._check_log(-1, "gbp:error: Unknown key 'foo' in commit-msg string")
+
+    def test_tagging(self):
+        """Test commiting/tagging"""
+        repo = self.init_test_repo('gbp-test-native')
+
+        # Update and commit+tag
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 0)
+        ok_(repo.has_tag('new-tag'))
+        sha = repo.rev_parse('HEAD')
+        eq_(sha, repo.rev_parse('new-tag^0'))
+
+        # Should fail if the tag already exists
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 1)
+
+        # Update and commit+tag
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^',
+                     '--retag']), 0)
+        ok_(repo.has_tag('new-tag'))
+        sha2 = repo.rev_parse('HEAD')
+        ok_(sha2 != sha)
+        eq_(sha2, repo.rev_parse('new-tag^0'))
+
+    def test_tagging2(self):
+        """Test commiting/tagging spec file"""
+        repo = self.init_test_repo('gbp-test2')
+
+        # Check unclean repo
+        with open('untracked-file', 'w') as fobj:
+            fobj.write('this file is not tracked\n')
+        with open('README', 'a') as fobj:
+            fobj.write('some new content\n')
+
+        # Unstaged file (README) -> failure
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 1)
+        self._check_log(-1, 'gbp:error: Please commit or stage your changes')
+
+        # Add file, update and commit+tag, untracked file should be ignored
+        repo.add_files('README')
+        eq_(mock_ch(['--tag', '--packaging-tag=new-tag', '--since=HEAD^']), 0)
+        ok_(repo.has_tag('new-tag'))
+        sha = repo.rev_parse('HEAD')
+        eq_(sha, repo.rev_parse('new-tag^0'))
+
     def test_option_editor_cmd(self):
         """Test the --editor-cmd and --spawn-editor cmdline options"""
         repo = self.init_test_repo('gbp-test-native')
@@ -267,6 +372,17 @@ class TestRpmCh(RpmRepoTestBase):
         os.environ['EDITOR'] = 'rm'
         eq_(mock_ch(['--spawn-editor=always', '--editor-cmd=']),
             0)
+
+    def test_option_message(self):
+        """Test the --message cmdline option"""
+        self.init_test_repo('gbp-test-native')
+        orig_content = self.read_file('packaging/gbp-test-native.changes')
+
+        eq_(mock_ch(['--message', 'my entry\nanother entry']), 0)
+        content = self.read_file('packaging/gbp-test-native.changes')
+        # Added header, two entries and a blank line
+        eq_(len(content), len(orig_content) + 4)
+        eq_(content[2], '- another entry\n')
 
     def test_user_customizations(self):
         """Test the user customizations"""
