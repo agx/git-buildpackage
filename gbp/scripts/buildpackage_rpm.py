@@ -296,7 +296,7 @@ def create_packaging_tag(repo, commit, name, version, options):
 
 def disable_hooks(options):
     """Disable all hooks (except for builder)"""
-    for hook in ['cleaner', 'postexport', 'prebuild', 'postbuild', 'posttag']:
+    for hook in ['cleaner', 'preexport', 'postexport', 'prebuild', 'postbuild', 'posttag']:
         if getattr(options, hook):
             gbp.log.info("Disabling '%s' hook" % hook)
             setattr(options, hook, '')
@@ -395,6 +395,10 @@ def build_parser(name, prefix=None, git_treeish=None):
     cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
                                      help="command to run before a build, default is "
                                      "'%(prebuild)s'")
+    cmd_group.add_config_file_option(option_name="preexport",
+                                     dest="preexport",
+                                     help="command to run before exporting the source tree, "
+                                     "default is '%(preexport)s'")
     cmd_group.add_config_file_option(option_name="postexport",
                                      dest="postexport",
                                      help="command to run after exporting the source tree, "
@@ -531,6 +535,13 @@ def main(argv):
             source_dir = makedir(os.path.join(export_dir,
                                  options.export_sourcedir))
             spec_dir = makedir(os.path.join(export_dir, options.export_specdir))
+
+            # Run preexport hook
+            if options.preexport:
+                RunAtCommand(options.preexport, shell=True,
+                             extra_env={'GBP_GIT_DIR': repo.git_dir,
+                                        'GBP_BUILD_DIR': export_dir}
+                             )()
 
             # Move packaging files to final export dir
             gbp.log.debug("Exporting packaging files from '%s' to '%s'" %

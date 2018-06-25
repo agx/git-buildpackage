@@ -163,6 +163,7 @@ class GbpOptionParser(OptionParser):
                 'posttag': '',
                 'pq-from': 'DEBIAN',
                 'prebuild': '',
+                'preexport': '',
                 'pristine-tar': 'False',
                 'pristine-tar-commit': 'False',
                 'purge': 'True',

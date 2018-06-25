@@ -467,11 +467,13 @@ class TestGbpRpm(RpmRepoTestBase):
         self.init_test_repo('gbp-test-native')
 
         cleaner = 'echo -n cleaner >> ../hooks'
+        preexport = 'echo -n preexport >> $GBP_TMP_DIR/../hooks'
         postexport = 'echo -n postexport >> $GBP_TMP_DIR/../hooks'
         prebuild = 'echo -n prebuild >> $GBP_BUILD_DIR/../hooks'
         postbuild = 'echo -n postbuild >> $GBP_BUILD_DIR/../hooks'
         posttag = 'echo -n posttag >> ../hooks'
         args = ['--git-cleaner=%s' % cleaner,
+                '--git-preexport=%s' % preexport,
                 '--git-postexport=%s' % postexport,
                 '--git-prebuild=%s' % prebuild,
                 '--git-postbuild=%s' % postbuild,
@@ -483,13 +485,13 @@ class TestGbpRpm(RpmRepoTestBase):
 
         # Export and build scripts are run when not tagging
         eq_(mock_gbp(args), 0)
-        self.check_and_rm_file('../hooks', 'cleanerpostexportprebuildpostbuild')
+        self.check_and_rm_file('../hooks', 'cleanerpreexportpostexportprebuildpostbuild')
         shutil.rmtree('../rpmbuild')
 
         # All hooks are run when building
         eq_(mock_gbp(args + ['--git-tag', '--git-packaging-tag=tag2']), 0)
         self.check_and_rm_file('../hooks',
-                               'cleanerpostexportprebuildpostbuildposttag')
+                               'cleanerpreexportpostexportprebuildpostbuildposttag')
         shutil.rmtree('../rpmbuild')
 
         # Run with hooks disabled

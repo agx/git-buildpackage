@@ -303,3 +303,12 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-tarball-dir=../tarballs'])
         eq_(ret, 1)
         self._check_log(-1, "gbp:error: Non-native package 'hello-debhelper' has invalid version '3.0'")
+
+    @RepoFixtures.quilt30()
+    def test_preexport(self, repo):
+        """Test the pre-export hook """
+        preexport_out = os.path.join(repo.path, '..', 'preexport.out')
+        self._test_buildpackage(repo, ['--git-export-dir=../export-dir',
+                                       '--git-preexport=printenv > %s' % preexport_out])
+        ok_(os.path.exists(preexport_out))
+        self.check_hook_vars('../preexport', ["GBP_BUILD_DIR", "GBP_GIT_DIR"])

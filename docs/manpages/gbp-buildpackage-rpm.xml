@@ -39,6 +39,7 @@
       <arg><option>--git-postbuild=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-postexport=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-prebuild=</option><replaceable>COMMAND</replaceable></arg>
+      <arg><option>--git-preexport=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--git-[no-]build</option></arg>
       <arg><option>--git-[no-]hooks</option></arg>
       <arg><option>--git-packaging-tag=</option><replaceable>TAG-FORMAT</replaceable></arg>
@@ -336,6 +337,21 @@
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><option>--git-preexport=</option><replaceable>COMMAND</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Execute <replaceable>COMMAND</replaceable> before exporting the source
+          tree.
+          </para>
+          <para>
+          Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
+          repository the package is being built from),
+          <envar>GBP_BUILD_DIR</envar> (the build dir).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><option>--git-postexport=</option><replaceable>COMMAND</replaceable>
         </term>
         <listitem>
@@ -382,7 +398,7 @@
         </term>
         <listitem>
           <para>
-          Enable running all (cleaner, postexport, prebuild, postbuild, and
+          Enable running all (cleaner, preexport, postexport, prebuild, postbuild, and
           posttag) hooks. Note: the <option>--git-builder</option> command is
           not affected by this option.
           </para>
