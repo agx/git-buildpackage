@@ -55,7 +55,7 @@ _gbp_comp ()
     local remote_config_opts="--remote-config\="
     local file_opts="--postimport\= --git-builder\= --git-cleaner\= \
                      --git-export-dir\= --git-postbuild\= --git-postexport\= \
-                     --git-posttag\= --git-prebuild\= --git-tarball-dir\= \
+                     --git-posttag\= --git-prebuild\= --git-preexport\= --git-tarball-dir\= \
                      --posttag\= --tarball-dir\="
     local start_opt=""
 

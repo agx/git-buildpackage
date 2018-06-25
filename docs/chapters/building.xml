@@ -267,5 +267,17 @@ rm -f rules.* control.*
 exit 0
 </programlisting>
     </sect2>
+    <sect2 id="gbp.building.preexport">
+    <title>Running preexport hook</title>
+    <para>&gbp-buildpackage; exports several variables into the
+	<option>preexport</option>'s environment (for details see
+	the <xref linkend="man.gbp.buildpackage"/> manual page). The motivation
+	for the preexport action is to allow further actions before preparing and
+	exporting the orig tarballs to the build directory.
+	A usecase could be having the orig tarballs in a separate repository due to
+	very large binary assets, that need to be checked out to the correct branch
+	before creating the tarballs.
+    </para>
+    </sect2>
     </sect1>
 </chapter>
