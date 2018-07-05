@@ -393,6 +393,9 @@ def build_parser(name, prefix=None):
                                       help="Compression level, default is '%(compression-level)s'")
     orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                       dest="components")
+    orig_group.add_config_file_option(option_name="exclude-with-copyright", action="store_true",
+                                      dest="exclude_with_copyright", default=False,
+                                      help="exclude files in Files-Excluded field set in debian/copyright")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
