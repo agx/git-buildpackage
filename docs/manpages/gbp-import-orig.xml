@@ -70,8 +70,8 @@
       </listitem>
       <listitem>
 	<para>
-	  <option>--uscan</option>: The latest upstream version is fetched
-	  via &uscan; relying on <filename>debian/watch</filename>.
+	  <option>--uscan</option>: The latest upstream or specified version is
+	  fetched via &uscan; relying on <filename>debian/watch</filename>.
 	</para>
       </listitem>
     </orderedlist>
@@ -112,7 +112,8 @@
         <term><option>-u</option><replaceable>version</replaceable></term>
         <listitem>
           <para>
-          The upstream version number
+          The upstream version number. With <option>--uscan</option>, passed to
+          uscan as <option>--download-debversion</option>
           </para>
         </listitem>
       </varlistentry>
@@ -333,7 +334,8 @@
         <term><option>--uscan</option></term>
         <listitem>
           <para>
-          Use &uscan; to fetch new upstream version.
+          Use &uscan; to fetch new upstream version. The version can be
+          specified with <option>--upstream-version</option>
           </para>
         </listitem>
       </varlistentry>
