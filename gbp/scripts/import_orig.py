@@ -133,7 +133,7 @@ def detect_name_and_version(repo, source, options):
     return (sourcepackage, version)
 
 
-def find_upstream(use_uscan, args):
+def find_upstream(use_uscan, args, version=None):
     """Find the main tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
     @rtype: string
@@ -161,7 +161,7 @@ def find_upstream(use_uscan, args):
         uscan = Uscan()
         gbp.log.info("Launching uscan...")
         try:
-            if not uscan.scan():
+            if not uscan.scan(download_version=version):
                 gbp.log.info("package is up to date, nothing to do.")
                 return None
         except UscanError as e:
@@ -422,7 +422,7 @@ def main(argv):
         if options.download:
             upstream = download_orig(args[0])
         else:
-            upstream = find_upstream(options.uscan, args)
+            upstream = find_upstream(options.uscan, args, options.version)
             if not upstream:
                 return ExitCodes.uscan_up_to_date
 

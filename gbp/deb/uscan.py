@@ -174,16 +174,16 @@ class Uscan(object):
             msg = "Uscan failed - debug by running 'uscan --verbose'"
         raise UscanError(msg)
 
-    def scan(self, destdir='..'):
+    def scan(self, destdir='..', download_version=None):
         """
         Invoke uscan to fetch a new upstream version
 
         @returns: C{True} if a new version was downloaded
         """
-        p = subprocess.Popen(['uscan', '--symlink', '--destdir=%s' % destdir,
-                              '--dehs'],
-                             cwd=self._dir,
-                             stdout=subprocess.PIPE)
+        cmd = ['uscan', '--symlink', '--destdir=%s' % destdir, '--dehs']
+        if download_version:
+            cmd += ['--download-debversion', download_version]
+        p = subprocess.Popen(cmd, cwd=self._dir, stdout=subprocess.PIPE)
         out = p.communicate()[0].decode()
         # uscan exits with 1 in case of uptodate and when an error occurred.
         # Don't fail in the uptodate case:
