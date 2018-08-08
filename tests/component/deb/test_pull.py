@@ -33,7 +33,7 @@ class TestPull(ComponentTestBase):
 
     @RepoFixtures.native()
     def test_pull_explicit_remote(self, repo):
-        """Test that pulling of debian native packages works"""
+        """Test that pulling of debian native packages works (explicit remote)"""
         dest = os.path.join(self._tmpdir, 'cloned_repo')
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
@@ -43,7 +43,7 @@ class TestPull(ComponentTestBase):
 
     @RepoFixtures.native()
     def test_pull_default_remote(self, repo):
-        """Test that pulling of debian native packages works"""
+        """Test that pulling of debian native packages works (default remote)"""
         dest = os.path.join(self._tmpdir, 'cloned_repo')
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
