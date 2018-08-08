@@ -182,6 +182,7 @@ class GbpOptionParser(OptionParser):
                 'template-dir': '',
                 'time-machine': 1,
                 'track': 'True',
+                'track-missing': 'False',
                 'upstream-branch': 'upstream',
                 'upstream-tag': 'upstream/%(version)s',
                 'upstream-tree': 'TAG',
@@ -301,6 +302,9 @@ class GbpOptionParser(OptionParser):
         'track':
             "Set up tracking for remote branches, "
             "default is '%(track)s'",
+        'track-missing':
+            "Track missing remote branches, "
+            "default is '%(track-missing)s'",
         'author-is-committer':
             "Use the authors's name also as the committer's name, "
             "default is '%(author-is-committer)s'",

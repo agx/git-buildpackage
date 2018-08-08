@@ -120,6 +120,15 @@ def parse_args(argv):
     return options, args
 
 
+def get_remote(repo, current):
+    current_remote = repo.get_merge_branch(current)
+    if current_remote:
+        fetch_remote = current_remote.split('/')[0]
+    else:
+        fetch_remote = 'origin'
+    return fetch_remote
+
+
 def main(argv):
     retval = 0
     current = None
@@ -164,6 +173,7 @@ def main(argv):
         repo.fetch(rem_repo, depth=options.depth)
         repo.fetch(rem_repo, depth=options.depth, tags=True)
 
+        fetch_remote = get_remote(repo, current)
         for branch in [options.debian_branch, options.upstream_branch]:
             if repo.has_branch(branch):
                 branches.add(branch)
@@ -172,11 +182,6 @@ def main(argv):
             branches.add(repo.pristine_tar_branch)
 
         if options.all:
-            current_remote = repo.get_merge_branch(current)
-            if current_remote:
-                fetch_remote = current_remote.split('/')[0]
-            else:
-                fetch_remote = 'origin'
             for branch in repo.get_local_branches():
                 merge_branch = repo.get_merge_branch(branch)
                 if merge_branch:
