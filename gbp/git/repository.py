@@ -340,7 +340,7 @@ class GitRepository(object):
         @param rev: where to start the branch from
         @param force: reset branch HEAD to start point, if it already exists
 
-        If rev is None the branch starts form the current HEAD.
+        If rev is None the branch starts from the current HEAD.
         """
         args = GitArgs(branch)
         args.add_true(force, '--force')
@@ -610,7 +610,7 @@ class GitRepository(object):
 
         @param local_branch: name of the local branch
         @type local_branch: C{str}
-        @param upstream: remote/branch, for example origin/master
+        @param upstream: Remote branch in the form remote/branch, e.g. origin/master
         @type upstream: C{str}
         """
 
