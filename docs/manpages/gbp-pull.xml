@@ -29,6 +29,7 @@
       <arg><option>--ignore-branch</option></arg>
       <arg><option>--debian-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
+      <arg><option>--track-missing</option></arg>
       <arg><option>--depth=</option><replaceable>depth</replaceable></arg>
       <arg><replaceable>repository</replaceable></arg>
     </cmdsynopsis>
@@ -98,6 +99,20 @@
         <listitem>
 	  <para>The branch in the &git; repository the upstream sources are put
 	  onto. Default is <replaceable>upstream</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><option>--track-missing</option></term>
+        <listitem>
+	  <para>
+            If a branch is missing in the local repository try to
+            fetch it from the remote side and (if it exists) fetch it and set up
+            branch tracking for it. This ensures that branches that are added at a
+            later point to the remote side (e.g.
+            <replaceable>pristine-tar</replaceable>) are picked up automatically.
+            Note that it's not an error for the branch to not exist on the remote
+            side.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>

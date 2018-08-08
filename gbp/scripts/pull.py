@@ -99,6 +99,7 @@ def build_parser(name):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    branch_group.add_boolean_config_file_option(option_name="track-missing", dest="track_missing")
     branch_group.add_option("--depth", action="store", dest="depth", default=0,
                             help="git history depth (for deepening shallow clones)")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
@@ -127,6 +128,17 @@ def get_remote(repo, current):
     else:
         fetch_remote = 'origin'
     return fetch_remote
+
+
+def track_missing(repo, remote, branch, options):
+    upstream = "remotes/{}/{}".format(remote, branch)
+    if not repo.has_branch(branch):
+        try:
+            repo.fetch(remote, depth=options.depth, refspec=branch)
+        except GitRepositoryError:
+            pass  # it's o.k. if the remote branch is missing
+        else:
+            repo.create_branch(branch, upstream)
 
 
 def main(argv):
@@ -175,11 +187,21 @@ def main(argv):
 
         fetch_remote = get_remote(repo, current)
         for branch in [options.debian_branch, options.upstream_branch]:
+            if not branch:
+                continue
+            if options.track_missing:
+                track_missing(repo, fetch_remote, branch, options)
+
             if repo.has_branch(branch):
                 branches.add(branch)
 
-        if repo.has_pristine_tar_branch() and options.pristine_tar:
-            branches.add(repo.pristine_tar_branch)
+        if options.pristine_tar:
+            branch = repo.pristine_tar_branch
+            if options.track_missing:
+                track_missing(repo, fetch_remote, branch, options)
+
+            if repo.has_pristine_tar_branch():
+                branches.add(repo.pristine_tar_branch)
 
         if options.all:
             for branch in repo.get_local_branches():

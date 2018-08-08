@@ -79,3 +79,28 @@ class TestPull(ComponentTestBase):
         eq_(pull(['argv0', '--all']), 0)
         eq_(len(cloned.get_commits(until='foob')), 3)
         eq_(len(cloned.get_commits(until='upstream')), 2)
+
+    @RepoFixtures.native()
+    def test_tracking(self, repo):
+        """Test that --track-missing picks up missing branches"""
+        dest = os.path.join(self._tmpdir, 'cloned_repo')
+        clone(['arg0', repo.path, dest])
+        cloned = ComponentTestGitRepository(dest)
+        os.chdir(cloned.path)
+        self._check_repo_state(cloned, 'master', ['master'])
+        # Pull initially
+        eq_(pull(['argv0']), 0)
+        assert len(repo.get_commits()) == 1
+        self._check_repo_state(cloned, 'master', ['master'])
+
+        # Pick up missing branches (none exist yet)
+        eq_(pull(['argv0', '--track-missing']), 0)
+        assert len(repo.get_commits()) == 1
+        self._check_repo_state(cloned, 'master', ['master'])
+
+        # Pick up missing branches
+        repo.create_branch('pristine-tar')
+        repo.create_branch('upstream')
+        eq_(pull(['argv0', '--track-missing', '--pristine-tar']), 0)
+        assert len(repo.get_commits()) == 1
+        self._check_repo_state(cloned, 'master', ['master', 'pristine-tar', 'upstream'])
