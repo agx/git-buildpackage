@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 #
-# (C) 2009,2013,2017 Guido Günther <agx@sigxcpu.org>
+# (C) 2009,2013,2017,2018 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
@@ -155,6 +155,15 @@ def main(argv):
             else:
                 raise
 
+        (ret, out) = repo.is_clean()
+        if not ret:
+            gbp.log.err("You have uncommitted changes in your source tree:")
+            gbp.log.err(out)
+            raise GbpError
+
+        repo.fetch(rem_repo, depth=options.depth)
+        repo.fetch(rem_repo, depth=options.depth, tags=True)
+
         for branch in [options.debian_branch, options.upstream_branch]:
             if repo.has_branch(branch):
                 branches.add(branch)
@@ -175,14 +184,6 @@ def main(argv):
                     if rem == fetch_remote and branch == rem_br:
                         branches.add(branch)
 
-        (ret, out) = repo.is_clean()
-        if not ret:
-            gbp.log.err("You have uncommitted changes in your source tree:")
-            gbp.log.err(out)
-            raise GbpError
-
-        repo.fetch(rem_repo, depth=options.depth)
-        repo.fetch(rem_repo, depth=options.depth, tags=True)
         for branch in branches:
             if not fast_forward_branch(rem_repo, branch, repo, options):
                 retval = 2
