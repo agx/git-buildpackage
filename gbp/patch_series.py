@@ -169,8 +169,7 @@ class Patch(object):
 class Dep3Patch(Patch):
     def _read_info(self):
         super(Dep3Patch, self)._read_info()
-        if not self.info:
-            self._check_dep3()
+        self._check_dep3()
 
     def _dep3_get_value(self, lines):
         value = []
@@ -191,6 +190,8 @@ class Dep3Patch(Patch):
         """
 
         def add_author(lines):
+            if 'email' in self.info and 'author' in self.info:
+                return 0
             value = self._dep3_get_value(lines).strip()
             m = re.match('(.*)<([^<>]+)>', value)
             if m:
@@ -200,6 +201,8 @@ class Dep3Patch(Patch):
             return 1
 
         def add_subject(lines, long_desc, changes):
+            if 'subject' in self.info:
+                return long_desc, 0
             value = self._dep3_get_value(lines).lstrip()
             if '\n' in value:
                 value, description = value.split('\n', 1)
@@ -207,6 +210,12 @@ class Dep3Patch(Patch):
                 long_desc = description + long_desc
             self.info['subject'] = value
             return long_desc, changes + 1
+
+        def add_date(lines):
+            if 'date' in self.info:
+                return 0
+            self.info['date'] = self._dep3_get_value(lines).strip()
+            return 1
 
         changes = 0
         long_desc = self._dep3_get_value(headers.get('long_desc', list()))
@@ -216,6 +225,8 @@ class Dep3Patch(Patch):
                 changes += add_author(v)
             elif k in ('subject', 'description'):
                 long_desc, changes = add_subject(v, long_desc, changes)
+            elif k in ['date']:
+                changes += add_date(v)
             elif k == 'long_desc':
                 pass
             else:
