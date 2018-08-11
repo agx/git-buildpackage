@@ -1,0 +1,56 @@
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Fri, 20 Jul 2018 01:30:24 +0100
+Subject: usbip: Fix misuse of strncpy()
+Bug-Debian: https://bugs.debian.org/897802
+
+gcc 8 reports:
+
+usbip_device_driver.c: In function ‘read_usb_vudc_device’:
+usbip_device_driver.c:106:2: error: ‘strncpy’ specified bound 256 equals destination size [-Werror=stringop-truncation]
+  strncpy(dev->path, path, SYSFS_PATH_MAX);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usbip_device_driver.c:125:2: error: ‘strncpy’ specified bound 32 equals destination size [-Werror=stringop-truncation]
+  strncpy(dev->busid, name, SYSFS_BUS_ID_SIZE);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I'm not convinced it makes sense to truncate the copied strings here,
+but since we're already doing so let's ensure they're still null-
+terminated.  We can't easily use strlcpy() here, so use snprintf().
+
+usbip_common.c has the same problem.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/tools/usb/usbip/libsrc/usbip_common.c
++++ b/tools/usb/usbip/libsrc/usbip_common.c
+@@ -226,8 +226,8 @@ int read_usb_device(struct udev_device *
+ 	path = udev_device_get_syspath(sdev);
+ 	name = udev_device_get_sysname(sdev);
+ 
+-	strncpy(udev->path,  path,  SYSFS_PATH_MAX);
+-	strncpy(udev->busid, name, SYSFS_BUS_ID_SIZE);
++	snprintf(udev->path, SYSFS_PATH_MAX, "%s", path);
++	snprintf(udev->busid, SYSFS_BUS_ID_SIZE, "%s", name);
+ 
+ 	sscanf(name, "%u-%u", &busnum, &devnum);
+ 	udev->busnum = busnum;
+--- a/tools/usb/usbip/libsrc/usbip_device_driver.c
++++ b/tools/usb/usbip/libsrc/usbip_device_driver.c
+@@ -103,7 +103,7 @@ int read_usb_vudc_device(struct udev_dev
+ 	copy_descr_attr16(dev, &descr, idProduct);
+ 	copy_descr_attr16(dev, &descr, bcdDevice);
+ 
+-	strncpy(dev->path, path, SYSFS_PATH_MAX);
++	snprintf(dev->path, SYSFS_PATH_MAX, "%s", path);
+ 
+ 	dev->speed = USB_SPEED_UNKNOWN;
+ 	speed = udev_device_get_sysattr_value(sdev, "current_speed");
+@@ -122,7 +122,7 @@ int read_usb_vudc_device(struct udev_dev
+ 	dev->busnum = 0;
+ 
+ 	name = udev_device_get_sysname(plat);
+-	strncpy(dev->busid, name, SYSFS_BUS_ID_SIZE);
++	snprintf(dev->busid, SYSFS_BUS_ID_SIZE, "%s", name);
+ 	return 0;
+ err:
+ 	fclose(fd);

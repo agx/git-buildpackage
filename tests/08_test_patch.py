@@ -67,3 +67,38 @@ Bug: https://bugs.example.org/123456
 Long description
 """,
                          p.long_desc)
+
+
+class TestMixedHeaderPatch(unittest.TestCase):
+    data_dir = os.path.splitext(__file__)[0] + '_data'
+
+    def test_mixed(self):
+        """Get patch information from git mailimport and extra DEP-3 headers"""
+        patchfile = os.path.join(self.data_dir, "usbip-fix-misuse-of-strncpy.patch")
+        self.assertTrue(os.path.exists(patchfile))
+        p = Dep3Patch(patchfile)
+        self.assertEqual("usbip: Fix misuse of strncpy()", p.subject)
+        self.assertEqual("Ben Hutchings", p.author)
+        self.assertEqual("ben@decadent.org.uk", p.email)
+        self.assertEqual("""\
+Bug-Debian: https://bugs.debian.org/897802
+
+gcc 8 reports:
+
+usbip_device_driver.c: In function ‘read_usb_vudc_device’:
+usbip_device_driver.c:106:2: error: ‘strncpy’ specified bound 256 equals destination size [-Werror=stringop-truncation]
+  strncpy(dev->path, path, SYSFS_PATH_MAX);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usbip_device_driver.c:125:2: error: ‘strncpy’ specified bound 32 equals destination size [-Werror=stringop-truncation]
+  strncpy(dev->busid, name, SYSFS_BUS_ID_SIZE);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I'm not convinced it makes sense to truncate the copied strings here,
+but since we're already doing so let's ensure they're still null-
+terminated.  We can't easily use strlcpy() here, so use snprintf().
+
+usbip_common.c has the same problem.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+""",
+                         p.long_desc)
