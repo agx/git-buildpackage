@@ -218,6 +218,7 @@ class Dep3Patch(Patch):
             return 1
 
         changes = 0
+        pseudo_headers = ''
         long_desc = self._dep3_get_value(headers.get('long_desc', list()))
 
         for k, v in headers.items():
@@ -230,10 +231,12 @@ class Dep3Patch(Patch):
             elif k == 'long_desc':
                 pass
             else:
-                long_desc += ''.join(v)
+                pseudo_headers += ''.join(v)
                 changes += 1
         if changes:
-            self.long_desc = long_desc + self.long_desc
+            self.long_desc = (pseudo_headers +
+                              ('\n' if pseudo_headers else '') +
+                              long_desc + self.long_desc)
 
     def _check_dep3(self):
         """
