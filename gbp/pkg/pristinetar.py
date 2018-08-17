@@ -71,7 +71,7 @@ class PristineTar(Command):
             return None
 
         regex = ('pristine-tar .* %s' % archive_regexp)
-        commits = self.repo.grep_log(regex, self.branch)
+        commits = self.repo.grep_log(regex, self.branch, merges=False)
         if commits:
             commit = commits[-1]
             gbp.log.debug("Found pristine-tar commit at '%s'" % commit)

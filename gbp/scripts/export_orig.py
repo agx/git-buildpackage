@@ -236,7 +236,7 @@ def guess_comp_type(comp_type, source, repo, tarball_dir):
     if comp_type == 'auto':
         if repo and repo.has_pristine_tar_branch():
             regex = 'pristine-tar .* %s_%s\.orig.tar\.' % (source.name, source.upstream_version)
-            commits = repo.grep_log(regex, repo.pristine_tar_branch)
+            commits = repo.grep_log(regex, repo.pristine_tar_branch, merges=False)
             if commits:
                 commit = commits[-1]
                 gbp.log.debug("Found pristine-tar commit at '%s'" % commit)

@@ -1645,7 +1645,7 @@ class GitRepository(object):
             raise GitRepositoryError("can't get %s: %s" % (id, stderr.decode().rstrip()))
         return obj
 
-    def grep_log(self, regex, since=None):
+    def grep_log(self, regex, since=None, merges=True):
         """
         Get commmits matching I{regex}
 
@@ -1655,6 +1655,8 @@ class GitRepository(object):
         @type since: C{str}
         """
         args = ['--pretty=format:%H']
+        if not merges:
+            args.append("--no-merges")
         args.append("--grep=%s" % regex)
         if since:
             args.append(since)

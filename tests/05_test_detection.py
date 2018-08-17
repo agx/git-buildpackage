@@ -24,7 +24,7 @@ class MockGitRepository:
     def pristine_tar_branch(self):
         'pristine-tar'
 
-    def grep_log(self, regex, branch):
+    def grep_log(self, regex, branch, merges=True):
         return None
 
     def get_commit_info(self, commit):
