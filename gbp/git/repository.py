@@ -1654,15 +1654,13 @@ class GitRepository(object):
         @param since: where to start grepping (e.g. a branch)
         @type since: C{str}
         """
-        args = ['--pretty=format:%H']
-        if not merges:
-            args.append("--no-merges")
-        args.append("--grep=%s" % regex)
-        if since:
-            args.append(since)
-        args.append('--')
+        args = GitArgs('--pretty=format:%H')
+        args.add_false(merges, '--no-merges')
+        args.add('--grep=%s' % regex)
+        args.add_true(since, since)
+        args.add('--')
 
-        stdout, stderr, ret = self._git_inout('log', args,
+        stdout, stderr, ret = self._git_inout('log', args.args,
                                               capture_stderr=True)
         if ret:
             raise GitRepositoryError("Error grepping log for %s: %s" %
