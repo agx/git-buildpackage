@@ -20,8 +20,7 @@ class TestHelp(TestCaseWithData):
                 'pull',
                 'push',
                 'pq',
-                'tag',
-    ]
+                'tag']
 
     rpm_cmds = ['buildpackage_rpm',
                 'import_srpm',
