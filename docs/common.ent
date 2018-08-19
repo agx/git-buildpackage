@@ -25,6 +25,7 @@
   <!ENTITY gbp-import-dsc	"<command>gbp&nbsp;import-dsc</command>">
   <!ENTITY gbp-import-dscs	"<command>gbp&nbsp;import-dscs</command>">
   <!ENTITY gbp-import-orig	"<command>gbp&nbsp;import-orig</command>">
+  <!ENTITY gbp-import-ref	"<command>gbp&nbsp;import-ref</command>">
   <!ENTITY gbp-import-srpm      "<command>gbp&nbsp;import-srpm</command>">
   <!ENTITY gbp-pq		"<command>gbp&nbsp;pq</command>">
   <!ENTITY gbp-pq-export	"<command>gbp&nbsp;pq&nbsp;<option>export</option></command>">

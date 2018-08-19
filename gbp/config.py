@@ -131,6 +131,7 @@ class GbpOptionParser(OptionParser):
                 'full': 'False',
                 'git-author': 'False',
                 'git-log': '--no-merges',
+                'git-ref': 'upstream/latest',
                 'hooks': 'True',
                 'id-length': '0',
                 'ignore-branch': 'False',

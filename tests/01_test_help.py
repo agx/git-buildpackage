@@ -15,6 +15,7 @@ class TestHelp(TestCaseWithData):
                 'create_remote_repo',
                 'dch',
                 'import_orig',
+                'import_ref',
                 'import_dsc',
                 'pristine_tar',
                 'pull',
