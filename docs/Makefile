@@ -11,7 +11,6 @@ MAN1S = \
         gbp-import-dsc    \
         gbp-import-dscs   \
         gbp-import-orig   \
-        gbp-import-ref    \
         gbp-pq            \
         gbp-pristine-tar  \
         gbp-pull          \

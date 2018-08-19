@@ -15,13 +15,13 @@ class TestHelp(TestCaseWithData):
                 'create_remote_repo',
                 'dch',
                 'import_orig',
-                'import_ref',
                 'import_dsc',
                 'pristine_tar',
                 'pull',
                 'push',
                 'pq',
-                'tag']
+                'tag',
+    ]
 
     rpm_cmds = ['buildpackage_rpm',
                 'import_srpm',

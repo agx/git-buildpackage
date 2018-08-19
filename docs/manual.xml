@@ -39,7 +39,6 @@
     &man.gbp.importdsc;
     &man.gbp.importdscs;
     &man.gbp.importorig;
-    &man.gbp.importref;
     &man.gbp.pq;
     &man.gbp.pristine.tar;
     &man.gbp.pull;

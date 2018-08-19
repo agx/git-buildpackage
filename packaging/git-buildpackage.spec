@@ -178,7 +178,6 @@ cat > files.list << EOF
 %{python_sitelib}/gbp/scripts/buildpackage.py*
 %{python_sitelib}/gbp/scripts/dch.py*
 %{python_sitelib}/gbp/scripts/export_orig.py*
-%{python_sitelib}/gbp/scripts/export_ref.py*
 %{python_sitelib}/gbp/scripts/import_dsc.py*
 %{python_sitelib}/gbp/scripts/import_dscs.py*
 %{python_sitelib}/gbp/scripts/import_orig.py*
@@ -194,7 +193,6 @@ cat >> files.list << EOF
 %{_mandir}/man1/gbp-import-dsc.1*
 %{_mandir}/man1/gbp-import-dscs.1*
 %{_mandir}/man1/gbp-import-orig.1*
-%{_mandir}/man1/gbp-import-ref.1*
 %{_mandir}/man1/gbp-pq.1*
 %{_mandir}/man1/git-pbuilder.1*
 EOF
