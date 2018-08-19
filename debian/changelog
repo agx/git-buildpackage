@@ -1,3 +1,43 @@
+git-buildpackage (0.9.10) unstable; urgency=medium
+
+  [ Ken Dreyer ]
+  * [f0b1bbe] deb.git: fix duplicate "tarball" in docstring.
+    Fix the docstring for create_pristine_tar_commits()
+  * [29b9f2c] deb.git: fix spelling of "described" in docstring.
+    Fix the docstring for _sanitize_version() and _unsanitize_version()
+
+  [ Guido Günther ]
+  * [62e0102] push: Allow to skip upstream and debian branch and tag push.
+    Push of tag and or branch can be skipped by setting
+    --{upstream,debian}-{branch,tag}='' . (Closes: #899234)
+  * [28a950a] tests: Check help output of tag and push too
+  * [a287bf6] config: allow to override default values via
+    add_config_file_option
+  * [b8221b8] pull: Check that repo is clean before fetching anything
+  * [6dda2da] pull: allow to set up branch tracking for missing branches.
+    If the remote branch does not exist at all that's currently not fatal.
+    (Closes: #882187)
+  * [d69006d] Depend on sensible-utils. gbp-dch uses sensible-editor.
+
+  [ Chris Lamb ]
+  * [6c30ac9] import-{dsc,orig}: Make --download deprecation text more useful.
+    Point to the manpages for usage examples. (Closes: #900606)
+
+  [ Guus Sliepen ]
+  * [48ef0ec] changelog: try iso8859-1 when utf-8 fails.
+    Fall back to iso8859-1 when opening the changelog. Helps when importing
+    old versions. (Closes: #900841)
+
+  [ Carsten Schoenert ]
+  * [50b9223] create_remote_repo: import urllib.parse
+    urllib.parse did not get imported in packaegs without changelog.
+
+  [ Iain Lane ]
+  * [5fedb2b] Ignore merge commits when looking at the pristine-tar branch.
+    (Closes: #906331)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 19 Aug 2018 08:29:47 +0200
+
 git-buildpackage (0.9.9) unstable; urgency=medium
 
   [ Guido Günther ]
