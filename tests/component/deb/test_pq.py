@@ -181,8 +181,9 @@ Forwarded: not-needed
 From: "Mr. T. St" <t@example.com>
 Subject: A very long description with wrapp-
 
- ing to increase readability in the file, which
- is currently split into a short and long description.
 Origin: https://twitter.com/MrT/status/941789967361097728
 Forwarded: not-needed
+
+ ing to increase readability in the file, which
+ is currently split into a short and long description.
 ''')
