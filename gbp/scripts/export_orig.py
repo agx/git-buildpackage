@@ -29,6 +29,7 @@ import gbp.log
 import gbp.notifications
 from gbp.scripts.common import ExitCodes
 from gbp.pkg import Compressor, Archive
+from gbp.pkg.pkgpolicy import PkgPolicy
 
 
 def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
@@ -334,6 +335,10 @@ def main(argv):
             source.is_native()
         except Exception as e:
             raise GbpError("Can't determine package type: %s" % e)
+
+        if options.tarball_dir and source.upstream_version is not None:
+            options.tarball_dir = PkgPolicy.version_subst(options.tarball_dir,
+                                                          source.upstream_version)
 
         output_dir = options.tarball_dir or os.path.join(repo.path, '..')
 

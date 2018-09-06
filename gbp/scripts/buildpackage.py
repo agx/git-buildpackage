@@ -45,6 +45,7 @@ from gbp.scripts.common.hook import Hook
 
 from gbp.scripts.export_orig import prepare_upstream_tarballs, guess_comp_type
 from gbp.scripts.tag import perform_tagging
+from gbp.pkg.pkgpolicy import PkgPolicy
 
 
 # Functions to handle export-dir
@@ -499,7 +500,9 @@ def main(argv):
 
         if not options.tag_only:
             output_dir = prepare_output_dir(options.export_dir)
-            tarball_dir = options.tarball_dir or output_dir
+            tarball_dir = output_dir
+            if options.tarball_dir and source.upstream_version is not None:
+                tarball_dir = PkgPolicy.version_subst(options.tarball_dir, source.upstream_version)
             tmp_dir = os.path.join(output_dir, "%s-tmp" % source.sourcepkg)
             build_env, hook_env = setup_pbuilder(options, repo, source.is_native())
             major = (source.debian_version if source.is_native()

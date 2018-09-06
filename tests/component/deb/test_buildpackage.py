@@ -312,3 +312,24 @@ class TestBuildpackage(ComponentTestBase):
                                        '--git-preexport=printenv > %s' % preexport_out])
         ok_(os.path.exists(preexport_out))
         self.check_hook_vars('../preexport', ["GBP_BUILD_DIR", "GBP_GIT_DIR"])
+
+    @RepoFixtures.overlay()
+    def test_export_dir_version_replacement(self, repo):
+        """Test that building in overlay mode with export dir with versioned name works"""
+        tarball_dir = os.path.join(DEB_TEST_DATA_DIR, 'foo-%(version)s')
+        self._test_buildpackage(repo, ['--git-overlay',
+                                       '--git-compression=auto',
+                                       '--git-tarball-dir=%s' % tarball_dir,
+                                       '--git-no-purge',
+                                       '--git-component=foo',
+                                       '--git-export-dir=../foo'])
+        # Check if main tarball got unpacked
+        ok_(os.path.exists('../foo/hello-debhelper-2.8/configure'))
+        # Check if debian dir is there
+        ok_(os.path.exists('../foo/hello-debhelper-2.8/debian/changelog'))
+        # Check if additional tarball got unpacked
+        ok_(os.path.exists('../foo/hello-debhelper-2.8/foo/test1'))
+        # Check if upstream tarballs is in export_dir
+        eq_(sorted(glob.glob('../foo/*')), ['../foo/hello-debhelper-2.8',
+                                            '../foo/hello-debhelper_2.8.orig-foo.tar.gz',
+                                            '../foo/hello-debhelper_2.8.orig.tar.gz'])
