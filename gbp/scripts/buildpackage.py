@@ -111,7 +111,7 @@ def overlay_extract_origs(source, tarball_dir, dest_dir, options):
                                 repo=None,
                                 tarball_dir=tarball_dir)
     tarball = os.path.join(tarball_dir, source.upstream_tarball_name(comp_type))
-    gbp.log.info("Extracting %s to '%s'" % (os.path.basename(tarball), dest_dir))
+    gbp.log.info("Extracting '%s' to '%s'" % (os.path.basename(tarball), dest_dir))
 
     move_old_export(dest_dir)
     upstream = DebianUpstreamSource(tarball)
@@ -140,7 +140,7 @@ def overlay_extract_origs(source, tarball_dir, dest_dir, options):
     for c in options.components:
         tarball = os.path.join(tarball_dir, source.upstream_tarball_name(
             comp_type, component=c))
-        gbp.log.info("Unpacking '%s' to '%s'" % (os.path.basename(tarball), dest_dir))
+        gbp.log.info("Extracting '%s' to '%s/%s'" % (os.path.basename(tarball), dest_dir, c))
         unpack_component_tarball(dest_dir, c, tarball, [])
 
 
