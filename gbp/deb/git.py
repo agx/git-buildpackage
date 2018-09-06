@@ -22,9 +22,9 @@ import re
 from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
-from gbp.format import format_str
 from gbp.paths import to_bin
 from gbp.pkg.git import PkgGitRepository
+from gbp.pkg.pkgpolicy import PkgPolicy
 
 import gbp.log
 
@@ -169,9 +169,7 @@ class DebianGitRepository(PkgGitRepository):
         >>> DebianGitRepository.version_to_tag(r'%(version%-%\\%)s', "0-1.2.3")
         '0%1.2.3'
         """
-        f, v = cls._mangle_version(format, version)
-        return format_str(f, dict(version=cls._sanitize_version(v),
-                                  hversion=cls._sanitize_version(v).replace('.', '-')))
+        return PkgPolicy.version_subst(format, version, cls._sanitize_version)
 
     @classmethod
     def _mangle_version(cls, format, version):

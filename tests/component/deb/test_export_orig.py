@@ -111,3 +111,28 @@ class TestExportOrig(ComponentTestBase):
                            '--pristine-tar'])
         ok_(ret == 1, "Exporting tarballs must fail")
         self._check_log(-1, ".*git show refs/heads/pristine-tar:.*failed")
+
+    def test_tarball_dir_version_replacement(self):
+        """Test that generating tarball from directory version substitution works"""
+        pkg = 'hello-debhelper'
+        dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0-additional-tarballs')
+        tarballs = ["%s_2.8.orig-foo.tar.gz" % pkg,
+                    "%s_2.8.orig.tar.gz" % pkg]
+
+        assert import_dsc(['arg0', '--no-pristine-tar', dsc]) == 0
+        ComponentTestGitRepository(pkg)
+        os.chdir(pkg)
+        for t in tarballs:
+            self.assertFalse(os.path.exists(os.path.join('..', t)), "Tarball %s must not exist" % t)
+
+        tarball_dir = os.path.join(DEB_TEST_DATA_DIR, 'foo-%(version)s')
+        ret = export_orig(['arg0',
+                           '--tarball-dir=%s' % tarball_dir,
+                           '--component=foo',
+                           '--no-pristine-tar'])
+        ok_(ret == 0, "Exporting tarballs failed")
+        # tarballs should be found in existing --tarball-dir directory and thus
+        # not get recreated by export-orig
+        for t in tarballs:
+            self.assertFalse(os.path.exists(os.path.join('..', t)), "Tarball %s found" % t)
+            self.assertTrue(os.path.exists(os.path.join(DEB_TEST_DATA_DIR, 'foo-2.8', t)), "Tarball %s not found" % t)

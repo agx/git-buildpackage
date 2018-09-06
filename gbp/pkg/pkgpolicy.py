@@ -20,6 +20,7 @@ import os
 import re
 
 from gbp.pkg.archive import Archive
+from gbp.format import format_str
 
 
 class PkgPolicy(object):
@@ -165,3 +166,40 @@ class PkgPolicy(object):
     @classmethod
     def symlink_orig(cls, orig_file, orig_dir, output_dir, force=False):
         return cls.symlink_origs([orig_file], orig_dir, output_dir, force=force)
+
+    @staticmethod
+    def version_subst(format, version, sanitizer=lambda arg: arg):
+        """Generate a string from a given format and a version. The extracted
+        version can be passed through the sanitizer function argument before
+        being formatted into a string.
+
+        %(version)s provides a clean version.
+
+        %(hversion)s provides the same thing, but with '.' replaced with '-'.
+        hversion is useful for upstreams with tagging policies that prohibit .
+        characters.
+
+        %(version%A%B)s provides %(version)s with string 'A' replaced by 'B'.
+        This way, simple version mangling is possible via substitution.
+        Inside the substition string, '%' needs to be escaped. See the
+        examples below.
+
+        >>> PkgPolicy.version_subst("debian/%(version)s", "0:0~0")
+        'debian/0:0~0'
+        >>> PkgPolicy.version_subst("libfoo-%(hversion)s", "1.8.1")
+        'libfoo-1-8-1'
+        >>> PkgPolicy.version_subst("v%(version%.%_)s", "1.2.3")
+        'v1_2_3'
+        >>> PkgPolicy.version_subst(r'%(version%-%\\%)s', "0-1.2.3")
+        '0%1.2.3'
+        """
+        version_mangle_re = (r'%\(version'
+                             r'%(?P<M>[^%])'
+                             r'%(?P<R>([^%]|\\%))+'
+                             r'\)s')
+        r = re.search(version_mangle_re, format)
+        if r:
+            format = re.sub(version_mangle_re, "%(version)s", format)
+            version = version.replace(r.group('M'), r.group('R').replace(r'\%', '%'))
+        return format_str(format, dict(version=sanitizer(version),
+                                       hversion=sanitizer(version).replace('.', '-')))

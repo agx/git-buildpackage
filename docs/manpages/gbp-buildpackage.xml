@@ -222,6 +222,8 @@
               Search for upstream tarballs in <replaceable>DIRECTORY</replaceable>
               instead of generating them. If a tarball is not found here it
               will be generated nevertheless.
+              <replaceable>DIRECTORY</replaceable> can contain a version format
+              substitution pattern, eg: <replaceable>foo-%(version)s</replaceable>.
             </para>
           </listitem>
 	</varlistentry>

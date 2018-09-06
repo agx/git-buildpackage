@@ -146,6 +146,8 @@
           <para>
           Search for original tarballs in <replaceable>DIRECTORY</replaceable>
           instead of generating them.
+          <replaceable>DIRECTORY</replaceable> can contain a version format
+          substitution pattern, eg: <replaceable>foo-%(version)s</replaceable>.
           </para>
         </listitem>
       </varlistentry>
