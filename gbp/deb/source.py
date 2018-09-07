@@ -158,6 +158,5 @@ class DebianSource(object):
         component names
         """
         names = [self.upstream_tarball_name(comp_type)]
-        for component in (components or []):
-            names += [self.upstream_tarball_name(comp_type, c) for c in components]
+        names += [self.upstream_tarball_name(comp_type, c) for c in (components or [])]
         return names
