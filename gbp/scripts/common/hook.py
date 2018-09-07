@@ -33,7 +33,7 @@ class Hook(RunAtCommand):
 
     @staticmethod
     def md(a, b):
-        "Merge two dictionaires a and b into a new one"
+        "Merge two dictionaries a and b into a new one"
         c = a.copy()
         c.update(b)
         return c
