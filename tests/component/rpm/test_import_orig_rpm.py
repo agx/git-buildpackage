@@ -222,6 +222,10 @@ class TestImportOrig(ImportOrigTestBase):
     def test_misc_options(self):
         """Test various options of git-import-orig-rpm"""
         repo = ComponentTestGitRepository.create('.')
+        # Force --no-ff for merges because default behavior is slightly
+        # different in newer git versions (> 2.16)
+        repo.set_config("branch.pack.mergeoptions", "--no-ff")
+
         # Import one orig with default options to get upstream and
         # packaging branch
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
