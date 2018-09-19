@@ -155,7 +155,7 @@ class PkgPolicy(object):
                 err.append(f)
                 continue
             try:
-                if os.path.exists(dst) and force:
+                if os.path.lexists(dst) and force:
                     os.unlink(dst)
                 os.symlink(src, dst)
             except OSError:
