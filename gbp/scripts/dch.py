@@ -24,7 +24,7 @@ import shutil
 import gbp.command_wrappers as gbpc
 import gbp.dch as dch
 import gbp.log
-from gbp.config import GbpOptionParserDebian, GbpOptionGroup
+from gbp.config import GbpConfArgParserDebian
 from gbp.errors import GbpError
 from gbp.deb import compare_versions
 from gbp.deb.source import DebianSource, DebianSourceError
@@ -327,119 +327,109 @@ def maybe_create_changelog(repo, source, options):
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name),
-                                       usage='%prog [options] paths')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    range_group = GbpOptionGroup(parser, "commit range options",
-                                 "which commits to add to the changelog")
-    version_group = GbpOptionGroup(parser, "release & version number options",
-                                   "what version number and release to use")
-    commit_group = GbpOptionGroup(parser, "commit message formatting",
-                                  "howto format the changelog entries")
-    naming_group = GbpOptionGroup(parser, "branch and tag naming",
-                                  "branch names and tag formats")
-    custom_group = GbpOptionGroup(parser, "customization",
-                                  "options for customization")
-    parser.add_option_group(range_group)
-    parser.add_option_group(version_group)
-    parser.add_option_group(commit_group)
-    parser.add_option_group(naming_group)
-    parser.add_option_group(custom_group)
+    range_group = parser.add_argument_group("commit range options",
+                                            "which commits to add to the changelog")
+    version_group = parser.add_argument_group("release & version number options",
+                                              "what version number and release to use")
+    commit_group = parser.add_argument_group("commit message formatting",
+                                             "howto format the changelog entries")
+    naming_group = parser.add_argument_group("branch and tag naming",
+                                             "branch names and tag formats")
+    custom_group = parser.add_argument_group("customization",
+                                             "options for customization")
 
-    parser.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
-    naming_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    naming_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
-    naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
-    naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
-    naming_group.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
-                                        help="expression to determine the next snapshot number, "
-                                        "default is '%(snapshot-number)s'")
-    parser.add_config_file_option(option_name="git-log", dest="git_log",
-                                  help="options to pass to git-log, "
-                                  "default is '%(git-log)s'")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    range_group.add_option("-s", "--since", dest="since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
-    range_group.add_option("-a", "--auto", action="store_true", dest="auto", default=False,
-                           help="autocomplete changelog from last snapshot or tag")
-    version_group.add_option("-R", "--release", action="store_true", dest="release", default=False,
-                             help="mark as release")
-    version_group.add_option("-S", "--snapshot", action="store_true", dest="snapshot", default=False,
-                             help="mark as snapshot build")
-    version_group.add_option("-D", "--distribution", dest="distribution", help="Set distribution")
-    version_group.add_option("--force-distribution", action="store_true", dest="force_distribution", default=False,
-                             help="Force the provided distribution to be used, "
-                             "even if it doesn't match the list of known distributions")
-    version_group.add_option("-N", "--new-version", dest="new_version",
-                             help="use this as base for the new version number")
-    version_group.add_config_file_option("urgency", dest="urgency")
-    version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
-                             help="Increment the Debian release number for an upload to backports, "
-                             "and add a backport upload changelog comment.")
-    version_group.add_option("--nmu", dest="nmu", action="store_true", default=False,
-                             help="Increment the Debian release number for a non-maintainer upload")
-    version_group.add_option("--qa", dest="qa", action="store_true", default=False,
-                             help="Increment the Debian release number for a Debian QA Team upload, "
-                             "and add a QA upload changelog comment.")
-    version_group.add_option("--team", dest="team", action="store_true", default=False,
-                             help="Increment the Debian release number for a Debian Team upload, "
-                             "and add a Team upload changelog comment.")
-    version_group.add_option("--security", dest="security", action="store_true", default=False,
-                             help="Increment the Debian release number for a security upload and "
-                             "add a security upload changelog comment.")
-    version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
-    commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
-    commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes")
-    commit_group.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
-    commit_group.add_boolean_config_file_option(option_name="full", dest="full")
-    commit_group.add_config_file_option(option_name="id-length", dest="idlen",
-                                        help="include N digits of the commit id in the changelog entry, "
-                                        "default is '%(id-length)s'",
-                                        type="int", metavar="N")
-    commit_group.add_config_file_option(option_name="ignore-regex", dest="ignore_regex",
-                                        help="Ignore commit lines matching regex, "
-                                        "default is '%(ignore-regex)s'")
-    commit_group.add_boolean_config_file_option(option_name="multimaint", dest="multimaint")
-    commit_group.add_boolean_config_file_option(option_name="multimaint-merge", dest="multimaint_merge")
-    commit_group.add_config_file_option(option_name="spawn-editor", dest="spawn_editor")
-    parser.add_config_file_option(option_name="commit-msg",
-                                  dest="commit_msg")
-    parser.add_option("-c", "--commit", action="store_true", dest="commit", default=False,
-                      help="commit changelog file after generating")
-    parser.add_config_file_option(option_name="dch-opt",
-                                  dest="dch_opts", action="append",
-                                  help="option to pass to dch verbatim, "
-                                  "can be given multiple times",
-                                  metavar="DCH_OPT")
+    parser.add_bool_conf_file_arg("--ignore-branch")
+    naming_group.add_conf_file_arg("--upstream-branch")
+    naming_group.add_conf_file_arg("--debian-branch")
+    naming_group.add_conf_file_arg("--upstream-tag")
+    naming_group.add_conf_file_arg("--debian-tag")
+    naming_group.add_conf_file_arg("--snapshot-number",
+                                   help="expression to determine the next snapshot number")
+    parser.add_conf_file_arg("--git-log",
+                             help="options to pass to git-log")
+    parser.add_arg("-v", "--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    range_group.add_arg("-s", "--since", help="commit to start from (e.g. HEAD^^^, debian/0.4.3)")
+    range_group.add_arg("-a", "--auto", action="store_true",
+                        help="autocomplete changelog from last snapshot or tag")
+    version_group.add_arg("-R", "--release", action="store_true",
+                          help="mark as release")
+    version_group.add_arg("-S", "--snapshot", action="store_true",
+                          help="mark as snapshot build")
+    version_group.add_arg("-D", "--distribution", help="Set distribution")
+    version_group.add_arg("--force-distribution", action="store_true",
+                          help="Force the provided distribution to be used, "
+                          "even if it doesn't match the list of known distributions")
+    version_group.add_arg("-N", "--new-version",
+                          help="use this as base for the new version number")
+    version_group.add_conf_file_arg("--urgency")
+    version_group.add_arg("--bpo", action="store_true",
+                          help="Increment the Debian release number for an upload to backports, "
+                          "and add a backport upload changelog comment.")
+    version_group.add_arg("--nmu", action="store_true",
+                          help="Increment the Debian release number for a non-maintainer upload")
+    version_group.add_arg("--qa", action="store_true",
+                          help="Increment the Debian release number for a Debian QA Team upload, "
+                          "and add a QA upload changelog comment.")
+    version_group.add_arg("--team", action="store_true",
+                          help="Increment the Debian release number for a Debian Team upload, "
+                          "and add a Team upload changelog comment.")
+    version_group.add_arg("--security", action="store_true",
+                          help="Increment the Debian release number for a security upload and "
+                          "add a security upload changelog comment.")
+    version_group.add_bool_conf_file_arg("--git-author", dest="use_git_author")
+    commit_group.add_bool_conf_file_arg("--meta")
+    commit_group.add_conf_file_arg("--meta-closes")
+    commit_group.add_conf_file_arg("--meta-closes-bugnum")
+    commit_group.add_bool_conf_file_arg("--full")
+    commit_group.add_conf_file_arg("--id-length", dest="idlen",
+                                   help="include N digits of the commit id in the changelog entry",
+                                   type=int, metavar="N")
+    commit_group.add_conf_file_arg("--ignore-regex",
+                                   help="Ignore commit lines matching regex")
+    commit_group.add_bool_conf_file_arg("--multimaint")
+    commit_group.add_bool_conf_file_arg("--multimaint-merge")
+    commit_group.add_conf_file_arg("--spawn-editor")
+    parser.add_conf_file_arg("--commit-msg")
+    parser.add_arg("-c", "--commit", action="store_true",
+                   help="commit changelog file after generating")
+    parser.add_conf_file_arg("--dch-opt", dest="dch_opts", action="append",
+                             help="option to pass to dch verbatim, "
+                             "can be given multiple times",
+                             metavar="DCH_OPT")
 
     help_msg = ('Load Python code from CUSTOMIZATION_FILE.  At the moment,'
                 ' the only useful thing the code can do is define a custom'
                 ' format_changelog_entry() function.')
-    custom_group.add_config_file_option(option_name="customizations",
-                                        dest="customization_file",
-                                        help=help_msg)
-    custom_group.add_config_file_option(option_name="postedit", dest="postedit",
-                                        help="Hook to run after changes to the changelog file"
-                                        "have been finalized default is '%(postedit)s'")
+    custom_group.add_conf_file_arg("--customizations",
+                                   dest="customization_file",
+                                   help=help_msg)
+    custom_group.add_conf_file_arg("--postedit", dest="postedit",
+                                   help="Hook to run after changes to the changelog file"
+                                   "have been finalized")
+    parser.add_argument("paths", metavar="PATHS", nargs='*',
+                        help="only look at changes to PATHS")
+
     return parser
 
 
 def parse_args(argv):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return [None] * 4
+        return [None] * 3
 
-    (options, args) = parser.parse_args(argv[1:])
+    options = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     dch_options = process_options(options, parser)
     editor_cmd = process_editor_option(options)
-    return options, args, dch_options, editor_cmd
+    return options, dch_options, editor_cmd
 
 
 def main(argv):
@@ -450,7 +440,7 @@ def main(argv):
     version_change = {}
     branch = None
 
-    options, args, dch_options, editor_cmd = parse_args(argv)
+    options, dch_options, editor_cmd = parse_args(argv)
 
     if not options:
         return ExitCodes.parse_error
@@ -489,9 +479,10 @@ def main(argv):
                 gbp.log.info(msg)
             found_snapshot_banner = has_snapshot_banner(cp)
 
-        if args:
-            gbp.log.info("Only looking for changes on '%s'" % " ".join(args))
-        commits = repo.get_commits(since=since, until=until, paths=args,
+        if options.paths:
+            gbp.log.info("Only looking for changes on '%s'" %
+                         " ".join(options.paths))
+        commits = repo.get_commits(since=since, until=until, paths=options.paths,
                                    options=options.git_log.split(" "))
         commits.reverse()
 

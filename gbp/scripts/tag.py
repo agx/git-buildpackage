@@ -22,7 +22,7 @@ import sys
 
 import gbp.log
 from gbp.format import format_str
-from gbp.config import GbpOptionParserDebian
+from gbp.config import GbpConfArgParserDebian
 from gbp.deb.git import DebianGitRepository, GitRepositoryError
 from gbp.deb.source import DebianSourceError
 from gbp.deb.source import DebianSource
@@ -80,45 +80,40 @@ def perform_tagging(repo, source, options, hook_env=None):
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name),
-                                       usage='%prog [options]')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    parser.add_option("--retag", action="store_true", dest="retag", default=False,
-                      help="don't fail if the tag already exists")
-    parser.add_config_file_option(option_name="debian-branch",
-                                  dest="debian_branch")
-    parser.add_config_file_option(option_name="debian-tag",
-                                  dest="debian_tag")
-    parser.add_config_file_option(option_name="debian-tag-msg", dest="debian_tag_msg")
-    parser.add_boolean_config_file_option(option_name="sign-tags", dest="sign_tags")
-    parser.add_config_file_option(option_name="keyid", dest="keyid")
-    parser.add_config_file_option(option_name="posttag", dest="posttag",
-                                  help="hook run after a successful tag operation, "
-                                  "default is '%(posttag)s'")
-    parser.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
-    parser.add_boolean_config_file_option(option_name="ignore-new", dest="ignore_new")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_option("--verbose", action="store_true", dest="verbose",
-                      default=False, help="verbose command execution")
+    parser.add_arg("--retag", action="store_true",
+                   help="don't fail if the tag already exists")
+    parser.add_conf_file_arg("--debian-branch")
+    parser.add_conf_file_arg("--debian-tag")
+    parser.add_conf_file_arg("--debian-tag-msg")
+    parser.add_bool_conf_file_arg("--sign-tags")
+    parser.add_conf_file_arg("--keyid")
+    parser.add_conf_file_arg("--posttag",
+                             help="hook run after a successful tag operation")
+    parser.add_bool_conf_file_arg("--ignore-branch")
+    parser.add_bool_conf_file_arg("--ignore-new")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_arg("--verbose", action="store_true",
+                   help="verbose command execution")
     return parser
 
 
 def parse_args(argv):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
-    return parser.parse_args(argv)
+        return None
+    return parser.parse_args(argv[1:])
 
 
 def main(argv):
     retval = 1
 
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 

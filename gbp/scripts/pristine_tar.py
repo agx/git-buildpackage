@@ -20,39 +20,46 @@
 import os
 import sys
 import gbp.log
+from argparse import ArgumentDefaultsHelpFormatter, RawDescriptionHelpFormatter
 from gbp.command_wrappers import CommandExecFailed
-from gbp.config import GbpOptionParserDebian
+from gbp.config import GbpConfArgParserDebian
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes, get_component_tarballs
 
 
-def usage_msg():
-    return """%prog [action] [options] /path/to/upstream-version.tar.gz
+class GbpHelpFormatter(RawDescriptionHelpFormatter,
+                       ArgumentDefaultsHelpFormatter):
+    pass
 
-Actions:
+
+def descr_msg():
+    return """Actions:
    commit         recreate the pristine-tar commits on the pristine-tar branch
 """
 
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage=usage_msg())
+        parser = GbpConfArgParserDebian.create_parser(prog=name,
+                                                      description=descr_msg(),
+                                                      formatter_class=GbpHelpFormatter)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    parser.add_config_file_option(option_name="upstream-tag",
-                                  dest="upstream_tag")
-    parser.add_config_file_option("component", action="append", metavar='COMPONENT',
-                                  dest="components")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
+    parser.add_conf_file_arg("--upstream-tag")
+    parser.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
+                             dest="components")
+    parser.add_arg("-v", "--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_argument("action", metavar="ACTION", choices=('commit',),
+                        help="action to take")
+    parser.add_argument("tarball", metavar="TARBALL",
+                        help="tarball to operate on")
     return parser
 
 
@@ -61,28 +68,22 @@ def parse_args(argv):
     @return: options and arguments
     """
 
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
+        return None
 
-    (options, args) = parser.parse_args(argv[1:])
+    options = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
-    return options, args
+    return options
 
 
 def main(argv):
     ret = 1
     repo = None
 
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
-
-    if len(args) != 2 or args[0] not in ['commit']:
-        gbp.log.err("No action given")
-        return 1
-    else:
-        tarball = args[1]
 
     try:
         try:
@@ -93,12 +94,12 @@ def main(argv):
         source = DebianSource('.')
         component_tarballs = get_component_tarballs(source.sourcepkg,
                                                     source.upstream_version,
-                                                    tarball,
+                                                    options.tarball,
                                                     options.components)
         upstream_tag = repo.version_to_tag(options.upstream_tag,
                                            source.upstream_version)
         repo.create_pristine_tar_commits(upstream_tag,
-                                         tarball,
+                                         options.tarball,
                                          component_tarballs)
         ret = 0
     except (GitRepositoryError, GbpError, CommandExecFailed) as err:
@@ -111,7 +112,7 @@ def main(argv):
         comp_msg = (' with additional tarballs for %s'
                     % ", ".join([os.path.basename(t[1]) for t in component_tarballs])) if component_tarballs else ''
         gbp.log.info("Successfully committed pristine-tar data for version %s of %s%s" % (source.upstream_version,
-                                                                                          tarball,
+                                                                                          options.tarball,
                                                                                           comp_msg))
     return ret
 

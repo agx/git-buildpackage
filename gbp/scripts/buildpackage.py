@@ -28,7 +28,7 @@ import gbp.deb as du
 from gbp.command_wrappers import (Command,
                                   RunAtCommand, CommandExecFailed,
                                   RemoveTree)
-from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+from gbp.config import GbpConfArgParserDebian
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError, FileVfs
 from gbp.deb.format import DebianSourceFormat
@@ -336,101 +336,85 @@ def check_branch(repo, options):
 
 def build_parser(name, prefix=None):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
+        parser = GbpConfArgParserDebian.create_parser(prefix=prefix, prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    tag_group = GbpOptionGroup(parser,
-                               "tag options",
-                               "options related to git tag creation")
-    orig_group = GbpOptionGroup(parser,
-                                "orig tarball options",
-                                "options related to the creation of the orig tarball")
-    branch_group = GbpOptionGroup(parser,
-                                  "branch options",
-                                  "branch layout options")
-    cmd_group = GbpOptionGroup(parser,
-                               "external command options",
-                               "how and when to invoke external commands and hooks")
-    export_group = GbpOptionGroup(parser,
-                                  "export build-tree options",
-                                  "alternative build tree related options")
-    for group in [tag_group, orig_group, branch_group, cmd_group, export_group]:
-        parser.add_option_group(group)
+    tag_group = parser.add_argument_group("tag options",
+                                          "options related to git tag creation")
+    orig_group = parser.add_argument_group("orig tarball options",
+                                           "options related to the creation of the orig tarball")
+    branch_group = parser.add_argument_group("branch options",
+                                             "branch layout options")
+    cmd_group = parser.add_argument_group("external command options",
+                                          "how and when to invoke external commands and hooks")
+    export_group = parser.add_argument_group("export build-tree options",
+                                             "alternative build tree related options")
 
-    parser.add_boolean_config_file_option(option_name="ignore-new", dest="ignore_new")
-    parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_config_file_option(option_name="notify", dest="notify", type='tristate')
-    tag_group.add_option("--git-tag", action="store_true", dest="tag", default=False,
-                         help="create a tag after a successful build")
-    tag_group.add_option("--git-tag-only", action="store_true", dest="tag_only", default=False,
-                         help="don't build, only tag and run the posttag hook")
-    tag_group.add_option("--git-retag", action="store_true", dest="retag", default=False,
-                         help="don't fail if the tag already exists")
-    tag_group.add_boolean_config_file_option(option_name="sign-tags", dest="sign_tags")
-    tag_group.add_config_file_option(option_name="keyid", dest="keyid")
-    tag_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
-    tag_group.add_config_file_option(option_name="debian-tag-msg", dest="debian_tag_msg")
-    tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
-    orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
-    orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
-    orig_group.add_boolean_config_file_option(option_name="pristine-tar-commit",
-                                              dest="pristine_tar_commit")
-    orig_group.add_config_file_option(option_name="force-create", dest="force_create",
-                                      help="force creation of orig tarball", action="store_true")
-    orig_group.add_config_file_option(option_name="no-create-orig", dest="no_create_orig",
-                                      help="don't create orig tarball", action="store_true")
-    orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",
-                                      help="location to look for external tarballs")
-    orig_group.add_config_file_option(option_name="compression", dest="comp_type",
-                                      help="Compression type, default is '%(compression)s'")
-    orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
-                                      help="Compression level, default is '%(compression-level)s'")
-    orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
-                                      dest="components")
-    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
-    branch_group.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
-    branch_group.add_boolean_config_file_option(option_name="submodules", dest="with_submodules")
-    cmd_group.add_config_file_option(option_name="builder", dest="builder",
-                                     help="command to build the Debian package, "
-                                          "default is '%(builder)s'")
-    cmd_group.add_config_file_option(option_name="cleaner", dest="cleaner",
-                                     help="command to clean the working copy, "
-                                          "default is '%(cleaner)s'")
-    cmd_group.add_config_file_option(option_name="prebuild", dest="prebuild",
-                                     help="hook to run before a build, "
-                                          "default is '%(prebuild)s'")
-    cmd_group.add_config_file_option(option_name="postexport", dest="postexport",
-                                     help="hook to run after exporting the source tree, "
-                                          "default is '%(postexport)s'")
-    cmd_group.add_config_file_option(option_name="postbuild", dest="postbuild",
-                                     help="hook run after a successful build, "
-                                          "default is '%(postbuild)s'")
-    cmd_group.add_config_file_option(option_name="posttag", dest="posttag",
-                                     help="hook run after a successful tag operation, "
-                                          "default is '%(posttag)s'")
-    cmd_group.add_boolean_config_file_option(option_name="pbuilder", dest="use_pbuilder")
-    cmd_group.add_boolean_config_file_option(option_name="qemubuilder", dest="use_qemubuilder")
-    cmd_group.add_config_file_option(option_name="dist", dest="pbuilder_dist")
-    cmd_group.add_config_file_option(option_name="arch", dest="pbuilder_arch")
-    cmd_group.add_boolean_config_file_option(option_name="pbuilder-autoconf",
-                                             dest="pbuilder_autoconf")
-    cmd_group.add_config_file_option(option_name="pbuilder-options", dest="pbuilder_options")
-    cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
-    export_group.add_config_file_option(option_name="export-dir", dest="export_dir", type="path",
-                                        help="before building the package export the source into EXPORT_DIR, "
-                                             "default is '%(export-dir)s'")
-    export_group.add_config_file_option("export", dest="export",
-                                        help="export treeish object TREEISH, "
-                                             "default is '%(export)s'", metavar="TREEISH")
-    export_group.add_boolean_config_file_option(option_name="purge", dest="purge")
-    export_group.add_boolean_config_file_option(option_name="overlay", dest="overlay")
+    parser.add_bool_conf_file_arg("--ignore-new")
+    parser.add_arg("--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    parser.add_conf_file_arg("--notify", type='tristate')
+    tag_group.add_arg("--tag", action="store_true",
+                      help="create a tag after a successful build")
+    tag_group.add_arg("--tag-only", action="store_true",
+                      help="don't build, only tag and run the posttag hook")
+    tag_group.add_arg("--retag", action="store_true",
+                      help="don't fail if the tag already exists")
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--debian-tag")
+    tag_group.add_conf_file_arg("--debian-tag-msg")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    orig_group.add_conf_file_arg("--upstream-tree")
+    orig_group.add_bool_conf_file_arg("--pristine-tar")
+    orig_group.add_bool_conf_file_arg("--pristine-tar-commit")
+    orig_group.add_conf_file_arg("--force-create",
+                                 help="force creation of orig tarball", action="store_true")
+    orig_group.add_conf_file_arg("--no-create-orig",
+                                 help="don't create orig tarball", action="store_true")
+    orig_group.add_conf_file_arg("--tarball-dir", type="path",
+                                 help="location to look for external tarballs")
+    orig_group.add_conf_file_arg("--compression", dest="comp_type",
+                                 help="Compression type")
+    orig_group.add_conf_file_arg("--compression-level", dest="comp_level",
+                                 help="Compression level")
+    orig_group.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
+                                 dest="components")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_bool_conf_file_arg("--ignore-branch")
+    branch_group.add_bool_conf_file_arg("--submodules", dest="with_submodules")
+    cmd_group.add_conf_file_arg("--builder",
+                                help="command to build the Debian package")
+    cmd_group.add_conf_file_arg("--cleaner",
+                                help="command to clean the working copy")
+    cmd_group.add_conf_file_arg("--prebuild",
+                                help="hook to run before a build")
+    cmd_group.add_conf_file_arg("--postexport",
+                                help="hook to run after exporting the source tree")
+    cmd_group.add_conf_file_arg("--postbuild",
+                                help="hook run after a successful build")
+    cmd_group.add_conf_file_arg("--posttag",
+                                help="hook run after a successful tag operation")
+    cmd_group.add_bool_conf_file_arg("--pbuilder", dest="use_pbuilder")
+    cmd_group.add_bool_conf_file_arg("--qemubuilder", dest="use_qemubuilder")
+    cmd_group.add_conf_file_arg("--dist", dest="pbuilder_dist")
+    cmd_group.add_conf_file_arg("--arch", dest="pbuilder_arch")
+    cmd_group.add_bool_conf_file_arg("--pbuilder-autoconf")
+    cmd_group.add_conf_file_arg("--pbuilder-options")
+    cmd_group.add_bool_conf_file_arg("--hooks")
+    export_group.add_conf_file_arg("--export-dir", type="path",
+                                   help="before building the package export "
+                                   "the source into EXPORT_DIR")
+    export_group.add_conf_file_arg("--export",
+                                   help="export treeish object TREEISH",
+                                   metavar="TREEISH")
+    export_group.add_bool_conf_file_arg("--purge")
+    export_group.add_bool_conf_file_arg("--overlay")
     return parser
 
 
@@ -445,8 +429,8 @@ def parse_args(argv, prefix):
 
     parser = build_parser(argv[0], prefix=prefix)
     if not parser:
-        return None, None, None
-    options, args = parser.parse_args(args)
+        return None, None
+    options = parser.parse_args(args)
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
     if not options.hooks:
@@ -455,18 +439,18 @@ def parse_args(argv, prefix):
         if not options.tag and not options.tag_only:
             gbp.log.err("'--%sretag' needs either '--%stag' or '--%stag-only'"
                         % (prefix, prefix, prefix))
-            return None, None, None
+            return None, None
 
     if options.overlay and not options.export_dir:
         gbp.log.err("Overlay must be used with --git-export-dir")
-        return None, None, None
+        return None, None
 
     if options.components and options.pristine_tar_commit:
         gbp.log.warn("Components specified, pristine-tar-commit not yet supported - disabling it.")
         options.pristine_tar_commit = False
 
     mangle_export_wc_opts(options)
-    return options, args, dpkg_args
+    return options, dpkg_args
 
 
 def main(argv):
@@ -475,7 +459,7 @@ def main(argv):
     source = None
     hook_env = {}
 
-    options, gbp_args, dpkg_args = parse_args(argv, prefix)
+    options, dpkg_args = parse_args(argv, prefix)
 
     if not options:
         return ExitCodes.parse_error

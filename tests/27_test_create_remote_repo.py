@@ -33,7 +33,7 @@ class TestGbpCreateRemoteRepoCommand(unittest.TestCase):
         self.assertFalse(os.path.exists(self.confname))
         os.environ['GBP_CONF_FILES'] = self.confname
 
-        _, _, sections = create_remote_repo.parse_args(['create-remote-repo'])
+        _, sections = create_remote_repo.parse_args(['create-remote-repo'])
         self.assertEqual(create_remote_repo.get_config_names(sections),
                          [])
 
@@ -42,6 +42,6 @@ class TestGbpCreateRemoteRepoCommand(unittest.TestCase):
         self.assertTrue(os.path.exists(self.confname))
         os.environ['GBP_CONF_FILES'] = self.confname
 
-        _, _, sections = create_remote_repo.parse_args(['create-remote-repo'])
+        _, sections = create_remote_repo.parse_args(['create-remote-repo'])
         self.assertEqual(create_remote_repo.get_config_names(sections),
                          ['config1', 'config2'])

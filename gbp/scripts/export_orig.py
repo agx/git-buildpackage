@@ -21,7 +21,7 @@ import os
 import sys
 import gbp.deb as du
 from gbp.command_wrappers import CommandExecFailed
-from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+from gbp.config import GbpConfArgParserDebian
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource, DebianSourceError
 from gbp.errors import GbpError
@@ -263,63 +263,57 @@ def guess_comp_type(comp_type, source, repo, tarball_dir):
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    tag_group = GbpOptionGroup(parser,
-                               "tag options",
-                               "options related to git tag creation")
-    orig_group = GbpOptionGroup(parser,
-                                "orig tarball options",
-                                "options related to the creation of the orig tarball")
-    branch_group = GbpOptionGroup(parser,
-                                  "branch options",
-                                  "branch layout options")
-    for group in [tag_group, orig_group, branch_group]:
-        parser.add_option_group(group)
+    tag_group = parser.add_argument_group("tag options",
+                                          "options related to git tag creation")
+    orig_group = parser.add_argument_group("orig tarball options",
+                                           "options related to the creation of the orig tarball")
+    branch_group = parser.add_argument_group("branch options",
+                                             "branch layout options")
 
-    parser.add_option("--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
-    orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
-    orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
-    orig_group.add_config_file_option(option_name="force-create", dest="force_create",
-                                      help="force creation of orig tarball", action="store_true")
-    orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",
-                                      help="location to look for external tarballs")
-    orig_group.add_config_file_option(option_name="compression", dest="comp_type",
-                                      help="Compression type, default is '%(compression)s'")
-    orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
-                                      help="Compression level, default is '%(compression-level)s'")
-    orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
-                                      dest="components")
-    branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    branch_group.add_boolean_config_file_option(option_name="submodules", dest="with_submodules")
+    parser.add_arg("--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    orig_group.add_conf_file_arg("--upstream-tree")
+    orig_group.add_bool_conf_file_arg("--pristine-tar")
+    orig_group.add_conf_file_arg("--force-create",
+                                 help="force creation of orig tarball", action="store_true")
+    orig_group.add_conf_file_arg("--tarball-dir", type="path",
+                                 help="location to look for external tarballs")
+    orig_group.add_conf_file_arg("--compression", dest="comp_type",
+                                 help="Compression type")
+    orig_group.add_conf_file_arg("--compression-level", dest="comp_level",
+                                 help="Compression level")
+    orig_group.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
+                                 dest="components")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_bool_conf_file_arg("--submodules", dest="with_submodules")
     return parser
 
 
 def parse_args(argv, prefix):
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
-    options, args = parser.parse_args(argv[1:])
+        return None
+    options = parser.parse_args(argv[1:])
 
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
-    return options, args
+    return options
 
 
 def main(argv):
     retval = 0
     source = None
 
-    options, args = parse_args(argv, '')
+    options = parse_args(argv, '')
 
-    if args or not options:
+    if not options:
         return ExitCodes.parse_error
 
     try:

@@ -29,7 +29,7 @@ from gbp.deb.upstreamsource import DebianUpstreamSource, unpack_component_tarbal
 from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import GitRepositoryError
-from gbp.config import GbpOptionParserDebian, GbpOptionGroup, no_upstream_branch_msg
+from gbp.config import GbpConfArgParserDebian, no_upstream_branch_msg
 from gbp.errors import GbpError
 from gbp.format import format_str
 from gbp.git.vfs import GitVfs
@@ -133,31 +133,26 @@ def detect_name_and_version(repo, source, options):
     return (sourcepackage, version)
 
 
-def find_upstream(use_uscan, args, version=None):
+def find_upstream(use_uscan, filepath, version=None):
     """Find the main tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
     @rtype: string
     @raise GbpError: raised on all detected errors
 
-    >>> find_upstream(False, ['too', 'many'])
-    Traceback (most recent call last):
-    ...
-    gbp.errors.GbpError: More than one archive specified. Try --help.
-    >>> find_upstream(False, [])
+    >>> find_upstream(False, '')
     Traceback (most recent call last):
     ...
     gbp.errors.GbpError: No archive to import specified. Try --help.
-    >>> find_upstream(True, ['tarball'])
+    >>> find_upstream(True, 'tarball')
     Traceback (most recent call last):
     ...
     gbp.errors.GbpError: you can't pass both --uscan and a filename.
-    >>> find_upstream(False, ['tarball']).path
+    >>> find_upstream(False, 'tarball').path
     'tarball'
     """
     if use_uscan:
-        if args:
+        if filepath:
             raise GbpError("you can't pass both --uscan and a filename.")
-
         uscan = Uscan()
         gbp.log.info("Launching uscan...")
         try:
@@ -169,15 +164,14 @@ def find_upstream(use_uscan, args, version=None):
 
         if uscan.tarball:
             gbp.log.info("Using uscan downloaded tarball %s" % uscan.tarball)
-            args.append(uscan.tarball)
+            filepath = uscan.tarball
         else:
             raise GbpError("uscan didn't download anything, and no source was found in ../")
-    if len(args) > 1:  # source specified
-        raise GbpError("More than one archive specified. Try --help.")
-    elif len(args) == 0:
+    if not filepath:
         raise GbpError("No archive to import specified. Try --help.")
     else:
-        return DebianUpstreamSource(args[0])
+        archive = DebianUpstreamSource(filepath)
+        return archive
 
 
 def debian_branch_merge(repo, tag, version, options):
@@ -306,69 +300,58 @@ def rollback(repo, options):
 
 def build_parser(name):
     try:
-        parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
+        parser = GbpConfArgParserDebian.create_parser(prog=name)
     except GbpError as err:
         gbp.log.err(err)
         return None
 
-    import_group = GbpOptionGroup(parser, "import options",
-                                  "pristine-tar and filtering")
-    tag_group = GbpOptionGroup(parser, "tag options",
-                               "options related to git tag creation")
-    branch_group = GbpOptionGroup(parser, "version and branch naming options",
-                                  "version number and branch layout options")
-    cmd_group = GbpOptionGroup(parser, "external command options",
-                               "how and when to invoke external commands and hooks")
-    for group in [import_group, branch_group, tag_group, cmd_group]:
-        parser.add_option_group(group)
+    import_group = parser.add_argument_group("import options",
+                                             "pristine-tar and filtering")
+    tag_group = parser.add_argument_group("tag options",
+                                          "options related to git tag creation")
+    branch_group = parser.add_argument_group("version and branch naming options",
+                                             "version number and branch layout options")
+    cmd_group = parser.add_argument_group("external command options",
+                                          "how and when to invoke external commands and hooks")
 
-    branch_group.add_option("-u", "--upstream-version", dest="version",
-                            help="Upstream Version")
-    branch_group.add_config_file_option(option_name="debian-branch",
-                                        dest="debian_branch")
-    branch_group.add_config_file_option(option_name="upstream-branch",
-                                        dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag",
-                                        help="Upstream VCS tag add to the merge commit")
-    branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
-    branch_group.add_config_file_option(option_name="merge-mode", dest="merge_mode")
+    branch_group.add_arg("-u", "--upstream-version", dest="version",
+                         help="Upstream Version")
+    branch_group.add_conf_file_arg("--debian-branch")
+    branch_group.add_conf_file_arg("--upstream-branch")
+    branch_group.add_conf_file_arg("--upstream-vcs-tag", dest="vcs_tag",
+                                   help="Upstream VCS tag add to the merge commit")
+    branch_group.add_bool_conf_file_arg("--merge")
+    branch_group.add_conf_file_arg("--merge-mode")
 
-    tag_group.add_boolean_config_file_option(option_name="sign-tags",
-                                             dest="sign_tags")
-    tag_group.add_config_file_option(option_name="keyid",
-                                     dest="keyid")
-    tag_group.add_config_file_option(option_name="upstream-tag",
-                                     dest="upstream_tag")
-    import_group.add_config_file_option(option_name="filter",
-                                        dest="filters", action="append")
-    import_group.add_boolean_config_file_option(option_name="pristine-tar",
-                                                dest="pristine_tar")
-    import_group.add_boolean_config_file_option(option_name="filter-pristine-tar",
-                                                dest="filter_pristine_tar")
-    import_group.add_config_file_option(option_name="import-msg",
-                                        dest="import_msg")
-    import_group.add_boolean_config_file_option(option_name="symlink-orig",
-                                                dest="symlink_orig")
-    import_group.add_config_file_option("component", action="append", metavar='COMPONENT',
-                                        dest="components")
-    cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
+    tag_group.add_bool_conf_file_arg("--sign-tags")
+    tag_group.add_conf_file_arg("--keyid")
+    tag_group.add_conf_file_arg("--upstream-tag")
+    import_group.add_conf_file_arg("--filter",
+                                   dest="filters", action="append")
+    import_group.add_bool_conf_file_arg("--pristine-tar")
+    import_group.add_bool_conf_file_arg("--filter-pristine-tar")
+    import_group.add_conf_file_arg("--import-msg")
+    import_group.add_bool_conf_file_arg("--symlink-orig")
+    import_group.add_conf_file_arg("--component", action="append", metavar='COMPONENT',
+                                   dest="components")
+    cmd_group.add_conf_file_arg("--postimport")
 
-    parser.add_boolean_config_file_option(option_name="interactive",
-                                          dest='interactive')
-    parser.add_boolean_config_file_option(option_name="rollback",
-                                          dest="rollback")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                      help="verbose command execution")
-    parser.add_config_file_option(option_name="color", dest="color", type='tristate')
-    parser.add_config_file_option(option_name="color-scheme",
-                                  dest="color_scheme")
-    parser.add_option("--uscan", dest='uscan', action="store_true",
-                      default=False, help="use uscan(1) to download the new tarball.")
+    parser.add_bool_conf_file_arg("--interactive")
+    parser.add_bool_conf_file_arg("--rollback")
+    parser.add_arg("-v", "--verbose", action="store_true",
+                   help="verbose command execution")
+    parser.add_conf_file_arg("--color", type='tristate')
+    parser.add_conf_file_arg("--color-scheme")
 
     # Accepted for compatibility
-    parser.add_option("--download", dest='download', action="store_true",
-                      default=False, help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-orig(1).")
+    parser.add_arg("--download", action="store_true",
+                   help="Ignored. Accepted for compatibility; see EXAMPLES in gbp-import-orig(1).")
+
+    src_group = parser.add_mutually_exclusive_group(required=True)
+    src_group.add_arg("--uscan", action="store_true",
+                      help="use uscan(1) to download the new tarball.")
+    src_group.add_argument("filepath", metavar="FILEPATH", nargs="?",
+                           help="archive to import")
     return parser
 
 
@@ -377,18 +360,18 @@ def parse_args(argv):
     @return: options and arguments
     """
 
-    parser = build_parser(argv[0])
+    parser = build_parser(os.path.basename(argv[0]))
     if not parser:
-        return None, None
+        return None
 
-    (options, args) = parser.parse_args(argv[1:])
+    options = parser.parse_args(argv[1:])
     gbp.log.setup(options.color, options.verbose, options.color_scheme)
 
     if options.download:
         gbp.log.warn("Passing --download explicitly is deprecated.")
 
-    options.download = is_download(args)
-    return options, args
+    options.download = is_download([options.filepath])
+    return options
 
 
 def main(argv):
@@ -398,7 +381,7 @@ def main(argv):
     linked = False
     repo = None
 
-    (options, args) = parse_args(argv)
+    options = parse_args(argv)
     if not options:
         return ExitCodes.parse_error
 
@@ -420,9 +403,9 @@ def main(argv):
 
         # Download the main tarball
         if options.download:
-            upstream = download_orig(args[0])
+            upstream = download_orig(options.filepath)
         else:
-            upstream = find_upstream(options.uscan, args, options.version)
+            upstream = find_upstream(options.uscan, options.filepath, options.version)
             if not upstream:
                 return ExitCodes.uscan_up_to_date
 

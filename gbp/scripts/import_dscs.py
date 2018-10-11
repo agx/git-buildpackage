@@ -26,7 +26,7 @@ from gbp.deb.dscfile import DscFile
 from gbp.errors import GbpError
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.scripts import import_dsc
-from gbp.config import GbpOptionParser
+from gbp.config import GbpConfig
 import gbp.log
 
 
@@ -102,7 +102,7 @@ def set_gbp_conf_files():
     Filter out all gbp.conf files that are local to the git repository and set
     GBP_CONF_FILES accordingly so gbp import-dsc will only use these.
     """
-    global_config = GbpOptionParser.get_config_files(no_local=True)
+    global_config = GbpConfig.get_config_files(no_local=True)
     gbp_conf_files = ':'.join(global_config)
     os.environ['GBP_CONF_FILES'] = gbp_conf_files
     gbp.log.debug("Setting GBP_CONF_FILES to '%s'" % gbp_conf_files)

@@ -2,7 +2,7 @@
 
 import os
 import unittest
-from gbp.config import GbpOptionParser, GbpOptionGroup
+from gbp.config import GbpConfig, GbpConfArgParser
 from .testutils import GbpLogTester
 
 
@@ -29,16 +29,17 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         """
         for n in range(1, 5):
             for prefix in ['', 'git-', 'gbp-']:
-                parser = GbpOptionParser('%scmd%d' % (prefix, n))
-                self.assertEqual(parser.config['default_option'], 'default_default1')
+                parser = GbpConfArgParser.create_parser(prog='%scmd%d' %
+                                                        (prefix, n))
+                self.assertEqual(parser.config.get_value('default_option'), 'default_default1')
 
     def test_single_override(self):
         """
         A value in any command section should override the default
         """
         for prefix in ['', 'git-', 'gbp-']:
-            parser = GbpOptionParser('%scmd1' % prefix)
-            self.assertEqual(parser.config['single_override_option1'], 'single_override_value1')
+            parser = GbpConfArgParser.create_parser(prog='%scmd1' % prefix)
+            self.assertEqual(parser.config.get_value('single_override_option1'), 'single_override_value1')
         # No deprecation warning since the test1.conf section is [cmd1]
         self._check_log_empty()
 
@@ -47,8 +48,8 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         A value in any git-command section should override the default
         """
         for prefix in ['', 'git-']:
-            parser = GbpOptionParser('%scmd2' % prefix)
-            self.assertEqual(parser.config['single_git_override_option1'], 'single_git_override_value1')
+            parser = GbpConfArgParser.create_parser(prog='%scmd2' % prefix)
+            self.assertEqual(parser.config.get_value('single_git_override_option1'), 'single_git_override_value1')
         for line in range(0, 2):
             self._check_log(line, ".*Old style config section \[git-cmd2\] found please rename to \[cmd2\]")
 
@@ -57,8 +58,8 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         A value in any gbp-command section should override the default
         """
         for prefix in ['', 'gbp-']:
-            parser = GbpOptionParser('%scmd3' % prefix)
-            self.assertEqual(parser.config['single_gbp_override_option1'], 'single_gbp_override_value1')
+            parser = GbpConfArgParser.create_parser(prog='%scmd3' % prefix)
+            self.assertEqual(parser.config.get_value('single_gbp_override_option1'), 'single_gbp_override_value1')
         for line in range(0, 2):
             self._check_log(line, ".*Old style config section \[gbp-cmd3\] found please rename to \[cmd3\]")
 
@@ -68,8 +69,10 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         """
         for prefix in ['', 'git-']:
             os.environ['GBP_DISABLE_SECTION_DEPRECATION'] = 'true'
-            parser = GbpOptionParser('%scmd2' % prefix)
-            self.assertEqual(parser.config['single_git_override_option1'], 'single_git_override_value1')
+            parser = GbpConfArgParser.create_parser(prog='%scmd2' % prefix)
+            self.assertEqual(
+                parser.config.get_value('single_git_override_option1'),
+                'single_git_override_value1')
         for line in range(0, 2):
             self._check_log_empty()
         os.environ.pop('GBP_DISABLE_SECTION_DEPRECATION')
@@ -82,53 +85,63 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         for n in range(4, 6):
             for prefix in ['', 'git-']:
                 cmd = '%scmd%d' % (prefix, n)
-                parser = GbpOptionParser(cmd)
-                actual = parser.config['new_overrides_git_option1']
+                parser = GbpConfArgParser.create_parser(prog=cmd)
+                actual = parser.config.get_value('new_overrides_git_option1')
                 expected = 'new_overrides_git_value1'
                 self.assertEqual(actual, expected, "%s != %s for %s" % (actual, expected, cmd))
 
-    def test_get_config_file_value(self):
+    def test_get_conf_file_value(self):
         """
         Read a single value from the parsed config
         """
-        parser = GbpOptionParser('cmd4')
-        self.assertEqual(parser.get_config_file_value('new_overrides_git_option1'),
+        parser = GbpConfArgParser.create_parser(prog='cmd4')
+        parser.add_conf_file_arg('--new_overrides_git_option1')
+        self.assertEqual(parser.get_conf_file_value('new_overrides_git_option1'),
                          'new_overrides_git_value1')
-        self.assertEqual(parser.get_config_file_value('doesnotexist'), None)
+        with self.assertRaises(KeyError):
+            parser.get_conf_file_value('doesnotexist')
 
     def test_param_list(self):
-        parser = GbpOptionParser('cmd4')
+        parser = GbpConfArgParser.create_parser(prog='cmd4')
 
-        branch_group = GbpOptionGroup(parser, "branch options", "branch update and layout options")
-        parser.add_option_group(branch_group)
-        branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-        branch_group.add_config_file_option("debian-branch", dest="upstream_branch")
-        parser.add_config_file_option(option_name="color", dest="color", type='tristate')
+        branch_group = parser.add_argument_group("branch options", "branch update and layout options")
+        branch_group.add_conf_file_arg("--upstream-branch", dest="upstream_branch")
+        branch_group.add_conf_file_arg("--debian-branch", dest="upstream_branch")
+        parser.add_conf_file_arg("--color", dest="color", type='tristate')
 
-        params = parser.valid_options
+        params = parser.conf_file_args
         self.assertTrue('upstream-branch' in params)
         self.assertTrue('debian-branch' in params)
         self.assertTrue('color' in params)
 
     def test_short_option_with_prefix(self):
         """Options with short options can't have a prefix"""
-        class TestOptonParser(GbpOptionParser):
+        class TestConfig(GbpConfig):
             list_opts = []
             defaults = {'withshort': 'foo'}
+
+        class TestParser(GbpConfArgParser):
             short_opts = {'withshort': '-S'}
-        parser = TestOptonParser('cmd', prefix='p')
+
+        config = TestConfig('cmd')
+        parser = TestParser.create_parser(prefix='p', prog='cmd', config=config)
         with self.assertRaisesRegexp(ValueError, "Options with prefix cannot have a short option"):
-            parser.add_config_file_option(option_name="withshort", dest="with_short", help="foo")
+            parser.add_conf_file_arg("--withshort", dest="with_short", help="foo")
 
     def test_short_option(self):
-        class TestOptionParser(GbpOptionParser):
+        class TestConfig(GbpConfig):
             list_opts = []
             defaults = {'withshort': 'foo'}
+
+        class TestParser(GbpConfArgParser):
             short_opts = {'withshort': '-S'}
 
-        parser = TestOptionParser('cmd')
-        parser.add_config_file_option(option_name="withshort", dest="with_short", help="foo")
-        self.assertEquals('withshort', parser.valid_options[0])
-        self.assertEquals(len(parser.valid_options), 1)
-        self.assertTrue(parser.has_option("--withshort"))
-        self.assertTrue(parser.has_option("-S"))
+        config = TestConfig('cmd')
+        parser = TestParser.create_parser(prog='cmd', config=config)
+        parser.add_conf_file_arg("--withshort", dest="with_short", help="foo")
+        self.assertTrue('withshort' in parser.conf_file_args)
+        self.assertEquals(len(parser.conf_file_args), 1)
+        args = parser.parse_args(['--withshort', 'bar'])
+        self.assertEquals(getattr(args, 'with_short'), 'bar')
+        args = parser.parse_args(['-S', 'baz'])
+        self.assertEquals(getattr(args, 'with_short'), 'baz')
