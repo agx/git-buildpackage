@@ -371,7 +371,7 @@ class TestScriptDch(DebianGitTestRepo):
                       msg="""test non-debian closes 1\n\nCloses: EX-123""")
         self.add_file("closes1", "test file",
                       msg="""test non-debian closes 2\n\nCloses: EX-5678""")
-        options = ["--meta", '--meta-closes-bugnum=ex-\d+']
+        options = ["--meta", r'--meta-closes-bugnum=ex-\d+']
         lines = self.run_dch(options)
         self.assertIn("""  * test non-debian closes 1 (Closes: EX-123)\n""",
                       lines)
@@ -383,7 +383,7 @@ class TestScriptDch(DebianGitTestRepo):
                       msg="""test non-debian closes 1\n\nExample: EX-123""")
         self.add_file("closes1", "test file",
                       msg="""test non-debian closes 2\n\nExample: EX-5678""")
-        options = ["--meta", '--meta-closes-bugnum=ex-\d+',
+        options = ["--meta", r'--meta-closes-bugnum=ex-\d+',
                    '--meta-closes=Example']
         lines = self.run_dch(options)
         self.assertIn("""  * test non-debian closes 1 (Example: EX-123)\n""",

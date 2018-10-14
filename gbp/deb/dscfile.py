@@ -29,19 +29,19 @@ class DscFile(object):
     compressions = r"(%s)" % '|'.join(DebianUpstreamSource.known_compressions())
     pkg_re = re.compile(r'Source:\s+(?P<pkg>.+)\s*')
     version_re = re.compile(r'Version:\s((?P<epoch>\d+)\:)?'
-                            '(?P<version>[%s]+)\s*$'
+                            r'(?P<version>[%s]+)\s*$'
                             % DebianPkgPolicy.debianversion_chars)
     tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                        '(\.orig)?\.tar\.%s)$' % compressions)
+                        r'(\.orig)?\.tar\.%s)$' % compressions)
     add_tar_re = re.compile(r'^\s\w+\s\d+\s+(?P<tar>[^_]+_[^_]+'
-                            '\.orig-(?P<dir>[a-zA-Z0-9-]+)\.tar\.%s)$' % compressions)
+                            r'\.orig-(?P<dir>[a-zA-Z0-9-]+)\.tar\.%s)$' % compressions)
     diff_re = re.compile(r'^\s\w+\s\d+\s+(?P<diff>[^_]+_[^_]+'
-                         '\.diff.(gz|bz2))$')
+                         r'\.diff.(gz|bz2))$')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
-                            '\.debian.tar.%s)$' % compressions)
+                            r'\.debian.tar.%s)$' % compressions)
     format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*')
     sig_re = re.compile(r'^\s\w+\s\d+\s+(?P<sig>[^_]+_[^_]+'
-                        '\.orig(-[a-z0-9-]+)?\.tar\.%s.asc)$' % compressions)
+                        r'\.orig(-[a-z0-9-]+)?\.tar\.%s.asc)$' % compressions)
 
     def __init__(self, dscfile):
         self.pkg = ""

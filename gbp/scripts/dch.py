@@ -34,7 +34,7 @@ from gbp.scripts.common import ExitCodes, maybe_debug_raise
 from gbp.scripts.common.hook import Hook
 
 user_customizations = {}
-snapshot_re = re.compile("\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*")
+snapshot_re = re.compile(r'\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*')
 
 
 def guess_version_from_upstream(repo, upstream_tag_format, upstream_branch, cp=None):

@@ -48,7 +48,7 @@ def parse_old_style_topic(commit_info):
     """Parse 'gbp-pq-topic:' line(s) from commit info"""
 
     commit = commit_info['id']
-    topic_regex = 'gbp-pq-topic:\s*(?P<topic>\S.*)'
+    topic_regex = r'gbp-pq-topic:\s*(?P<topic>\S.*)'
     mangled_body = ''
     topic = ''
     # Parse and filter commit message body

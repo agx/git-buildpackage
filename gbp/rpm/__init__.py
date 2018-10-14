@@ -115,11 +115,11 @@ class SrcRpmFile(object):
 class SpecFile(object):
     """Class for parsing/modifying spec files"""
     tag_re = re.compile(r'^(?P<name>[a-z]+)(?P<num>[0-9]+)?\s*:\s*'
-                        '(?P<value>\S(.*\S)?)\s*$', flags=re.I)
+                        r'(?P<value>\S(.*\S)?)\s*$', flags=re.I)
     directive_re = re.compile(r'^%(?P<name>[a-z]+)(?P<num>[0-9]+)?'
-                              '(\s+(?P<args>.*))?$', flags=re.I)
+                              r'(\s+(?P<args>.*))?$', flags=re.I)
     gbptag_re = re.compile(r'^\s*#\s*gbp-(?P<name>[a-z-]+)'
-                           '(\s*:\s*(?P<args>\S.*))?$', flags=re.I)
+                           r'(\s*:\s*(?P<args>\S.*))?$', flags=re.I)
     # Here "sections" stand for all scripts, scriptlets and other directives,
     # but not macros
     section_identifiers = ('package', 'description', 'prep', 'build', 'install',
@@ -626,7 +626,7 @@ class SpecFile(object):
             if not tag['num'] in ignored:
                 tag_prev = self._delete_tag('patch', tag['num'])
                 # Remove a preceding comment if it seems to originate from GBP
-                if re.match("^\s*#.*patch.*auto-generated",
+                if re.match(r'^\s*#.*patch.*auto-generated',
                             str(tag_prev), flags=re.I):
                     tag_prev = self._content.delete(tag_prev)
 
@@ -643,7 +643,7 @@ class SpecFile(object):
 
                 # Remove a preceding comment line if it ends with '.patch' or
                 # '.diff' plus an optional compression suffix
-                if re.match("^\s*#.+(patch|diff)(\.(gz|bz2|xz|lzma))?\s*$",
+                if re.match(r'^\s*#.+(patch|diff)(\.(gz|bz2|xz|lzma))?\s*$',
                             str(macro_prev), flags=re.I):
                     macro_prev = self._content.delete(macro_prev)
 

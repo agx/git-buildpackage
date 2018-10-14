@@ -41,7 +41,7 @@ Closes: 456
         """Test non-default BTS commands. We use the example given in the
         documentation manpages."""
         options = OptionsStub()
-        options.meta_closes_bugnum = "(?:bug)?\s*ex-\d+"
+        options.meta_closes_bugnum = r'(?:bug)?\s*ex-\d+'
         lines = """This is a test commit
 some more lines...
 

@@ -272,8 +272,8 @@ class PatchSeries(list):
     """
     A series of L{Patch}es as read from a quilt series file).
     """
-    comment_re = re.compile('\s+#.*$')
-    level_re = re.compile('-p(?P<level>[0-9]+)')
+    comment_re = re.compile(r'\s+#.*$')
+    level_re = re.compile(r'-p(?P<level>[0-9]+)')
 
     @classmethod
     def read_series_file(cls, seriesfile):

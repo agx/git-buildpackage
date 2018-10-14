@@ -1186,10 +1186,10 @@ class GitRepository(object):
             fetch_url = None
             push_urls = []
             for line in out.decode().splitlines():
-                match = re.match('\s*Fetch\s+URL:\s*(\S.*)', line)
+                match = re.match(r'\s*Fetch\s+URL:\s*(\S.*)', line)
                 if match:
                     fetch_url = match.group(1)
-                match = re.match('\s*Push\s+URL:\s*(\S.*)', line)
+                match = re.match(r'\s*Push\s+URL:\s*(\S.*)', line)
                 if match:
                     push_urls.append(match.group(1))
             remotes[remote] = GitRemote(remote, fetch_url, push_urls)

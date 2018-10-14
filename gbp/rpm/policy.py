@@ -30,9 +30,9 @@ class RpmPkgPolicy(PkgPolicy):
 
     alnum = 'a-zA-Z0-9'
     # Valid characters for RPM pkg name
-    name_whitelist_chars = '._+%{}\-'
+    name_whitelist_chars = r'._+%{}\-'
     # Valid characters for RPM pkg version
-    version_whitelist_chars = '._+%{}~'
+    version_whitelist_chars = r'._+%{}~'
 
     # Regexp for checking the validity of package name
     packagename_re = re.compile("^[%s][%s%s]+$" %

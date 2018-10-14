@@ -33,9 +33,9 @@ class DebianGitRepository(PkgGitRepository):
     """A git repository that holds the source of a Debian package"""
 
     version_mangle_re = (r'%\(version'
-                         '%(?P<M>[^%])'
-                         '%(?P<R>([^%]|\\%))+'
-                         '\)s')
+                         r'%(?P<M>[^%])'
+                         r'%(?P<R>([^%]|\\%))+'
+                         r'\)s')
 
     def __init__(self, *args, **kwargs):
         super(DebianGitRepository, self).__init__(*args, **kwargs)
@@ -166,7 +166,7 @@ class DebianGitRepository(PkgGitRepository):
         'libfoo-1-8-1'
         >>> DebianGitRepository.version_to_tag("v%(version%.%_)s", "1.2.3")
         'v1_2_3'
-        >>> DebianGitRepository.version_to_tag("%(version%-%\%)s", "0-1.2.3")
+        >>> DebianGitRepository.version_to_tag(r'%(version%-%\\%)s', "0-1.2.3")
         '0%1.2.3'
         """
         f, v = cls._mangle_version(format, version)
@@ -178,13 +178,13 @@ class DebianGitRepository(PkgGitRepository):
         """
         Basic version mangling to replce single characters
 
-        >>> DebianGitRepository._mangle_version("%(version%-%\%)s", "0-1.2.3")
+        >>> DebianGitRepository._mangle_version(r'%(version%-%\\%)s', "0-1.2.3")
         ('%(version)s', '0%1.2.3')
         """
         r = re.search(cls.version_mangle_re, format)
         if r:
             f = re.sub(cls.version_mangle_re, "%(version)s", format)
-            v = version.replace(r.group('M'), r.group('R').replace('\%', '%'))
+            v = version.replace(r.group('M'), r.group('R').replace(r'\%', '%'))
             return f, v
         else:
             return format, version
@@ -207,7 +207,7 @@ class DebianGitRepository(PkgGitRepository):
         """
         r = re.search(cls.version_mangle_re, format)
         if r:
-            v = tag.replace(r.group('R').replace('\%', '%'), r.group('M'))
+            v = tag.replace(r.group('R').replace(r'\%', '%'), r.group('M'))
             return v
         else:
             return tag
@@ -231,7 +231,7 @@ class DebianGitRepository(PkgGitRepository):
         >>> DebianGitRepository._sanitize_version("0.lock")
         '0.#lock'
         """
-        v = re.sub('\.(?=\.|$|lock$)', '.#', version)
+        v = re.sub(r'\.(?=\.|$|lock$)', '.#', version)
         return v.replace('~', '_').replace(':', '%')
 
     @staticmethod
@@ -262,7 +262,7 @@ class DebianGitRepository(PkgGitRepository):
         >>> DebianGitRepository.tag_to_version("foo/2.3.4", "upstream/%(version)s")
         """
         f = cls._unmangle_format(format)
-        version_re = f.replace('%(version)s', '(?P<version>[\w_%+-.#]+)')
+        version_re = f.replace('%(version)s', r'(?P<version>[\w_%+-.#]+)')
         r = re.match(version_re, tag)
         if r:
             v = cls._unsanitize_version(r.group('version'))

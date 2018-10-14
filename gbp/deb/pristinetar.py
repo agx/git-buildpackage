@@ -36,11 +36,11 @@ class DebianPristineTar(PristineTar):
         @type comp_type: C{str}
         """
         if not comp_type:
-            ext = '\w\+'
+            ext = r'\w\+'
         else:
             ext = Compressor.Exts[comp_type]
 
-        name_regexp = '%s_%s\.orig\.tar\.%s' % (package, version, ext)
+        name_regexp = r'%s_%s\.orig\.tar\.%s' % (package, version, ext)
 
         return super(DebianPristineTar, self).has_commit(name_regexp)
 

@@ -48,7 +48,7 @@ class TestDep3Patch(unittest.TestCase):
         patchfile = os.path.join(self.data_dir, "dep3-iso8859-1.patch")
         self.assertTrue(os.path.exists(patchfile))
         p = Dep3Patch(patchfile)
-        self.assertEqual('Replace all -- in man page by \-\- to make lintian happy.', p.subject)
+        self.assertEqual(r'Replace all -- in man page by \-\- to make lintian happy.', p.subject)
         self.assertEqual("Roland Rosenfeld", p.author)
         self.assertEqual("roland@debian.org", p.email)
         self.assertEqual("", p.long_desc)

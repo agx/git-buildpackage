@@ -152,7 +152,7 @@ def write_patch_file(filename, commit_info, diff):
             name = commit_info['author']['name']
             email = commit_info['author']['email']
             # Git compat: put name in quotes if special characters found
-            if re.search("[,.@()\[\]\\\:;]", name):
+            if re.search(r'[,.@()\[\]\\\:;]', name):
                 name = '"%s"' % name
             from_header = Header(header_name='from')
             try:
@@ -216,7 +216,7 @@ def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
         if renumber:
             # Remove any existing numeric prefix if the patch
             # should be renumbered
-            name = re.sub('^\d+[-_]*', '', name)
+            name = re.sub(r'^\d+[-_]*', '', name)
         else:
             # Otherwise, clear proposed prefix
             num_prefix = ''

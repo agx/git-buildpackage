@@ -43,7 +43,7 @@ class DebianPkgPolicy(PkgPolicy):
     # must consist only of lower case letters (a-z), digits (0-9), plus (+)
     # and minus (-) signs, and periods (.). They must be at least two
     # characters long and must start with an alphanumeric character."
-    packagename_re = re.compile("^[a-zA-Z0-9][a-zA-Z0-9\.\+\-~]+$")
+    packagename_re = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9\.\+\-~]+$')
     packagename_msg = """Package names must be at least two characters long, start with an
     alphanumeric and can only containg letters (a-z,A-Z), digits
     (0-9), plus signs (+), minus signs (-), periods (.) and hyphens (~)"""
@@ -55,7 +55,7 @@ class DebianPkgPolicy(PkgPolicy):
     # are not allowed; if there is no epoch then colons are not allowed."
     # Since we don't know about any epochs and debian revisions yet, the
     # last two conditions are not checked.
-    upstreamversion_re = re.compile("^[0-9][a-zA-Z0-9\.\+\-\:\~]*$")
+    upstreamversion_re = re.compile(r'^[0-9][a-zA-Z0-9\.\+\-\:\~]*$')
     upstreamversion_msg = """Upstream version numbers must start with a digit and can only containg lower case
     letters (a-z), digits (0-9), full stops (.), plus signs (+), minus signs
     (-), colons (:) and tildes (~)"""
