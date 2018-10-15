@@ -1884,7 +1884,6 @@ class GitRepository(object):
         args.add_true(auto, '--auto')
         self._git_command("gc", args.args)
 
-
 #{ Submodules
 
     def has_submodules(self, treeish=None):
