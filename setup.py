@@ -17,30 +17,8 @@
 #    <http://www.gnu.org/licenses/>
 # END OF COPYRIGHT #
 
-import subprocess
 from setuptools import setup, find_packages
 import os
-
-
-def fetch_version():
-    """Get version from debian changelog and write it to gbp/version.py"""
-    version = "0.0"
-
-    try:
-        popen = subprocess.Popen('dpkg-parsechangelog', stdout=subprocess.PIPE)
-        out, ret = popen.communicate()
-        for line in out.decode('utf-8').split('\n'):
-            if line.startswith('Version:'):
-                version = line.split(' ')[1].strip()
-                break
-    except OSError:
-        pass  # Failing is fine, we just can't print the version then
-
-    with open('gbp/version.py', 'w') as f:
-        f.write('"The current gbp version number"\n')
-        f.write('gbp_version = "%s"\n' % version)
-
-    return version
 
 
 def readme():
@@ -56,7 +34,7 @@ def setup_requires():
 
 
 setup(name="gbp",
-      version=fetch_version(),
+      version='0.9.10',
       author=u'Guido Günther',
       author_email='agx@sigxcpu.org',
       url='https://honk.sigxcpu.org/piki/projects/git-buildpackage/',
