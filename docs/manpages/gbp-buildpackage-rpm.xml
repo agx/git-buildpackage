@@ -347,7 +347,8 @@
           <para>
           Exported environment variables are: <envar>GBP_GIT_DIR</envar> (the
           repository the package is being built from),
-          <envar>GBP_BUILD_DIR</envar> (the build dir).
+          <envar>GBP_TMP_DIR</envar> (the temporary directory where the sources
+          have been initially exported).
           </para>
         </listitem>
       </varlistentry>

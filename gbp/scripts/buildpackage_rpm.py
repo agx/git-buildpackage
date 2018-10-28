@@ -540,7 +540,7 @@ def main(argv):
             if options.preexport:
                 RunAtCommand(options.preexport, shell=True,
                              extra_env={'GBP_GIT_DIR': repo.git_dir,
-                                        'GBP_BUILD_DIR': export_dir}
+                                        'GBP_TMP_DIR': export_dir}
                              )()
 
             # Move packaging files to final export dir
