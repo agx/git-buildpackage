@@ -192,10 +192,10 @@ class GitRepository(object):
         """
         if not cwd:
             cwd = self.path
-        return self.__git_inout(command, args, input, extra_env, cwd, capture_stderr, config_args)
+        return self.git_inout(command, args, input, extra_env, cwd, capture_stderr, config_args)
 
     @classmethod
-    def __git_inout(cls, command, args, input, extra_env, cwd, capture_stderr, config_args=None):
+    def git_inout(cls, command, args, input, extra_env, cwd, capture_stderr, config_args=None):
         """
         As _git_inout but can be used without an instance
         """
@@ -2001,12 +2001,12 @@ class GitRepository(object):
             if not os.path.exists(abspath):
                 os.makedirs(abspath)
             try:
-                stdout, stderr, ret = cls.__git_inout(command='init',
-                                                      args=args.args,
-                                                      input=None,
-                                                      extra_env=None,
-                                                      cwd=abspath,
-                                                      capture_stderr=True)
+                stdout, stderr, ret = cls.git_inout(command='init',
+                                                    args=args.args,
+                                                    input=None,
+                                                    extra_env=None,
+                                                    cwd=abspath,
+                                                    capture_stderr=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git init: %s" % excobj)
             if ret:
@@ -2067,12 +2067,12 @@ class GitRepository(object):
                 os.makedirs(abspath)
 
             try:
-                stdout, stderr, ret = cls.__git_inout(command='clone',
-                                                      args=args.args,
-                                                      input=None,
-                                                      extra_env=None,
-                                                      cwd=abspath,
-                                                      capture_stderr=True)
+                stdout, stderr, ret = cls.git_inout(command='clone',
+                                                    args=args.args,
+                                                    input=None,
+                                                    extra_env=None,
+                                                    cwd=abspath,
+                                                    capture_stderr=True)
             except Exception as excobj:
                 raise GitRepositoryError("Error running git clone: %s" % excobj)
             if ret:
