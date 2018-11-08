@@ -19,9 +19,9 @@
 import collections
 import os
 import re
-import subprocess
 import tempfile
 from gbp.errors import GbpError
+from gbp.git.repository import GitRepository
 
 VALID_DEP3_ENDS = re.compile(r'(?:---|\*\*\*|Index:)[ \t][^ \t]|^diff -|^---')
 
@@ -68,17 +68,38 @@ class Patch(object):
         using I{git mailinfo}
         """
         self.info = {}
+        self.long_desc = ''
+
         body = tempfile.NamedTemporaryFile(prefix='gbp_')
-        pipe = subprocess.Popen("git mailinfo -k '%s' /dev/null 2>/dev/null < '%s'" %
-                                (body.name, self.path),
-                                shell=True,
-                                stdout=subprocess.PIPE).stdout
-        for line in pipe:
-            line = line.decode()
+
+        # No patch yet, file name information only
+        if not os.path.exists(self.path):
+            return
+        # The patch description might contain UTF-8 while the actual patch is ascii.
+        # To unconfuse git-mailinfo stop at the patch separator
+        toparse = []
+        for line in open(self.path, 'rb'):
+            if line == b'---\n':
+                break
+            toparse.append(line)
+
+        out, err, ret = GitRepository.git_inout(command='mailinfo',
+                                                args=['-k', body.name, '/dev/null'],
+                                                input=b''.join(toparse),
+                                                extra_env=None,
+                                                cwd=None,
+                                                capture_stderr=True)
+        if ret != 0:
+            raise GbpError("Failed to read patch header of '%s': %s" %
+                           (self.path, err))
+
+        # Header
+        for line in out.decode().split('\n'):
             if ':' in line:
                 rfc_header, value = line.split(" ", 1)
                 header = rfc_header[:-1].lower()
                 self.info[header] = value.strip()
+        # Body
         try:
             self.long_desc = "".join([l.decode("utf-8", "backslashreplace") for l in body])
         except (IOError, UnicodeDecodeError) as msg:

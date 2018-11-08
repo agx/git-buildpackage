@@ -102,3 +102,27 @@ usbip_common.c has the same problem.
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 """,
                          p.long_desc)
+
+
+class TestBase64Patch(unittest.TestCase):
+    data_dir = os.path.splitext(__file__)[0] + '_data'
+
+    def test_parse(self):
+        """Get patch information from git mailimport with base64 body but plain text patch"""
+        patchfile = os.path.join(self.data_dir, "base64.patch")
+        self.assertTrue(os.path.exists(patchfile))
+        p = Dep3Patch(patchfile)
+        self.assertEqual("Sort files in archive (reproducible builds)", p.subject)
+        self.assertEqual("Nick Leverton", p.author)
+        self.assertEqual("nick@leverton.org", p.email)
+        self.assertEqual("""\
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+
+Sort files when using mergelib to create libnullmailer.a, to get
+reproducible build
+
+Author: Alexis Bienvenüe <pado@passoire.fr>
+""",
+                         p.long_desc)

@@ -1,0 +1,25 @@
+From: Nick Leverton <nick@leverton.org>
+Date: Tue, 11 Jul 2017 22:25:43 -0300
+Subject: Sort files in archive (reproducible builds)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+
+U29ydCBmaWxlcyB3aGVuIHVzaW5nIG1lcmdlbGliIHRvIGNyZWF0ZSBsaWJudWxsbWFpbGVyLmEs
+IHRvIGdldApyZXByb2R1Y2libGUgYnVpbGQKCkF1dGhvcjogQWxleGlzIEJpZW52ZW7DvGUgPHBh
+ZG9AcGFzc29pcmUuZnI+Cg==
+---
+ lib/mergelib.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/mergelib.sh b/lib/mergelib.sh
+index f9b7a94..4e71079 100644
+--- a/lib/mergelib.sh
++++ b/lib/mergelib.sh
+@@ -12,5 +12,5 @@ for input in "$@"; do
+ 	"${AR:-ar}" x ../../"$input"
+ 	cd ..
+ done
+-"${AR:-ar}" rc ../"$archive" */*
++"${AR:-ar}" rc ../"$archive" `LC_ALL=C ls */*`
+ "${RANLIB:-ranlib}" ../"$archive"
