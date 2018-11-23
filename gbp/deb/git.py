@@ -32,10 +32,7 @@ import gbp.log
 class DebianGitRepository(PkgGitRepository):
     """A git repository that holds the source of a Debian package"""
 
-    version_mangle_re = (r'%\(version'
-                         r'%(?P<M>[^%])'
-                         r'%(?P<R>([^%]|\\%))+'
-                         r'\)s')
+    version_mangle_re = PkgPolicy.version_mangle_re
 
     def __init__(self, *args, **kwargs):
         super(DebianGitRepository, self).__init__(*args, **kwargs)

@@ -27,6 +27,10 @@ class PkgPolicy(object):
     """
     Common helpers for packaging policy.
     """
+    version_mangle_re = (r'%\(version'
+                         r'%(?P<M>[^%])'
+                         r'%(?P<R>([^%]|\\%))+'
+                         r'\)s')
     packagename_re = None
     packagename_msg = None
     upstreamversion_re = None
@@ -167,8 +171,8 @@ class PkgPolicy(object):
     def symlink_orig(cls, orig_file, orig_dir, output_dir, force=False):
         return cls.symlink_origs([orig_file], orig_dir, output_dir, force=force)
 
-    @staticmethod
-    def version_subst(format, version, sanitizer=lambda arg: arg):
+    @classmethod
+    def version_subst(cls, format, version, sanitizer=lambda arg: arg):
         """Generate a string from a given format and a version. The extracted
         version can be passed through the sanitizer function argument before
         being formatted into a string.
@@ -193,13 +197,9 @@ class PkgPolicy(object):
         >>> PkgPolicy.version_subst(r'%(version%-%\\%)s', "0-1.2.3")
         '0%1.2.3'
         """
-        version_mangle_re = (r'%\(version'
-                             r'%(?P<M>[^%])'
-                             r'%(?P<R>([^%]|\\%))+'
-                             r'\)s')
-        r = re.search(version_mangle_re, format)
+        r = re.search(cls.version_mangle_re, format)
         if r:
-            format = re.sub(version_mangle_re, "%(version)s", format)
+            format = re.sub(cls.version_mangle_re, "%(version)s", format)
             version = version.replace(r.group('M'), r.group('R').replace(r'\%', '%'))
         return format_str(format, dict(version=sanitizer(version),
                                        hversion=sanitizer(version).replace('.', '-')))
