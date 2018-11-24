@@ -72,7 +72,7 @@ class DebianSource(object):
                 f = DebianSourceFormat(ff.read())
             if f.type:
                 return f.type == 'native'
-        except IOError as e:
+        except IOError:
             pass  # Fall back to changelog parsing
 
         try:
