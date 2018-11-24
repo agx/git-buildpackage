@@ -32,7 +32,7 @@ class PristineTar(Command):
                                           cwd=repo.path,
                                           capture_stderr=True)
 
-    def _has_in_output(self, feature):
+    def _has_in_output(self, match):
         """
         Check if pristine_tar has a certain feature enabled.
 
@@ -42,7 +42,7 @@ class PristineTar(Command):
         @rtype: C{bool}
         """
         self.call(['--help'], quiet=True)  # There's no --help so we always exit 1
-        r = re.compile('.* pristine-tar .* %s' % feature)
+        r = re.compile(match)
         for line in self.stderr.splitlines():
             if r.match(line):
                 return True
@@ -50,11 +50,11 @@ class PristineTar(Command):
 
     def has_feature_verify(self):
         """Does this pristine-tar support tarball verification"""
-        return self._has_in_output("verify")
+        return self._has_in_output(".* pristine-tar .* verify")
 
     def has_feature_sig(self):
         """Does this pristine-tar support detached upstream signatures"""
-        return self._has_in_output(r'\[-s signaturefile\]')
+        return self._has_in_output(r'.*--signature-file')
 
     def has_commit(self, archive_regexp):
         """
