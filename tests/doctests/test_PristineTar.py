@@ -169,7 +169,7 @@ def test_pristine_tar_checkout_with_sig():
     >>> os.unlink(sf)
     >>> repo.pristine_tar.checkout('upstream', '1.0', 'gzip', '..',
     ...                             signature=True)
-    >>> os.path.exists(sf)
+    >>> os.path.exists(sf) or not repo.pristine_tar.has_feature_sig()
     True
     """
 

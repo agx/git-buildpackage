@@ -92,7 +92,7 @@ class PristineTar(Command):
         """
         args = ['checkout', archive]
         self.run_error = 'Pristine-tar couldn\'t checkout "%s": {stderr_or_reason}' % os.path.basename(archive)
-        if signaturefile:
+        if signaturefile and self.has_feature_sig():
             args += ['-s', signaturefile]
         self.__call__(args, quiet=quiet)
 
@@ -109,7 +109,7 @@ class PristineTar(Command):
         args = ['commit', archive, upstream]
         self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr_or_reason}" %
                           (self.branch, upstream))
-        if signaturefile:
+        if signaturefile and self.has_feature_sig():
             args += ['-s', signaturefile]
         self.__call__(args, quiet=quiet)
 
