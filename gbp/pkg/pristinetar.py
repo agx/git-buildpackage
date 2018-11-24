@@ -83,17 +83,20 @@ class PristineTar(Command):
             return commit
         return None
 
-    def checkout(self, archive, quiet=False):
+    def checkout(self, archive, quiet=False, signaturefile=None):
         """
         Checkout an orig archive from pristine-tar branch
 
         @param archive: the name of the orig archive
         @type archive: C{str}
         """
+        args = ['checkout', archive]
         self.run_error = 'Pristine-tar couldn\'t checkout "%s": {stderr_or_reason}' % os.path.basename(archive)
-        self.__call__(['checkout', archive], quiet=quiet)
+        if signaturefile:
+            args += ['-s', signaturefile]
+        self.__call__(args, quiet=quiet)
 
-    def commit(self, archive, upstream, quiet=False):
+    def commit(self, archive, upstream, quiet=False, signaturefile=None):
         """
         Commit an archive I{archive} to the pristine tar branch using upstream
         branch ${upstream}.
@@ -103,9 +106,12 @@ class PristineTar(Command):
         @param upstream: the upstream branch to diff against
         @type upstream: C{str}
         """
+        args = ['commit', archive, upstream]
         self.run_error = ("Couldn't commit to '%s' with upstream '%s': {stderr_or_reason}" %
                           (self.branch, upstream))
-        self.__call__(['commit', archive, upstream], quiet=quiet)
+        if signaturefile:
+            args += ['-s', signaturefile]
+        self.__call__(args, quiet=quiet)
 
     def verify(self, archive, quiet=False):
         """Verify an archive's I{archive} checksum using to the pristine tar branch"""

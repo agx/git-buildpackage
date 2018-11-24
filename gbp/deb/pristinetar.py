@@ -45,7 +45,7 @@ class DebianPristineTar(PristineTar):
         return super(DebianPristineTar, self).has_commit(name_regexp)
 
     def checkout(self, package, version, comp_type, output_dir, component=None,
-                 quiet=False):
+                 quiet=False, signature=False):
         """
         Checkout the orig tarball for package I{package} of I{version} and
         compression type I{comp_type} to I{output_dir}
@@ -59,9 +59,18 @@ class DebianPristineTar(PristineTar):
         @param output_dir: the directory to put the tarball into
         @type output_dir: C{str}
         """
+        signaturefile = None
         name = DebianPkgPolicy.build_tarball_name(package,
                                                   version,
                                                   comp_type,
                                                   output_dir,
                                                   component=component)
-        super(DebianPristineTar, self).checkout(name, quiet=quiet)
+        if signature:
+            signaturefile = DebianPkgPolicy.build_signature_name(package,
+                                                                 version,
+                                                                 comp_type,
+                                                                 output_dir,
+                                                                 component=component)
+        super(DebianPristineTar, self).checkout(name,
+                                                quiet=quiet,
+                                                signaturefile=signaturefile)

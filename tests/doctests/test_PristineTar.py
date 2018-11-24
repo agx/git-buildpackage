@@ -76,7 +76,7 @@ def test_commit_dir():
 
 def test_create_tarball():
     """
-    Create a tarball from a git tree
+    Create a tarball from a git tree and add a stub signature
 
     Methods tested:
          - L{gbp.deb.git.DebianGitRepository.archive}
@@ -85,6 +85,8 @@ def test_create_tarball():
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.archive('tar', 'upstream/', '../upstream_1.0.orig.tar', 'upstream')
     >>> gbp.command_wrappers.Command('gzip', [ '-n', '%s/../upstream_1.0.orig.tar' % dirs['repo']])()
+    >>> with open('%s/../upstream_1.0.orig.tar.gz.asc' % dirs['repo'], 'w') as f: f.write("sig")
+    3
     """
 
 
@@ -98,6 +100,20 @@ def test_pristine_tar_commit():
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.commit('../upstream_1.0.orig.tar.gz', 'upstream')
+    """
+
+
+def test_pristine_tar_commit_with_sig():
+    """
+    Commit the delta to the pristine-tar branch including a signature
+
+    Methods tested:
+         - L{gbp.deb.pristinetar.DebianPristineTar.commit}
+
+    >>> import gbp.deb.git
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
+    >>> repo.pristine_tar.commit('../upstream_1.0.orig.tar.gz', 'upstream',
+    ...                          signaturefile='../upstream_1.0.orig.tar.gz.asc')
     """
 
 
@@ -134,6 +150,27 @@ def test_pristine_tar_checkout():
     >>> import gbp.deb.git
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> repo.pristine_tar.checkout('upstream', '1.0', 'gzip', '..')
+    """
+
+
+def test_pristine_tar_checkout_with_sig():
+    """
+    Checkout a tarball using pristine-tar
+
+    Methods tested:
+         - L{gbp.deb.pristinetar.DebianPristineTar.checkout}
+
+    >>> import gbp.deb.git
+    >>> from gbp.deb.policy import DebianPkgPolicy
+
+    >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
+    >>> sf = os.path.join(repo.path,
+    ...                   DebianPkgPolicy.build_signature_name('upstream', '1.0', 'gzip', '..'))
+    >>> os.unlink(sf)
+    >>> repo.pristine_tar.checkout('upstream', '1.0', 'gzip', '..',
+    ...                             signature=True)
+    >>> os.path.exists(sf)
+    True
     """
 
 

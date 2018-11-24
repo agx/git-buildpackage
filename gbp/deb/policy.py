@@ -96,3 +96,11 @@ class DebianPkgPolicy(PkgPolicy):
         if dir:
             tarball = os.path.join(dir, tarball)
         return tarball
+
+    @staticmethod
+    def build_signature_name(*args, **kwargs):
+        """
+        Given a source package's I{name}, I{version} and I{compression}
+        return the name of the corresponding upstream tarball signature file.
+        """
+        return DebianPkgPolicy.build_tarball_name(*args, **kwargs) + '.asc'
