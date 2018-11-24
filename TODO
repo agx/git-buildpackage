@@ -1,1 +1,26 @@
 See https://honk.sigxcpu.org/piki/projects/git-buildpackage/
+
+Upstream signature support
+==========================
+
+import-dsc:
+  - import signature if part of dsc file
+
+import-orig:
+  - symlink when symlinking upstream tarball if present
+  - commit to pristine-tar branch
+
+export-orig:
+  - symlink signature if present
+  - export from pristine-tar branch if present
+
+pristine-tar:
+  - commit signature file if present
+
+
+Signature modes (--upstream-signatures)
+=======================================
+  - yes: force checkin/checkout of sigs
+  - no: always ignore signatures
+  - auto: checkin/checkout signatures if present
+
