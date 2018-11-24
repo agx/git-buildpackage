@@ -18,6 +18,7 @@
 
 import re
 import os
+import traceback
 from gbp.errors import GbpError
 from gbp.deb import DebianPkgPolicy
 from gbp.pkg import Archive
@@ -67,3 +68,8 @@ def get_component_tarballs(name, version, tarball, components):
         if not os.path.exists(cname):
             raise GbpError("Can not find component tarball %s" % cname)
     return tarballs
+
+
+def debug_exc(options):
+    if options.verbose:
+        traceback.print_exc()

@@ -35,7 +35,7 @@ from gbp.git.vfs import GitVfs
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
                         no_upstream_branch_msg)
 from gbp.errors import GbpError
-from gbp.scripts.common import ExitCodes
+from gbp.scripts.common import ExitCodes, debug_exc
 from gbp.scripts.common import repo_setup
 import gbp.log
 
@@ -534,9 +534,11 @@ def main(argv):
         pass  # command itself printed an error
     except GitRepositoryError as msg:
         gbp.log.err("Git command failed: %s" % msg)
+        debug_exc(options)
     except GbpError as err:
         if str(err):
             gbp.log.err(err)
+        debug_exc(options)
     except SkipImport:
         skipped = True
         ret = 0
