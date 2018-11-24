@@ -32,7 +32,7 @@ class PristineTar(Command):
                                           cwd=repo.path,
                                           capture_stderr=True)
 
-    def _has_feature(self, feature):
+    def _has_in_output(self, feature):
         """
         Check if pristine_tar has a certain feature enabled.
 
@@ -49,7 +49,12 @@ class PristineTar(Command):
         return False
 
     def has_feature_verify(self):
-        return self._has_feature("verify")
+        """Does this pristine-tar support tarball verification"""
+        return self._has_in_output("verify")
+
+    def has_feature_sig(self):
+        """Does this pristine-tar support detached upstream signatures"""
+        return self._has_in_output(r'\[-s signaturefile\]')
 
     def has_commit(self, archive_regexp):
         """
