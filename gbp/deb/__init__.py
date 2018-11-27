@@ -58,7 +58,7 @@ class DpkgCompareVersions(gbpc.Command):
     def __call__(self, version1, version2):
         """
         Compare two package versions. Return 0 if the versions are equal, -1 1 if version1 < version2,
-        and 1 oterwise.
+        and 1 otherwise.
 
         @raises CommandExecFailed: if the version comparison fails
         """
