@@ -487,7 +487,9 @@ def main(argv):
         except GitRepositoryError:
             # Not being on any branch is OK with --ignore-branch
             if options.ignore_branch:
-                current = repo.get_commits(num=1)[0]
+                current = repo.get_commits(num=1,
+                    options=["--pretty=format:%h"]  # Force abbreviated commit hash
+                )[0]
             else:
                 raise
 
