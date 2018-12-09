@@ -316,7 +316,7 @@
           <para>
           Exported environment variables are: <envar>GBP_TAG</envar> (the name
           of the generated tag), <envar>GBP_BRANCH</envar> (the branch the
-          package was build from) and <envar>GBP_SHA1</envar> (the sha1 of the
+          package was built from) and <envar>GBP_SHA1</envar> (the sha1 of the
           commit the tag was created at).
           </para>
         </listitem>

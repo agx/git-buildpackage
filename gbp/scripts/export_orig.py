@@ -96,7 +96,7 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
     """
     Build orig tarball using pristine-tar
 
-    @returns: C{True} if tarball was build, C{False} otherwise
+    @returns: C{True} if tarball was built, C{False} otherwise
     """
     if not options.pristine_tar:
         return False
@@ -134,9 +134,9 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
 
 def pristine_tar_verify_origs(repo, source, options, output_dir, orig_files):
     """
-    Verify orig tarballs using prstine tar
+    Verify orig tarballs using pristine-tar
 
-    @returns: C{True} if tarball was build, C{False} otherwise
+    @returns: C{True} if tarball was built, C{False} otherwise
     """
     if not options.pristine_tar:
         return True
