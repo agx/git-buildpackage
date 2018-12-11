@@ -1,3 +1,103 @@
+git-buildpackage (0.9.11) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [7ce98d6] import-ref: New experimental command to merge in changes from a
+    upstream using git.
+  * [2320ac3] Add test case for conversion of extra DEP-3 headers to
+    pseudo-headers.  Currently the extra DEP-3 headers may end up as trailers
+    instead of should be pseudo-headers.
+  * [1e31e67] pq: Fix testcase.  Pseudo headers are now moved to the top of
+    the patch.
+  * [2f6a432] travisci: Test Python 3.7 as well.
+    Use the workaround from
+        https://github.com/travis-ci/travis-ci/issues/9815
+    since Python 3.7 is not yet supported by the default image.
+  * [497addc] Ignore flake8's 'W504 line break after binary operator'
+    With flake8's other warnings this doesn't make much sense since
+    indentation according to https://hg.python.org/peps/rev/3857909d7956
+    does not work. It triggers
+    - 'W503 line break before binary operator'
+    - 'E129 visually indented line with same indent as next logical line'
+    If one want to align the operators one hits
+    - 'E127 continuation line over-indented for visual indent'
+    So let's leave things as is for the moment.
+  * [6b13422] Fix flake8's W605 (invalid escape sequence)
+    See also
+        https://docs.python.org/3/whatsnew/3.6.html#deprecated-python-behavior
+  * [caa586a] builpackage-rpm: Use GBP_TMP_DIR instead of GBP_BUILD_DIR.
+    This is consistent with --git-post-export and unbreaks
+        tests/component/rpm/test_buildpackage_rpm.py:TestGbpRpm.test_hook_options
+  * [1994bb2] PatchSeries: Only pass patch description and header to
+    git-mailinfo. There are patches around that use
+      Content-Transfer-Encoding: base64
+    but the actual patch after '---' is unencoded ascii resulting in garbage
+    after the patch description when imported into a patch queue.
+    Since we're discarding the patch part of git-mailinfo anyway don't pass
+    this on in the first place. (Closes: #912426)
+  * [a55d19f] PristineTar: detect signature verification support
+  * [dacca59] PristineTar: support checking in/out upstream signatures
+  * [ad904b8] PristienTar: Properly detect signature feature
+  * [0277c54] PristineTar: Don't fail if pristine-tar doesn't support
+    signatures
+  * [4a8908c] Make it simple to print exception details
+  * [f932338] import-orig: rename sourcepackage to name
+    since it's the source package's name
+
+  [ Mathieu Parent ]
+  * [03accd2] import-orig: Allow one to import the requested version with
+    --uscan (Closes: #741148)
+
+  [ Ben Hutchings ]
+  * [771114b] Add test case for bug #905934
+  * [0304fd3] pq import: Look for DEP-3 header fields even if git mailimport
+    succeeds (Closes: #905934)
+  * [47cf4c6] pq import: Always put DEP-3 headers as pseudo-headers.  If there
+    are any non-git DEP-3 header fields, put them at the top of the body text,
+    regardless of whether Description or Subject is used.  Also put a blank
+    line between them and the rest of the message body.
+  
+  [ Markus Lehtonen ]
+  * [8428343] gbp.git: fix doctest with recent python-dateutil.
+    Traceback format has changed in recent python-dateutil.
+  * [a656995] tests: small fix for import-orig-rpm component test.
+    Merge behaviour in newer git versions (> v2.16) is slightly different.
+
+  [ Andreas Beckmann ]
+  * [12574cc] debian.source: Enumerate components only once
+  * [a596206] PkgPolicy.symlink_orig: also remove dangling symlinks
+
+  [ Luca Boccassi ]
+  * [ce6b1e7] buildpackage{,-rpm}: add preexport hook.
+    Sometimes it is necessary to perform operations before preparing the
+    tarballs and exporting to the build directory.
+    One such case is when having to handle extremely large binary assets in
+    the orig tarball and at the same time complex packaging code, which makes
+    it desirable to separate the two into different repositories for easier
+    handling.
+    A pre-export hook allows one to ensure that the tarball repository is
+    present and checked out at the correct branch. (Closes: #909266)
+  * [44acc6d] Refresh tests data submodule
+  * [e5aedb1] buildpackage, export-orig: support version substitution for
+    --git-tarball-dir.
+    Add support for passing %(version), %(hversion) and %(version%A%B) in
+    buildpackage --git-tarball-dir and export-orig --tarball-dir.
+    (Closes: #909266)
+
+  [ Kiss György ]
+  * [7bba657] setup.py: Fix version parsing when installing from pip.
+
+  [ Arnaud Rebillout ]
+  * [f0cb11d] docs: update references from <http://dep.debian.net> to
+    <https://dep-team.pages.debian.net>.
+
+  [ Chris Lamb ]
+  * [9dc9f5e] Fix "was build" typos (Closes: #916044)
+
+  [ Ken Dreyer ]
+  * [f6096ed] gbp.deb: Correct "otherwise" spelling in comment
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 11 Dec 2018 10:39:43 +0100
+
 git-buildpackage (0.9.10) unstable; urgency=medium
 
   [ Ken Dreyer ]
