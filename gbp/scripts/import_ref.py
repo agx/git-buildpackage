@@ -135,6 +135,7 @@ def main(argv):
     # TODO: add --filter-with-copyright which takes d/copyright into account
     # TODO: handle automatic versions based on timestamp + sha1
     # TODO: handle updating of upstream branch from remote
+    gbp.warn("This script is experimental, it might change incompatibly between versions.")
     try:
         try:
             repo = RollbackDebianGitRepository('.')
