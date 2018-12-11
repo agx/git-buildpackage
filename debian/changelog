@@ -1,3 +1,10 @@
+git-buildpackage (0.9.12) unstable; urgency=medium
+
+  * [aa7ca25] import_ref: Fix warning output. Otherwise import-ref
+    won't load correctly.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 11 Dec 2018 18:23:09 +0100
+
 git-buildpackage (0.9.11) unstable; urgency=medium
 
   [ Guido Günther ]
