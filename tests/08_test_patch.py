@@ -126,3 +126,14 @@ reproducible build
 Author: Alexis Bienvenüe <pado@passoire.fr>
 """,
                          p.long_desc)
+
+
+class TestMarkerOnly(unittest.TestCase):
+    data_dir = os.path.splitext(__file__)[0] + '_data'
+
+    def test_parse(self):
+        """Don't fail on empty patch header"""
+        patchfile = os.path.join(self.data_dir, "916545.patch")
+        self.assertTrue(os.path.exists(patchfile))
+        p = Dep3Patch(patchfile)
+        self.assertEqual("916545", p.subject)

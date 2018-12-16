@@ -83,15 +83,19 @@ class Patch(object):
                 break
             toparse.append(line)
 
-        out, err, ret = GitRepository.git_inout(command='mailinfo',
-                                                args=['-k', body.name, '/dev/null'],
-                                                input=b''.join(toparse),
-                                                extra_env=None,
-                                                cwd=None,
-                                                capture_stderr=True)
-        if ret != 0:
-            raise GbpError("Failed to read patch header of '%s': %s" %
-                           (self.path, err))
+        input = b''.join(toparse)
+        if input.strip():
+            out, err, ret = GitRepository.git_inout(command='mailinfo',
+                                                    args=['-k', body.name, '/dev/null'],
+                                                    input=input,
+                                                    extra_env=None,
+                                                    cwd=None,
+                                                    capture_stderr=True)
+            if ret != 0:
+                raise GbpError("Failed to read patch header of '%s': %s" %
+                               (self.path, err))
+        else:
+            out = b''
 
         # Header
         for line in out.decode().split('\n'):
