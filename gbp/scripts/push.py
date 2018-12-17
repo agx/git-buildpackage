@@ -76,7 +76,7 @@ def do_push(repo, dests, to_push, dry_run):
             except GitRepositoryError as e:
                 gbp.log.err(e)
                 success = False
-        for k, v in to_push['refs'].items():
+        for k, v in to_push['refs']:
             gbp.log.info("%s %s to %s:%s" % (verb, v, dest, k))
             try:
                 repo.push(dest, v, k, dry_run=dry_run)
@@ -110,7 +110,7 @@ def main(argv):
     branch = None
     dest = None
     to_push = {
-        'refs': {},
+        'refs': [],
         'tags': [],
     }
 
@@ -150,7 +150,7 @@ def main(argv):
 
         if source.is_releasable() and branch:
             ref = 'refs/heads/%s' % branch
-            to_push['refs'][ref] = get_push_src(repo, ref, dtag)
+            to_push['refs'].append((ref, get_push_src(repo, ref, dtag)))
 
         if not source.is_native():
             if options.upstream_tag != '':
@@ -161,13 +161,13 @@ def main(argv):
 
             if options.upstream_branch != '':
                 ref = 'refs/heads/%s' % options.upstream_branch
-                to_push['refs'][ref] = get_push_src(repo, ref, utag)
+                to_push['refs'].append((ref, get_push_src(repo, ref, utag)))
 
             if options.pristine_tar:
                 commit = repo.get_pristine_tar_commit(source)
                 if commit:
                     ref = 'refs/heads/pristine-tar'
-                    to_push['refs'][ref] = get_push_src(repo, ref, commit)
+                    to_push['refs'].append((ref, get_push_src(repo, ref, commit)))
 
         if do_push(repo, [dest], to_push, dry_run=options.dryrun):
             retval = 0
