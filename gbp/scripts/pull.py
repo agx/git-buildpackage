@@ -217,8 +217,8 @@ def main(argv):
 
         if options.redo_pq:
             repo.set_branch(options.debian_branch)
-            Command("gbp-pq")(["drop"])
-            Command("gbp-pq")(["import"])
+            Command("gbp")(["pq", "drop"])
+            Command("gbp")(["pq", "import"])
 
         repo.set_branch(current)
     except KeyboardInterrupt:
