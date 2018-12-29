@@ -1,3 +1,27 @@
+git-buildpackage (0.9.13) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [55edef2] PatchSeries: Don't fail if there's only a patch end marker.
+    If the patch only has '---' we pass empty data to git-mail-info
+    otherwise.
+    Thanks to James Cowgill for the detailed report (Closes: #916545)
+  * [861121e] push: Push Debian branch first.
+    This makes sure in new repos this is the correct default branch.
+    (Closes: #916651)
+  * [81bfe17] rpm_ch: Escape \S in regex replacement.
+
+  [ Chris Lamb ]
+  * [b58311f] Fix typo (Closes: #914280)
+
+  [ Simon McVittie ]
+  * [cb4c916] zsh completion: Fix typo in redirection to _gbp-import-dsc
+    (Closes: #917636)
+  * [cd4c4d2] gbp-pull: Invoke gbp pq correctly for --redo-pq option
+    `gbp pull --redo-pq` assumed that `gbp-pq` exists in PATH, which isn't
+    normally true since 0.6.24 (2015). (Closes: #917637)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 29 Dec 2018 18:49:21 +0100
+
 git-buildpackage (0.9.12) unstable; urgency=medium
 
   * [aa7ca25] import_ref: Fix warning output. Otherwise import-ref
