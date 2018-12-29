@@ -425,7 +425,7 @@ _gbp-import-dsc() {
 
 _gbp-import-dscs() {
 	# same options
-	_gbp-import_dsc
+	_gbp-import-dsc
 	_arguments \
 		'--debsnap[Fetch snapshots from snapshots.debian.org]' \
 		'--ignore-repo-config[Ignore options in gbp.conf]'
