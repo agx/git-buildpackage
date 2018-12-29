@@ -260,7 +260,7 @@ def safe_patches(series, repo):
     patches = os.path.join(tmpdir, 'patches')
     series = os.path.join(patches, name)
 
-    gbp.log.debug("Safeing patches '%s' in '%s'" % (src, tmpdir))
+    gbp.log.debug("Saving patches '%s' in '%s'" % (src, tmpdir))
     shutil.copytree(src, patches)
 
     return (tmpdir, series)
