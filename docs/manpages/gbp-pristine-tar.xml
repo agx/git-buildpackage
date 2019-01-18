@@ -84,11 +84,11 @@
     <title>EXAMPLES</title>
     <para>Add pristine-tar commits for an upstream tarball:</para>
     <screen>
-      &gbp-pristine-tar; ../upstream-tarball-0.1.tar.gz</screen>
+      &gbp-pristine-tar; commit ../upstream-tarball-0.1.tar.gz</screen>
     <para>Same as above with an additional
     tarball <filename>../upstream-tarball-foo-0.1.tar.gz:</filename></para>
     <screen>
-      &gbp-pristine-tar; --component-tarball=foo ../upstream-tarball-0.1.tar.gz</screen>
+      &gbp-pristine-tar; --component-tarball=foo commit ../upstream-tarball-0.1.tar.gz</screen>
 </refsect1>
   <refsect1>
     &man.gbp.config-files;
