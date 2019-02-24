@@ -1613,7 +1613,7 @@ class GitRepository(object):
                              merge commit
         @type first_parent: C{bool}
         """
-        args = GitArgs('--pretty=format:%H')
+        args = GitArgs('--pretty=format:%H', '--no-show-signature')
         args.add_true(num, '-%d' % num)
         args.add_true(first_parent, '--first-parent')
         if since:
@@ -1694,7 +1694,7 @@ class GitRepository(object):
         commit_sha1 = self.rev_parse("%s^0" % commitish)
         args = GitArgs('--pretty=format:%an%x00%ae%x00%ad%x00%cn%x00%ce%x00%cd%x00%s%x00%f%x00%b%x00',
                        '-z', '--date=raw', '--no-renames', '--name-status',
-                       commit_sha1)
+                       '--no-show-signature', commit_sha1)
         out, err, ret = self._git_inout('show', args.args)
         if ret:
             raise GitRepositoryError("Unable to retrieve commit info for %s"
