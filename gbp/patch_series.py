@@ -255,6 +255,16 @@ class Dep3Patch(Patch):
                 changes += add_date(v)
             elif k == 'long_desc':
                 pass
+            elif k in (
+                'content-transfer-encoding',
+                'content-type',
+                'mime-version',
+            ):
+                # These can appear in `git format-patch` or `gbp pq export`
+                # output. They are not semantically significant: they're
+                # part of the encoding of the patch as an email, rather
+                # than real patch metadata.
+                pass
             else:
                 pseudo_headers += ''.join(v)
                 changes += 1
