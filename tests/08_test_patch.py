@@ -116,10 +116,6 @@ class TestBase64Patch(unittest.TestCase):
         self.assertEqual("Nick Leverton", p.author)
         self.assertEqual("nick@leverton.org", p.email)
         self.assertEqual("""\
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-
 Sort files when using mergelib to create libnullmailer.a, to get
 reproducible build
 
