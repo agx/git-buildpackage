@@ -1,3 +1,31 @@
+git-buildpackage (0.9.14) unstable; urgency=medium
+
+  [ Michael Prokop ]
+  * [4142928] docs: update examples for pristine-tar usage, requiring commit
+    action
+    (Closes: #919677)
+
+  [ Roberto C. Sánchez ]
+  * [d3f67c8] docs: Fix typo
+
+  [ Gabriel Filion ]
+  * [34b9da1] Disable PGP signatures when retrieving list of commits
+    (Closes: #923087)
+
+  [ Guido Günther ]
+  * [3e3458f] setup.py: Move version parser into setup.py.
+    This makes sure it ends up in the sdist tarball.
+
+  [ Simon McVittie ]
+  * [74669f0] Dep3Patch: Ignore MIME headers.
+    Otherwise, if we import a patch containing non-ASCII characters exported
+    by `gbp pq export` or `git format-patch` using DEP-3 syntax, we'd
+    misinterpret these fields as semantically significant and copy them into
+    pseudo-headers, causing them to be duplicated in the commit's long
+    description. (Closes: #924478)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 21 Mar 2019 10:33:34 +0100
+
 git-buildpackage (0.9.13) unstable; urgency=medium
 
   [ Guido Günther ]
