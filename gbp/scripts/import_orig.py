@@ -210,6 +210,14 @@ def postimport_hook(repo, tag, version, options):
              extra_env=env)()
 
 
+def postunpack_hook(repo, tmp_dir, options):
+    if options.postunpack:
+        Hook('Postunpack', options.postunpack,
+             extra_env={'GBP_GIT_DIR': repo.git_dir,
+                        'GBP_TMP_DIR': tmp_dir}
+             )(dir=tmp_dir)
+
+
 def is_30_quilt(repo, options):
     format_file = DebianSourceFormat.format_file
     try:
@@ -353,6 +361,7 @@ def build_parser(name):
     import_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                         dest="components")
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
+    cmd_group.add_config_file_option(option_name="postunpack", dest="postunpack")
 
     parser.add_boolean_config_file_option(option_name="interactive",
                                           dest='interactive')
@@ -442,6 +451,10 @@ def main(argv):
             set_bare_repo_options(options)
 
         upstream, tmpdir = unpack_tarballs(name, upstream, version, component_tarballs, options)
+        try:
+            postunpack_hook(repo, tmpdir, options)
+        except gbpc.CommandExecFailed:
+            raise GbpError()  # The hook already printed an error message
 
         (pristine_orig, linked) = prepare_pristine_tar(upstream.path,
                                                        name,

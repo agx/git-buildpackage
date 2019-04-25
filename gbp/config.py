@@ -160,6 +160,7 @@ class GbpOptionParser(OptionParser):
                 'postedit': '',
                 'postexport': '',
                 'postimport': '',
+                'postunpack': '',
                 'posttag': '',
                 'pq-from': 'DEBIAN',
                 'prebuild': '',
@@ -320,6 +321,9 @@ class GbpOptionParser(OptionParser):
             "default is '%(submodules)s'",
         'postimport':
             "hook run after a successful import, "
+            "default is '%(postimport)s'",
+        'postunpack':
+            "hook run after a unpacking the tarballs, "
             "default is '%(postimport)s'",
         'hooks':
             "Enable running all hooks, default is %(hooks)s",

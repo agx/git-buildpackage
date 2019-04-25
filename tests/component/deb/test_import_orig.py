@@ -100,6 +100,7 @@ class TestImportOrig(ComponentTestBase):
         orig = self._orig('2.8')
         ok_(import_orig(['arg0',
                          '--postimport=printenv > ../postimport.out',
+                         '--postunpack=printenv > ../postunpack.out',
                          '--no-interactive', '--pristine-tar', orig]) == 0)
         self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
