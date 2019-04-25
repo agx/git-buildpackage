@@ -36,6 +36,7 @@
       <arg><option>--[no-]filter-pristine-tar</option></arg>
       <arg><option>--[no-]symlink-orig</option></arg>
       <arg><option>--postimport=cmd</option></arg>
+      <arg><option>--postunpack=cmd</option></arg>
       <arg><option>--[no-]interactive</option></arg>
       <arg><option>--[no-]rollback</option></arg>
       <group choice="plain">
@@ -324,6 +325,31 @@
 	      <listitem><para>
 		  The Debian version of the package with a Debian
 		  revision of '-1'
+	      </para></listitem>
+	    </varlistentry>
+	  </variablelist>
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--postunpack=<replaceable>cmd</replaceable></option></term>
+        <listitem>
+          <para>
+            Run <replaceable>cmd</replaceable> after the import. This can be useful
+	    to e.g. convert or remove certain files prior to the import.
+            The hook gets passed the following environment variables:
+	  <variablelist>
+	    <varlistentry>
+	      <term><envar>GBP_TMP_DIR</envar></term>
+	      <listitem><para>
+		The temporary directory the tarballs are unapcked into.
+	      </para></listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><envar>GBP_GIT_DIR</envar></term>
+	      <listitem><para>
+		The directory of the git repository where the tarball
+		will be imported into.
 	      </para></listitem>
 	    </varlistentry>
 	  </variablelist>
