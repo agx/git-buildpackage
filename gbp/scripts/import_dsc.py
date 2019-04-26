@@ -252,9 +252,12 @@ def import_upstream(repo, source, dsc, options):
     author = committer = {}
     commit_msg = "Import %s" % msg
 
+    upstream_parent = repo.vcs_tag_parent(options.vcs_tag,
+                                          dsc.upstream_version)
     commit = repo.commit_dir(source.unpacked,
                              commit_msg,
                              branch,
+                             other_parents=upstream_parent,
                              author=author,
                              committer=committer)
 
@@ -335,6 +338,7 @@ def build_parser(name):
                                         dest="upstream_branch")
     branch_group.add_boolean_config_file_option(option_name="create-missing-branches",
                                                 dest="create_missing_branches")
+    branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag")
 
     tag_group.add_boolean_config_file_option(option_name="sign-tags",
                                              dest="sign_tags")
