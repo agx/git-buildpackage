@@ -337,8 +337,7 @@ def build_parser(name):
                                         dest="debian_branch")
     branch_group.add_config_file_option(option_name="upstream-branch",
                                         dest="upstream_branch")
-    branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag",
-                                        help="Upstream VCS tag add to the merge commit")
+    branch_group.add_config_file_option(option_name="upstream-vcs-tag", dest="vcs_tag")
     branch_group.add_boolean_config_file_option(option_name="merge", dest="merge")
     branch_group.add_config_file_option(option_name="merge-mode", dest="merge_mode")
 

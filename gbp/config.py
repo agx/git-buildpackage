@@ -375,7 +375,10 @@ class GbpOptionParser(OptionParser):
         'repo-email':
             "Set repo email from the DEBFULLNAME and DEBEMAIL "
             "environment variables ('DEBIAN') or fallback to the "
-            "git configuration ('GIT'), default is '%(repo-email)s'"
+            "git configuration ('GIT'), default is '%(repo-email)s'",
+        'upstream-vcs-tag':
+            "Upstream VCS tag added to the merge commit, "
+            "default is '%(upstream-vcs-tag)s'",
     }
 
     short_opts = {
