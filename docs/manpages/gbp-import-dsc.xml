@@ -33,6 +33,7 @@
       <arg><option>--skip-debian-tag</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--upstream-vcs-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
       <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
       <arg choice="plain"><replaceable>debian-source.dsc</replaceable></arg>
@@ -135,6 +136,24 @@
           Use this tag format when tagging upstream versions,
           default is <replaceable>upstream/%(version)s</replaceable>.
           </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-vcs-tag</option>=<replaceable>tag-format</replaceable>
+        </term>
+        <listitem>
+          <para>
+          Add <replaceable>tag-format</replaceable> as additional parent to the
+          commit of the upstream tarball. Useful when upstream uses git and you
+          want to link to its revision history. The
+          <replaceable>tag-format</replaceable> can be a pattern similar to
+          what <option>--upstream-tag</option> supports.
+          </para>
+	  <para>
+	    The default is to not add upsteam tags as additional
+	    parents since this requires additional setup to have the upstream
+	    sources in the same repository.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
