@@ -259,7 +259,9 @@ def debian_branch_merge_by_replace(repo, tag, version, options):
     repo.update_ref("refs/heads/%s" % options.debian_branch, commit,
                     msg="gbp: Updating %s after import of %s" % (options.debian_branch,
                                                                  tag))
-    repo.force_head(commit, hard=True)
+    current_branch = repo.get_branch()
+    if current_branch == options.debian_branch:
+        repo.force_head(commit, hard=True)
 
 
 def debian_branch_merge_by_merge(repo, tag, version, options):
