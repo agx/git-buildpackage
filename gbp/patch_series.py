@@ -145,7 +145,7 @@ class Patch(object):
             if ext in self.patch_exts:
                 subject = base
         except ValueError:
-                pass  # No ext so keep subject as is
+            pass  # No ext so keep subject as is
         return subject.lstrip('0123456789-') or subject
 
     def _get_info_field(self, key, get_val=None):

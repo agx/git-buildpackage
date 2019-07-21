@@ -330,8 +330,8 @@ def check_branch(repo, options):
 
     ignore = options.ignore_new or options.ignore_branch
     if branch != options.debian_branch and not ignore:
-            gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
-            raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
+        gbp.log.err("You are not on branch '%s' but on '%s'" % (options.debian_branch, branch))
+        raise GbpError("Use --git-ignore-branch to ignore or --git-debian-branch to set the branch name.")
     return branch
 
 

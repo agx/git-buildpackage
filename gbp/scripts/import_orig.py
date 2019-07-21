@@ -79,7 +79,7 @@ def prepare_pristine_tar(archive, pkg, version):
                 os.symlink(os.path.abspath(archive), link)
                 linked = True
         except OSError as err:
-                raise GbpError("Cannot symlink '%s' to '%s': %s" % (archive, link, err[1]))
+            raise GbpError("Cannot symlink '%s' to '%s': %s" % (archive, link, err[1]))
         return (link, linked)
     else:
         return (archive, linked)

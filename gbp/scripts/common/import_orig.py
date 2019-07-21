@@ -68,8 +68,8 @@ def cleanup_tmp_tree(tree):
 def is_link_target(target, link):
     """does symlink link already point to target?"""
     if os.path.exists(link):
-            if os.path.samefile(target, link):
-                return True
+        if os.path.samefile(target, link):
+            return True
     return False
 
 
