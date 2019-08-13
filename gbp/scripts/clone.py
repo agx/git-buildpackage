@@ -81,6 +81,8 @@ def repo_to_url(repo):
     """
     >>> repo_to_url("https://foo.example.com")
     'https://foo.example.com'
+    >>> repo_to_url("salsa:agx/git-buildpackage")
+    'https://salsa.debian.org/agx/git-buildpackage.git'
     >>> repo_to_url("github:agx/git-buildpackage")
     'https://github.com/agx/git-buildpackage.git'
     """
@@ -90,6 +92,8 @@ def repo_to_url(repo):
     else:
         proto, path = parts
 
+    if proto == 'salsa':
+        return 'https://salsa.debian.org/%s.git' % path
     if proto == 'github':
         return 'https://github.com/%s.git' % path
     elif proto in ['vcsgit', 'vcs-git']:
