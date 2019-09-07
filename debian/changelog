@@ -1,3 +1,30 @@
+git-buildpackage (0.9.15) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [b12b85a] import-orig: Allow to run a post unpack hook.
+    The working directory of the hook is the top temporary directory the
+    tarballs are being unpacked into.
+  * [6696656] docs: Document gbp import-orig --postunpack
+  * [292edcf] import_orig: Move upstream-vcs-tag's help to config.
+    This way it can be shared.
+  * [61757c0] import_dsc: Support upstream-vcs-tag (Closes: #782886)
+  * [1acd0bb] docs: import-dsc: Document --upstream-vcs-tag
+  * [b888349] gbp-clone: Support salsa: pseudo urls
+  * Fix flake8 errors (Closes: #939648)
+
+  [ Hideki Yamane ]
+  * [d1960b3] gbp.conf: Set default compresson to xz.
+    The value is commented out so does not have any effect but it's
+    better to recommend the right value.
+
+  [ Maximiliano Curia ]
+  * [8afb7ee] import-orig/merge_replace Avoid calling force_head.
+    The debian_merge_by_replace function ends up calling force_head, but up to
+    this point the current branch could be anything, and thus when called from
+    a feature branch the latest commits get lost.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 07 Sep 2019 10:58:51 -0700
+
 git-buildpackage (0.9.14) unstable; urgency=medium
 
   [ Michael Prokop ]
