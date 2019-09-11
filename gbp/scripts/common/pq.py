@@ -277,11 +277,14 @@ def get_maintainer_from_control(repo):
     control = os.path.join(repo.path, 'debian', 'control')
 
     maint_re = re.compile('Maintainer: +(?P<name>.*[^ ]) *<(?P<email>.*)>')
-    with open(control, encoding='utf-8') as f:
-        for line in f:
-            m = maint_re.match(line)
-            if m:
-                return GitModifier(m.group('name'), m.group('email'))
+    try:
+        with open(control, encoding='utf-8') as f:
+            for line in f:
+                m = maint_re.match(line)
+                if m:
+                    return GitModifier(m.group('name'), m.group('email'))
+    except FileNotFoundError:
+        raise GbpError("Debian control file {} not found".format(control))
     return GitModifier()
 
 
