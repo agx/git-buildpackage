@@ -152,7 +152,7 @@ by version number.
     simple. You can either rename that branch to the default
     <option>upstream-branch</option> name <emphasis>upstream</emphasis> with:
 <programlisting>
-  &gitcmd; branch -m upstream theupstream-branch
+  &gitcmd; branch -m theupstream-branch upstream
 </programlisting>
     or you can tell &gbp-buildpackage; the name of the branch to use as
     <option>upstream-branch</option>:
