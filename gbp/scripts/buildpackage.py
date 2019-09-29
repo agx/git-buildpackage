@@ -287,7 +287,7 @@ def disable_hooks(options):
             setattr(options, hook, '')
 
 
-def changes_file_suffix(builder, dpkg_args):
+def changes_file_suffix(builder, dpkg_args, arch):
     """
     >>> changes_file_suffix('debuild', ['-A'])
     'all'
@@ -306,15 +306,15 @@ def changes_file_suffix(builder, dpkg_args):
     elif '-A' in args:
         return 'all'
     else:
-        return os.getenv('ARCH', None) or du.get_arch()
+        return arch or os.getenv('ARCH', None) or du.get_arch()
 
 
-def changes_file_name(source, build_dir, builder, dpkg_args):
+def changes_file_name(source, build_dir, builder, dpkg_args, arch):
     return os.path.abspath("%s/../%s_%s_%s.changes" %
                            (build_dir,
                             source.changelog.name,
                             source.changelog.noepoch,
-                            changes_file_suffix(builder, dpkg_args)))
+                            changes_file_suffix(builder, dpkg_args, arch)))
 
 
 def check_branch(repo, options):
@@ -514,7 +514,7 @@ def main(argv):
                      else source.upstream_version)
             export_dir = os.path.join(output_dir, "%s-%s" % (source.sourcepkg, major))
             build_dir = export_dir if options.export_dir else repo.path
-            changes_file = changes_file_name(source, build_dir, options.builder, dpkg_args)
+            changes_file = changes_file_name(source, build_dir, options.builder, dpkg_args, options.pbuilder_arch)
 
             # Run preexport hook
             if options.export_dir and options.preexport:
