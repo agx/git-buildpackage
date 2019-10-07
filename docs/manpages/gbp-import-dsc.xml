@@ -150,7 +150,7 @@
           what <option>--upstream-tag</option> supports.
           </para>
 	  <para>
-	    The default is to not add upsteam tags as additional
+	    The default is to not add upstream tags as additional
 	    parents since this requires additional setup to have the upstream
 	    sources in the same repository.
 	  </para>

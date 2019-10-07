@@ -37,7 +37,7 @@
     <title>DESCRIPTION</title>
     <para>
       &gbp-import-ref; merges upstream git commits onto your &debian-branch;
-      You can either specifiy a branch to merge, give an upstream
+      You can either specify a branch to merge, give an upstream
       version or specify the commit id directly. If no tag exists for the imported
       commit it will be automatically created.
     </para>
