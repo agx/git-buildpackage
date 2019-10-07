@@ -21,6 +21,9 @@ class MockGitRepository:
     def has_pristine_tar_branch(self):
         return self.with_branch
 
+    def has_branch(self, branch, remote=False):
+        return branch == 'pristine-tar' and self.with_branch
+
     def pristine_tar_branch(self):
         'pristine-tar'
 

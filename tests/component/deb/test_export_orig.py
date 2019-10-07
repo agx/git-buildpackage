@@ -21,9 +21,11 @@ import os
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
+from tests.component.deb.fixtures import RepoFixtures
 
 from nose.tools import ok_, assert_false, assert_true
 
+from gbp.scripts.clone import main as clone
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.export_orig import main as export_orig
 
@@ -136,3 +138,19 @@ class TestExportOrig(ComponentTestBase):
         for t in tarballs:
             self.assertFalse(os.path.exists(os.path.join('..', t)), "Tarball %s found" % t)
             self.assertTrue(os.path.exists(os.path.join(DEB_TEST_DATA_DIR, 'foo-2.8', t)), "Tarball %s not found" % t)
+
+    @RepoFixtures.quilt30(opts=['--pristine-tar'])
+    def test_pristine_tar_commit_on_origin(self, repo):
+        """Test that we can create tarball from 'origin/pristine-tar'"""
+
+        assert_true(repo.has_branch('pristine-tar'),
+                    "Pristine-tar branch must exist in origin")
+        dest = os.path.join(self._tmpdir, 'cloned_repo')
+        clone(['arg0', repo.path, dest])
+        cloned = ComponentTestGitRepository(dest)
+
+        os.chdir(cloned.path)
+        assert_false(cloned.has_branch('pristine-tar'),
+                     "Pristine-tar branch must not exist in clone")
+        ret = export_orig(['arg0', '--pristine-tar'])
+        ok_(ret == 0, "Exporting tarballs must not fail")

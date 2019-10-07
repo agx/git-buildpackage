@@ -235,14 +235,20 @@ def guess_comp_type(comp_type, source, repo, tarball_dir):
             comp_type = 'auto'
 
     if comp_type == 'auto':
-        if repo and repo.has_pristine_tar_branch():
+        branch = None
+        if repo.has_branch('pristine-tar'):
+            branch = 'pristine-tar'
+        elif repo.has_branch('origin/pristine-tar', remote=True):
+            branch = 'origin/pristine-tar'
+
+        if branch:
             regex = r'pristine-tar .* %s_%s\.orig.tar\.' % (source.name, source.upstream_version)
-            commits = repo.grep_log(regex, repo.pristine_tar_branch, merges=False)
+            commits = repo.grep_log(regex, branch, merges=False)
             if commits:
                 commit = commits[-1]
                 gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
             else:
-                commit = repo.pristine_tar_branch
+                commit = branch
             tarball = repo.get_commit_info(commit)['subject']
             (base_name, archive_fmt, comp_type) = Archive.parse_filename(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
@@ -250,8 +256,7 @@ def guess_comp_type(comp_type, source, repo, tarball_dir):
                 comp_type = 'gzip'
                 gbp.log.warn("Unknown compression type of %s, assuming %s" % (tarball, comp_type))
         else:
-            if not tarball_dir:
-                tarball_dir = '..'
+            tarball_dir = tarball_dir or '..'
             detected = None
             for comp in Compressor.Opts.keys():
                 if du.DebianPkgPolicy.has_orig(source.upstream_tarball_name(comp), tarball_dir):
