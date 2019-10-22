@@ -1,3 +1,17 @@
+git-buildpackage (0.9.16) unstable; urgency=medium
+
+  * [fef81e2] pq: Don't bubble up FileNotFoundException (Closes: #940043)
+  * [fb26fd9] docs: Fix wrong argument order of branch rename.
+    Thanks to Jens Reyer (Closes: #941110)
+  * [11f9f31] export-orig: Check 'origin/pristine-tar' as well for compression
+    type (Closes: #941894)
+  * [916f538] docs: Fix typos.
+    Thanks to lintian
+  * [6cf1f7e] d/control: Bump standards version
+    no changes needed
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 22 Oct 2019 17:36:46 +0200
+
 git-buildpackage (0.9.15) unstable; urgency=medium
 
   [ Guido Günther ]
