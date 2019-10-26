@@ -236,12 +236,13 @@ def guess_comp_type(comp_type, source, repo, tarball_dir):
 
     if comp_type == 'auto':
         branch = None
-        if repo.has_branch('pristine-tar'):
-            branch = 'pristine-tar'
-        elif repo.has_branch('origin/pristine-tar', remote=True):
-            branch = 'origin/pristine-tar'
+        if repo:
+            if repo.has_branch('pristine-tar'):
+                branch = 'pristine-tar'
+            elif repo.has_branch('origin/pristine-tar', remote=True):
+                branch = 'origin/pristine-tar'
 
-        if branch:
+        if branch is not None:
             regex = r'pristine-tar .* %s_%s\.orig.tar\.' % (source.name, source.upstream_version)
             commits = repo.grep_log(regex, branch, merges=False)
             if commits:

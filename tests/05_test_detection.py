@@ -139,3 +139,8 @@ class TestDetection(unittest.TestCase):
         guessed = export_orig.guess_comp_type(
             'gz', self.source, repo, None)
         self.assertEqual("gzip", guessed)
+
+    def test_guess_comp_type_no_repo(self):
+        guessed = export_orig.guess_comp_type(
+            'auto', self.source, None, str(self.tmpdir))
+        self.assertEqual('gzip', guessed)
