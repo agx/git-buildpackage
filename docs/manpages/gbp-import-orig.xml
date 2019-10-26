@@ -39,6 +39,7 @@
       <arg><option>--postunpack=cmd</option></arg>
       <arg><option>--[no-]interactive</option></arg>
       <arg><option>--[no-]rollback</option></arg>
+      <arg><option>--upstream-signatures=</option>[auto|on|off]</arg>
       <group choice="plain">
         <arg choice="plain"><replaceable>filename</replaceable></arg>
         <arg choice="plain"><replaceable>url</replaceable></arg>
@@ -379,6 +380,20 @@
         <listitem>
           <para>
 	    Rollback changes in case of an error.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-signatures=</option>[auto|on|off]</term>
+        <listitem>
+          <para>
+	    Whether upstream signatures should be imported as well (when
+	    using pristine-tar). <emphasis>no</emphasis> turns this
+            off completely while <emphasis>yes</emphasis> always tries to
+	    import a signature (which can be useful if you want to fail if
+	    e.g. &uscan; did not fetch a signature). The default
+            <emphasis>auto</emphasis> means to import a signature file if
+	    present but do nothing otherwise.
           </para>
         </listitem>
       </varlistentry>
