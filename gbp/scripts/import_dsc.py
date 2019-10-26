@@ -488,9 +488,13 @@ def main(argv):
 
         # unpack
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
-        # FIXME: need to add signatures to DebianUpstreamSource later here
-        sources = [DebianUpstreamSource(dsc.tgz)]
-        sources += [DebianAdditionalTarball(t[1], t[0]) for t in dsc.additional_tarballs.items()]
+        sigfile = '{}.asc'.format(dsc.tgz)
+        sigfile = sigfile if sigfile in dsc.sigs else None
+        sources = [DebianUpstreamSource(dsc.tgz, sig=sigfile)]
+        for component, tarball in dsc.additional_tarballs.items():
+            sigfile = '{}.asc'.format(tarball)
+            sigfile = sigfile if sigfile in dsc.sigs else None
+            sources.append(DebianAdditionalTarball(tarball, component))
         sources[0].unpack(dirs['tmp'], options.filters)
         for tarball in sources[1:]:
             gbp.log.info("Found component tarball '%s'" % os.path.basename(tarball.path))
