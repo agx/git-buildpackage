@@ -178,7 +178,12 @@ def find_upstream(use_uscan, args, version=None):
     elif len(args) == 0:
         raise GbpError("No archive to import specified. Try --help.")
     else:
-        return DebianUpstreamSource(args[0])
+        sig = '{}.asc'.format(args[0])
+        if os.path.exists(sig):
+            gbp.log.debug("Signature {} found for {}".format(args[0], sig))
+        else:
+            sig = None
+        return DebianUpstreamSource(args[0], sig=sig)
 
 
 def debian_branch_merge(repo, tag, version, options):
