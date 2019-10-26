@@ -44,6 +44,7 @@ class UpstreamSource(object):
         self._pkg_policy = pkg_policy
         self._path = name
         self.unpacked = unpacked
+        self._sig = sig
 
         self._check_orig()
         if self.is_dir():
@@ -92,6 +93,10 @@ class UpstreamSource(object):
     @property
     def path(self):
         return self._path.rstrip('/')
+
+    @property
+    def signaturefile(self):
+        return self._sig
 
     def unpack(self, dir, filters=None):
         """
