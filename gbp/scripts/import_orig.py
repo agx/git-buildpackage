@@ -25,8 +25,7 @@ import time
 import gbp.command_wrappers as gbpc
 from gbp.deb import (DebianPkgPolicy, parse_changelog_repo)
 from gbp.deb.format import DebianSourceFormat
-from gbp.deb.upstreamsource import (DebianUpstreamSource,
-                                    DebianAdditionalTarball)
+from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.deb.uscan import (Uscan, UscanError)
 from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.deb.git import GitRepositoryError
@@ -371,6 +370,9 @@ def build_parser(name):
                                                 dest="symlink_orig")
     import_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                         dest="components")
+    import_group.add_config_file_option(option_name="upstream-signatures",
+                                        dest="upstream_signatures",
+                                        type='tristate')
     cmd_group.add_config_file_option(option_name="postimport", dest="postimport")
     cmd_group.add_config_file_option(option_name="postunpack", dest="postunpack")
 
@@ -497,6 +499,10 @@ def main(argv):
             if options.pristine_tar:
                 if pristine_orig:
                     repo.rrr_branch('pristine-tar')
+                    for source in sources:
+                        # Enforce signature file exists with --upstream-signatures=on
+                        if options.upstream_signatures.is_on() and not source.signaturefile:
+                            raise GbpError("%s does not have a signature file" % source.path)
                     # For all practical purposes we're interested in pristine_orig's path
                     if pristine_orig != sources[0].path:
                         sources[0]._path = pristine_orig

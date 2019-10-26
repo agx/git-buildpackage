@@ -181,6 +181,7 @@ class GbpOptionParser(OptionParser):
                 'submodules': 'False',
                 'symlink-orig': 'True',
                 'tarball-dir': '',
+                'upstream-signatures': 'auto',
                 'template-dir': '',
                 'time-machine': 1,
                 'track': 'True',
@@ -327,6 +328,8 @@ class GbpOptionParser(OptionParser):
             "default is '%(postimport)s'",
         'hooks':
             "Enable running all hooks, default is %(hooks)s",
+        'upstream-signatures':
+            "Whether to import/export upstream tarball signatures",
         'time-machine':
             "don't try to apply patch queue to head commit only. "
             "Try at most TIME_MACHINE commits back, "
