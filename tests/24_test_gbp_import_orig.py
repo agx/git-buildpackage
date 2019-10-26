@@ -8,9 +8,14 @@ from collections import namedtuple
 
 from gbp.scripts.import_orig import (debian_branch_merge_by_replace,
                                      GbpError,
-                                     is_30_quilt)
+                                     is_30_quilt,
+                                     prepare_pristine_tar)
+
 from gbp.scripts.common.import_orig import download_orig
 from . testutils import DebianGitTestRepo
+
+import shutil
+import tempfile
 
 
 @unittest.skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
@@ -88,3 +93,40 @@ class TestMergeModeReplace(DebianGitTestRepo):
         self.assertTrue(os.path.exists("upstream_file"))
         # … but upsream's debian dir must not
         self.assertFalse(os.path.exists("debian/changelog"))
+
+
+class TestGbpBuildpackagePreparePristineTar(unittest.TestCase):
+    def setUp(self):
+        self._cwd = os.getcwd()
+        self._tmpdir = os.path.abspath(tempfile.mkdtemp(prefix='gbp_', dir='.'))
+        # we need to change into a temp subdir since the link is
+        # create in '..'
+        d = os.path.join(self._tmpdir, 'd')
+        os.mkdir(d)
+        os.chdir(d)
+
+    def tearDown(self):
+        if not os.getenv("GBP_TESTS_NOCLEAN"):
+            shutil.rmtree(self._tmpdir)
+        os.chdir(self._cwd)
+
+    def test_dir(self):
+        ret = prepare_pristine_tar(self._tmpdir, 'foo', '1.0')
+        self.assertEquals(ret, (None, False))
+
+    def test_tar(self):
+        archive = '{}/foo.tgz'.format(self._tmpdir)
+        ret = prepare_pristine_tar(archive, 'foo', '1.0')
+        self.assertEquals(ret, ('../foo_1.0.orig.tar.gz', True))
+        self.assertTrue(os.path.islink(
+            os.path.join(self._tmpdir, 'foo_1.0.orig.tar.gz')))
+
+    def test_signature(self):
+        archive = '{}/foo.tgz'.format(self._tmpdir)
+        signature = '{}.asc'.format(archive)
+        with open(signature, 'w') as f:
+            f.write('')
+        ret = prepare_pristine_tar(archive, 'foo', '1.0')
+        self.assertEquals(ret, ('../foo_1.0.orig.tar.gz', True))
+        self.assertTrue(os.path.islink(
+            os.path.join(self._tmpdir, 'foo_1.0.orig.tar.gz.asc')))
