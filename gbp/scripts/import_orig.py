@@ -42,6 +42,22 @@ from gbp.scripts.common.hook import Hook
 from gbp.deb.rollbackgit import RollbackDebianGitRepository
 
 
+def maybe_link(orig, link):
+    """
+    Create a symlink named link pointing to orig if
+    that is not the case already.
+    """
+    if is_link_target(orig, link):
+        return False
+
+    if os.path.exists(link):
+        backup = "%s.%d" % (link, time.time())
+        gbp.log.info("%s already exists, moving to %s" % (link, backup))
+        shutil.move(link, backup)
+    os.symlink(os.path.abspath(orig), link)
+    return True
+
+
 def prepare_pristine_tar(archive, pkg, version):
     """
     Prepare the upstream source for pristine tar import.
@@ -49,7 +65,7 @@ def prepare_pristine_tar(archive, pkg, version):
     This checks if the upstream source is actually a tarball
     and creates a symlink from I{archive}
     to I{<pkg>_<version>.orig.tar.<ext>} so pristine-tar will
-    see the correct basename.
+    see the correct basename. Same goes for an optional signature.
 
     @param archive: the upstream source's name
     @type archive: C{str}
@@ -61,25 +77,21 @@ def prepare_pristine_tar(archive, pkg, version):
     """
     linked = False
     if os.path.isdir(archive):
-        return None, None
+        return None, False
 
     ext = os.path.splitext(archive)[1]
     if ext in ['.tgz', '.tbz2', '.tlz', '.txz']:
         ext = ".%s" % ext[2:]
 
     link = "../%s_%s.orig.tar%s" % (pkg, version, ext)
-
     if os.path.basename(archive) != os.path.basename(link):
         try:
-            if not is_link_target(archive, link):
-                if os.path.exists(link):
-                    backup = "%s.%d" % (link, time.time())
-                    gbp.log.info("%s already exists, moving to %s" % (link, backup))
-                    shutil.move(link, backup)
-                os.symlink(os.path.abspath(archive), link)
-                linked = True
+            linked = maybe_link(archive, link)
+            archive_sig = '{}.asc'.format(archive)
+            if os.path.exists(archive_sig):
+                maybe_link(archive_sig, '{}.asc'.format(link))
         except OSError as err:
-            raise GbpError("Cannot symlink '%s' to '%s': %s" % (archive, link, err[1]))
+            raise GbpError("Cannot symlink '%s' to '%s': %s" % (archive, link, err))
         return (link, linked)
     else:
         return (archive, linked)
