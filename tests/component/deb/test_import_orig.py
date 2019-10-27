@@ -22,7 +22,7 @@ import tarfile
 
 from mock import patch, DEFAULT
 
-from tests.component import (ComponentTestBase, skipUnless)
+from tests.component import (ComponentTestBase, ComponentTestGitRepository, skipUnless)
 from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL
 from tests.component.deb.fixtures import RepoFixtures
 
@@ -354,3 +354,50 @@ class TestImportOrig(ComponentTestBase):
         orig = self._orig('2.8')
         submodule.create_branch('upstream', 'origin/upstream')
         ok_(import_orig(['arg0', '--no-interactive', orig]) == 0)
+
+    def test_with_signaturefile(self):
+        """
+        Test that importing a new version with a signature file works
+        """
+        repo = ComponentTestGitRepository.create(self.pkg)
+        os.chdir(self.pkg)
+        orig = self._orig('2.8')
+        ok_(import_orig(['arg0',
+                         '--postimport=printenv > ../postimport.out',
+                         '--postunpack=printenv > ../postunpack.out',
+                         '--no-interactive', '--pristine-tar',
+                         '--upstream-signatures=on', orig]) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['upstream/2.8'])
+        ok_(os.path.exists('../postimport.out'))
+        eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.id',
+                                           b'hello-debhelper_2.8.orig.tar.gz.delta',
+                                           b'hello-debhelper_2.8.orig.tar.gz.asc'})
+        self.check_hook_vars('../postimport', [("GBP_BRANCH", "master"),
+                                               ("GBP_TAG", "upstream/2.8"),
+                                               ("GBP_UPSTREAM_VERSION", "2.8"),
+                                               ("GBP_DEBIAN_VERSION", "2.8-1")])
+
+    def test_with_auto_signaturefile(self):
+        """
+        Test that importing a new version with a signature file works
+        when using auto mode.
+        """
+        repo = ComponentTestGitRepository.create(self.pkg)
+        os.chdir(self.pkg)
+        orig = self._orig('2.8')
+        ok_(import_orig(['arg0',
+                         '--postimport=printenv > ../postimport.out',
+                         '--postunpack=printenv > ../postunpack.out',
+                         '--no-interactive', '--pristine-tar',
+                         '--upstream-signatures=auto', orig]) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['upstream/2.8'])
+        ok_(os.path.exists('../postimport.out'))
+        eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.id',
+                                           b'hello-debhelper_2.8.orig.tar.gz.delta',
+                                           b'hello-debhelper_2.8.orig.tar.gz.asc'})
+        self.check_hook_vars('../postimport', [("GBP_BRANCH", "master"),
+                                               ("GBP_TAG", "upstream/2.8"),
+                                               ("GBP_UPSTREAM_VERSION", "2.8"),
+                                               ("GBP_DEBIAN_VERSION", "2.8-1")])
