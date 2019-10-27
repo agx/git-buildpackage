@@ -367,3 +367,20 @@ class TestImportDsc(ComponentTestBase):
         ok_(os.path.exists("./configure.ac"))
         ok_(not os.path.exists("./debian/patches/series"))
         ok_(not os.path.exists("./debian/patches/AUTHORS"))
+
+    def test_import_signature(self):
+        dscfile = self._dsc30('2.8-1')
+        assert import_dsc(['arg0',
+                           '--verbose',
+                           '--pristine-tar',
+                           '--debian-branch=master',
+                           '--upstream-branch=upstream',
+                           dscfile]) == 0
+        repo = ComponentTestGitRepository('hello-debhelper')
+        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        commits, expected = len(repo.get_commits()), 2
+        commits, expected = len(repo.get_commits(until='pristine-tar')), 1
+        ok_(commits == expected, "Found %d pristine-tar commits instead of %d" % (commits, expected))
+        eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.delta',
+                                           b'hello-debhelper_2.8.orig.tar.gz.id',
+                                           b'hello-debhelper_2.8.orig.tar.gz.asc'})
