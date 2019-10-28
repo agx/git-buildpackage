@@ -27,7 +27,7 @@ Build-Depends:
  cpio <!nocheck>,
  devscripts (>= 2.17.7~) <!nocheck>,
  git (>= 1:1.7.9.1-1~) <!nocheck>,
- pristine-tar <!nocheck>,
+ pristine-tar (>= 1.14) <!nocheck>,
  rpm <!nocheck>,
  unzip <!nocheck>,
  zipmerge <!nocheck>,
@@ -51,7 +51,7 @@ Depends: ${python3:Depends},
  python3-dateutil,
  python3-pkg-resources,
  sensible-utils,
-Recommends: pristine-tar (>= 0.5),
+Recommends: pristine-tar (>= 1.41),
  cowbuilder | pbuilder | sbuild,
  python3-requests
 Suggests: python3-notify2, unzip, sudo
