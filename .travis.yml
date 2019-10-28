@@ -4,16 +4,11 @@ language: python
 
 services:
   - docker
+dist: bionic 
 
 python:
-  - "3.4"
-  - "3.5"
   - "3.6"
-matrix:
-  include:
-    - python: 3.7
-      dist: xenial
-      sudo: true
+  -  3.7
 
 before_install:
   - sudo apt-get -qq update
