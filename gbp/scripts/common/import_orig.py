@@ -181,4 +181,4 @@ def download_orig(url):
         gbp.log.debug("Signature {} found for {}".format(target, sig))
     else:
         sig = None
-    return DebianUpstreamSource(target, signaturefile=sig)
+    return DebianUpstreamSource(target, sig=sig)
