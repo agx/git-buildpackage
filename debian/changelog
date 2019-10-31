@@ -1,3 +1,20 @@
+git-buildpackage (0.9.17) unstable; urgency=medium
+
+  * [6248524] export_orig: Don't fail without a repository.
+    This is a valid use case in overlay mode
+    Thanks to Thomas Koch for the report
+  * [ff9ff7e] Use UpstreamSource for additional tarballs as well.
+    This will help on upstream tarball signatures as well as
+    improving additional tarball handling.
+  * [16781c8] import-orig: Handle tarball signature when using pristine-tar
+  * [4a97a1c] import-dsc: Import signature if present in dsc
+  * [e541f35] Recommend and build depend on pristine-tar 1.41
+    since only this version has signature support.
+  * [12ed9fb] travis-ci: Switch to bionic.
+    Need to drop python 3.4 for that since it's not available on bionic.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 31 Oct 2019 19:15:14 +0100
+
 git-buildpackage (0.9.16) unstable; urgency=medium
 
   * [fef81e2] pq: Don't bubble up FileNotFoundException (Closes: #940043)
