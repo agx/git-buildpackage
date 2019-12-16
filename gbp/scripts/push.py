@@ -164,7 +164,7 @@ def main(argv):
                 to_push['refs'].append((ref, get_push_src(repo, ref, utag)))
 
             if options.pristine_tar:
-                commit = repo.get_pristine_tar_commit(source)
+                commit, _ = repo.get_pristine_tar_commit(source)
                 if commit:
                     ref = 'refs/heads/pristine-tar'
                     to_push['refs'].append((ref, get_push_src(repo, ref, commit)))

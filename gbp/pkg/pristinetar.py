@@ -63,25 +63,38 @@ class PristineTar(Command):
         @param archive_regexp: archive name to look for (regexp wildcards allowed)
         @type archive_regexp: C{str}
         """
-        return True if self.get_commit(archive_regexp) else False
+        return True if self.get_commit(archive_regexp)[0] else False
+
+    def _commit_contains_file(self, commit, regexp):
+        """Does the given commit contain a file with the given regex"""
+        files = self.repo.get_commit_info(commit)['files']
+        cregex = re.compile(regexp)
+        for _, v in files.items():
+            for f in v:
+                if cregex.match(f.decode()):
+                    return True
+        return False
 
     def get_commit(self, archive_regexp):
         """
         Get the pristine-tar commit of a package matching I{archive_regexp}.
+        Checks also whether the commit contains a signature file.
 
         @param archive_regexp: archive name to look for (regexp wildcards allowed)
         @type archive_regexp: C{str}
+        @return: Commit, True if commit contains a signature file
+        @rtype: C{tuple} of C{str} and C{bool}
         """
         if not self.repo.has_pristine_tar_branch():
-            return None
+            return None, False
 
         regex = ('pristine-tar .* %s' % archive_regexp)
         commits = self.repo.grep_log(regex, self.branch, merges=False)
         if commits:
             commit = commits[-1]
             gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
-            return commit
-        return None
+            return commit, self._commit_contains_file(commit, '%s.asc' % archive_regexp)
+        return None, False
 
     def checkout(self, archive, quiet=False, signaturefile=None):
         """

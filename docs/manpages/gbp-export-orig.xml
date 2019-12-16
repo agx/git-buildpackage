@@ -31,6 +31,7 @@
       <arg><option>--compression-level=</option><replaceable>LEVEL</replaceable></arg>
       <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--upstream-signatures=</option>[auto|on|off]</arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -206,6 +207,15 @@
         </listitem>
       </varlistentry>
     </variablelist>
+    <varlistentry>
+        <term><option>--upstream-signatures=</option>[auto|on|off]
+        </term>
+        <listitem>
+          <para>
+          Whether to export with upstream signatures.
+          </para>
+        </listitem>
+      </varlistentry>
   </refsect1>
   <refsect1>
     <title>EXAMPLES</title>

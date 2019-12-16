@@ -395,6 +395,8 @@ def build_parser(name, prefix=None):
                                       help="Compression type, default is '%(compression)s'")
     orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
                                       help="Compression level, default is '%(compression-level)s'")
+    orig_group.add_config_file_option(option_name="upstream-signatures", dest="upstream_signatures",
+                                      help="use upstream signatures, default is auto", type='tristate')
     orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                       dest="components")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")

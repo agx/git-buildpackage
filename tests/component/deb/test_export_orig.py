@@ -112,7 +112,7 @@ class TestExportOrig(ComponentTestBase):
                            '--component=foo',
                            '--pristine-tar'])
         ok_(ret == 1, "Exporting tarballs must fail")
-        self._check_log(-1, ".*git show refs/heads/pristine-tar:.*failed")
+        self._check_log(-1, "gbp:error: Can not find pristine tar commit for archive 'hello-debhelper_2.8.orig.tar.gz'")
 
     def test_tarball_dir_version_replacement(self):
         """Test that generating tarball from directory version substitution works"""
@@ -138,6 +138,90 @@ class TestExportOrig(ComponentTestBase):
         for t in tarballs:
             self.assertFalse(os.path.exists(os.path.join('..', t)), "Tarball %s found" % t)
             self.assertTrue(os.path.exists(os.path.join(DEB_TEST_DATA_DIR, 'foo-2.8', t)), "Tarball %s not found" % t)
+
+    def test_pristine_tar_upstream_signatures_with(self):
+        """Test that exporting upstream signatures in pristine tar works with imported signature"""
+        pkg = 'hello-debhelper'
+        dsc = self._dsc_name(pkg, '2.8-1', 'dsc-3.0')
+        files = ["%s_2.8.orig.tar.gz" % pkg,
+                 "%s_2.8.orig.tar.gz.asc" % pkg]
+
+        assert import_dsc(['arg0', '--pristine-tar', dsc]) == 0
+        ComponentTestGitRepository(pkg)
+        os.chdir(pkg)
+        for f in files:
+            self.assertFalse(os.path.exists(os.path.join('..', f)), "File %s must not exist" % f)
+
+        ret = export_orig(['arg0',
+                           '--pristine-tar',
+                           '--upstream-signatures=no'])
+        ok_(ret == 0, "Exporting tarballs failed")
+        self.assertTrue(os.path.exists(os.path.join('..', files[0])), "Tarball %s not found" % files[0])
+        self.assertFalse(os.path.exists(os.path.join('..', files[1])), "Signature %s found" % files[1])
+
+        os.remove(os.path.join('..', files[0]))
+        for f in files:
+            self.assertFalse(os.path.exists(os.path.join('..', f)), "File %s must not exist" % f)
+
+        ret = export_orig(['arg0',
+                           '--pristine-tar',
+                           '--upstream-signatures=auto'])
+        ok_(ret == 0, "Exporting tarballs failed")
+        for f in files:
+            self.assertTrue(os.path.exists(os.path.join('..', f)), "File %s not found" % f)
+
+        for f in files:
+            os.remove(os.path.join('..', f))
+            self.assertFalse(os.path.exists(os.path.join('..', f)), "File %s must not exist" % f)
+
+        ret = export_orig(['arg0',
+                           '--pristine-tar',
+                           '--upstream-signatures=on'])
+        ok_(ret == 0, "Exporting tarballs failed")
+        for f in files:
+            self.assertTrue(os.path.exists(os.path.join('..', f)), "File %s not found" % f)
+
+    def test_pristine_tar_upstream_signatures_without(self):
+        """Test that exporting upstream signatures in pristine tar works without imported signature"""
+        pkg = 'hello-debhelper'
+        dsc = self._dsc_name(pkg, '2.6-1', 'dsc-3.0')
+        files = ["%s_2.6.orig.tar.gz" % pkg,
+                 "%s_2.6.orig.tar.gz.asc" % pkg]
+
+        assert import_dsc(['arg0', '--pristine-tar', dsc]) == 0
+        ComponentTestGitRepository(pkg)
+        os.chdir(pkg)
+        for f in files:
+            self.assertFalse(os.path.exists(os.path.join('..', f)), "File %s must not exist" % f)
+
+        ret = export_orig(['arg0',
+                           '--pristine-tar',
+                           '--upstream-signatures=no'])
+        ok_(ret == 0, "Exporting tarballs failed")
+        self.assertTrue(os.path.exists(os.path.join('..', files[0])), "Tarball %s not found" % files[0])
+        self.assertFalse(os.path.exists(os.path.join('..', files[1])), "Signature %s found" % files[1])
+
+        os.remove(os.path.join('..', files[0]))
+        for f in files:
+            self.assertFalse(os.path.exists(os.path.join('..', f)), "File %s must not exist" % f)
+
+        ret = export_orig(['arg0',
+                           '--pristine-tar',
+                           '--upstream-signatures=auto'])
+        ok_(ret == 0, "Exporting tarballs failed")
+        self.assertTrue(os.path.exists(os.path.join('..', files[0])), "Tarball %s not found" % files[0])
+        self.assertFalse(os.path.exists(os.path.join('..', files[1])), "Signature %s found" % files[1])
+
+        os.remove(os.path.join('..', files[0]))
+        for f in files:
+            self.assertFalse(os.path.exists(os.path.join('..', f)), "File %s must not exist" % f)
+
+        ret = export_orig(['arg0',
+                           '--pristine-tar',
+                           '--upstream-signatures=on'])
+        ok_(ret == 1, "Exporting tarballs must fail")
+        self._check_log(-1, "gbp:error: Can not find requested upstream signature for archive "
+                        "'hello-debhelper_2.6.orig.tar.gz' in pristine tar commit.")
 
     @RepoFixtures.quilt30(opts=['--pristine-tar'])
     def test_pristine_tar_commit_on_origin(self, repo):

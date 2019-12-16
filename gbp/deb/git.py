@@ -316,13 +316,22 @@ class DebianGitRepository(PkgGitRepository):
                                                                     source.upstream_version,
                                                                     comp))
 
-    def create_upstream_tarball_via_pristine_tar(self, source, output_dir, comp, component=None):
+    def create_upstream_tarball_via_pristine_tar(self, source, output_dir, comp, upstream_signatures, component=None):
         output = source.upstream_tarball_name(comp.type, component=component)
+        gbp.log.debug("upstream signature state: %s" % upstream_signatures)
+        commit, found_signature = self.get_pristine_tar_commit(source, component)
+        if not commit and self.has_pristine_tar_branch():
+            raise GitRepositoryError("Can not find pristine tar commit for archive '%s'" % output)
+        if not found_signature and upstream_signatures.is_on():
+            raise GitRepositoryError("Can not find requested upstream signature for archive '%s' in pristine tar commit." % output)
         try:
+            signature = False if upstream_signatures.is_off() else found_signature
             self.pristine_tar.checkout(source.name, source.upstream_version, comp.type, output_dir,
-                                       component=component, quiet=True)
+                                       component=component, quiet=True, signature=signature)
         except Exception as e:
-            raise GitRepositoryError("Error creating %s: %s" % (output, e))
+            raise GitRepositoryError("Error creating %s%s: %s" % (output,
+                                                                  " with attached signature file" if signature else "",
+                                                                  e))
         return True
 
     def create_upstream_tarball_via_git_archive(self, source, output_dir, treeish,

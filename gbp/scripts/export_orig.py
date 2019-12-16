@@ -113,7 +113,8 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
                                                   source.upstream_tarball_name(comp.type))))
         repo.create_upstream_tarball_via_pristine_tar(source,
                                                       output_dir,
-                                                      comp)
+                                                      comp,
+                                                      options.upstream_signatures)
         for component in options.components:
             gbp.log.info("Creating %s" %
                          os.path.abspath(os.path.join(output_dir,
@@ -121,6 +122,7 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
             repo.create_upstream_tarball_via_pristine_tar(source,
                                                           output_dir,
                                                           comp,
+                                                          options.upstream_signatures,
                                                           component=component)
         return True
     except GitRepositoryError:
@@ -303,6 +305,8 @@ def build_parser(name):
                                       help="Compression type, default is '%(compression)s'")
     orig_group.add_config_file_option(option_name="compression-level", dest="comp_level",
                                       help="Compression level, default is '%(compression-level)s'")
+    orig_group.add_config_file_option(option_name="upstream-signatures", dest="upstream_signatures",
+                                      help="use upstream signature, default is auto", type='tristate')
     orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                       dest="components")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")

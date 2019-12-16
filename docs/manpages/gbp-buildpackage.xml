@@ -50,6 +50,7 @@
       <arg><option>--git-upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--git-force-create</option></arg>
       <arg><option>--git-no-create-orig</option></arg>
+      <arg><option>--git-upstream-signatures=</option>[auto|on|off]</arg>
       <arg><option>--git-upstream-tree=</option><replaceable>[BRANCH|SLOPPY|TAG|TREEISH]</replaceable></arg>
       <arg><option>--git-tarball-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--git-compression=</option><replaceable>TYPE</replaceable></arg>
@@ -273,6 +274,15 @@
             <para>
               Don't try to create any upstream tarballs or to create
               symlinks to existing tarballs in <option>tarball-dir</option>.
+            </para>
+          </listitem>
+	</varlistentry>
+	<varlistentry>
+          <term><option>--git-upstream-signatures=</option>[auto|on|off]
+          </term>
+          <listitem>
+            <para>
+              Whether to export the upstream tarball with signatures.
             </para>
           </listitem>
 	</varlistentry>
