@@ -67,7 +67,7 @@
 	  <replaceable>url</replaceable>: The tarball is downloaded
 	  from a <replaceable>http</replaceable>
 	  or <replaceable>https</replaceable> <replaceable>url</replaceable>.
-	  This needs the python-request package installed.
+	  This needs the python3-request package installed.
 	</para>
       </listitem>
       <listitem>

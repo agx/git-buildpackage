@@ -157,7 +157,7 @@ def download_orig(url):
         requests = None
 
     if requests is None:
-        raise GbpError("python-requests not installed")
+        raise GbpError("python3-requests not installed")
 
     tarball = os.path.basename(url)
     target = os.path.join('..', tarball)
