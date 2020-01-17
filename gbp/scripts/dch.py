@@ -486,7 +486,7 @@ def main(argv):
                 msg = "Continuing from commit '%s'" % since
             else:
                 msg = "Starting from first commit"
-                gbp.log.info(msg)
+            gbp.log.info(msg)
             found_snapshot_banner = has_snapshot_banner(cp)
 
         if args:
