@@ -1,3 +1,25 @@
+git-buildpackage (0.9.18) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [abe1ec7] import-orig: Recommend python3-requests.  The python2 version
+    won't do
+  * [bddd221] dch: Always print where we pick up
+  * [f8883eb] config: Be less picky about comments after boolean values.
+    This makes 'patch-numbers = False # comment' work.
+    Thanks to Mechtilde Stehmann for the report
+
+  [ Christian Göttsche ]
+  * [2f1c157] add option to export tarballs with upstream signature.
+    Add option `--upstream-signatures=[on|auto|off]` to export-orig.
+    Add option `--git-upstream-signatures=[on|auto|off]` to buildpackage.
+    (Closes: 872864)
+
+  [ Matthias Klose ]
+  * [b80027c] d/tests/control: Add xsltproc to the autopkg test dependencies
+    (Closes: #950216)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 17 Feb 2020 15:12:12 +0100
+
 git-buildpackage (0.9.17) unstable; urgency=medium
 
   * [6248524] export_orig: Don't fail without a repository.
