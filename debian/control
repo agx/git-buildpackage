@@ -11,7 +11,7 @@ Build-Depends:
  gtk-doc-tools,
  libdistro-info-perl,
  perl,
- python-pydoctor,
+ pydoctor,
  python3 (>= 3.5),
  python3-coverage,
  python3-dateutil,
