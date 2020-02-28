@@ -1,3 +1,13 @@
+git-buildpackage (0.9.19) unstable; urgency=medium
+
+  * [30cfa76] d/tests/control: Drop python-rpm. We'd need
+    python3-rpm for the build test but that is not run atm.
+  * [2159ac3] Build-Depend on pydoctor since this uses python3
+    Thanks to Boyuan Yang for the hints (Closes: #943107)
+  * [96526f2] Add salsa-ci
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 28 Feb 2020 09:48:05 +0100
+
 git-buildpackage (0.9.18) unstable; urgency=medium
 
   [ Guido Günther ]
