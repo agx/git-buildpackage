@@ -1,4 +1,3 @@
 Tests: smoke-rpm
-Depends: @,
- python-rpm, xsltproc
+Depends: @, xsltproc
 Restrictions: allow-stderr
