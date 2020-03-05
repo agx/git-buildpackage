@@ -347,6 +347,12 @@
 	      </para></listitem>
 	    </varlistentry>
 	    <varlistentry>
+	      <term><envar>GBP_SOURCES_DIR</envar></term>
+	      <listitem><para>
+		The temporary directory where the unpacked sources are.
+	      </para></listitem>
+	    </varlistentry>
+	    <varlistentry>
 	      <term><envar>GBP_GIT_DIR</envar></term>
 	      <listitem><para>
 		The directory of the git repository where the tarball

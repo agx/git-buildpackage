@@ -227,11 +227,12 @@ def postimport_hook(repo, tag, version, options):
              extra_env=env)()
 
 
-def postunpack_hook(repo, tmp_dir, options):
+def postunpack_hook(repo, tmp_dir, sources, options):
     if options.postunpack:
         Hook('Postunpack', options.postunpack,
              extra_env={'GBP_GIT_DIR': repo.git_dir,
-                        'GBP_TMP_DIR': tmp_dir}
+                        'GBP_TMP_DIR': tmp_dir,
+                        'GBP_SOURCES_DIR': sources[0].unpacked}
              )(dir=tmp_dir)
 
 
@@ -474,7 +475,7 @@ def main(argv):
 
         sources, tmpdir = unpack_tarballs(name, sources, version, options)
         try:
-            postunpack_hook(repo, tmpdir, options)
+            postunpack_hook(repo, tmpdir, sources, options)
         except gbpc.CommandExecFailed:
             raise GbpError()  # The hook already printed an error message
 
