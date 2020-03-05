@@ -293,11 +293,16 @@ def debian_branch_merge_by_merge(repo, tag, version, options):
     repo.set_branch(branch)
 
 
-def unpack_tarballs(name, sources, version, options):
+def unpack_tarballs(repo, name, sources, version, options):
     tmpdir = tempfile.mkdtemp(dir='../')
     if not sources[0].is_dir():  # Unpack main tarball
         sources[0].unpack(tmpdir, options.filters)
         gbp.log.debug("Unpacked '%s' to '%s'" % (sources[0].path, sources[0].unpacked))
+
+    try:
+        postunpack_hook(repo, tmpdir, sources, options)
+    except gbpc.CommandExecFailed:
+        raise GbpError()  # The hook already printed an error message
 
     if orig_needs_repack(sources[0], options):
         gbp.log.debug("Filter pristine-tar: repacking '%s' from '%s'" % (sources[0].path,
@@ -473,11 +478,7 @@ def main(argv):
         if repo.bare:
             set_bare_repo_options(options)
 
-        sources, tmpdir = unpack_tarballs(name, sources, version, options)
-        try:
-            postunpack_hook(repo, tmpdir, sources, options)
-        except gbpc.CommandExecFailed:
-            raise GbpError()  # The hook already printed an error message
+        sources, tmpdir = unpack_tarballs(repo, name, sources, version, options)
 
         if options.verbose:
             for source in sources:

@@ -274,6 +274,49 @@ class TestImportOrig(ComponentTestBase):
         t.close()
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_filter_with_component_tarballs_and_postunpack_changes(self, repo):
+        """
+        Test that using a filter works with component tarballs (#840602) and
+        that the postunpack hook can be used to do more sophisticated changes
+        to the orig (#951534).
+        """
+        # copy data since we don't want the repacked tarball to end up in DEB_TEST_DATA_DIR
+        os.mkdir('../tarballs')
+        for f in ['hello-debhelper_2.8.orig-foo.tar.gz', 'hello-debhelper_2.8.orig.tar.gz']:
+            src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0-additional-tarballs', f)
+            shutil.copy(src, '../tarballs')
+
+        ok_(import_orig(['arg0',
+                         '--component=foo',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--filter=README*',
+                         '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
+                         'rm $GBP_SOURCES_DIR/TODO',
+                         '../tarballs/hello-debhelper_2.8.orig.tar.gz']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+        self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
+
+        ok_('README' not in repo.ls_tree('HEAD'),
+            "README not filtered out of %s" % repo.ls_tree('HEAD'))
+        ok_('TODO' not in repo.ls_tree('HEAD'),
+            "TODO not filtered out of %s" % repo.ls_tree('HEAD'))
+        tar = '../hello-debhelper_2.8.orig.tar.gz'
+
+        # Check if tar got filtered properly
+        ok_(os.path.exists(tar))
+        t = tarfile.open(name=tar, mode="r:gz")
+        for f in ['hello-2.8/configure', 'hello-2.8/postunpack.out']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README', 'hello-2.8/TODO']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_filter_with_orig_tarball(self, repo):
         """
         Test that using a filter works with an upstream tarball that has
@@ -307,6 +350,76 @@ class TestImportOrig(ComponentTestBase):
         t.close()
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_filter_with_orig_tarball_and_postunpack_changes(self, repo):
+        """
+        Test that using a filter works with an upstream tarball that has
+        already the correct name (#558777) and that the postunpack hook can
+        be used to do more sophisticated changes to the orig (#951534).
+        """
+        f = 'hello-debhelper_2.8.orig.tar.gz'
+        src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
+        shutil.copy(src, '..')
+
+        ok_(import_orig(['arg0',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--filter=README*',
+                         '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
+                         'rm $GBP_SOURCES_DIR/TODO',
+                         '../hello-debhelper_2.8.orig.tar.gz']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
+        filtered = os.path.join('..', f)
+        ok_(os.path.exists(filtered))
+        eq_(os.readlink(filtered).split('/')[-1],
+            'hello-debhelper_2.8.orig.gbp.tar.gz')
+        # Check if tar got filtered properly
+        t = tarfile.open(name=filtered, mode="r:gz")
+        for f in ['hello-2.8/configure', 'hello-2.8/postunpack.out']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README', 'hello-2.8/TODO']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_postunpack_changes_with_orig_tarball(self, repo):
+        """
+        Test that using a postupack script to apply changes works with an
+        upstream tarball that has already the correct name (#951534).
+        """
+        f = 'hello-debhelper_2.8.orig.tar.gz'
+        src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
+        shutil.copy(src, '..')
+
+        ok_(import_orig(['arg0',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
+                         'rm $GBP_SOURCES_DIR/TODO; rm $GBP_SOURCES_DIR/README',
+                         '../hello-debhelper_2.8.orig.tar.gz']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
+        filtered = os.path.join('..', f)
+        ok_(os.path.exists(filtered))
+        eq_(os.readlink(filtered).split('/')[-1],
+            'hello-debhelper_2.8.orig.gbp.tar.gz')
+        # Check if tar got filtered properly
+        t = tarfile.open(name=filtered, mode="r:gz")
+        for f in ['hello-2.8/configure', 'hello-2.8/postunpack.out']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README', 'hello-2.8/TODO']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_filter_unpacked_dir(self, repo):
         """
         Test that importing and filtering unpacked upstream source works.
@@ -335,6 +448,43 @@ class TestImportOrig(ComponentTestBase):
             i = t.getmember(f)
             eq_(type(i), tarfile.TarInfo)
         for f in ['hello-2.8/README']:
+            with assert_raises(KeyError):
+                t.getmember(f)
+        t.close()
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_filter_unpacked_dir_with_postunpack_changes(self, repo):
+        """
+        Test that importing and filtering unpacked upstream source works and
+        that the postunpack hook can be used to do more sophisticated changes
+        to the orig (#951534).
+        """
+        f = 'hello-debhelper_2.8.orig.tar.gz'
+        src = os.path.join(DEB_TEST_DATA_DIR, 'dsc-3.0', f)
+
+        # Create an unpacked tarball we can import
+        UnpackTarArchive(src, '..')()
+        ok_(os.path.exists('../hello-2.8'))
+
+        ok_(import_orig(['arg0',
+                         '--no-interactive',
+                         '--pristine-tar',
+                         '--filter-pristine-tar',
+                         '--filter=README*',
+                         '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
+                         'rm $GBP_SOURCES_DIR/TODO',
+                         '../hello-2.8']) == 0)
+        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
+        filtered = os.path.join('..', f)
+        ok_(os.path.exists(filtered))
+        # Check if tar got filtered properly
+        t = tarfile.open(name=filtered, mode="r:gz")
+        for f in ['hello-2.8/configure', 'hello-2.8/postunpack.out']:
+            i = t.getmember(f)
+            eq_(type(i), tarfile.TarInfo)
+        for f in ['hello-2.8/README', 'hello-2.8/TODO']:
             with assert_raises(KeyError):
                 t.getmember(f)
         t.close()
