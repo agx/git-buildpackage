@@ -401,3 +401,18 @@ class TestImportOrig(ComponentTestBase):
                                                ("GBP_TAG", "upstream/2.8"),
                                                ("GBP_UPSTREAM_VERSION", "2.8"),
                                                ("GBP_DEBIAN_VERSION", "2.8-1")])
+
+    def test_postunpack_env_vars(self):
+        """
+        Test that the expected environment variables are set during
+        postunpack hook.
+        """
+        repo = ComponentTestGitRepository.create(self.pkg)
+        os.chdir(self.pkg)
+        orig = self._orig('2.8')
+        ok_(import_orig(['arg0',
+                         '--postunpack=printenv > ../postunpack.out',
+                         '--no-interactive', '--pristine-tar', orig]) == 0)
+        self.check_hook_vars('../postunpack', ["GBP_GIT_DIR",
+                                               "GBP_TMP_DIR",
+                                               "GBP_SOURCES_DIR"])
