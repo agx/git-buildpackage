@@ -40,19 +40,25 @@ def orig_needs_repack(upstream_source, options):
     Determine if the upstream sources needs to be repacked
 
     We repack if
-     1. we want to filter out files and use pristine tar since we want
-        to make a filtered tarball available to pristine-tar
+     1. we want to filter out files via filters or post-unpack script and use
+        pristine tar since we want to make a filtered tarball available to
+        pristine-tar
      2. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
         and want to use filters
      3. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
         and want to use pristine-tar
+     4. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
+        and want to use a post-unpack script
     """
-    if ((options.pristine_tar and options.filter_pristine_tar and len(options.filters) > 0)):
+    if ((options.pristine_tar and options.filter_pristine_tar and
+       (options.filters or options.postunpack))):
         return True
     elif not upstream_source.is_orig():
         if len(options.filters):
             return True
         elif options.pristine_tar:
+            return True
+        elif options.postunpack:
             return True
     return False
 
