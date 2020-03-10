@@ -187,6 +187,7 @@ class GbpOptionParser(OptionParser):
                 'track': 'True',
                 'track-missing': 'False',
                 'upstream-branch': 'upstream',
+                'upstream-remote': 'upstream',
                 'upstream-tag': 'upstream/%(version)s',
                 'upstream-tree': 'TAG',
                 'upstream-vcs-tag': '',
@@ -201,6 +202,11 @@ class GbpOptionParser(OptionParser):
         'upstream-tree':
             "Where to generate the upstream tarball from "
             "(tag or branch), default is '%(upstream-tree)s'",
+        'upstream-remote':
+            "If debian/upstream/metadata specifies an upstream git repository, "
+            "the remote name to fetch it into, default is "
+            "'%(upstream-remote)s'. Set to an empty string to disable cloning "
+            "upstream",
         'pq-from':
             "How to find the patch queue base. DEBIAN or TAG, "
             "the default is '%(pq-from)s'",

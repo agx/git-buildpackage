@@ -117,6 +117,7 @@ def build_parser(name):
 
     branch_group.add_option("--all", action="store_true", dest="all", default=False,
                             help="track all branches, not only debian and upstream")
+    branch_group.add_config_file_option(option_name="upstream-remote", dest="upstream_remote")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
@@ -207,6 +208,31 @@ def main(argv):
         repo.set_branch(options.debian_branch)
 
         repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
+
+        if options.upstream_remote:
+            try:
+                with open(os.path.join(clone_to, 'debian', 'upstream', 'metadata')) as f:
+                    import yaml
+
+                    y = yaml.load(f, Loader=yaml.CSafeLoader)
+                    try:
+                        upstream_repo = y['Repository']
+
+                        try:
+                            # check if it exists as a git repo
+                            repo.fetch(repo=upstream_repo)
+
+                            repo.add_remote_repo(options.upstream_remote,
+                                                 upstream_repo,
+                                                 tags=True)
+                        except GitRepositoryError:
+                            gbp.log.warn(
+                                'Unable to fetch upstream repository %s, '
+                                'ignoring.' % upstream_repo)
+                    except KeyError:
+                        pass
+            except FileNotFoundError:
+                pass
 
         if postclone:
             Hook('Postclone', options.postclone,

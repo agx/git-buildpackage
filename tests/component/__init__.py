@@ -178,7 +178,7 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
 
     @classmethod
     def _check_repo_state(cls, repo, current_branch, branches, files=None,
-                          dirs=None, tags=None, clean=True):
+                          dirs=None, tags=None, clean=True, remotes=[]):
         """
         Check that repository is clean and given branches, tags, files
         and dirs exist
@@ -190,6 +190,12 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
         assert_msg = "Branches: expected %s, found %s" % (branches,
                                                           local_branches)
         eq_(set(local_branches), set(branches), assert_msg)
+
+        if remotes:
+            repo_remotes = repo.get_remotes().keys()
+            assert_msg = "Remotes: expected %s, found %s" % (remotes,
+                                                             repo_remotes)
+            eq_(set(repo_remotes), set(remotes), assert_msg)
 
         if files is not None or dirs is not None:
             # Get files of the working copy recursively
