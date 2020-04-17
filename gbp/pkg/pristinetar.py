@@ -68,7 +68,9 @@ class PristineTar(Command):
     def _commit_contains_file(self, commit, regexp):
         """Does the given commit contain a file with the given regex"""
         files = self.repo.get_commit_info(commit)['files']
-        cregex = re.compile(regexp)
+        # CPython wants '+' (which is valid in source package names)
+        # escaped but git-grep doesn't so we do it that late:
+        cregex = re.compile(regexp.replace('+', '\\+'))
         for _, v in files.items():
             for f in v:
                 if cregex.match(f.decode()):
