@@ -311,10 +311,15 @@ class DebianGitRepository(PkgGitRepository):
         """
         Get the pristine-tar commit for the given source package's latest version.
         """
+        def _esc(s):
+            return s.replace('.', '\\.')
+
         comp = '-%s' % component if component else ''
-        return self.pristine_tar.get_commit('%s_%s.orig%s.tar.*' % (source.sourcepkg,
-                                                                    source.upstream_version,
-                                                                    comp))
+        source_esc = _esc(source.sourcepkg)
+        ver_esc = _esc(source.upstream_version)
+        return self.pristine_tar.get_commit('%s_%s\\.orig%s\\.tar.*' % (source_esc,
+                                                                        ver_esc,
+                                                                        comp))
 
     def create_upstream_tarball_via_pristine_tar(self, source, output_dir, comp, upstream_signatures, component=None):
         output = source.upstream_tarball_name(comp.type, component=component)
