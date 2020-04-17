@@ -209,7 +209,7 @@ def test_pristine_tar_checkout_nonexistent():
     >>> repo = gbp.deb.git.DebianGitRepository(dirs['repo'])
     >>> _gbp_log_err_bak = gbp.log.err
     >>> gbp.log.err = lambda x: None
-    >>> repo.pristine_tar.checkout('upstream', '1.1', 'gzip', '..')
+    >>> repo.pristine_tar.checkout('upstream', '1.1', 'gzip', '..') # doctest:+IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
     gbp.command_wrappers.CommandExecFailed: Pristine-tar couldn't checkout "upstream_1.1.orig.tar.gz": fatal: Path 'upstream_1.1.orig.tar.gz.delta' does not exist in 'refs/heads/pristine-tar'
