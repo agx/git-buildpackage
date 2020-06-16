@@ -112,8 +112,8 @@
         <listitem>
           <para>
 	    What to merge into the &debian-branch;.
-            <replaceable>BRANCH</replaceable> (the default) merges from the upstream branch.
-            <replaceable>VERSION</replaceable> looks for a tag determined from the given
+            <replaceable>BRANCH</replaceable> merges from the upstream branch.
+            <replaceable>VERSION</replaceable> (the default) looks for a tag determined from the given
 	    upstream version number via the <option>--upstream-version</option> option.
 	  </para>
 	  <para>
