@@ -66,7 +66,10 @@ def get_component_tarballs(name, version, tarball, components):
                                                    comp_type,
                                                    os.path.dirname(tarball),
                                                    component)
-        tarballs.append(DebianAdditionalTarball(cname, component))
+        sig = cname + '.asc'
+        if not os.path.exists(sig):
+            sig = None
+        tarballs.append(DebianAdditionalTarball(cname, component, sig=sig))
         if not os.path.exists(cname):
             raise GbpError("Can not find component tarball %s" % cname)
     return tarballs
