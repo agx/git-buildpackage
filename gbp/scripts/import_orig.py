@@ -519,6 +519,8 @@ def main(argv):
                         # Enforce signature file exists with --upstream-signatures=on
                         if options.upstream_signatures.is_on() and not source.signaturefile:
                             raise GbpError("%s does not have a signature file" % source.path)
+                        elif options.upstream_signatures.is_off():
+                            source.signaturefile = None
                     # For all practical purposes we're interested in pristine_orig's path
                     if pristine_orig != sources[0].path:
                         sources[0]._path = pristine_orig

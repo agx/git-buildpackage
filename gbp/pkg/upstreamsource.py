@@ -104,6 +104,10 @@ class UpstreamSource(object):
     def signaturefile(self):
         return self._sig
 
+    @signaturefile.setter
+    def signaturefile(self, sig):
+        self._sig = sig
+
     def unpack(self, dir, filters=None):
         """
         Unpack packed upstream sources into a given directory
