@@ -38,10 +38,6 @@ def rfc822_date_to_git(rfc822_date, fuzzy=False):
     '1206000777 -0700'
     >>> rfc822_date_to_git('Sat, 5 Apr 2008 17:01:32 +0200')
     '1207407692 +0200'
-    >>> rfc822_date_to_git('So, 26 Feb 1998 8:50:00 +0100') # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    ValueError:...
     >>> rfc822_date_to_git('So, 26 Feb 1998 8:50:00 +0100', fuzzy=True)
     '888479400 +0100'
     """
