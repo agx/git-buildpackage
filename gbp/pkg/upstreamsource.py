@@ -50,6 +50,12 @@ class UpstreamSource(object):
         if self.is_dir():
             self.unpacked = self.path
 
+    def __repr__(self):
+        path = "'%s'" % self.path if self.path is not None else None
+        sig = "'%s'" % self.signaturefile if self.signaturefile is not None else None
+        return "<%s path=%s signaturefile=%s>" % (self.__class__.__name__,
+                                                  path, sig)
+
     def _check_orig(self):
         """
         Check if upstream source format can be used as orig tarball.
