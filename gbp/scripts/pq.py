@@ -120,7 +120,7 @@ def compare_series(old, new):
     ([], [])
     """
     added = set(new).difference(old)
-    removed = [l for l in set(old).difference(new) if not l.startswith('#')]
+    removed = [li for li in set(old).difference(new) if not li.startswith('#')]
     return (list(added), removed)
 
 

@@ -515,7 +515,7 @@ class GitRepository(object):
         if not out:  # both branches have the same commits
             return True, True
 
-        for line in (l.decode() for l in out):
+        for line in (li.decode() for li in out):
             if line.startswith("<"):
                 has_local = True
             elif line.startswith(">"):
@@ -597,7 +597,7 @@ class GitRepository(object):
         args.add(commit)
 
         out, ret = self._git_getoutput('branch', args.args)
-        for line in [l.decode() for l in out]:
+        for line in [li.decode() for li in out]:
             # remove prefix '*' for current branch before comparing
             line = line.replace('*', '')
             if line.strip() == branch:

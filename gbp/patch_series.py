@@ -105,7 +105,7 @@ class Patch(object):
                 self.info[header] = value.strip()
         # Body
         try:
-            self.long_desc = "".join([l.decode("utf-8", "backslashreplace") for l in body])
+            self.long_desc = "".join([li.decode("utf-8", "backslashreplace") for li in body])
         except (IOError, UnicodeDecodeError) as msg:
             raise GbpError("Failed to read patch header of '%s': %s" %
                            (self.path, msg))
