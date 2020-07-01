@@ -1,3 +1,31 @@
+git-buildpackage (0.9.20) unstable; urgency=medium
+
+  * [e513375] doctest: Ignore exception detail.
+    We used the tests to check whether the right exception was returned but
+    python 3.8 breaks this again.  Doctest were a nice feature but keeping up
+    with the subtle breackage is too cumbersome.
+  * [3b05fa8] deb: git: Escape '.' on pristine-tar matches
+    '.' is valid in source package names and version numbers so we
+    want to match exactly that and not an arbitrary character.
+  * [74b3799] pristine-tar: Escape '+' in match regexp.
+    When looking for matching file name we need to exscape the valid '+' but
+    need to do it late since it must not be escaped for git-grep.
+    (Closes: #956103)
+  * [a3d9c98] docs: import-ref: Fix wrong --upstream-tree default
+    (Closes: #962916)
+  * [f68858e] import-orig: Print all found sources with `verbose`
+  * [111aa86] get_component_tarballs: Check for signature too
+    (Closes: #96396)
+  * [4f2569d] git: Drop another doctest that matched exception
+    type.
+  * [305a4ad] import_orig: Drop all upstream signatures with
+    --upstream-signatures=off.  This makes sure we don't use spurious files as
+    signatures
+  * [0bc42b4] Make flake8 E741 happy
+    (Closes: #964040)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 01 Jul 2020 14:47:44 +0200
+
 git-buildpackage (0.9.19) unstable; urgency=medium
 
   * [30cfa76] d/tests/control: Drop python-rpm. We'd need
