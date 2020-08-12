@@ -162,7 +162,7 @@
               Use pristine-tar when generating the upstream tarball if
               it doesn't exist. If this mode is enabled
               the <option>--git-upstream-tag</option>, <option>--git-upstream-tree</option>
-              options have no effect.
+              options have no effect when creating tarballs.
             </para>
           </listitem>
 	</varlistentry>
