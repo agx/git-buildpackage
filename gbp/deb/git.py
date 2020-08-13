@@ -129,6 +129,57 @@ class DebianGitRepository(PkgGitRepository):
             version = "%s:%s" % (epoch, version)
         return version
 
+    @classmethod
+    def _upstream_version_from_debian_upstream(cls, version):
+        """
+        Convert a Debian upstream version to an upstream version.
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "1.1.8+dfsg1")
+        ('1.1.8', None)
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "1:5.5.0~dfsg")
+        ('5.5.0', None)
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "0.0~git20160722.0.0cdb66a")
+        (None, '0cdb66a')
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "3:6.04~git20190206.bf6db5b4+dfsg1")
+        (None, 'bf6db5b4')
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "2.3+really2.2")
+        ('2.2', None)
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "4.99.4+dfsg+really4.10.0+py3")
+        ('4.10.0', None)
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "5.4.1+really5.4.1~repack")
+        ('5.4.1', None)
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "0.0~git20190103.40eba7e+really0.0~git20181023.b4e2780")
+        (None, 'b4e2780')
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "1.1.0+really1.0.0+git20181028.94f6ae3")
+        (None, '94f6ae3')
+        """
+
+        # If version starts with an epoch, remove it.
+        m = re.search(r'^[0-9]+:(.*)', version)
+        if m:
+            version = m.group(1)
+
+        # If version has "really", keep the version starting after "really".
+        m = re.search(r'really(.*)', version)
+        if m:
+            version = m.group(1)
+
+        # If version matches a git snapshot pattern, return the git revision.
+        m = re.search(r'[~+]git[0-9]{8}(\.[0-9]+)?\.([0-9a-f]+)', version)
+        if m:
+            return (None, m.group(2))
+
+        # Strip off anything starting with [+~] and return the rest.
+        return (re.split(r'[+~]', version)[0], None)
+
     @staticmethod
     def _build_legacy_tag(format, version):
         """
@@ -377,11 +428,13 @@ class DebianGitRepository(PkgGitRepository):
         """If linking to the upstream VCS get the commit id"""
         if not vcs_tag_format:
             return None
+        (version, revision) = self._upstream_version_from_debian_upstream(version)
         try:
-            tag = self.version_to_tag(vcs_tag_format, version)
-            return [self.rev_parse("%s^{}" % tag)]
+            if not revision:
+                revision = self.version_to_tag(vcs_tag_format, version)
+            return [self.rev_parse("%s^{}" % revision)]
         except GitRepositoryError:
-            raise GitRepositoryError("Can't find upstream vcs tag at '%s'" % tag)
+            raise GitRepositoryError("Can't find upstream vcs tag/revision at '%s'" % revision)
 
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
