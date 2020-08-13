@@ -378,8 +378,8 @@ class DebianGitRepository(PkgGitRepository):
         if not vcs_tag_format:
             return None
         try:
-            tag = "%s^{}" % self.version_to_tag(vcs_tag_format, version)
-            return [self.rev_parse(tag)]
+            tag = self.version_to_tag(vcs_tag_format, version)
+            return [self.rev_parse("%s^{}" % tag)]
         except GitRepositoryError:
             raise GitRepositoryError("Can't find upstream vcs tag at '%s'" % tag)
 
