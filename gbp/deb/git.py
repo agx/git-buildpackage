@@ -171,7 +171,7 @@ class DebianGitRepository(PkgGitRepository):
     @classmethod
     def _mangle_version(cls, format, version):
         """
-        Basic version mangling to replce single characters
+        Basic version mangling to replace single characters
 
         >>> DebianGitRepository._mangle_version(r'%(version%-%\\%)s', "0-1.2.3")
         ('%(version)s', '0%1.2.3')
