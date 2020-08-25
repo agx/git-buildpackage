@@ -8,16 +8,13 @@ git config user.email "you@example.com"
 git config user.name "Doesnot Matter"
 git add .
 git commit -m"Smoketest" -a
-cat <<EOF >> ~/.rpmmacros
-%__python3 /usr/bin/python3
-%python_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib().replace('dist-', 'site-'))")
-%python_sitearch %(%{__python3} -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1).replace('dist-', 'site-'))")
-EOF
 
 gbp buildpackage-rpm --help
 
 # Build an RPM of ourselfes if build-deps are available
 if python3 -c "import setuptools"; then
-  gbp buildpackage-rpm --git-packaging-dir=packaging/ -bb --nodeps
-  rm -r .git ~/.rpmmacros
+  gbp buildpackage-rpm --git-packaging-dir=packaging/ \
+                       -D'%__python3 /usr/bin/python3' \
+                       -D'%__python /usr/bin/python3' \
+                       -bb --nodeps
 fi
