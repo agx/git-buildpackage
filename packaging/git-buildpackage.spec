@@ -154,7 +154,7 @@ GIT_CEILING_DIRECTORIES=%{_builddir} \
 %install
 rm -rf %{buildroot}
 WITHOUT_NOSETESTS=1 %{__python3} ./setup.py install --root=%{buildroot} --prefix=/usr --install-lib=%{python_sitelib}
-find %{buildroot} -name __pycache__ | xargs rm -r
+find %{buildroot} -name __pycache__ | xargs -r rm -r
 mkdir -p %{buildroot}/usr/share/%{name}
 mv %{buildroot}/usr/bin/gbp-builder-mock %{buildroot}/usr/share/%{name}/
 mkdir -p %{buildroot}/%{_sysconfdir}/git-buildpackage/
