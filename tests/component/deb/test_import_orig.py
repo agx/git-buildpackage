@@ -557,7 +557,7 @@ class TestImportOrig(ComponentTestBase):
         Test that the expected environment variables are set during
         postunpack hook.
         """
-        repo = ComponentTestGitRepository.create(self.pkg)
+        ComponentTestGitRepository.create(self.pkg)
         os.chdir(self.pkg)
         orig = self._orig('2.8')
         ok_(import_orig(['arg0',
