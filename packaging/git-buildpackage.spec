@@ -178,7 +178,7 @@ cat > files.list << EOF
 %{python_sitelib}/gbp/scripts/buildpackage.py*
 %{python_sitelib}/gbp/scripts/dch.py*
 %{python_sitelib}/gbp/scripts/export_orig.py*
-%{python_sitelib}/gbp/scripts/export_ref.py*
+%{python_sitelib}/gbp/scripts/import_ref.py*
 %{python_sitelib}/gbp/scripts/import_dsc.py*
 %{python_sitelib}/gbp/scripts/import_dscs.py*
 %{python_sitelib}/gbp/scripts/import_orig.py*
