@@ -388,7 +388,7 @@ class TestImportOrig(ComponentTestBase):
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_postunpack_changes_with_orig_tarball(self, repo):
         """
-        Test that using a postupack script to apply changes works with an
+        Test that using a postunpack script to apply changes works with an
         upstream tarball that has already the correct name (#951534).
         """
         f = 'hello-debhelper_2.8.orig.tar.gz'
