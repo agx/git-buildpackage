@@ -3,6 +3,13 @@
 set -e
 set -x
 
+cleanup()
+{
+  [ -z "${GBP_TEMPDIR}" ] || rm -rf "${GBP_TEMPDIR}"
+}
+
+trap cleanup EXIT
+
 git init .
 git config user.email "you@example.com"
 git config user.name "Doesnot Matter"
@@ -13,7 +20,9 @@ gbp buildpackage-rpm --help
 
 # Build an RPM of ourselfes if build-deps are available
 if python3 -c "import setuptools"; then
+  GBP_TEMPDIR=$(mktemp -d)
   gbp buildpackage-rpm --git-packaging-dir=packaging/ \
+                       --git-export-dir="$GBP_TEMPDIR" \
                        -D'%__python3 /usr/bin/python3' \
                        -D'%__python /usr/bin/python3' \
                        -bb --nodeps
