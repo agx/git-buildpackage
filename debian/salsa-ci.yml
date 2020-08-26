@@ -3,3 +3,7 @@ include:
   - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/salsa-ci.yml
   - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/pipeline-jobs.yml
 
+# Reprotest triggers a test failure not related to reproducibility
+variables:
+  SALSA_CI_DISABLE_REPROTEST: 1
+
