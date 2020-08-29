@@ -177,6 +177,14 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
         ok_(os.path.exists('../foo/bar'))
 
+    @RepoFixtures.quilt30()
+    def test_export_dir_with_tarball_dir_buildpackage(self, repo):
+        """Test that building with a export dir and tarball dir (without the actual tarball) works"""
+        self._test_buildpackage(repo, ['--git-export-dir=../foo/bar',
+                                       '--git-tarball-dir=../foo',
+                                       '--git-overlay'])
+        ok_(os.path.exists('../foo/bar'))
+
     @RepoFixtures.quilt30_additional_tarball()
     def test_export_dir_additional_tar(self, repo):
         """Test that building with a export dir and additional tarball works"""
