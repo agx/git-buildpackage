@@ -328,10 +328,11 @@ def check_branch(repo, options):
     branch = None
     try:
         branch = repo.get_branch()
-    except GitRepositoryError:
+    except GitRepositoryError as repo_error:
         # Not being on any branch is o.k. with --git-ignore-branch
         if not options.ignore_branch:
-            raise
+            gbp.log.err(repo_error)
+            raise GitRepositoryError("Use --git-ignore-branch to ignore")
 
     ignore = options.ignore_new or options.ignore_branch
     if branch != options.debian_branch and not ignore:
