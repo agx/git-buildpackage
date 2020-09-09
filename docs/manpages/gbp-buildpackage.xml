@@ -816,6 +816,12 @@
     <screen>
       DIST=wheezy ARCH=i386 &git-pbuilder; create
     </screen>
+    <para>
+      To export the source tree without performing any build you can use:
+    </para>
+    <screen>
+      gbp buildpackage --git-export-dir=/where/to/export --git-builder=/bin/true --git-no-pbuilder --git-no-hooks --git-no-purge
+    </screen>
   </refsect1>
   <refsect1>
     &man.gbp.config-files;
