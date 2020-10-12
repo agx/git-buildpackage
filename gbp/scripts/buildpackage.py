@@ -289,16 +289,18 @@ def disable_hooks(options):
 
 def changes_file_suffix(builder, dpkg_args, arch):
     """
-    >>> changes_file_suffix('debuild', ['-A'])
+    >>> changes_file_suffix('debuild', ['-A'], '')
     'all'
-    >>> changes_file_suffix('debuild', ['-S'])
+    >>> changes_file_suffix('debuild', ['-S'], '')
     'source'
-    >>> changes_file_suffix('debuild -A', ['-uc', '-us'])
+    >>> changes_file_suffix('debuild -A', ['-uc', '-us'], '')
     'all'
-    >>> changes_file_suffix('debuild -S', ['-uc', '-us'])
+    >>> changes_file_suffix('debuild -S', ['-uc', '-us'], '')
     'source'
-    >>> changes_file_suffix('debuild', []) == du.get_arch()
+    >>> changes_file_suffix('debuild', [], '') == du.get_arch()
     True
+    >>> changes_file_suffix('debuild', [], 'arm64')
+    'arm64'
     """
     args = shlex.split(builder) + dpkg_args
     if '-S' in args:
@@ -514,7 +516,8 @@ def main(argv):
                      else source.upstream_version)
             export_dir = os.path.join(output_dir, "%s-%s" % (source.sourcepkg, major))
             build_dir = export_dir if options.export_dir else repo.path
-            changes_file = changes_file_name(source, build_dir, options.builder, dpkg_args, options.pbuilder_arch)
+            changes_file = changes_file_name(source, build_dir, options.builder, dpkg_args,
+                                             options.pbuilder_arch)
 
             # Run preexport hook
             if options.export_dir and options.preexport:
