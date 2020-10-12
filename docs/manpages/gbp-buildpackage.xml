@@ -709,7 +709,7 @@
               source formats.
             </para>
 	    <para>
-	      This optios allows one to keep only the debian/ dir in the version
+	      This option allows one to keep only the debian/ dir in the version
 	      control system.
 	    </para>
           </listitem>
