@@ -59,7 +59,7 @@ def get_commit_and_version_to_merge(repo, options):
 def build_parser(name):
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
+                                       usage='%prog [options] -u<upstream-version>')
     except GbpError as err:
         gbp.log.err(err)
         return None
