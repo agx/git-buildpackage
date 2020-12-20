@@ -15,11 +15,11 @@ import re
 default_urgency = get_dch_default_urgency()
 
 # For Ubuntu compatibility
-os_release = OsReleaseFile('/etc/lsb-release')
+os_release = OsReleaseFile()
 
 # OS release codename and snapshot of version 0.9-2~1
-if os_release['DISTRIB_ID'] == 'Ubuntu':
-    os_codename = os_release['DISTRIB_CODENAME']
+if os_release['ID'] == 'Ubuntu':
+    os_codename = os_release['UBUNTU_CODENAME']
     snap_header_0_9 = r'^test-package\s\(0.9-1ubuntu1~1\.gbp([0-9a-f]{6})\)\sUNRELEASED;\surgency=%s' % default_urgency
     new_version_0_9 = '0.9-1ubuntu1'
 else:
