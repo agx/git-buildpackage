@@ -277,12 +277,12 @@ def test_add_section():
     >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
     >>> cl.add_section(msg=["Test add section"], distribution=None, author="Debian Maintainer", email="maint@debian.org")
     >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
-    >>> version = '0.5.32ubuntu1' if os_release['DISTRIB_ID'] == 'Ubuntu' else '0.5.33'
+    >>> version = '0.5.32ubuntu1' if os_release['ID'] == 'ubuntu' else '0.5.33'
     >>> cl.version == version
     True
     >>> cl.debian_version == version
     True
-    >>> distributions = ['UNRELEASED', os_release['DISTRIB_CODENAME'] or 'unstable']
+    >>> distributions = ['UNRELEASED', os_release['VERSION_CODENAME'] or 'unstable']
     >>> cl['Distribution'] in distributions
     True
     >>> 'Test add section' in cl['Changes']
@@ -325,12 +325,12 @@ def test_add_entry():
     >>> cl.add_section(msg=["Test add section"], distribution=None, author="Debian Maintainer", email="maint@debian.org")
     >>> cl.add_entry(msg=["Test add entry"], author="Debian Maintainer", email="maint@debian.org")
     >>> cl = gbp.deb.changelog.ChangeLog(filename=testclname)
-    >>> version = '0.5.32ubuntu1' if os_release['DISTRIB_ID'] == 'Ubuntu' else '0.5.33'
+    >>> version = '0.5.32ubuntu1' if os_release['ID'] == 'ubuntu' else '0.5.33'
     >>> cl.version == version
     True
     >>> cl.debian_version == version
     True
-    >>> distributions = ['UNRELEASED', os_release['DISTRIB_CODENAME'] or 'unstable']
+    >>> distributions = ['UNRELEASED', os_release['VERSION_CODENAME'] or 'unstable']
     >>> cl['Distribution'] in distributions
     True
     >>> 'Test add entry' in cl['Changes']
