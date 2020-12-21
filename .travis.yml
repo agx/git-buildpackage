@@ -4,7 +4,7 @@ language: python
 
 services:
   - docker
-dist: bionic 
+dist: focal
 
 python:
   - "3.6"
