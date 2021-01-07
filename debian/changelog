@@ -1,3 +1,74 @@
+git-buildpackage (0.9.21) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [bd15730] docs: Drop --git- from dch invocation.
+    Thanks Pierre Equoy
+  * [7179893] docs: Clarify that only tarball creation is affected.
+    Thanks to Pierre Equoy
+  * [1d922d7] policy: Fix typos.
+    Thanks to Andrius Merkys (Closes: #966130)
+  * [16b8817] spec: Include the correct file
+    export_ref.py does not exist.
+  * [fd35de0] spec: Don't fail on empty cache dir
+  * [df9bae2] autopkgtest: Pass RPM macros on command line.
+    This avoids the need to modify files in the home directory.
+  * [53501b5] smoketest: Avoid writing to ..
+    Use a temporary directory to avoid 'allow-root'.
+  * [4e5fc40] autopkgtests: Depend on @builddep@
+    Otherwise gbp is not able to build itself.
+    Thanks to Lukas Märdian for the detailed report
+    (Closes: #968982)
+  * [504dda3] test_import_orig: Fix typo
+  * [c09d629] test_import_orig: Drop unused variable.
+    This makes flake8 happy
+  * [73492e1] salsa-ci: Skip reprotest.
+    It triggers a test failure since a test can write to a
+    destination it should not be able to write too.
+  * [c02938f] docs: Add example for exporting the source tree.
+    See #969952
+  * [657b005] buildpackage: Fix tests and test arch override
+  * [cc5e85b] import-ref: Fix help.
+    We want an upstream version, not  path
+  * [680e9ec] gitlab-ci: Use a more recent Ubuntu LTS
+  * [e085ab9] tests: Fixup changelog test on Ubuntu.
+    The keys in os-release differ from lsb-release
+
+  [ Marco Trevisan (Treviño) ]
+  * [9fc3f1b] import-orig: expose unpacked sources dir to the postunpack hook.
+    Use an $GBP_SOURCES_DIR to expose the post-unpack sources dir to the hook.
+    Include a test that checks that all the expected env variables are set.
+  * [297c5ff] import-orig: Allow the post-unpack hook to filter tarball files.
+    With post-unpack scripts is currently possible to filter out files that
+    are not needed from the upstream branch, however it is not possible to use it
+    to filter files that will end up in the orig file, and in some scenarios
+    this is not easily doable just using a filter list.
+    So, run the post-unpack hook just after unpacking and before repacking the
+    tar. (Closes: #812721)
+
+  [ Richard Laager ]
+  * [0f8f550] import-orig: Fix a comment typo
+  * [707ebdf] import-orig: Refactor vcs_tag_parent.
+    This eliminates an indentation level.
+  * [064834b] import-orig: Refactor vcs_tag_parent.
+    This makes the "tag" variable just the tag.  This improves the
+    human-readability of the error message if the tag cannot be found.
+
+  [ Heiko Schlittermann ]
+  * [d9e4734] buildpackage: Honor --git-arch for GBP_CHANGES_FILE
+    (Closes: #941345)
+
+  [ Chris Lamb ]
+  * [8734ed3] docs: Correct "option" typo in gbp-buildpackage manpage
+    (Closes: #972081)
+
+  [ nicoo ]
+  * [a2a3085] tests/11_test_dch_main.py: Don't expect /etc/lsb-release on
+    Debian
+  * [0916529] doctests/test_Changelog: Don't expect /etc/lsb-release
+    (Closes: #976914)
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 07 Jan 2021 11:28:00 +0100
+
 git-buildpackage (0.9.20) unstable; urgency=medium
 
   * [e513375] doctest: Ignore exception detail.
