@@ -17,8 +17,8 @@ Packager:       my_packager
 Url:            my_url
 Vcs:            my_vcs
 Source:         my_source
-Patch:          my_%patch_fn_base
-Patch0:         my_%{patch_fn_base}0
+Patch0:         my_%patch_fn_base
+Patch1:         my_%{patch_fn_base}1
 Nosource:       0
 Nopatch:        0
 BuildRoot:      my_buildroot
@@ -40,8 +40,8 @@ Package for testing GBP.
 %prep
 %setup -n my_prefix
 
-%patch -b my_patch
-%patch -P0 -b my_patch0
+%patch -P0 -b my_patch
+%patch -P1 -b my_patch1
 
 %build
 
