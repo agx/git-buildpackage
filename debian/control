@@ -28,7 +28,7 @@ Build-Depends:
  devscripts (>= 2.17.7~) <!nocheck>,
  git (>= 1:1.7.9.1-1~) <!nocheck>,
  pristine-tar (>= 1.14) <!nocheck>,
- rpm <!nocheck>,
+ rpm (>= 4.16.1) <!nocheck>,
  unzip <!nocheck>,
  zipmerge <!nocheck>,
 # For the network tests
@@ -77,8 +77,8 @@ Depends: ${python3:Depends},
  ${misc:Depends},
  cpio,
  git-buildpackage (= ${binary:Version}),
- python3-rpm,
- rpm,
+ python3-rpm (>= 4.16.1),
+ rpm (>= 4.16.1),
 Recommends: pristine-tar (>= 0.5)
 Suggests: python3-notify, unzip, zipmerge, mock
 Description: Suite to help with RPM packages in Git repositories
