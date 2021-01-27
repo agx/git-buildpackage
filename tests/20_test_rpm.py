@@ -56,7 +56,8 @@ class RpmTestBase(object):
 
     def teardown(self):
         """Test case teardown"""
-        shutil.rmtree(self.tmpdir)
+        if not os.getenv("GBP_TESTS_NOCLEAN"):
+            shutil.rmtree(self.tmpdir)
 
 
 class TestSrcRpmFile(RpmTestBase):
