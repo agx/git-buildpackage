@@ -231,7 +231,7 @@ class TestSpecFile(RpmTestBase):
         spec.protected('_delete_tag')('source', 0)
         eq_(spec.sources(), {})
         spec.protected('_delete_tag')('patch', 0)
-        spec.protected('_delete_tag')('patch', -1)
+        spec.protected('_delete_tag')('patch', 1)
         eq_(spec.protected('_patches')(), {})
         prev = spec.protected('_delete_tag')('invalidtag', None)
 
@@ -314,7 +314,7 @@ class TestSpecFile(RpmTestBase):
             for patch in spec.protected('_tags')['patch']['lines']:
                 patches[patch['num']] = patch['linevalue']
 
-            eq_(patches, {0: 'my_patch0', -1: 'my_patch'})
+            eq_(patches, {0: 'my_patch0', 1: 'my_patch'})
 
     def test_patch_series(self):
         """Test the getting the patches as a patchseries"""
