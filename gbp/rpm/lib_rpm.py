@@ -31,7 +31,7 @@ except ImportError:
     import rpm as librpm
 
 # Module initialization
-_rpmlog = tempfile.NamedTemporaryFile(prefix='gbp_rpmlog')
+_rpmlog = tempfile.NamedTemporaryFile(mode='w+', prefix='gbp_rpmlog')
 _rpmlogfd = _rpmlog.file
 librpm.setVerbosity(librpm.RPMLOG_INFO)
 librpm.setLogFile(_rpmlogfd)
