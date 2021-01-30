@@ -34,11 +34,6 @@ from gbp.rpm.linkedlist import LinkedList
 from gbp.rpm.lib_rpm import librpm, get_librpm_log
 
 
-def _decode(s):
-    if s is not None:
-        return s.decode()
-
-
 class NoSpecError(Exception):
     """Spec file parsing error"""
     pass
@@ -79,8 +74,8 @@ class SrcRpmFile(object):
     @property
     def version(self):
         """Get the (downstream) version of the RPM package"""
-        version = dict(upstreamversion=self.rpmhdr[librpm.RPMTAG_VERSION].decode(),
-                       release=self.rpmhdr[librpm.RPMTAG_RELEASE].decode())
+        version = dict(upstreamversion=self.rpmhdr[librpm.RPMTAG_VERSION],
+                       release=self.rpmhdr[librpm.RPMTAG_RELEASE])
         if self.rpmhdr[librpm.RPMTAG_EPOCH] is not None:
             version['epoch'] = str(self.rpmhdr[librpm.RPMTAG_EPOCH])
         return version
@@ -88,17 +83,17 @@ class SrcRpmFile(object):
     @property
     def name(self):
         """Get the name of the RPM package"""
-        return self.rpmhdr[librpm.RPMTAG_NAME].decode()
+        return self.rpmhdr[librpm.RPMTAG_NAME]
 
     @property
     def upstreamversion(self):
         """Get the upstream version of the RPM package"""
-        return self.rpmhdr[librpm.RPMTAG_VERSION].decode()
+        return self.rpmhdr[librpm.RPMTAG_VERSION]
 
     @property
     def packager(self):
         """Get the packager of the RPM package"""
-        return _decode(self.rpmhdr[librpm.RPMTAG_PACKAGER])
+        return self.rpmhdr[librpm.RPMTAG_PACKAGER]
 
     def unpack(self, dest_dir):
         """
@@ -168,13 +163,13 @@ class SpecFile(object):
 
         # Other initializations
         source_header = self._specinfo.packages[0].header
-        self.name = source_header[librpm.RPMTAG_NAME].decode()
-        self.upstreamversion = source_header[librpm.RPMTAG_VERSION].decode()
-        self.release = source_header[librpm.RPMTAG_RELEASE].decode()
+        self.name = source_header[librpm.RPMTAG_NAME]
+        self.upstreamversion = source_header[librpm.RPMTAG_VERSION]
+        self.release = source_header[librpm.RPMTAG_RELEASE]
         # rpm-python returns epoch as 'long', convert that to string
         self.epoch = str(source_header[librpm.RPMTAG_EPOCH]) \
             if source_header[librpm.RPMTAG_EPOCH] is not None else None
-        self.packager = _decode(source_header[librpm.RPMTAG_PACKAGER])
+        self.packager = source_header[librpm.RPMTAG_PACKAGER]
         self._tags = {}
         self._special_directives = defaultdict(list)
         self._gbp_tags = defaultdict(list)
