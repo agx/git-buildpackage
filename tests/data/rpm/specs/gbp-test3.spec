@@ -6,7 +6,7 @@ Group:      Development/Libraries
 License:    GPLv2
 Source:     %{name}-%{version}.tar.gz
 # Gbp-Ignore-Patches: 10
-Patch:      my.patch
+Patch0:     my.patch
 Patch10:    my2.patch
 Patch20:    my3.patch
 
