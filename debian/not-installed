@@ -1,0 +1,8 @@
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/deb/__pycache__
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/git/__pycache__
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/pkg/__pycache__
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/__pycache__
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/rpm/__pycache__
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/scripts/common/__pycache__
+debian/tmp/usr/lib/python3.9/dist-packages/gbp/scripts/__pycache__
+
