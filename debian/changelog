@@ -1,3 +1,38 @@
+git-buildpackage (0.9.22) unstable; urgency=medium
+
+  [ Jochen Sprickerhof ]
+  * [1586313] Define %python_sitelib for autopkgtest.
+    The rpm package no longer defines this, instead there is python3_sitelib
+    in /usr/lib/rpm/macros.d/macros.python3 provided by the
+    python3-rpm-macros package (not in Debian).
+  * [5949fbc] autopkgtest: Set %_arch.
+    Seems to be needed on armhf. (Closes: #980256)
+  * [43ead9c] rpm: Stop decoding strings.
+    Fails with newer rpmlib
+  * [c6731c0] rpm: Open tempfile in text mode
+  * [2dc9953] rpm: Fix tags in rpm spec files.
+    Patches are named similar to sources, counting from 0.
+    https://docs.fedoraproject.org/en-US/Fedora_Draft_Documentation/0.1/html/RPM_Guide/ch09s03s04.html
+  * [8b3abc9] rpm: Fix tags in rpm spec files
+    (Closes: #980637)
+
+  [ Guido Günther ]
+  * [6391e0a] tests: Honor GBP_TESTS_NOCLEAN in rpm tests too
+  * [99af76a] d/control: Require newer rpm.  The version changed API and
+    parsing strictness in multiple places, don't try to cater for older
+    versions.
+  * [785e204] Update rpm component test submodule
+  * [9efbe12] d/control: Switch to dh-compat 13
+  * [ef79503] dh_missing: Ignore __pycache__
+  * [190b19d] d/control: Bump supported python3 version.
+    We specify current stable as a lower bound.
+  * [bb396dd] Drop maintainer scripts.
+    They were needed for the oldstable -> stable upgrade
+  * [67ce18a] manpages: Fix typo in gbp-buildpackage-rpm.1
+  * [16c23ec] stricter arch check to unbreak test on i386 in salsa-ci
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 01 Feb 2021 09:15:22 +0100
+
 git-buildpackage (0.9.21) unstable; urgency=medium
 
   [ Guido Günther ]
