@@ -164,7 +164,7 @@ class TestDpkgCompareVersions(unittest.TestCase):
 class TestDeb(unittest.TestCase):
     """Test L{gbp.deb.__init__} """
 
-    @unittest.skipUnless(platform.machine() == "x86_64", "not on amd64")
+    @unittest.skipUnless(platform.machine() == "x86_64" and platform.architecture()[0] == '64bit', "not on amd64")
     def test_get_arch(self):
         arch = gbp.deb.get_arch()
         self.assertTrue(isinstance(arch, str))
