@@ -310,7 +310,7 @@
         </term>
         <listitem>
           <para>
-          Excecute <replaceable>COMMAND</replaceable> after tagging a new
+          Execute <replaceable>COMMAND</replaceable> after tagging a new
           version.
           </para>
           <para>
