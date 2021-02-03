@@ -48,14 +48,20 @@ _gbp() {
 		local -a subcommands
 		subcommands=(
 			'buildpackage:Build a Debian package'
-			'clone:Clone  a  Git  repository from a remote and set up the necessary branch tracking.'
+			'clone:Clone a Git repository from a remote and set up the necessary branch tracking'
+			'config:Query configuration values'
 			'create-remote-repo:Create a remote Git repository'
 			'dch:Generate the debian/changelog from  Git commit history'
+			'export-orig:Create orig tarballs from git'
 			'import-dsc:Import a single Debian source package'
 			'import-dscs:Import multiple Debian source packages'
 			'import-orig:Import a new upstream tarball'
+			'import-ref:Update upstream sources when using Git only'
 			'pq:Manage debian/patches using Git rebase'
+			'pristine-tar:Manage pristine-tar commits in a git repository'
 			'pull:Update a Git repository from a remote'
+			'push:Push Debian packaging changes to a Git remote'
+			'tag:Tag a Debian packages in a Git repository'
 		)
 
 		_describe -t commands gbp subcommands
@@ -479,10 +485,85 @@ _gbp-pull() {
 	__gbp_common_options
 	__gbp_branch_options
 	_arguments \
+		'--all[Update all remote-tracking branches that have identical name in the remote]' \
+		'--depth=-[Depth for deepening shallow clones]' \
 		'--force[Update even non fast-forward]' \
-		'--redo-pq[Rebuild the patch queue]' \
 		'--ignore-branch[Dont care if on a detached state]' \
-		'--depth=-[Depth for deepening shallow clones]'
+		'--no-ignore-branch[Negates --ignore-branch]' \
+		'--no-pristine-tar[Negates --pristine-tar]' \
+		'--no-track-missing[Negates --track-missing]' \
+		'--redo-pq[Rebuild the patch queue]' \
+		'--track-missing[Track missing remote branches, default is "False"]'
+}
+
+_gbp-push() {
+	__gbp_common_options
+	__gbp_branch_options
+	__gbp_tag_format_options
+	_arguments \
+		'--dry-run[Dry run, do not push]' \
+		'--ignore-branch[Dont care if on a detached state]' \
+		'--no-ignore-branch[Negates --ignore-branch]'
+}
+
+_gbp-import-ref() {
+	__gbp_common_options
+        __gbp_tag_sign_options
+	_arguments \
+		'--debian-branch=-[The branch the Debian package is being developed on]' \
+		'--keyid=-[Use this keyid for gpg signing tags]' \
+		'--merge-mode=-[How to fold the upstream commits onto the Debian packaging branch]' \
+		'--no-rollback[Do not rollback changes in case of an error]' \
+		'--postimport=-[Run cmd after the import]' \
+		'--rollback[Rollback changes in case of an error]' \
+		'--upstream-branch=-[The branch the upstream sources are put onto]' \
+		'--upstream-tag=-[Format string for upstream tags]' \
+		'--upstream-tree=-[What to merge into the debian-branch]:tree:(BRANCH TAG TREEISH)' \
+		'--upstream-version=-[The upstream version to merge]'
+}
+
+_gbp-export-orig() {
+	__gbp_common_options
+	_arguments \
+		'--component=-[Component name for additional tarballs]' \
+		'--compression=-[Compression type]:compression:(auto gzip bzip2 lzma xz)' \
+		'--compression-level=-[Set compression level]:level:(1 2 3 4 5 6 7 8 9)' \
+		'--force-create[Force creation of orig tarball]' \
+		'--no-pristine-tar[Negates --pristine-tar]' \
+		'--no-submodules[Negates --submodules]' \
+		'--pristine-tar[Use pristine-tar to create orig tarball]' \
+		'--submodules[Transparently handle submodules in the upstream tree]' \
+		'--tarball-dir=-[Location to look for external tarballs]:tarball directory:_files -/' \
+		'--upstream-branch=-[The branch the upstream sources are put onto]' \
+		'--upstream-signatures=-[Use upstream signature]' \
+		'--upstream-tag=-[Format string for upstream tags]' \
+		'--upstream-tree=-[What to merge into the debian-branch]:tree:(BRANCH TAG TREEISH)'
+}
+
+_gbp-pristine-tar() {
+	__gbp_common_options
+	_arguments \
+		'--component=-[Component name for additional tarballs]' \
+		'--upstream-tag=-[Format string for upstream tags]'
+}
+
+_gbp-tag() {
+	__gbp_common_options
+	__gbp_tag_sign_options
+	_arguments \
+		'--debian-branch=-[The branch the Debian package is being developed on]' \
+		"--debian-tag=-[Format string for debian tags]" \
+		"--debian-tag-msg=-[Format string for signed debian-tag messages]" \
+		'--git-no-ignore-branch[Negates --git-ignore-branch]' \
+		'--ignore-branch[Dont care if on a detached state]' \
+		'--ignore-new[Build with uncommitted changes in the source tree]' \
+		'--no-ignore-new[Negates --git-ignore-new]' \
+		'--posttag=-[Hook run after a successful tag operation]:command:' \
+		'--retag[Do not fail if the tag already exists]'
+}
+
+_gbp-config() {
+	__gbp_common_options
 }
 
 _gbp "$@"
