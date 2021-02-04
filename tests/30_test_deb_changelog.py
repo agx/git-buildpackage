@@ -30,6 +30,21 @@ class TestQuoting(unittest.TestCase):
         self.assertEquals(cl.email, 'agx@sigxcpu.org')
 
 
+class TestEncoding(unittest.TestCase):
+    def test_nul(self):
+        """Test we remove NUL characters from strings when parsing (#981340)"""
+        changes = """git-buildpackage (0.9.2) unstable; urgency=low
+
+  * List of ch\0nges
+
+ -- User N\0me <agx@sigxcpu.org>  Sun, 12 Nov 2017 19:00:00 +0200
+"""
+        cl = ChangeLog(changes)
+        self.assertEquals(cl.author, 'User Nme')
+        self.assertEquals(cl.email, 'agx@sigxcpu.org')
+        self.assertEquals('\0' in cl.get_changes(), False)
+
+
 @skip_without_cmd('debchange')
 class Test(unittest.TestCase):
     def setUp(self):

@@ -99,7 +99,7 @@ class ChangeLog(object):
         if cmd.returncode:
             raise ParseChangeLogError("Failed to parse changelog. "
                                       "dpkg-parsechangelog said:\n%s" % stderr.decode().strip())
-        return stdout.decode()
+        return stdout.decode().replace('\0', '')
 
     def _parse(self):
         """Parse a changelog based on the already read contents."""
