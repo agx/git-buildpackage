@@ -82,3 +82,15 @@ class TestClone(ComponentTestBase):
         self.assertEquals(ret, 0)
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'master', ['master'])
+
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_clone_upstream_remote(self):
+        """Test that cloning from github urls works"""
+        dest = os.path.join(self._tmpdir,
+                            'cloned_repo')
+        ret = clone(['arg0', "vcsgit:tepl", dest])
+        self.assertEquals(ret, 0)
+        cloned = ComponentTestGitRepository(dest)
+        self._check_repo_state(cloned, 'debian/master',
+                               ['debian/master', 'upstream/latest', 'pristine-tar'],
+                               remotes=['origin', 'upstream'])
