@@ -951,6 +951,8 @@ def test_make_tree():
     '745951810c9e22fcc6de9b23f05efd6ab5512123'
     >>> list(repo.list_tree(newtree, recurse=False, paths='testfile'))
     [('100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile')]
+    >>> list(repo.list_tree(newtree, recurse=False, paths='testfile', sizes=True))
+    [('100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 20, b'testfile')]
     >>> repo.make_tree([])
     '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
     """
