@@ -1071,8 +1071,8 @@ class GitRepository(object):
 
     def list_tree(self, treeish, recurse=False, paths=None):
         """
-        Get a trees content. It returns a list of objects that match the
-        'ls-tree' output: [mode, type, sha1, path].
+        Get a trees content. It yields tuples that match the
+        'ls-tree' output: (mode, type, sha1, path).
 
         @param treeish: the treeish object to list
         @type treeish: C{str}
@@ -1091,15 +1091,13 @@ class GitRepository(object):
         if ret:
             raise GitRepositoryError("Failed to ls-tree '%s': '%s'" % (treeish, err.decode().strip()))
 
-        tree = []
         for line in out.split(b'\0'):
             if line:
                 parts = line.split(None, 3)
                 # decode everything but the file name
-                for i in range(len(parts) - 1):
-                    parts[i] = parts[i].decode()
-                tree.append(parts)
-        return tree
+                filename = parts.pop()
+                mode, type, sha1 = (part.decode() for part in parts)
+                yield mode, type, sha1, filename
 
 #}
 
