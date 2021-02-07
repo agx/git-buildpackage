@@ -121,6 +121,7 @@ class GbpOptionParser(OptionParser):
                 'debian-branch': 'master',
                 'debian-tag': 'debian/%(version)s',
                 'debian-tag-msg': '%(pkg)s Debian release %(version)s',
+                'defuse-gitattributes': 'auto',
                 'dist': 'sid',
                 'drop': 'False',
                 'export': 'HEAD',
