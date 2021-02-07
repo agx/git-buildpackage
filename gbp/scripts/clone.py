@@ -204,7 +204,8 @@ def main(argv):
                         not repo.has_branch(branch)):
                     repo.create_branch(branch, remote)
 
-        repo.set_branch(options.debian_branch)
+        if repo.has_branch(options.debian_branch, remote=True):
+            repo.set_branch(options.debian_branch)
 
         repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
 
