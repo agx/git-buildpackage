@@ -1069,20 +1069,24 @@ class GitRepository(object):
             raise GitRepositoryError("Not a Git repository object: '%s'" % obj)
         return out[0].decode().strip()
 
-    def list_tree(self, treeish, recurse=False, paths=None):
+    def list_tree(self, treeish, recurse=False, paths=None, sizes=False):
         """
         Get a trees content. It yields tuples that match the
-        'ls-tree' output: (mode, type, sha1, path).
+        'ls-tree' output: (mode, type, sha1, path). When sizes is True,
+        includes object sizes: (mode, type, sha1, size, path)
 
         @param treeish: the treeish object to list
         @type treeish: C{str}
         @param recurse: whether to list the tree recursively
+        @type recurse: C{bool}
+        @param sizes: whether to include object sizes
         @type recurse: C{bool}
         @return: the tree
         @rtype: C{list} of objects. See above.
         """
         args = GitArgs('-z')
         args.add_true(recurse, '-r')
+        args.add_true(sizes, '-l')
         args.add(treeish)
         args.add("--")
         args.add_cond(paths, paths)
@@ -1093,11 +1097,15 @@ class GitRepository(object):
 
         for line in out.split(b'\0'):
             if line:
-                parts = line.split(None, 3)
+                parts = line.split(None, 4 if sizes else 3)
                 # decode everything but the file name
                 filename = parts.pop()
-                mode, type, sha1 = (part.decode() for part in parts)
-                yield mode, type, sha1, filename
+                if sizes:
+                    mode, type, sha1, size = (part.decode() for part in parts)
+                    yield mode, type, sha1, int(size), filename
+                else:
+                    mode, type, sha1 = (part.decode() for part in parts)
+                    yield mode, type, sha1, filename
 
 #}
 
