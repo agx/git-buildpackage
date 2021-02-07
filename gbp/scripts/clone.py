@@ -138,6 +138,8 @@ def build_parser(name):
                                   choices=['DEBIAN', 'GIT'])
     parser.add_config_file_option(option_name="repo-email", dest="repo_email",
                                   choices=['DEBIAN', 'GIT'])
+    parser.add_config_file_option(option_name="defuse-gitattributes", dest="defuse_gitattributes",
+                                  type="tristate", help="disable harmful Git attributes")
     return parser
 
 
@@ -208,6 +210,9 @@ def main(argv):
             repo.set_branch(options.debian_branch)
 
         repo_setup.set_user_name_and_email(options.repo_user, options.repo_email, repo)
+        if not options.defuse_gitattributes.is_off():
+            if options.defuse_gitattributes.is_on() or not repo_setup.check_gitattributes(repo, 'HEAD'):
+                repo_setup.setup_gitattributes(repo)
 
         if postclone:
             Hook('Postclone', options.postclone,
