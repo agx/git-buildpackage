@@ -942,15 +942,15 @@ def test_make_tree():
     >>> sha1 = repo.write_file('testfile')
     >>> sha1
     '19af7398c894bc5e86e17259317e4db519e9241f'
-    >>> head = repo.list_tree('HEAD')
+    >>> head = list(repo.list_tree('HEAD'))
     >>> head
-    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile']]
+    [('100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile')]
     >>> head.append(['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', 'testfile2'])
     >>> newtree = repo.make_tree(head)
     >>> newtree
     '745951810c9e22fcc6de9b23f05efd6ab5512123'
-    >>> repo.list_tree(newtree, recurse=False, paths='testfile')
-    [['100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile']]
+    >>> list(repo.list_tree(newtree, recurse=False, paths='testfile'))
+    [('100644', 'blob', '19af7398c894bc5e86e17259317e4db519e9241f', b'testfile')]
     >>> repo.make_tree([])
     '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
     """
