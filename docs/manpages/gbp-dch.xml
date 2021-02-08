@@ -49,6 +49,7 @@
         <arg><option>--qa</option></arg>
         <arg><option>--security</option></arg>
         <arg><option>--team</option></arg>
+        <arg><option>--local=</option><replaceable>suffix</replaceable></arg>
       </group>
       <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
       <arg><option>--force-distribution</option></arg>
@@ -379,6 +380,18 @@
             Increment the Debian release number for a Debian Security
             Team non-maintainer upload, and add a "Security Team
             upload" changelog comment.
+            This option can't be set via &gbp.conf;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--local=</option><replaceable>suffix</replaceable>,
+              <option>-l</option> <replaceable>suffix</replaceable>
+        </term>
+        <listitem>
+          <para>
+            Increment the Debian release number for a local build
+            using the specified suffix.
             This option can't be set via &gbp.conf;.
           </para>
         </listitem>

@@ -304,6 +304,13 @@ class TestScriptDch(DebianGitTestRepo):
         self.assertEqual("test-package (%s) %s; urgency=%s\n" % (new_version_0_9, os_codename, default_urgency), lines[0])
         self.assertIn("""  * added debian/control\n""", lines)
 
+    def test_dch_main_increment_debian_version_with_local(self):
+        """Test dch.py like gbp dch script does: increment debian version - local suffix"""
+        options = ["--local", "suffix"]
+        lines = self.run_dch(options)
+        self.assertEqual("test-package (0.9-1suffix1) UNRELEASED; urgency=%s\n" % (default_urgency,), lines[0])
+        self.assertIn("""  * added debian/control\n""", lines)
+
     def test_dch_main_increment_debian_version_with_auto(self):
         """Test dch.py like gbp dch script does: increment debian version - guess last commit"""
         self.repo.delete_tag("upstream/1.0")
