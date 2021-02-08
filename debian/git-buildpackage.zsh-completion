@@ -154,6 +154,7 @@ _gbp-dch () {
 		'--bpo[Increment the release number for a backports upload]' \
 		'--nmu[Increment the release number for a NMU upload]' \
 		'--qa[Increment the release number for a QA upload]' \
+		'(--local -l)'{-l,--local}'=-[Increment the release number for a local build]' \
 		'--distribution=-[Set the distribution field]' \
 		'--force-distribution[Force distribution]' \
 		'--urgency=-[Set the upload urgency]' \

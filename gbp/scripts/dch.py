@@ -393,6 +393,8 @@ def build_parser(name):
     version_group.add_option("--security", dest="security", action="store_true", default=False,
                              help="Increment the Debian release number for a security upload and "
                              "add a security upload changelog comment.")
+    version_group.add_option("-l", "--local", dest="local_suffix", metavar="SUFFIX",
+                             help="Add a suffix to the Debian version number for a local build.")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
     commit_group.add_boolean_config_file_option(option_name="meta", dest="meta")
     commit_group.add_config_file_option(option_name="meta-closes", dest="meta_closes")
@@ -498,7 +500,7 @@ def main(argv):
         add_section = False
         # add a new changelog section if:
         if (options.new_version or options.bpo or options.nmu or options.qa or
-                options.team or options.security):
+                options.team or options.security or options.local_suffix):
             if options.bpo:
                 version_change['increment'] = '--bpo'
             elif options.nmu:
@@ -509,6 +511,8 @@ def main(argv):
                 version_change['increment'] = '--team'
             elif options.security:
                 version_change['increment'] = '--security'
+            elif options.local_suffix:
+                version_change['increment'] = '--local=%s' % options.local_suffix
             else:
                 version_change['version'] = options.new_version
             # the user wants to force a new version
