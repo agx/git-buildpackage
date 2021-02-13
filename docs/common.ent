@@ -35,6 +35,7 @@
   <!ENTITY gbp-pristine-tar	"<command>gbp&nbsp;pristine-tar</command>">
   <!ENTITY gbp-pull		"<command>gbp&nbsp;pull</command>">
   <!ENTITY gbp-push		"<command>gbp&nbsp;push</command>">
+  <!ENTITY gbp-setup-gitattributes "<command>gbp&nbsp;setup-gitattributes</command>">
   <!ENTITY gbp-rpm-ch           "<command>gbp rpm-ch</command>">
   <!ENTITY gbp-tag              "<command>gbp tag</command>">
   <!ENTITY gbp.conf		"<filename>gbp.conf</filename>">
