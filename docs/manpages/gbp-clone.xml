@@ -30,6 +30,7 @@
       <arg><option>--reference=</option><replaceable>repository</replaceable></arg>
       <arg><option>--postclone=</option><replaceable>COMMAND</replaceable></arg>
       <arg><option>--[no-]hooks</option></arg>
+      <arg><option>--defuse-gitattributes=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
       <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
       <arg choice="plain"><replaceable>repository</replaceable></arg>
@@ -123,6 +124,27 @@
 	</listitem>
       </varlistentry>
       <varlistentry>
+	<term><option>--defuse-gitattributes=</option><option>[auto|on|off]</option></term>
+	<listitem>
+          <para>
+            Disable Git attributes that may interfere with building packages. Works
+            by updating <filename>.git/info/attributes</filename> to override attributes
+            in the upstream sources which may cause files to be transformed on checkout.
+            More specifically, a new macro attribute is defined, <symbol>[attr]dgit-defuse-attrs</symbol>,
+            which is then applied to <filename>*</filename> together with <symbol>export-subst</symbol>
+            and <symbol>export-ignore</symbol>. This is done to be compatible with <command>dgit</command>
+            and <command>git-deborig</command> which disable Git attributes this way.
+          </para>
+          <para>
+            If set to <replaceable>auto</replaceable>, first check whether there
+            are any <filename>.gitattributes</filename> files in the upstream source,
+            and act only if there are some. If set to <replaceable>on</replaceable>,
+            unconditionally there are some. If set to <replaceable>off</replaceable>,
+            does nothing.
+          </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
 	<term><option>--repo-email=</option><option>[GIT|DEBIAN]</option></term>
         <listitem>
           <para>
@@ -195,7 +217,11 @@
     <para>
       <xref linkend="man.gbp.buildpackage"/>,
       <xref linkend="man.gbp.pull"/>,
-      <xref linkend="man.gbp.conf"/>
+      <xref linkend="man.gbp.conf"/>,
+      <citerefentry>
+        <refentrytitle>gitattributes</refentrytitle>
+        <manvolnum>5</manvolnum>
+      </citerefentry>
     </para>
   </refsect1>
   <refsect1>
