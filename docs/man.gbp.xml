@@ -30,5 +30,6 @@
 &man.gbp.pull;
 &man.gbp.push;
 &man.gbp.rpm.ch;
+&man.gbp.setup.gitattributes;
 &man.gbp.tag;
 </reference>

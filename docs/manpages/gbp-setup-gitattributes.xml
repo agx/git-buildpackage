@@ -1,0 +1,77 @@
+<refentry id="man.gbp.setup.gitattributes">
+  <refentryinfo>
+    <address>
+      <email>andrew@shadura.me</email>
+    </address>
+    <author>
+      <firstname>Andrej</firstname>
+      <surname>Shadura</surname>
+    </author>
+  </refentryinfo>
+  <refmeta><refentrytitle>gbp-setup-gitattributes</refentrytitle>
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>gbp-setup-gitattributes</refname>
+    <refpurpose>Set up &git; attributes to disable transformations</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      &gbp-setup-gitattributes;
+
+      &man.common.options.synopsis;
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+      &gbp-setup-gitattributes; sets up <filename>.git/info/attributes</filename> in the current
+      repository to disable all transforming attributes for all files. This is done by defining
+      a macro attribute <symbol>[attr]dgit-defuse-attrs</symbol> and applying it to <filename>*</filename>
+      together with <symbol>export-subst</symbol> and <symbol>export-ignore</symbol>.
+    </para>
+    <para>
+      This method is compatible with <command>dgit</command> and <command>git-deborig</command>
+      which use this macro attribute. Older versions of <command>dgit</command> use an incomplete
+      preset missing some attributes; if such is found, it is replaced by an updated definition.
+    </para>
+    <para>
+      Disabling those attributes is necessary, since they cause often unwanted conversion of files
+      on checkout (e.g. line endings, encodings, etc). Working with such source tree is confusing,
+      since the working tree differs from the Git history (and sometimes from the source tarball),
+      and can lead to errors.
+    </para>
+    <para>
+      By default, &gbp-clone; tries to detect the usage of <filename>.gitattributes</filename> in the
+      upstream source and disable the Git attributes only when necessary.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      &man.common.options.description;
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <xref linkend="man.gbp.clone"/>,
+      <xref linkend="man.gbp.push"/>,
+      <xref linkend="man.gbp.conf"/>,
+      <citerefentry>
+        <refentrytitle>gitattributes</refentrytitle>
+        <manvolnum>5</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+        <refentrytitle>dgit</refentrytitle>
+        <manvolnum>7</manvolnum>
+      </citerefentry>
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+    <para>
+      Andrej Shadura <email>andrew@shadura.me</email>
+    </para>
+  </refsect1>
+</refentry>

@@ -19,6 +19,7 @@
 <!ENTITY man.gbp.pull SYSTEM "gbp-pull.xml">
 <!ENTITY man.gbp.push SYSTEM "gbp-push.xml">
 <!ENTITY man.gbp.rpm.ch SYSTEM "gbp-rpm-ch.xml">
+<!ENTITY man.gbp.setup.gitattributes SYSTEM "gbp-setup-gitattributes.xml">
 <!ENTITY man.gbp.tag SYSTEM "gbp-tag.xml">
 <!ENTITY man.seealso.common SYSTEM "man.seealso.xml">
 
