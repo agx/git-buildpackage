@@ -57,18 +57,18 @@ Recommends: pristine-tar (>= 1.41),
 Suggests: python3-notify2, unzip, sudo
 Description: Suite to help with Debian packages in Git repositories
  This package contains the following tools:
-  * gbp buildpackage: build a package out of a git repository, check for local
+  * gbp buildpackage: build a package out of a Git repository, check for local
     modifications and tag appropriately
-  * gbp import-orig: import a new upstream version into the git repository
-  * gbp export-orig: export an upstream tarball from the git repository
-  * gbp import-{dsc,dscs}: import existing Debian source packages into a git
+  * gbp import-orig: import a new upstream version into the Git repository
+  * gbp export-orig: export an upstream tarball from the Git repository
+  * gbp import-{dsc,dscs}: import existing Debian source packages into a Git
     repository
   * gbp dch: generate Debian changelog entries from Git commit messages
   * gbp {pull,clone}: clone and pull from remote repos
   * gbp pq: manage debian/patches easily
   * gbp create-remote-repo: create remote repositories
   * gbp push: push content to remote repositories
-  * gbp tag: tag a Debian package in git
+  * gbp tag: tag a Debian package in Git
   * gbp pristine-tar: create pristine-tar commits
   * gbp setup-gitattributes: set up Git attributes to disable transformations
 
@@ -84,9 +84,9 @@ Recommends: pristine-tar (>= 0.5)
 Suggests: python3-notify, unzip, zipmerge, mock
 Description: Suite to help with RPM packages in Git repositories
  This package contains the following tools:
-  * gbp buildpackage-rpm: build a package out of a git repository, check for
+  * gbp buildpackage-rpm: build a package out of a Git repository, check for
     local modifications and tag appropriately
-  * gbp import-srpm: import existing RPM source packages into a git
+  * gbp import-srpm: import existing RPM source packages into a Git
     repository
   * gbp pq-rpm: manage patches easily
  .
