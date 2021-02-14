@@ -70,6 +70,7 @@ Description: Suite to help with Debian packages in Git repositories
   * gbp push: push content to remote repositories
   * gbp tag: tag a Debian package in git
   * gbp pristine-tar: create pristine-tar commits
+  * gbp setup-gitattributes: set up Git attributes to disable transformations
 
 Package: git-buildpackage-rpm
 Architecture: all
