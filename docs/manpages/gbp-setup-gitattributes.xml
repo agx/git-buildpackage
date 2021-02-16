@@ -13,43 +13,69 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-setup-gitattributes</refname>
-    <refpurpose>Set up &git; attributes to disable transformations</refpurpose>
+    <refpurpose>Set up &git; attributes for packaging</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
       &gbp-setup-gitattributes;
 
       &man.common.options.synopsis;
+      <arg><option>--[no-]dgit-defuse-attrs</option></arg>
+      <arg><option>--all</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
       &gbp-setup-gitattributes; sets up <filename>.git/info/attributes</filename> in the current
-      repository to disable all transforming attributes for all files. This is done by defining
-      a macro attribute <symbol>[attr]dgit-defuse-attrs</symbol> and applying it to <filename>*</filename>
-      together with <symbol>export-subst</symbol> and <symbol>export-ignore</symbol>.
+      &git; repository to sane defaults most suitable for packaging work. At the moment, this
+      amounts to making sure no transformations happen during checkout, commit or export. More
+      attributes may be added in future, by default all known settings are applied.
     </para>
     <para>
-      This method is compatible with <command>dgit</command> and <command>git-deborig</command>
-      which use this macro attribute. Older versions of <command>dgit</command> use an incomplete
-      preset missing some attributes; if such is found, it is replaced by an updated definition.
-    </para>
-    <para>
-      Disabling those attributes is necessary, since they cause often unwanted conversion of files
-      on checkout (e.g. line endings, encodings, etc). Working with such source tree is confusing,
+      Upstream sources may ship <filename>.gitattributes</filename> files enabling certain
+      transformations to the committed source, usually to make working with files in different
+      encodings more convenient for the upstream authors. For Debian packaging, it is necessary
+      to override these attributes, since they cause often unwanted conversion of files (e.g.
+      line endings, encodings and some others). Working with such source tree is confusing,
       since the working tree differs from the Git history (and sometimes from the source tarball),
       and can lead to errors.
     </para>
     <para>
       By default, &gbp-clone; tries to detect the usage of <filename>.gitattributes</filename> in the
-      upstream source and disable the Git attributes only when necessary.
+      upstream source and disables the Git attributes only when necessary.
     </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
     <variablelist>
       &man.common.options.description;
+      <varlistentry>
+        <term><option>--[no-]dgit-defuse-attrs</option>
+        </term>
+        <listitem>
+          <para>
+            <option>Disables all transforming attributes for all files. This is done by
+            defining a macro attribute <symbol>[attr]dgit-defuse-attrs</symbol> and applying it
+            to <filename>*</filename> together with <symbol>export-subst</symbol> and
+            <symbol>export-ignore</symbol>.
+          </para>
+          <para>
+            This method is compatible with <command>dgit</command> and <command>git-deborig</command>
+            which use this macro attribute. Older versions of <command>dgit</command> use an incomplete
+            preset missing some attributes; if such is found, it is replaced by an updated definition.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--all</option>
+        </term>
+        <listitem>
+          <para>
+            Apply all known &git; attribute settings. This is the default.
+          </para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>

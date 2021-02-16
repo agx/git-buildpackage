@@ -30,15 +30,33 @@ from gbp.scripts.common.repo_setup import setup_gitattributes
 
 
 def build_parser(name):
+    setting_presets = {'dgit-defuse-attrs'}
+
+    def disable_preset(option, opt, value, parser):
+        setting = opt.replace('--no-', '')
+        if parser.values.attr_presets and setting in parser.values.attr_presets:
+            parser.values.attr_presets.remove(setting)
+
+    def enable_preset(option, opt, value, parser):
+        setting = opt.replace('--', '')
+        parser.values.attr_presets.add(setting)
+
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
-                                       usage='%prog - disable harmful Git attributes')
+                                       usage='%prog - set up sane Git attributes')
     except GbpError as err:
         gbp.log.err(err)
         return None
 
     parser.add_option("--verbose", action="store_true", dest="verbose",
                       default=False, help="verbose command execution")
+    for preset in setting_presets:
+        parser.add_option("--%s" % preset, action="callback", callback=enable_preset,
+                          help="Apply %s preset" % preset)
+        parser.add_option("--no-%s" % preset, action="callback", callback=disable_preset,
+                          help="Do not apply %s preset" % preset)
+    parser.add_option("--all", action="store_const", dest="attr_presets",
+                      const=setting_presets, default=setting_presets, help="apply all known settings")
     parser.add_config_file_option(option_name="color", dest="color",
                                   type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
@@ -74,6 +92,8 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
+        if not options.attr_presets:
+            raise GbpError("Nothing to do, no settings to apply.")
         setup_gitattributes(repo)
     except (GitRepositoryError, GbpError, CommandExecFailed) as err:
         if str(err):
