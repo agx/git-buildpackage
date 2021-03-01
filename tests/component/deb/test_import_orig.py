@@ -258,7 +258,8 @@ class TestImportOrig(ComponentTestBase):
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
 
-        ok_('README' not in repo.ls_tree('HEAD'),
+        ok_(b'COPYING' in repo.ls_tree('HEAD'))
+        ok_(b'README' not in repo.ls_tree('HEAD'),
             "README not filtered out of %s" % repo.ls_tree('HEAD'))
         tar = '../hello-debhelper_2.8.orig.tar.gz'
 
@@ -299,9 +300,10 @@ class TestImportOrig(ComponentTestBase):
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
 
-        ok_('README' not in repo.ls_tree('HEAD'),
+        ok_(b'COPYING' in repo.ls_tree('HEAD'))
+        ok_(b'README' not in repo.ls_tree('HEAD'),
             "README not filtered out of %s" % repo.ls_tree('HEAD'))
-        ok_('TODO' not in repo.ls_tree('HEAD'),
+        ok_(b'TODO' not in repo.ls_tree('HEAD'),
             "TODO not filtered out of %s" % repo.ls_tree('HEAD'))
         tar = '../hello-debhelper_2.8.orig.tar.gz'
 
