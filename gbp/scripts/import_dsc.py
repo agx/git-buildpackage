@@ -34,7 +34,7 @@ from gbp.git import rfc822_date_to_git
 from gbp.git.modifier import GitModifier
 from gbp.git.vfs import GitVfs
 from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
-                        no_upstream_branch_msg)
+                        no_debian_branch_msg, no_upstream_branch_msg)
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes, debug_exc
 from gbp.scripts.common import repo_setup
@@ -198,14 +198,14 @@ def apply_debian_patch(repo, source, dsc, upstream_commit, options):
         os.chdir(repo.path)
 
 
-def create_missing_branch(repo, branch, options):
+def create_missing_branch(repo, branch, options, err_msg):
     if not repo.has_branch(branch):
         if options.create_missing_branches:
             gbp.log.info("Creating missing branch '%s'" % branch)
             repo.create_branch(branch)
         else:
-            raise GbpError(no_upstream_branch_msg % branch +
-                           "\nAlso check the --create-missing-branches option.")
+            raise GbpError(err_msg + "\n"
+                           "Also check the --create-missing-branches option.")
 
 
 def import_native(repo, source, dsc, options):
@@ -217,7 +217,8 @@ def import_native(repo, source, dsc, options):
         branch = None
     else:
         branch = options.debian_branch
-        create_missing_branch(repo, branch, options)
+        create_missing_branch(repo, branch, options,
+                              no_debian_branch_msg % branch)
 
     author = get_author_from_changelog(source.unpacked)
     committer = get_committer_from_author(author, options)
@@ -248,7 +249,8 @@ def import_upstream(repo, source, dsc, options):
         branch = None
     else:
         branch = options.upstream_branch
-        create_missing_branch(repo, branch, options)
+        create_missing_branch(repo, branch, options,
+                              no_upstream_branch_msg % branch)
 
     author = committer = {}
     commit_msg = "Import %s" % msg

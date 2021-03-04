@@ -39,6 +39,12 @@ file:///usr/share/doc/git-buildpackage/manual-html/gbp.import.html#GBP.IMPORT.CO
 on howto create it otherwise use --upstream-branch to specify it.
 """
 
+no_debian_branch_msg = """
+Repository does not have branch '%s' for packaging sources. If there is none see
+file:///usr/share/doc/git-buildpackage/manual-html/gbp.import.html#GBP.IMPORT.CONVERT
+on howto create it otherwise use --debian-branch to specify it.
+"""
+
 
 def expand_path(option, opt, value):
     value = os.path.expandvars(value)
