@@ -58,7 +58,7 @@
             <option>Disables all transforming attributes for all files. This is done by
             defining a macro attribute <symbol>[attr]dgit-defuse-attrs</symbol> and applying it
             to <filename>*</filename> together with <symbol>export-subst</symbol> and
-            <symbol>export-ignore</symbol>.
+            <symbol>export-ignore</symbol>.</option>
           </para>
           <para>
             This method is compatible with <command>dgit</command> and <command>git-deborig</command>
