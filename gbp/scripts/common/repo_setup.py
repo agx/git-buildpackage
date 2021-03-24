@@ -61,10 +61,10 @@ attr_glob_defns = {
 def is_gitattributes_set_up(repo) -> bool:
     """
     Return True if git attributes have been set up correctly:
-        * dgit-defuse-attrs macro exists
-        * dgit-defuse-attrs includes attributes we’re interested in
-        * dgit-defuse-attrs is enabled for *
-        * export-subst and export-ignore are unset for *
+        - dgit-defuse-attrs macro exists
+        - dgit-defuse-attrs includes attributes we’re interested in
+        - dgit-defuse-attrs is enabled for *
+        - export-subst and export-ignore are unset for *
     """
     gitattrs = Path(repo.git_dir) / 'info' / 'attributes'
     if not gitattrs.exists():
