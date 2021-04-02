@@ -516,7 +516,7 @@ def main(argv):
 
             if options.pristine_tar:
                 if pristine_orig:
-                    repo.rrr_branch('pristine-tar')
+                    repo.rrr_branch(repo.pristine_tar_branch)
                     for source in sources:
                         # Enforce signature file exists with --upstream-signatures=on
                         if options.upstream_signatures.is_on() and not source.signaturefile:
