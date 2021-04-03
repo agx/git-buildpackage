@@ -103,7 +103,7 @@ def pristine_tar_build_origs(repo, source, output_dir, options):
 
     if not repo.has_branch(repo.pristine_tar_branch):
         gbp.log.warn('Pristine-tar branch "%s" not found' %
-                     repo.pristine_tar.branch)
+                     repo.pristine_tar_branch)
 
     comp = Compressor(options.comp_type)
     pristine_tar_prepare_orig_tree(repo, source, options)
