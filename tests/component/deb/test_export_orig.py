@@ -112,7 +112,7 @@ class TestExportOrig(ComponentTestBase):
                            '--component=foo',
                            '--pristine-tar'])
         ok_(ret == 1, "Exporting tarballs must fail")
-        self._check_log(-1, "gbp:error: Can not find pristine tar commit for archive 'hello-debhelper_2.8.orig.tar.gz'")
+        self._check_log(-1, "gbp:error: Cannot find pristine tar commit for archive 'hello-debhelper_2.8.orig.tar.gz'")
 
     def test_tarball_dir_version_replacement(self):
         """Test that generating tarball from directory version substitution works"""
@@ -220,7 +220,7 @@ class TestExportOrig(ComponentTestBase):
                            '--pristine-tar',
                            '--upstream-signatures=on'])
         ok_(ret == 1, "Exporting tarballs must fail")
-        self._check_log(-1, "gbp:error: Can not find requested upstream signature for archive "
+        self._check_log(-1, "gbp:error: Cannot find requested upstream signature for archive "
                         "'hello-debhelper_2.6.orig.tar.gz' in pristine tar commit.")
 
     @RepoFixtures.quilt30(opts=['--pristine-tar'])

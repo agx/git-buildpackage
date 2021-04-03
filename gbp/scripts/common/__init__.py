@@ -71,7 +71,7 @@ def get_component_tarballs(name, version, tarball, components):
             sig = None
         tarballs.append(DebianAdditionalTarball(cname, component, sig=sig))
         if not os.path.exists(cname):
-            raise GbpError("Can not find component tarball %s" % cname)
+            raise GbpError("Cannot find component tarball %s" % cname)
     return tarballs
 
 

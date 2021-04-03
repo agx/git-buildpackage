@@ -326,9 +326,9 @@ class DebianGitRepository(PkgGitRepository):
         gbp.log.debug("upstream signature state: %s" % upstream_signatures)
         commit, found_signature = self.get_pristine_tar_commit(source, component)
         if not commit and self.has_pristine_tar_branch():
-            raise GitRepositoryError("Can not find pristine tar commit for archive '%s'" % output)
+            raise GitRepositoryError("Cannot find pristine tar commit for archive '%s'" % output)
         if not found_signature and upstream_signatures.is_on():
-            raise GitRepositoryError("Can not find requested upstream signature for archive '%s' in pristine tar commit." % output)
+            raise GitRepositoryError("Cannot find requested upstream signature for archive '%s' in pristine tar commit." % output)
         try:
             signature = False if upstream_signatures.is_off() else found_signature
             self.pristine_tar.checkout(source.name, source.upstream_version, comp.type, output_dir,
