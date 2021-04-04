@@ -36,6 +36,7 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
     """
     Make sure we have the needed upstream tarballs. The default order is:
     - look in tarball_dir and if found symlink to it
+    - create tarball using pristine-lfs
     - create tarball using pristine-tar
     - create tarball using git-archive
 
@@ -68,7 +69,8 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
 
     # Create tarball if missing or forced
     if not du.DebianPkgPolicy.has_origs(orig_files, output_dir) or options.force_create:
-        if not pristine_tar_build_origs(repo, source, output_dir, options):
+        if (not pristine_lfs_checkout_origs(repo, source, output_dir, options) and
+                not pristine_tar_build_origs(repo, source, output_dir, options)):
             git_archive_build_origs(repo, source, output_dir, options)
     maybe_pristine_tar_commit(repo, source, options, output_dir, orig_files)
     pristine_tar_verify_origs(repo, source, options, output_dir, orig_files)
@@ -90,6 +92,27 @@ def pristine_tar_prepare_orig_tree(repo, source, options):
         except GitRepositoryError:
             raise GbpError("Couldn't find upstream tree '%s' to create "
                            "orig tarball via pristine-tar" % tree_name)
+
+
+def pristine_lfs_checkout_origs(repo, source, output_dir, options):
+    """
+    Check out orig tarballs using pristine-lfs
+
+    @returns: C{True} if tarball was built, C{False} otherwise
+    """
+    gbp.log.info(options)
+    if not options.pristine_lfs:
+        return False
+
+    if not repo.has_branch(repo.pristine_lfs_branch):
+        gbp.log.warn('Pristine-lfs branch "%s" not found' %
+                     repo.pristine_lfs_branch)
+
+    try:
+        repo.pristine_lfs.checkout(source.name, source.version, output_dir, quiet=not options.verbose)
+        return True
+    except CommandExecFailed:
+        return False
 
 
 def pristine_tar_build_origs(repo, source, output_dir, options):
@@ -297,6 +320,7 @@ def build_parser(name):
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    orig_group.add_boolean_config_file_option(option_name="pristine-lfs", dest="pristine_lfs")
     orig_group.add_config_file_option(option_name="force-create", dest="force_create",
                                       help="force creation of orig tarball", action="store_true")
     orig_group.add_config_file_option(option_name="tarball-dir", dest="tarball_dir", type="path",

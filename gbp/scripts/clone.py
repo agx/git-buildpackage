@@ -224,6 +224,8 @@ def main(argv):
             branches = [options.debian_branch, options.upstream_branch]
             if options.pristine_tar:
                 branches += [repo.pristine_tar_branch]
+            if options.pristine_lfs:
+                branches += [repo.pristine_lfs_branch]
             gbp.log.debug('Will track branches: %s' % branches)
             for branch in branches:
                 remote = 'origin/%s' % branch

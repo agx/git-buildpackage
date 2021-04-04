@@ -22,6 +22,7 @@ import re
 from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
+from gbp.deb.pristinelfs import PristineLfs
 from gbp.paths import to_bin
 from gbp.pkg.git import PkgGitRepository
 from gbp.pkg.pkgpolicy import PkgPolicy
@@ -338,6 +339,43 @@ class DebianGitRepository(PkgGitRepository):
                                                                   " with attached signature file" if signature else "",
                                                                   e))
         return True
+
+    @property
+    def pristine_lfs_branch(self):
+        """
+        The name of the pristine-lfs branch, whether it already exists or
+        not.
+        """
+        return PristineLfs.branch
+
+    def has_pristine_lfs_branch(self):
+        """
+        Whether the repo has a I{pristine-lfs} branch.
+
+        @return: C{True} if the repo has pristine-lfs commits already, C{False}
+            otherwise
+        @rtype: C{Bool}
+        """
+        return True if self.has_branch(self.pristine_lfs_branch) else False
+
+    def create_pristine_lfs_commits(self, sources):
+        """
+        Create pristine-lfs commits for a package with main tarball
+        and (optional) component tarballs based on upstream_tree
+
+        @param soures: C{list} of tarball as I{UpstreamSource}. First one being the main
+                       tarball the other ones additional tarballs.
+        """
+        all_files = [
+            source.path for source in sources
+        ] + [
+            source.signaturefile for source in sources if source.signaturefile
+        ]
+
+        try:
+            self.pristine_lfs.commit(all_files)
+        except CommandExecFailed as e:
+            raise GitRepositoryError(str(e))
 
     def create_upstream_tarball_via_git_archive(self, source, output_dir, treeish,
                                                 comp, with_submodules, component=None):

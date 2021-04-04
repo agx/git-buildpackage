@@ -174,6 +174,8 @@ class GbpOptionParser(OptionParser):
                 'pq-from': 'DEBIAN',
                 'prebuild': '',
                 'preexport': '',
+                'pristine-lfs': 'False',
+                'pristine-lfs-commit': 'False',
                 'pristine-tar': 'False',
                 'pristine-tar-commit': 'False',
                 'purge': 'True',
@@ -238,6 +240,12 @@ class GbpOptionParser(OptionParser):
         'commit-msg':
             "Format string for commit message used to commit, "
             "the changelog, default is '%(commit-msg)s'",
+        'pristine-lfs':
+            "Use pristine-lfs to create orig tarball, "
+            "default is '%(pristine-lfs)s'",
+        'pristine-lfs-commit':
+            "When generating a tarball, commit it to the pristine-lfs branch '%(pristine-lfs-commit)s' "
+            "default is '%(pristine-lfs-commit)s'",
         'pristine-tar':
             "Use pristine-tar to create orig tarball, "
             "default is '%(pristine-tar)s'",

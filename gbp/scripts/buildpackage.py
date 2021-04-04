@@ -385,6 +385,7 @@ def build_parser(name, prefix=None):
     tag_group.add_config_file_option(option_name="debian-tag-msg", dest="debian_tag_msg")
     tag_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     orig_group.add_config_file_option(option_name="upstream-tree", dest="upstream_tree")
+    orig_group.add_boolean_config_file_option(option_name="pristine-lfs", dest="pristine_lfs")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
     orig_group.add_boolean_config_file_option(option_name="pristine-tar-commit",
                                               dest="pristine_tar_commit")
