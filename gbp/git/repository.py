@@ -1119,7 +1119,7 @@ class GitRepository(object):
         """
         value, ret = self._git_getoutput('config', [name])
         if ret:
-            raise KeyError("'%s' not found in git config")
+            raise KeyError("'%s' not found in git config" % name)
         return value[0].decode()[:-1]  # first line with \n ending removed
 
     def set_config(self, name, value):
