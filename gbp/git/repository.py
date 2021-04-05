@@ -1545,7 +1545,12 @@ class GitRepository(object):
                     raise
         else:  # empty repo
             cur = None
-            branch = 'master'
+            out, _, ret = self._git_inout('symbolic-ref', ['HEAD'],
+                                          capture_stderr=True)
+            if ret:
+                raise GitRepositoryError("Currently not on a branch")
+            ref = out.decode().split('\n')[0]
+            branch = ref[len('/refs/heads'):]
 
         # Build list of parents:
         parents = []
