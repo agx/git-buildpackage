@@ -307,10 +307,17 @@ def move_tag_stamp(repo, format, version):
 
 
 def disable_pristine_tar(options, reason):
-    """Disable pristine tar if enabled"""
+    """Disable pristine-tar if enabled"""
     if options.pristine_tar:
         gbp.log.info("%s: setting '--no-pristine-tar' option" % reason)
         options.pristine_tar = False
+
+
+def disable_pristine_lfs(options, reason):
+    """Disable pristine-lfs if enabled"""
+    if options.pristine_lfs:
+        gbp.log.info("%s: setting '--no-pristine-lfs' option" % reason)
+        options.pristine_lfs = False
 
 
 def build_parser(name):
@@ -359,6 +366,8 @@ def build_parser(name):
                                         dest="filters", action="append")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
                                                 dest="pristine_tar")
+    import_group.add_boolean_config_file_option(option_name="pristine-lfs",
+                                                dest="pristine_lfs")
     import_group.add_option("--allow-same-version", action="store_true",
                             dest="allow_same_version", default=False,
                             help="allow import of already imported version")
@@ -487,6 +496,7 @@ def main(argv):
 
         if repo.bare:
             disable_pristine_tar(options, "Bare repository")
+            disable_pristine_lfs(options, "Bare repository")
 
         # unpack
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
@@ -532,8 +542,11 @@ def main(argv):
             else:
                 gbp.log.warn("Didn't find a diff to apply.")
 
-            if imported and options.pristine_tar:
-                repo.create_pristine_tar_commits(commit, sources)
+            if imported:
+                if options.pristine_lfs:
+                    repo.create_pristine_lfs_commits(sources)
+                if options.pristine_tar:
+                    repo.create_pristine_tar_commits(commit, sources)
         if repo.get_branch() == options.debian_branch or repo.empty:
             # Update HEAD if we modified the checked out branch
             repo.force_head(options.debian_branch, hard=True)

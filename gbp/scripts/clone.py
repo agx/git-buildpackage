@@ -141,6 +141,7 @@ def build_parser(name):
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_config_file_option(option_name="debian-branch", dest="debian_branch")
     branch_group.add_boolean_config_file_option(option_name="pristine-tar", dest="pristine_tar")
+    branch_group.add_boolean_config_file_option(option_name="pristine-lfs", dest="pristine_lfs")
     branch_group.add_option("--depth", action="store", dest="depth", default=0,
                             help="git history depth (for creating shallow clones)")
     branch_group.add_option("--reference", action="store", dest="reference", default=None,
