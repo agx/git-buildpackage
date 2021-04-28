@@ -228,6 +228,7 @@ done
 %{python_sitelib}/gbp/scripts/pristine_tar.py*
 %{python_sitelib}/gbp/scripts/pull.py*
 %{python_sitelib}/gbp/scripts/push.py*
+%{python_sitelib}/gbp/scripts/setup_gitattributes.py*
 %{python_sitelib}/gbp/scripts/supercommand.py*
 %{python_sitelib}/gbp/scripts/tag.py*
 %{python_sitelib}/gbp/scripts/common/*.py*
@@ -241,6 +242,7 @@ done
 %{_mandir}/man1/gbp-pristine-tar.1*
 %{_mandir}/man1/gbp-pull.1*
 %{_mandir}/man1/gbp-push.1*
+%{_mandir}/man1/gbp-setup-gitattributes.1*
 %{_mandir}/man1/gbp-tag.1*
 %{_mandir}/man5/*.5*
 %endif
