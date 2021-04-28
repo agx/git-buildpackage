@@ -18,20 +18,20 @@
 # END OF COPYRIGHT #
 
 import os
+import re
 from setuptools import setup, find_packages
-import subprocess
 
 VERSION_PY_PATH = 'gbp/version.py'
 
 
 def _parse_changelog():
     """Get version from debian changelog and write it to gbp/version.py"""
-    popen = subprocess.Popen('dpkg-parsechangelog', stdout=subprocess.PIPE)
-    out, ret = popen.communicate()
-    for line in out.decode('utf-8').split('\n'):
-        if line.startswith('Version:'):
-            version = line.split(' ')[1].strip()
-            return version
+    with open("debian/changelog") as f:
+        line = f.readline()
+
+    m = re.match(".* \\(([0-9.]+)\\) ", line)
+    if m:
+        return m.group(1)
 
     raise ValueError('Could not parse version from debian/changelog')
 
