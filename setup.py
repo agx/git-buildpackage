@@ -29,7 +29,9 @@ def _parse_changelog():
     with open("debian/changelog") as f:
         line = f.readline()
 
-    m = re.match(".* \\(([0-9.]+)\\) ", line)
+    # Parse version from changelog without external tooling so it can work
+    # on non Debian systems.
+    m = re.match(".* \\(([0-9a-zA-Z.~\\-:+]+)\\) ", line)
     if m:
         return m.group(1)
 
