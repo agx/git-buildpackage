@@ -31,13 +31,13 @@ Source0:    %{name}_%{version}.tar.gz
 %if 0%{?suse_version}
 %define python_pkg_name python-base
 %else
-%define python_pkg_name python
+%define python_pkg_name python3
 %endif
 
 %if 0%{?tizen_version:1}
 %define rpm_python_pkg_name python-rpm
 %else
-%define rpm_python_pkg_name rpm-python
+%define rpm_python_pkg_name python3-rpm
 %endif
 
 Requires:   %{name}-common = %{version}-%{release}
