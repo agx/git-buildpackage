@@ -67,11 +67,11 @@ gbp_builder_mock() {
 	spec="$export_dir/SPECS/$SPEC"
 	sources="$export_dir/SOURCES"
 	srpms="$export_dir/SRPMS"
-	pat="${GBP_BUILDER_MOCK_RESULTS_PAT-results/%(dist)s/%(target_arch)s/}"
+	pat="${GBP_BUILDER_MOCK_RESULTS_PAT-results/{{dist\}\}/{{target_arch\}\}/}"
 	local resultdir="$export_dir/$pat"
-	local mock="mock -r $root --resultdir=$srpms --spec=$spec --sources=$sources"
+	local mock="mock -r $root --sources=$sources"
 
-	$mock --buildsrpm
+	$mock --resultdir=$srpms --spec=$spec --buildsrpm
 	# Assuming that nothing was built in this directory since the previous command:
 	local srpm=`ls -t $PWD/SRPMS/*.src.rpm 2>/dev/null| head -n1`
 	if [ -z $srpm ]; then
