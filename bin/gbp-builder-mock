@@ -69,7 +69,7 @@ gbp_builder_mock() {
 	srpms="$export_dir/SRPMS"
 	pat="${GBP_BUILDER_MOCK_RESULTS_PAT-results/{{dist\}\}/{{target_arch\}\}/}"
 	local resultdir="$export_dir/$pat"
-	local mock="mock -r $root --sources=$sources"
+	local mock="mock -r $root --sources=$sources ${GBP_BUILDER_MOCK_OPTIONS}"
 
 	$mock --resultdir=$srpms --spec=$spec --buildsrpm
 	# Assuming that nothing was built in this directory since the previous command:
