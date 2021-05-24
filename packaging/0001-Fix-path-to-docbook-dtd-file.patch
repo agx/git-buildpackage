@@ -1,0 +1,24 @@
+From 8725e1900b3924d3161a9a0233787334d03ca9a6 Mon Sep 17 00:00:00 2001
+From: "Quanah Gibson-Mount" <quanah@symas.com>
+Date: Thu, 29 Apr 2021 15:54:08 -0400
+Subject: [PATCH] Fix path to docbook dtd file
+
+---
+ docs/man.gbp.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/docs/man.gbp.xml b/docs/man.gbp.xml
+index d74e906e..3a543376 100644
+--- a/docs/man.gbp.xml
++++ b/docs/man.gbp.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+-                   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
++                   "/usr/share/sgml/docbook/sgml-dtd-4.5/docbook.dtd" [
+   <!ENTITY % COMMON SYSTEM "common.ent">
+   %COMMON;
+   <!ENTITY % MANPAGES SYSTEM "manpages/manpages.ent">
+-- 
+2.27.0
+

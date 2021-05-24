@@ -1,5 +1,11 @@
 # Add --without docs rpmbuild option, i.e. docs are enabled by default
 %bcond_without docs
+%if 0%{?centos_ver} && 0%{?centos_ver} >= 7
+%define __python /usr/bin/python3
+%endif
+%if 0%{?centos_ver} && 0%{?centos_ver} == 7
+%define __python3 /usr/bin/python3
+%endif
 
 Name:       git-buildpackage
 Summary:    Build packages from git
@@ -10,6 +16,9 @@ License:    GPLv2
 BuildArch:  noarch
 URL:        https://honk.sigxcpu.org/piki/projects/git-buildpackage/
 Source0:    %{name}_%{version}.tar.gz
+%if 0%{?centos_ver} && 0%{?centos_ver} >= 7
+Patch0: 0001-Fix-path-to-docbook-dtd-file.patch
+%endif
 
 # Conditional package names for requirements
 %if 0%{?fedora} || 0%{?centos_ver} >= 7
@@ -37,7 +46,11 @@ Source0:    %{name}_%{version}.tar.gz
 %if 0%{?tizen_version:1}
 %define rpm_python_pkg_name python-rpm
 %else
+%if 0%{?centos_ver} && 0%{?centos_ver} == 7
+%define rpm_python_pkg_name rpm-python
+%else
 %define rpm_python_pkg_name python3-rpm
+%endif
 %endif
 
 Requires:   %{name}-common = %{version}-%{release}
@@ -47,9 +60,19 @@ BuildRequires:  python3
 BuildRequires:  python3-setuptools
 
 %if %{with docs}
+%if 0%{?centos_ver} && 0%{?centos_ver} >= 8
+BuildRequires:  docbook2X
+%else
+%if 0%{?centos_ver} && 0%{?centos_ver} == 7
+BuildRequires:  docbook-utils
+%else
 BuildRequires:  docbook2x
+%endif
+%endif
 BuildRequires:  gtk-doc
+%if 0%{?suse_version}
 BuildRequires:  libxslt-tools
+%endif
 %if 0%{?fedora}
 BuildRequires:  perl-podlators
 %endif
@@ -130,7 +153,9 @@ Debian and the RPM tool set.
 
 %prep
 %setup -q -n %{name}-%{version}
-
+%if 0%{?centos_ver} && 0%{?centos_ver} >= 7
+%patch0 -p1
+%endif
 
 
 %build
@@ -234,6 +259,11 @@ done
 %{python_sitelib}/gbp/scripts/common/*.py*
 %{python_sitelib}/gbp/git/*.py*
 %{python_sitelib}/gbp/pkg/*.py*
+%exclude %{python_sitelib}/gbp/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/git/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/pkg/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/scripts/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/scripts/common/__pycache__/*.pyc
 %config %{_sysconfdir}/git-buildpackage
 %if %{with docs}
 %{_mandir}/man1/gbp.1*
