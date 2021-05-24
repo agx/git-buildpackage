@@ -26,7 +26,7 @@ VERSION_PY_PATH = 'gbp/version.py'
 
 def _parse_changelog():
     """Get version from debian changelog and write it to gbp/version.py"""
-    with open("debian/changelog") as f:
+    with open("debian/changelog", encoding="utf-8") as f:
         line = f.readline()
 
     # Parse version from changelog without external tooling so it can work
