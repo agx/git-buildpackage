@@ -40,6 +40,13 @@ MAN_DATE=$(shell dpkg-parsechangelog -l ../debian/changelog -SDate | TZ=UTC LC_A
 IMAGES=$(wildcard images/*png)
 DEST_IMAGES=$(subst images/,$(MANUAL)/images/,$(IMAGES))
 
+# Select python
+ifneq ($(strip $(shell which python3)),)
+	PYTHON=python3
+else
+	PYTHON=python
+endif
+
 # Select docbook-to-man tool
 ifeq ($(shell which docbook2x-man), )
 	DOCBOOK_TO_MAN=docbook-to-man
@@ -79,7 +86,7 @@ git-pbuilder.1: ../bin/git-pbuilder
 manual.xml: $(VERSION_ENT)
 
 $(GBP_VERSION): ../debian/changelog
-	cd .. && python setup.py build --help >/dev/null
+	cd .. && $(PYTHON) setup.py build --help >/dev/null
 
 $(VERSION_ENT): $(GBP_VERSION)
 	echo '<!ENTITY gbp-version "$(DEB_VERSION)">' > $(VERSION_ENT)
