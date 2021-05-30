@@ -234,6 +234,11 @@ done
 %{python_sitelib}/gbp/scripts/common/*.py*
 %{python_sitelib}/gbp/git/*.py*
 %{python_sitelib}/gbp/pkg/*.py*
+%exclude %{python_sitelib}/gbp/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/git/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/pkg/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/scripts/__pycache__/*.pyc
+%exclude %{python_sitelib}/gbp/scripts/common/__pycache__/*.pyc
 %config %{_sysconfdir}/git-buildpackage
 %if %{with docs}
 %{_mandir}/man1/gbp.1*
