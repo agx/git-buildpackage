@@ -48,10 +48,14 @@ else
 endif
 
 # Select docbook-to-man tool
-ifeq ($(shell which docbook2x-man), )
-	DOCBOOK_TO_MAN=docbook-to-man
-else
+ifneq ($(strip $(shell which docbook2x-man)),)
 	DOCBOOK_TO_MAN=docbook2x-man
+else ifneq ($(strip $(shell which docbook-to-man)),)
+	DOCBOOK_TO_MAN=docbook-to-man
+else ifneq ($(strip $(shell which docbook2man)),)
+	DOCBOOK_TO_MAN=docbook2man
+else
+	$(error Unable to find usable docbook to man conversion tool)
 endif
 
 all: manual $(MANPAGES)
