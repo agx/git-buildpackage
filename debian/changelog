@@ -1,3 +1,109 @@
+git-buildpackage (0.9.23) experimental; urgency=medium
+
+  [ Michael Prokop ]
+  * [4d15467] zsh completion: update completion for "pull" and further new
+    commands. Provide zsh completion for new commands config, export-orig,
+    import-ref, pristine-tar,push, tag. While at it, also extend completion
+    for `gbp pull`.
+
+  [ Andrej Shadura ]
+  * [434d558] import-dsc: Delete NULs from dpkg-parsechangelog output before
+    parsing. Commit messages may not contain NUL characters; in practice,
+    Debian changelogs sometimes do, usually as the result of incorrectly used
+    encoding for non-ASCII personal names.  As a safety net, delete all NULs
+    from the output of dpkg-parsechangelog before parsing it, so that they
+    don’t get fed into Git or anything else further in the processing.
+    (Closes: #981340)
+  * [0d21789] clone: Don’t check out the Debian branch if it doesn’t exist
+  * [b17c14a] gbp.git: Change list_tree to return an iterator.
+    When working with huge trees, we want to avoid consuming large amounts
+    of memory just to throw away most of it almost immediately when we only
+    need one entry or a few of them.
+  * [3fa9f4d] gbp.git: Add support for long listing format (with object sizes)
+    This is useful to be able to scan a tree for a specific file
+    but only act if it’s non-empty.
+  * [8e0e7cc] repo_setup: Add check/setup_gitattributes
+    setup_gitattributes() sets up .git/info/attributes in a way to prevent
+    transformations from interfering with packaging, because the working tree
+    files can differ from the Git revision history (and from the source
+    packages).
+    Similar functionality has been implemented by dgit and git-deborig, so we
+    try to stay compatible and re-use the name of the attribute macro. Since
+    dgit doesn’t disable export-subst and export-ignore, which may interfere
+    with export-orig, we add this on top the same way git-deborig does.
+    dgit used to have an older preset missing some of the attributes, so if
+    we find those, we disable them.
+    The user, should they choose so, still can re-enable the attributes
+    disabled in this way by adding more specific rules further in the
+    .git/info/attributes file.
+  * [20052e1] clone: Add --defuse-gitattributes.
+    On clone, disable Git attributes that may interfere with building
+    packages shipping .gitattributes *iff* they ship those files.
+    Set to auto by default, can also be turned off completely or
+    can be performed unconditionally.
+  * [7a9079a] scripts: Add setup-gitattributes subcommand.
+    The setup-gitattributes subcommands overrides Git attributes
+    unconditionally, without verifying first the package ships any
+    .gitattributes files.
+  * [660c027] docs: gbp-clone: Document --defuse-gitattributes.
+    Describe concisely what the option does; a longer description
+    will go into a separate manpage.
+  * [85b0b65] docs: Add a manpage for gbp setup-gitattributes.
+    Describle how and why the attributes are being disabled, refer
+    to dgit, git-deborig and Git documentation; add a reference to
+    the gbp-clone manpage.
+  * [0621195] d/control: Add the new subcommand to the package description
+  * [acd81c9] d/control: Capitalise Git throughout the package descriptions
+  * [6a53c23] scripts: Make setup_gitattributes future-proof
+    * Add --all (default) and --[no-]dgit-defuse-attrs to enable
+      adding more options in future.
+    * Rewrite the manual page to reflect the change in approach.
+    * Error out when running with no presets enabled
+  * [b29f355] Install the setup_gitattributes script
+  * [6ab3421] Add tests for setup-gitattributes functionality
+
+  [ Jonathan Rubenstein ]
+  * [d50d590] Add info about --git-ignore-branch when not on branch
+    (Closes: #956491)
+
+  [ Emanuele Aina ]
+  * [fc56884] dch: Add support for the --local=suffix option
+    (Closes: #857370)
+
+  [ Guido Günther ]
+  * [d6a92cc] tests: Match the correct files in filter tests.
+    Verify we match at all by adding a positive test as well
+  * [35d91d5] setup.py: Avoid dpkg-parsechangelog.
+    This helps on non-debian systems
+  * [c341c19] setup.py: Allow for more liberal version numbers.
+    Otherwise this causes trouble for backports, downstreams, etc.
+  * [82bb712] spec: Install setup-git-attributes command.
+    This unbreaks the autopkgtest
+  * [f48e18c] spec: Switch requires to python3 too.
+    Thanks to Quanah Gibson-Mount
+  * [e34e595] docs: Use either python3 or python.
+    Some distros (such as Debian) don't ship a /usr/bin/python anymore
+
+  [ Logan Rosen ]
+  * [a54baad] tests/11_test_dch_main.py: Fix OS release check for Ubuntu.
+    (Closes: #983204)
+
+  [ Arnaud Ferraris ]
+  * [0a03572] manpages: fix gbp-setup-gitattributes
+  * [3f8a58c] repo_setup: fix documentation generation
+    docstring format for bullet lists requires a leading dash. This fix
+    prevents build failures when running `make docs`.
+
+  [ Quanah Gibson-Mount ]
+  * [d5e2096] gbp-builder-mock: Update to work with current mock releases
+  * [3a6b629] Fix gbp-builder-mock to honor configured options for mock
+  * [3adf602] setup.py: Explicitly open the changelog file as utf-8
+  * [c97aeda] docs: Check for docbook2man too
+  * [d32fdb4] spec: Ignore byte-compiled python files
+  * [3151247] spec: Fix rpm build on centos7 and centos8
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 08 Jun 2021 17:35:20 +0200
+
 git-buildpackage (0.9.22) unstable; urgency=medium
 
   [ Jochen Sprickerhof ]
