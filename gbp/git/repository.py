@@ -1976,8 +1976,8 @@ class GitRepository(object):
             # A submodules is shown as "commit" object in ls-tree:
             if objtype == "commit":
                 nextpath = os.path.join(path, name)
-                submodules.append((nextpath.replace(self.path, '').lstrip('/'),
-                                   commit))
+                submodules.append(
+                    (nextpath.replace(self.path, '', 1).lstrip('/'), commit))
                 if recursive:
                     submodules += self.get_submodules(commit, path=nextpath,
                                                       recursive=recursive)
