@@ -459,6 +459,12 @@ def main(argv):
 
     try:
         old_cwd = os.path.abspath(os.path.curdir)
+        for var in ['EMAIL', 'DEBEMAIL']:
+            if var in os.environ and os.environ[var]:
+                break
+        else:
+            raise GbpError("Either 'EMAIL' or 'DEBEMAIL' must be set in the environment for 'dch' to work")
+
         try:
             repo = DebianGitRepository('.', toplevel=False)
             os.chdir(repo.path)
