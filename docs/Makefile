@@ -98,3 +98,10 @@ $(VERSION_ENT): $(GBP_VERSION)
 clean:
 	-rm -r $(MANUAL)
 	-rm *.1 *.5 $(VERSION_ENT)
+
+po4a:
+	po4a -v -f po/po4a.cfg
+
+langs: po4a
+	$(MAKE) -C _gen/de -f ../../Makefile.lang
+

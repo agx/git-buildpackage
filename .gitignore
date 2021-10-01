@@ -15,6 +15,7 @@ nosetests.xml
 
 docs/*.1
 docs/*.5
+docs/_gen/
 docs/buildxref/
 docs/manual-html/
 docs/manpage.links

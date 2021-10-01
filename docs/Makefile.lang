@@ -1,0 +1,33 @@
+MANUAL = manual-html
+
+ENTS = \
+	manpages/manpages.ent \
+	manpages/man.common-options.ent \
+	chapters/chapters.ent \
+	version.ent \
+	common.ent \
+	$(NULL)
+
+all: $(MANUAL)/index.html
+
+manpages/manpages.ent: ../../manpages/manpages.ent
+	cp -f $< $@
+
+manpages/man.common-options.ent: ../../manpages/man.common-options.ent
+	cp -f $< $@
+
+chapters/chapters.ent: ../../chapters/chapters.ent
+	cp -f $< $@
+
+version.ent: ../../version.ent
+	cp -f $< $@
+
+common.ent: ../../common.ent
+	cp -f $< $@
+
+$(MANUAL)/index.html: manual.xml chapters/*.xml manpages/*.xml $(ENTS)
+	mkdir -p $(MANUAL)
+	xsltproc -o $(MANUAL)/ /usr/share/gtk-doc/data/gtk-doc.xsl $<
+	cp /usr/share/gtk-doc/data/*.png \
+	   /usr/share/gtk-doc/data/*.css \
+	   $(MANUAL)
