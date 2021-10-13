@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-  
+
 EXAMPLE_SCRIPTS=\
     gbp-add-patch          \
     gbp-cowbuilder-sid     \
@@ -47,4 +47,3 @@ override_dh_auto_clean:
 
 override_dh_compress:
 	dh_compress --exclude=usr/share/doc/git-buildpackage/examples/
-
