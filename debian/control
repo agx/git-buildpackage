@@ -6,6 +6,7 @@ Build-Depends:
  bash-completion (>= 1:2.1-4.2~),
  debhelper-compat (= 13),
  dh-python,
+ dh-sequence-python3,
  docbook2x,
  flake8,
  gtk-doc-tools,
