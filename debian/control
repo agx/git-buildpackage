@@ -38,6 +38,7 @@ Standards-Version: 4.4.0
 Vcs-Git: https://git.sigxcpu.org/cgit/git-buildpackage/
 Vcs-Browser: https://git.sigxcpu.org/cgit/git-buildpackage/
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
+Rules-Requires-Root: no
 X-Python3-Version: >= 3.7
 
 Package: git-buildpackage
