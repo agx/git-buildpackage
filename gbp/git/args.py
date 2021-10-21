@@ -18,7 +18,7 @@
 Git command argument handling helpers
 """
 
-import collections
+import collections.abc
 
 
 class GitArgs(object):
@@ -58,7 +58,7 @@ class GitArgs(object):
         for arg in args:
             if isinstance(arg, str):
                 self._args.append(arg)
-            elif isinstance(arg, collections.Iterable):
+            elif isinstance(arg, collections.abc.Iterable):
                 for i in iter(arg):
                     self._args.append(str(i))
             else:
