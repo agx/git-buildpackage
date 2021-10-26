@@ -9,7 +9,7 @@
 
 Name:       git-buildpackage
 Summary:    Build packages from git
-Version:    0.9.23
+Version:    0.9.24
 Release:    0
 Group:      Development/Tools/Building
 License:    GPLv2

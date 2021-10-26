@@ -1,3 +1,31 @@
+git-buildpackage (0.9.24) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [82750c0] dch: Require EMAIL or DEBEMAIL to be set.
+    The alternative would be to set a dummy address in case of
+    --git-author but that again can use $EMAIL so just fail if
+    both are unset. (Closes: #987611)
+  * [c48b0f4] Add translation infrastructure.
+    Make it simple to create/update the pot file and provide an initial po
+    file for de.
+  * [6ac98c7] d/control: Drop versioned python3 dep.
+    Even oldoldstable is recent enough
+  * [e8292e3] d/control: Add RulesRequiresRoot
+  * [e80151a] d/control: Depend on dh-sequence-python3.
+    This makes the requirement more obvious since dh-python does
+    multiple things
+
+  [ Emanuele Aina ]
+  * [26d6ceb] git: Actually include the missing key name in the KeyError message
+  * [f90e4f8] Fix import-dsc on empty repo if defaultBranch!=master.
+    (Closes: #906600)
+
+  [ Anthony Sottile ]
+  * [6c92ebb] Use collections.abc.Iterable instead of collections.Iterable
+    since Python 3.10 dropped the alias.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 26 Oct 2021 09:46:11 +0200
+
 git-buildpackage (0.9.23) experimental; urgency=medium
 
   [ Michael Prokop ]
