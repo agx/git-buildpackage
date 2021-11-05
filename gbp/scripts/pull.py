@@ -177,12 +177,6 @@ def main(argv):
             else:
                 raise
 
-        (ret, out) = repo.is_clean()
-        if not ret:
-            gbp.log.err("You have uncommitted changes in your source tree:")
-            gbp.log.err(out)
-            raise GbpError
-
         repo.fetch(rem_repo, depth=options.depth)
         repo.fetch(rem_repo, depth=options.depth, tags=True)
 
