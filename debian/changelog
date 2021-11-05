@@ -1,3 +1,13 @@
+git-buildpackage (0.9.25) unstable; urgency=medium
+
+  * [e6c86c1] buildpackage: Map 'debian/latest' and 'debian/main' to sid too.
+    This avoids having to specify a suite with more modern common branch
+    names.
+  * [196a9ee] tests: Make sure DEBEMAIL is set.  Otherwise dch based tests
+    fail (Closes: #998573)
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 05 Nov 2021 10:24:32 +0100
+
 git-buildpackage (0.9.24) unstable; urgency=medium
 
   [ Guido Günther ]
