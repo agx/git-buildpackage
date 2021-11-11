@@ -55,7 +55,9 @@ Patch0: 0001-Fix-path-to-docbook-dtd-file.patch
 
 Requires:   %{name}-common = %{version}-%{release}
 Requires:   %{dpkg_pkg_name}
+%if 0%{?fedora} || 0%{?centos_ver} && 0%{?centos_ver} == 7
 Requires:   devscripts
+%endif
 BuildRequires:  python3
 BuildRequires:  python3-setuptools
 
