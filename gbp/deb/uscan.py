@@ -69,16 +69,6 @@ class Uscan(object):
             if m:
                 source = '../%s' % m.group(1)
                 break
-            elif row.startswith('<messages>'):
-                m = re.match(r".*symlinked ([^\s]+) to it", row)
-                if m:
-                    source = "../%s" % m.group(1)
-                    break
-                m = re.match(r"Successfully downloaded updated package "
-                             "([^<]+)", row)
-                if m:
-                    source = "../%s" % m.group(1)
-                    break
         # Try to determine the already downloaded sources name
         else:
             d = {}
