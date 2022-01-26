@@ -133,6 +133,8 @@ def main(argv):
     try:
         source = DebianSource(repo.path)
         branch = repo.branch
+        dtag = None
+
         if not options.ignore_branch:
             if branch != options.debian_branch:
                 gbp.log.err("You are not on branch '%s' but %s" %
@@ -148,9 +150,13 @@ def main(argv):
             if repo.has_tag(dtag):
                 to_push['tags'].append(dtag)
 
-        if source.is_releasable() and branch:
+        if branch:
             ref = 'refs/heads/%s' % branch
-            to_push['refs'].append((ref, get_push_src(repo, ref, dtag)))
+            if source.is_releasable() and dtag:
+                to_push['refs'].append((ref, get_push_src(repo, ref, dtag)))
+            elif not dtag:
+                # --debian-tag='': Push branch up to tip
+                to_push['refs'].append((ref, get_push_src(repo, ref, ref)))
 
         if not source.is_native():
             if options.upstream_tag != '':
