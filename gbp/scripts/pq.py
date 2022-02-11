@@ -396,6 +396,15 @@ def switch_pq(repo, branch, options):
         switch_to_pq_branch(repo, branch)
 
 
+def check_clean(repo, options):
+    if not options.ignore_new:
+        (clean, out) = repo.is_clean()
+        if not clean:
+            gbp.log.err("You have uncommitted changes in your source tree:")
+            gbp.log.err(out)
+            raise GbpError("Use --ignore-new to ignore.")
+
+
 def usage_msg():
     return """%prog [options] action - maintain patches on a patch queue branch
 Actions:
@@ -437,6 +446,7 @@ def build_parser(name):
     parser.add_config_file_option(option_name="meta-closes-bugnum", dest="meta_closes_bugnum")
     parser.add_config_file_option(option_name="pq-from", dest="pq_from", choices=['DEBIAN', 'TAG'])
     parser.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
+    parser.add_boolean_config_file_option(option_name="ignore-new", dest="ignore_new")
     return parser
 
 
@@ -485,6 +495,7 @@ def main(argv):
         if action == "export":
             export_patches(repo, current, options)
         elif action == "import":
+            check_clean(repo, options)
             import_pq(repo, current, options)
         elif action == "drop":
             drop_pq(repo, current)

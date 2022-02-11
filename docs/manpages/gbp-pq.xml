@@ -33,6 +33,7 @@
       <arg><option>--meta-closes-bugnum=bug-number-format</option></arg>
       <arg><option>--pq-from=</option><replaceable>[DEBIAN|TAG]</replaceable></arg>
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--[no-]ignore-new</option></arg>
       <group choice="plain">
         <arg><option>drop</option></arg>
         <arg><option>export</option></arg>
@@ -276,6 +277,17 @@
           <para>
           Use this tag format when looking for tags of upstream versions,
           default is <replaceable>upstream/%(version)s</replaceable>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]ignore-new</option>
+        </term>
+        <listitem>
+          <para>
+            Don't abort if there are uncommitted changes in the source tree or
+            the current branch doesn't match the
+            <replaceable>DEBIAN-BRANCH</replaceable>.
           </para>
         </listitem>
       </varlistentry>
