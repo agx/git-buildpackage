@@ -16,7 +16,6 @@
 #    along with this program; if not, please see
 #    <http://www.gnu.org/licenses/>
 
-import os
 import subprocess
 
 from tests.component import ComponentTestBase
@@ -136,17 +135,16 @@ class TestPush(ComponentTestBase):
         """
         Check that in case of failure we push all other branches/tags
         """
-        # Create a broken tag so pushing to it fails:
-        tag = os.path.join(self.target.path, 'refs', 'tags', 'debian', '2.8-1')
-        os.mkdir(os.path.dirname(tag))
-        with open(tag, 'w') as f:
-            f.write("broken_tag")
-
         repo.add_remote_repo('origin', self.target.path)
+
+        # Make the upstream branch not fast forwardable so pushing to it fails
+        repo.push('origin', 'master')
+        self.target.create_branch('upstream', 'master')
+
         self.assertEquals(push(['argv0']), 1)
         self._check_repo_state(self.target, 'master',
                                ['master', 'upstream'],
-                               tags=['upstream/2.8'])
+                               tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEquals(repo.head, self.target.head)
-        self._check_in_log('.*Error running git push: .*refs/tags/debian/2.8-1')
+        self._check_in_log('.*Error running git push: To.*/target')
         self._check_log(-1, ".*Failed to push some refs")
