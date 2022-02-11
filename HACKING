@@ -26,6 +26,11 @@ single test e.g.
 
    nosetests3 tests/component/deb/test_push.py:TestPush.test_push_failure
 
+If you want to keep any temporary repos around for inspection use
+`GBP_TESTS_NOCLEAN`:
+
+   GBP_TESTS_NOCLEAN=1 nosetests3 tests/component/deb/test_push.py:TestPush.test_push_failure
+
 Building the API Docs
 ---------------------
 You can build the API docs using
