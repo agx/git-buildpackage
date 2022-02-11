@@ -21,6 +21,11 @@ You can run the tests in a `debian:sid` docker container by using
 
     packaging/run-in-docker
 
+The python tests use `python-nose` so you can use all it's options. To run a
+single test e.g.
+
+   nosetests3 tests/component/deb/test_push.py:TestPush.test_push_failure
+
 Building the API Docs
 ---------------------
 You can build the API docs using
