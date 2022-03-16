@@ -81,7 +81,7 @@ class _ChangelogEntry(object):
         @param author: author of the change
         @type author: C{str}
         @param text: message of the changelog entry
-        @type text: C{str} or C{list} of C{str}
+        @type text: C{str} or C{list} of C{str}
         """
         self._pkgpolicy = pkgpolicy
         self.author = author
