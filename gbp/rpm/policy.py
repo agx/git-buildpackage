@@ -110,7 +110,7 @@ class RpmPkgPolicy(PkgPolicy):
             @param meta_tags: meta tags to look for
             @type meta_tags: C{tuple} of C{str}
             @return: bts-ids per meta tag and the non-mathced lines
-            @rtype: (C{dict}, C{list} of C{str})
+            @rtype: (C{dict}, C{list} of C{str})
             """
             tags = {}
             other_lines = []
@@ -142,7 +142,7 @@ class RpmPkgPolicy(PkgPolicy):
             @param ignore_re: regexp for matching ignored lines
             @type ignore_re: C{str}
             @return: filtered commit message
-            @rtype: C{list} of C{str}
+            @rtype: C{list} of C{str}
             """
             if ignore_re:
                 match = re.compile(ignore_re)
@@ -162,7 +162,7 @@ class RpmPkgPolicy(PkgPolicy):
                 currently we recognize 'full', 'id_len' and 'ignore_re'
             @type kwargs: C{dict}
             @return: formatted changelog entry
-            @rtype: C{list} of C{str}
+            @rtype: C{list} of C{str}
             """
             # Parse and filter out gbp command meta-tags
             cmds, body = parse_gbp_commands(commit_info, 'gbp-rpm-ch',
