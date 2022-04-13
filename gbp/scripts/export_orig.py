@@ -211,7 +211,12 @@ def git_archive_build_origs(repo, source, output_dir, options):
                                             upstream_tree))
     gbp.log.debug("Building upstream tarball with compression %s" % comp)
     tree = repo.tree_drop_dirs(upstream_tree, options.components) if options.components else upstream_tree
-    repo.create_upstream_tarball_via_git_archive(source, output_dir, tree, comp, options.with_submodules)
+
+    excludes = source.copyright.files_excluded() if options.exclude_with_copyright else []
+    gbp.log.debug("Excluding these files from archive: %s" % excludes)
+
+    repo.create_upstream_tarball_via_git_archive(source, output_dir, tree, comp,
+                                                 options.with_submodules, excludes=excludes)
     for component in options.components:
         subtree = repo.tree_get_dir(upstream_tree, component)
         if not subtree:
@@ -220,8 +225,11 @@ def git_archive_build_origs(repo, source, output_dir, options):
         gbp.log.info("Creating additional tarball '%s' from '%s'"
                      % (source.upstream_tarball_name(options.comp_type, component=component),
                         subtree))
+        excludes = source.copyright.files_excluded(component) if options.exclude_with_copyright else []
+        gbp.log.debug("Excluding these files from archive: %s" % excludes)
         repo.create_upstream_tarball_via_git_archive(source, output_dir, subtree, comp,
-                                                     options.with_submodules, component=component)
+                                                     options.with_submodules, component=component,
+                                                     excludes=excludes)
 
 
 def guess_comp_type(comp_type, source, repo, tarball_dir):
@@ -309,6 +317,9 @@ def build_parser(name):
                                       help="use upstream signature, default is auto", type='tristate')
     orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                       dest="components")
+    orig_group.add_config_file_option(option_name="exclude-with-copyright", action="store_true",
+                                      dest="exclude_with_copyright", default=False,
+                                      help="exclude files in Files-Excluded field set in debian/copyright")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_boolean_config_file_option(option_name="submodules", dest="with_submodules")
     return parser

@@ -2106,3 +2106,32 @@ class GitRepository(object):
                                      % (remote, abspath, err[1]))
         return None
 #}
+
+#{ Attributes in Git_DIR
+    def read_git_dir_attributes(self):
+        """
+        Get content of $GIT_DIR/info/attributes
+
+        @return: attributes contents
+        @rtype: C{str}
+        """
+        path = os.path.join(self.git_dir, 'info/attributes')
+        if not os.path.exists(path):
+            return ''
+        with open(path, 'rb') as f:
+            contents = f.read().decode('utf-8')
+        return contents
+
+    def write_git_dir_attributes(self, contents):
+        """
+        Write contents to $GIT_DIR/info/attributes
+
+        @param contents: contents to write
+        @type contents: C{str}
+        """
+        path = os.path.join(self.git_dir, 'info')
+        if not os.path.isdir(path):
+            raise GitRepositoryError("Path %s is not directory" % path)
+        with open(os.path.join(path, 'attributes'), 'w') as f:
+            f.write(contents)
+#}

@@ -340,7 +340,7 @@ class DebianGitRepository(PkgGitRepository):
         return True
 
     def create_upstream_tarball_via_git_archive(self, source, output_dir, treeish,
-                                                comp, with_submodules, component=None):
+                                                comp, with_submodules, component=None, excludes=None):
         """
         Create a compressed orig tarball in output_dir using git archive
 
@@ -356,6 +356,8 @@ class DebianGitRepository(PkgGitRepository):
         @type with_submodules: C{bool}
         @param component: component to add to tarball name
         @type component: C{str}
+        @param excludes: files to be excluded from tarball
+        @type excludes: C{list}
 
         Raises GitRepositoryError in case of an error
         """
@@ -364,11 +366,18 @@ class DebianGitRepository(PkgGitRepository):
                               source.upstream_tarball_name(comp.type, component=component))
         prefix = "%s-%s" % (source.name, source.upstream_version)
 
+        old_attributes = self.read_git_dir_attributes()
+        if excludes:
+            attributes = '\n'.join([f + ' export-ignore' for f in excludes])
+            attributes = attributes + '\n' + old_attributes
+            self.write_git_dir_attributes(attributes)
         try:
             if self.has_submodules() and with_submodules:
                 submodules = True
                 self.update_submodules()
             self.archive_comp(treeish, output, prefix, comp, submodules=submodules)
+            if excludes:
+                self.write_git_dir_attributes(old_attributes)
         except Exception as e:
             raise GitRepositoryError("Error creating %s: %s" % (output, e))
         return True

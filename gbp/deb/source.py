@@ -21,6 +21,7 @@ from gbp.deb import DebianPkgPolicy as Policy
 from gbp.deb.format import DebianSourceFormat
 from gbp.deb.changelog import ChangeLog
 from gbp.deb.control import Control
+from gbp.deb.copyright import Copyright
 
 
 class FileVfs(object):
@@ -57,6 +58,7 @@ class DebianSource(object):
         """
         self._changelog = None
         self._control = None
+        self._copyright = None
 
         if isinstance(vfs, str):
             self._vfs = FileVfs(vfs)
@@ -113,6 +115,19 @@ class DebianSource(object):
             except IOError as err:
                 raise DebianSourceError('Failed to read control file: %s' % err)
         return self._control
+
+    @property
+    def copyright(self):
+        """
+        Return the L{gbp.deb.copyright}
+        """
+        if not self._copyright:
+            try:
+                with self._vfs.open('debian/copyright', 'rb') as crf:
+                    self._copyright = Copyright(crf.read().decode('utf-8'))
+            except IOError as err:
+                raise DebianSourceError('Failed to read copyright file: %s' % err)
+        return self._copyright
 
     @property
     def sourcepkg(self):
