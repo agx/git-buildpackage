@@ -1,6 +1,6 @@
 usr/bin/gbp-builder-mock /usr/share/git-buildpackage/
-usr/lib/python3.?/dist-packages/gbp/rpm usr/lib/python3/dist-packages/gbp/
-usr/lib/python3.?//dist-packages/gbp/scripts/import_srpm.py usr/lib/python3/dist-packages/gbp/scripts/
-usr/lib/python3.?/dist-packages/gbp/scripts/pq_rpm.py usr/lib/python3/dist-packages/gbp/scripts/
-usr/lib/python3.?/dist-packages/gbp/scripts/buildpackage_rpm.py usr/lib/python3/dist-packages/gbp/scripts/
-usr/lib/python3.?/dist-packages/gbp/scripts/rpm_ch.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.*/dist-packages/gbp/rpm usr/lib/python3/dist-packages/gbp/
+usr/lib/python3.*//dist-packages/gbp/scripts/import_srpm.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.*/dist-packages/gbp/scripts/pq_rpm.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.*/dist-packages/gbp/scripts/buildpackage_rpm.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.*/dist-packages/gbp/scripts/rpm_ch.py usr/lib/python3/dist-packages/gbp/scripts/
