@@ -9,6 +9,7 @@ all+net:
 	$(MAKE) GBP_NETWORK_TESTS=1 all
 
 test:
+	export HOME=/nonexisting;                       \
 	export GIT_AUTHOR_NAME="Gbp Tests";		\
 	export GIT_AUTHOR_EMAIL=tests@example.com;	\
 	export GIT_COMMITTER_NAME=$$GIT_AUTHOR_NAME;	\
