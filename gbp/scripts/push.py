@@ -172,8 +172,10 @@ def main(argv):
             if options.pristine_tar:
                 commit, _ = repo.get_pristine_tar_commit(source)
                 if commit:
-                    ref = 'refs/heads/pristine-tar'
-                    to_push['refs'].append((ref, get_push_src(repo, ref, commit)))
+                    target = repo.get_merge_branch('pristine-tar')
+                    if not repo.branch_contains(target, commit, remote=True):
+                        ref = 'refs/heads/pristine-tar'
+                        to_push['refs'].append((ref, get_push_src(repo, ref, commit)))
 
         if do_push(repo, [dest], to_push, dry_run=options.dryrun):
             retval = 0
