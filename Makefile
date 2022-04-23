@@ -27,6 +27,6 @@ docs:
 
 apidocs:
 	mkdir -p build
-	pydoctor -v --config=.pydoctor.cfg
+	pydoctor -v gbp tests/doctests/
 
 .PHONY: docs
