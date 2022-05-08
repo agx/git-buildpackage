@@ -103,7 +103,7 @@ def build_parser(name):
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
                                   dest="color_scheme")
-    parser.add_option("--verbose", action="store_true", dest="verbose",
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
                       default=False, help="verbose command execution")
     return parser
 

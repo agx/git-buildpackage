@@ -289,7 +289,7 @@ def build_parser(name):
     for group in [tag_group, orig_group, branch_group]:
         parser.add_option_group(group)
 
-    parser.add_option("--verbose", action="store_true", dest="verbose", default=False,
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
     parser.add_config_file_option(option_name="color-scheme",
