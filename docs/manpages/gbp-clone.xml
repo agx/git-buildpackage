@@ -207,6 +207,7 @@
       Clone from the <emphasis>Git-Vcs</emphasis> URL of a package:
     </para>
     <screen>
+    &gbp-clone; vcs-git:libvirt
     &gbp-clone; vcsgit:libvirt</screen>
     <para>
       Clone a repository from salsa (Debian's code hosting):
