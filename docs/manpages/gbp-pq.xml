@@ -224,7 +224,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--export</option></term>
+        <term><option>--commit</option></term>
         <listitem>
           <para>
 	    In case of <option>export</option>, commit
