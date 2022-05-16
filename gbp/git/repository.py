@@ -1666,6 +1666,7 @@ class GitRepository(object):
         @type since: C{str}
         """
         args = GitArgs('--pretty=format:%H')
+        args.add("--no-show-signature")
         args.add_false(merges, '--no-merges')
         args.add('--grep=%s' % regex)
         args.add_true(since, since)
