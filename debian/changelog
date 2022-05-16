@@ -1,3 +1,76 @@
+git-buildpackage (0.9.26) unstable; urgency=medium
+
+  [ Quanah Gibson-Mount ]
+  * [677500d] rpm: Avoid devscript dependency.
+    The package is currently not available everywhere.
+
+  [ Andrej Shadura ]
+  * [231ecef] import-orig: Don’t hardcode the pristine-tar branch
+  * [de3c7c8] export-orig: Consistently refer to the pristine-tar branch.
+    Since we’re checking pristine_tar_branch, not pristine_tar.branch,
+    use the same expression in the log even though it’s not supposed
+    to be different.
+  * [1065bca] config: Add missing comma
+  * [6acd556] deb.git, scripts: Use cannot rather than can not for clarity
+    "Can not" may in some cases mean something different than "cannot",
+    use "cannot" to make sure there are no misunderstandings.
+
+  [ Unit 193 ]
+  * [f268448] uscan: Remove pre-devscripts 2.10.70 compat code.
+    We can rely on the <target> element being present in dehs output.
+    The output it looks for from uscan no longer matches anyway.
+
+  [ Guido Günther ]
+  * [c8782f2] HACKING: mention how to rerun a single test
+  * [bb783b5] HACKING: Document how to keep test repos around
+  * [63ce4ed] tests: Fix "test_push_failure" with newer git.
+    The test created a broken tag on the remote side to avoid that being
+    pushed in the test however git 2.34 and newer fail every push to that
+    repo so rather create a non-ff branch instead to make the push fail.
+  * [caf64cb] push: Make --debian-tag='' match the documentation.
+    An empty Debian tag indicates "don't care" about the packaging branch.
+    Don't fail in that case but rather push out up to the branch tip.
+    this makes it simpler to push the current development work via
+      gbp  push --debian-tag='' <remote>
+    But we'll need to add less obscure ways in follow up commits too.
+  * [8db5af7] pq: Check if repo is clean before importing patches
+    (Closes: #1005321)
+  * [dbadeed] rpm.changelog: Drop non breaking space.
+    This trips up pydoctor.
+    Thanks to Carsten Schönert for debugging help
+  * [40b9693] rpm.policy: Drop non breaking space.
+    This trips up pydoctor.
+    Thanks to Carsten Schönert for debugging help
+
+  [ Antonio Terceiro ]
+  * [5dcd753] docs: port build system to newer pydoctor.
+    According to https://pydoctor.readthedocs.io/en/latest/help.html, the
+    command line and configuration parsing has changed in an incompatible
+    way. These changes fix the documentation build for me, but are probably
+    backwards-incompatible with older versions of pydoctor.
+  * [0dfc259] tests: set HOME to an unexisting directory.
+    The test suite contains several assumptions about the global git
+    configuration, including but not limited to the default branch name
+    being `master`. By running the tests against a unexisting HOME, git will
+    not load the user configuration and instead use all the git defaults.
+  * [1a5fd69] debian/rules: fix build with python3.10 as default
+  * [6733ab9] tests: fix input data to create-remote-repo tests
+    (Closes: #1010061)
+  * [2405e15] push: skip pristine-tar push if already present remotely.
+    When one is working on an older branch (stable update or backport), the
+    pristine-tar branch may already contain new commits after the one
+    corresponding to the upstream version in question. (Helps: #1001163)
+
+  [ Nicolas Boulenguez ]
+  * [e17d814] scripts: add -v shortcut for --verbose where it has been
+    forgotten
+    (Closes: #1010750)
+
+  [ Roland Mas ]
+  * [3627fa0] docs: Fix argument for "gbp pq export --commit"
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 16 May 2022 10:56:56 +0200
+
 git-buildpackage (0.9.25) unstable; urgency=medium
 
   * [e6c86c1] buildpackage: Map 'debian/latest' and 'debian/main' to sid too.
