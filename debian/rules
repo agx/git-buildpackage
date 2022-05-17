@@ -11,30 +11,20 @@ DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
 
 PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
 
+
 %:
-	dh $@ --with python3 --buildsystem=pybuild
+	dh $@ --buildsystem=pybuild
 
 override_dh_auto_test:
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	make
-else
-	@echo "Checks disabled via DEB_BUILD_OPTIONS"
-endif
 
-override_dh_auto_build:
-	dh_auto_build
+execute_after_dh_auto_build:
 	make docs
 
-override_dh_auto_install:
-	dh_auto_install
-	dh_bash-completion
-	chmod a+x debian/tmp/usr/lib/python3.*/dist-packages/gbp/scripts/supercommand.py
+execute_after_dh_fixperms:
+	chmod a+x debian/git-buildpackage/usr/lib/python3/dist-packages/gbp/scripts/supercommand.py
 
-override_dh_auto_clean:
-	dh_auto_clean
+execute_after_dh_auto_clean:
 	rm -rf build/
 	make -C docs/ clean
 	-rm gbp/version.py
-
-override_dh_compress:
-	dh_compress --exclude=usr/share/doc/git-buildpackage/examples/
