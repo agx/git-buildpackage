@@ -1,17 +1,5 @@
 #!/usr/bin/make -f
 
-EXAMPLE_SCRIPTS=\
-    gbp-add-patch          \
-    gbp-cowbuilder-sid     \
-    gbp-posttag-push       \
-    gbp-configure-unpatched-source \
-    wrap_cl.py
-
-DEB_COMPRESS_EXCLUDE=$(EXAMPLE_SCRIPTS)
-
-PYCHECKER_ARGS=-boptparse --no-override --no-shadowbuiltin
-
-
 %:
 	dh $@ --buildsystem=pybuild
 
