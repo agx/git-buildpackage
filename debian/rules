@@ -14,3 +14,4 @@ execute_after_dh_fixperms:
 
 execute_after_dh_auto_clean:
 	make -C docs/ clean
+	find gbp -name __init__.py -printf '%h/__pycache__/\n' | xargs rm -fr
