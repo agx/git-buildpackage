@@ -97,7 +97,7 @@ def parse_changelog_repo(repo, branch, filename):
     except GitRepositoryError:
         raise NoChangeLogError("Changelog %s not found in branch %s" % (filename, branch))
 
-    return ChangeLog(repo.show(sha))
+    return ChangeLog(repo.show(sha).decode('utf-8'))
 
 
 def get_arch():
