@@ -164,6 +164,14 @@ class TestImportOrig(ComponentTestBase):
             eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
                 (f, old, new))
 
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    def test_update_from_upstream_branch(self, repo):
+        orig = self._orig('2.8')
+        repo.checkout('upstream')
+        ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
+        self._check_repo_state(repo, 'upstream', ['master', 'upstream', 'pristine-tar'],
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
+
     def test_tag_exists(self):
         """Test that importing an already imported version fails"""
         repo = GitRepository.create(self.pkg)
