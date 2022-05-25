@@ -581,7 +581,7 @@ class GbpOptionParser(OptionParser):
         self.prefix = prefix
         self.config = {}
         self.valid_options = []
-        self.config_parser = configparser.SafeConfigParser()
+        self.config_parser = configparser.ConfigParser()
         self._warned_old_gbp_conf = False
 
         try:
