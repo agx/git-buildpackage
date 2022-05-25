@@ -13,6 +13,4 @@ execute_after_dh_fixperms:
 	chmod a+x debian/git-buildpackage/usr/lib/python3/dist-packages/gbp/scripts/supercommand.py
 
 execute_after_dh_auto_clean:
-	rm -rf build/
 	make -C docs/ clean
-	-rm gbp/version.py
