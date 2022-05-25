@@ -6,7 +6,7 @@ TEST_LOCALE?=C.UTF-8
 all: syntax-check test
 
 all+net:
-	$(MAKE) GBP_NETWORK_TESTS=1 all
+	GBP_NETWORK_TESTS=1 $(MAKE) all
 
 test:
 	export HOME=/nonexisting;                       \
