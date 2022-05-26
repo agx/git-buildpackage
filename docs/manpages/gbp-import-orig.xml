@@ -394,8 +394,8 @@
         <listitem>
           <para>
 	    Whether upstream signatures should be imported as well (when
-	    using pristine-tar). <emphasis>no</emphasis> turns this
-            off completely while <emphasis>yes</emphasis> always tries to
+	    using pristine-tar). <emphasis>off</emphasis> turns this
+            off completely while <emphasis>on</emphasis> always tries to
 	    import a signature (which can be useful if you want to fail if
 	    e.g. &uscan; did not fetch a signature). The default
             <emphasis>auto</emphasis> means to import a signature file if
