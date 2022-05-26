@@ -1102,6 +1102,8 @@ class GitRepository(object):
                 filename = parts.pop()
                 if sizes:
                     mode, type, sha1, size = (part.decode() for part in parts)
+                    # Git submodules report '-' instead of a size
+                    size = size if size != '-' else 0
                     yield mode, type, sha1, int(size), filename
                 else:
                     mode, type, sha1 = (part.decode() for part in parts)
