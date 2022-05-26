@@ -33,6 +33,7 @@
       <arg><option>--defuse-gitattributes=</option><replaceable>[auto|on|off]</replaceable></arg>
       <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
       <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
+      <arg><option>--[no-]aliases</option></arg>
       <arg choice="plain"><replaceable>repository</replaceable></arg>
       <arg><replaceable>directory</replaceable></arg>
     </cmdsynopsis>
@@ -163,6 +164,15 @@
 	    use the <envar>DEBUSER</envar> environment variable to set the
 	    user.name &git; configuration otherwise use &git;'s
 	    defaults.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]aliases</option>
+        </term>
+        <listitem>
+          <para>
+	    Whether to expand gbp specific aliases for remote repos like <symbol>salsa:</symbol>.
           </para>
         </listitem>
       </varlistentry>

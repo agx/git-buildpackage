@@ -140,6 +140,7 @@ def build_parser(name):
                                   choices=['DEBIAN', 'GIT'])
     parser.add_config_file_option(option_name="defuse-gitattributes", dest="defuse_gitattributes",
                                   type="tristate", help="disable harmful Git attributes")
+    parser.add_boolean_config_file_option(option_name="aliases", dest="aliases")
     return parser
 
 
@@ -164,7 +165,8 @@ def main(argv):
         gbp.log.err("Need a repository to clone.")
         return 1
     else:
-        source = repo_to_url(args[1])
+        remote_repo = args[1]
+        source = repo_to_url(remote_repo) if options.aliases else remote_repo
         if not source:
             return 1
 

@@ -102,6 +102,7 @@ class GbpOptionParser(OptionParser):
     @type def_config_files: dict (type, path)
     """
     defaults = {'abbrev': 7,
+                'aliases': 'True',
                 'allow-unauthenticated': 'False',
                 'arch': '',
                 'author-date-is-committer-date': 'False',
@@ -194,6 +195,9 @@ class GbpOptionParser(OptionParser):
                 'urgency': 'medium',
                 }
     help = {
+        'aliases':
+            "Whether to expand gbp specific aliases like `salsa:`,"
+            "default is '%(aliases)s'",
         'debian-branch':
             "Branch the Debian package is being developed on, "
             "default is '%(debian-branch)s'",
