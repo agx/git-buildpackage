@@ -49,7 +49,8 @@ def fast_forward_branch(rem_repo, branch, repo, options):
         gbp.log.warn("No branch tracking '%s' found - skipping." % branch)
         return False
 
-    can_fast_forward, up_to_date = repo.is_fast_forward(branch, remote)
+    can_fast_forward, up_to_date = repo.is_fast_forward(repo.ensure_refs_heads(branch),
+                                                        remote)
 
     if up_to_date:  # Great, we're done
         gbp.log.info("Branch '%s' is already up to date." % branch)
