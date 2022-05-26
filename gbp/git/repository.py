@@ -653,6 +653,16 @@ class GitRepository(object):
 
         return out[0].decode().strip()
 
+    @staticmethod
+    def ensure_refs_heads(branch):
+        """
+        Make sure a branch name is prefixed with `refs/heads'
+        """
+        if (branch.startswith('refs/heads/')):
+            return branch
+        #return f'refs/heads/{branch}'
+        return f'{branch}'
+
 #{ Tags
 
     def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):
