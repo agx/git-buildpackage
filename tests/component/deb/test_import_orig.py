@@ -576,3 +576,18 @@ class TestImportOrig(ComponentTestBase):
         self.check_hook_vars('../postunpack', ["GBP_GIT_DIR",
                                                "GBP_TMP_DIR",
                                                "GBP_SOURCES_DIR"])
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
+    @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
+    def test_uscan(self, repo):
+        """Test that importing via uscan works"""
+        with open("debian/watch", 'w+', encoding='utf-8') as f:
+            f.write("""version=4
+https://git.sigxcpu.org/cgit/gbp/deb-testdata/plain/dsc-3.0/ \
+  @PACKAGE@_@ANY_VERSION@\\.orig\\.tar\\.gz
+""")
+        repo.add_files(["debian/watch"])
+        repo.commit_files("debian/watch", msg="Add watch file")
+        ok_(import_orig(['arg0', '--uscan', '--no-interactive', '--no-pristine-tar']) == 0)
+        self._check_repo_state(repo, 'master', self.def_branches,
+                               tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
