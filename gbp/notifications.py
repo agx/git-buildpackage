@@ -27,7 +27,7 @@ def enable_notifications():
         # Avoid GTK+ cannot open display warning:
         warnings.simplefilter("ignore")
         try:
-            import notify2
+            import notify2  # type: ignore
             notify_module = notify2
         except (ImportError, RuntimeError):
             return False

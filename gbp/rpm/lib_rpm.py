@@ -28,7 +28,7 @@ except ImportError:
     gbp.log.warn("Failed to import '%s' as rpm python module, using host's "
                  "default rpm library instead" %
                  RpmPkgPolicy.python_rpmlib_module_name)
-    import rpm as librpm
+    import rpm as librpm  # type: ignore
 
 # Module initialization
 _rpmlog = tempfile.NamedTemporaryFile(mode='w+', prefix='gbp_rpmlog')
