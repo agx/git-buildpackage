@@ -22,6 +22,9 @@ syntax-check:
 	flake8 $(FLAKE_OPTS)
 	flake8 $(FLAKE_OPTS) $(PY_EXAMPLES)
 
+type-check:
+	mypy gbp
+
 docs:
 	$(MAKE) -C docs
 	$(MAKE) apidocs
