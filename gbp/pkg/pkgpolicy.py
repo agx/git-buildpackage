@@ -18,6 +18,8 @@
 
 import os
 import re
+import typing
+
 
 from gbp.pkg.archive import Archive
 from gbp.format import format_str
@@ -31,10 +33,10 @@ class PkgPolicy(object):
                          r'%(?P<M>[^%])'
                          r'%(?P<R>([^%]|\\%))+'
                          r'\)s')
-    packagename_re = None
-    packagename_msg = None
-    upstreamversion_re = None
-    upstreamversion_msg = None
+    packagename_re: typing.Pattern[str] | None = None
+    packagename_msg: str | None = None
+    upstreamversion_re: typing.Pattern[str] | None = None
+    upstreamversion_msg: str | None = None
 
     @classmethod
     def is_valid_packagename(cls, name):
