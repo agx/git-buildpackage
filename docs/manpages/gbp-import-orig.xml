@@ -103,6 +103,12 @@
       all changes it has done to the repository (see
       the <option>--rollback</option> option).
     </para>
+    <para>
+      Note that for projects using multiple tarballs the name of the
+      additional components needs to be specified via the
+      <option>--component</option> command line option or via
+      <filename>gbp.conf</filename> (see below for details).
+    </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
@@ -252,7 +258,8 @@
 	    <filename>hello-debhelper_1.0.orig-foo.tar.gz</filename>
 	    the component would be <replaceable>foo</replaceable>. The additional
 	    tarball is expected to be in the same directory than the upstream tarball
-	    and to use the same compression type.
+	    and to use the same compression type. You also need to specify the components
+	    when using <option>--uscan</option>.
 	  </para>
 	  <para>
 	    Using additional original tarballs is a feature of the 3.0
