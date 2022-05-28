@@ -14,5 +14,6 @@ docs/gbp-pq.1
 docs/gbp-pristine-tar.1
 docs/gbp-pull.1
 docs/gbp-push.1
+docs/gbp-setup-gitattributes.1
 docs/gbp-tag.1
 docs/git-pbuilder.1
