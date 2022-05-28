@@ -43,7 +43,7 @@ class Uscan(object):
 
     def _parse(self, out):
         r"""
-        Parse the uscan output return and update the object's properties
+        Parse the uscan output and update the object's properties
 
         @param out: uscan output
         @type out: string
@@ -57,44 +57,17 @@ class Uscan(object):
         >>> u._parse('')
         Traceback (most recent call last):
         ...
-        gbp.deb.uscan.UscanError: Couldn't find 'upstream-url' in uscan output
+        gbp.deb.uscan.UscanError: Couldn't find source in uscan output
         """
         source = None
         self._uptodate = False
 
-        # Check if uscan downloaded something
         for row in out.split("\n"):
-            # uscan >= 2.10.70 has a target element:
             m = re.match(r"<target>(.*)</target>", row)
             if m:
                 source = '../%s' % m.group(1)
-                break
-        # Try to determine the already downloaded sources name
-        else:
-            d = {}
-
-            try:
-                for row in out.split("\n"):
-                    for n in ('package',
-                              'upstream-version',
-                              'upstream-url'):
-                        m = re.match("<%s>(.*)</%s>" % (n, n), row)
-                        if m:
-                            d[n] = m.group(1)
-                d["ext"] = os.path.splitext(d['upstream-url'])[1]
-                # We want the name of the orig tarball if possible
-                source = ("../%(package)s_%(upstream-version)s."
-                          "orig.tar%(ext)s" % d)
-
-                # Fall back to the upstream source name otherwise
-                if not os.path.exists(source):
-                    source = "../%s" % d['upstream-url'].rsplit('/', 1)[1]
-                    if not os.path.exists(source):
-                        raise UscanError("Couldn't find tarball at '%s'" %
-                                         source)
-            except KeyError as e:
-                raise UscanError("Couldn't find '%s' in uscan output" %
-                                 e.args[0])
+        if not source:
+            raise UscanError("Couldn't find source in uscan output")
         self._tarball = source
 
     def _parse_uptodate(self, out):
