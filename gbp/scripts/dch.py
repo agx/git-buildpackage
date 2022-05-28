@@ -50,6 +50,9 @@ def guess_version_from_upstream(repo, upstream_tag_format, upstream_branch, cp=N
                                                     upstream_branch,
                                                     epoch=epoch,
                                                     debian_release=False)
+        if version is None:
+            gbp.log.warn("Failed to find upstream version tag")
+            return None
         gbp.log.debug("Found upstream version %s." % version)
         if compare_versions(version, cmp_version) > 0:
             return "%s-1" % version
