@@ -1,3 +1,85 @@
+git-buildpackage (0.9.27) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [7717b39] git/repository: Disable signatures when grepping for commits.
+    Otherwise get the signature back as well.
+    Thanks to наб for the patch (Closes: #1010370)
+  * [86b4fd8] config: Use ConfigParser instead of deprecated SafeConfigParser
+    (Closes: #1011344)
+  * [83e7791] tests: Test import-orig from upstream branch
+  * [14ea481] deb: Decode changelog content when fetched from git.
+    When importing not form the upstream branch the changelog is fetched
+    via `git show`. Decode the bytes in that case. (Closes: #1004354)
+  * [4d173ac] docs: Fix --upstream-signature flag description.
+    Thanks to Tino Mettler
+  * [42a1406] clone: Allow to skip alias expansion.
+    Add an option that allow to skip exansion of aliases like salsa:
+    by gbp so that git can do that. (Closes: #983085)
+  * [9ab4a0e] pkgpolicy: Add type annotations.
+    Just enough to  make mypy happy.
+  * [39ae57e] Ignore imports without type annotations for now.
+    Ignore rpm and libnotify for the moment
+  * [92c3fd2] dch: Add minimal type information.
+    Just enough to make mypy happy
+  * [441bd27] Makefile: add type-check
+  * [05ea122] tests: Add "gbp import-orig --uscan" test
+  * [36737d2] uscan: Drop pre 2.11 devscripts compat code.
+    It's not even in oldoldoldstable anymore
+  * [613fcb8] docs: Make --component more prominent
+    (Closes: #934200)
+  * [7a674e0] docs: Ship gbp-setup-gitattributs man page
+  * [14170d6] dch: Don't crash when we fail to get an upstream version
+    (Closes: #879495)
+  * [25327d1] smoke-rpm: Avoid deprecated distutils
+  * [59bf3a6] repository: list_tree: Handle '-'
+  * [3e30ce3] repository.get_submodules: Only strip repo path from the
+    beginning.  We shouldn't just replace any occurence since we otherwise
+    might also substitute in the submodule.
+    Based on a patch by "ushen <yshxxsjt715@gmail.com>".
+    See https://github.com/agx/git-buildpackage/pull/82
+  * [03348fd] repository: Add helper to prefix branch with 'refs/heads/'
+    No attempt is being made to ensure this is a local branch.
+  * [a5e6dea] pull: Prefix local branch with 'refs/heads/'
+    This can resolve ambiguity when generating the rev list.
+    (Closes: #966627)
+  * [d2200e4] Add breaks on older dgit.
+    See #1005873, #1010061
+
+  [ Nicolas Boulenguez ]
+  * [ff524f1] debhelper: make package prefix explicit in configuration files.
+    This slightly improves readability.
+  * [6d1c325] debian/rules: simplify installation of zsh and pk4.
+    There seems to be no reason to change their names and permissions
+    between the source tree and the eventual installation path.
+  * [8742d3f] rules: simplify thanks to debhelper compat 13.
+    When dh-sequence-foo is listed in build-depends, debhelper
+    automatically inserts dh_foo in the commands.
+    override_dh_auto_test is not invoked anymore if DEB_BUILD_OPTIONS
+    contains nocheck.
+    execute_after_dh_* is available and more readable than override_dh_*.
+    Move chmod to execute_after_dh_fixperms for clarity.
+    Examples are not compressed anymore.
+  * [4c9032e] debian/rules: remove obsolete and unused Make variables
+  * [bd529f0] debian/copyrigt: switch to machine-readable format 1.0
+  * [36499a8] Move some cleaning from debian/rules to debian/clean
+  * [9bdb516] debian/clean: add forgotten files
+  * [7740d59] debian/rules: really export GBP_NETWORK_TESTS to tests
+    $(MAKE) GBP_NETWORK_TESTS=1
+    was setting a Make variable in the sub-Make, but not exporting it for
+    test/*.py subprocesses.
+  * [71a1556] debian/rules: clean __pycache__ directories generated during the
+    build
+  * [ee38574] clone: add second allowed form for vcs-git protocol to manual
+    page
+
+  [ Arnaud Rebillout ]
+  * [abce93c] import-dsc: Fix error message when missing debian branch.
+    The error message mistakenly talks about the upstream branch when it
+    should be talking about the debian branch.
+    (Closes: #984516)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 31 May 2022 10:07:23 +0200
+
 git-buildpackage (0.9.26) unstable; urgency=medium
 
   [ Quanah Gibson-Mount ]
