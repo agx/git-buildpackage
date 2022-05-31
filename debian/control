@@ -57,6 +57,7 @@ Depends: ${python3:Depends},
 Recommends: pristine-tar (>= 1.41),
  cowbuilder | pbuilder | sbuild,
  python3-requests
+Breaks: dgit (<< 9.16~)
 Suggests: python3-notify2, unzip, sudo
 Description: Suite to help with Debian packages in Git repositories
  This package contains the following tools:
