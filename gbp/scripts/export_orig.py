@@ -165,7 +165,7 @@ def maybe_pristine_tar_commit(repo, source, options, output_dir, orig_files):
     else:
         upstream_tree = git_archive_get_upstream_tree(repo, source, options)
         archive = os.path.join(output_dir, orig_files[0])
-        gbp.log.debug("Adding %s to pristine-tar branch" % archive)
+        gbp.log.info("Adding %s to pristine-tar branch" % archive)
         repo.pristine_tar.commit(archive, upstream_tree)
 
 
@@ -309,6 +309,8 @@ def build_parser(name):
                                       help="use upstream signature, default is auto", type='tristate')
     orig_group.add_config_file_option("component", action="append", metavar='COMPONENT',
                                       dest="components")
+    orig_group.add_boolean_config_file_option(option_name="pristine-tar-commit",
+                                              dest="pristine_tar_commit")
     branch_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
     branch_group.add_boolean_config_file_option(option_name="submodules", dest="with_submodules")
     return parser

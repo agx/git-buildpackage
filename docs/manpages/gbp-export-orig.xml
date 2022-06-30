@@ -31,6 +31,7 @@
       <arg><option>--compression-level=</option><replaceable>LEVEL</replaceable></arg>
       <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--[no-]pristine-tar-commit</option></arg>
       <arg><option>--upstream-signatures=</option>[auto|on|off]</arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -206,7 +207,16 @@
           </para>
         </listitem>
       </varlistentry>
-    </variablelist>
+      <varlistentry>
+        <term><option>--pristine-tar-commit</option>
+        </term>
+        <listitem>
+          <para>
+            Commit the pristine-tar delta to the pristine-tar branch if a new
+            tarball was generated and the pristine-tar data isn't already there.
+          </para>
+        </listitem>
+      </varlistentry>
     <varlistentry>
         <term><option>--upstream-signatures=</option>[auto|on|off]
         </term>
@@ -215,7 +225,8 @@
           Whether to export with upstream signatures.
           </para>
         </listitem>
-      </varlistentry>
+    </varlistentry>
+  </variablelist>
   </refsect1>
   <refsect1>
     <title>EXAMPLES</title>
