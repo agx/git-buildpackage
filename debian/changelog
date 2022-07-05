@@ -1,3 +1,15 @@
+git-buildpackage (0.9.28) unstable; urgency=medium
+
+  [ Diane Trout ]
+  * [09338d2] pkgpolicy: Use type annotations that also work for python 3.9
+    (Closes: #1012717)
+
+  [ Guido Günther ]
+  * [666389b] export-orig: Allow for --pristine-tar-commit.
+    No reason to restrict this to build-package
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 05 Jul 2022 11:50:33 +0200
+
 git-buildpackage (0.9.27) unstable; urgency=medium
 
   [ Guido Günther ]
