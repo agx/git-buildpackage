@@ -85,7 +85,7 @@ class RpmPkgPolicy(PkgPolicy):
         body_name_re = r'\[(?P<name>.*)\]'
 
         # Changelog header format (when writing out changelog)
-        header_format = "* %(time)s %(name)s <%(email)s> %(revision)s"
+        header_format = "* %(time)s %(name)s <%(email)s> - %(revision)s"
         header_time_format = "%a %b %d %Y"
         header_rev_format = "%(version)s"
 
