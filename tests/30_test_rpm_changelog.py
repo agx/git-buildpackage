@@ -34,7 +34,7 @@ class TestChangelogHeader(object):
         time = datetime(2014, 1, 29, 12, 13, 14)
         header = _ChangelogHeader(RpmPkgPolicy, time, name="John Doe",
                                   email="user@host.com", revision="1")
-        eq_(str(header), "* Wed Jan 29 2014 John Doe <user@host.com> 1\n")
+        eq_(str(header), "* Wed Jan 29 2014 John Doe <user@host.com> - 1\n")
 
     def test_str_format_err(self):
         """Test missing properties"""
@@ -79,7 +79,7 @@ class TestChangelogSection(object):
     def test_str_format(self):
         """Basic test"""
         section = self.default_sect
-        eq_(str(section), "* Wed Jan 29 2014 J. D. <u@h> 1\n- my change\n\n")
+        eq_(str(section), "* Wed Jan 29 2014 J. D. <u@h> - 1\n- my change\n\n")
 
     def test_append_entry(self):
         """Test add_entry() method"""
@@ -87,7 +87,7 @@ class TestChangelogSection(object):
         entry = _ChangelogEntry(RpmPkgPolicy, author="",
                                 text="- another\n  change")
         new_entry = section.append_entry(entry)
-        eq_(str(section), "* Wed Jan 29 2014 J. D. <u@h> 1\n- my change\n"
+        eq_(str(section), "* Wed Jan 29 2014 J. D. <u@h> - 1\n- my change\n"
                           "- another\n  change\n\n")
         eq_(new_entry, section.entries[-1])
 
@@ -96,25 +96,25 @@ class TestChangelogSection(object):
         section = self.default_sect
         time = datetime(2014, 1, 30)
         section.set_header(time=time, name="Jane", email="u@h", revision="1.1")
-        eq_(str(section), "* Thu Jan 30 2014 Jane <u@h> 1.1\n- my change\n\n")
+        eq_(str(section), "* Thu Jan 30 2014 Jane <u@h> - 1.1\n- my change\n\n")
 
 
 class TestChangelogParser(object):
     """Test the default changelog parser"""
 
     cl_default_style = """\
-* Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.3-1
+* Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.3-1
 - Version bump
 - Drop foo.patch
 
-* Tue Jan 28 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.2
+* Tue Jan 28 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.2
 - Update to 0.2
 
-* Mon Jan 27 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.1
+* Mon Jan 27 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.1
 - Initial version
 """
     cl_with_authors = """\
-* Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.3-1
+* Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.3-1
 [Markus Lehtonen]
 - Version bump
 [John Doe]
@@ -122,17 +122,17 @@ class TestChangelogParser(object):
 """
     # Invalid timestamp / name
     cl_broken_header_1 = """\
-* Wed Jan 29 2014Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.3-1
+* Wed Jan 29 2014Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.3-1
 - Version bump
 """
     # Whitespace before the asterisk in the header
     cl_broken_header_2 = """\
- * Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.3-1
+ * Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.3-1
 - Version bump
 """
     # Invalid timestamp
     cl_broken_header_3 = """\
-* Wed Jan 32 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.3-1
+* Wed Jan 32 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.3-1
 - Version bump
 """
     # Missing email
@@ -143,7 +143,7 @@ class TestChangelogParser(object):
     # Garbage before section header
     cl_broken_header_5 = """\
 ---garbage---
-* Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.3-1
+* Wed Jan 29 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> - 0.3-1
 - Version bump
 """
 
@@ -222,5 +222,5 @@ class TestChangelog(object):
         time = datetime(2014, 1, 30)
         new_section = changelog.add_section(time=time, name="Jane Doe",
                                             email="j@doe.com", revision="1.2")
-        eq_(str(changelog), "* Thu Jan 30 2014 Jane Doe <j@doe.com> 1.2\n\n")
+        eq_(str(changelog), "* Thu Jan 30 2014 Jane Doe <j@doe.com> - 1.2\n\n")
         eq_(new_section, changelog.sections[0])
