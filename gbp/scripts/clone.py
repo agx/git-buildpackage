@@ -22,6 +22,7 @@
 import re
 import sys
 import os
+import yaml
 from gbp.config import (GbpOptionParser, GbpOptionGroup)
 from gbp.deb.git import DebianGitRepository
 from gbp.git import (GitRepository, GitRepositoryError)
@@ -102,6 +103,24 @@ def repo_to_url(repo):
         return repo
 
 
+def add_upstream_vcs(repo):
+    upstream_info = os.path.join('debian', 'upstream', 'metadata')
+    if not os.path.exists(upstream_info):
+        gbp.log.warn("No upstream metadata, can't track upstream repo")
+        return
+
+    with open(upstream_info) as f:
+        metadata = yaml.safe_load(f)
+        url = metadata.get('Repository', None)
+
+    if url is None:
+        gbp.log.warn("No repository in metadata, can't track upstream repo")
+        return
+
+    gbp.log.info(f"Adding upstream vcs at {url} as additional remote")
+    repo.add_remote_repo('upstreamvcs', url, fetch=True)
+
+
 def build_parser(name):
     try:
         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
@@ -112,8 +131,10 @@ def build_parser(name):
 
     branch_group = GbpOptionGroup(parser, "branch options", "branch tracking and layout options")
     cmd_group = GbpOptionGroup(parser, "external command options", "how and when to invoke hooks")
+    uvcs_group = GbpOptionGroup(parser, "upstream vcs options", "upstream vcs options")
     parser.add_option_group(branch_group)
     parser.add_option_group(cmd_group)
+    parser.add_option_group(uvcs_group)
 
     branch_group.add_option("--all", action="store_true", dest="all", default=False,
                             help="track all branches, not only debian and upstream")
@@ -128,6 +149,8 @@ def build_parser(name):
                                      help="hook to run after cloning the source tree, "
                                      "default is '%(postclone)s'")
     cmd_group.add_boolean_config_file_option(option_name="hooks", dest="hooks")
+
+    uvcs_group.add_boolean_config_file_option(option_name="add-upstream-vcs", dest='add_upstream_vcs')
 
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
@@ -215,6 +238,9 @@ def main(argv):
         if not options.defuse_gitattributes.is_off():
             if options.defuse_gitattributes.is_on() or not repo_setup.check_gitattributes(repo, 'HEAD'):
                 repo_setup.setup_gitattributes(repo)
+
+        if options.add_upstream_vcs:
+            add_upstream_vcs(repo)
 
         if postclone:
             Hook('Postclone', options.postclone,

@@ -108,6 +108,7 @@ class GbpOptionParser(OptionParser):
     @type def_config_files: dict (type, path)
     """
     defaults = {'abbrev': 7,
+                'add-upstream-vcs': 'False',
                 'aliases': 'True',
                 'allow-unauthenticated': 'False',
                 'arch': '',
@@ -201,6 +202,9 @@ class GbpOptionParser(OptionParser):
                 'urgency': 'medium',
                 }
     help = {
+        'add-upstream-vcs':
+            "Whether to add the upstream vcs as additional remote "
+            "default is '%(add-upstream-vcs)s'",
         'aliases':
             "Whether to expand gbp specific aliases like `salsa:`,"
             "default is '%(aliases)s'",

@@ -34,6 +34,7 @@
       <arg><option>--repo-user=</option><option>[GIT|DEBIAN]</option></arg>
       <arg><option>--repo-email=</option><option>[GIT|DEBIAN]</option></arg>
       <arg><option>--[no-]aliases</option></arg>
+      <arg><option>--[no-]add-upstream-vcs</option></arg>
       <arg choice="plain"><replaceable>repository</replaceable></arg>
       <arg><replaceable>directory</replaceable></arg>
     </cmdsynopsis>
@@ -173,6 +174,16 @@
         <listitem>
           <para>
 	    Whether to expand gbp specific aliases for remote repos like <symbol>salsa:</symbol>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]add-upstream-vcs</option>
+        </term>
+        <listitem>
+          <para>
+	    Whether to add the upstream git repository as additional remote. The repositor url is read from
+            <filename>debian/upstream/meta</filename>.
           </para>
         </listitem>
       </varlistentry>

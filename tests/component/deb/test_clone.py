@@ -61,10 +61,12 @@ class TestClone(ComponentTestBase):
         """Test that cloning from vcs-git urls works"""
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
-        ret = clone(['arg0', "vcsgit:libvirt-glib", dest])
+        ret = clone(['arg0', "--add-upstream-vcs", "vcsgit:libvirt-glib", dest])
         self.assertEquals(ret, 0)
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'debian/sid', ['debian/sid', 'upstream/latest'])
+        assert cloned.has_remote_repo("upstreamvcs")
+        assert 'upstreamvcs/master' in cloned.get_remote_branches()
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_clone_vcsgit_fail(self):
