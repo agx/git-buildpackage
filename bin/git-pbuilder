@@ -39,7 +39,12 @@ shell_quote () {
 
 # unset variables we inherited from the environment ourselfes
 # Names like DIST are very generic and can trip up other build systems
-unset_env() {
+# so unset these and set some prefixed ones instead so they can e.g.
+# be used in .pbuilderrc.
+update_env() {
+     [ -z "$DIST" -o -n "$GBP_DIST" ] || export GBP_DIST=$DIST
+     [ -z "$BUILDER" -o -n "$GBP_BUILDER" ] || export GBP_BUILDER=$BUILDER
+     [ -z "$ARCH" -o -n "$GBP_ARCH" ] || export GBP_ARCH=$ARCH
     export -n DIST BUILDER ARCH
 }
 
@@ -351,7 +356,7 @@ done
 
 # Now we can finally run pdebuild.  The quoting here is tricky, but this
 # seems to pass everything through properly.
-unset_env
+update_env
 if [ no = "$GIT_PBUILDER_AUTOCONF" ] ; then
     set -e
     [ ! "$GIT_PBUILDER_DEBUG" ] || set -x
