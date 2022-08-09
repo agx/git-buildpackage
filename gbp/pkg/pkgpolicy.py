@@ -30,8 +30,8 @@ class PkgPolicy(object):
     Common helpers for packaging policy.
     """
     version_mangle_re = (r'%\(version'
-                         r'%(?P<M>[^%])'
-                         r'%(?P<R>([^%]|\\%))+'
+                         r'%(?P<M>([^%]+))'      # match
+                         r'%(?P<R>([^%]|\\%))?'  # replacement
                          r'\)s')
     packagename_re: typing.Optional[typing.Pattern[str]] = None
     packagename_msg: typing.Optional[str] = None
@@ -198,10 +198,13 @@ class PkgPolicy(object):
         'v1_2_3'
         >>> PkgPolicy.version_subst(r'%(version%-%\\%)s', "0-1.2.3")
         '0%1.2.3'
+        >>> PkgPolicy.version_subst(r'%(version%+ds%)s', "1.2.3+ds")
+        '1.2.3'
         """
         r = re.search(cls.version_mangle_re, format)
         if r:
             format = re.sub(cls.version_mangle_re, "%(version)s", format)
-            version = version.replace(r.group('M'), r.group('R').replace(r'\%', '%'))
+            replacement = r.group('R').replace(r'\%', '%') if r.group('R') else ''
+            version = version.replace(r.group('M'), replacement)
         return format_str(format, dict(version=sanitizer(version),
                                        hversion=sanitizer(version).replace('.', '-')))
