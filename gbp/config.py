@@ -340,7 +340,7 @@ class GbpOptionParser(OptionParser):
             "default is '%(postimport)s'",
         'postunpack':
             "hook run after a unpacking the tarballs, "
-            "default is '%(postimport)s'",
+            "default is '%(postunpack)s'",
         'hooks':
             "Enable running all hooks, default is %(hooks)s",
         'upstream-signatures':
