@@ -25,7 +25,7 @@ if python3 -c "import setuptools"; then
                        --git-export-dir="$GBP_TEMPDIR" \
                        -D'%__python3 /usr/bin/python3' \
                        -D'%__python /usr/bin/python3' \
-                       -D'%python_sitelib %(%{__python3} -Ic "from sysconfig import get_path; print(get_path('"'platlib'"'))")' \
+                       -D'%python_sitelib %(%{__python3} -Ic "from sysconfig import get_path; print(get_path('"'platlib'"', '"'posix_prefix'"'))")' \
                        -D'%_arch noarch' \
                        -bb --nodeps
 fi
