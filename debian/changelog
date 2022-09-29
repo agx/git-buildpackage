@@ -1,3 +1,36 @@
+git-buildpackage (0.9.29) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [f76f200] clone: Allow to automatically add upstream vcs.
+    While "gbp import-orig" supports "--upstream-vcs" since some time to
+    link to the upstream git history however setup of the upstream remote
+    repo so far was manual.
+    To make this more automatic add "--add-upstream-vcs" to "gbp clone"
+    (defaulting to False) and set up the upstreamvcs remote in case there's
+    sufficient information in debian/upstream/metadata. Once added fetch
+    from that remote initially.
+  * [37cd681] git-pbuilder: export GBP_{DIST,ARCH,BUILDER} to the environment.
+    This makes sure we don't export very generic vars while still being able
+    to make decisions based on what was passed to gbp.
+  * [2f463b9] config: Print correct default for postunpack hook
+  * [5155e98] Build-depend on python3-filelock.
+    This works around #1020024
+
+  [ Pete Moore ]
+  * [907e17a] rpm: Fix flake8
+
+  [ Stefano Rivera ]
+  * [ccbb64b] Specify a sysconfig scheme in smoke-rpm.
+    Debian uses the posix_local scheme by default, since Python 3.10,
+    causing the rpm to be built with the incorrect layout.
+  * [3954043] Explicitly use the deb install layout when building our RPM.
+    Debian defaults to installing to /usr/local, unless told otherwise. This
+    is usually done by passing --install-layout=deb to setup.py, when called
+    directly. But that's only an option on Debian systems that have this
+    patch. Set the environment variable equivalent, instead.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 29 Sep 2022 16:45:34 +0200
+
 git-buildpackage (0.9.28) unstable; urgency=medium
 
   [ Diane Trout ]
