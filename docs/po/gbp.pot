@@ -5500,7 +5500,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: manpages/gbp-create-remote-repo.xml:136
 msgid ""
-"Whether to the remote repository should be a bare repository (this is the "
+"Whether the remote repository should be a bare repository (this is the "
 "default)."
 msgstr ""
 

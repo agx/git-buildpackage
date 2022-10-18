@@ -133,7 +133,7 @@
         <term><option>--[no-]bare</option>
         </term>
         <listitem>
-	  <para>Whether to the remote repository should be a bare
+	  <para>Whether the remote repository should be a bare
 	  repository (this is the default).</para>
         </listitem>
       </varlistentry>
