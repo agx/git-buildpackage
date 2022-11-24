@@ -1,3 +1,13 @@
+git-buildpackage (0.9.30) unstable; urgency=medium
+
+  * [f102dca] examples: Add upload script
+  * [2e1ff95] tests: Allow file protocol for submodule test
+    (Closes: #1023379)
+  * [b21f537] Bump standards version to 4.6.1.
+    No changes required
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 24 Nov 2022 16:55:53 +0100
+
 git-buildpackage (0.9.29) unstable; urgency=medium
 
   [ Guido Günther ]
