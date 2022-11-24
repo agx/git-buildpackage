@@ -367,7 +367,9 @@ class TestGbpRpm(RpmRepoTestBase):
         pkg_branch = repo.get_branch()
         upstr_branch = 'upstream'
         repo.set_branch(upstr_branch)
+        os.environ['GIT_ALLOW_PROTOCOL'] = 'file'
         repo.add_submodule(sub_repo.path)
+        del os.environ['GIT_ALLOW_PROTOCOL']
         repo.commit_all('Add submodule')
         repo.set_branch(pkg_branch)
 
@@ -407,7 +409,9 @@ class TestGbpRpm(RpmRepoTestBase):
 
         # Create submodule
         sub_repo = self.orig_repos['gbp-test-native2']
+        os.environ['GIT_ALLOW_PROTOCOL'] = 'file'
         repo.add_submodule(sub_repo.path)
+        del os.environ['GIT_ALLOW_PROTOCOL']
         repo.commit_all('Add submodule')
 
         sub_files = sub_repo.ls_tree('HEAD')

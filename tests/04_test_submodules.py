@@ -46,6 +46,7 @@ def setup():
     REPODIR = TMPDIR.join('test_repo')
     REPO = DebianGitRepository.create(REPODIR)
 
+    os.environ['GIT_ALLOW_PROTOCOL'] = 'file'
     for name in SUBMODULE_NAMES:
         SUBMODULES.append(Submodule(name, str(TMPDIR)))
 
@@ -54,7 +55,9 @@ def setup():
 
 def teardown():
     """Test module teardown"""
+
     context.teardown()
+    del os.environ['GIT_ALLOW_PROTOCOL']
 
 
 def test_empty_has_submodules():

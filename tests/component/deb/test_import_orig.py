@@ -505,7 +505,9 @@ class TestImportOrig(ComponentTestBase):
         Test that importing works if repo is a git submodule (#674015)
         """
         parent_repo = GitRepository.create('../parent')
+        os.environ['GIT_ALLOW_PROTOCOL'] = 'file'
         parent_repo.add_submodule(repo.path)
+        del os.environ['GIT_ALLOW_PROTOCOL']
         parent_repo.update_submodules(init=True, recursive=True)
         submodule = GitRepository(os.path.join(parent_repo.path,
                                                'hello-debhelper'))
