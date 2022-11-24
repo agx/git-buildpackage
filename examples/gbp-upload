@@ -14,7 +14,9 @@ VERSION="$(dpkg-parsechangelog -S Version)"
 SOURCE="$(dpkg-parsechangelog -S Source)"
 CHANGES="../${SOURCE}_${VERSION}_source.changes"
 
-less "${CHANGES}"
+less --quit-at-eof "${CHANGES}"
+echo "Hit <RETURN> to upload, <CTRL>-C to quit"
+read -r VAL
 
 gbp tag
 debsign -S
