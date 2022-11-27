@@ -3,23 +3,32 @@
 # Tag, upload to the Debian archive and push to the remote
 
 set -e
+set -u
 
 REMOTE=salsa+rw
+DEBS_DIR=..
 
 if gbp config upload.remote; then
     REMOTE="$(gbp config upload.remote)"
 fi
 
+if gbp config buildpackage.export-dir; then
+    DEBS_DIR="$(gbp config buildpackage.export-dir)"
+fi
+
 VERSION="$(dpkg-parsechangelog -S Version)"
 SOURCE="$(dpkg-parsechangelog -S Source)"
-CHANGES="../${SOURCE}_${VERSION}_source.changes"
+CHANGES="${DEBS_DIR}/${SOURCE}_${VERSION}_source.changes"
 
 less --quit-at-eof "${CHANGES}"
 echo "Hit <RETURN> to upload, <CTRL>-C to quit"
 read -r VAL
 
+echo "Signing tag and built artifacts"
 gbp tag
-debsign -S
+debsign --debs-dir ${DEBS_DIR} -S
 
-dput "${CHANGES}"
+echo "Uploading ${CHANGES}"
+dput $@ "${CHANGES}"
+echo "Pushing to ${REMOTE}"
 gbp push "${REMOTE}"
