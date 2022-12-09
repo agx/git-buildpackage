@@ -12,7 +12,7 @@ if gbp config upload.remote; then
     REMOTE="$(gbp config upload.remote)"
 fi
 
-if gbp config buildpackage.export-dir; then
+if [ -n "$(gbp config buildpackage.export-dir)" ] ; then
     DEBS_DIR="$(gbp config buildpackage.export-dir)"
 fi
 
@@ -26,7 +26,7 @@ read -r VAL
 
 echo "Signing tag and built artifacts"
 gbp tag
-debsign --debs-dir ${DEBS_DIR} -S
+debsign --debs-dir "${DEBS_DIR}" -S
 
 echo "Uploading ${CHANGES}"
 dput $@ "${CHANGES}"
