@@ -10,5 +10,9 @@
         <refentrytitle>pristine-tar</refentrytitle>
         <manvolnum>1</manvolnum>
       </citerefentry>,
+      <citerefentry>
+        <refentrytitle>pristine-lfs</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry>,
       <ulink url="file:///usr/share/doc/git-buildpackage/manual-html/index.html">
       <citetitle>The Git-Buildpackage Manual</citetitle></ulink>
