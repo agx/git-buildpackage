@@ -20,6 +20,11 @@ VERSION="$(dpkg-parsechangelog -S Version)"
 SOURCE="$(dpkg-parsechangelog -S Source)"
 CHANGES="${DEBS_DIR}/${SOURCE}_${VERSION}_source.changes"
 
+if ! git remote show "${REMOTE}" >/dev/null 2>&1; then
+    echo "Failed to access ${REMOTE}."
+    exit 1
+fi
+
 less --quit-at-eof "${CHANGES}"
 echo "Hit <RETURN> to upload, <CTRL>-C to quit"
 read -r VAL
