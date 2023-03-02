@@ -600,7 +600,7 @@ class GbpOptionParser(OptionParser):
 
         try:
             self.parse_config_files()
-        except configparser.ParsingError as err:
+        except (configparser.ParsingError, configparser.DuplicateSectionError) as err:
             raise GbpError(str(err) + "\nSee 'man gbp.conf' for the format.")
 
         OptionParser.__init__(self, option_class=GbpOption,
