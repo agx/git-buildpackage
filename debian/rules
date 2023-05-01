@@ -4,7 +4,9 @@
 	dh $@ --buildsystem=pybuild
 
 override_dh_auto_test:
+ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	make
+endif
 
 execute_after_dh_auto_build:
 	make docs
