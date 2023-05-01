@@ -33,6 +33,8 @@ class DebianGitRepository(PkgGitRepository):
     """A git repository that holds the source of a Debian package"""
 
     version_mangle_re = PkgPolicy.version_mangle_re
+    # Extensions to strip from version numbers
+    splitexts = ['repack', 'py', 'dfsg', 'ds']
 
     def __init__(self, *args, **kwargs):
         super(DebianGitRepository, self).__init__(*args, **kwargs)
@@ -149,6 +151,9 @@ class DebianGitRepository(PkgGitRepository):
         ... "2.3+really2.2")
         ('2.2', None)
         >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "42~beta1")
+        ('42~beta1', None)
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
         ... "4.99.4+dfsg+really4.10.0+py3")
         ('4.10.0', None)
         >>> DebianGitRepository._upstream_version_from_debian_upstream(
@@ -160,6 +165,9 @@ class DebianGitRepository(PkgGitRepository):
         >>> DebianGitRepository._upstream_version_from_debian_upstream(
         ... "1.1.0+really1.0.0+git20181028.94f6ae3")
         (None, '94f6ae3')
+        >>> DebianGitRepository._upstream_version_from_debian_upstream(
+        ... "1.1.0")
+        ('1.1.0', None)
         """
 
         # If version starts with an epoch, remove it.
@@ -177,8 +185,8 @@ class DebianGitRepository(PkgGitRepository):
         if m:
             return (None, m.group(2))
 
-        # Strip off anything starting with [+~] and return the rest.
-        return (re.split(r'[+~]', version)[0], None)
+        # Strip off common extensions starting with [+~] and return the rest.
+        return (re.split(r'[+~]({})'.format('|'.join(cls.splitexts)), version)[0], None)
 
     @staticmethod
     def _build_legacy_tag(format, version):
