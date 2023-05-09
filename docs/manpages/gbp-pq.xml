@@ -55,7 +55,7 @@
     called <replaceable>patch-queue/master</replaceable>.
     </para>
     <para>
-    See <ulink url="https://honk.sigxcpu.org/piki/development/debian_packages_in_git/"></ulink>
+    See <ulink url="https://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.patches.html"></ulink>
     for example workflows.
     </para>
   </refsect1>
