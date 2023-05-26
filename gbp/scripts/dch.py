@@ -607,7 +607,8 @@ def main(argv):
     except KeyboardInterrupt:
         ret = 1
         gbp.log.err("Interrupted. Aborting.")
-    except (gbpc.CommandExecFailed,
+    except (gbp.deb.control.ParseControlError,
+            gbpc.CommandExecFailed,
             GbpError,
             GitRepositoryError,
             DebianSourceError,
