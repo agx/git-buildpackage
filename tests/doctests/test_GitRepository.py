@@ -647,7 +647,7 @@ def test_clone():
     >>> clone.branch
     'master'
     >>> clone.get_remote_branches()
-    ['origin', 'origin/foo', 'origin/master']
+    ['origin/HEAD', 'origin/foo', 'origin/master']
     >>> clone.get_local_branches()
     ['master']
     >>> clone.get_merge_branch('master')
