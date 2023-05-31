@@ -1,3 +1,57 @@
+git-buildpackage (0.9.31) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * Upload to experimental.
+    gbp-import-orig when used with --upstream-vcs-tag now strips extensions like
+    'dfsg', 'ds' or 'repack' from upstream version numbers and handles the
+    'really' convention. Let's test this in experimental before uploading to
+    unstable.
+  * [cf5b2ad] config: Print sensible error message on duplicate sections.
+    Don't confuse users with a backtrace.
+  * [a420bc9] gbp/deb/git: Don't strip ~ patterns unconditionally.
+    They're needed when packaging upstream beta versions. So use
+    a positive list instead.
+    Fixes: a5575e178639a8e167c7f3090263a03b362e05e7
+  * [9c4841e] d/rules: Check for DEB_BUILD_OPTIONS
+  * [e358254] dch: Catch d/control parse errors too.
+    Print a clear error message instead of hiding it in the backtrace.
+    Thanks to Mechtilde Stehmann for the report
+  * [4f909d2] pq: Roll back on all errors.
+    Drop the pq branch on all exceptions not only on the ones gbp throws
+    itself. This makes sure the result is consistent in such situations (no
+    patches applied).
+  * [8dfec59] patch_series: Ignore whitespace lines.
+    E.g. python-coverage has a form feed in the series file.
+    Thanks to Ian Jackson for the detailed report (Closes: #1030534)
+  * [c72464b] gbp-upload: Check if remote exists
+
+  [ Akbarkhon Variskhanov ]
+  * [afcd15b] create-remote-repo.xml: Fix minor typo
+
+  [ Samuel Henrique ]
+  * [11728ec] rpm/policy: Add missing dash before version in RPM changelog header.
+
+  [ Huw Jones ]
+  * [3434531] repository.create_tag: Explicitly don't sign when sign=False.
+    This avoids `tag.gpgsign = true` from git-config leaking through.
+    (Closes: #1032932)
+
+  [ Richard Laager ]
+  * [29370b5] import-orig: Parse various Debian version patterns.
+    This parses common Debian version patterns into the "real" upstream
+    version.  For example, 1.1.8+dfsg1 becomes 1.1.8.  This strips epochs,
+    handles the +really convention, finds git revisions, and strips other +
+    or ~ patterns. (Closes: #968329)
+
+  [ Junichi Uekawa ]
+  * [f0e9d41] docs: gbp-pq manpage: refer to the moved location
+    gbp-pq manpage refers to a page that says the content has moved.
+    I think it can refer to the local html copy[1], or the internet copy.
+    [1] /usr/share/doc/git-buildpackage/manual-html/gbp.patches.html
+    (Closes: #1035838)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 31 May 2023 10:59:35 +0200
+
 git-buildpackage (0.9.30) unstable; urgency=medium
 
   * [f102dca] examples: Add upload script
