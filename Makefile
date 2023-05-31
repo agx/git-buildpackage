@@ -31,6 +31,5 @@ docs:
 
 apidocs:
 	mkdir -p build
-	pydoctor -v gbp tests/doctests/
 
 .PHONY: docs
