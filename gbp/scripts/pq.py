@@ -333,7 +333,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
             try:
                 name = os.path.basename(patch.path)
                 apply_and_commit_patch(repo, patch, maintainer, patch.topic, name)
-            except (GbpError, GitRepositoryError) as e:
+            except Exception as e:
                 gbp.log.err("Failed to apply '%s': %s" % (patch.path, e))
                 repo.force_head('HEAD', hard=True)
                 repo.set_branch(branch)
