@@ -1,3 +1,10 @@
+git-buildpackage (0.9.32) unstable; urgency=medium
+
+  * Upload to unstable
+    Closes: #1042188
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 04 Aug 2023 09:11:56 +0200
+
 git-buildpackage (0.9.31) experimental; urgency=medium
 
   [ Guido Günther ]
