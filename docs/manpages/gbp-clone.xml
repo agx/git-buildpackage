@@ -182,8 +182,9 @@
         </term>
         <listitem>
           <para>
-	    Whether to add the upstream git repository as additional remote. The repositor url is read from
-            <filename>debian/upstream/meta</filename>.
+	    Whether to add the upstream git repository as additional remote. The repository url is read from
+	    the "Repository" field in
+            <filename>debian/upstream/metadata</filename>.
           </para>
         </listitem>
       </varlistentry>
