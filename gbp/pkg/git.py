@@ -24,6 +24,7 @@ import tempfile
 from gbp.command_wrappers import (CatenateTarArchive, CatenateZipArchive)
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
+from gbp.deb.pristinelfs import PristineLfs
 
 
 import gbp.log
@@ -35,6 +36,7 @@ class PkgGitRepository(GitRepository):
     def __init__(self, *args, **kwargs):
         super(PkgGitRepository, self).__init__(*args, **kwargs)
         self.pristine_tar = DebianPristineTar(self)
+        self.pristine_lfs = PristineLfs(self)
 
     @staticmethod
     def sanitize_prefix(prefix):
