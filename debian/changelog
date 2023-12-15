@@ -1,3 +1,21 @@
+git-buildpackage (0.9.33) unstable; urgency=medium
+
+  [ Evangelos Ribeiro Tzaras ]
+  * [f6d90d5] docs: gbp-clone: Fix small typo and fix metadata file name
+
+  [ Guido Günther ]
+  * [6923df4] config: Catch DuplicateOption errors.
+    Nicer than printing a stack trace
+  * [8deb2e1] tests: Make flake8 happy (Closes: #1058551)
+
+  [ Taihsiang Ho (tai271828) ]
+  * [d1a9745] d/control: Specify required git version as dependency.
+    Explicitly specify the git version to facilitate easier backporting.
+    Developers can align with this git version to reduce false alarms due
+    to version inconsistencies.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 15 Dec 2023 15:49:47 +0100
+
 git-buildpackage (0.9.32) unstable; urgency=medium
 
   * Upload to unstable
