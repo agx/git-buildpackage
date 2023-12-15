@@ -55,7 +55,7 @@ class TestUnpack(unittest.TestCase):
             source.unpack(".")
             assert source.is_orig() is True
             assert source.is_dir() is False
-            assert type(source.unpacked) == str
+            assert type(source.unpacked) is str
 
     def test_upstream_source_unpack(self):
         for (comp, archive) in self.archives.items():
