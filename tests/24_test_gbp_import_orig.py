@@ -85,7 +85,7 @@ class TestMergeModeReplace(DebianGitTestRepo):
         self.repo.set_branch("upstream")
         self.add_file("upstream_file")
         self.add_file("debian/changelog")
-        self.repo.set_branch("debian/latest")
+        self.repo.set_branch("master")
         self.repo.create_tag('upstream/1.0', "Upstream 1.0", "upstream")
         debian_branch_merge_by_replace(self.repo, "upstream/1.0", "1.0", self)
         self.assertTrue(os.path.exists("debian/control"))
