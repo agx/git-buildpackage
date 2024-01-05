@@ -244,7 +244,7 @@ mkdir -p ~/.config/pk4/hooks-enabled/unpack/
 ln -s /usr/share/pk4/hooks-available/unpack/gbp ~/.config/pk4/hooks-enabled/unpack/
       </programlisting>
       <para>
-	This will make sure packages are imported into a git respository after download.
+	This will make sure packages are imported into a git repository after download.
       </para>
     </sect1>
 </chapter>

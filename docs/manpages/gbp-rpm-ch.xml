@@ -28,7 +28,7 @@
       <arg><option>--packaging-dir=</option><replaceable>DIRECTORY</replaceable></arg>
       <arg><option>--changelog-file=</option><replaceable>FILEPATH</replaceable></arg>
       <arg><option>--spec-file=</option><replaceable>FILEPATH</replaceable></arg>
-      <arg><option>--since=</option><replaceable>COMMITISH</replaceable></arg>
+      <arg><option>--since=</option><replaceable>COMMIT-ISH</replaceable></arg>
       <arg><option>--no-release</option></arg>
       <arg><option>--[no-]git-author</option></arg>
       <arg><option>--[no-]full</option></arg>
@@ -152,12 +152,12 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--since=</option><replaceable>COMMITTISH</replaceable>
+        <term><option>--since=</option><replaceable>COMMIT-ISH</replaceable>
         </term>
         <listitem>
           <para>
           Start reading commit messages at
-          <replaceable>COMMITTISH</replaceable>.
+          <replaceable>COMMIT-ISH</replaceable>.
           </para>
         </listitem>
       </varlistentry>

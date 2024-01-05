@@ -26,8 +26,8 @@
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
       <arg><option>--ignore-branch</option></arg>
       <group>
-	<arg><option>-s</option> <replaceable>commitish</replaceable></arg>
-        <arg><option>--since=</option><replaceable>commitish</replaceable></arg>
+	<arg><option>-s</option> <replaceable>commit-ish</replaceable></arg>
+        <arg><option>--since=</option><replaceable>commit-ish</replaceable></arg>
       </group>
       <group>
 	<group>
@@ -96,7 +96,7 @@
       <listitem><para>The start commit is read from the snapshot banner (see below for
       details)</para></listitem>
       <listitem><para>If the topmost version of the
-      <filename>debian/changelog</filename> is alread tagged. Use the commit
+      <filename>debian/changelog</filename> is already tagged. Use the commit
       the tag points to as start commit.</para></listitem>
       <listitem><para>The last commit that modified <filename>debian/changelog</filename> is
       used as start commit.</para></listitem>
@@ -200,12 +200,12 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>--since=</option><replaceable>committish</replaceable>
+        <term><option>--since=</option><replaceable>commit-ish</replaceable>
         </term>
         <listitem>
           <para>
             Start reading commit messages at
-            <replaceable>committish</replaceable>.
+            <replaceable>commit-ish</replaceable>.
             This option can't be set via &gbp.conf;.
           </para>
         </listitem>

@@ -690,7 +690,7 @@ msgid ""
 "filename> is at the very end of the list it can be used to override "
 "configuration entries shipped by the package. This can be useful if packages "
 "set e.g. <option>export-dir</option> or <option>tarball-dir</option> and you "
-"perfer different locations: <placeholder type=\"programlisting\" id=\"0\"/>"
+"prefer different locations: <placeholder type=\"programlisting\" id=\"0\"/>"
 msgstr ""
 
 #. type: Content of: <chapter><sect1><para><programlisting>
@@ -1680,7 +1680,7 @@ msgstr ""
 msgid ""
 "The basic idea is that patches are imported from your &debian-branch; to a "
 "patch-queue branch with one patch file in <filename>debian/patches/</"
-"filename> becoming one commit on the the patch-queue branch.  The created "
+"filename> becoming one commit on the patch-queue branch.  The created "
 "branch will be named after the branch you imported from with <filename>patch-"
 "queue/</filename> prepended. So if you do your &debian; packaging on "
 "<filename>debian/sid</filename> and do a"
@@ -1725,7 +1725,7 @@ msgstr ""
 #: chapters/patches.xml:49
 msgid ""
 "The main drawback of this workflow is the lack of history on the patch-queue "
-"branch since it is frequently droppend and recreated. But there is full "
+"branch since it is frequently dropped and recreated. But there is full "
 "history on the your &debian-branch;, of course."
 msgstr ""
 
@@ -2866,7 +2866,7 @@ msgstr ""
 #. type: Content of: <chapter><sect1><para>
 #: chapters/special.xml:247
 msgid ""
-"This will make sure packages are imported into a git respository after "
+"This will make sure packages are imported into a git repository after "
 "download."
 msgstr ""
 
@@ -5432,8 +5432,8 @@ msgid ""
 "upstream-branch=</option><replaceable>branch_name</replaceable></arg> "
 "<arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></"
 "arg> <arg><option>--ignore-branch</option></arg> <group> <arg><option>-s</"
-"option> <replaceable>commitish</replaceable></arg> <arg><option>--since=</"
-"option><replaceable>commitish</replaceable></arg> </group> <group> <group> "
+"option> <replaceable>commit-ish</replaceable></arg> <arg><option>--since=</"
+"option><replaceable>commit-ish</replaceable></arg> </group> <group> <group> "
 "<arg><option>-S</option></arg> <arg><option>--snapshot</option></arg> </"
 "group> <group> <arg><option>-R</option></arg> <arg><option>--release</"
 "option></arg> </group> </group> <group> <arg><option>-N</option> "
@@ -5487,7 +5487,7 @@ msgstr ""
 #: manpages/gbp-dch.xml:98
 msgid ""
 "If the topmost version of the <filename>debian/changelog</filename> is "
-"alread tagged. Use the commit the tag points to as start commit."
+"already tagged. Use the commit the tag points to as start commit."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
@@ -5523,7 +5523,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: manpages/gbp-dch.xml:123
 msgid ""
-"To restrict the selected changes even further you can use use the <option>--"
+"To restrict the selected changes even further you can use the <option>--"
 "git-log</option> option which is passed on verbatim to <command>git log</"
 "command>. E.g. by using <option>--git-log=</option><replaceable>\"--"
 "author=Foo Bar\"</replaceable>."
@@ -5584,13 +5584,13 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: manpages/gbp-dch.xml:203
-msgid "<option>--since=</option><replaceable>committish</replaceable>"
+msgid "<option>--since=</option><replaceable>commit-ish</replaceable>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: manpages/gbp-dch.xml:207
 msgid ""
-"Start reading commit messages at <replaceable>committish</replaceable>.  "
+"Start reading commit messages at <replaceable>commit-ish</replaceable>.  "
 "This option can't be set via &gbp.conf;."
 msgstr ""
 
@@ -7263,7 +7263,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: manpages/gbp-import-ref.xml:219
 msgid ""
-"Merge commits from the the tag corresponding to version <replaceable>1.0</"
+"Merge commits from the tag corresponding to version <replaceable>1.0</"
 "replaceable>:"
 msgstr ""
 
@@ -8334,7 +8334,7 @@ msgstr ""
 msgid ""
 "If a <replaceable>remote</replaceable> is given on the command line the "
 "changes are pushed to the given remote repository. By default it will push "
-"to the current branchs remote and fall back to <emphasis>origin</emphasis>."
+"to the current branches remote and fall back to <emphasis>origin</emphasis>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -8425,7 +8425,7 @@ msgid ""
 "option><replaceable>DIRECTORY</replaceable></arg> <arg><option>--changelog-"
 "file=</option><replaceable>FILEPATH</replaceable></arg> <arg><option>--spec-"
 "file=</option><replaceable>FILEPATH</replaceable></arg> <arg><option>--"
-"since=</option><replaceable>COMMITISH</replaceable></arg> <arg><option>--no-"
+"since=</option><replaceable>COMMIT-ISH</replaceable></arg> <arg><option>--no-"
 "release</option></arg> <arg><option>--[no-]git-author</option></arg> "
 "<arg><option>--[no-]full</option></arg> <arg><option>--id-length=</"
 "option><replaceable>NUMBER</replaceable></arg> <arg><option>--ignore-regex=</"
@@ -8497,12 +8497,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: manpages/gbp-rpm-ch.xml:155
-msgid "<option>--since=</option><replaceable>COMMITTISH</replaceable>"
+msgid "<option>--since=</option><replaceable>COMMIT-ISH</replaceable>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: manpages/gbp-rpm-ch.xml:159
-msgid "Start reading commit messages at <replaceable>COMMITTISH</replaceable>."
+msgid "Start reading commit messages at <replaceable>COMMIT-ISH</replaceable>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>

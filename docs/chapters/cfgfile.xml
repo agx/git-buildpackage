@@ -109,7 +109,7 @@
       can be used to override configuration entries shipped by the
       package. This can be useful if packages set
       e.g. <option>export-dir</option> or
-      <option>tarball-dir</option> and you perfer different locations:
+      <option>tarball-dir</option> and you prefer different locations:
       <programlisting>
 	$ cat &lt;&lt;EOF &gt;~/.gbp.late.conf
 	[DEFAULT]

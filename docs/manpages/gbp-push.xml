@@ -82,7 +82,7 @@
     <para>
       If a <replaceable>remote</replaceable> is given on the command line
       the changes are pushed to the given remote repository. By
-      default it will push to the current branchs remote and fall
+      default it will push to the current branches remote and fall
       back to <emphasis>origin</emphasis>.
     </para>
   </refsect1>

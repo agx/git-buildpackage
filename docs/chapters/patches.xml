@@ -47,7 +47,7 @@
 
   <para>
     The main drawback of this workflow is the lack of history on the
-    patch-queue branch since it is frequently droppend and
+    patch-queue branch since it is frequently dropped and
     recreated. But there is full history on
     the your &debian-branch;, of course.
   </para>
