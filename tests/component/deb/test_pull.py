@@ -37,7 +37,7 @@ class TestPull(ComponentTestBase):
         dest = os.path.join(self._tmpdir, 'cloned_repo')
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
         eq_(pull(['argv0', 'origin']), 0)
         assert len(repo.get_commits()) == 1
 
@@ -47,7 +47,7 @@ class TestPull(ComponentTestBase):
         dest = os.path.join(self._tmpdir, 'cloned_repo')
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
         eq_(pull(['argv0']), 0)
         assert len(repo.get_commits()) == 1
 
@@ -65,12 +65,12 @@ class TestPull(ComponentTestBase):
         os.mkdir(tmp_workdir)
         with open(os.path.join(tmp_workdir, 'new_file'), 'w'):
             pass
-        repo.commit_dir(tmp_workdir, 'New commit in master', branch='master')
+        repo.commit_dir(tmp_workdir, 'New commit in debian/latest', branch='debian/latest')
         repo.commit_dir(tmp_workdir, 'New commit in foob', branch='foob')
 
         # Check that the branch is not updated when --all is not used
         eq_(pull(['argv0']), 0)
-        eq_(len(cloned.get_commits(until='master')), 3)
+        eq_(len(cloned.get_commits(until='debian/latest')), 3)
         eq_(len(cloned.get_commits(until='upstream')), 1)
         eq_(len(cloned.get_commits(until='foob')), 2)
 
@@ -87,20 +87,20 @@ class TestPull(ComponentTestBase):
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
         os.chdir(cloned.path)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
         # Pull initially
         eq_(pull(['argv0']), 0)
         assert len(repo.get_commits()) == 1
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         # Pick up missing branches (none exist yet)
         eq_(pull(['argv0', '--track-missing']), 0)
         assert len(repo.get_commits()) == 1
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         # Pick up missing branches
         repo.create_branch('pristine-tar')
         repo.create_branch('upstream')
         eq_(pull(['argv0', '--track-missing', '--pristine-tar']), 0)
         assert len(repo.get_commits()) == 1
-        self._check_repo_state(cloned, 'master', ['master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest', 'pristine-tar', 'upstream'])

@@ -38,8 +38,8 @@ class TestPush(ComponentTestBase):
     def test_push_native(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         self.assertEqual(push(['argv0']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest'],
                                tags=['debian/0.4.14'])
         self.assertEqual(repo.head, self.target.head)
 
@@ -47,8 +47,8 @@ class TestPush(ComponentTestBase):
     def test_push_upstream(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         self.assertEqual(push(['argv0']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master', 'upstream'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEqual(repo.head, self.target.head)
 
@@ -56,8 +56,8 @@ class TestPush(ComponentTestBase):
     def test_push_pristine_tar(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         self.assertEqual(push(['argv0', '--pristine-tar']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEqual(repo.head, self.target.head)
 
@@ -76,8 +76,8 @@ class TestPush(ComponentTestBase):
     def test_push_skip_upstream(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         self.assertEqual(push(['argv0', '--upstream-branch=']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEqual(repo.head, self.target.head)
 
@@ -86,8 +86,8 @@ class TestPush(ComponentTestBase):
         repo.add_remote_repo('origin', self.target.path)
         self.add_file(repo, "foo.txt", "foo")
         self.assertEqual(push(['argv0']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest'],
                                tags=['debian/0.4.14'])
         self.assertEqual(repo.rev_parse("HEAD^"),
                          self.target.head)
@@ -98,7 +98,7 @@ class TestPush(ComponentTestBase):
         repo.create_branch("foo")
         repo.set_branch("foo")
         self.assertEqual(push(['argv0']), 1)
-        self._check_log(-2, ".*You are not on branch 'master' but on 'foo'")
+        self._check_log(-2, ".*You are not on branch 'debian/latest' but on 'foo'")
 
     @skip_without_cmd('debchange')
     @RepoFixtures.quilt30()
@@ -114,19 +114,19 @@ class TestPush(ComponentTestBase):
     def test_push_not_origin(self, repo):
         repo.add_remote_repo('notorigin', self.target.path)
         self.assertEqual(push(['argv0', 'notorigin']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master', 'upstream'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.quilt30()
     def test_push_not_origin_detect(self, repo):
         repo.add_remote_repo('notorigin', self.target.path)
-        repo.set_config("branch.master.remote", "notorigin")
-        repo.set_config("branch.master.merge", "refs/heads/master")
+        repo.set_config("branch.debian/latest.remote", "notorigin")
+        repo.set_config("branch.debian/latest.merge", "refs/heads/debian/latest")
         self.assertEqual(push(['argv0']), 0)
-        self._check_repo_state(self.target, 'master',
-                               ['master', 'upstream'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEqual(repo.head, self.target.head)
 
@@ -138,12 +138,12 @@ class TestPush(ComponentTestBase):
         repo.add_remote_repo('origin', self.target.path)
 
         # Make the upstream branch not fast forwardable so pushing to it fails
-        repo.push('origin', 'master')
-        self.target.create_branch('upstream', 'master')
+        repo.push('origin', 'debian/latest')
+        self.target.create_branch('upstream', 'debian/latest')
 
         self.assertEqual(push(['argv0']), 1)
-        self._check_repo_state(self.target, 'master',
-                               ['master', 'upstream'],
+        self._check_repo_state(self.target, 'debian/latest',
+                               ['debian/latest', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
         self.assertEqual(repo.head, self.target.head)
         self._check_in_log('.*Error running git push: To.*/target')

@@ -52,7 +52,7 @@ class TestClone(ComponentTestBase):
                '--postclone=printenv > ../postclone.out',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
         assert len(cloned.get_commits()) == 1
         self.check_hook_vars('../postclone', ["GBP_GIT_DIR"])
 
@@ -66,7 +66,7 @@ class TestClone(ComponentTestBase):
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'debian/sid', ['debian/sid', 'upstream/latest'])
         assert cloned.has_remote_repo("upstreamvcs")
-        assert 'upstreamvcs/master' in cloned.get_remote_branches()
+        assert 'upstreamvcs/debian/latest' in cloned.get_remote_branches()
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_clone_vcsgit_fail(self):
@@ -83,7 +83,7 @@ class TestClone(ComponentTestBase):
         ret = clone(['arg0', "github:agx/git-buildpackage", dest])
         self.assertEqual(ret, 0)
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
     @RepoFixtures.native()
     def test_clone_without_attrs(self, repo):
@@ -93,7 +93,7 @@ class TestClone(ComponentTestBase):
         clone(['arg0',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
         # file may be empty or absent
@@ -113,7 +113,7 @@ class TestClone(ComponentTestBase):
         clone(['arg0',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
         ok_(os.path.exists(attrs_file), "%s is missing" % attrs_file)

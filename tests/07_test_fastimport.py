@@ -36,7 +36,7 @@ def test_init_fastimport():
 def test_add_file():
     """Add a file via fastimport"""
     author = repo.get_author_info()
-    fastimport.start_commit('master', author, "a commit")
+    fastimport.start_commit('debian/latest', author, "a commit")
     fastimport.deleteall()
     testfile = os.path.join(repo.path, '.git', 'description')
     fastimport.add_file(b'./testfile',
@@ -47,7 +47,7 @@ def test_add_file():
 def test_add_symlink():
     """Add a symbolic link via fastimport"""
     author = repo.get_author_info()
-    fastimport.start_commit('master', author, "a 2nd commit")
+    fastimport.start_commit('debian/latest', author, "a 2nd commit")
     fastimport.add_symlink(tl_name, tf_name)
 
 
@@ -56,7 +56,7 @@ def test_close():
 
 
 def test_result():
-    repo.force_head('master', hard=True)
+    repo.force_head('debian/latest', hard=True)
 
     testfile = os.path.join(repo.path, tf_name)
     testlink = os.path.join(repo.path, tl_name)

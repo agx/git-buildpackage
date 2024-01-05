@@ -102,7 +102,7 @@ class RepoFixtures(object):
     def import_native(cls, dsc=DEFAULT_NATIVE, opts=None):
         """Import a Debian native package, verify and change into repo"""
         repo = cls._import_one(dsc, opts)
-        ComponentTestBase._check_repo_state(repo, 'master', ['master'])
+        ComponentTestBase._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         eq_(len(repo.get_commits()), 1)
         os.chdir(repo.path)
         return repo
@@ -111,10 +111,10 @@ class RepoFixtures(object):
     def import_quilt30(cls, dsc=DEFAULT_QUILT30, opts=None):
         """Import a 3.0 (quilt)  package, verify and change into repo"""
         repo = cls._import_one(dsc, opts)
-        expected_branches = ['master', 'upstream']
+        expected_branches = ['debian/latest', 'upstream']
         if opts and '--pristine-tar' in opts:
             expected_branches.append('pristine-tar')
-        ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
+        ComponentTestBase._check_repo_state(repo, 'debian/latest', expected_branches)
         eq_(len(repo.get_commits()), 2)
         os.chdir(repo.path)
         return repo
@@ -123,10 +123,10 @@ class RepoFixtures(object):
     def import_quilt30_additional_tarball(cls, dsc=DEFAULT_ADDITIONAL_TAR, opts=None):
         """Import a 3.0 (quilt) package with additional tarball, verify and change into repo"""
         repo = cls._import_one(dsc, opts)
-        expected_branches = ['master', 'upstream']
+        expected_branches = ['debian/latest', 'upstream']
         if opts and '--pristine-tar' in opts:
             expected_branches.append('pristine-tar')
-        ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
+        ComponentTestBase._check_repo_state(repo, 'debian/latest', expected_branches)
         eq_(len(repo.get_commits()), 2)
         os.chdir(repo.path)
         ok_(os.path.exists('./foo'))
@@ -139,8 +139,8 @@ class RepoFixtures(object):
         UnpackTarArchive(debian, repo.path)()
         repo.add_files('.')
         repo.commit_files('.', msg="debian dir")
-        expected_branches = ['master']
-        ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
+        expected_branches = ['debian/latest']
+        ComponentTestBase._check_repo_state(repo, 'debian/latest', expected_branches)
         eq_(len(repo.get_commits()), 1)
         os.chdir(repo.path)
         return repo

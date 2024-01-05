@@ -33,7 +33,7 @@ from tests.component.rpm import RpmRepoTestBase
 def mock_ch(args):
     """Wrapper for gbp-rpm-ch"""
     with capture_stderr():
-        return rpm_ch(['arg0', '--packaging-branch=master',
+        return rpm_ch(['arg0', '--packaging-branch=debian/latest',
                        '--spawn-editor=never'] + args)
 
 

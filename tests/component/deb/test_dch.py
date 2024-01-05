@@ -40,7 +40,7 @@ DEFAULT_DSC = _dsc_file('hello-debhelper', '2.6-2')
 class TestDch(ComponentTestBase):
     """Test importing of new upstream versions"""
     pkg = "hello-debhelper"
-    def_branches = ['master', 'upstream', 'pristine-tar']
+    def_branches = ['debian/latest', 'upstream', 'pristine-tar']
 
     @RepoFixtures.quilt30(DEFAULT_DSC)
     def test_user_customizations(self, repo):

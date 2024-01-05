@@ -23,7 +23,7 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         tag = self.repo.version_to_tag(tagformat, uversion)
         self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
                              sign=False)
-        self.repo.set_branch("master")
+        self.repo.set_branch("debian/latest")
         guessed = dch.guess_version_from_upstream(self.repo,
                                                   tagformat,
                                                   upstream_branch,
@@ -44,7 +44,7 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
                              sign=False)
 
-        self.repo.set_branch("master")
+        self.repo.set_branch("debian/latest")
         guessed = dch.guess_version_from_upstream(self.repo,
                                                   tagformat,
                                                   upstream_branch,
@@ -65,7 +65,7 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         tag = self.repo.version_to_tag(tagformat, uversion)
         self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
                              sign=False)
-        self.repo.set_branch("master")
+        self.repo.set_branch("debian/latest")
         self.add_file("clash", "bar")
         self.repo.create_tag("vyatta/something", msg="some non-upstream tag but not package release tag either")
         self.add_file("clash2", "bar")
@@ -90,7 +90,7 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         tag = self.repo.version_to_tag(tagformat, uversion)
         self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
                              sign=False)
-        self.repo.set_branch('master')
+        self.repo.set_branch('debian/latest')
         self.add_file('doesnot2', 'matter')
 
         guessed = dch.guess_version_from_upstream(self.repo,
@@ -111,7 +111,7 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         tag = self.repo.version_to_tag(tagformat, uversion)
         self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
                              sign=False)
-        self.repo.set_branch("master")
+        self.repo.set_branch("debian/latest")
         guessed = dch.guess_version_from_upstream(self.repo,
                                                   tagformat,
                                                   upstream_branch,
@@ -128,7 +128,7 @@ class TestGuessVersionFromUpstream(testutils.DebianGitTestRepo):
         tag = self.repo.version_to_tag(tagformat, uversion)
         self.repo.create_tag(name=tag, msg="Upstream release %s" % uversion,
                              sign=False)
-        self.repo.set_branch("master")
+        self.repo.set_branch("debian/latest")
         guessed = dch.guess_version_from_upstream(self.repo,
                                                   tagformat,
                                                   upstream_branch,

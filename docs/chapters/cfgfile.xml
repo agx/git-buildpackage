@@ -73,7 +73,7 @@
     # the default branch for upstream sources
     upstream-branch=upstream
     # the default branch for the debian patch
-    debian-branch=master
+    debian-branch=debian/latest
 
     [buildpackage]
     upstream-branch=dfsgclean
@@ -130,7 +130,7 @@
       <programlisting>
 	$ export GBP_CONFI_FILES=/does/not/exist
 	$ gbp config buildpackage.debian-branch
-	master
+	debian/latest
       </programlisting>
     </para>
   </sect1>

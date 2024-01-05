@@ -73,200 +73,200 @@ class TestPqRpm(RpmRepoTestBase):
     def test_import_export(self):
         """Basic test for patch import and export"""
         repo = self.init_test_repo('gbp-test')
-        branches = repo.get_local_branches() + ['patch-queue/master']
+        branches = repo.get_local_branches() + ['patch-queue/debian/latest']
         # Test import
         eq_(mock_pq(['import']), 0)
         files = ['AUTHORS', 'dummy.sh', 'Makefile', 'NEWS', 'README',
                  'mydir/myfile.txt']
         patches = ['my.patch', '0001-my-gz.patch', '0002-my-bzip2.patch', '0003-my2.patch']
 
-        branches.append('patch-queue/master')
-        self._check_repo_state(repo, 'patch-queue/master', branches, files)
-        eq_(repo.get_merge_base('upstream', 'patch-queue/master'),
+        branches.append('patch-queue/debian/latest')
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches, files)
+        eq_(repo.get_merge_base('upstream', 'patch-queue/debian/latest'),
             repo.rev_parse('upstream'))
         ok_(len(repo.get_commits('', 'upstream')) <
-            len(repo.get_commits('', 'patch-queue/master')))
+            len(repo.get_commits('', 'patch-queue/debian/latest')))
 
         # Test export
         eq_(mock_pq(['export', '--upstream-tag', 'upstream/%(version)s']), 0)
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
-        self._check_repo_state(repo, 'master', branches, files, clean=False)
+        self._check_repo_state(repo, 'debian/latest', branches, files, clean=False)
         eq_(repo.status()[' M'], [b'gbp-test.spec'])
         self._has_patches('gbp-test.spec', patches)
 
         # Another export after removing some patches
         os.unlink('0001-my-gz.patch')
         eq_(mock_pq(['export']), 0)
-        self._check_repo_state(repo, 'master', branches, files, clean=False)
+        self._check_repo_state(repo, 'debian/latest', branches, files, clean=False)
         self._has_patches('gbp-test.spec', patches)
 
     def test_import_export2(self):
         """Another test for import and export"""
         repo = self.init_test_repo('gbp-test2')
-        branches = repo.get_local_branches() + ['patch-queue/master-orphan']
-        repo.set_branch('master-orphan')
+        branches = repo.get_local_branches() + ['patch-queue/debian/latest-orphan']
+        repo.set_branch('debian/latest-orphan')
         # Import
         eq_(mock_pq(['import']), 0)
         files = ['dummy.sh', 'Makefile', 'README', 'mydir/myfile.txt']
         patches = ['packaging/0001-PATCH-My-modification.patch', 'my.patch']
-        self._check_repo_state(repo, 'patch-queue/master-orphan', branches,
+        self._check_repo_state(repo, 'patch-queue/debian/latest-orphan', branches,
                                files)
 
         # Test export with --drop
-        branches.remove('patch-queue/master-orphan')
+        branches.remove('patch-queue/debian/latest-orphan')
         eq_(mock_pq(['export', '--drop', '--upstream-tag',
                      'upstream/%(version)s', '--spec-file',
                      'packaging/gbp-test2.spec']), 0)
-        self._check_repo_state(repo, 'master-orphan', branches, clean=False)
+        self._check_repo_state(repo, 'debian/latest-orphan', branches, clean=False)
         eq_(repo.status()[' M'], [b'packaging/gbp-test2.spec'])
         self._has_patches('packaging/gbp-test2.spec', patches)
 
     def test_rebase(self):
         """Basic test for rebase action"""
         repo = self.init_test_repo('gbp-test')
-        repo.rename_branch('pq/master', 'patch-queue/master')
-        repo.set_branch('patch-queue/master')
+        repo.rename_branch('pq/debian/latest', 'patch-queue/debian/latest')
+        repo.set_branch('patch-queue/debian/latest')
         branches = repo.get_local_branches()
         # Make development branch out-of-sync
         GitCommand("rebase")(['--onto', 'upstream^', 'upstream'])
         # Sanity check for our git rebase...
-        ok_(repo.get_merge_base('patch-queue/master', 'upstream') !=
+        ok_(repo.get_merge_base('patch-queue/debian/latest', 'upstream') !=
             repo.rev_parse('upstream'))
 
         # Do rebase
         eq_(mock_pq(['rebase']), 0)
-        self._check_repo_state(repo, 'patch-queue/master', branches)
-        ok_(repo.get_merge_base('patch-queue/master', 'upstream') ==
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches)
+        ok_(repo.get_merge_base('patch-queue/debian/latest', 'upstream') ==
             repo.rev_parse('upstream'))
 
-        # Get to out-of-sync, again, and try rebase from master branch
+        # Get to out-of-sync, again, and try rebase from debian/latest branch
         GitCommand("rebase")(['--onto', 'upstream^', 'upstream'])
         eq_(mock_pq(['switch']), 0)
         eq_(mock_pq(['rebase']), 0)
-        self._check_repo_state(repo, 'patch-queue/master', branches)
-        ok_(repo.get_merge_base('patch-queue/master', 'upstream') ==
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches)
+        ok_(repo.get_merge_base('patch-queue/debian/latest', 'upstream') ==
             repo.rev_parse('upstream'))
 
     def test_switch(self):
         """Basic test for switch action"""
         repo = self.init_test_repo('gbp-test')
-        branches = repo.get_local_branches() + ['patch-queue/master']
-        repo.create_branch('patch-queue/master')
+        branches = repo.get_local_branches() + ['patch-queue/debian/latest']
+        repo.create_branch('patch-queue/debian/latest')
 
         # Switch to base branch and back to pq
         eq_(mock_pq(['switch']), 0)
-        self._check_repo_state(repo, 'patch-queue/master', branches)
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches)
         eq_(mock_pq(['switch']), 0)
-        self._check_repo_state(repo, 'master', branches)
+        self._check_repo_state(repo, 'debian/latest', branches)
 
     def test_switch_drop(self):
         """Basic test for drop action"""
         repo = self.init_test_repo('gbp-test')
-        repo.rename_branch('pq/master', 'patch-queue/master')
-        repo.set_branch('patch-queue/master')
+        repo.rename_branch('pq/debian/latest', 'patch-queue/debian/latest')
+        repo.set_branch('patch-queue/debian/latest')
         branches = repo.get_local_branches()
 
-        # Switch to master
+        # Switch to debian/latest
         eq_(mock_pq(['switch']), 0)
-        self._check_repo_state(repo, 'master', branches)
+        self._check_repo_state(repo, 'debian/latest', branches)
 
-        # Drop should succeed when on master branch
+        # Drop should succeed when on debian/latest branch
         eq_(mock_pq(['drop']), 0)
-        branches.remove('patch-queue/master')
-        self._check_repo_state(repo, 'master', branches)
+        branches.remove('patch-queue/debian/latest')
+        self._check_repo_state(repo, 'debian/latest', branches)
 
     def test_drop_pq(self):
         """drop action should work on pq branch"""
         repo = self.init_test_repo('gbp-test')
-        repo.rename_branch('pq/master', 'patch-queue/master')
-        repo.set_branch('patch-queue/master')
+        repo.rename_branch('pq/debian/latest', 'patch-queue/debian/latest')
+        repo.set_branch('patch-queue/debian/latest')
         branches = repo.get_local_branches()
 
-        # Switch to master
+        # Switch to debian/latest
         eq_(mock_pq(['switch']), 0)
-        self._check_repo_state(repo, 'master', branches)
+        self._check_repo_state(repo, 'debian/latest', branches)
 
-        # Drop should succeed when on master branch
+        # Drop should succeed when on debian/latest branch
         eq_(mock_pq(['drop']), 0)
-        branches.remove('patch-queue/master')
-        self._check_repo_state(repo, 'master', branches)
+        branches.remove('patch-queue/debian/latest')
+        self._check_repo_state(repo, 'debian/latest', branches)
 
     def test_force_import(self):
         """Test force import"""
         repo = self.init_test_repo('gbp-test')
         pkg_files = [f.decode() for f in repo.list_files()]
-        repo.rename_branch('pq/master', 'patch-queue/master')
-        repo.set_branch('patch-queue/master')
+        repo.rename_branch('pq/debian/latest', 'patch-queue/debian/latest')
+        repo.set_branch('patch-queue/debian/latest')
         branches = repo.get_local_branches()
         pq_files = [f.decode() for f in repo.list_files()]
 
         # Re-import should fail
         eq_(mock_pq(['import']), 1)
         self._check_log(0, "gbp:error: Already on a patch-queue branch")
-        self._check_repo_state(repo, 'patch-queue/master', branches, pq_files)
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches, pq_files)
 
         # Mangle pq branch and try force import on top of that
-        repo.force_head('master', hard=True)
-        self._check_repo_state(repo, 'patch-queue/master', branches, pkg_files)
+        repo.force_head('debian/latest', hard=True)
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches, pkg_files)
         eq_(mock_pq(['import', '--force']), 0)
         # .gbp.conf won't get imported by pq
         pq_files.remove('.gbp.conf')
-        self._check_repo_state(repo, 'patch-queue/master', branches, pq_files)
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches, pq_files)
 
-        # Switch back to master
+        # Switch back to debian/latest
         eq_(mock_pq(['switch']), 0)
-        self._check_repo_state(repo, 'master', branches, pkg_files)
+        self._check_repo_state(repo, 'debian/latest', branches, pkg_files)
 
         # Import should fail
         eq_(mock_pq(['import']), 1)
         self._check_log(-1, "gbp:error: Patch-queue branch .* already exists")
-        self._check_repo_state(repo, 'master', branches, pkg_files)
+        self._check_repo_state(repo, 'debian/latest', branches, pkg_files)
 
         # Force import should succeed
         eq_(mock_pq(['import', '--force']), 0)
-        self._check_repo_state(repo, 'patch-queue/master', branches, pq_files)
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches, pq_files)
 
     def test_apply(self):
         """Basic test for apply action"""
         repo = self.init_test_repo('gbp-test')
         upstr_files = ['dummy.sh', 'Makefile', 'README']
-        branches = repo.get_local_branches() + ['patch-queue/master']
+        branches = repo.get_local_branches() + ['patch-queue/debian/latest']
 
         # No patch given
         eq_(mock_pq(['apply']), 1)
         self._check_log(-1, "gbp:error: No patch name given.")
 
         # Create a pristine pq-branch
-        repo.create_branch('patch-queue/master', 'upstream')
+        repo.create_branch('patch-queue/debian/latest', 'upstream')
 
         # Apply patch
         with tempfile.NamedTemporaryFile() as tmp_patch:
-            tmp_patch.write(repo.show('master:%s' % 'my.patch'))
+            tmp_patch.write(repo.show('debian/latest:%s' % 'my.patch'))
             tmp_patch.file.flush()
             eq_(mock_pq(['apply', tmp_patch.name]), 0)
-            self._check_repo_state(repo, 'patch-queue/master', branches,
+            self._check_repo_state(repo, 'patch-queue/debian/latest', branches,
                                    upstr_files)
 
         # Apply another patch, now when already on pq branch
         with tempfile.NamedTemporaryFile() as tmp_patch:
-            tmp_patch.write(repo.show('master:%s' % 'my2.patch'))
+            tmp_patch.write(repo.show('debian/latest:%s' % 'my2.patch'))
             tmp_patch.file.flush()
             eq_(mock_pq(['apply', tmp_patch.name]), 0)
-        self._check_repo_state(repo, 'patch-queue/master', branches,
+        self._check_repo_state(repo, 'patch-queue/debian/latest', branches,
                                upstr_files + ['mydir/myfile.txt'])
 
     def test_option_patch_numbers(self):
         """Test the --patch-numbers cmdline option"""
         repo = self.init_test_repo('gbp-test')
-        repo.rename_branch('pq/master', 'patch-queue/master')
+        repo.rename_branch('pq/debian/latest', 'patch-queue/debian/latest')
         branches = repo.get_local_branches()
         # Export
         eq_(mock_pq(['export', '--no-patch-numbers']), 0)
         patches = ['my-gz.patch', 'my-bzip2.patch', 'my2.patch', 'my.patch']
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
-        self._check_repo_state(repo, 'master', branches, files, clean=False)
+        self._check_repo_state(repo, 'debian/latest', branches, files, clean=False)
         self._has_patches('gbp-test.spec', patches)
 
     def test_option_tmp_dir(self):
@@ -325,15 +325,15 @@ class TestPqRpm(RpmRepoTestBase):
     def test_export_with_merges(self):
         """Test exporting pq-branch with merge commits"""
         repo = self.init_test_repo('gbp-test')
-        repo.rename_branch('pq/master', 'patch-queue/master')
-        repo.set_branch('patch-queue/master')
+        repo.rename_branch('pq/debian/latest', 'patch-queue/debian/latest')
+        repo.set_branch('patch-queue/debian/latest')
         branches = repo.get_local_branches()
 
         # Create a merge commit in pq-branch
         patches = repo.format_patches('HEAD^', 'HEAD', '.')
         repo.force_head('HEAD^', hard=True)
-        repo.commit_dir('.', 'Merge with master', 'patch-queue/master',
-                        ['master'])
+        repo.commit_dir('.', 'Merge with debian/latest', 'patch-queue/debian/latest',
+                        ['debian/latest'])
         merge_rev = repo.rev_parse('HEAD', short=7)
         eq_(mock_pq(['apply', patches[0].decode()]), 0)
         upstr_rev = repo.rev_parse('upstream', short=7)
@@ -345,7 +345,7 @@ class TestPqRpm(RpmRepoTestBase):
                    '%s-to-%s.diff' % (upstr_rev, merge_rev), '0002-my2.patch']
         files = ['.gbp.conf', '.gitignore', 'bar.tar.gz', 'foo.txt',
                  'gbp-test.spec'] + patches
-        self._check_repo_state(repo, 'master', branches, files, clean=False)
+        self._check_repo_state(repo, 'debian/latest', branches, files, clean=False)
         self._has_patches('gbp-test.spec', patches)
 
     def test_import_unapplicable_patch(self):
@@ -357,11 +357,11 @@ class TestPqRpm(RpmRepoTestBase):
             patch_file.write('-this-does\n+not-apply\n')
         eq_(mock_pq(['import']), 1)
         self._check_log(-2, "Please commit your changes or stash them")
-        self._check_repo_state(repo, 'master', branches, clean=False)
+        self._check_repo_state(repo, 'debian/latest', branches, clean=False)
 
         # Now commit the changes to the patch and try again
         repo.add_files(['my2.patch'], force=True)
         repo.commit_files(['my2.patch'], msg="Mangle patch")
         eq_(mock_pq(['import']), 1)
         self._check_log(-1, "gbp:error: Import failed: Error running git apply")
-        self._check_repo_state(repo, 'master', branches, clean=False)
+        self._check_repo_state(repo, 'debian/latest', branches, clean=False)

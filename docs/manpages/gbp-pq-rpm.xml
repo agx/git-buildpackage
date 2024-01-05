@@ -50,8 +50,8 @@
     &gbp-pq-rpm; makes it easy to do source code development on a separate
     development branch (patch-queue branch in Debian git-buildpackage terms).
     For example, if the packaging files would be stored in
-    <replaceable>master</replaceable> the associated development branch would
-    be <replaceable>development/master</replaceable>.
+    <replaceable>debian/latest</replaceable> the associated development branch would
+    be <replaceable>development/debian/latest</replaceable>.
     </para>
   </refsect1>
   <refsect1>

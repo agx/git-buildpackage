@@ -17,9 +17,9 @@ class TestGitRepositoryCommitDir(DebianGitTestRepo):
     def test_simple(self):
         self.repo.commit_dir(self.content,
                              'new content',
-                             'master',
+                             'debian/latest',
                              create_missing_branch=True)
-        self.assertEqual(self.repo.show('master:file1'), b'content1')
+        self.assertEquals(self.repo.show('debian/latest:file1'), b'content1')
 
     def test_long_reflog(self):
         """Make sure we fail on onverly long msg resulting in an
@@ -27,16 +27,16 @@ class TestGitRepositoryCommitDir(DebianGitTestRepo):
         with self.assertRaises(GitRepositoryError):
             self.repo.commit_dir(self.content,
                                  'foo' * 100000,
-                                 'master',
+                                 'debian/latest',
                                  create_missing_branch=True)
 
     def test_long_msg_854333(self):
         """Make sure we shorten the reflog entry properly"""
         self.repo.commit_dir(self.content,
                              'foo\n' * 100000,
-                             'master',
+                             'debian/latest',
                              create_missing_branch=True)
-        self.assertEqual(self.repo.show('master:file1'), b'content1')
+        self.assertEquals(self.repo.show('debian/latest:file1'), b'content1')
         out, dummy, ret = self.repo._git_inout('reflog', [])
         self.assertEqual(ret, 0)
         self.assertIn(b'HEAD@{0}: gbp: foo\n', out)

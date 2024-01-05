@@ -126,7 +126,7 @@ class GbpOptionParser(OptionParser):
                 'create-missing-branches': 'False',
                 'customizations': '',
                 'dch-opt': [],
-                'debian-branch': 'master',
+                'debian-branch': 'debian/latest',
                 'debian-tag': 'debian/%(version)s',
                 'debian-tag-msg': '%(pkg)s Debian release %(version)s',
                 'defuse-gitattributes': 'auto',
@@ -812,7 +812,7 @@ class GbpOptionParserRpm(GbpOptionParser):
     defaults.update({
         'tmp-dir': '/var/tmp/gbp/',
         'vendor': 'Downstream',
-        'packaging-branch': 'master',
+        'packaging-branch': 'debian/latest',
         'packaging-dir': '',
         'packaging-tag-msg': '%(pkg)s (vendor)s release %(version)s',
         'packaging-tag': 'packaging/%(version)s',

@@ -127,7 +127,7 @@
         <listitem>
           <para>
             The branch in the &git; repository the &debian; package is being
-            developed on, default is <replaceable>master</replaceable>.
+            developed on, default is <replaceable>debian/latest</replaceable>.
           </para>
         </listitem>
       </varlistentry>

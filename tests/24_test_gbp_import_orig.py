@@ -47,7 +47,7 @@ class TestIs30Quilt(DebianGitTestRepo):
         os.makedirs('debian/source/')
 
     def test_30_quilt(self):
-        options = self.Options(debian_branch='master')
+        options = self.Options(debian_branch='debian/latest')
         with open(self.format_file, 'w') as f:
             f.write('3.0 (quilt)\n')
         self.repo.add_files([self.format_file])
@@ -56,23 +56,23 @@ class TestIs30Quilt(DebianGitTestRepo):
         self.assertTrue(is_30_quilt(self.repo, options))
 
     def test_no_format(self):
-        options = self.Options(debian_branch='master')
+        options = self.Options(debian_branch='debian/latest')
         self.assertFalse(os.path.exists(self.format_file))
         self.assertFalse(is_30_quilt(self.repo, options))
 
     def test_no_quilt(self):
-        options = self.Options(debian_branch='master')
+        options = self.Options(debian_branch='debian/latest')
         with open(self.format_file, 'w') as f:
             f.write('3.0 (nonexistent)')
         self.assertFalse(is_30_quilt(self.repo, options))
 
     def test_30_quilt_empty_repo(self):
-        options = self.Options(debian_branch='master')
+        options = self.Options(debian_branch='debian/latest')
         self.assertFalse(is_30_quilt(self.repo, options))
 
 
 class TestMergeModeReplace(DebianGitTestRepo):
-    debian_branch = 'master'
+    debian_branch = 'debian/latest'
 
     def setUp(self):
         DebianGitTestRepo.setUp(self)
@@ -85,7 +85,7 @@ class TestMergeModeReplace(DebianGitTestRepo):
         self.repo.set_branch("upstream")
         self.add_file("upstream_file")
         self.add_file("debian/changelog")
-        self.repo.set_branch("master")
+        self.repo.set_branch("debian/latest")
         self.repo.create_tag('upstream/1.0', "Upstream 1.0", "upstream")
         debian_branch_merge_by_replace(self.repo, "upstream/1.0", "1.0", self)
         self.assertTrue(os.path.exists("debian/control"))

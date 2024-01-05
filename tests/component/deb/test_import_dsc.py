@@ -67,7 +67,7 @@ class TestImportDsc(ComponentTestBase):
         dsc = _dsc('0.4.14')
         assert import_dsc(['arg0', dsc]) == 0
         repo = ComponentTestGitRepository('git-buildpackage')
-        self._check_repo_state(repo, 'master', ['master'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         assert len(repo.get_commits()) == 1
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("git-buildpackage (0.01) unstable; urgency=low" in commitmsg)
@@ -76,7 +76,7 @@ class TestImportDsc(ComponentTestBase):
         os.chdir('git-buildpackage')
         dsc = _dsc('0.4.15')
         assert import_dsc(['arg0', dsc]) == 0
-        self._check_repo_state(repo, 'master', ['master'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         assert len(repo.get_commits()) == 2
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg)
@@ -84,7 +84,7 @@ class TestImportDsc(ComponentTestBase):
 
         dsc = _dsc('0.4.16')
         assert import_dsc(['arg0', dsc]) == 0
-        self._check_repo_state(repo, 'master', ['master'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         assert len(repo.get_commits()) == 3
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg)
@@ -102,7 +102,7 @@ class TestImportDsc(ComponentTestBase):
                            '--allow-unauthenticated',
                            dsc]) == 0
         repo = ComponentTestGitRepository('git-buildpackage')
-        self._check_repo_state(repo, 'master', ['master'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         assert len(repo.get_commits()) == 1
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
@@ -124,14 +124,14 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dsc]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
         os.chdir('hello-debhelper')
         assert len(repo.get_commits()) == 2
         self._check_reflog(repo)
-        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'pristine-tar', 'upstream'])
         dsc = self._dsc30('2.8-1')
         assert import_dsc(['arg0',
                            '--verbose',
@@ -140,7 +140,7 @@ class TestImportDsc(ComponentTestBase):
                            '--upstream-branch=bar',
                            '--create-missing-branches',
                            dsc]) == 0
-        self._check_repo_state(repo, 'master', ['bar', 'foo', 'master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['bar', 'foo', 'debian/latest', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
@@ -149,11 +149,11 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dscfile]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
         commitmsg = repo.get_commit_info('HEAD')['body']
         eq_("hello-debhelper (2.6-1) unstable; urgency=low", commitmsg.split('\n')[0])
@@ -164,7 +164,7 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dscfile]) == 0
         commits, expected = len(repo.get_commits()), 3
@@ -186,11 +186,11 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dscfile]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
@@ -229,7 +229,7 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dsc]) == 1
         self._check_log(0, "gbp:error: Directory 'hello-debhelper' already exists. If you want to import into it, "
@@ -245,7 +245,7 @@ class TestImportDsc(ComponentTestBase):
         dsc = _dsc('2.6-2')
         assert import_dsc(['arg0', dsc]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'],
                                tags=['upstream/2.6', 'debian/2.6-2'])
         assert len(repo.get_commits()) == 2
 
@@ -259,7 +259,7 @@ class TestImportDsc(ComponentTestBase):
                            'targetdir']) == 0
         assert os.path.exists('targetdir')
         repo = ComponentTestGitRepository('targetdir')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
 
     def test_bare(self):
         """Test that importing into bare repository works"""
@@ -267,14 +267,14 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dsc]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
         os.chdir('hello-debhelper')
         assert len(repo.get_commits()) == 2
         self._check_reflog(repo)
-        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'pristine-tar', 'upstream'])
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg)
         ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
@@ -283,7 +283,7 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dsc]) == 0
         commits, expected = len(repo.get_commits()), 4
@@ -337,16 +337,16 @@ class TestImportDsc(ComponentTestBase):
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
     def test_upstream_branch_is_master(self):
-        """Make sure we can import when upstream-branch == master (#750962)"""
+        """Make sure we can import when upstream-branch == debian/latest (#750962)"""
         dsc = self._dsc30('2.6-2')
         assert import_dsc(['arg0',
                            '--verbose',
                            '--no-pristine-tar',
                            '--debian-branch=debian',
-                           '--upstream-branch=master',
+                           '--upstream-branch=debian/latest',
                            dsc]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'debian', ['debian', 'master'])
+        self._check_repo_state(repo, 'debian', ['debian', 'debian/latest'])
         commits, expected = len(repo.get_commits()), 2
         ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
 
@@ -355,13 +355,13 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--no-pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            '--filter=debian/patches/*',
                            '--filter=AUTHORS',
                            dscfile]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         os.chdir('hello-debhelper')
         ok_(os.path.exists("./debian/changelog"))
         ok_(os.path.exists("./configure.ac"))
@@ -373,11 +373,11 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0',
                            '--verbose',
                            '--pristine-tar',
-                           '--debian-branch=master',
+                           '--debian-branch=debian/latest',
                            '--upstream-branch=upstream',
                            dscfile]) == 0
         repo = ComponentTestGitRepository('hello-debhelper')
-        self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
         commits, expected = len(repo.get_commits(until='pristine-tar')), 1
         ok_(commits == expected, "Found %d pristine-tar commits instead of %d" % (commits, expected))

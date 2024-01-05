@@ -119,13 +119,13 @@ by version number.
 	gbp:info: Importing '../gif2apng-1.9.tar.gz' to branch 'upstream' (filtering out ["'CVS/*'", "'.bzr/*'", "'.hg/*'", "'.svn/*'"])...
 	gbp:info: Source package is gif2apng
 	gbp:info: Upstream version is 1.9
-	gbp:info: Merging to 'master'
+	gbp:info: Merging to 'debian/latest'
 	gbp:error: Automatic merge failed.
 	gbp:error: Error detected, Will roll back changes.
 	gbp:info: Rolling back branch upstream by resetting it to a6733c1f1e190ac0ed4774abc3466e9986a6df5e
 	gbp:info: Rolling back branch pristine-tar by resetting it to 0ee24ac614c920e30af82d602882c2ee841c88e5
 	gbp:info: Rolling back tag upstream/1.9 by deleting it
-	gbp:info: Rolling back branch master by resetting it to ce99782336e83a56e8e579b3cdadf93b0c19e1a8
+	gbp:info: Rolling back branch debian/latest by resetting it to ce99782336e83a56e8e579b3cdadf93b0c19e1a8
 	gbp:info: Rolling back failed merge of upstream/1.9
 	gbp:error: Rolled back changes after import error.
       </programlisting>
@@ -179,7 +179,7 @@ EOF
     &gitcmd; branch upstream $(&gitcmd; log --format='%H' | tail -1)
 </programlisting>
     The important thing here is that the <envar>COMMIT_ID</envar> specifies a
-    point on the master branch that carried <emphasis>only</emphasis> the
+    point on the debian/latest branch that carried <emphasis>only</emphasis> the
     upstream sources and not the &debian; modifications. The above example
     assumes that this was the first commit to that repository.
     </para>
@@ -200,7 +200,7 @@ EOF
   <command>git checkout</command> <option>--orphan</option> <replaceable>upstream</replaceable>
   <command>git rm</command> <option>-rf</option> <replaceable>.</replaceable>
   <command>git commit</command> <option>--allow-empty</option> <option>-m</option> <replaceable>'Initial upstream branch.'</replaceable>
-  <command>git checkout</command> <option>-f</option> <replaceable>master</replaceable>
+  <command>git checkout</command> <option>-f</option> <replaceable>debian/latest</replaceable>
   # When not using 3.0 (quilt) with the default --merge-mode=auto
   <command>git merge</command> <option>--allow-unrelated-histories</option> <replaceable>upstream</replaceable>
 </programlisting>
@@ -425,7 +425,7 @@ upstream-tag = v%(version%.%_)s
     <sect1 id="gbp.branch.naming">
       <title>Branch layout</title>
       <para>
-	By default, &gbp; uses one branch to keep the &debian; packaging called <emphasis>master</emphasis>
+	By default, &gbp; uses one branch to keep the &debian; packaging called <emphasis>debian/latest</emphasis>
 	and a branch to keep the upstream packaging called <emphasis>upstream</emphasis>.
       </para>
       <para>

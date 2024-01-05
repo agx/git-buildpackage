@@ -91,7 +91,7 @@
         <listitem>
           <para>
           The branch in the Git repository the package is being developed on,
-          default is <replaceable>master</replaceable>.
+          default is <replaceable>debian/latest</replaceable>.
           </para>
         </listitem>
       </varlistentry>

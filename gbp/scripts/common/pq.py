@@ -51,8 +51,8 @@ def pq_branch_name(branch):
     """
     get the patch queue branch corresponding to branch
 
-    >>> pq_branch_name("patch-queue/master")
-    'patch-queue/master'
+    >>> pq_branch_name("patch-queue/debian/latest")
+    'patch-queue/debian/latest'
     >>> pq_branch_name("foo")
     'patch-queue/foo'
     """
@@ -66,8 +66,8 @@ def pq_branch_base(branch):
     """
     get the branch corresponding to the given patch queue branch
 
-    >>> pq_branch_base("patch-queue/master")
-    'master'
+    >>> pq_branch_base("patch-queue/debian/latest")
+    'debian/latest'
     >>> pq_branch_base("foo")
     'foo'
     """

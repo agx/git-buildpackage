@@ -41,33 +41,33 @@ class TestPq(ComponentTestBase):
     @RepoFixtures.quilt30()
     def test_rebase_import(self, repo):
         """Test that rebase imports patches first"""
-        eq_(repo.branch, 'master')
-        eq_(repo.has_branch('patch-queue/master'), False)
+        eq_(repo.branch, 'debian/latest')
+        eq_(repo.has_branch('patch-queue/debian/latest'), False)
         self._test_pq(repo, 'rebase')
-        eq_(repo.has_branch('patch-queue/master'), True)
+        eq_(repo.has_branch('patch-queue/debian/latest'), True)
 
     @RepoFixtures.quilt30()
     def test_switch_import(self, repo):
         """Test that switch imports patches first"""
-        eq_(repo.branch, 'master')
-        eq_(repo.has_branch('patch-queue/master'), False)
+        eq_(repo.branch, 'debian/latest')
+        eq_(repo.has_branch('patch-queue/debian/latest'), False)
         self._test_pq(repo, 'switch')
-        eq_(repo.has_branch('patch-queue/master'), True)
+        eq_(repo.has_branch('patch-queue/debian/latest'), True)
 
     @RepoFixtures.quilt30()
     def test_empty_cycle(self, repo):
-        eq_(repo.has_branch('patch-queue/master'), False)
-        eq_(repo.branch, 'master')
+        eq_(repo.has_branch('patch-queue/debian/latest'), False)
+        eq_(repo.branch, 'debian/latest')
         self._test_pq(repo, 'import')
-        eq_(repo.has_branch('patch-queue/master'), True)
-        eq_(repo.branch, 'patch-queue/master')
+        eq_(repo.has_branch('patch-queue/debian/latest'), True)
+        eq_(repo.branch, 'patch-queue/debian/latest')
         self._test_pq(repo, 'rebase')
-        eq_(repo.branch, 'patch-queue/master')
+        eq_(repo.branch, 'patch-queue/debian/latest')
         self._test_pq(repo, 'export')
-        eq_(repo.has_branch('patch-queue/master'), True)
-        eq_(repo.branch, 'master')
+        eq_(repo.has_branch('patch-queue/debian/latest'), True)
+        eq_(repo.branch, 'debian/latest')
         self._test_pq(repo, 'drop')
-        eq_(repo.has_branch('patch-queue/master'), False)
+        eq_(repo.has_branch('patch-queue/debian/latest'), False)
 
     @RepoFixtures.quilt30()
     def test_rename(self, repo):

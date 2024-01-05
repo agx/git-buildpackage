@@ -96,7 +96,7 @@
         <listitem>
           <para>
           The branch in the &git; repository the packaging files are put
-          onto. Default is <replaceable>master</replaceable>.
+          onto. Default is <replaceable>debian/latest</replaceable>.
           </para>
         </listitem>
       </varlistentry>

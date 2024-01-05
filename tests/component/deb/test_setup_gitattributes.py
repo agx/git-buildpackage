@@ -63,7 +63,7 @@ class TestSetupGitattributes(ComponentTestBase):
         clone(['arg0',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
 
@@ -89,7 +89,7 @@ class TestSetupGitattributes(ComponentTestBase):
         clone(['arg0',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
 
@@ -114,7 +114,7 @@ class TestSetupGitattributes(ComponentTestBase):
         clone(['arg0',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
 
@@ -149,7 +149,7 @@ class TestSetupGitattributes(ComponentTestBase):
         clone(['arg0',
                repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
+        self._check_repo_state(cloned, 'debian/latest', ['debian/latest'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
 
