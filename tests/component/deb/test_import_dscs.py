@@ -40,7 +40,7 @@ class TestImportDscs(ComponentTestBase):
         dsc2 = _dsc('0.4.15')
         assert import_dscs(['arg0', dsc1, dsc2]) == 0
         repo = ComponentTestGitRepository('git-buildpackage')
-        self._check_repo_state(repo, 'master', ['master'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         assert len(repo.get_commits()) == 2
         commitmsg = repo.get_commit_info('HEAD')['body']
         ok_("git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg)

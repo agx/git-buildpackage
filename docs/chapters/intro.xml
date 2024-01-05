@@ -47,7 +47,7 @@
 	</para>
 	<itemizedlist>
 	<listitem><para>The <option>debian-branch</option> (the default branch
-	name used in the &git; repository is <emphasis>master</emphasis>) holds
+	name used in the &git; repository is <emphasis>debian/latest</emphasis>) holds
 	your current development work.  That's the branch you usually cut your
 	releases from and the default branch new upstream releases are merged
 	onto.</para></listitem>
@@ -68,8 +68,8 @@
 	<listitem><para> There can be one or more <option>patch-queue</option> branches.
 	Every patch-queue branch is related to a
 	<option>debian-branch</option>. If the <option>debian-branch</option> is called
-	<emphasis>master</emphasis>, the corresponding patch-queue branch is
-	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is 
+	<emphasis>debian/latest</emphasis>, the corresponding patch-queue branch is
+	called <emphasis>patch-queue/debian/latest</emphasis>. The patch-queue branch is
 	the &debian; branch plus the contents of
 	<emphasis>debian/patches</emphasis> applied. These branches are managed
 	with &gbp-pq;.

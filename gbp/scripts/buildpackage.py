@@ -212,12 +212,12 @@ def get_pbuilder_dist(options, repo, native=False):
         if len(parts) == 2:  # e.g. debian/stretch
             suite = parts[1]
             if vendor == parts[0]:
-                dist = '' if suite in ['sid', 'master', 'main', 'latest'] else suite
+                dist = '' if suite in ['sid', 'debian/latest', 'master', 'main', 'latest'] else suite
             else:
                 dist = '%s_%s' % (parts[0], suite)
         # Branches in Debian often omit the debian/ prefix
         elif len(parts) == 1 and vendor.lower() == "debian":
-            if branch in ['master', 'sid']:
+            if branch in ['debian/latest', 'sid']:
                 dist = ''
             elif branch in du.Releases:
                 dist = branch

@@ -132,7 +132,7 @@
         <listitem>
           <para>
             If you're not on this branch when invoking &gbp-tag; it will
-            fail. Default is <replaceable>master</replaceable>. This is done to
+            fail. Default is <replaceable>debian/latest</replaceable>. This is done to
             make sure you don't accidentally tag on the wrong branch.  Not
             being on this branch will be ignored when using
             <option>--ignore-branch</option>.

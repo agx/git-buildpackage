@@ -37,7 +37,7 @@ DEFAULT_DSC = _dsc_file('hello-debhelper', '2.6-2')
 class TestPristineTar(ComponentTestBase):
     """Test pristine-tar commit tool"""
     pkg = "hello-debhelper"
-    def_branches = ['master', 'upstream', 'pristine-tar']
+    def_branches = ['debian/latest', 'upstream', 'pristine-tar']
 
     def _orig(self, version, dir='dsc-3.0'):
         return os.path.join(DEB_TEST_DATA_DIR,
@@ -51,7 +51,7 @@ class TestPristineTar(ComponentTestBase):
         """
         orig = self._orig('2.6')
         ok_(pristine_tar(['arg0', 'commit', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'])
 
     @RepoFixtures.quilt30(_dsc_file('hello-debhelper',
                                     '2.8-1',
@@ -63,7 +63,7 @@ class TestPristineTar(ComponentTestBase):
         """
         orig = self._orig('2.8', dir='dsc-3.0-additional-tarballs')
         ok_(pristine_tar(['arg0', 'commit', '--component=foo', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'])
 
         ptars = [('hello-debhelper_2.8.orig.tar.gz', 'pristine-tar'),
                  ('hello-debhelper_2.8.orig-foo.tar.gz', 'pristine-tar^')]

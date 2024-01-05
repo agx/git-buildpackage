@@ -59,7 +59,7 @@ class TestImportPacked(ComponentTestBase):
         repo = GitRepository('gbp-test')
         files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
                  'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'}
-        self._check_repo_state(repo, 'master', ['master', 'upstream'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'],
                                files=files,
                                tags=['packaging/1.0-1', 'upstream/1.0'])
         # Two commits: upstream and packaging files
@@ -74,7 +74,7 @@ class TestImportPacked(ComponentTestBase):
         files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
                  'gbp-test2.spec', 'gbp-test2-alt.spec', 'my.patch',
                  'my2.patch', 'my3.patch'}
-        self._check_repo_state(repo, 'master', ['master', 'upstream'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'],
                                files=files,
                                tags=['packaging/1%2.0-0', 'upstream/2.0'])
         # Two commits: upstream and packaging files
@@ -87,7 +87,7 @@ class TestImportPacked(ComponentTestBase):
         # Check repository state
         assert os.path.exists('targetdir')
         repo = GitRepository('targetdir')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
 
     def test_basic_import_orphan(self):
         """
@@ -100,7 +100,7 @@ class TestImportPacked(ComponentTestBase):
         repo = GitRepository('gbp-test2')
         files = {'bar.tar.gz', 'foo.txt', 'gbp-test2.spec',
                  'gbp-test2-alt.spec', 'my.patch', 'my2.patch', 'my3.patch'}
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
         # Only one commit: the packaging files
         eq_(len(repo.get_commits()), 1)
 
@@ -112,7 +112,7 @@ class TestImportPacked(ComponentTestBase):
         files = {'.gbp.conf', 'Makefile', 'README', 'dummy.sh',
                  'packaging/gbp-test-native.spec'}
         repo = GitRepository('gbp-test-native')
-        self._check_repo_state(repo, 'master', ['master'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'],
                                files=files,
                                tags=['packaging/1.0-1'])
         # Only one commit: the imported source tarball
@@ -124,7 +124,7 @@ class TestImportPacked(ComponentTestBase):
         eq_(mock_import([srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test-native2')
-        self._check_repo_state(repo, 'master', ['master'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest'])
         # Only one commit: packaging files
         eq_(len(repo.get_commits()), 1)
 
@@ -135,7 +135,7 @@ class TestImportPacked(ComponentTestBase):
                                                      'gbp-test-1.1-1.src.rpm']]
         eq_(mock_import(['--no-pristine-tar', srpms[0]]), 0)
         repo = GitRepository('gbp-test')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         eq_(len(repo.get_commits()), 2)
         # Try to import same version again
         eq_(mock_import([srpms[1]]), 0)
@@ -149,7 +149,7 @@ class TestImportPacked(ComponentTestBase):
         eq_(mock_import(['--no-pristine-tar', srpms[2]]), 0)
         files = {'Makefile', 'README', 'bar.tar.gz', 'dummy.sh', 'foo.txt',
                  'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'}
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
         eq_(len(repo.get_commits()), 5)
         eq_(len(repo.get_commits(until='upstream')), 2)
         # Check number of tags
@@ -178,7 +178,7 @@ class TestImportPacked(ComponentTestBase):
         eq_(mock_import([srpm]), 1)
         self._check_log(-1, 'Also check the --create-missing-branches')
         eq_(mock_import(['--no-pristine-tar', '--create-missing', srpm]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         # Four commits: our initial, upstream and packaging files
         eq_(len(repo.get_commits()), 3)
 
@@ -195,7 +195,7 @@ class TestImportPacked(ComponentTestBase):
         repo = GitRepository('gbp-test')
         files = set(['Makefile', 'dummy.sh', 'bar.tar.gz', 'foo.txt',
                      'gbp-test.spec', 'my.patch', 'my2.patch', 'my3.patch'])
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
 
     def test_tagging(self):
         """Test tag options of import-srpm"""
@@ -321,7 +321,7 @@ class TestImportUnPacked(ComponentTestBase):
         eq_(mock_import(['--no-pristine-tar', 'gbp-test-1.0-1-unpack']), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
 
         # Check that importing dir with multiple spec files fails
         eq_(mock_import(['multi-unpack']), 1)
@@ -350,7 +350,7 @@ class TestDownloadImport(ComponentTestBase):
     def test_urldownload(self):
         """Test downloading and importing src.rpm from remote url"""
         srpm = 'http://raw.github.com/marquiz/git-buildpackage-rpm-testdata/'\
-               'master/gbp-test-1.0-1.src.rpm'
+               'debian/latest/gbp-test-1.0-1.src.rpm'
         # Mock to use local files instead of really downloading
         local_fn = os.path.join(DATA_DIR, os.path.basename(srpm))
         import_srpm.urlopen = Mock()
@@ -359,7 +359,7 @@ class TestDownloadImport(ComponentTestBase):
         eq_(mock_import(['--no-pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
 
     def test_nonexistent_url(self):
         """Test graceful failure when trying download from non-existent url"""
@@ -397,7 +397,7 @@ class TestPristineTar(ComponentTestBase):
         eq_(mock_import(['--pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test')
-        self._check_repo_state(repo, 'master', ['master', 'upstream',
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream',
                                'pristine-tar'])
         # Two commits: upstream and packaging files
         eq_(len(repo.get_commits()), 2)
@@ -408,7 +408,7 @@ class TestPristineTar(ComponentTestBase):
         eq_(mock_import(['--pristine-tar', srpm]), 0)
         # Check repository state
         repo = GitRepository('gbp-test-native')
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         # Check that a warning is printed
         self._check_log(-1, "gbp:warning: Ignoring pristine-tar")
 
@@ -423,8 +423,8 @@ class TestBareRepo(ComponentTestBase):
         repo = GitRepository.create('myrepo', bare=True)
         os.chdir('myrepo')
         eq_(mock_import([srpm]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         # Patch import to bare repos not supported -> only 2 commits
-        eq_(len(repo.get_commits(until='master')), 2)
+        eq_(len(repo.get_commits(until='debian/latest')), 2)
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

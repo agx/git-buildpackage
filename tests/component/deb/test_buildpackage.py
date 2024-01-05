@@ -93,7 +93,7 @@ class TestBuildpackage(ComponentTestBase):
         eq_(os.path.exists('../posttag.out'), True)
         eq_(os.path.exists('../builder-run.stamp'), False)
         self.check_hook_vars('../posttag', [("GBP_TAG", "debian/0.4.14"),
-                                            ("GBP_BRANCH", "master"),
+                                            ("GBP_BRANCH", "debian/latest"),
                                             "GBP_SHA1"])
 
     def test_component_generation(self):
@@ -262,24 +262,24 @@ class TestBuildpackage(ComponentTestBase):
     @RepoFixtures.quilt30()
     def test_tag_pq_branch(self, repo):
         ret = pq(['argv0', 'import'])
-        eq_(repo.rev_parse('master'), repo.rev_parse('debian/2.8-1^{}'))
+        eq_(repo.rev_parse('debian/latest'), repo.rev_parse('debian/2.8-1^{}'))
         eq_(ret, 0)
-        eq_(repo.branch, 'patch-queue/master')
+        eq_(repo.branch, 'patch-queue/debian/latest')
         self.add_file(repo, 'foo.txt')
         ret = buildpackage(['argv0',
                             '--git-tag-only',
                             '--git-retag',
                             '--git-ignore-branch'])
         eq_(ret, 0)
-        eq_(repo.branch, 'patch-queue/master')
-        eq_(repo.rev_parse('patch-queue/master^{}^'), repo.rev_parse('debian/2.8-1^{}'))
+        eq_(repo.branch, 'patch-queue/debian/latest')
+        eq_(repo.rev_parse('patch-queue/debian/latest^{}^'), repo.rev_parse('debian/2.8-1^{}'))
 
     @RepoFixtures.quilt30()
     def test_tag_detached_head(self, repo):
         """
         Test that tagging works with an detached head (#863167)
         """
-        eq_(repo.rev_parse('master^{}'), repo.rev_parse('debian/2.8-1^{}'))
+        eq_(repo.rev_parse('debian/latest^{}'), repo.rev_parse('debian/2.8-1^{}'))
         self.add_file(repo, 'debian/foo.txt')
         repo.checkout("HEAD~")
         ret = buildpackage(['argv0',
@@ -287,8 +287,8 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-retag',
                             '--git-ignore-branch'])
         eq_(ret, 0)
-        repo.checkout("master")
-        eq_(repo.rev_parse('master~^{}'), repo.rev_parse('debian/2.8-1^{}'))
+        repo.checkout("debian/latest")
+        eq_(repo.rev_parse('debian/latest~^{}'), repo.rev_parse('debian/2.8-1^{}'))
 
     @skip_without_cmd('debchange')
     @RepoFixtures.quilt30()

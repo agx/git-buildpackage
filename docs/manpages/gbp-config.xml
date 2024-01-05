@@ -79,7 +79,7 @@
     <screen>
     $ gbp config buildpackage
     buildpackage.upstream-branch=upstream
-    buildpackage.debian-branch=master
+    buildpackage.debian-branch=debian/latest
     ...</screen>
   </refsect1>
   <refsect1>

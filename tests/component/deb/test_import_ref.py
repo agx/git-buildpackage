@@ -37,7 +37,7 @@ DEFAULT_DSC = _dsc_file('hello-debhelper', '2.6-2')
 class TestImportRef(ComponentTestBase):
     """Test importing of new upstream versions"""
     pkg = "hello-debhelper"
-    def_branches = ['master', 'upstream', 'pristine-tar']
+    def_branches = ['debian/latest', 'upstream', 'pristine-tar']
 
     def _orig(self, version, dir='dsc-3.0'):
         return os.path.join(DEB_TEST_DATA_DIR,
@@ -54,7 +54,7 @@ class TestImportRef(ComponentTestBase):
                         '--upstream-tree=BRANCH',
                         '--upstream-tag=theupstream/%(version)s',
                         '-uaversion']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
+        self._check_repo_state(repo, 'debian/latest', self.def_branches,
                                tags=['debian/2.6-2', 'theupstream/aversion', 'upstream/2.6'])
         eq_(len(repo.get_commits()), 3)
 
@@ -68,7 +68,7 @@ class TestImportRef(ComponentTestBase):
                         '--upstream-tree=VERSION',
                         '--upstream-tag=upstream/%(version)s',
                         '-u2.6']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
+        self._check_repo_state(repo, 'debian/latest', self.def_branches,
                                tags=['debian/2.6-2', 'upstream/2.6'])
         eq_(len(repo.get_commits()), 3)
 
@@ -82,6 +82,6 @@ class TestImportRef(ComponentTestBase):
                         '--upstream-tree=upstream',
                         '--upstream-tag=upstream/%(version)s',
                         '-u2.6']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
+        self._check_repo_state(repo, 'debian/latest', self.def_branches,
                                tags=['debian/2.6-2', 'upstream/2.6'])
         eq_(len(repo.get_commits()), 3)
