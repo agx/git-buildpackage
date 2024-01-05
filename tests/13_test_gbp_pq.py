@@ -158,7 +158,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         for expected in expected_paths:
             self.repo.apply_patch(expected)
         self.repo.commit_all("foo")
-        diff = self.repo.diff('debian/latest', 'testapply')
+        diff = self.repo.diff('master', 'testapply')
         # Branches must be identical afterwards
         self.assertEqual(b'', diff)
 
