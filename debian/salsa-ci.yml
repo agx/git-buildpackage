@@ -6,4 +6,4 @@ include:
 # Reprotest triggers a test failure not related to reproducibility
 variables:
   SALSA_CI_DISABLE_REPROTEST: 1
-
+  SALSA_CI_DISABLE_VERSION_BUMP: 1
