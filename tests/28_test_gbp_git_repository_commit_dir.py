@@ -34,9 +34,9 @@ class TestGitRepositoryCommitDir(DebianGitTestRepo):
         """Make sure we shorten the reflog entry properly"""
         self.repo.commit_dir(self.content,
                              'foo\n' * 100000,
-                             'debian/latest',
+                             'master',
                              create_missing_branch=True)
-        self.assertEquals(self.repo.show('debian/latest:file1'), b'content1')
+        self.assertEquals(self.repo.show('master:file1'), b'content1')
         out, dummy, ret = self.repo._git_inout('reflog', [])
         self.assertEqual(ret, 0)
         self.assertIn(b'HEAD@{0}: gbp: foo\n', out)

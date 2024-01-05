@@ -47,7 +47,7 @@ class TestIs30Quilt(DebianGitTestRepo):
         os.makedirs('debian/source/')
 
     def test_30_quilt(self):
-        options = self.Options(debian_branch='debian/latest')
+        options = self.Options(debian_branch='master')
         with open(self.format_file, 'w') as f:
             f.write('3.0 (quilt)\n')
         self.repo.add_files([self.format_file])
