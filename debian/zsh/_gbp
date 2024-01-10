@@ -9,7 +9,6 @@ __gbp_common_options() {
 
 	_arguments "--${prefix}verbose[Verbose execution]" \
 		"--${prefix}color=-[Use colored output]:color:(on auto off)"
-
 }
 
 __gbp_branch_options() {
@@ -123,7 +122,7 @@ _gbp-create-remote-repo() {
 	__gbp_common_options
 	_arguments \
 		'--remote-url-pattern=-[Where to create remote repository]' \
-		'--remote-name=-[What  name  git  will use when refering to that repository]' \
+		'--remote-name=-[What  name  git  will use when referring to that repository]' \
 		'--template-dir=-[Template dir to pass to git init]' \
 		'--remote-config=-[Name of config file section to specify params]' \
 		'(--track --no-track)--track[Set up branch tracking]' \
@@ -138,7 +137,7 @@ _gbp-dch () {
 
 	_arguments \
 		'--ignore-branch[build although debian-branch != current branch]' \
-		'--since=-[Start point for reading commits]:commitish:' \
+		'--since=-[Start point for reading commits]:commit-ish:' \
 		'--auto[Guess the last commit documented in the changelog]' \
 		'(--meta --no-meta)--meta[Parse meta tags]' \
 		'(--meta --no-meta)--no-meta[Do not parse meta tags]' \
@@ -244,7 +243,7 @@ _gbp-pull() {
 	_arguments \
 		'--force[Update even non fast-forward]' \
 		'--redo-pq[Rebuild the patch queue]' \
-		'--ignore-branch[Dont care if on a detached state]' \
+		'--ignore-branch[Do not care if on a detached state]' \
 		'--depth=-[Depth for deepening shallow clones]'
 }
 
@@ -368,12 +367,11 @@ _gbp-create-remote-repo() {
 	__gbp_common_options
 	_arguments \
 		'--remote-url-pattern=-[Where to create remote repository]' \
-		'--remote-name=-[What  name  git  will use when refering to that repository]' \
+		'--remote-name=-[What  name  git  will use when referring to that repository]' \
 		'--template-dir=-[Template dir to pass to git init]' \
 		'--remote-config=-[Name of config file section to specify params]' \
 		'(--track --no-track)--track[Set up branch tracking]' \
 		'(--track --no-track)--no-track[Do not set up branch tracking]'
-
 }
 
 _gbp-dch () {
@@ -383,7 +381,7 @@ _gbp-dch () {
 
 	_arguments \
 		'--ignore-branch[build although debian-branch != current branch]' \
-		'--since=-[Start point for reading commits]:commitish:' \
+		'--since=-[Start point for reading commits]:commit-ish:' \
 		'--auto[Guess the last commit documented in the changelog]' \
 		'(--meta --no-meta)--meta[Parse meta tags]' \
 		'(--meta --no-meta)--no-meta[Do not parse meta tags]' \
@@ -489,7 +487,7 @@ _gbp-pull() {
 		'--all[Update all remote-tracking branches that have identical name in the remote]' \
 		'--depth=-[Depth for deepening shallow clones]' \
 		'--force[Update even non fast-forward]' \
-		'--ignore-branch[Dont care if on a detached state]' \
+		'--ignore-branch[Do not care if on a detached state]' \
 		'--no-ignore-branch[Negates --ignore-branch]' \
 		'--no-pristine-tar[Negates --pristine-tar]' \
 		'--no-track-missing[Negates --track-missing]' \
@@ -503,7 +501,7 @@ _gbp-push() {
 	__gbp_tag_format_options
 	_arguments \
 		'--dry-run[Dry run, do not push]' \
-		'--ignore-branch[Dont care if on a detached state]' \
+		'--ignore-branch[Do not care if on a detached state]' \
 		'--no-ignore-branch[Negates --ignore-branch]'
 }
 
@@ -556,7 +554,7 @@ _gbp-tag() {
 		"--debian-tag=-[Format string for debian tags]" \
 		"--debian-tag-msg=-[Format string for signed debian-tag messages]" \
 		'--git-no-ignore-branch[Negates --git-ignore-branch]' \
-		'--ignore-branch[Dont care if on a detached state]' \
+		'--ignore-branch[Do not care if on a detached state]' \
 		'--ignore-new[Build with uncommitted changes in the source tree]' \
 		'--no-ignore-new[Negates --git-ignore-new]' \
 		'--posttag=-[Hook run after a successful tag operation]:command:' \
