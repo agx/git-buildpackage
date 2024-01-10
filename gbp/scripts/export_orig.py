@@ -40,7 +40,7 @@ def prepare_upstream_tarballs(repo, source, options, tarball_dir, output_dir):
     - create tarball using git-archive
 
     Afterwards
-    - create pristine-tar commmits if pristine-tar-commit is in use
+    - create pristine-tar commits if pristine-tar-commit is in use
     - verify tarball checksums if pristine-tar is in use
     """
     if hasattr(options, 'no_create_orig') and options.no_create_orig:

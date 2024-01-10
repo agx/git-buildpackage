@@ -59,7 +59,7 @@ def perform_tagging(repo, source, options, hook_env=None):
     """
     Perform the tagging
 
-    Select brach to tag, create tag and run hooks
+    Select branch to tag, create tag and run hooks
     """
     branch = repo.branch
     if branch and is_pq_branch(branch):

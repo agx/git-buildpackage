@@ -42,7 +42,7 @@ class Control(object):
         @param filename: name of the control file
         @type filename: C{str}
         @return: Control object
-        @rtype: C{gbp.deb.conrol.Control} object
+        @rtype: C{gbp.deb.control.Control} object
         """
         if contents:
             control = email.message_from_string(contents)

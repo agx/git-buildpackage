@@ -46,7 +46,7 @@ class RpmPkgPolicy(PkgPolicy):
     upstreamversion_re = re.compile("^[0-9][%s%s]*$" %
                                     (alnum, version_whitelist_chars))
     upstreamversion_msg = ("Upstream version numbers must start with a digit "
-                           "and can only containg alphanumerics or characters "
+                           "and can only containing alphanumerics or characters "
                            "in %s" % list(version_whitelist_chars))
 
     @classmethod

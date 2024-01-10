@@ -88,7 +88,7 @@ def do_push(repo, dests, to_push, dry_run):
 
 def get_push_src(repo, ref, tag):
     """
-    Determine wether we can push the ref
+    Determine whether we can push the ref
 
     If the ref is further ahead than the tag
     we only want to push up to this tag.

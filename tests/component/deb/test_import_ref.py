@@ -73,7 +73,7 @@ class TestImportRef(ComponentTestBase):
         eq_(len(repo.get_commits()), 3)
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
-    def test_from_committish(self, repo):
+    def test_from_commitish(self, repo):
         """
         Test that importing a upstream git from another commit works
         """

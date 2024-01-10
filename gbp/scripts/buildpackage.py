@@ -199,7 +199,7 @@ def check_tag(options, repo, source):
 
 def get_pbuilder_dist(options, repo, native=False):
     """
-    Determin the dist to build for with pbuilder/cowbuilder
+    Determine the dist to build for with pbuilder/cowbuilder
     """
     dist = None
     if options.pbuilder_dist == 'DEP14':

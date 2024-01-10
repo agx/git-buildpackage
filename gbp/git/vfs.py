@@ -56,13 +56,13 @@ class GitVfs(object):
         def __exit__(self, exc_type, exc_val, exc_tb):
             self.close()
 
-    def __init__(self, repo, committish=None):
+    def __init__(self, repo, commitish=None):
         """
         @param repo: the git repository to act on
-        @param committish: the committish to act on
+        @param commitish: the commit-ish to act on
         """
         self._repo = repo
-        self._committish = committish or 'HEAD'
+        self._commitish = commitish or 'HEAD'
 
     def open(self, path, flags=None):
         flags = flags or 'r'
@@ -72,7 +72,7 @@ class GitVfs(object):
                 raise NotImplementedError("Flag '%s' unsupported so far" % flag)
         try:
             return GitVfs._File(self._repo.show(
-                "%s:%s" % (self._committish, path)),
+                "%s:%s" % (self._commitish, path)),
                 True if 'b' in flags else False)
         except GitRepositoryError as e:
             raise OSError(e)

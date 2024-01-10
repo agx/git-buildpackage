@@ -119,7 +119,7 @@ def supercommand(argv=None):
         usage()
         return 0
     elif cmd == 'help' and len(args) > 1:
-        # Make the first argument after help the new commadn and
+        # Make the first argument after help the new command and
         # request it's help output
         cmd = args[1]
         args = [cmd, '--help']

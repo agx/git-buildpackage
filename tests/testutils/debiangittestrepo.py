@@ -30,7 +30,7 @@ class DebianGitTestRepo(unittest.TestCase):
         Add a single file with name I{name} and content I{content}. If
         I{content} is C{none} the content of the file is undefined.
 
-        @param name: the file's path relativ to the git repo
+        @param name: the file's path relative to the git repo
         @type name: C{str}
         @param content: the file's content
         @type content: C{str}

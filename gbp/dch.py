@@ -49,7 +49,7 @@ def filter_ignore_rx_matches(lines, options):
 
 def extract_bts_cmds(lines, opts):
     """Return a dictionary of the bug tracking system commands
-    contained in the the given lines.  i.e. {'closed' : [1], 'fixed':
+    contained in the given lines.  i.e. {'closed' : [1], 'fixed':
     [3, 4]}.  Right now, this will only notice a single directive
     clause on a line.  Also return all of the lines that do not
     contain bug tracking system commands."""

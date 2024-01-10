@@ -21,7 +21,7 @@ rm -f *.deb *.changes *.build *.dsc
 # named scratchbuild
 cd scratchbuild/
 
-# Make sure we have an uptodate cowbuilder environment
+# Make sure we have an up-to-date cowbuilder environment
 # Note that git-pbuilder will pick up $DIST and $ARCH from the environment
 [ -d /var/cache/pbuilder/base.cow ] || git-pbuilder create
 git-pbuilder update

@@ -112,7 +112,7 @@ def generate_patches(repo, start, end, outdir, options):
 
 def compare_series(old, new):
     """
-    Compare new pathes to lists of patches already exported
+    Compare new paths to lists of patches already exported
 
     >>> compare_series(['# comment', 'a', 'b'], ['b', 'c'])
     (['c'], ['a'])
@@ -190,7 +190,7 @@ def find_upstream_commit(repo, branch, upstream_tag):
 
 
 def pq_on_upstream_tag(pq_from):
-    """Return True if the patch queue is based on the uptream tag,
+    """Return True if the patch queue is based on the upstream tag,
     False if its based on the debian packaging branch"""
     return True if pq_from.upper() == 'TAG' else False
 

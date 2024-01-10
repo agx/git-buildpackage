@@ -288,7 +288,7 @@ def test_get_upstream_branch():
 
 def test_tag():
     """
-    Create a tag named I{tag} and check its existance
+    Create a tag named I{tag} and check its existence
 
     Methods tested:
          - L{gbp.git.GitRepository.create_tag}

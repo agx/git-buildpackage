@@ -11,7 +11,7 @@ if [ "$DIST" = "UNRELEASED" ]; then
     echo "Distribution is unreleased"
     exit 1
 elif [ -z "$VERSION" ]; then
-    echo "Cant read package version"
+    echo "Can't read package version"
     exit 1
 fi
 

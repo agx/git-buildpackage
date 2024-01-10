@@ -18,7 +18,7 @@ from gbp.command_wrappers import CommandExecFailed
 
 class TestQuoting(unittest.TestCase):
     def test_comma(self):
-        """Test we properly parse maitainers with comma #737623"""
+        """Test we properly parse maintainers with comma #737623"""
         changes = """git-buildpackage (0.9.2) unstable; urgency=low
 
   * List of changes

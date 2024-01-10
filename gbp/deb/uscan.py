@@ -76,7 +76,7 @@ class Uscan(object):
 
         @param out: uscan output
         @type out: string
-        @returns: C{True} if package is uptodate
+        @returns: C{True} if package is up-to-date
 
         >>> u = Uscan('http://example.com/')
         >>> u._parse_uptodate('<status>up to date</status>')
@@ -109,12 +109,12 @@ class Uscan(object):
         >>> u = Uscan('http://example.com/')
         >>> u._raise_error("<warnings>uscan warning: "
         ... "In watchfile debian/watch, reading webpage\n"
-        ... "http://a.b/ failed: 500 Cant connect "
+        ... "http://a.b/ failed: 500 Can't connect "
         ... "to example.com:80 (Bad hostname)</warnings>")
         Traceback (most recent call last):
         ...
         gbp.deb.uscan.UscanError: Uscan failed: uscan warning: In watchfile debian/watch, reading webpage
-        http://a.b/ failed: 500 Cant connect to example.com:80 (Bad hostname)
+        http://a.b/ failed: 500 Can't connect to example.com:80 (Bad hostname)
         >>> u._raise_error("<errors>uscan: Can't use --verbose if "
         ... "you're using --dehs!</errors>")
         Traceback (most recent call last):
@@ -148,8 +148,8 @@ class Uscan(object):
             cmd += ['--download-debversion', download_version]
         p = subprocess.Popen(cmd, cwd=self._dir, stdout=subprocess.PIPE)
         out = p.communicate()[0].decode()
-        # uscan exits with 1 in case of uptodate and when an error occurred.
-        # Don't fail in the uptodate case:
+        # uscan exits with 1 in case of up-to-date and when an error occurred.
+        # Don't fail in the up-to-date case:
         if self._parse_uptodate(out):
             return False
 

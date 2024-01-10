@@ -213,7 +213,7 @@ class DebianGitRepository(PkgGitRepository):
 
         %(version%A%B)s provides %(version)s with string 'A' replaced by 'B'.
         This way, simple version mangling is possible via substitution.
-        Inside the substition string, '%' needs to be escaped. See the
+        Inside the substitution string, '%' needs to be escaped. See the
         examples below.
 
         >>> DebianGitRepository.version_to_tag("debian/%(version)s", "0:0~0")
@@ -347,7 +347,7 @@ class DebianGitRepository(PkgGitRepository):
         and (optional) component tarballs based on upstream_tree
 
         @param upstream_tree: the treeish in the git repo to create the commits against
-        @param soures: C{list} of tarball as I{UpstreamSource}. First one being the main
+        @param sources: C{list} of tarball as I{UpstreamSource}. First one being the main
                        tarball the other ones additional tarballs.
         """
         components = [t.component for t in sources[1:]]
@@ -411,7 +411,7 @@ class DebianGitRepository(PkgGitRepository):
         @type treeish: C{str}
         @param comp: compressor
         @type comp: L{Compressor}
-        @param with_submodules: wether to add submodules
+        @param with_submodules: whether to add submodules
         @type with_submodules: C{bool}
         @param component: component to add to tarball name
         @type component: C{str}

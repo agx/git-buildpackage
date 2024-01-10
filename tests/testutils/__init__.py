@@ -27,7 +27,7 @@ __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
 
 
 class OsReleaseFile(object):
-    """Repesents a simple file with key-value pairs"""
+    """Represents a simple file with key-value pairs"""
 
     def __init__(self, filename="/etc/os-release"):
         self._values = {}

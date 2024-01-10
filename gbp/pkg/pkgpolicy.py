@@ -187,7 +187,7 @@ class PkgPolicy(object):
 
         %(version%A%B)s provides %(version)s with string 'A' replaced by 'B'.
         This way, simple version mangling is possible via substitution.
-        Inside the substition string, '%' needs to be escaped. See the
+        Inside the substitution string, '%' needs to be escaped. See the
         examples below.
 
         >>> PkgPolicy.version_subst("debian/%(version)s", "0:0~0")

@@ -28,7 +28,7 @@ in existing repositories or to
 
     /usr/share/git-core/templates
 
-so it get's used for new ones.
+so it gets used for new ones.
 """
 
 

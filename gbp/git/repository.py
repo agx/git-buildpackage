@@ -637,7 +637,7 @@ class GitRepository(object):
         """
         Get upstream branch for the local branch
 
-        @param local_branch: name fo the local branch
+        @param local_branch: name of the local branch
         @type local_branch: C{str}
         @return: upstream (remote/branch) or  '' if no upstream found
         @rtype: C{str}
@@ -1468,7 +1468,7 @@ class GitRepository(object):
             raise GbpError("Failed to move '%s' to '%s': %s" % (old, new, stderr.decode().rstrip()))
 #}
 
-#{ Comitting
+#{ Committing
 
     def _commit(self, msg, args=[], author_info=None):
         extra_env = author_info.get_author_env() if author_info else None
@@ -1672,7 +1672,7 @@ class GitRepository(object):
 
     def grep_log(self, regex, since=None, merges=True):
         """
-        Get commmits matching I{regex}
+        Get commits matching I{regex}
 
         @param regex: regular expression
         @type regex: C{str}

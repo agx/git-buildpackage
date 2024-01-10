@@ -51,7 +51,7 @@ def get_commit_and_version_to_merge(repo, options):
             raise GbpError("%s is not a valid branch" % options.upstream_branch)
         commit = options.upstream_branch
     else:
-        # Use whatever is passed in as commitish
+        # Use whatever is passed in as commit-ish
         commit = "%s^{commit}" % options.upstream_tree
     return commit, version
 

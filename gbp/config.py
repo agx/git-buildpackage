@@ -382,7 +382,7 @@ class GbpOptionParser(OptionParser):
         'component':
             'component name for additional tarballs',
         'bare':
-            "wether to create a bare repository on the remote side. "
+            "whether to create a bare repository on the remote side. "
             "'Default is '%(bare)s'.",
         'urgency':
             "Set urgency level, default is '%(urgency)s'",
