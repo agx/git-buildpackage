@@ -38,4 +38,4 @@ usr/lib/python3.*/dist-packages/gbp/scripts/tag.py usr/lib/python3/dist-packages
 usr/lib/python3.*/dist-packages/gbp/tmpfile.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/tristate.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/version.py usr/lib/python3/dist-packages/gbp/
-usr/share/git-buildpackage/gbp.conf etc/git-buildpackage/
+usr/share/git_buildpackage/gbp.conf etc/git-buildpackage/
