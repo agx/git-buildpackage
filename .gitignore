@@ -12,6 +12,7 @@ nosetests.xml
 *.sw?
 \#*#
 .#*
+*.log
 
 docs/*.1
 docs/*.5

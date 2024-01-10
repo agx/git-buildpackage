@@ -10,13 +10,14 @@ debian_tag="${DEBIAN_TAG:-sid}"
 
 usage() {
     cat << EOF
-Usage: $(basename ${this}) [OPTION]... [ACTION]
-Run tests or create package in a docker container
+Usage: $(basename "${this}") [OPTION]... [ACTION]
+Run tests or create package in a podman (or docker) container
 
 Options:
     -h                print this usage and exit
     -C PROJECT_DIR    change to PROJECT_DIR (default: ${project_dir})
     -t DEBIAN_TAG     debian release tag (default: ${debian_tag})
+    -c CONTAINER_CMD  container runner command (default: podman)
 
 Actions:
     help       print this usage and exit
@@ -31,10 +32,11 @@ EOF
 die() { { echo "ERROR: ${@}"; usage; } >&2; exit 1; }
 
 # convenience wrapper
-docker_build() {
-    docker build \
-        --force-rm=${DOCKER_BUILD_FORCE_RM:-false} \
-        --no-cache=${DOCKER_BUILD_NO_CACHE:-false} \
+# shellcheck disable=SC2068  # re-splitting command arguments intentional
+container_build() {
+    ${container_cmd} build \
+        --force-rm="${DOCKER_BUILD_FORCE_RM:-false}" \
+        --no-cache="${DOCKER_BUILD_NO_CACHE:-false}" \
         ${@}
 }
 
@@ -55,7 +57,7 @@ ${this##${PWD}/}
 .git*
 EOF
     ) >${project_dir}/.dockerignore
-    docker_build \
+    container_build \
         --pull=${DOCKER_BUILD_PULL:-false} \
         --build-arg=FROM_IMAGE=debian:${debian_tag} \
         -t gbp-base:${debian_tag} -f- ${project_dir} <<'EOF'
@@ -80,7 +82,8 @@ EOF
 gbp_test() {
     base_build
     for L in C.UTF-8 C; do
-        docker run --rm -ie"TEST_LOCALE=${L}" gbp-base:${debian_tag} sh <<'EOF'
+        ${container_cmd} run --rm -ie"TEST_LOCALE=${L}" \
+        "gbp-base:${debian_tag}" sh <<'EOF'
 set -euvx
 make all+net
 make -C docs
@@ -91,16 +94,16 @@ EOF
 # create debian package artifacts, copy to host
 gbp_package() {
     base_build
-    docker_build \
-        --build-arg=FROM_IMAGE=gbp-base:${debian_tag} \
-        -t gbp-package:${debian_tag} -f- ${project_dir} <<'EOF'
+    container_build \
+        --build-arg="FROM_IMAGE=gbp-base:${debian_tag}" \
+        -t "gbp-package:${debian_tag}" -f- "${project_dir}" <<'EOF'
 arg FROM_IMAGE
 from ${FROM_IMAGE}
 run dpkg-buildpackage -j$(nproc) -sa -us -uc
 EOF
-    docker run --rm -iu0:0 \
-        --mount type=bind,source="${PWD}",target=/mnt/host-volume \
-        gbp-package:${debian_tag} sh <<EOF
+    ${container_cmd} run --rm -iu0:0 \
+        --mount="type=bind,source=${PWD},target=/mnt/host-volume" \
+        "gbp-package:${debian_tag}" sh <<EOF
 set -euvx
 find .. -maxdepth 1 -mindepth 1 -type f \
     -exec chown -v $(id -u):$(id -g) {} + \
@@ -108,16 +111,26 @@ find .. -maxdepth 1 -mindepth 1 -type f \
 EOF
 }
 
-while getopts ":hC:t:" opt; do
+while getopts ":hC:t:c:" opt; do
     case $opt in
         h) usage; exit 0;;
         C) project_dir="$(readlink -e ${OPTARG})"
             [ -d "${project_dir}" ] || die "bad project dir ${OPTARG}";;
         t) debian_tag="${OPTARG}";;
+        c) container_cmd="${OPTARG}";;
         :) die "missing argument: -${OPTARG}";;
         \?) die "bad option: -${OPTARG}";;
     esac
 done
+
+# Set default container command
+container_cmd="${container_cmd:-podman}"
+
+# Set default container command value if none set
+case "${container_cmd}" in
+    docker|podman) ;;
+    *) die "container command is expected to be one of 'docker' or 'podman'" ;;
+esac
 
 shift $((${OPTIND} - 1))
 case "${1:-test}" in
