@@ -25,6 +25,12 @@ syntax-check:
 type-check:
 	mypy gbp
 
+shell-check:
+	@echo "# Validating zsh completion"
+	zsh debian/zsh/_gbp
+	@echo "# Validating bash completion"
+	shellcheck --shell=bash debian/git-buildpackage.bash-completion
+
 docs:
 	$(MAKE) -C docs
 	$(MAKE) apidocs
