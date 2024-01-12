@@ -69,8 +69,12 @@ run set -euvx \
   && apt-get update -y \
   && apt-get -y --no-install-recommends install \
        build-essential devscripts equivs
+copy debian debian
+run mk-build-deps -r -i debian/control -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends'
+# To avoid constantly invalidating previous container layers, run the slow
+# dependency installation early and copy files (along with any changed files)
+# later
 copy . .
-run yes | mk-build-deps -ir
 run groupadd luser && useradd -g luser luser && chown -R luser:luser ..
 user luser
 EOF
