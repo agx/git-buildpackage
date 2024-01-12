@@ -185,7 +185,7 @@ find %{buildroot} -name __pycache__ | xargs -r rm -r
 mkdir -p %{buildroot}/usr/share/%{name}
 mv %{buildroot}/usr/bin/gbp-builder-mock %{buildroot}/usr/share/%{name}/
 mkdir -p %{buildroot}/%{_sysconfdir}/git-buildpackage/
-mv %{buildroot}/usr/share/%{name}/gbp.conf %{buildroot}/%{_sysconfdir}/git-buildpackage/
+mv %{buildroot}/usr/share/git_buildpackage/gbp.conf %{buildroot}/%{_sysconfdir}/git-buildpackage/
 
 %if %{with docs}
 # Install man pages
