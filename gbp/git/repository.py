@@ -2021,6 +2021,14 @@ class GitRepository(object):
         abspath = os.path.abspath(path)
 
         args.add_true(bare, '--bare')
+
+        # Git creates new repositories with default branch name 'master' unless
+        # defined otherwise. To create it with DEP-14 branch name git 2.28.0 or
+        # newer with --initial-branch is required.
+        # https://git-scm.com/docs/git-init/2.28.0
+        args.add('--initial-branch', 'debian/latest')
+        # @TODO: Replace hard-coded name with options.debian_branch
+
         git_dir = '' if bare else '.git'
 
         try:
