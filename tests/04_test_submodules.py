@@ -113,7 +113,7 @@ def test_dump_tree():
     """Dump the repository and check if files exist"""
     dumpdir = TMPDIR.join("dump")
     os.mkdir(dumpdir)
-    ok_(buildpackage.dump_tree(REPO, dumpdir, "master", True))
+    ok_(buildpackage.dump_tree(REPO, dumpdir, "debian/latest", True))
     ok_(os.path.exists(os.path.join(dumpdir, TESTFILE_NAME)))
     ok_(os.path.exists(os.path.join(dumpdir, TESTDIR_NAME, TESTFILE_NAME)))
     ok_(os.path.exists(os.path.join(dumpdir, SUBMODULES[0].name,
@@ -121,7 +121,7 @@ def test_dump_tree():
     # No submodules or subdirs if recursive is False
     dumpdir = TMPDIR.join("dump2")
     os.mkdir(dumpdir)
-    ok_(buildpackage.dump_tree(REPO, dumpdir, "master", True, False))
+    ok_(buildpackage.dump_tree(REPO, dumpdir, "debian/latest", True, False))
     ok_(os.path.exists(os.path.join(dumpdir, TESTFILE_NAME)))
     ok_(not os.path.exists(os.path.join(dumpdir, TESTDIR_NAME)))
     ok_(not os.path.exists(os.path.join(dumpdir, SUBMODULES[0].name)))

@@ -56,15 +56,18 @@ class TestScriptDch(DebianGitTestRepo):
         self.add_file("bar", "foo")
         self.repo.create_tag("upstream/1.0", msg="upstream version 1.0")
         self.repo.create_branch("upstream")
-        self.repo.create_branch("debian")
-        self.repo.set_branch("debian")
+        # As repository contains branch 'debian/latest' by default, git will not
+        # allow to create a new branch with just the name 'debian'
+        # (Will fail on 'fatal: cannot lock ref 'refs/heads/debian': 'refs/heads/debian/latest' exists')
+        self.repo.create_branch("debian/draft")
+        self.repo.set_branch("debian/draft")
         self.upstream_tag = "upstream/%(version)s"
         self.top = os.path.abspath(os.path.curdir)
         os.mkdir(os.path.join(self.repo.path, "debian"))
         context.chdir(self.repo.path)
         self.add_file("debian/changelog", cl_debian)
         self.add_file("debian/control", """Source: test-package\nSection: test\n""")
-        self.options = ["--upstream-tag=%s" % self.upstream_tag, "--debian-branch=debian",
+        self.options = ["--upstream-tag=%s" % self.upstream_tag, "--debian-branch=debian/draft",
                         "--upstream-branch=upstream", "--id-length=0", "--spawn-editor=/bin/true"]
         self.repo.create_tag(deb_tag, msg=deb_tag_msg, commit="HEAD~1")
         self.repo.set_user_name("gbp test user")
