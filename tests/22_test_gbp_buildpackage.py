@@ -33,9 +33,11 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         self.assertEqual(get_pbuilder_dist(self.options, self.repo), '')
         patch.assert_called_once_with()
 
+    # @TODO: This test should actually be deleted as there is no debian/master
+    # in https://dep-team.pages.debian.net/deps/dep14/
     @patch('gbp.deb.get_vendor', return_value='Debian')
     def test_get_pbuilder_dist_dep14_debian_master(self, patch):
-        branch = 'debian/debian/latest'
+        branch = 'debian/master'
         self.repo.create_branch(branch)
         self.repo.set_branch(branch)
         self.assertEqual(get_pbuilder_dist(self.options, self.repo), '')
