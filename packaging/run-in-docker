@@ -58,25 +58,25 @@ ${this##${PWD}/}
 EOF
     ) >${project_dir}/.dockerignore
     container_build \
-        --pull=${DOCKER_BUILD_PULL:-false} \
-        --build-arg=FROM_IMAGE=debian:${debian_tag} \
-        -t gbp-base:${debian_tag} -f- ${project_dir} <<'EOF'
-arg FROM_IMAGE
-from ${FROM_IMAGE}
-env DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
-workdir /workdir/project
-run set -euvx \
-  && apt-get update -y \
-  && apt-get -y --no-install-recommends install \
-       build-essential devscripts equivs
-copy debian debian
-run mk-build-deps -r -i debian/control -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends'
+        --pull="${DOCKER_BUILD_PULL:-false}" \
+        --build-arg="FROM_IMAGE=debian:${debian_tag}" \
+        -t "gbp-base:${debian_tag}" -f- "${project_dir}" <<'EOF'
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
+ENV DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
+WORKDIR /workdir/project
+RUN set -euvx \
+&& apt-get update -y \
+&& apt-get -y --no-install-recommends install \
+build-essential devscripts equivs
+COPY debian debian
+RUN mk-build-deps -r -i debian/control -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends'
 # To avoid constantly invalidating previous container layers, run the slow
 # dependency installation early and copy files (along with any changed files)
 # later
-copy . .
-run groupadd luser && useradd -g luser luser && chown -R luser:luser ..
-user luser
+COPY . .
+RUN groupadd luser && useradd -g luser luser && chown -R luser:luser ..
+USER luser
 EOF
     rm -vf ${project_dir}/.dockerignore
 }
@@ -101,9 +101,9 @@ gbp_package() {
     container_build \
         --build-arg="FROM_IMAGE=gbp-base:${debian_tag}" \
         -t "gbp-package:${debian_tag}" -f- "${project_dir}" <<'EOF'
-arg FROM_IMAGE
-from ${FROM_IMAGE}
-run dpkg-buildpackage -j$(nproc) -sa -us -uc
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
+RUN dpkg-buildpackage -j$(nproc) -sa -us -uc
 EOF
     ${container_cmd} run --rm -iu0:0 \
         --mount="type=bind,source=${PWD},target=/mnt/host-volume" \
