@@ -47,7 +47,7 @@ base_build() {
         [ -f .gitignore ] && cat .gitignore
         [ -f .gitmodules ] && sed -nr 's|\s+path = (.+)|\1|gp' .gitmodules
         cat <<EOF
-${this##${PWD}/}
+${this##"${PWD}"/}
 *.buildinfo
 *.changes
 *.deb
