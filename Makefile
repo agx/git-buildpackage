@@ -3,6 +3,10 @@ FLAKE_OPTS=$(shell test -w /dev/shm || echo '-j1')
 NOSE_OPTS=--with-xcoverage
 TEST_LOCALE?=C.UTF-8
 
+SH_SCRIPTS = \
+  packaging/run-in-container \
+  $(NULL)
+
 all: syntax-check test
 
 all+net:
@@ -30,6 +34,7 @@ shell-check:
 	zsh debian/zsh/_gbp
 	@echo "# Validating bash completion"
 	shellcheck --shell=bash debian/git-buildpackage.bash-completion
+	shellcheck $(SH_SCRIPTS)
 
 docs:
 	$(MAKE) -C docs
