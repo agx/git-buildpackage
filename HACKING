@@ -19,7 +19,7 @@ other tests use:
 
 You can run the tests in a `debian:sid` docker container by using
 
-    packaging/run-in-docker
+    packaging/run-in-container
 
 The python tests use `python-nose` so you can use all it's options. To run a
 single test e.g.

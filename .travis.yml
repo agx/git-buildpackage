@@ -18,4 +18,4 @@ install: "pip install -r dev_requirements.txt"
 script:
   - flake8
   - python $(which nosetests) -v tests/doctests/ tests/component/deb/
-  - packaging/run-in-docker
+  - packaging/run-in-container
