@@ -2,10 +2,10 @@
 
 set -eu
 
-this="$(readlink -e ${0})"
+this="$(readlink -e "${0}")"
 
 # assign defaults
-project_dir="$(dirname $(dirname ${this}))"
+project_dir="$(dirname "$(dirname "${this}")")"
 debian_tag="${DEBIAN_TAG:-sid}"
 
 usage() {
@@ -25,11 +25,11 @@ Actions:
     test       run tests (default)
 
 Example:
-    $(basename ${this}) -C ~/code/git-buildpackage -t stretch package
+    $(basename "${this}") -C ~/code/git-buildpackage -t stretch package
 EOF
 }
 
-die() { { echo "ERROR: ${@}"; usage; } >&2; exit 1; }
+die() { { echo "ERROR: ${*}"; usage; } >&2; exit 1; }
 
 # convenience wrapper
 # shellcheck disable=SC2068  # re-splitting command arguments intentional
@@ -43,7 +43,7 @@ container_build() {
 # take path to project dir; build docker image for base
 base_build() {
     (
-        cd ${project_dir}
+        cd "${project_dir}"
         [ -f .gitignore ] && cat .gitignore
         [ -f .gitmodules ] && sed -nr 's|\s+path = (.+)|\1|gp' .gitmodules
         cat <<EOF
@@ -56,7 +56,7 @@ ${this##${PWD}/}
 .dockerignore
 .git*
 EOF
-    ) >${project_dir}/.dockerignore
+    ) > "${project_dir}/.dockerignore"
     container_build \
         --pull="${DOCKER_BUILD_PULL:-false}" \
         --build-arg="FROM_IMAGE=debian:${debian_tag}" \
@@ -78,7 +78,7 @@ COPY . .
 RUN groupadd luser && useradd -g luser luser && chown -R luser:luser ..
 USER luser
 EOF
-    rm -vf ${project_dir}/.dockerignore
+    rm -vf "${project_dir}/.dockerignore"
 }
 
 
@@ -118,7 +118,7 @@ EOF
 while getopts ":hC:t:c:" opt; do
     case $opt in
         h) usage; exit 0;;
-        C) project_dir="$(readlink -e ${OPTARG})"
+        C) project_dir="$(readlink -e "${OPTARG}")"
             [ -d "${project_dir}" ] || die "bad project dir ${OPTARG}";;
         t) debian_tag="${OPTARG}";;
         c) container_cmd="${OPTARG}";;
@@ -136,10 +136,10 @@ case "${container_cmd}" in
     *) die "container command is expected to be one of 'docker' or 'podman'" ;;
 esac
 
-shift $((${OPTIND} - 1))
+shift $((OPTIND - 1))
 case "${1:-test}" in
     'help') usage; exit 0;;
     'test') gbp_test; exit ${?};;
     'package') gbp_package; exit ${?};;
-    \?) die "bad action: ${1}";;
+    *) die "bad action: ${1}";;
 esac
