@@ -15,7 +15,7 @@
     <option>upstream-branch</option> (by default named
     <emphasis>upstream</emphasis>) as usual and just don't merge to the
     <emphasis>debian-branch</emphasis>  (by default named
-    <emphasis>master</emphasis>):
+    <emphasis>debian/latest</emphasis>):
     </para>
 <programlisting>
   &gbp-import-orig; --no-merge <filename>/path/to/nondfsg-clean-package_10.4.orig.tar.gz</filename>
@@ -35,7 +35,7 @@
   cleanup-script.sh
   &gitcmd; commit -a -m "Make source dfsg clean"
   &gitcmd; tag <replaceable>10.4.dfsg</replaceable>
-  &gitcmd; checkout <replaceable>master</replaceable>
+  &gitcmd; checkout <replaceable>debian/latest</replaceable>
   &gitcmd; pull <replaceable>.</replaceable> <replaceable>dfsg_clean</replaceable>
 </programlisting>
     </sect1>
@@ -44,21 +44,21 @@
     <title>Importing NMUs</title>
     <para>
     First, create a branch that holds the NMUs from the tip of your
-    <option>debian-branch</option> (default is <emphasis>master</emphasis>) once:
+    <option>debian-branch</option> (default is <emphasis>debian/latest</emphasis>) once:
     </para>
 <programlisting>
-  &gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>master</replaceable>
+  &gitcmd; <option>branch</option> <replaceable>nmu</replaceable> <replaceable>debian/latest</replaceable>
 </programlisting>
     <para>
     To import an NMU, change into the git repository and use &gbp-import-dsc;:
     </para>
 <programlisting>
-  &gitcmd; checkout <replaceable>master</replaceable>
+  &gitcmd; checkout <replaceable>debian/latest</replaceable>
   &gbp-import-dsc; <option>--debian-branch</option>=<replaceable>nmu</replaceable> <filename>/path/to/package_1.0-1nmu0.dsc</filename>
 </programlisting>
     <para>
     This will import the NMU onto the branched named <emphasis>nmu</emphasis>
-    instead of the default <option>master</option>. This method can also
+    instead of the default <option>debian/latest</option>. This method can also
     be used to import "old" releases into the &git; repository when migrating
     to &git; from another VCS.
     </para>
@@ -151,7 +151,7 @@ EOF
     This uses <command>apt-get</command> to download the source package,
     puts the orig tarball on the <option>upstream-branch</option> and the
     &debian; changes on the <option>debian-branch</option> (by default
-    <emphasis>master</emphasis>). The second command
+    <emphasis>debian/latest</emphasis>). The second command
     creates a branch called <emphasis>debian</emphasis>. Now you can easily
     modify the package, revert changes you made, create other branches for
     testing, see what changes you made, etc.  When finished, just do</para>
