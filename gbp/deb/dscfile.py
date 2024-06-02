@@ -53,11 +53,29 @@ class DscFile(object):
         self.upstream_version = ""
         self.native = False
         self.dscfile = os.path.abspath(dscfile)
+
+        with open(self.dscfile, encoding='utf-8') as f:
+            self._parse_file(f)
+
+        # Source format 1.0 can have non-native packages without a Debian revision:
+        # e.g. http://snapshot.debian.org/archive/debian/20090801T192339Z/pool/main/l/latencytop/latencytop_0.5.dsc
+        if self.pkgformat == "1.0" and self.diff:
+            self.native = False
+        elif not self.native and not self.debian_version:
+            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
+
+        if not self.pkg:
+            raise GbpError("Cannot parse package name from '%s'" % self.dscfile)
+        elif not self.tgz:
+            raise GbpError("Cannot parse archive name from '%s'" % self.dscfile)
+        if not self.upstream_version:
+            raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
+
+    def _parse_file(self, f):
         sigs = []
         add_tars = []
+        fromdir = os.path.dirname(self.dscfile)
 
-        f = open(self.dscfile, encoding='utf-8')
-        fromdir = os.path.dirname(os.path.abspath(dscfile))
         for line in f:
             m = self.version_re.match(line)
             if m and not self.upstream_version:
@@ -102,21 +120,7 @@ class DscFile(object):
             if m:
                 self.pkgformat = m.group('format')
                 continue
-        f.close()
 
-        # Source format 1.0 can have non-native packages without a Debian revision:
-        # e.g. http://snapshot.debian.org/archive/debian/20090801T192339Z/pool/main/l/latencytop/latencytop_0.5.dsc
-        if self.pkgformat == "1.0" and self.diff:
-            self.native = False
-        elif not self.native and not self.debian_version:
-            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
-
-        if not self.pkg:
-            raise GbpError("Cannot parse package name from '%s'" % self.dscfile)
-        elif not self.tgz:
-            raise GbpError("Cannot parse archive name from '%s'" % self.dscfile)
-        if not self.upstream_version:
-            raise GbpError("Cannot parse version number from '%s'" % self.dscfile)
         self.additional_tarballs = dict(add_tars)
         self.sigs = list(set(sigs))
 
