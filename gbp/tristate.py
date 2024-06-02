@@ -37,7 +37,7 @@ class Tristate(object):
                 self._state = self.AUTO
             else:
                 self._state = self.OFF
-        elif type(val) is str:
+        elif isinstance(val, str):
             if val.lower() in ['on', 'true']:
                 self._state = self.ON
             elif val.lower() in ['auto']:
