@@ -54,8 +54,11 @@ class DscFile(object):
         self.native = False
         self.dscfile = os.path.abspath(dscfile)
 
-        with open(self.dscfile, encoding='utf-8') as f:
-            self._parse_file(f)
+        try:
+            with open(self.dscfile, encoding='utf-8') as f:
+                self._parse_file(f)
+        except UnicodeDecodeError:
+            raise GbpError(f"{self.dscfile} is not UTF-8 encoded")
 
         # Source format 1.0 can have non-native packages without a Debian revision:
         # e.g. http://snapshot.debian.org/archive/debian/20090801T192339Z/pool/main/l/latencytop/latencytop_0.5.dsc

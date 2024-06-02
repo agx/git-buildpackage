@@ -136,6 +136,27 @@ Files:
         self.assertEquals(dsc.sigs, [])
 
 
+class Test30DscFileNonUtf8(unittest.TestCase):
+    """Test L{gbp.deb.DscFile} with non-UTF8 dsc"""
+
+    content = """Format: 3.0 (quilt)
+Source: libvirt
+Uploaders: Guido Günther <agx@sigxcpu.org>, Laurent Léonard <laurent@open-minds.org>
+"""
+
+    def setUp(self):
+        with tempfile.NamedTemporaryFile(delete=False) as self.dscfile:
+            self.dscfile.write(self.content.encode('iso8859-1'))
+
+    def tearDown(self):
+        os.unlink(self.dscfile.name)
+
+    def test_dscfile_parse(self):
+        """Test parsing an invalid (non-UTF8) dsc file"""
+        with self.assertRaisesRegex(gbp.errors.GbpError, "is not UTF-8 encoded"):
+            DscFile.parse(self.dscfile.name)
+
+
 @testutils.skip_without_cmd('dpkg')
 class TestDpkgCompareVersions(unittest.TestCase):
     """Test L{gbp.deb.DpkgCompareVersions}"""
