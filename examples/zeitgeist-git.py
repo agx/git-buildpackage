@@ -64,7 +64,7 @@ def get_repo():
         else:
             sep = ':'
         try:
-            repo = unicode(uri.rsplit(sep, 1)[1])
+            repo = uri.rsplit(sep, 1)[1]
         except IndexError:  # no known separator
             repo = uri
         repo = repo.rsplit(u'.git', 1)[0]
@@ -72,6 +72,9 @@ def get_repo():
 
 
 def main(argv):
+    if not CLIENT:
+        return
+
     interpretation = Interpretation.MODIFY_EVENT.uri
 
     # FIXME: I'd be great if zeitgeist would allow for more detail:
@@ -82,7 +85,7 @@ def main(argv):
 
     repo, origin = get_repo()
     if not repo:
-        repo = unicode(curdir.rsplit('/', 1)[1])
+        repo = curdir.rsplit('/', 1)[1]
         origin = uri
 
     subject = Subject.new_for_values(
