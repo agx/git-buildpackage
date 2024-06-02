@@ -3,6 +3,14 @@ include:
   - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/salsa-ci.yml
   - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/pipeline-jobs.yml
 
+python-lint:
+  image: debian:sid
+  before_script:
+    - apt -y update
+    - apt -y install ruff
+  script:
+    - ruff check .
+
 # Reprotest triggers a test failure not related to reproducibility
 variables:
   SALSA_CI_DISABLE_REPROTEST: 1
