@@ -1,0 +1,7 @@
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+# Ignore line length for now
+ignore = ["E501"]
