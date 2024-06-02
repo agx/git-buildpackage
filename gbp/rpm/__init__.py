@@ -618,7 +618,7 @@ class SpecFile(object):
         ignored = self.ignorepatches
         # Remove 'Patch:̈́' tags
         for tag in self._patches().values():
-            if not tag['num'] in ignored:
+            if tag['num'] not in ignored:
                 tag_prev = self._delete_tag('patch', tag['num'])
                 # Remove a preceding comment if it seems to originate from GBP
                 if re.match(r'^\s*#.*patch.*auto-generated',
@@ -627,7 +627,7 @@ class SpecFile(object):
 
         # Remove '%patch:' macros
         for macro in self._special_directives['patch']:
-            if not macro['id'] in ignored:
+            if macro['id'] not in ignored:
                 macro_prev = self._delete_special_macro('patch', macro['id'])
                 # Remove surrounding if-else
                 macro_next = macro_prev.next
