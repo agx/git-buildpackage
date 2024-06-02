@@ -2,7 +2,7 @@
 
 """Test L{gbp.deb}"""
 
-from . import context  # noqa: 401
+from . import context  # noqa: F401
 from . import testutils
 
 import os

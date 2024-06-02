@@ -4,7 +4,7 @@
 Test L{gbp.deb.control.Control}
 """
 
-from .. import context  # noqa: 401
+from .. import context  # noqa: F401
 
 cl_debian = """Source: git-buildpackage
 Section: vcs

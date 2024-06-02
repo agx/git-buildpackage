@@ -7,7 +7,7 @@ Test things here that don't fit nicely into the doctests that
 also make up the API documentation.
 """
 
-from . import context  # noqa: 401
+from . import context  # noqa: F401
 from . import testutils
 
 import os

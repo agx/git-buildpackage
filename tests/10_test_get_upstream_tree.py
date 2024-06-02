@@ -2,7 +2,7 @@
 
 """Test  L{export_orig}'s git_archive_get_upstream_tree method"""
 
-from . import context  # noqa: 401
+from . import context  # noqa: F401
 from . import testutils
 
 import gbp.errors

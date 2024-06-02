@@ -3,7 +3,7 @@
 """
 Test L{gbp.deb.changelog.ChangeLog}
 """
-from .. import context  # noqa: 401
+from .. import context  # noqa: F401
 from .. testutils import have_cmd
 
 import nose

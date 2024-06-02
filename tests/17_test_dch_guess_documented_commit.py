@@ -2,7 +2,7 @@
 
 """Test L{Changelog}'s guess_version_from_upstream"""
 
-from . import context  # noqa: 401
+from . import context  # noqa: F401
 from . import testutils
 
 from gbp.scripts import dch
