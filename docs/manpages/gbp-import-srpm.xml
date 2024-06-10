@@ -244,7 +244,7 @@
         <listitem>
           <para>
 	    When set to <option>DEBIAN</option>
-	    use the <envar>DEBUSER</envar> environment variable to set the
+	    use the <envar>DEBFULLNAME</envar> environment variable to set the
 	    user.name &git; configuration otherwise use &git;'s
 	    defaults. Only affects newly created repos.
           </para>

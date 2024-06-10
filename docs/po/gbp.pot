@@ -4805,7 +4805,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: manpages/gbp-clone.xml:162
 msgid ""
-"When set to <option>DEBIAN</option> use the <envar>DEBUSER</envar> "
+"When set to <option>DEBIAN</option> use the <envar>DEBFULLNAME</envar> "
 "environment variable to set the user.name &git; configuration otherwise use "
 "&git;'s defaults."
 msgstr ""
@@ -6750,7 +6750,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: manpages/gbp-import-dsc.xml:254 manpages/gbp-import-srpm.xml:246
 msgid ""
-"When set to <option>DEBIAN</option> use the <envar>DEBUSER</envar> "
+"When set to <option>DEBIAN</option> use the <envar>DEBFULLNAME</envar> "
 "environment variable to set the user.name &git; configuration otherwise use "
 "&git;'s defaults. Only affects newly created repos."
 msgstr ""
