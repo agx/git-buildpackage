@@ -43,7 +43,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
     def test_valid_tree(self):
         """Get upstream tree from a valid upstream tree"""
         self.add_file('foo')
-        tree = self.repo.rev_parse('master')
+        tree = self.repo.rev_parse('debian/latest')
         options = MockOptions(upstream_tree=tree)
         t = export_orig.git_archive_get_upstream_tree(self.repo, None, options)
         self.assertEqual(t, tree)
@@ -58,7 +58,7 @@ class TestGetUpstreamTree(testutils.DebianGitTestRepo):
     def test_valid_tag(self):
         """Get upstream tree from a valid tag"""
         self.add_file('foo')
-        self.repo.rev_parse('master')
+        self.repo.rev_parse('debian/latest')
         self.repo.create_tag('upstream/1.0_rc3')
         options = MockOptions(upstream_tree="TAG",
                               upstream_tag="upstream/%(version)s")

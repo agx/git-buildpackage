@@ -54,7 +54,7 @@ DEFAULT_DSC = _dsc_file('hello-debhelper', '2.6-2')
 class TestImportOrig(ComponentTestBase):
     """Test importing of new upstream versions"""
     pkg = "hello-debhelper"
-    def_branches = ['master', 'upstream', 'pristine-tar']
+    def_branches = ['debian/latest', 'upstream', 'pristine-tar']
 
     def _orig(self, version, dir='dsc-3.0'):
         return os.path.join(DEB_TEST_DATA_DIR,
@@ -72,7 +72,7 @@ class TestImportOrig(ComponentTestBase):
         os.chdir(self.pkg)
         orig = self._orig('2.6')
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
+        self._check_repo_state(repo, 'debian/latest', self.def_branches,
                                tags=['upstream/2.6'])
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
@@ -82,7 +82,7 @@ class TestImportOrig(ComponentTestBase):
         os.chdir(self.pkg)
         orig = self._download_url('2.6')
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
+        self._check_repo_state(repo, 'debian/latest', self.def_branches,
                                tags=['upstream/2.6'])
 
     def _check_component_tarballs(self, repo, files):
@@ -102,11 +102,11 @@ class TestImportOrig(ComponentTestBase):
                          '--postimport=printenv > ../postimport.out',
                          '--postunpack=printenv > ../postunpack.out',
                          '--no-interactive', '--pristine-tar', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         ok_(os.path.exists('debian/changelog'))
         ok_(os.path.exists('../postimport.out'))
-        self.check_hook_vars('../postimport', [("GBP_BRANCH", "master"),
+        self.check_hook_vars('../postimport', [("GBP_BRANCH", "debian/latest"),
                                                ("GBP_TAG", "upstream/2.8"),
                                                ("GBP_UPSTREAM_VERSION", "2.8"),
                                                ("GBP_DEBIAN_VERSION", "2.8-1")])
@@ -119,7 +119,7 @@ class TestImportOrig(ComponentTestBase):
         # Import 2.8
         orig = self._orig('2.8', dir='dsc-3.0-additional-tarballs')
         ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, [b'foo/test1', b'foo/test2'])
         ok_(os.path.exists('debian/changelog'))
@@ -144,7 +144,7 @@ class TestImportOrig(ComponentTestBase):
         # Import 2.9
         orig = self._orig('2.9', dir='dsc-3.0-additional-tarballs')
         ok_(import_orig(['arg0', '--component=foo', '--no-interactive', '--pristine-tar', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8', 'upstream/2.9'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2', 'foo/test3'])
         ok_(os.path.exists('debian/changelog'))
@@ -169,7 +169,7 @@ class TestImportOrig(ComponentTestBase):
         orig = self._orig('2.8')
         repo.checkout('upstream')
         ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 0)
-        self._check_repo_state(repo, 'upstream', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'upstream', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
     def test_tag_exists(self):
@@ -197,7 +197,7 @@ class TestImportOrig(ComponentTestBase):
         with patch('gbp.git.repository.GitRepository.create_tag',
                    side_effect=GitRepositoryError('this is a create tag error mock')):
             ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 1)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6'])
         self.check_refs(repo, heads)
 
@@ -211,7 +211,7 @@ class TestImportOrig(ComponentTestBase):
         with patch('gbp.scripts.import_orig.debian_branch_merge',
                    side_effect=GitRepositoryError('this is a fail merge error mock')):
             ok_(import_orig(['arg0', '--no-interactive', '--pristine-tar', orig]) == 1)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6'])
         self.check_refs(repo, heads)
 
@@ -262,7 +262,7 @@ class TestImportOrig(ComponentTestBase):
                          '--filter-pristine-tar',
                          '--filter=README*',
                          '../tarballs/hello-debhelper_2.8.orig.tar.gz']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
 
@@ -304,7 +304,7 @@ class TestImportOrig(ComponentTestBase):
                          '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
                          'rm $GBP_SOURCES_DIR/TODO',
                          '../tarballs/hello-debhelper_2.8.orig.tar.gz']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
         self._check_component_tarballs(repo, ['foo/test1', 'foo/test2'])
 
@@ -342,7 +342,7 @@ class TestImportOrig(ComponentTestBase):
                          '--filter-pristine-tar',
                          '--filter=README*',
                          '../hello-debhelper_2.8.orig.tar.gz']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
         filtered = os.path.join('..', f)
@@ -378,7 +378,7 @@ class TestImportOrig(ComponentTestBase):
                          '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
                          'rm $GBP_SOURCES_DIR/TODO',
                          '../hello-debhelper_2.8.orig.tar.gz']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
         filtered = os.path.join('..', f)
@@ -412,7 +412,7 @@ class TestImportOrig(ComponentTestBase):
                          '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
                          'rm $GBP_SOURCES_DIR/TODO; rm $GBP_SOURCES_DIR/README',
                          '../hello-debhelper_2.8.orig.tar.gz']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
         filtered = os.path.join('..', f)
@@ -447,7 +447,7 @@ class TestImportOrig(ComponentTestBase):
                          '--filter-pristine-tar',
                          '--filter=README*',
                          '../hello-2.8']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
         filtered = os.path.join('..', f)
@@ -484,7 +484,7 @@ class TestImportOrig(ComponentTestBase):
                          '--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;' +
                          'rm $GBP_SOURCES_DIR/TODO',
                          '../hello-2.8']) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])
 
         filtered = os.path.join('..', f)
@@ -529,13 +529,13 @@ class TestImportOrig(ComponentTestBase):
                          '--postunpack=printenv > ../postunpack.out',
                          '--no-interactive', '--pristine-tar',
                          '--upstream-signatures=on', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['upstream/2.8'])
         ok_(os.path.exists('../postimport.out'))
         eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.id',
                                            b'hello-debhelper_2.8.orig.tar.gz.delta',
                                            b'hello-debhelper_2.8.orig.tar.gz.asc'})
-        self.check_hook_vars('../postimport', [("GBP_BRANCH", "master"),
+        self.check_hook_vars('../postimport', [("GBP_BRANCH", "debian/latest"),
                                                ("GBP_TAG", "upstream/2.8"),
                                                ("GBP_UPSTREAM_VERSION", "2.8"),
                                                ("GBP_DEBIAN_VERSION", "2.8-1")])
@@ -553,13 +553,13 @@ class TestImportOrig(ComponentTestBase):
                          '--postunpack=printenv > ../postunpack.out',
                          '--no-interactive', '--pristine-tar',
                          '--upstream-signatures=auto', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'],
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream', 'pristine-tar'],
                                tags=['upstream/2.8'])
         ok_(os.path.exists('../postimport.out'))
         eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.id',
                                            b'hello-debhelper_2.8.orig.tar.gz.delta',
                                            b'hello-debhelper_2.8.orig.tar.gz.asc'})
-        self.check_hook_vars('../postimport', [("GBP_BRANCH", "master"),
+        self.check_hook_vars('../postimport', [("GBP_BRANCH", "debian/latest"),
                                                ("GBP_TAG", "upstream/2.8"),
                                                ("GBP_UPSTREAM_VERSION", "2.8"),
                                                ("GBP_DEBIAN_VERSION", "2.8-1")])
@@ -591,5 +591,5 @@ https://git.sigxcpu.org/cgit/gbp/deb-testdata/plain/dsc-3.0/ \
         repo.add_files(["debian/watch"])
         repo.commit_files("debian/watch", msg="Add watch file")
         ok_(import_orig(['arg0', '--uscan', '--no-interactive', '--no-pristine-tar']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
+        self._check_repo_state(repo, 'debian/latest', self.def_branches,
                                tags=['debian/2.6-2', 'upstream/2.6', 'upstream/2.8'])

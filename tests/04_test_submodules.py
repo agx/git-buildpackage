@@ -104,7 +104,7 @@ def test_has_submodules():
 
 def test_get_submodules():
     """Check for submodules list of  (name, hash)"""
-    modules = REPO.get_submodules("master")[0]
+    modules = REPO.get_submodules("debian/latest")[0]
     eq_(modules[0], 'test_submodule')
     eq_(len(modules[1]), 40)
 
@@ -113,7 +113,7 @@ def test_dump_tree():
     """Dump the repository and check if files exist"""
     dumpdir = TMPDIR.join("dump")
     os.mkdir(dumpdir)
-    ok_(buildpackage.dump_tree(REPO, dumpdir, "master", True))
+    ok_(buildpackage.dump_tree(REPO, dumpdir, "debian/latest", True))
     ok_(os.path.exists(os.path.join(dumpdir, TESTFILE_NAME)))
     ok_(os.path.exists(os.path.join(dumpdir, TESTDIR_NAME, TESTFILE_NAME)))
     ok_(os.path.exists(os.path.join(dumpdir, SUBMODULES[0].name,
@@ -121,7 +121,7 @@ def test_dump_tree():
     # No submodules or subdirs if recursive is False
     dumpdir = TMPDIR.join("dump2")
     os.mkdir(dumpdir)
-    ok_(buildpackage.dump_tree(REPO, dumpdir, "master", True, False))
+    ok_(buildpackage.dump_tree(REPO, dumpdir, "debian/latest", True, False))
     ok_(os.path.exists(os.path.join(dumpdir, TESTFILE_NAME)))
     ok_(not os.path.exists(os.path.join(dumpdir, TESTDIR_NAME)))
     ok_(not os.path.exists(os.path.join(dumpdir, SUBMODULES[0].name)))
@@ -186,9 +186,9 @@ def test_add_whitespace_submodule():
 
 def test_get_more_submodules():
     """Check for submodules list of  (name, hash)"""
-    module = REPO.get_submodules("master")
+    module = REPO.get_submodules("debian/latest")
     eq_(len(module), len(SUBMODULE_NAMES))
-    for module in REPO.get_submodules("master"):
+    for module in REPO.get_submodules("debian/latest"):
         eq_(len(module[1]), 40)
         ok_(os.path.basename(module[0]) in SUBMODULE_NAMES)
 

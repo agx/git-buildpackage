@@ -51,8 +51,8 @@
     3.0 (quilt) source format. With &gbp-pq;, you can maintain the quilt patches
     that should be applied to a package on a separate branch called patch-queue
     branch. So if your &debian; package lives on
-    <replaceable>master</replaceable>, the associated patch-queue branch will be
-    called <replaceable>patch-queue/master</replaceable>.
+    <replaceable>debian/latest</replaceable>, the associated patch-queue branch will be
+    called <replaceable>patch-queue/debian/latest</replaceable>.
     </para>
     <para>
     See <ulink url="https://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.patches.html"></ulink>

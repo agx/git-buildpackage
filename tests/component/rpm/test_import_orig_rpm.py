@@ -125,31 +125,31 @@ class TestImportOrig(ImportOrigTestBase):
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
         eq_(mock_import(['--merge', orig]), 0)
         files = ['Makefile', 'README', 'dummy.sh']
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='master')), 1)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
+        eq_(len(repo.get_commits(until='debian/latest')), 1)
         eq_(len(repo.get_commits(until='upstream')), 1)
         eq_(repo.get_tags(), ['upstream/1.0'])
 
-        # Import second version, don't merge to master branch
+        # Import second version, don't merge to debian/latest branch
         orig = os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')
         eq_(mock_import(['--no-merge', orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='master')), 1)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
+        eq_(len(repo.get_commits(until='debian/latest')), 1)
         eq_(len(repo.get_commits(until='upstream')), 2)
         eq_(repo.get_tags(), ['upstream/1.0', 'upstream/1.1'])
-        # Check that master is based on v1.0
+        # Check that debian/latest is based on v1.0
         sha1 = repo.rev_parse("%s^0" % 'upstream/1.0')
-        eq_(repo.get_merge_base('master', 'upstream'), sha1)
+        eq_(repo.get_merge_base('debian/latest', 'upstream'), sha1)
 
     def test_import_zip(self):
         """Test importing of zip archive"""
         repo = ComponentTestGitRepository.create('.')
-        # Import zip with, no master branch should be present
+        # Import zip with, no debian/latest branch should be present
         orig = os.path.join(DATA_DIR, 'gbp-test-native-1.0.zip')
         files = ['.gbp.conf', 'packaging/gbp-test-native.spec',
                  'dummy.sh', 'README', 'Makefile']
         eq_(mock_import([orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
         eq_(repo.get_tags(), ['upstream/1.0'])
 
     def test_branch_update(self):
@@ -161,7 +161,7 @@ class TestImportOrig(ImportOrigTestBase):
         repo.set_branch('upstream')
         eq_(mock_import([orig2]), 0)
         files = ['Makefile', 'README', 'dummy.sh']
-        self._check_repo_state(repo, 'upstream', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'upstream', ['debian/latest', 'upstream'], files)
         eq_(len(repo.get_commits(until='upstream')), 2)
 
     def test_import_dir(self):
@@ -175,7 +175,7 @@ class TestImportOrig(ImportOrigTestBase):
         # Import dir first, fool the version to be 0.9
         eq_(mock_import(['../gbp-test'], 'gbp-test\n0.9\n'), 0)
         files = ['Makefile', 'README', 'dummy.sh']
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
 
         # Import from unpacked and check that the contents is the same
         eq_(mock_import([orig]), 0)
@@ -192,8 +192,8 @@ class TestImportOrig(ImportOrigTestBase):
         # Try filtering out .git directory and shell scripts
         eq_(mock_import(['--filter=.git', '--filter=*.sh', '--merge', orig],
                         'gbp-test\n1.0\n'), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
-        eq_(len(repo.get_commits(until='master')), 1)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
+        eq_(len(repo.get_commits(until='debian/latest')), 1)
         eq_(len(repo.get_commits(until='upstream')), 1)
         eq_(repo.get_tags(), ['upstream/1.0'])
         added_files = repo.get_commit_info('upstream')['files']['A']
@@ -216,8 +216,8 @@ class TestImportOrig(ImportOrigTestBase):
                         stdin_data=''), 0)
         files = ['.gbp.conf', 'Makefile', 'README', 'dummy.sh',
                  'packaging/gbp-test-native.spec']
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='master')), 1)
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'], files)
+        eq_(len(repo.get_commits(until='debian/latest')), 1)
 
     def test_misc_options(self):
         """Test various options of git-import-orig-rpm"""
@@ -270,11 +270,11 @@ class TestImportOrig(ImportOrigTestBase):
 
         script = ("echo -n branch: $GBP_BRANCH > ../hook.txt")
         eq_(mock_import(['--postimport', script, '--merge', orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         eq_(repo.get_tags(), ['upstream/1.0'])
         with open('../hook.txt', 'r') as hookout:
             data = hookout.read()
-        eq_(data, 'branch: master')
+        eq_(data, 'branch: debian/latest')
 
     def test_hook_error(self):
         """Test postimport hook failure"""
@@ -284,7 +284,7 @@ class TestImportOrig(ImportOrigTestBase):
         self._check_log(-2, "gbp:error: Postimport-hook '/bin/false' failed:")
         self._check_log(-1, 'gbp:error: Import of %s failed' % orig)
         # Other parts of the import should've succeeded
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
 
 
 class TestBareRepo(ImportOrigTestBase):
@@ -295,7 +295,7 @@ class TestBareRepo(ImportOrigTestBase):
         repo = ComponentTestGitRepository.create('.', bare=True)
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
         eq_(mock_import([orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])
         eq_(len(repo.get_commits(until='upstream')), 1)
         eq_(repo.get_tags(), ['upstream/1.0'])
 
@@ -303,7 +303,7 @@ class TestBareRepo(ImportOrigTestBase):
         repo.set_branch('upstream')
         orig = os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')
         eq_(mock_import([orig]), 0)
-        self._check_repo_state(repo, 'upstream', ['master', 'upstream'])
+        self._check_repo_state(repo, 'upstream', ['debian/latest', 'upstream'])
         eq_(len(repo.get_commits(until='upstream')), 2)
 
     def test_pristine_import_to_bare(self):
@@ -312,4 +312,4 @@ class TestBareRepo(ImportOrigTestBase):
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
         eq_(mock_import([orig]), 0)
         # No pristine-tar branch should be present
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
+        self._check_repo_state(repo, 'debian/latest', ['debian/latest', 'upstream'])

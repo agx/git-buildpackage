@@ -89,7 +89,7 @@
     <para>
       The sources are placed on the upstream branch (default:
       <replaceable>upstream</replaceable>), tagged and merged onto the
-      debian branch (default: <replaceable>master</replaceable>).  This
+      debian branch (default: <replaceable>debian/latest</replaceable>).  This
       is either done using plain <command>git merge</command>
       or by creating a new tree that consists of the new
       upstream version plus the <filename>debian/</filename>
@@ -178,7 +178,7 @@
         <listitem>
           <para>
           The branch in the &git; repository the &debian; package is being
-          developed on, default is <replaceable>master</replaceable>. After
+          developed on, default is <replaceable>debian/latest</replaceable>. After
           importing the new sources on the upstream branch, &gbp-import-orig;
           will try to merge the new version onto this branch.
           </para>

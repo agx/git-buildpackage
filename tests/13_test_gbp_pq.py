@@ -120,8 +120,8 @@ class TestApplySinglePatch(testutils.DebianGitTestRepo):
 
         patch = gbp.patch_series.Patch(_patch_path('foo.patch'))
 
-        self.repo.create_branch(pq.pq_branch_name('master'))
-        pq.apply_single_patch(self.repo, 'master', patch, None)
+        self.repo.create_branch(pq.pq_branch_name('debian/latest'))
+        pq.apply_single_patch(self.repo, 'debian/latest', patch, None)
         self.assertIn(b'foo', self.repo.list_files())
 
 
@@ -158,7 +158,7 @@ class TestWritePatch(testutils.DebianGitTestRepo):
         for expected in expected_paths:
             self.repo.apply_patch(expected)
         self.repo.commit_all("foo")
-        diff = self.repo.diff('master', 'testapply')
+        diff = self.repo.diff('debian/latest', 'testapply')
         # Branches must be identical afterwards
         self.assertEqual(b'', diff)
 
@@ -241,7 +241,7 @@ class TestExport(testutils.DebianGitTestRepo):
         opts = TestExport.Options()
         opts.drop = True
 
-        repo.create_branch(pq.pq_branch_name('master'))
+        repo.create_branch(pq.pq_branch_name('debian/latest'))
         switch_pq(repo, start, opts)
         self.assertEqual(repo.get_branch(), pq_branch)
         export_patches(repo, pq_branch, opts)
@@ -255,7 +255,7 @@ class TestExport(testutils.DebianGitTestRepo):
         pq_branch = os.path.join('patch-queue', start)
         opts = TestExport.Options()
         opts.commit = True
-        repo.create_branch(pq.pq_branch_name('master'))
+        repo.create_branch(pq.pq_branch_name('debian/latest'))
         switch_pq(repo, start, opts)
         self.assertEqual(len(repo.get_commits()), 1)
         self.assertEqual(repo.get_branch(), pq_branch)
@@ -284,7 +284,7 @@ class TestExport(testutils.DebianGitTestRepo):
             f.write("patch2.diff\n")
         repo.add_files('debian/patches')
         repo.commit_all('Add series file')
-        repo.create_branch(pq.pq_branch_name('master'))
+        repo.create_branch(pq.pq_branch_name('debian/latest'))
         switch_pq(repo, start, opts)
         self.assertEqual(len(repo.get_commits()), 2)
         self.assertEqual(repo.get_branch(), pq_branch)
@@ -352,7 +352,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         self.git_create_empty_branch('bar')
         self.add_file('foo', 'foo')
         self.repo.create_tag('upstream/0.0.1')
-        self.repo.set_branch('master')
+        self.repo.set_branch('debian/latest')
 
     def test_empty(self):
 
@@ -365,7 +365,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
                              upstream_tag=TestFromTAG.Options.upstream_tag)
         diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
         self.assertEqual(b'', diff)
-        diff = self.repo.diff(self.repo.get_branch(), 'master')
+        diff = self.repo.diff(self.repo.get_branch(), 'debian/latest')
         self.assertNotEqual(b'', diff)
 
         rebase_pq(self.repo,
@@ -373,7 +373,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
                   options=TestFromTAG.Options)
         diff = self.repo.diff(self.repo.get_branch(), 'upstream/0.0.1')
         self.assertEqual(b'', diff)
-        diff = self.repo.diff(self.repo.get_branch(), 'master')
+        diff = self.repo.diff(self.repo.get_branch(), 'debian/latest')
         self.assertNotEqual(b'', diff)
 
         export_patches(self.repo,
@@ -397,7 +397,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
         self.assertTrue(os.path.exists(os.path.join(self.repo.path,
                                                     os.path.dirname(SERIES_FILE),
                                                     'added-bar.patch')))
-        switch_pq(self.repo, 'master', TestFromTAG.Options)
+        switch_pq(self.repo, 'debian/latest', TestFromTAG.Options)
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   options=TestFromTAG.Options())
@@ -409,9 +409,9 @@ class TestFromTAG(testutils.DebianGitTestRepo):
                                                     'added-bar.patch')))
         # New upstream release
         self.repo.set_branch('bar')
-        GitCommand('cherry-pick', cwd=self.repo.path)(['patch-queue/master'])
+        GitCommand('cherry-pick', cwd=self.repo.path)(['patch-queue/debian/latest'])
         self.repo.create_tag('upstream/0.0.2')
-        self.repo.set_branch('master')
+        self.repo.set_branch('debian/latest')
         self.add_file(
             'debian/changelog',
             'foo (0.0.2-1) UNRELEASED; urgency=medium\n'
@@ -421,7 +421,7 @@ class TestFromTAG(testutils.DebianGitTestRepo):
             ' -- Mr. T. S. <t@example.com>  '
             'Thu, 01 Jan 1970 00:00:00 +0000\n'
         )
-        switch_pq(self.repo, 'master', TestFromTAG.Options())
+        switch_pq(self.repo, 'debian/latest', TestFromTAG.Options())
         rebase_pq(self.repo,
                   branch=self.repo.get_branch(),
                   options=TestFromTAG.Options())
