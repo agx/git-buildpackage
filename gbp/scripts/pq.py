@@ -427,6 +427,7 @@ def build_parser(name):
         gbp.log.err(err)
         return None
 
+    parser.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_config_file_option(option_name="patch-num-format", dest="patch_num_format")
     parser.add_boolean_config_file_option(option_name="renumber", dest="renumber")
@@ -491,7 +492,18 @@ def main(argv):
         return 1
 
     try:
-        current = repo.get_branch()
+        try:
+            current = repo.get_branch()
+        except GitRepositoryError:
+            # Not being on any branch is OK with --ignore-branch
+            if options.ignore_branch:
+                current = repo.get_commits(
+                    num=1,
+                    options=["--pretty=format:%h"]  # Force abbreviated commit hash
+                )[0]
+            else:
+                raise
+
         if action == "export":
             export_patches(repo, current, options)
         elif action == "import":
