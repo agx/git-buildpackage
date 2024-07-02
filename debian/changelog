@@ -1,3 +1,89 @@
+git-buildpackage (0.9.34) unstable; urgency=medium
+
+  [ Otto Kekäläinen ]
+  * [dbd1b36] salsa-ci: Disable SALSA_CI_DISABLE_VERSION_BUMP.
+    Disabling the version automatic version bump in Salsa-CI satisfies
+    Python setuptools and build passes.
+  * [ae2d10c] docs: Fix misc spelling in documentation.
+    In code standardize on using 'commitish' while docs have 'commit-ish'
+    like upstream git convention seems to be.
+  * [a0e45c6] gbp: Fix misc spelling in user visible output and comments
+  * [42c3e15] debian: Fix misc spelling.
+    The debian/changelog has many spelling errors but not touching them now
+    as changing past changelog entries might be contentious.
+  * [13f5205] tests: Implement 'run-in-docker -c docker'
+    Typically developers have either Docker or Podman on their laptops for
+    running containers. As Podman follows nearly identical syntax as Docker,
+    add new option '-c' that allows to specify Podman or Docker as the
+    container command, with Podman being default if nothing is defined as
+    the main developer is using Podman.
+    Also ignore log files both in .gitignore and resulting .dockerignore so
+    that tests runs can be logged with 'tee x.log' without triggering
+    rebuilds of the container via polluting the 'COPY . .' step.
+  * [6df86f9] tests: Avoid busting container layer cache on every file change
+  * [c7c73d3] tests: Capitalize Dockerfile commands to follow to formal syntax.
+    This is necessary to be able to use static Dockerfile analyzers.
+  * [4940747] tests: Fix shell syntax issues in run-in-container.
+    If 'run-in-container x' was issued, script would fail silently. With
+    this change it will properly exit with 'bad action: x' and help message.
+    Also fix a bunch of other minor issues detected by ShellCheck.
+  * [dd891c6] tests: Rename run-in-docker to run-in-container to be more generic
+
+  [ Guido Günther ]
+  * [75cda52] Validate shell completion functions.
+    For zsh we can at least catch syntax errors and use shellcheck for
+    bash.
+  * [2f47ec4] setup: Move most options to setup.cfg.
+    We can move everything that doesn't depend on running a script
+    or evaluating environment variables.
+  * [307f8ad] docs: Drop NEWS
+    dh_installchangelogs handles that
+  * [af15aad] rpm: Adjust to new gbp.conf install path.
+    To make setup.py happy we moved to an underscore path name in
+        2f47ec4c ("setup: Move most options to setup.cfg")
+  * [ef0211c] tests: shellcheck packaging-in-container too.
+    Now that is passes let's make sure it stays that way.
+  * [dca6702] dscfile: Use "file" as context manager.
+    Closes the file automatically. Move parsing out of the constructor
+    while at that.
+  * [2ba5b93] dscfile: Improve error when dsc file isn't UTF-8
+    (Closes: #1072387)
+  * [c0b776c] examples/zeitgest: Exit early if we don't find the python module.
+    Don't use `unicode` while at that.
+  * [1233918] rpm: Prefer isinstance() over type()
+  * [cbce318] rpm: Prefer 'not in' for membership tests
+  * [6166d74] tristate: Prefer isinstance() over type()
+  * [9650f68] tests: Prefer isinstance() over type()
+  * [364eccb] tests: Clarify noqa tags.
+    Ruff is more strict than flake8 here
+  * [ff276e5] Add linter configs
+  * [077cc51] ci: Run ruff
+  * [0d7193b] tests: Avoid assertEquals.
+    Python 3.12 dropped it. I just wish there would be deprecations.
+  * [dde9e7d] tests: Avoid assertRaisesRegexp.
+    Python 3.12 dropped it. I just wish there would be deprecations.
+  * [15f3b8c] Drop format_b.
+    We require python 3.5 anyway and Python 3.12 dropped decode from string.
+    (Closes: #1074681)
+
+  [ Jochen Sprickerhof ]
+  * [026cd23] pull: Allow pull in unclean repos.
+    This works just fine when git can fast forward, i.e. with untracked
+    content or changes in tracked files that are not touched by the commits.
+    In case fast forward is not possible gbp will complain anyhow.
+
+  [ Carlos Henrique Lima Melara ]
+  * [385291f] docs: document how to send the tip of debian-branch with gbp push.
+    When --debian-tag is set to '' empty string, gbp will push the tip of
+    the debian branch to remote.
+    Small typo fix also: s/branach/branch/
+
+  [ Sven Geuer ]
+  * [1d814b9] docs: create_repo uses DEBFULLNAME not DEBUSER.
+    Make the docs match.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 02 Jul 2024 20:51:28 +0200
+
 git-buildpackage (0.9.33) unstable; urgency=medium
 
   [ Evangelos Ribeiro Tzaras ]
