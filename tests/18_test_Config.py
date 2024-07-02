@@ -117,7 +117,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
             defaults = {'withshort': 'foo'}
             short_opts = {'withshort': '-S'}
         parser = TestOptonParser('cmd', prefix='p')
-        with self.assertRaisesRegexp(ValueError, "Options with prefix cannot have a short option"):
+        with self.assertRaisesRegex(ValueError, "Options with prefix cannot have a short option"):
             parser.add_config_file_option(option_name="withshort", dest="with_short", help="foo")
 
     def test_short_option(self):

@@ -27,7 +27,7 @@ class TestImportOrigDownload(DebianGitTestRepo):
         os.chdir(self.repo.path)
 
     def test_404_download(self):
-        with self.assertRaisesRegexp(GbpError, "404 Client Error: Not Found for url"):
+        with self.assertRaisesRegex(GbpError, "404 Client Error: Not Found for url"):
             download_orig("https://{host}/does_not_exist".format(host=self.HOST))
 
     def test_200_download(self):

@@ -72,11 +72,11 @@ class Test(unittest.TestCase):
 
     def test_changelog_missing_dir(self):
         os.rmdir('debian/')
-        with self.assertRaisesRegexp(CommandExecFailed, "Cannot find debian directory"):
+        with self.assertRaisesRegex(CommandExecFailed, "Cannot find debian directory"):
             ChangeLog.create('package', '1.0')
 
     def test_changelog_exists(self):
         with open('debian/changelog', 'w') as f:
             f.write('')
-        with self.assertRaisesRegexp(CommandExecFailed, "File debian/changelog already exists"):
+        with self.assertRaisesRegex(CommandExecFailed, "File debian/changelog already exists"):
             ChangeLog.create('package', '1.0')

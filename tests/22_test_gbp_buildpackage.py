@@ -88,8 +88,8 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         branch = 'too/many/slashes'
         self.repo.create_branch(branch)
         self.repo.set_branch(branch)
-        with self.assertRaisesRegexp(GbpError,
-                                     "DEP14 DIST: Current branch 'too/many/slashes' does not match vendor/suite"):
+        with self.assertRaisesRegex(GbpError,
+                                    "DEP14 DIST: Current branch 'too/many/slashes' does not match vendor/suite"):
             get_pbuilder_dist(self.options, self.repo)
 
 
