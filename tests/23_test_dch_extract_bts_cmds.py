@@ -35,7 +35,7 @@ Closes: bug#12345
 Closes: 456
 """
         bugs, dummy = extract_bts_cmds(lines.split('\n'), options)
-        self.assertEquals(bugs, {'Closes': ['bug#12345', '456']})
+        self.assertEqual(bugs, {'Closes': ['bug#12345', '456']})
 
     def test_nondebian_commands(self):
         """Test non-default BTS commands. We use the example given in the
@@ -51,5 +51,5 @@ Closes: bug ex-1ab
 Closes: EX--12345
 """
         bugs, dummy = extract_bts_cmds(lines.split('\n'), options)
-        self.assertEquals(bugs, {'Closes': ['bug EX-12345', 'ex-01273',
-                                            'bug ex-1']})
+        self.assertEqual(bugs, {'Closes': ['bug EX-12345', 'ex-01273',
+                                           'bug ex-1']})

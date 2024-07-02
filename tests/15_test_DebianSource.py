@@ -95,7 +95,7 @@ class TestDebianSource(testutils.DebianGitTestRepo):
  -- Guido Guenther <agx@sigxcpu.org>  Mon,  2 Oct 2006 18:30:20 +0200
 """)
         source = DebianSource('.')
-        self.assertEquals(source.changelog.distribution, "unstable")
+        self.assertEqual(source.changelog.distribution, "unstable")
         self.assertTrue(source.is_releasable())
 
     def test_is_not_releasable(self):
@@ -108,7 +108,7 @@ class TestDebianSource(testutils.DebianGitTestRepo):
  -- Guido Guenther <agx@sigxcpu.org>  Mon,  2 Oct 2006 18:30:20 +0200
 """)
         source = DebianSource('.')
-        self.assertEquals(source.changelog.distribution, "UNRELEASED")
+        self.assertEqual(source.changelog.distribution, "UNRELEASED")
         self.assertFalse(source.is_releasable())
 
     def test_control(self):
@@ -117,7 +117,7 @@ class TestDebianSource(testutils.DebianGitTestRepo):
             f.write("Source: foo")
         source = DebianSource('.')
         self.assertIsNotNone(source.control)
-        self.assertEquals(source.control.name, "foo")
+        self.assertEqual(source.control.name, "foo")
 
     def test_cur_dir_not_toplevel(self):
         """
@@ -135,9 +135,9 @@ class TestDebianSource(testutils.DebianGitTestRepo):
             f.write("Source: foo")
         os.chdir('debian/')
         source = DebianSource('..')
-        self.assertEquals(source.changelog.name, "foo")
-        self.assertEquals(source.control.name, "foo")
+        self.assertEqual(source.changelog.name, "foo")
+        self.assertEqual(source.control.name, "foo")
 
         source = DebianSource(os.path.abspath('..'))
-        self.assertEquals(source.changelog.name, "foo")
-        self.assertEquals(source.control.name, "foo")
+        self.assertEqual(source.changelog.name, "foo")
+        self.assertEqual(source.control.name, "foo")

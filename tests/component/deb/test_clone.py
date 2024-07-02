@@ -62,7 +62,7 @@ class TestClone(ComponentTestBase):
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
         ret = clone(['arg0', "--add-upstream-vcs", "vcsgit:libvirt-glib", dest])
-        self.assertEquals(ret, 0)
+        self.assertEqual(ret, 0)
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'debian/sid', ['debian/sid', 'upstream/latest'])
         assert cloned.has_remote_repo("upstreamvcs")
@@ -72,7 +72,7 @@ class TestClone(ComponentTestBase):
     def test_clone_vcsgit_fail(self):
         """Test that cloning from vcs-git urls fails as expected"""
         ret = clone(['arg0', "vcsgit:doesnotexist"])
-        self.assertEquals(ret, 1)
+        self.assertEqual(ret, 1)
         self._check_log(-1, "gbp:error: Can't find any vcs-git URL for 'doesnotexist'")
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
@@ -81,7 +81,7 @@ class TestClone(ComponentTestBase):
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
         ret = clone(['arg0', "github:agx/git-buildpackage", dest])
-        self.assertEquals(ret, 0)
+        self.assertEqual(ret, 0)
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'master', ['master'])
 
@@ -128,4 +128,4 @@ class TestClone(ComponentTestBase):
             '* dgit-defuse-attrs',
             '[attr]dgit-defuse-attrs  -text -eol -crlf -ident -filter -working-tree-encoding',
         ]
-        self.assertEquals(attrs, expected_gitattrs)
+        self.assertEqual(attrs, expected_gitattrs)

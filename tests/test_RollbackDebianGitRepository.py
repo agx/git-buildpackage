@@ -15,36 +15,36 @@ class TestRollbackGitRepository(DebianGitTestRepo):
 
     def test_empty_rollback(self):
         self.repo.rollback()
-        self.assertEquals(self.repo.rollback_errors, [])
+        self.assertEqual(self.repo.rollback_errors, [])
 
     def test_rrr_tag(self):
         self.repo.rrr_tag('doesnotexist')
-        self.assertEquals(self.repo.rollbacks, [('doesnotexist', 'tag', 'delete', None)])
+        self.assertEqual(self.repo.rollbacks, [('doesnotexist', 'tag', 'delete', None)])
         self.repo.rollback()
-        self.assertEquals(self.repo.rollback_errors, [])
+        self.assertEqual(self.repo.rollback_errors, [])
 
     def test_rrr_branch(self):
         self.repo.rrr_branch('doesnotexist', 'delete')
-        self.assertEquals(self.repo.rollbacks, [('doesnotexist', 'branch', 'delete', None)])
+        self.assertEqual(self.repo.rollbacks, [('doesnotexist', 'branch', 'delete', None)])
         self.repo.rollback()
-        self.assertEquals(self.repo.rollback_errors, [])
+        self.assertEqual(self.repo.rollback_errors, [])
 
     def test_rrr_merge(self):
         self.repo.rrr_merge('HEAD')
-        self.assertEquals(self.repo.rollbacks, [('HEAD', 'commit', 'abortmerge', None)])
+        self.assertEqual(self.repo.rollbacks, [('HEAD', 'commit', 'abortmerge', None)])
         self.repo.rollback()
-        self.assertEquals(self.repo.rollback_errors, [])
+        self.assertEqual(self.repo.rollback_errors, [])
 
     def test_rrr_merge_abort(self):
         self.repo.rrr_merge('HEAD')
-        self.assertEquals(self.repo.rollbacks, [('HEAD', 'commit', 'abortmerge', None)])
+        self.assertEqual(self.repo.rollbacks, [('HEAD', 'commit', 'abortmerge', None)])
         # Test that we abort the merge in case MERGE_HEAD exists
         with open(os.path.join(self.repo.git_dir, 'MERGE_HEAD'), 'w'):
             pass
         self.assertTrue(self.repo.is_in_merge())
         self.repo.rollback()
         self.assertFalse(self.repo.is_in_merge())
-        self.assertEquals(self.repo.rollback_errors, [])
+        self.assertEqual(self.repo.rollback_errors, [])
 
     def test_rrr_unknown_action(self):
         with self.assertRaisesRegexp(GitRepositoryError, "Unknown action 'unknown' for tag 'doesnotmatter'"):

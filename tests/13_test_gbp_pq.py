@@ -59,7 +59,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         pq.apply_and_commit_patch(self.repo, patch, None)
         self.assertIn(b'foo', self.repo.list_files())
         info = self.repo.get_commit_info('HEAD')
-        self.assertEquals('[text] foobar', info['subject'])
+        self.assertEqual('[text] foobar', info['subject'])
 
     def test_topic(self):
         """Test if setting a topic works"""
@@ -302,24 +302,24 @@ class TestParseGbpCommand(unittest.TestCase):
         """Test command filtering with an empty body"""
         info = {'body': ''}
         (cmds, body) = pq.parse_gbp_commands(info, ['tag'], ['cmd1'], ['cmd2'])
-        self.assertEquals(cmds, {})
-        self.assertEquals(body, '')
+        self.assertEqual(cmds, {})
+        self.assertEqual(body, '')
 
     def test_noarg_cmd(self):
         orig_body = '\n'.join(["Foo",
                                "tag: cmd1"])
         info = {'body': orig_body}
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'])
-        self.assertEquals(cmds, {'cmd': None})
-        self.assertEquals(body, orig_body)
+        self.assertEqual(cmds, {'cmd': None})
+        self.assertEqual(body, orig_body)
 
     def test_filter_cmd(self):
         orig_body = '\n'.join(["Foo",
                                "tag: cmd1"])
         info = {'body': orig_body}
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'], ['cmd'])
-        self.assertEquals(cmds, {'cmd': None})
-        self.assertEquals(body, 'Foo')
+        self.assertEqual(cmds, {'cmd': None})
+        self.assertEqual(body, 'Foo')
 
 
 class TestFromTAG(testutils.DebianGitTestRepo):

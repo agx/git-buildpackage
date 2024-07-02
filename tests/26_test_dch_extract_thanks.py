@@ -37,4 +37,4 @@ Thanks: everyone"""
 
         lines += "   \n"  # Add some trailing whitespace
         bugs, dummy = extract_thanks_info(lines.split('\n'), None)
-        self.assertEquals(bugs, ['a lot', 'everyone'])
+        self.assertEqual(bugs, ['a lot', 'everyone'])

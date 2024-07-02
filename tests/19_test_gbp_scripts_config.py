@@ -99,7 +99,7 @@ class TestGbpConfigCommand(unittest.TestCase):
             printstub = self.AllValuesPrintStub(cmd)
             ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
             self.assertIn('%s.color' % cmd, printstub.result.keys())
-            self.assertEquals(printstub.result['%s.color' % cmd], 'auto')
+            self.assertEqual(printstub.result['%s.color' % cmd], 'auto')
             self.assertEqual(ret, 0)
 
     def test_nonexistent_cmds(self):
@@ -107,5 +107,5 @@ class TestGbpConfigCommand(unittest.TestCase):
         for cmd in ["import_dscs", "supercommand", "nonexistent"]:
             printstub = self.AllValuesPrintStub(cmd)
             ret = gbp.scripts.config.print_cmd_values(cmd, printstub)
-            self.assertEquals(printstub.result, dict())
+            self.assertEqual(printstub.result, dict())
             self.assertEqual(ret, 2)

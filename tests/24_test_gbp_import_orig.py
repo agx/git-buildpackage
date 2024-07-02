@@ -52,7 +52,7 @@ class TestIs30Quilt(DebianGitTestRepo):
             f.write('3.0 (quilt)\n')
         self.repo.add_files([self.format_file])
         self.repo.commit_all("Add %s" % self.format_file)
-        self.assertEquals(self.repo.branch, options.debian_branch)
+        self.assertEqual(self.repo.branch, options.debian_branch)
         self.assertTrue(is_30_quilt(self.repo, options))
 
     def test_no_format(self):
@@ -112,12 +112,12 @@ class TestGbpBuildpackagePreparePristineTar(unittest.TestCase):
 
     def test_dir(self):
         ret = prepare_pristine_tar(self._tmpdir, 'foo', '1.0')
-        self.assertEquals(ret, (None, False))
+        self.assertEqual(ret, (None, False))
 
     def test_tar(self):
         archive = '{}/foo.tgz'.format(self._tmpdir)
         ret = prepare_pristine_tar(archive, 'foo', '1.0')
-        self.assertEquals(ret, ('../foo_1.0.orig.tar.gz', True))
+        self.assertEqual(ret, ('../foo_1.0.orig.tar.gz', True))
         self.assertTrue(os.path.islink(
             os.path.join(self._tmpdir, 'foo_1.0.orig.tar.gz')))
 
@@ -127,6 +127,6 @@ class TestGbpBuildpackagePreparePristineTar(unittest.TestCase):
         with open(signature, 'w') as f:
             f.write('')
         ret = prepare_pristine_tar(archive, 'foo', '1.0')
-        self.assertEquals(ret, ('../foo_1.0.orig.tar.gz', True))
+        self.assertEqual(ret, ('../foo_1.0.orig.tar.gz', True))
         self.assertTrue(os.path.islink(
             os.path.join(self._tmpdir, 'foo_1.0.orig.tar.gz.asc')))

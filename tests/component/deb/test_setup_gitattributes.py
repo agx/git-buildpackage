@@ -104,7 +104,7 @@ class TestSetupGitattributes(ComponentTestBase):
 
         with open(attrs_file) as f:
             attrs = sorted(f.read().splitlines())
-        self.assertEquals(attrs, sorted_gitattrs)
+        self.assertEqual(attrs, sorted_gitattrs)
 
     @RepoFixtures.native()
     def test_setup_gitattrs_dgit(self, repo):
@@ -139,7 +139,7 @@ class TestSetupGitattributes(ComponentTestBase):
             '# ^ see GITATTRIBUTES in dgit(7) and dgit setup-new-tree in dgit(1)',
         ])
 
-        self.assertEquals(attrs, expected_gitattrs)
+        self.assertEqual(attrs, expected_gitattrs)
 
     @RepoFixtures.native()
     def test_setup_gitattrs_dgit34(self, repo):
@@ -174,4 +174,4 @@ class TestSetupGitattributes(ComponentTestBase):
             '# ^ see dgit(7).  To undo, leave a definition of [attr]dgit-defuse-attrs',
         ])
 
-        self.assertEquals(attrs, expected_gitattrs)
+        self.assertEqual(attrs, expected_gitattrs)

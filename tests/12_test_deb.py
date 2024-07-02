@@ -87,9 +87,9 @@ Files:
         for s in ['foo', 'bar', 'upper-CASE']:
             self.assertEqual(os.path.basename(dsc.additional_tarballs[s]),
                              'libvirt_0.9.12.orig-%s.tar.gz' % s)
-        self.assertEquals(sorted(dsc.sigs), ['/tmp/libvirt_0.9.12.orig-bar.tar.gz.asc',
-                                             '/tmp/libvirt_0.9.12.orig-foo.tar.gz.asc',
-                                             '/tmp/libvirt_0.9.12.orig.tar.gz.asc'])
+        self.assertEqual(sorted(dsc.sigs), ['/tmp/libvirt_0.9.12.orig-bar.tar.gz.asc',
+                                            '/tmp/libvirt_0.9.12.orig-foo.tar.gz.asc',
+                                            '/tmp/libvirt_0.9.12.orig.tar.gz.asc'])
 
 
 class Test10DscNonNativeFile(unittest.TestCase):
@@ -133,7 +133,7 @@ Files:
         self.assertEqual(os.path.basename(dsc.deb_tgz), '')
         self.assertEqual(os.path.basename(dsc.diff), 'latencytop_0.5.diff.gz')
         self.assertEqual(dsc.additional_tarballs, {}),
-        self.assertEquals(dsc.sigs, [])
+        self.assertEqual(dsc.sigs, [])
 
 
 class Test30DscFileNonUtf8(unittest.TestCase):
@@ -189,10 +189,10 @@ class TestDeb(unittest.TestCase):
     def test_get_arch(self):
         arch = gbp.deb.get_arch()
         self.assertTrue(isinstance(arch, str))
-        self.assertEquals(arch, "amd64")
+        self.assertEqual(arch, "amd64")
 
     @unittest.skipUnless(testutils.OsReleaseFile()['ID'] == 'debian', "not on Debian")
     def test_get_vendor(self):
         vendor = gbp.deb.get_vendor()
         self.assertTrue(isinstance(vendor, str))
-        self.assertEquals(vendor, "Debian")
+        self.assertEqual(vendor, "Debian")

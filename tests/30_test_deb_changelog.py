@@ -26,8 +26,8 @@ class TestQuoting(unittest.TestCase):
  -- Guido Günther, aftercomma <agx@sigxcpu.org>  Sun, 12 Nov 2017 19:00:00 +0200
 """
         cl = ChangeLog(changes)
-        self.assertEquals(cl.author, 'Guido Günther, aftercomma')
-        self.assertEquals(cl.email, 'agx@sigxcpu.org')
+        self.assertEqual(cl.author, 'Guido Günther, aftercomma')
+        self.assertEqual(cl.email, 'agx@sigxcpu.org')
 
 
 class TestEncoding(unittest.TestCase):
@@ -40,9 +40,9 @@ class TestEncoding(unittest.TestCase):
  -- User N\0me <agx@sigxcpu.org>  Sun, 12 Nov 2017 19:00:00 +0200
 """
         cl = ChangeLog(changes)
-        self.assertEquals(cl.author, 'User Nme')
-        self.assertEquals(cl.email, 'agx@sigxcpu.org')
-        self.assertEquals('\0' in cl.get_changes(), False)
+        self.assertEqual(cl.author, 'User Nme')
+        self.assertEqual(cl.email, 'agx@sigxcpu.org')
+        self.assertEqual('\0' in cl.get_changes(), False)
 
 
 @skip_without_cmd('debchange')
@@ -57,18 +57,18 @@ class Test(unittest.TestCase):
 
     def test_changelog_creation_full(self):
         cp = ChangeLog.create('package', '1.0')
-        self.assertEquals(cp.name, 'package')
-        self.assertEquals(cp.version, '1.0')
+        self.assertEqual(cp.name, 'package')
+        self.assertEqual(cp.version, '1.0')
 
     def test_changelog_creation_version(self):
         cp = ChangeLog.create(version='1.0')
-        self.assertEquals(cp.name, 'PACKAGE')
-        self.assertEquals(cp.version, '1.0')
+        self.assertEqual(cp.name, 'PACKAGE')
+        self.assertEqual(cp.version, '1.0')
 
     def test_changelog_creation_package(self):
         cp = ChangeLog.create(package='package')
-        self.assertEquals(cp.name, 'package')
-        self.assertEquals(cp.version, 'unknown')
+        self.assertEqual(cp.name, 'package')
+        self.assertEqual(cp.version, 'unknown')
 
     def test_changelog_missing_dir(self):
         os.rmdir('debian/')

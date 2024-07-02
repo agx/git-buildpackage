@@ -37,35 +37,35 @@ class TestPush(ComponentTestBase):
     @RepoFixtures.native()
     def test_push_native(self, repo):
         repo.add_remote_repo('origin', self.target.path)
-        self.assertEquals(push(['argv0']), 0)
+        self.assertEqual(push(['argv0']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master'],
                                tags=['debian/0.4.14'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.quilt30()
     def test_push_upstream(self, repo):
         repo.add_remote_repo('origin', self.target.path)
-        self.assertEquals(push(['argv0']), 0)
+        self.assertEqual(push(['argv0']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.quilt30(opts=['--pristine-tar'])
     def test_push_pristine_tar(self, repo):
         repo.add_remote_repo('origin', self.target.path)
-        self.assertEquals(push(['argv0', '--pristine-tar']), 0)
+        self.assertEqual(push(['argv0', '--pristine-tar']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master', 'upstream', 'pristine-tar'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.quilt30(opts=['--pristine-tar'])
     def test_push_detached_head(self, repo):
         repo.checkout("HEAD^{commit}")
         repo.add_remote_repo('origin', self.target.path)
-        self.assertEquals(push(['argv0', '--ignore-branch']), 0)
+        self.assertEqual(push(['argv0', '--ignore-branch']), 0)
         # Since branch head is detached we don't push it but upstream
         # branch and tags must be there:
         self._check_repo_state(self.target, None,
@@ -75,29 +75,29 @@ class TestPush(ComponentTestBase):
     @RepoFixtures.quilt30()
     def test_push_skip_upstream(self, repo):
         repo.add_remote_repo('origin', self.target.path)
-        self.assertEquals(push(['argv0', '--upstream-branch=']), 0)
+        self.assertEqual(push(['argv0', '--upstream-branch=']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.native()
     def test_push_tag_ne_branch(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         self.add_file(repo, "foo.txt", "foo")
-        self.assertEquals(push(['argv0']), 0)
+        self.assertEqual(push(['argv0']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master'],
                                tags=['debian/0.4.14'])
-        self.assertEquals(repo.rev_parse("HEAD^"),
-                          self.target.head)
+        self.assertEqual(repo.rev_parse("HEAD^"),
+                         self.target.head)
 
     @RepoFixtures.quilt30()
     def test_not_debian_branch(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         repo.create_branch("foo")
         repo.set_branch("foo")
-        self.assertEquals(push(['argv0']), 1)
+        self.assertEqual(push(['argv0']), 1)
         self._check_log(-2, ".*You are not on branch 'master' but on 'foo'")
 
     @skip_without_cmd('debchange')
@@ -105,7 +105,7 @@ class TestPush(ComponentTestBase):
     def test_dont_push_unreleased(self, repo):
         repo.add_remote_repo('origin', self.target.path)
         subprocess.check_call(["debchange", "-i", "foo"])
-        self.assertEquals(push(['argv0']), 0)
+        self.assertEqual(push(['argv0']), 0)
         self._check_repo_state(self.target, None,
                                ['upstream'],
                                tags=['upstream/2.8'])
@@ -113,22 +113,22 @@ class TestPush(ComponentTestBase):
     @RepoFixtures.quilt30()
     def test_push_not_origin(self, repo):
         repo.add_remote_repo('notorigin', self.target.path)
-        self.assertEquals(push(['argv0', 'notorigin']), 0)
+        self.assertEqual(push(['argv0', 'notorigin']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.quilt30()
     def test_push_not_origin_detect(self, repo):
         repo.add_remote_repo('notorigin', self.target.path)
         repo.set_config("branch.master.remote", "notorigin")
         repo.set_config("branch.master.merge", "refs/heads/master")
-        self.assertEquals(push(['argv0']), 0)
+        self.assertEqual(push(['argv0']), 0)
         self._check_repo_state(self.target, 'master',
                                ['master', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
 
     @RepoFixtures.quilt30()
     def test_push_failure(self, repo):
@@ -141,10 +141,10 @@ class TestPush(ComponentTestBase):
         repo.push('origin', 'master')
         self.target.create_branch('upstream', 'master')
 
-        self.assertEquals(push(['argv0']), 1)
+        self.assertEqual(push(['argv0']), 1)
         self._check_repo_state(self.target, 'master',
                                ['master', 'upstream'],
                                tags=['debian/2.8-1', 'upstream/2.8'])
-        self.assertEquals(repo.head, self.target.head)
+        self.assertEqual(repo.head, self.target.head)
         self._check_in_log('.*Error running git push: To.*/target')
         self._check_log(-1, ".*Failed to push some refs")

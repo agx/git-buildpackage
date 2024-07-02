@@ -49,7 +49,7 @@ class TestBrokenConfig(TestCaseWithData, GbpLogTester):
         try:
             m = __import__(module, globals(), locals(), ['main'], 0)
             ret = m.main([cmd, '--help'])
-            self.assertEquals(ret, 3)
+            self.assertEqual(ret, 3)
         except Exception as e:
             self.assertTrue(False, "Caught '%s'" % e)
         self._check_log(-1, "See 'man gbp.conf' for the format.")
