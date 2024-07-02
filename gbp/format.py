@@ -42,25 +42,3 @@ def format_str(msg, args):
     except KeyError as e:
         raise GbpError("Failed to format %s: Missing value %s in %s" %
                        (msg, e, args))
-
-
-def format_b(fmtstr, *args):
-    """String-like interpolation for bytes objects.
-
-    NOTE: This is a compatibility wrapper for older versions (<3.5) of Python 3
-    which do not support the percent operator ('%') for bytes objects. This
-    function should be removed (and replaced by simple '%') when Python 3.5
-    has gained wide enough adoption.
-
-    >>> format_b(b'%s %d', b'foo', 123)
-    b'foo 123'
-    >>> format_b(b'foo 123')
-    b'foo 123'
-    >>> format_b('%s %d', b'foo', 123)
-    Traceback (most recent call last):
-    ...
-    AttributeError: 'str' object has no attribute 'decode'
-    """
-    fmtstr = fmtstr.decode()
-    strargs = tuple([(a.decode() if isinstance(a, bytes) else a) for a in args])
-    return (fmtstr % strargs).encode()

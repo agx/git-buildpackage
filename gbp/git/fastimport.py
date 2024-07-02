@@ -20,7 +20,6 @@
 import subprocess
 import time
 from gbp.errors import GbpError
-from gbp.format import format_b
 from gbp.paths import to_bin
 
 
@@ -49,7 +48,7 @@ class FastImport(object):
                 "Invalid argument when spawning git fast-import: %s" % err)
 
     def _do_data(self, fd, size):
-        self._out.write(format_b(b"data %d\n", size))
+        self._out.write(b"data %d\n" % size)
         while True:
             data = fd.read(self._bufsize)
             self._out.write(data)
@@ -59,7 +58,7 @@ class FastImport(object):
 
     def _do_file(self, filename, mode, fd, size):
         name = b"/".join(to_bin(filename).split(b'/')[1:])
-        self._out.write(format_b(b"M %d inline %s\n", mode, name))
+        self._out.write(b"M %d inline %s\n" % (mode, name))
         self._do_data(fd, size)
 
     def add_file(self, filename, fd, size, mode=m_regular):
@@ -88,9 +87,9 @@ class FastImport(object):
         """
         linktarget = to_bin(linktarget)
         linkname = to_bin(linkname)
-        self._out.write(format_b(b"M %d inline %s\n", self.m_symlink, linkname))
-        self._out.write(format_b(b"data %d\n", len(linktarget)))
-        self._out.write(format_b(b"%s\n", linktarget))
+        self._out.write(b"M %d inline %s\n" % (self.m_symlink, linkname))
+        self._out.write(b"data %d\n" % len(linktarget))
+        self._out.write(b"%s\n" % linktarget)
 
     def start_commit(self, branch, committer, msg):
         """
