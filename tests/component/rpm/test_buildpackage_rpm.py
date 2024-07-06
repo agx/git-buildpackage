@@ -18,13 +18,13 @@
 """Unit tests for the gbp-buildpackage-rpm tool"""
 
 import glob
-import mock
 import os
 import re
 import shutil
 import stat
 import subprocess
 
+from unittest import mock
 from nose import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 

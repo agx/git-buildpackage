@@ -18,7 +18,6 @@ Build-Depends:
  python3-coverage,
  python3-dateutil,
  python3-filelock,
- python3-mock,
  python3-nose,
  python3-nosexcover,
  python3-pkg-resources,

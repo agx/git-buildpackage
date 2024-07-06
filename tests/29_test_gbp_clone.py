@@ -2,7 +2,7 @@
 from gbp.scripts.clone import vcs_git_url
 
 import unittest
-from mock import patch
+from unittest.mock import patch
 
 from . testutils import skip_without_cmd
 

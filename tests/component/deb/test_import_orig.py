@@ -20,7 +20,7 @@ import os
 import shutil
 import tarfile
 
-from mock import patch, DEFAULT
+from unittest.mock import patch, DEFAULT
 
 from tests.component import (ComponentTestBase, ComponentTestGitRepository, skipUnless)
 from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL

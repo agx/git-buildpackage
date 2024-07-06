@@ -21,7 +21,7 @@ import shutil
 import urllib
 from nose.plugins.skip import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
-from mock import Mock
+from unittest.mock import Mock
 
 import gbp.scripts.import_srpm as import_srpm
 from gbp.git import GitRepository

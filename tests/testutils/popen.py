@@ -1,7 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
 import functools
-import mock
+from unittest import mock
 
 
 def patch_popen(stdout=b'', stderr=b'', returncode=1):

@@ -6,7 +6,7 @@ from gbp.scripts.buildpackage import (get_pbuilder_dist,
                                       GbpError)
 from . testutils import DebianGitTestRepo
 
-from mock import patch
+from unittest.mock import patch
 
 
 class TestGbpBuildpackageDep14(DebianGitTestRepo):
