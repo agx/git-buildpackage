@@ -67,7 +67,7 @@ def setup_requires():
     if os.getenv('WITHOUT_NOSETESTS'):
         return []
     else:
-        return ['nose>=0.11.1', 'coverage>=2.85', 'nosexcover>=1.0.7']
+        return ['nose>=0.11.1', 'coverage>=2.85']
 
 
 setup(name="gbp",

@@ -20,7 +20,8 @@ test:
 	export GIT_COMMITTER_EMAIL=$$GIT_AUTHOR_EMAIL;	\
 	export DEBEMAIL=$$GIT_AUTHOR_EMAIL;             \
 	PYTHONPATH=.					\
-	LC_ALL=$(TEST_LOCALE) python3 setup.py nosetests $(NOSE_OPTS)
+	LC_ALL=$(TEST_LOCALE)                           \
+	python3 -m pytest
 
 syntax-check:
 	flake8 $(FLAKE_OPTS)
