@@ -39,7 +39,7 @@ class DscFile(object):
                          r'\.diff.(gz|bz2))$')
     deb_tgz_re = re.compile(r'^\s\w+\s\d+\s+(?P<deb_tgz>[^_]+_[^_]+'
                             r'\.debian.tar.%s)$' % compressions)
-    format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*')
+    format_re = re.compile(r'Format:\s+(?P<format>[0-9.]+)\s*(?:\((?P<subtype>native|quilt|git)\))?')
     sig_re = re.compile(r'^\s\w+\s\d+\s+(?P<sig>[^_]+_[^_]+'
                         r'\.orig(-[a-z0-9-]+)?\.tar\.%s.asc)$' % compressions)
 
@@ -60,12 +60,27 @@ class DscFile(object):
         except UnicodeDecodeError:
             raise GbpError(f"{self.dscfile} is not UTF-8 encoded")
 
-        # Source format 1.0 can have non-native packages without a Debian revision:
-        # e.g. http://snapshot.debian.org/archive/debian/20090801T192339Z/pool/main/l/latencytop/latencytop_0.5.dsc
-        if self.pkgformat == "1.0" and self.diff:
-            self.native = False
-        elif not self.native and not self.debian_version:
-            raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
+        if self.pkgformat == "1.0":
+            self.native = self.diff == ""
+        else:
+            self.native = self.subtype == 'native'
+        if self.native:
+            # Source format 1.0 native versions may contain hyphens.  Examples:
+            # http://snapshot.debian.org/package/python3-defaults/3.10.6-1/
+            # http://archive.ubuntu.com/ubuntu/pool/main/p/pam/pam_1.1.8-3.6ubuntu2.18.04.6.dsc
+            self.upstream_version = self.full_version
+        else:
+            self.upstream_version, separator, self.debian_version = self.full_version.rpartition('-')
+            if separator:
+                if not self.debian_version:
+                    raise GbpError("Cannot parse Debian version number from '%s'" % self.dscfile)
+                if not self.upstream_version:
+                    raise GbpError("Cannot parse upstream version number from '%s'" % self.dscfile)
+            else:
+                # Source format 1.0 non-native versions without hyphen:
+                # http://snapshot.debian.org/package/latencytop/0.5/
+                self.upstream_version = self.full_version
+                self.debian_version = ''
 
         if not self.pkg:
             raise GbpError("Cannot parse package name from '%s'" % self.dscfile)
@@ -81,18 +96,9 @@ class DscFile(object):
 
         for line in f:
             m = self.version_re.match(line)
-            if m and not self.upstream_version:
-                if '-' in m.group('version'):
-                    self.debian_version = m.group('version').split("-")[-1]
-                    self.upstream_version = "-".join(m.group('version').split("-")[0:-1])
-                    self.native = False
-                else:
-                    self.native = True  # Debian native package
-                    self.upstream_version = m.group('version')
-                if m.group('epoch'):
-                    self.epoch = m.group('epoch')
-                else:
-                    self.epoch = ""
+            if m:
+                self.full_version = m.group('version')
+                self.epoch = m.group('epoch') or ''
                 continue
             m = self.pkg_re.match(line)
             if m:
@@ -122,6 +128,7 @@ class DscFile(object):
             m = self.format_re.match(line)
             if m:
                 self.pkgformat = m.group('format')
+                self.subtype = m.group('subtype') or ''
                 continue
 
         self.additional_tarballs = dict(add_tars)
