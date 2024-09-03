@@ -436,11 +436,21 @@ upstream-tag = v%(version%.%_)s
       <variablelist>
 	<varlistentry>
 	  <term>
+	    debian/latest
+	  </term>
+	  <listitem>
+	    <para>
+	      the latest &debian; packaging
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
 	    debian/&lt;release&gt;
 	  </term>
 	  <listitem>
 	    <para>
-	      the &debian; packaging for a release <emphasis>jessie</emphasis>,
+	      the &debian; packaging for a specific release or suite like <emphasis>jessie</emphasis>,
 	      <emphasis>stretch</emphasis>, <emphasis>sid</emphasis>, <emphasis>jessie</emphasis>, <emphasis>jessie-backports</emphasis>, <emphasis>jessie-security</emphasis>
 	      or <emphasis>experimental</emphasis>.
 	    </para>
