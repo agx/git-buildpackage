@@ -321,10 +321,12 @@ def unpack_tarballs(repo, name, sources, version, options):
 def set_bare_repo_options(options):
     """Modify options for import into a bare repository"""
     if options.pristine_tar or options.merge:
-        gbp.log.info("Bare repository: setting %s%s options"
+        gbp.log.info("Bare repository: setting %s%s%s options"
                      % (["", " '--no-pristine-tar'"][options.pristine_tar],
+                        ["", " '--no-pristine-lfs'"][options.pristine_lfs],
                         ["", " '--no-merge'"][options.merge]))
         options.pristine_tar = False
+        options.pristine_lfs = False
         options.merge = False
 
 
@@ -378,6 +380,8 @@ def build_parser(name):
                                      dest="upstream_tag")
     import_group.add_config_file_option(option_name="filter",
                                         dest="filters", action="append")
+    import_group.add_boolean_config_file_option(option_name="pristine-lfs",
+                                                dest="pristine_lfs")
     import_group.add_boolean_config_file_option(option_name="pristine-tar",
                                                 dest="pristine_tar")
     import_group.add_boolean_config_file_option(option_name="filter-pristine-tar",
@@ -514,9 +518,12 @@ def main(argv):
                                      create_missing_branch=is_empty,
                                      )
 
-            if options.pristine_tar:
+            if options.pristine_tar or options.pristine_lfs:
                 if pristine_orig:
-                    repo.rrr_branch(repo.pristine_tar_branch)
+                    if options.pristine_lfs:
+                        repo.rrr_branch(repo.pristine_lfs_branch)
+                    if options.pristine_tar:
+                        repo.rrr_branch(repo.pristine_tar_branch)
                     for source in sources:
                         # Enforce signature file exists with --upstream-signatures=on
                         if options.upstream_signatures.is_on() and not source.signaturefile:
@@ -526,9 +533,12 @@ def main(argv):
                     # For all practical purposes we're interested in pristine_orig's path
                     if pristine_orig != sources[0].path:
                         sources[0]._path = pristine_orig
-                    repo.create_pristine_tar_commits(import_branch, sources)
+                    if options.pristine_lfs:
+                        repo.create_pristine_lfs_commits(sources)
+                    if options.pristine_tar:
+                        repo.create_pristine_tar_commits(import_branch, sources)
                 else:
-                    gbp.log.warn("'%s' not an archive, skipping pristine-tar" % sources[0].path)
+                    gbp.log.warn("'%s' not an archive, skipping pristine-tar/pristine-lfs" % sources[0].path)
 
             repo.create_tag(name=tag,
                             msg="Upstream version %s" % version,
