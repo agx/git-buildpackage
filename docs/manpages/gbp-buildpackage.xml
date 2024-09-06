@@ -828,12 +828,12 @@
     <para>
       All options in the config files must be specified without the 'git-'
       prefix. So
-      e.g. <option>--git-debian-branch</option>=<replaceable>debian/sid</replaceable>
+      e.g. <option>--git-debian-branch</option>=<replaceable>debian/latest</replaceable>
       becomes in &gbp.conf;:
     </para>
     <programlisting>
       [buildpackage]
-      debian-branch = debian/sid
+      debian-branch = debian/latest
     </programlisting>
   </refsect1>
   <refsect1>

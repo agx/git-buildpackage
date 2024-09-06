@@ -1,5 +1,5 @@
 This package is maintained with git-buildpackage(1). It follows DEP-14
-for branch naming (e.g. using debian/sid for the current version
+for branch naming (e.g. using debian/latest for the current version
 in Debian unstable).
 
 It uses pristine-tar(1) to store enough information in git to generate

@@ -15,7 +15,7 @@
     the patch-queue branch.  The created branch will be named after
     the branch you imported from
     with <filename>patch-queue/</filename> prepended. So if you do
-    your &debian; packaging on <filename>debian/sid</filename> and do
+    your &debian; packaging on <filename>debian/latest</filename> and do
     a
   </para>
 <programlisting>
@@ -23,7 +23,7 @@
 </programlisting>
   <para>
     then the newly created branch will be
-    called <filename>patch-queue/debian/sid</filename>.
+    called <filename>patch-queue/debian/latest</filename>.
   </para>
 
   <para>On the patch-queue branch you can work on the commits using
@@ -78,7 +78,7 @@
       format package with patches
       in <filename>debian/patches</filename> parseable
       by <command>git-quiltimport(1)</command>. The git branch
-      currently checked out is named <filename>debian/sid</filename>.
+      currently checked out is named <filename>debian/latest</filename>.
     </para>
 
     <mediaobject>
@@ -106,11 +106,11 @@
   This will generate output like:
 <screen>
     gbp:info: Trying to apply patches at 'aaa1011bfd5aa74fea43620aae94709de05f80be'
-    gbp:info: 18 patches listed in 'debian/patches/series' imported on 'patch-queue/debian/sid'
+    gbp:info: 18 patches listed in 'debian/patches/series' imported on 'patch-queue/debian/latest'
 </screen>
   What happened is that &gbp-pq; imported each patch file and switched
   you to the newly created patch-queue branch
-  (<filename>patch-queue/debian/sid</filename>) automatically.
+  (<filename>patch-queue/debian/latest</filename>) automatically.
 </para>
 
   <mediaobject>
@@ -150,7 +150,7 @@
 <para>
   Once satisfied with the commits let's regenerate the patches
   in <filename>debian/patches/</filename> using &gbp-pq;. This will
-  switch you back to the branch <filename>debian/sid</filename> and
+  switch you back to the branch <filename>debian/latest</filename> and
   regenerate the patches using a method similar
   to <command>git-format-patch</command>:
 </para>

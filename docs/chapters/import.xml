@@ -343,9 +343,9 @@ upstream-tag = v%(version%.%_)s
 <programlisting>
   <command>git clone</command> --no-checkout -o upstream git://git.example.com/libgbp.git
   <command>cd</command> libgbp
-  <command>git checkout</command> -b debian/sid v1.0
+  <command>git checkout</command> -b debian/latest v1.0
 </programlisting>
-	  The above makes sure we have <replaceable>debian/sid</replaceable> for the &debian; packaging. We didn't create
+	  The above makes sure we have <replaceable>debian/latest</replaceable> for the &debian; packaging. We didn't create
 	  any <replaceable>upstream/*</replaceable> branches; they're not needed for the packaging and only need to be
 	  kept up to date. We started the branch at the commit corresponding to the tag <replaceable>v1.0</replaceable>.
       </para>
@@ -353,14 +353,14 @@ upstream-tag = v%(version%.%_)s
       <para>After adding the &debian; packaging, we build the package. This assumes you're using &pristine-tar;
 	  and upstream uses a version number format as described above:
 <programlisting>
-  <command>gbp buildpackage</command> --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s' --git-debian-branch=debian/sid
+  <command>gbp buildpackage</command> --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s' --git-debian-branch=debian/latest
 </programlisting>
 	  When updating to a new upstream version, we simply fetch from upstream and merge in the new tag. Afterwards, we
 	  update the changelog and build the package:
 <programlisting>
   <command>git fetch</command> upstream
   <command>git merge</command> v1.1
-  <command>gbp dch</command> --debian-branch=debian/sid --snapshot --auto debian/
+  <command>gbp dch</command> --debian-branch=debian/latest --snapshot --auto debian/
   &gbp-buildpackage; --git-ignore-new --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s'
 </programlisting>
 	  Note that the above &gbp-dch; call makes sure we only pickup changes in the <filename>debian/</filename>
@@ -368,9 +368,9 @@ upstream-tag = v%(version%.%_)s
 	  we need to tell &gbp-buildpackage; that the working directory is unclean via the <option>--git-ignore-new</option> option.
 	  Once everything looks good, commit the changelog and build a release version:
 <programlisting>
-  <command>gbp dch</command> --release --auto --debian-branch=debian/sid
+  <command>gbp dch</command> --release --auto --debian-branch=debian/latest
   <command>git commit</command> -m"Release 1.1-1" debian/changelog
-  &gbp-buildpackage; --git-upstream-tag='v%(version)s' --git-debian-branch=debian/sid
+  &gbp-buildpackage; --git-upstream-tag='v%(version)s' --git-debian-branch=debian/latest
 </programlisting>
 	  If you want to share your repository with others, you can use &gbp-create-remote-repo; and &gbp-pull; as usual.
 	</para>
