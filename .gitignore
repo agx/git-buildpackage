@@ -1,5 +1,4 @@
 *.pyc
-.noseids
 .coverage
 .tox/
 .ropeproject/
@@ -7,7 +6,6 @@ coverage.xml
 gbp/version.py
 build/
 gbp.egg-info/
-nosetests.xml
 *~
 *.sw?
 \#*#

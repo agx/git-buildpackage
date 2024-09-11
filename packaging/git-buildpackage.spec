@@ -84,6 +84,8 @@ BuildRequires:  perl-podlators
 BuildRequires:  python3-coverage
 BuildRequires:  python3-mock
 BuildRequires:  python3-nose
+BuildRequires:  python3-pytest
+BuildRequires:  python3-pycov
 BuildRequires:  git-core
 BuildRequires:  %{man_pkg_name}
 BuildRequires:  %{dpkg_pkg_name}
@@ -174,7 +176,7 @@ HAVE_SGML2X=0 make -C docs/
 GIT_CEILING_DIRECTORIES=%{_builddir} \
     GIT_AUTHOR_EMAIL=rpmbuild@example.com GIT_AUTHOR_NAME=rpmbuild \
     GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL \
-    %{__python3} setup.py nosetests
+    pytest
 %endif
 
 

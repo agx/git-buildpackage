@@ -17,9 +17,9 @@
 """Basic tests for the git-import-srpm tool"""
 
 import os
+import pytest
 import shutil
 import urllib
-from nose.plugins.skip import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 from unittest.mock import Mock
 
@@ -387,8 +387,8 @@ class TestPristineTar(ComponentTestBase):
     @classmethod
     def setUpClass(cls):
         if not os.path.exists('/usr/bin/pristine-tar'):
-            raise SkipTest('Skipping %s:%s as pristine-tar tool is not '
-                           'available' % (__name__, cls.__name__))
+            pytest.skip('Skipping %s:%s as pristine-tar tool is not '
+                        'available' % (__name__, cls.__name__))
         super(TestPristineTar, cls).setUpClass()
 
     def test_basic_import_pristine_tar(self):

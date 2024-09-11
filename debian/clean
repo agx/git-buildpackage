@@ -1,5 +1,3 @@
 build/
-coverage.xml
 gbp.egg-info/
 gbp/version.py
-nosetests.xml

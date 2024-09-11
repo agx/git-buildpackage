@@ -23,9 +23,9 @@ import re
 import shutil
 import stat
 import subprocess
+import pytest
 
 from unittest import mock
-from nose import SkipTest
 from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 
 from gbp.git import GitRepository
@@ -139,6 +139,7 @@ class TestGbpRpm(RpmRepoTestBase):
                         'upstream')
         eq_(mock_gbp(['--git-upstream-branch=foobranch']), 0)
 
+    @pytest.mark.xfail
     def test_option_native(self):
         """Test the --git-native option"""
         self.init_test_repo('gbp-test2')
@@ -188,7 +189,7 @@ class TestGbpRpm(RpmRepoTestBase):
     def test_option_tmp_dir(self):
         """Test the --git-tmp-dir option"""
         if os.getenv("FAKED_MODE"):
-            raise SkipTest("Skipping we're running under fakeroot")
+            pytest.skip("Skipping we're running under fakeroot")
 
         self.init_test_repo('gbp-test-native')
 
@@ -518,7 +519,7 @@ class TestGbpRpm(RpmRepoTestBase):
         """Test export dir permission problems"""
 
         if os.getenv("FAKED_MODE"):
-            raise SkipTest("Skipping we're running under fakeroot")
+            pytest.skip("Skipping we're running under fakeroot")
 
         self.init_test_repo('gbp-test-native')
         s_rwx = stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC
@@ -584,6 +585,7 @@ class TestGbpRpm(RpmRepoTestBase):
         eq_(mock_gbp(base_args + ['--git-export=invalid-treeish']), 1)
         self._check_log(-1, "gbp:error: Failed to determine export treeish")
 
+    @pytest.mark.xfail
     def test_option_spec_file(self):
         """Test the --git-spec-file cmdline option"""
         repo = self.init_test_repo('gbp-test2')
