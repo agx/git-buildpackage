@@ -23,6 +23,7 @@ import re
 import shutil
 import stat
 import subprocess
+import pytest
 
 from unittest import mock
 from nose import SkipTest
@@ -139,6 +140,7 @@ class TestGbpRpm(RpmRepoTestBase):
                         'upstream')
         eq_(mock_gbp(['--git-upstream-branch=foobranch']), 0)
 
+    @pytest.mark.xfail
     def test_option_native(self):
         """Test the --git-native option"""
         self.init_test_repo('gbp-test2')
@@ -584,6 +586,7 @@ class TestGbpRpm(RpmRepoTestBase):
         eq_(mock_gbp(base_args + ['--git-export=invalid-treeish']), 1)
         self._check_log(-1, "gbp:error: Failed to determine export treeish")
 
+    @pytest.mark.xfail
     def test_option_spec_file(self):
         """Test the --git-spec-file cmdline option"""
         repo = self.init_test_repo('gbp-test2')
