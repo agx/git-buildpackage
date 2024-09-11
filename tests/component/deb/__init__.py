@@ -26,6 +26,6 @@ DEB_TEST_DATA_DIR = os.path.abspath(DEB_TEST_SUBMODULE)
 DEB_TEST_DOWNLOAD_URL = 'https://git.sigxcpu.org/cgit/gbp/deb-testdata/plain/'
 
 
-def setup():
+def setup_module():
     """Test Module setup"""
     ComponentTestGitRepository.check_testdata(DEB_TEST_SUBMODULE)
