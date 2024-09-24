@@ -24,10 +24,10 @@ git-buildpackage (0.9.35) unstable; urgency=medium
     Closes: #1080224
     Helps: #1018367
   * [a553f93] rpm: Mark two tests as xfail.
-    Needs debugging why they regressed as there werent any changes in that
+    Needs debugging why they regressed as there weren't any changes in that
     area recently.
-  * [54bec6e] tests/component: Fix skipping tests when submodules are no present.
-    Rework the logic to work with pytest instead of nose
+  * [54bec6e] tests/component: Fix skipping tests when submodules are no
+    present.  Rework the logic to work with pytest instead of nose
   * [3a87c05] tests/component/rpm: Fix skipping tests with pytest.
     Rework the logic to work with pytest instead of nose
 
