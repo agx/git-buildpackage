@@ -1,3 +1,44 @@
+git-buildpackage (0.9.35) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [09d65cb] Use pythons builtin mock
+  * [360222d] d/control: Let Vcs-* point to salsa
+  * [ca70762] import: Use debian/latest.
+    It's the recommended layout
+  * [4dc9a6c] docs: Prefer debian/latest over debian/sid.
+    This is more widespread nowadays and ensures the latest upstream
+    version is always in the repositories default branch.
+  * [a88e01e] Drop completely outdated tox.ini
+  * [5c8f1af] Drop travis CI file.
+    We use salsa's CI and haven't used travis CI since ages.
+  * [8e494cb] tests: Merge the repository doctests.
+    We use a single doctest as module scoped fixtures can't be used with
+    doctests in pytest
+  * [d21fead] tests: Merge the pristine-tar doctests.
+    We use a single doctest as module scoped fixtures can't be used with
+    doctests in pytest
+  * [33f4884] build: Run tests through pytest.
+    We still use nose's assertions. See
+    https://github.com/pytest-dev/nose2pytest on how to convert those in the
+    future so can't drop the dependency yet.
+    Closes: #1080224
+    Helps: #1018367
+  * [a553f93] rpm: Mark two tests as xfail.
+    Needs debugging why they regressed as there werent any changes in that
+    area recently.
+  * [54bec6e] tests/component: Fix skipping tests when submodules are no present.
+    Rework the logic to work with pytest instead of nose
+  * [3a87c05] tests/component/rpm: Fix skipping tests with pytest.
+    Rework the logic to work with pytest instead of nose
+
+  [ Ferenc Wágner ]
+  * [aa468c0] dscfile.py: decide native/non-native based on diff presence, not
+    version format. Source format 1.0 native packages with a hyphen in their
+    version number were mistaken by the original code for non-native.
+  * [1fecdcd] 12_test_deb: add test for native 1.0 DSC with Debian revision
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 24 Sep 2024 07:59:14 +0200
+
 git-buildpackage (0.9.34) unstable; urgency=medium
 
   [ Otto Kekäläinen ]
