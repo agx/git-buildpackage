@@ -23,8 +23,6 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import ok_
-
 from gbp.scripts.clone import main as clone
 from gbp.scripts.setup_gitattributes import main as setup_gitattributes
 
@@ -100,7 +98,7 @@ class TestSetupGitattributes(ComponentTestBase):
         os.chdir(cloned.path)
         setup_gitattributes(['arg0'])
 
-        ok_(os.path.exists(attrs_file), "%s is missing" % attrs_file)
+        assert os.path.exists(attrs_file), "%s is missing" % attrs_file
 
         with open(attrs_file) as f:
             attrs = sorted(f.read().splitlines())
@@ -128,7 +126,7 @@ class TestSetupGitattributes(ComponentTestBase):
         os.chdir(cloned.path)
         setup_gitattributes(['arg0', '--verbose'])
 
-        ok_(os.path.exists(attrs_file), "%s is missing" % attrs_file)
+        assert os.path.exists(attrs_file), "%s is missing" % attrs_file
 
         with open(attrs_file) as f:
             attrs = sorted(f.read().splitlines())
@@ -163,7 +161,7 @@ class TestSetupGitattributes(ComponentTestBase):
         os.chdir(cloned.path)
         setup_gitattributes(['arg0', '--verbose'])
 
-        ok_(os.path.exists(attrs_file), "%s is missing" % attrs_file)
+        assert os.path.exists(attrs_file), "%s is missing" % attrs_file
 
         with open(attrs_file) as f:
             attrs = sorted(f.read().splitlines())

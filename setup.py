@@ -64,10 +64,10 @@ def parse_and_fetch_version():
 
 
 def setup_requires():
-    if os.getenv('WITHOUT_NOSETESTS'):
+    if os.getenv('WITHOUT_PYTESTS'):
         return []
     else:
-        return ['nose>=0.11.1', 'coverage>=2.85']
+        return ['pytest', 'coverage>=2.85']
 
 
 setup(name="gbp",

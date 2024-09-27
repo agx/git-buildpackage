@@ -24,8 +24,6 @@ from tests.component.deb.fixtures import RepoFixtures
 
 from gbp.scripts.import_ref import main as import_ref
 
-from nose.tools import ok_, eq_
-
 
 def _dsc_file(pkg, version, dir='dsc-3.0'):
     return os.path.join(DEB_TEST_DATA_DIR, dir, '%s_%s.dsc' % (pkg, version))
@@ -49,39 +47,53 @@ class TestImportRef(ComponentTestBase):
         """
         Test that importing a upstream git from a branch works
         """
-        eq_(len(repo.get_commits()), 2)
-        ok_(import_ref(['arg0',
-                        '--upstream-tree=BRANCH',
-                        '--upstream-tag=theupstream/%(version)s',
-                        '-uaversion']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
-                               tags=['debian/2.6-2', 'theupstream/aversion', 'upstream/2.6'])
-        eq_(len(repo.get_commits()), 3)
+        assert len(repo.get_commits()) == 2
+        assert (
+            import_ref(
+                [
+                    "arg0",
+                    "--upstream-tree=BRANCH",
+                    "--upstream-tag=theupstream/%(version)s",
+                    "-uaversion",
+                ]
+            ) == 0
+        )
+        self._check_repo_state(
+            repo,
+            "master",
+            self.def_branches,
+            tags=["debian/2.6-2", "theupstream/aversion", "upstream/2.6"],
+        )
+        assert len(repo.get_commits()) == 3
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_from_version(self, repo):
         """
         Test that importing a upstream git from a given version works
         """
-        eq_(len(repo.get_commits()), 2)
-        ok_(import_ref(['arg0',
-                        '--upstream-tree=VERSION',
-                        '--upstream-tag=upstream/%(version)s',
-                        '-u2.6']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
-                               tags=['debian/2.6-2', 'upstream/2.6'])
-        eq_(len(repo.get_commits()), 3)
+        assert len(repo.get_commits()) == 2
+        assert (
+            import_ref(
+                ["arg0", "--upstream-tree=VERSION", "--upstream-tag=upstream/%(version)s", "-u2.6"]
+            ) == 0
+        )
+        self._check_repo_state(
+            repo, "master", self.def_branches, tags=["debian/2.6-2", "upstream/2.6"]
+        )
+        assert len(repo.get_commits()) == 3
 
     @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--pristine-tar'])
     def test_from_commitish(self, repo):
         """
         Test that importing a upstream git from another commit works
         """
-        eq_(len(repo.get_commits()), 2)
-        ok_(import_ref(['arg0',
-                        '--upstream-tree=upstream',
-                        '--upstream-tag=upstream/%(version)s',
-                        '-u2.6']) == 0)
-        self._check_repo_state(repo, 'master', self.def_branches,
-                               tags=['debian/2.6-2', 'upstream/2.6'])
-        eq_(len(repo.get_commits()), 3)
+        assert len(repo.get_commits()) == 2
+        assert (
+            import_ref(
+                ["arg0", "--upstream-tree=upstream", "--upstream-tag=upstream/%(version)s", "-u2.6"]
+            ) == 0
+        )
+        self._check_repo_state(
+            repo, "master", self.def_branches, tags=["debian/2.6-2", "upstream/2.6"]
+        )
+        assert len(repo.get_commits()) == 3

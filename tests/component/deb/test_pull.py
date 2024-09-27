@@ -22,8 +22,6 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import eq_
-
 from gbp.scripts.clone import main as clone
 from gbp.scripts.pull import main as pull
 
@@ -37,8 +35,8 @@ class TestPull(ComponentTestBase):
         dest = os.path.join(self._tmpdir, 'cloned_repo')
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
-        eq_(pull(['argv0', 'origin']), 0)
+        self._check_repo_state(cloned, "master", ["master"])
+        assert pull(["argv0", "origin"]) == 0
         assert len(repo.get_commits()) == 1
 
     @RepoFixtures.native()
@@ -47,8 +45,8 @@ class TestPull(ComponentTestBase):
         dest = os.path.join(self._tmpdir, 'cloned_repo')
         clone(['arg0', repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
-        self._check_repo_state(cloned, 'master', ['master'])
-        eq_(pull(['argv0']), 0)
+        self._check_repo_state(cloned, "master", ["master"])
+        assert pull(["argv0"]) == 0
         assert len(repo.get_commits()) == 1
 
     @RepoFixtures.quilt30()
@@ -69,16 +67,16 @@ class TestPull(ComponentTestBase):
         repo.commit_dir(tmp_workdir, 'New commit in foob', branch='foob')
 
         # Check that the branch is not updated when --all is not used
-        eq_(pull(['argv0']), 0)
-        eq_(len(cloned.get_commits(until='master')), 3)
-        eq_(len(cloned.get_commits(until='upstream')), 1)
-        eq_(len(cloned.get_commits(until='foob')), 2)
+        assert pull(["argv0"]) == 0
+        assert len(cloned.get_commits(until="master")) == 3
+        assert len(cloned.get_commits(until="upstream")) == 1
+        assert len(cloned.get_commits(until="foob")) == 2
 
         # Check that --all updates all branches
-        repo.commit_dir(tmp_workdir, 'New commit in upstream', branch='upstream')
-        eq_(pull(['argv0', '--all']), 0)
-        eq_(len(cloned.get_commits(until='foob')), 3)
-        eq_(len(cloned.get_commits(until='upstream')), 2)
+        repo.commit_dir(tmp_workdir, "New commit in upstream", branch="upstream")
+        assert pull(["argv0", "--all"]) == 0
+        assert len(cloned.get_commits(until="foob")) == 3
+        assert len(cloned.get_commits(until="upstream")) == 2
 
     @RepoFixtures.native()
     def test_tracking(self, repo):
@@ -89,18 +87,18 @@ class TestPull(ComponentTestBase):
         os.chdir(cloned.path)
         self._check_repo_state(cloned, 'master', ['master'])
         # Pull initially
-        eq_(pull(['argv0']), 0)
+        assert pull(["argv0"]) == 0
         assert len(repo.get_commits()) == 1
         self._check_repo_state(cloned, 'master', ['master'])
 
         # Pick up missing branches (none exist yet)
-        eq_(pull(['argv0', '--track-missing']), 0)
+        assert pull(["argv0", "--track-missing"]) == 0
         assert len(repo.get_commits()) == 1
         self._check_repo_state(cloned, 'master', ['master'])
 
         # Pick up missing branches
-        repo.create_branch('pristine-tar')
-        repo.create_branch('upstream')
-        eq_(pull(['argv0', '--track-missing', '--pristine-tar']), 0)
+        repo.create_branch("pristine-tar")
+        repo.create_branch("upstream")
+        assert pull(["argv0", "--track-missing", "--pristine-tar"]) == 0
         assert len(repo.get_commits()) == 1
         self._check_repo_state(cloned, 'master', ['master', 'pristine-tar', 'upstream'])

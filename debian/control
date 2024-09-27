@@ -18,7 +18,7 @@ Build-Depends:
  python3-pytest-cov,
  python3-dateutil,
  python3-filelock,
- python3-nose,
+ python3-pytest,
  python3-pkg-resources,
  python3-rpm,
  python3-setuptools,

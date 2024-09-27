@@ -26,8 +26,6 @@ from tests.testutils import skip_without_cmd
 import gbp.scripts.dch
 from gbp.scripts.dch import main as dch
 
-from nose.tools import eq_, ok_
-
 
 def _dsc_file(pkg, version, dir='dsc-3.0'):
     return os.path.join(DEB_TEST_DATA_DIR, dir, '%s_%s.dsc' % (pkg, version))
@@ -46,8 +44,9 @@ class TestDch(ComponentTestBase):
     def test_user_customizations(self, repo):
         os.chdir(repo.path)
         # Non-existent customization file
-        ok_(dch(['arg0', '--customizations=customizations.py']) == 1,
-            "dch did no fail as expected")
+        assert (
+            dch(["arg0", "--customizations=customizations.py"]) == 1
+        ), "dch did no fail as expected"
 
         # Create user customizations file
         with open('customizations.py', 'w') as fobj:
@@ -57,16 +56,17 @@ class TestDch(ComponentTestBase):
         # Add the file so we have a change
         repo.add_files(['customizations.py'])
         repo.commit_all(msg="test customizations")
-        ok_(dch(['arg0', '-S', '-a', '--customizations=customizations.py']) == 0,
-            "dch did no succeed as expected")
-        with open("debian/changelog", encoding='utf-8') as f:
+        assert (
+            dch(["arg0", "-S", "-a", "--customizations=customizations.py"]) == 0
+        ), "dch did no succeed as expected"
+        with open("debian/changelog", encoding="utf-8") as f:
             cl = f.read()
-        ok_('* testentry\n' in cl)
-        del gbp.scripts.dch.user_customizations['format_changelog_entry']
+        assert "* testentry\n" in cl
+        del gbp.scripts.dch.user_customizations["format_changelog_entry"]
 
     @RepoFixtures.native()
     def test_postedit_hook(self, repo):
         os.chdir(repo.path)
-        eq_(dch(['arg0', '-N', '1.2.3', '--postedit', 'echo $GBP_DEBIAN_VERSION > foo.txt']), 0)
-        with open('foo.txt') as f:
-            eq_(f.read(), '1.2.3\n')
+        assert dch(["arg0", "-N", "1.2.3", "--postedit", "echo $GBP_DEBIAN_VERSION > foo.txt"]) == 0
+        with open("foo.txt") as f:
+            assert f.read() == "1.2.3\n"

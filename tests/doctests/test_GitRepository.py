@@ -29,7 +29,10 @@ def setup_module():
 
 def teardown_module():
     for s in subdirs:
-        del dirs[s]
+        try:
+            del dirs[s]
+        except KeyError:
+            pass
     context.teardown()
 
 

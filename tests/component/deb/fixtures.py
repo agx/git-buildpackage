@@ -22,8 +22,6 @@ from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
 
-from nose.tools import eq_, ok_
-
 from gbp.command_wrappers import UnpackTarArchive
 from gbp.git import GitRepository
 from gbp.deb.dscfile import DscFile
@@ -103,7 +101,7 @@ class RepoFixtures(object):
         """Import a Debian native package, verify and change into repo"""
         repo = cls._import_one(dsc, opts)
         ComponentTestBase._check_repo_state(repo, 'master', ['master'])
-        eq_(len(repo.get_commits()), 1)
+        assert len(repo.get_commits()) == 1
         os.chdir(repo.path)
         return repo
 
@@ -115,7 +113,7 @@ class RepoFixtures(object):
         if opts and '--pristine-tar' in opts:
             expected_branches.append('pristine-tar')
         ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
-        eq_(len(repo.get_commits()), 2)
+        assert len(repo.get_commits()) == 2
         os.chdir(repo.path)
         return repo
 
@@ -127,9 +125,9 @@ class RepoFixtures(object):
         if opts and '--pristine-tar' in opts:
             expected_branches.append('pristine-tar')
         ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
-        eq_(len(repo.get_commits()), 2)
+        assert len(repo.get_commits()) == 2
         os.chdir(repo.path)
-        ok_(os.path.exists('./foo'))
+        assert os.path.exists("./foo")
         return repo
 
     @classmethod
@@ -141,6 +139,6 @@ class RepoFixtures(object):
         repo.commit_files('.', msg="debian dir")
         expected_branches = ['master']
         ComponentTestBase._check_repo_state(repo, 'master', expected_branches)
-        eq_(len(repo.get_commits()), 1)
+        assert len(repo.get_commits()) == 1
         os.chdir(repo.path)
         return repo

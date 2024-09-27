@@ -17,8 +17,9 @@
 """Test RPM changelog classes and parsing"""
 
 from datetime import datetime
-from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
 from tempfile import NamedTemporaryFile
+
+import pytest
 
 from gbp.rpm.changelog import _ChangelogHeader, _ChangelogEntry
 from gbp.rpm.changelog import _ChangelogSection, Changelog
@@ -34,13 +35,13 @@ class TestChangelogHeader(object):
         time = datetime(2014, 1, 29, 12, 13, 14)
         header = _ChangelogHeader(RpmPkgPolicy, time, name="John Doe",
                                   email="user@host.com", revision="1")
-        eq_(str(header), "* Wed Jan 29 2014 John Doe <user@host.com> - 1\n")
+        assert str(header) == "* Wed Jan 29 2014 John Doe <user@host.com> - 1\n"
 
     def test_str_format_err(self):
         """Test missing properties"""
         time = datetime(2014, 1, 29, 12, 13, 14)
         header = _ChangelogHeader(RpmPkgPolicy, time, name="John", revision="1")
-        with assert_raises(ChangelogError):
+        with pytest.raises(ChangelogError):
             str(header)
 
     def test_container(self):
@@ -48,11 +49,11 @@ class TestChangelogHeader(object):
         header = _ChangelogHeader(RpmPkgPolicy, datetime(2014, 1, 1), name="N",
                                   revision="1")
         # Test __getitem__()
-        eq_(header['name'], "N")
-        eq_(header['email'], None)
+        assert header["name"] == "N"
+        assert header["email"] is None
         # Test __contains__()
-        ok_('name' in header)
-        ok_('foo' not in header)
+        assert "name" in header
+        assert "foo" not in header
 
 
 class TestChangelogEntry(object):
@@ -62,7 +63,7 @@ class TestChangelogEntry(object):
         """Basic test"""
         entry = _ChangelogEntry(RpmPkgPolicy, author="John Doe",
                                 text="- foo\n  bar")
-        eq_(str(entry), "- foo\n  bar\n")
+        assert str(entry) == "- foo\n  bar\n"
 
 
 class TestChangelogSection(object):
@@ -79,7 +80,7 @@ class TestChangelogSection(object):
     def test_str_format(self):
         """Basic test"""
         section = self.default_sect
-        eq_(str(section), "* Wed Jan 29 2014 J. D. <u@h> - 1\n- my change\n\n")
+        assert str(section) == "* Wed Jan 29 2014 J. D. <u@h> - 1\n- my change\n\n"
 
     def test_append_entry(self):
         """Test add_entry() method"""
@@ -87,16 +88,18 @@ class TestChangelogSection(object):
         entry = _ChangelogEntry(RpmPkgPolicy, author="",
                                 text="- another\n  change")
         new_entry = section.append_entry(entry)
-        eq_(str(section), "* Wed Jan 29 2014 J. D. <u@h> - 1\n- my change\n"
-                          "- another\n  change\n\n")
-        eq_(new_entry, section.entries[-1])
+        assert (
+            str(section) == "* Wed Jan 29 2014 J. D. <u@h> - 1\n- my change\n"
+            "- another\n  change\n\n"
+        )
+        assert new_entry == section.entries[-1]
 
     def test_set_header(self):
         """Test set_header() method"""
         section = self.default_sect
         time = datetime(2014, 1, 30)
         section.set_header(time=time, name="Jane", email="u@h", revision="1.1")
-        eq_(str(section), "* Thu Jan 30 2014 Jane <u@h> - 1.1\n- my change\n\n")
+        assert str(section) == "* Thu Jan 30 2014 Jane <u@h> - 1.1\n- my change\n\n"
 
 
 class TestChangelogParser(object):
@@ -153,27 +156,27 @@ class TestChangelogParser(object):
         """Basic tests for successful parsing"""
         # Raw parsing of changelog
         changelog = self.parser.raw_parse_string(self.cl_default_style)
-        eq_(len(changelog.sections), 3)
+        assert len(changelog.sections) == 3
 
         # Check that re-creating the changelog doesn't mangle it
-        eq_(str(changelog), self.cl_default_style)
+        assert str(changelog) == self.cl_default_style
 
         # Parse and check section
         section = self.parser.parse_section(changelog.sections[0])
 
-        eq_(section.header['time'], datetime(2014, 1, 29))
-        eq_(section.header['name'], "Markus Lehtonen")
-        eq_(section.header['email'], "markus.lehtonen@linux.intel.com")
-        eq_(section.header['revision'], "0.3-1")
+        assert section.header["time"] == datetime(2014, 1, 29)
+        assert section.header["name"] == "Markus Lehtonen"
+        assert section.header["email"] == "markus.lehtonen@linux.intel.com"
+        assert section.header["revision"] == "0.3-1"
 
         # Check that re-creating section doesn't mangle it
-        eq_(str(section), changelog.sections[0])
+        assert str(section) == changelog.sections[0]
 
     def test_parse_authors(self):
         """Test parsing of authors from changelog entries"""
         section = self.parser.parse_section(self.cl_with_authors)
-        eq_(section.entries[0].author, "Markus Lehtonen")
-        eq_(section.entries[1].author, "John Doe")
+        assert section.entries[0].author == "Markus Lehtonen"
+        assert section.entries[1].author == "John Doe"
 
     def test_parse_changelog_file(self):
         """Basic tests for parsing a file"""
@@ -183,28 +186,28 @@ class TestChangelogParser(object):
         tmpfile.file.flush()
         changelog = self.parser.raw_parse_file(tmpfile.name)
         # Check parsing results
-        eq_(len(changelog.sections), 3)
-        eq_(str(changelog), self.cl_default_style)
+        assert len(changelog.sections) == 3
+        assert str(changelog) == self.cl_default_style
         # Cleanup
         tmpfile.close()
 
     def test_parse_section_fail(self):
         """Basic tests for failures of changelog section parsing"""
-        with assert_raises(ChangelogError):
+        with pytest.raises(ChangelogError):
             self.parser.parse_section(self.cl_broken_header_1)
 
-        with assert_raises(ChangelogError):
+        with pytest.raises(ChangelogError):
             self.parser.parse_section(self.cl_broken_header_2)
 
-        with assert_raises(ChangelogError):
+        with pytest.raises(ChangelogError):
             self.parser.parse_section(self.cl_broken_header_3)
 
-        with assert_raises(ChangelogError):
+        with pytest.raises(ChangelogError):
             self.parser.parse_section(self.cl_broken_header_4)
 
     def test_parse_changelog_fail(self):
         """Basic tests for changelog parsing failures"""
-        with assert_raises(ChangelogError):
+        with pytest.raises(ChangelogError):
             self.parser.raw_parse_string(self.cl_broken_header_5)
 
 
@@ -214,7 +217,7 @@ class TestChangelog(object):
     def basic_test(self):
         """Test basic initialization"""
         changelog = Changelog(RpmPkgPolicy)
-        eq_(str(changelog), "")
+        assert str(changelog) == ""
 
     def test_add_section(self):
         """Test the add_section() method"""
@@ -222,5 +225,5 @@ class TestChangelog(object):
         time = datetime(2014, 1, 30)
         new_section = changelog.add_section(time=time, name="Jane Doe",
                                             email="j@doe.com", revision="1.2")
-        eq_(str(changelog), "* Thu Jan 30 2014 Jane Doe <j@doe.com> - 1.2\n\n")
-        eq_(new_section, changelog.sections[0])
+        assert str(changelog) == "* Thu Jan 30 2014 Jane Doe <j@doe.com> - 1.2\n\n"
+        assert new_section == changelog.sections[0]

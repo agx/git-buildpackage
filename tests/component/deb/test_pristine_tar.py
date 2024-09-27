@@ -24,8 +24,6 @@ from tests.component.deb import DEB_TEST_DATA_DIR
 
 from gbp.scripts.pristine_tar import main as pristine_tar
 
-from nose.tools import ok_, eq_
-
 
 def _dsc_file(pkg, version, dir='dsc-3.0'):
     return os.path.join(DEB_TEST_DATA_DIR, dir, '%s_%s.dsc' % (pkg, version))
@@ -49,9 +47,9 @@ class TestPristineTar(ComponentTestBase):
         """
         Test that adding pristine-tar commit works
         """
-        orig = self._orig('2.6')
-        ok_(pristine_tar(['arg0', 'commit', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+        orig = self._orig("2.6")
+        assert pristine_tar(["arg0", "commit", orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream", "pristine-tar"])
 
     @RepoFixtures.quilt30(_dsc_file('hello-debhelper',
                                     '2.8-1',
@@ -61,11 +59,11 @@ class TestPristineTar(ComponentTestBase):
         """
         Test that adding pristine-tar commits with additional tarballs works
         """
-        orig = self._orig('2.8', dir='dsc-3.0-additional-tarballs')
-        ok_(pristine_tar(['arg0', 'commit', '--component=foo', orig]) == 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream', 'pristine-tar'])
+        orig = self._orig("2.8", dir="dsc-3.0-additional-tarballs")
+        assert pristine_tar(["arg0", "commit", "--component=foo", orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream", "pristine-tar"])
 
         ptars = [('hello-debhelper_2.8.orig.tar.gz', 'pristine-tar'),
                  ('hello-debhelper_2.8.orig-foo.tar.gz', 'pristine-tar^')]
         for f, w in ptars:
-            eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
+            assert repo.get_subject(w) == "pristine-tar data for %s" % f

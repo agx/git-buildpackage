@@ -20,7 +20,6 @@ import os
 import shutil
 import sys
 import subprocess
-from nose.tools import eq_
 from io import StringIO
 
 from gbp.scripts.import_orig import main as import_orig
@@ -90,11 +89,11 @@ class TestImportOrig(ImportOrigTestBase):
         origs = [os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2'),
                  os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')]
         # Test empty args
-        eq_(mock_import([]), 1)
+        assert mock_import([]) == 1
         self._clear_log()
 
         # Test multiple archives
-        eq_(mock_import([] + origs), 1)
+        assert mock_import([] + origs) == 1
         self._check_log(0, 'gbp:error: More than one archive specified')
         self._clear_log()
 
@@ -105,41 +104,41 @@ class TestImportOrig(ImportOrigTestBase):
         """Test importing when not in a git repository"""
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
         # Import should fail
-        eq_(mock_import([orig]), 1)
+        assert mock_import([orig]) == 1
         self._check_log(0, 'gbp:error: %s is not a git repository' %
                         os.path.abspath(os.getcwd()))
 
     def test_invalid_config_file(self):
         """Test invalid config file"""
         # Create dummy invalid config file and try to import (should fail)
-        ComponentTestGitRepository.create('.')
-        with open('.gbp.conf', 'w') as conffd:
-            conffd.write('foobar\n')
-        eq_(mock_import(['foo']), 3)
-        self._check_log(0, 'gbp:error: File contains no section headers.')
+        ComponentTestGitRepository.create(".")
+        with open(".gbp.conf", "w") as conffd:
+            conffd.write("foobar\n")
+        assert mock_import(["foo"]) == 3
+        self._check_log(0, "gbp:error: File contains no section headers.")
 
     def test_import_tars(self):
         """Test importing of tarballs, with and without merging"""
         repo = ComponentTestGitRepository.create('.')
         # Import first version, with --merge
-        orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
-        eq_(mock_import(['--merge', orig]), 0)
-        files = ['Makefile', 'README', 'dummy.sh']
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='master')), 1)
-        eq_(len(repo.get_commits(until='upstream')), 1)
-        eq_(repo.get_tags(), ['upstream/1.0'])
+        orig = os.path.join(DATA_DIR, "gbp-test-1.0.tar.bz2")
+        assert mock_import(["--merge", orig]) == 0
+        files = ["Makefile", "README", "dummy.sh"]
+        self._check_repo_state(repo, "master", ["master", "upstream"], files)
+        assert len(repo.get_commits(until="master")) == 1
+        assert len(repo.get_commits(until="upstream")) == 1
+        assert repo.get_tags() == ["upstream/1.0"]
 
         # Import second version, don't merge to master branch
-        orig = os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')
-        eq_(mock_import(['--no-merge', orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='master')), 1)
-        eq_(len(repo.get_commits(until='upstream')), 2)
-        eq_(repo.get_tags(), ['upstream/1.0', 'upstream/1.1'])
+        orig = os.path.join(DATA_DIR, "gbp-test-1.1.tar.bz2")
+        assert mock_import(["--no-merge", orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream"], files)
+        assert len(repo.get_commits(until="master")) == 1
+        assert len(repo.get_commits(until="upstream")) == 2
+        assert repo.get_tags() == ["upstream/1.0", "upstream/1.1"]
         # Check that master is based on v1.0
-        sha1 = repo.rev_parse("%s^0" % 'upstream/1.0')
-        eq_(repo.get_merge_base('master', 'upstream'), sha1)
+        sha1 = repo.rev_parse("%s^0" % "upstream/1.0")
+        assert repo.get_merge_base("master", "upstream") == sha1
 
     def test_import_zip(self):
         """Test importing of zip archive"""
@@ -148,21 +147,21 @@ class TestImportOrig(ImportOrigTestBase):
         orig = os.path.join(DATA_DIR, 'gbp-test-native-1.0.zip')
         files = ['.gbp.conf', 'packaging/gbp-test-native.spec',
                  'dummy.sh', 'README', 'Makefile']
-        eq_(mock_import([orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(repo.get_tags(), ['upstream/1.0'])
+        assert mock_import([orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream"], files)
+        assert repo.get_tags() == ["upstream/1.0"]
 
     def test_branch_update(self):
         """Check that the working copy is kept in sync with branch HEAD"""
-        repo = ComponentTestGitRepository.create('.')
-        orig1 = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
-        orig2 = os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')
-        eq_(mock_import(['--merge', orig1]), 0)
-        repo.set_branch('upstream')
-        eq_(mock_import([orig2]), 0)
-        files = ['Makefile', 'README', 'dummy.sh']
-        self._check_repo_state(repo, 'upstream', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='upstream')), 2)
+        repo = ComponentTestGitRepository.create(".")
+        orig1 = os.path.join(DATA_DIR, "gbp-test-1.0.tar.bz2")
+        orig2 = os.path.join(DATA_DIR, "gbp-test-1.1.tar.bz2")
+        assert mock_import(["--merge", orig1]) == 0
+        repo.set_branch("upstream")
+        assert mock_import([orig2]) == 0
+        files = ["Makefile", "README", "dummy.sh"]
+        self._check_repo_state(repo, "upstream", ["master", "upstream"], files)
+        assert len(repo.get_commits(until="upstream")) == 2
 
     def test_import_dir(self):
         """Test importing of unpacked sources"""
@@ -173,31 +172,32 @@ class TestImportOrig(ImportOrigTestBase):
         os.chdir('myrepo')
 
         # Import dir first, fool the version to be 0.9
-        eq_(mock_import(['../gbp-test'], 'gbp-test\n0.9\n'), 0)
-        files = ['Makefile', 'README', 'dummy.sh']
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
+        assert mock_import(["../gbp-test"], "gbp-test\n0.9\n") == 0
+        files = ["Makefile", "README", "dummy.sh"]
+        self._check_repo_state(repo, "master", ["master", "upstream"], files)
 
         # Import from unpacked and check that the contents is the same
-        eq_(mock_import([orig]), 0)
-        eq_(len(repo.diff('upstream/0.9', 'upstream/1.0')), 0)
+        assert mock_import([orig]) == 0
+        assert len(repo.diff("upstream/0.9", "upstream/1.0")) == 0
 
     def test_basic_filtering(self):
         """Basic test for import filter"""
         repo = ComponentTestGitRepository.create('.')
         orig = os.path.join(DATA_DIR, 'gbp-test-1.1.with_dotgit.tar.bz2')
         # Try importing a tarball with git metadata
-        eq_(mock_import([orig], 'gbp-test\n1.0\n'), 1)
-        self._check_log(0, 'gbp:error: The orig tarball contains .git')
+        assert mock_import([orig], "gbp-test\n1.0\n") == 1
+        self._check_log(0, "gbp:error: The orig tarball contains .git")
 
         # Try filtering out .git directory and shell scripts
-        eq_(mock_import(['--filter=.git', '--filter=*.sh', '--merge', orig],
-                        'gbp-test\n1.0\n'), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
-        eq_(len(repo.get_commits(until='master')), 1)
-        eq_(len(repo.get_commits(until='upstream')), 1)
-        eq_(repo.get_tags(), ['upstream/1.0'])
-        added_files = repo.get_commit_info('upstream')['files']['A']
-        eq_(set(added_files), set([b'Makefile', b'README']))
+        assert (
+            mock_import(["--filter=.git", "--filter=*.sh", "--merge", orig], "gbp-test\n1.0\n") == 0
+        )
+        self._check_repo_state(repo, "master", ["master", "upstream"])
+        assert len(repo.get_commits(until="master")) == 1
+        assert len(repo.get_commits(until="upstream")) == 1
+        assert repo.get_tags() == ["upstream/1.0"]
+        added_files = repo.get_commit_info("upstream")["files"]["A"]
+        assert set(added_files) == set([b"Makefile", b"README"])
 
     def test_noninteractive(self):
         """Test non-interactive mode"""
@@ -208,16 +208,14 @@ class TestImportOrig(ImportOrigTestBase):
         os.chdir('testrepo')
 
         # Guessing name and version should fail
-        eq_(mock_import(['--no-interactive', orig_renamed]), 1)
+        assert mock_import(["--no-interactive", orig_renamed]) == 1
         self._check_log(-1, "gbp:error: Couldn't determine upstream package")
 
         # Guessing from the original archive should succeed
-        eq_(mock_import(['--no-interactive', '--merge', orig],
-                        stdin_data=''), 0)
-        files = ['.gbp.conf', 'Makefile', 'README', 'dummy.sh',
-                 'packaging/gbp-test-native.spec']
-        self._check_repo_state(repo, 'master', ['master', 'upstream'], files)
-        eq_(len(repo.get_commits(until='master')), 1)
+        assert mock_import(["--no-interactive", "--merge", orig], stdin_data="") == 0
+        files = [".gbp.conf", "Makefile", "README", "dummy.sh", "packaging/gbp-test-native.spec"]
+        self._check_repo_state(repo, "master", ["master", "upstream"], files)
+        assert len(repo.get_commits(until="master")) == 1
 
     def test_misc_options(self):
         """Test various options of git-import-orig-rpm"""
@@ -228,10 +226,9 @@ class TestImportOrig(ImportOrigTestBase):
 
         # Import one orig with default options to get upstream and
         # packaging branch
-        orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
-        eq_(mock_import(['--debian-branch=pack',
-                         '--upstream-branch=orig', '-u0.8', orig]), 0)
-        self._check_repo_state(repo, 'pack', ['pack', 'orig'])
+        orig = os.path.join(DATA_DIR, "gbp-test-1.0.tar.bz2")
+        assert mock_import(["--debian-branch=pack", "--upstream-branch=orig", "-u0.8", orig]) == 0
+        self._check_repo_state(repo, "pack", ["pack", "orig"])
 
         # Import the "native" zip to get packaging files
         orig = os.path.join(DATA_DIR, 'gbp-test-native-1.0.zip')
@@ -239,15 +236,14 @@ class TestImportOrig(ImportOrigTestBase):
                      '--upstream-tag=orig/%(version)s', '--merge']
         # Fake version to be 0.9
         extra_args = ['-u0.9', '--upstream-vcs-tag=upstream/0.8', orig]
-        eq_(mock_import(base_args + extra_args), 0)
+        assert mock_import(base_args + extra_args) == 0
         # Check repository state
-        files = ['dummy.sh', 'packaging/gbp-test-native.spec',
-                 '.gbp.conf', 'Makefile', 'README']
-        self._check_repo_state(repo, 'pack', ['pack', 'orig'], files)
-        eq_(len(repo.get_commits(until='pack')), 3)
+        files = ["dummy.sh", "packaging/gbp-test-native.spec", ".gbp.conf", "Makefile", "README"]
+        self._check_repo_state(repo, "pack", ["pack", "orig"], files)
+        assert len(repo.get_commits(until="pack")) == 3
         # Check tags
         tags = repo.get_tags()
-        eq_(set(tags), set(['upstream/0.8', 'orig/0.9']))
+        assert set(tags) == set(["upstream/0.8", "orig/0.9"])
 
         # Change to packaging branch and create new commit
         repo.set_branch('pack')
@@ -255,32 +251,32 @@ class TestImportOrig(ImportOrigTestBase):
         repo.add_files('.')
         repo.commit_all('My new commit')
         # Import a new version, name should be taken from spec
-        orig = os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')
-        extra_args = ['--no-interactive', '-u1.1', orig]
-        eq_(mock_import(base_args + extra_args, ''), 0)
+        orig = os.path.join(DATA_DIR, "gbp-test-1.1.tar.bz2")
+        extra_args = ["--no-interactive", "-u1.1", orig]
+        assert mock_import(base_args + extra_args, "") == 0
         # Threeupstream versions, "my new" commit and one merge commit
-        eq_(len(repo.get_commits(until='pack')), 6)
+        assert len(repo.get_commits(until="pack")) == 6
         tags = repo.get_tags()
-        eq_(set(tags), set(['upstream/0.8', 'orig/0.9', 'orig/1.1']))
+        assert set(tags) == set(["upstream/0.8", "orig/0.9", "orig/1.1"])
 
     def test_import_hooks(self):
         """Basic test for postimport hook"""
         repo = ComponentTestGitRepository.create('.')
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
 
-        script = ("echo -n branch: $GBP_BRANCH > ../hook.txt")
-        eq_(mock_import(['--postimport', script, '--merge', orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
-        eq_(repo.get_tags(), ['upstream/1.0'])
-        with open('../hook.txt', 'r') as hookout:
+        script = "echo -n branch: $GBP_BRANCH > ../hook.txt"
+        assert mock_import(["--postimport", script, "--merge", orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream"])
+        assert repo.get_tags() == ["upstream/1.0"]
+        with open("../hook.txt", "r") as hookout:
             data = hookout.read()
-        eq_(data, 'branch: master')
+        assert data == "branch: master"
 
     def test_hook_error(self):
         """Test postimport hook failure"""
-        repo = ComponentTestGitRepository.create('.')
-        orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
-        eq_(mock_import(['--postimport=/bin/false', '--merge', '--no-rollback', orig]), 1)
+        repo = ComponentTestGitRepository.create(".")
+        orig = os.path.join(DATA_DIR, "gbp-test-1.0.tar.bz2")
+        assert mock_import(["--postimport=/bin/false", "--merge", "--no-rollback", orig]) == 1
         self._check_log(-2, "gbp:error: Postimport-hook '/bin/false' failed:")
         self._check_log(-1, 'gbp:error: Import of %s failed' % orig)
         # Other parts of the import should've succeeded
@@ -294,22 +290,22 @@ class TestBareRepo(ImportOrigTestBase):
         """Test importing inside bare git repository"""
         repo = ComponentTestGitRepository.create('.', bare=True)
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
-        eq_(mock_import([orig]), 0)
-        self._check_repo_state(repo, 'master', ['master', 'upstream'])
-        eq_(len(repo.get_commits(until='upstream')), 1)
-        eq_(repo.get_tags(), ['upstream/1.0'])
+        assert mock_import([orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream"])
+        assert len(repo.get_commits(until="upstream")) == 1
+        assert repo.get_tags() == ["upstream/1.0"]
 
         # Import another version
         repo.set_branch('upstream')
         orig = os.path.join(DATA_DIR, 'gbp-test-1.1.tar.bz2')
-        eq_(mock_import([orig]), 0)
-        self._check_repo_state(repo, 'upstream', ['master', 'upstream'])
-        eq_(len(repo.get_commits(until='upstream')), 2)
+        assert mock_import([orig]) == 0
+        self._check_repo_state(repo, "upstream", ["master", "upstream"])
+        assert len(repo.get_commits(until="upstream")) == 2
 
     def test_pristine_import_to_bare(self):
         """Test importing inside bare git repository"""
         repo = ComponentTestGitRepository.create('.', bare=True)
         orig = os.path.join(DATA_DIR, 'gbp-test-1.0.tar.bz2')
-        eq_(mock_import([orig]), 0)
+        assert mock_import([orig]) == 0
         # No pristine-tar branch should be present
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
