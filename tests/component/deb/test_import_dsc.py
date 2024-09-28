@@ -24,8 +24,6 @@ from tests.component import (ComponentTestBase,
 from tests.component.deb import DEB_TEST_DATA_DIR, DEB_TEST_DOWNLOAD_URL
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import ok_, eq_
-
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.deb.pristinetar import DebianPristineTar
 from gbp.deb.dscfile import DscFile
@@ -46,16 +44,16 @@ class TestImportDsc(ComponentTestBase):
         # update-ref HEAD HEAD" while older ones (2.9.4) don't so
         # reflog[0] is either there or not.
         if len(reflog) == 3:
-            ok_(b"gbp: Import Debian changes" in reflog[1])
-            ok_(b"gbp: Import Upstream version 2.6" in reflog[2])
+            assert b"gbp: Import Debian changes" in reflog[1]
+            assert b"gbp: Import Upstream version 2.6" in reflog[2]
         elif len(reflog) == 2:
             # Furthermore some older git versions (<2.10) fail to set
             # the reflog correctly on the initial commit so only check
             # the second
-            ok_(b"gbp: Import Debian changes" in reflog[0])
+            assert b"gbp: Import Debian changes" in reflog[0]
         else:
-            ok_(len(reflog) > 3, "Reflog %s has too many lines" % reflog)
-            ok_(len(reflog) < 2, "Reflog %s has too few lines" % reflog)
+            assert len(reflog) > 3, "Reflog %s has too many lines" % reflog
+            assert len(reflog) < 2, "Reflog %s has too few lines" % reflog
 
     def test_import_debian_native(self):
         """Test that importing of debian native packages works"""
@@ -70,8 +68,8 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 1
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("git-buildpackage (0.01) unstable; urgency=low" in commitmsg)
-        ok_("git-buildpackage (0.4.14) unstable; urgency=low" in commitmsg)
+        assert "git-buildpackage (0.01) unstable; urgency=low" in commitmsg
+        assert "git-buildpackage (0.4.14) unstable; urgency=low" in commitmsg
 
         os.chdir('git-buildpackage')
         dsc = _dsc('0.4.15')
@@ -79,17 +77,17 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 2
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg)
-        ok_("git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg)
+        assert "git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg
+        assert "git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg
 
         dsc = _dsc('0.4.16')
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 3
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg)
-        ok_("git-buildpackage (0.4.15) unstable; urgency=low" not in commitmsg)
-        ok_("git-buildpackage (0.4.16) unstable; urgency=low" in commitmsg)
+        assert "git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg
+        assert "git-buildpackage (0.4.15) unstable; urgency=low" not in commitmsg
+        assert "git-buildpackage (0.4.16) unstable; urgency=low" in commitmsg
 
     @skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
     def test_download(self):
@@ -142,7 +140,7 @@ class TestImportDsc(ComponentTestBase):
                            dsc]) == 0
         self._check_repo_state(repo, 'master', ['bar', 'foo', 'master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
     def test_import_30_pristine_tar(self):
         dscfile = self._dsc30('2.6-1')
@@ -155,9 +153,9 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        commitmsg = repo.get_commit_info('HEAD')['body']
-        eq_("hello-debhelper (2.6-1) unstable; urgency=low", commitmsg.split('\n')[0])
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        commitmsg = repo.get_commit_info("HEAD")["body"]
+        assert "hello-debhelper (2.6-1) unstable; urgency=low" == commitmsg.split("\n")[0]
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
         os.chdir(repo.path)
         dscfile = self._dsc30('2.6-2')
@@ -168,12 +166,15 @@ class TestImportDsc(ComponentTestBase):
                            '--upstream-branch=upstream',
                            dscfile]) == 0
         commits, expected = len(repo.get_commits()), 3
-        commitmsg = repo.get_commit_info('HEAD')['body']
-        eq_("hello-debhelper (2.6-2) unstable; urgency=medium", commitmsg.split('\n')[0])
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        commitmsg = repo.get_commit_info("HEAD")["body"]
+        assert "hello-debhelper (2.6-2) unstable; urgency=medium" == commitmsg.split("\n")[0]
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
-        commits, expected = len(repo.get_commits(until='pristine-tar')), 1
-        ok_(commits == expected, "Found %d pristine-tar commits instead of %d" % (commits, expected))
+        commits, expected = len(repo.get_commits(until="pristine-tar")), 1
+        assert commits == expected, "Found %d pristine-tar commits instead of %d" % (
+            commits,
+            expected,
+        )
 
     def test_import_30_additional_tarball_pristine_tar(self):
         """Test that importing a package with additional tarballs works"""
@@ -193,14 +194,15 @@ class TestImportDsc(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
-        ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
+        assert "hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg
+        assert "hello (1.3-7) experimental; urgency=LOW" in commitmsg
 
-        for file in [b'foo/test1', b'foo/test2']:
-            ok_(file in repo.ls_tree('HEAD'),
-                "Could not find component tarball file %s in %s" % (file, repo.ls_tree('HEAD')))
+        for file in [b"foo/test1", b"foo/test2"]:
+            assert file in repo.ls_tree(
+                "HEAD"
+            ), "Could not find component tarball file %s in %s" % (file, repo.ls_tree("HEAD"))
 
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
         dsc = DscFile.parse(dscfile)
         # Check if we can rebuild the tarball and component
@@ -210,12 +212,13 @@ class TestImportDsc(ComponentTestBase):
         p = DebianPristineTar(repo)
         outdir = os.path.abspath('.')
         for f, w, s, o in ptars:
-            eq_(repo.get_subject(w), 'pristine-tar data for %s' % f)
+            assert repo.get_subject(w) == "pristine-tar data for %s" % f
             old = self.hash_file(o)
             p.checkout('hello-debhelper', '2.8', 'gzip', outdir, component=s)
             new = self.hash_file(os.path.join(outdir, f))
-            eq_(old, new, "Checksum %s of regenerated tarball %s does not match original %s" %
-                (f, old, new))
+            assert (
+                old == new
+            ), "Checksum %s of regenerated tarball %s does not match original %s" % (f, old, new)
 
     def test_existing_dir(self):
         """
@@ -276,8 +279,8 @@ class TestImportDsc(ComponentTestBase):
         self._check_reflog(repo)
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg)
-        ok_("hello (1.3-7) experimental; urgency=LOW" in commitmsg)
+        assert "hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg
+        assert "hello (1.3-7) experimental; urgency=LOW" in commitmsg
 
         dsc = self._dsc30('2.8-1')
         assert import_dsc(['arg0',
@@ -287,11 +290,11 @@ class TestImportDsc(ComponentTestBase):
                            '--upstream-branch=upstream',
                            dsc]) == 0
         commits, expected = len(repo.get_commits()), 4
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg)
-        ok_("ello-debhelper (2.7-1) unstable; urgency=low" in commitmsg)
-        ok_("hello-debhelper (2.6-2) unstable; urgency=medium" not in commitmsg)
+        assert "hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg
+        assert "ello-debhelper (2.7-1) unstable; urgency=low" in commitmsg
+        assert "hello-debhelper (2.6-2) unstable; urgency=medium" not in commitmsg
 
     def test_import_environ(self):
         """Test that environment variables influence git configuration"""
@@ -300,11 +303,11 @@ class TestImportDsc(ComponentTestBase):
         repo = RepoFixtures.import_native()
         got = repo.get_config("user.email")
         want = os.environ['DEBEMAIL']
-        ok_(got == want, "unexpected git config user.email: got %s, want %s" % (got, want))
+        assert got == want, "unexpected git config user.email: got %s, want %s" % (got, want)
 
         got = repo.get_config("user.name")
         want = os.environ['DEBFULLNAME']
-        ok_(got == want, "unexpected git config user.name: got %s, want %s" % (got, want))
+        assert got == want, "unexpected git config user.name: got %s, want %s" % (got, want)
 
     def test_debian_branch_not_master(self):
         """Make sure we only have debian-branch and upstream-branch after an initial import"""
@@ -318,7 +321,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'pk4', ['pk4', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
     def test_empty_repo(self):
         """Make sure we can import into an empty repository"""
@@ -334,7 +337,7 @@ class TestImportDsc(ComponentTestBase):
                            dsc]) == 0
         self._check_repo_state(repo, 'pk4', ['pk4', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
     def test_upstream_branch_is_master(self):
         """Make sure we can import when upstream-branch == master (#750962)"""
@@ -348,7 +351,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'debian', ['debian', 'master'])
         commits, expected = len(repo.get_commits()), 2
-        ok_(commits == expected, "Found %d commit instead of %d" % (commits, expected))
+        assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
     def test_import_30_filters(self):
         dscfile = self._dsc30('2.6-1')
@@ -363,10 +366,10 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'master', ['master', 'upstream'])
         os.chdir('hello-debhelper')
-        ok_(os.path.exists("./debian/changelog"))
-        ok_(os.path.exists("./configure.ac"))
-        ok_(not os.path.exists("./debian/patches/series"))
-        ok_(not os.path.exists("./debian/patches/AUTHORS"))
+        assert os.path.exists("./debian/changelog")
+        assert os.path.exists("./configure.ac")
+        assert not os.path.exists("./debian/patches/series")
+        assert not os.path.exists("./debian/patches/AUTHORS")
 
     def test_import_signature(self):
         dscfile = self._dsc30('2.8-1')
@@ -379,8 +382,13 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        commits, expected = len(repo.get_commits(until='pristine-tar')), 1
-        ok_(commits == expected, "Found %d pristine-tar commits instead of %d" % (commits, expected))
-        eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.delta',
-                                           b'hello-debhelper_2.8.orig.tar.gz.id',
-                                           b'hello-debhelper_2.8.orig.tar.gz.asc'})
+        commits, expected = len(repo.get_commits(until="pristine-tar")), 1
+        assert commits == expected, "Found %d pristine-tar commits instead of %d" % (
+            commits,
+            expected,
+        )
+        assert repo.ls_tree("pristine-tar") == {
+            b"hello-debhelper_2.8.orig.tar.gz.delta",
+            b"hello-debhelper_2.8.orig.tar.gz.id",
+            b"hello-debhelper_2.8.orig.tar.gz.asc",
+        }

@@ -16,7 +16,6 @@
 #    <http://www.gnu.org/licenses/>
 """Test module for RPM command line tools of the git-buildpackage suite"""
 
-from nose.tools import nottest
 import os
 import shutil
 from glob import glob
@@ -53,12 +52,13 @@ class RpmRepoTestBase(ComponentTestBase):
             cls.orig_repos[prj] = ComponentTestGitRepository(path)
 
     @classmethod
-    @nottest
     def init_test_repo(cls, pkg_name):
         """Initialize git repository for testing"""
         dirname = os.path.basename(cls.orig_repos[pkg_name].path)
         shutil.copytree(cls.orig_repos[pkg_name].path, dirname)
         os.chdir(dirname)
         return ComponentTestGitRepository('.')
+
+    init_test_repo.__test__ = False
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

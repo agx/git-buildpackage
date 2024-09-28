@@ -21,7 +21,6 @@ import os
 from tests.component import (ComponentTestBase,
                              ComponentTestGitRepository)
 from tests.component.deb import DEB_TEST_DATA_DIR
-from nose.tools import ok_
 
 from gbp.scripts.import_dscs import main as import_dscs
 
@@ -43,4 +42,4 @@ class TestImportDscs(ComponentTestBase):
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 2
         commitmsg = repo.get_commit_info('HEAD')['body']
-        ok_("git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg)
+        assert "git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg

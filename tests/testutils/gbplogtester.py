@@ -2,7 +2,6 @@
 
 import re
 from io import StringIO
-from nose.tools import ok_, assert_less
 
 import gbp.log
 
@@ -64,18 +63,16 @@ class GbpLogTester(object):
     def _check_log_empty(self):
         """Check that nothig was logged"""
         output = self._get_log()
-        ok_(output == [], "Log is not empty: %s" % output)
+        assert output == [], "Log is not empty: %s" % output
 
     def _check_log(self, linenum, regex):
         """Check that the specified line on log matches expectations"""
         if self._log is None:
             raise Exception("BUG in unittests: no log captured!")
         log = self._get_log()
-        assert_less(linenum, len(log),
-                    "Not enough log lines: %d" % len(log))
+        assert linenum < len(log), "Not enough log lines: %d" % len(log)
         output = self._get_log()[linenum].strip()
-        ok_(re.match(regex, output),
-            "Log entry '%s' doesn't match '%s'" % (output, regex))
+        assert re.match(regex, output), "Log entry '%s' doesn't match '%s'" % (output, regex)
 
     def _check_in_log(self, regex):
         """Check that at least one line in log matches expectations"""
@@ -87,7 +84,7 @@ class GbpLogTester(object):
             if re.match(regex, line):
                 found = True
                 break
-        ok_(found, "No line of %s matched '%s'" % (log, regex))
+        assert found, "No line of %s matched '%s'" % (log, regex)
 
     def _check_in_info_log(self, regex):
         """Check that at least one line in info log matches expectations"""
@@ -99,7 +96,7 @@ class GbpLogTester(object):
             if re.match(regex, line):
                 found = True
                 break
-        ok_(found, "No line of %s matched '%s'" % (log, regex))
+        assert found, "No line of %s matched '%s'" % (log, regex)
 
     def _clear_log(self):
         """Clear the mock strerr"""

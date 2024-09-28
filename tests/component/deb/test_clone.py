@@ -23,8 +23,6 @@ from tests.component import (ComponentTestBase,
                              skipUnless)
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import ok_
-
 from gbp.scripts.clone import main as clone
 
 
@@ -34,14 +32,15 @@ class TestClone(ComponentTestBase):
     @RepoFixtures.native()
     def test_clone_nonempty(self, repo):
         """Test that cloning into an existing dir fails"""
-        os.chdir('..')
-        ok_(clone(['arg0', repo.path]) == 1,
-            "Cloning did no fail as expected")
-        self._check_log(-2,
-                        "gbp:error: Git command failed: Error "
-                        "running git clone: fatal: destination path "
-                        "'git-buildpackage' already exists and is not "
-                        "an empty directory.")
+        os.chdir("..")
+        assert clone(["arg0", repo.path]) == 1, "Cloning did no fail as expected"
+        self._check_log(
+            -2,
+            "gbp:error: Git command failed: Error "
+            "running git clone: fatal: destination path "
+            "'git-buildpackage' already exists and is not "
+            "an empty directory.",
+        )
 
     @RepoFixtures.native()
     def test_clone_native(self, repo):
@@ -116,7 +115,7 @@ class TestClone(ComponentTestBase):
         self._check_repo_state(cloned, 'master', ['master'])
 
         attrs_file = os.path.join(dest, '.git', 'info', 'attributes')
-        ok_(os.path.exists(attrs_file), "%s is missing" % attrs_file)
+        assert os.path.exists(attrs_file), "%s is missing" % attrs_file
 
         with open(attrs_file) as f:
             attrs = sorted(f.read().splitlines())

@@ -22,8 +22,6 @@ from tests.component import ComponentTestBase
 from tests.component.deb import DEB_TEST_DATA_DIR
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import ok_, eq_
-
 from gbp.scripts.tag import main as tag
 from gbp.scripts.pq import main as pq
 
@@ -40,38 +38,37 @@ class TestTag(ComponentTestBase):
     @RepoFixtures.native()
     def test_tag(self, repo):
         """Test that tagging a native debian package works"""
-        repo.delete_tag('debian/0.4.14')  # make sure we can tag again
-        eq_(repo.has_tag('debian/0.4.14'), False)
-        ret = tag(['arg0',
-                   '--posttag=printenv > posttag.out'])
-        ok_(ret == 0, "Tagging the package failed")
-        eq_(os.path.exists('posttag.out'), True)
-        self.check_hook_vars('posttag', [("GBP_TAG", "debian/0.4.14"),
-                                         ("GBP_BRANCH", "master"),
-                                         "GBP_SHA1"])
-        eq_(repo.head, repo.rev_parse('debian/0.4.14^{}'))
+        repo.delete_tag("debian/0.4.14")  # make sure we can tag again
+        assert repo.has_tag("debian/0.4.14") is False
+        ret = tag(["arg0", "--posttag=printenv > posttag.out"])
+        assert ret == 0, "Tagging the package failed"
+        assert os.path.exists("posttag.out") is True
+        self.check_hook_vars(
+            "posttag", [("GBP_TAG", "debian/0.4.14"), ("GBP_BRANCH", "master"), "GBP_SHA1"]
+        )
+        assert repo.head == repo.rev_parse("debian/0.4.14^{}")
 
     @RepoFixtures.quilt30()
     def test_tag_pq_branch(self, repo):
-        ret = pq(['argv0', 'import'])
-        eq_(repo.rev_parse('master'), repo.rev_parse('debian/2.8-1^{}'))
-        eq_(ret, 0)
-        eq_(repo.branch, 'patch-queue/master')
-        self.add_file(repo, 'foo.txt')
-        ret = tag(['argv0', '--retag', '--ignore-branch'])
-        eq_(ret, 0)
-        eq_(repo.branch, 'patch-queue/master')
-        eq_(repo.rev_parse('patch-queue/master^{}^'), repo.rev_parse('debian/2.8-1^{}'))
+        ret = pq(["argv0", "import"])
+        assert repo.rev_parse("master") == repo.rev_parse("debian/2.8-1^{}")
+        assert ret == 0
+        assert repo.branch == "patch-queue/master"
+        self.add_file(repo, "foo.txt")
+        ret = tag(["argv0", "--retag", "--ignore-branch"])
+        assert ret == 0
+        assert repo.branch == "patch-queue/master"
+        assert repo.rev_parse("patch-queue/master^{}^") == repo.rev_parse("debian/2.8-1^{}")
 
     @RepoFixtures.quilt30()
     def test_tag_detached_head(self, repo):
         """
         Test that tagging works with an detached head (#863167)
         """
-        eq_(repo.rev_parse('master^{}'), repo.rev_parse('debian/2.8-1^{}'))
-        self.add_file(repo, 'debian/foo.txt')
+        assert repo.rev_parse("master^{}") == repo.rev_parse("debian/2.8-1^{}")
+        self.add_file(repo, "debian/foo.txt")
         repo.checkout("HEAD~")
         ret = tag(['argv0', '--retag', '--ignore-branch'])
-        eq_(ret, 0)
+        assert ret == 0
         repo.checkout("master")
-        eq_(repo.rev_parse('master~^{}'), repo.rev_parse('debian/2.8-1^{}'))
+        assert repo.rev_parse("master~^{}") == repo.rev_parse("debian/2.8-1^{}")

@@ -23,8 +23,6 @@ from tests.component import (ComponentTestBase)
 from tests.component.deb import DEB_TEST_DATA_DIR
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import ok_, eq_
-
 from gbp.scripts.pq import main as pq
 from gbp.scripts.import_dsc import main as import_dsc
 
@@ -36,38 +34,38 @@ class TestPq(ComponentTestBase):
         args = ['arg0', action] + opts
         os.chdir(os.path.abspath(repo.path))
         ret = pq(args)
-        ok_(ret == 0, "Running gbp pq %s failed" % action)
+        assert ret == 0, "Running gbp pq %s failed" % action
 
     @RepoFixtures.quilt30()
     def test_rebase_import(self, repo):
         """Test that rebase imports patches first"""
-        eq_(repo.branch, 'master')
-        eq_(repo.has_branch('patch-queue/master'), False)
-        self._test_pq(repo, 'rebase')
-        eq_(repo.has_branch('patch-queue/master'), True)
+        assert repo.branch == "master"
+        assert repo.has_branch("patch-queue/master") is False
+        self._test_pq(repo, "rebase")
+        assert repo.has_branch("patch-queue/master") is True
 
     @RepoFixtures.quilt30()
     def test_switch_import(self, repo):
         """Test that switch imports patches first"""
-        eq_(repo.branch, 'master')
-        eq_(repo.has_branch('patch-queue/master'), False)
-        self._test_pq(repo, 'switch')
-        eq_(repo.has_branch('patch-queue/master'), True)
+        assert repo.branch == "master"
+        assert repo.has_branch("patch-queue/master") is False
+        self._test_pq(repo, "switch")
+        assert repo.has_branch("patch-queue/master") is True
 
     @RepoFixtures.quilt30()
     def test_empty_cycle(self, repo):
-        eq_(repo.has_branch('patch-queue/master'), False)
-        eq_(repo.branch, 'master')
-        self._test_pq(repo, 'import')
-        eq_(repo.has_branch('patch-queue/master'), True)
-        eq_(repo.branch, 'patch-queue/master')
-        self._test_pq(repo, 'rebase')
-        eq_(repo.branch, 'patch-queue/master')
-        self._test_pq(repo, 'export')
-        eq_(repo.has_branch('patch-queue/master'), True)
-        eq_(repo.branch, 'master')
-        self._test_pq(repo, 'drop')
-        eq_(repo.has_branch('patch-queue/master'), False)
+        assert repo.has_branch("patch-queue/master") is False
+        assert repo.branch == "master"
+        self._test_pq(repo, "import")
+        assert repo.has_branch("patch-queue/master") is True
+        assert repo.branch == "patch-queue/master"
+        self._test_pq(repo, "rebase")
+        assert repo.branch == "patch-queue/master"
+        self._test_pq(repo, "export")
+        assert repo.has_branch("patch-queue/master") is True
+        assert repo.branch == "master"
+        self._test_pq(repo, "drop")
+        assert repo.has_branch("patch-queue/master") is False
 
     @RepoFixtures.quilt30()
     def test_rename(self, repo):
@@ -106,15 +104,14 @@ class TestPq(ComponentTestBase):
 
     @RepoFixtures.quilt30()
     def test_import(self, repo):
-        pkg = 'hello-debhelper'
-        dsc = self._dsc_name(pkg, '2.6-2', 'dsc-3.0')
-        eq_(import_dsc(['arg0', dsc]), 0)
-        self._test_pq(repo, 'import')
+        pkg = "hello-debhelper"
+        dsc = self._dsc_name(pkg, "2.6-2", "dsc-3.0")
+        assert import_dsc(["arg0", dsc]) == 0
+        self._test_pq(repo, "import")
 
         author, subject = repo.get_head_author_subject()
-        eq_(author, 'Santiago Vila <sanvila@debian.org>')
-        eq_(subject, 'Modified doc/Makefile.in to avoid '
-                     '/usr/share/info/dir.gz')
+        assert author == "Santiago Vila <sanvila@debian.org>"
+        assert subject == "Modified doc/Makefile.in to avoid " "/usr/share/info/dir.gz"
 
         self._test_pq(repo, 'switch')
 
@@ -132,16 +129,16 @@ Description: Short DEP3 description
         self._test_pq(repo, 'import', ['--force'])
 
         author, subject = repo.get_head_author_subject()
-        eq_(subject, 'Short DEP3 description')
-        eq_(author, '"Mr. T. St" <t@example.com>')
+        assert subject == "Short DEP3 description"
+        assert author == '"Mr. T. St" <t@example.com>'
 
     @RepoFixtures.quilt30()
     def test_import_poor_dep3_behaviour(self, repo):
         """Demonstrate the issues with the current DEP3 support"""
 
-        pkg = 'hello-debhelper'
-        dsc = self._dsc_name(pkg, '2.6-2', 'dsc-3.0')
-        eq_(import_dsc(['arg0', dsc]), 0)
+        pkg = "hello-debhelper"
+        dsc = self._dsc_name(pkg, "2.6-2", "dsc-3.0")
+        assert import_dsc(["arg0", dsc]) == 0
 
         self._append_patch(repo, 'foo', '''\
 Author: Mr. T. St <t@example.com>
@@ -158,7 +155,7 @@ Forwarded: not-needed
         self._test_pq(repo, 'import', ['--force'])
 
         _, subject = repo.get_head_author_subject()
-        eq_(subject, 'A very long description with wrapp-')
+        assert subject == "A very long description with wrapp-"
 
         self._test_pq(repo, 'export')
 
@@ -177,7 +174,8 @@ Forwarded: not-needed
 
                 relevant_parts_of_patch += line
 
-        eq_(relevant_parts_of_patch, '''\
+        assert (
+            relevant_parts_of_patch == """\
 From: "Mr. T. St" <t@example.com>
 Subject: A very long description with wrapp-
 
@@ -186,4 +184,5 @@ Forwarded: not-needed
 
  ing to increase readability in the file, which
  is currently split into a short and long description.
-''')
+"""
+        )

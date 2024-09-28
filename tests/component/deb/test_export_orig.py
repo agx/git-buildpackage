@@ -23,8 +23,6 @@ from tests.component import (ComponentTestBase,
 from tests.component.deb import DEB_TEST_DATA_DIR
 from tests.component.deb.fixtures import RepoFixtures
 
-from nose.tools import ok_, assert_false, assert_true
-
 from gbp.scripts.clone import main as clone
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.export_orig import main as export_orig
@@ -49,13 +47,13 @@ class TestExportOrig(ComponentTestBase):
         assert import_dsc(['arg0', '--no-pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
-        assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch must not exist")
+        assert not repo.has_branch("pristine-tar"), "Pristine-tar branch must not exist"
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         ret = export_orig(['arg0',
                            '--component=foo',
                            '--no-pristine-tar'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
@@ -69,7 +67,7 @@ class TestExportOrig(ComponentTestBase):
         assert import_dsc(['arg0', '--pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
-        assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
+        assert repo.has_branch("pristine-tar"), "Pristine-tar branch must exist"
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         #  Make sure the tree object for importing the main tarball is recreated
@@ -77,7 +75,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--component=foo',
                            '--pristine-tar'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
@@ -89,11 +87,11 @@ class TestExportOrig(ComponentTestBase):
         assert import_dsc(['arg0', '--no-pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
-        assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch not must exist")
-        ret = export_orig(['arg0',
-                           '--component=bar',  # non-existing component
-                           '--no-pristine-tar'])
-        ok_(ret == 1, "Exporting tarballs must fail")
+        assert not repo.has_branch("pristine-tar"), "Pristine-tar branch not must exist"
+        ret = export_orig(
+            ["arg0", "--component=bar", "--no-pristine-tar"]  # non-existing component
+        )
+        assert ret == 1, "Exporting tarballs must fail"
         self._check_log(-1, "gbp:error: No tree for 'bar' found in "
                         "'upstream/2.8' to create additional tarball from")
 
@@ -105,13 +103,13 @@ class TestExportOrig(ComponentTestBase):
         assert import_dsc(['arg0', '--pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
-        assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
+        assert repo.has_branch("pristine-tar"), "Pristine-tar branch must exist"
         repo.delete_branch("pristine-tar")
         repo.create_branch("pristine-tar")  # create a nonsense pristine-tar branch
         ret = export_orig(['arg0',
                            '--component=foo',
                            '--pristine-tar'])
-        ok_(ret == 1, "Exporting tarballs must fail")
+        assert ret == 1, "Exporting tarballs must fail"
         self._check_log(-1, "gbp:error: Cannot find pristine tar commit for archive 'hello-debhelper_2.8.orig.tar.gz'")
 
     def test_tarball_dir_version_replacement(self):
@@ -132,7 +130,7 @@ class TestExportOrig(ComponentTestBase):
                            '--tarball-dir=%s' % tarball_dir,
                            '--component=foo',
                            '--no-pristine-tar'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         # tarballs should be found in existing --tarball-dir directory and thus
         # not get recreated by export-orig
         for t in tarballs:
@@ -155,7 +153,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--pristine-tar',
                            '--upstream-signatures=no'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         self.assertTrue(os.path.exists(os.path.join('..', files[0])), "Tarball %s not found" % files[0])
         self.assertFalse(os.path.exists(os.path.join('..', files[1])), "Signature %s found" % files[1])
 
@@ -166,7 +164,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--pristine-tar',
                            '--upstream-signatures=auto'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         for f in files:
             self.assertTrue(os.path.exists(os.path.join('..', f)), "File %s not found" % f)
 
@@ -177,7 +175,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--pristine-tar',
                            '--upstream-signatures=on'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         for f in files:
             self.assertTrue(os.path.exists(os.path.join('..', f)), "File %s not found" % f)
 
@@ -197,7 +195,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--pristine-tar',
                            '--upstream-signatures=no'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         self.assertTrue(os.path.exists(os.path.join('..', files[0])), "Tarball %s not found" % files[0])
         self.assertFalse(os.path.exists(os.path.join('..', files[1])), "Signature %s found" % files[1])
 
@@ -208,7 +206,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--pristine-tar',
                            '--upstream-signatures=auto'])
-        ok_(ret == 0, "Exporting tarballs failed")
+        assert ret == 0, "Exporting tarballs failed"
         self.assertTrue(os.path.exists(os.path.join('..', files[0])), "Tarball %s not found" % files[0])
         self.assertFalse(os.path.exists(os.path.join('..', files[1])), "Signature %s found" % files[1])
 
@@ -219,7 +217,7 @@ class TestExportOrig(ComponentTestBase):
         ret = export_orig(['arg0',
                            '--pristine-tar',
                            '--upstream-signatures=on'])
-        ok_(ret == 1, "Exporting tarballs must fail")
+        assert ret == 1, "Exporting tarballs must fail"
         self._check_log(-1, "gbp:error: Cannot find requested upstream signature for archive "
                         "'hello-debhelper_2.6.orig.tar.gz' in pristine tar commit.")
 
@@ -227,14 +225,12 @@ class TestExportOrig(ComponentTestBase):
     def test_pristine_tar_commit_on_origin(self, repo):
         """Test that we can create tarball from 'origin/pristine-tar'"""
 
-        assert_true(repo.has_branch('pristine-tar'),
-                    "Pristine-tar branch must exist in origin")
-        dest = os.path.join(self._tmpdir, 'cloned_repo')
-        clone(['arg0', repo.path, dest])
+        assert repo.has_branch("pristine-tar"), "Pristine-tar branch must exist in origin"
+        dest = os.path.join(self._tmpdir, "cloned_repo")
+        clone(["arg0", repo.path, dest])
         cloned = ComponentTestGitRepository(dest)
 
         os.chdir(cloned.path)
-        assert_false(cloned.has_branch('pristine-tar'),
-                     "Pristine-tar branch must not exist in clone")
-        ret = export_orig(['arg0', '--pristine-tar'])
-        ok_(ret == 0, "Exporting tarballs must not fail")
+        assert not cloned.has_branch("pristine-tar"), "Pristine-tar branch must not exist in clone"
+        ret = export_orig(["arg0", "--pristine-tar"])
+        assert ret == 0, "Exporting tarballs must not fail"

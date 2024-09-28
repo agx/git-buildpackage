@@ -29,8 +29,6 @@ from tests.component.deb.fixtures import (RepoFixtures,
                                           DEFAULT_OVERLAY)
 from tests.testutils import skip_without_cmd
 
-from nose.tools import ok_, eq_, assert_false, assert_true
-
 from gbp.scripts.import_dsc import main as import_dsc
 from gbp.scripts.buildpackage import main as buildpackage
 from gbp.scripts.pq import main as pq
@@ -57,9 +55,9 @@ class TestBuildpackage(ComponentTestBase):
                 '--git-cleaner=/bin/true'] + opts
         os.chdir(repo.path)
         ret = buildpackage(args)
-        ok_(ret == 0, "Building the package failed")
-        eq_(os.path.exists(prebuild_out), True)
-        eq_(os.path.exists(postbuild_out), True)
+        assert ret == 0, "Building the package failed"
+        assert os.path.exists(prebuild_out) is True
+        assert os.path.exists(postbuild_out) is True
 
         self.check_hook_vars('../prebuild', ["GBP_BUILD_DIR",
                                              "GBP_GIT_DIR",
@@ -89,12 +87,12 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-posttag=printenv > ../posttag.out',
                             '--git-builder=touch ../builder-run.stamp',
                             '--git-cleaner=/bin/true'])
-        ok_(ret == 0, "Building the package failed")
-        eq_(os.path.exists('../posttag.out'), True)
-        eq_(os.path.exists('../builder-run.stamp'), False)
-        self.check_hook_vars('../posttag', [("GBP_TAG", "debian/0.4.14"),
-                                            ("GBP_BRANCH", "master"),
-                                            "GBP_SHA1"])
+        assert ret == 0, "Building the package failed"
+        assert os.path.exists("../posttag.out") is True
+        assert os.path.exists("../builder-run.stamp") is False
+        self.check_hook_vars(
+            "../posttag", [("GBP_TAG", "debian/0.4.14"), ("GBP_BRANCH", "master"), "GBP_SHA1"]
+        )
 
     def test_component_generation(self):
         """Test that generating tarball and additional tarball works without pristine-tar"""
@@ -106,7 +104,7 @@ class TestBuildpackage(ComponentTestBase):
         assert import_dsc(['arg0', '--no-pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
-        assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch must not exist")
+        assert not repo.has_branch("pristine-tar"), "Pristine-tar branch must not exist"
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         ret = buildpackage(['arg0',
@@ -115,7 +113,7 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-posttag=printenv > posttag.out',
                             '--git-builder=touch builder-run.stamp',
                             '--git-cleaner=/bin/true'])
-        ok_(ret == 0, "Building the package failed")
+        assert ret == 0, "Building the package failed"
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
@@ -129,7 +127,7 @@ class TestBuildpackage(ComponentTestBase):
         assert import_dsc(['arg0', '--pristine-tar', dsc]) == 0
         repo = ComponentTestGitRepository(pkg)
         os.chdir(pkg)
-        assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
+        assert repo.has_branch("pristine-tar"), "Pristine-tar branch must exist"
         for t in tarballs:
             self.assertFalse(os.path.exists(t), "Tarball %s must not exist" % t)
         #  Make sure the tree object for importing the main tarball is recreated
@@ -140,21 +138,21 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-posttag=printenv > posttag.out',
                             '--git-builder=touch builder-run.stamp',
                             '--git-cleaner=/bin/true'])
-        ok_(ret == 0, "Building the package failed")
+        assert ret == 0, "Building the package failed"
         for t in tarballs:
             self.assertTrue(os.path.exists(t), "Tarball %s not found" % t)
 
     @RepoFixtures.quilt30()
     def test_pristine_tar_commit(self, repo):
         """Test that committing to pristine-tar branch after building tarballs works"""
-        assert_false(repo.has_branch('pristine-tar'), "Pristine-tar branch must not exist")
-        ret = buildpackage(['arg0',
-                            '--git-builder=/bin/true',
-                            '--git-pristine-tar-commit'])
-        ok_(ret == 0, "Building the package failed")
-        assert_true(repo.has_branch('pristine-tar'), "Pristine-tar branch must exist")
-        eq_(repo.ls_tree('pristine-tar'), {b'hello-debhelper_2.8.orig.tar.gz.id',
-                                           b'hello-debhelper_2.8.orig.tar.gz.delta'})
+        assert not repo.has_branch("pristine-tar"), "Pristine-tar branch must not exist"
+        ret = buildpackage(["arg0", "--git-builder=/bin/true", "--git-pristine-tar-commit"])
+        assert ret == 0, "Building the package failed"
+        assert repo.has_branch("pristine-tar"), "Pristine-tar branch must exist"
+        assert repo.ls_tree("pristine-tar") == {
+            b"hello-debhelper_2.8.orig.tar.gz.id",
+            b"hello-debhelper_2.8.orig.tar.gz.delta",
+        }
 
     @RepoFixtures.quilt30()
     def test_sloppy_tarball_generation(self, repo):
@@ -174,8 +172,8 @@ class TestBuildpackage(ComponentTestBase):
     @RepoFixtures.quilt30()
     def test_export_dir_buildpackage(self, repo):
         """Test that building with a export dir works"""
-        self._test_buildpackage(repo, ['--git-export-dir=../foo/bar'])
-        ok_(os.path.exists('../foo/bar'))
+        self._test_buildpackage(repo, ["--git-export-dir=../foo/bar"])
+        assert os.path.exists("../foo/bar")
 
     @RepoFixtures.quilt30_additional_tarball()
     def test_export_dir_additional_tar(self, repo):
@@ -184,11 +182,13 @@ class TestBuildpackage(ComponentTestBase):
                                        '--git-no-purge',
                                        '--git-component=foo'])
         # Check that all needed tarballs end up in the build-area
-        eq_(sorted(glob.glob('../foo/bar/*')), ['../foo/bar/hello-debhelper-2.8',
-                                                '../foo/bar/hello-debhelper_2.8.orig-foo.tar.gz',
-                                                '../foo/bar/hello-debhelper_2.8.orig.tar.gz'])
+        assert sorted(glob.glob("../foo/bar/*")) == [
+            "../foo/bar/hello-debhelper-2.8",
+            "../foo/bar/hello-debhelper_2.8.orig-foo.tar.gz",
+            "../foo/bar/hello-debhelper_2.8.orig.tar.gz",
+        ]
         # Check that directories from additional tarballs get exported too
-        ok_(os.path.exists('../foo/bar/hello-debhelper-2.8/foo'))
+        assert os.path.exists("../foo/bar/hello-debhelper-2.8/foo")
 
     @RepoFixtures.overlay()
     def test_export_dir_overlay(self, repo):
@@ -201,15 +201,17 @@ class TestBuildpackage(ComponentTestBase):
                                        '--git-component=foo',
                                        '--git-export-dir=../overlay'])
         # Check if main tarball got unpacked
-        ok_(os.path.exists('../overlay/hello-debhelper-2.8/configure'))
+        assert os.path.exists("../overlay/hello-debhelper-2.8/configure")
         # Check if debian dir is there
-        ok_(os.path.exists('../overlay/hello-debhelper-2.8/debian/changelog'))
+        assert os.path.exists("../overlay/hello-debhelper-2.8/debian/changelog")
         # Check if additional tarball got unpacked
-        ok_(os.path.exists('../overlay/hello-debhelper-2.8/foo/test1'))
+        assert os.path.exists("../overlay/hello-debhelper-2.8/foo/test1")
         # Check if upstream tarballs is in export_dir
-        eq_(sorted(glob.glob('../overlay/*')), ['../overlay/hello-debhelper-2.8',
-                                                '../overlay/hello-debhelper_2.8.orig-foo.tar.gz',
-                                                '../overlay/hello-debhelper_2.8.orig.tar.gz'])
+        assert sorted(glob.glob("../overlay/*")) == [
+            "../overlay/hello-debhelper-2.8",
+            "../overlay/hello-debhelper_2.8.orig-foo.tar.gz",
+            "../overlay/hello-debhelper_2.8.orig.tar.gz",
+        ]
 
     @RepoFixtures.quilt30()
     def test_export_wc_buildpackage(self, repo):
@@ -217,9 +219,8 @@ class TestBuildpackage(ComponentTestBase):
         modifications the source tree """
         with open(os.path.join(repo.path, 'foo.txt'), 'w') as f:
             f.write("foo")
-        self._test_buildpackage(repo, ['--git-export=WC',
-                                       '--git-export-dir=../foo/bar'])
-        ok_(os.path.exists('../foo/bar'))
+        self._test_buildpackage(repo, ["--git-export=WC", "--git-export-dir=../foo/bar"])
+        assert os.path.exists("../foo/bar")
 
     @RepoFixtures.native()
     def test_argument_quoting(self, repo):
@@ -233,7 +234,7 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-builder=ls',
                             '--git-cleaner=/bin/true',
                             '../arg with spaces'])
-        ok_(ret == 0, "Building the package failed")
+        assert ret == 0, "Building the package failed"
 
     @RepoFixtures.quilt30()
     def test_tarball_default_compression(self, repo):
@@ -241,54 +242,57 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage(repo, ['--git-no-pristine-tar'])
         tarball = "../hello-debhelper_2.8.orig.tar.gz"
         out = subprocess.check_output(["file", tarball])
-        ok_(b"max compression" not in out)
+        assert b"max compression" not in out
         m1 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
         os.unlink(tarball)
-        eq_(buildpackage(['arg0',
-                          '--git-ignore-new',
-                          '--git-builder=/bin/true',
-                          '--git-cleaner=/bin/true',
-                          '../arg with spaces']), 0)
-        m2 = hashlib.md5(open(tarball, 'rb').read()).hexdigest()
-        eq_(m1, m2, "Regenerated tarball has different checksum")
+        assert (
+            buildpackage(
+                [
+                    "arg0",
+                    "--git-ignore-new",
+                    "--git-builder=/bin/true",
+                    "--git-cleaner=/bin/true",
+                    "../arg with spaces",
+                ]
+            ) == 0
+        )
+        m2 = hashlib.md5(open(tarball, "rb").read()).hexdigest()
+        assert m1 == m2, "Regenerated tarball has different checksum"
 
     @RepoFixtures.quilt30()
     def test_tarball_max_compression(self, repo):
         """Test that passing max compression works (#820846)"""
         self._test_buildpackage(repo, ['--git-no-pristine-tar', '--git-compression-level=9'])
         out = subprocess.check_output(["file", "../hello-debhelper_2.8.orig.tar.gz"])
-        ok_(b"max compression" in out)
+        assert b"max compression" in out
 
     @RepoFixtures.quilt30()
     def test_tag_pq_branch(self, repo):
-        ret = pq(['argv0', 'import'])
-        eq_(repo.rev_parse('master'), repo.rev_parse('debian/2.8-1^{}'))
-        eq_(ret, 0)
-        eq_(repo.branch, 'patch-queue/master')
-        self.add_file(repo, 'foo.txt')
-        ret = buildpackage(['argv0',
-                            '--git-tag-only',
-                            '--git-retag',
-                            '--git-ignore-branch'])
-        eq_(ret, 0)
-        eq_(repo.branch, 'patch-queue/master')
-        eq_(repo.rev_parse('patch-queue/master^{}^'), repo.rev_parse('debian/2.8-1^{}'))
+        ret = pq(["argv0", "import"])
+        assert repo.rev_parse("master") == repo.rev_parse("debian/2.8-1^{}")
+        assert ret == 0
+        assert repo.branch == "patch-queue/master"
+        self.add_file(repo, "foo.txt")
+        ret = buildpackage(["argv0", "--git-tag-only", "--git-retag", "--git-ignore-branch"])
+        assert ret == 0
+        assert repo.branch == "patch-queue/master"
+        assert repo.rev_parse("patch-queue/master^{}^") == repo.rev_parse("debian/2.8-1^{}")
 
     @RepoFixtures.quilt30()
     def test_tag_detached_head(self, repo):
         """
         Test that tagging works with an detached head (#863167)
         """
-        eq_(repo.rev_parse('master^{}'), repo.rev_parse('debian/2.8-1^{}'))
-        self.add_file(repo, 'debian/foo.txt')
+        assert repo.rev_parse("master^{}") == repo.rev_parse("debian/2.8-1^{}")
+        self.add_file(repo, "debian/foo.txt")
         repo.checkout("HEAD~")
         ret = buildpackage(['argv0',
                             '--git-tag-only',
                             '--git-retag',
                             '--git-ignore-branch'])
-        eq_(ret, 0)
+        assert ret == 0
         repo.checkout("master")
-        eq_(repo.rev_parse('master~^{}'), repo.rev_parse('debian/2.8-1^{}'))
+        assert repo.rev_parse("master~^{}") == repo.rev_parse("debian/2.8-1^{}")
 
     @skip_without_cmd('debchange')
     @RepoFixtures.quilt30()
@@ -301,7 +305,7 @@ class TestBuildpackage(ComponentTestBase):
                             '--git-ignore-new',
                             '--git-builder=/bin/true',
                             '--git-tarball-dir=../tarballs'])
-        eq_(ret, 1)
+        assert ret == 1
         self._check_log(-1, "gbp:error: Non-native package 'hello-debhelper' has invalid version '3.0'")
 
     @RepoFixtures.quilt30()
@@ -310,7 +314,7 @@ class TestBuildpackage(ComponentTestBase):
         preexport_out = os.path.join(repo.path, '..', 'preexport.out')
         self._test_buildpackage(repo, ['--git-export-dir=../export-dir',
                                        '--git-preexport=printenv > %s' % preexport_out])
-        ok_(os.path.exists(preexport_out))
+        assert os.path.exists(preexport_out)
         self.check_hook_vars('../preexport', ["GBP_BUILD_DIR", "GBP_GIT_DIR"])
 
     @RepoFixtures.overlay()
@@ -324,12 +328,14 @@ class TestBuildpackage(ComponentTestBase):
                                        '--git-component=foo',
                                        '--git-export-dir=../foo'])
         # Check if main tarball got unpacked
-        ok_(os.path.exists('../foo/hello-debhelper-2.8/configure'))
+        assert os.path.exists("../foo/hello-debhelper-2.8/configure")
         # Check if debian dir is there
-        ok_(os.path.exists('../foo/hello-debhelper-2.8/debian/changelog'))
+        assert os.path.exists("../foo/hello-debhelper-2.8/debian/changelog")
         # Check if additional tarball got unpacked
-        ok_(os.path.exists('../foo/hello-debhelper-2.8/foo/test1'))
+        assert os.path.exists("../foo/hello-debhelper-2.8/foo/test1")
         # Check if upstream tarballs is in export_dir
-        eq_(sorted(glob.glob('../foo/*')), ['../foo/hello-debhelper-2.8',
-                                            '../foo/hello-debhelper_2.8.orig-foo.tar.gz',
-                                            '../foo/hello-debhelper_2.8.orig.tar.gz'])
+        assert sorted(glob.glob("../foo/*")) == [
+            "../foo/hello-debhelper-2.8",
+            "../foo/hello-debhelper_2.8.orig-foo.tar.gz",
+            "../foo/hello-debhelper_2.8.orig.tar.gz",
+        ]
