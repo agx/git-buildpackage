@@ -20,6 +20,7 @@
 import errno
 import os
 import pipes
+import re
 import shutil
 import shlex
 import sys
@@ -211,6 +212,9 @@ def get_pbuilder_dist(options, repo, native=False):
         parts = branch.rsplit('/')
         if len(parts) == 2:  # e.g. debian/stretch
             suite = parts[1]
+            # Strip numeral prefix if suite name has it
+            # e.g. '12-bookworm' or '24.04-noble'
+            suite = re.sub(r'^[0-9][0-9.]*-', '', suite)
             if vendor == parts[0]:
                 dist = '' if suite in ['sid', 'master', 'main', 'latest'] else suite
             else:
