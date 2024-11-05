@@ -341,7 +341,7 @@ upstream-tag = v%(version%.%_)s
 	  and the upstream repository, we name the upstream repository <replaceable>upstream</replaceable> instead of the
 	  default <replaceable>origin</replaceable>.
 <programlisting>
-  <command>git clone</command> --no-checkout -o upstream git://git.example.com/libgbp.git
+  <command>git clone</command> --no-checkout -o upstreamvcs git://git.example.com/libgbp.git
   <command>cd</command> libgbp
   <command>git checkout</command> -b debian/latest v1.0
 </programlisting>
@@ -401,8 +401,8 @@ upstream-tag = v%(version%.%_)s
 	  a &git; repository with your packaging, change into that
 	  repository and do:
 <programlisting>
- &gitcmd; remote add upstream https://upstream.example.com/upstream.git
- &gitcmd; fetch upstream
+ &gitcmd; remote add upstreamvcs https://upstream.example.com/upstream.git
+ &gitcmd; fetch upstreamvcs
 </programlisting>
 	  This will pull in upstream's &git; history into your repo but since
 	  your packaging commits and upstreams commits have no common
