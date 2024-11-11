@@ -57,8 +57,10 @@ Contributing Patches
 --------------------
 
 Make sure the tests pass before sending in patch. You can either send
-it to the mailing list or add it to a bug report against
-git-buildpackage on <http://bugs.debian.org/src:git-buildpackage>.
+it to the mailing list, add it to a bug report against
+git-buildpackage on <http://bugs.debian.org/src:git-buildpackage> or
+open a merge request at
+<https://salsa.debian.org/agx/git-buildpackage/-/merge_requests>
 
 If you fix a regression or add a new feature please make sure this is covered
 by either a unittest (`tests/*.py`) or a component test that exercises one of the
