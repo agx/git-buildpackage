@@ -34,14 +34,14 @@ The python tests use `pytest` so you can use all it's options. To run a
 single test e.g.
 
 ```sh
-pytest tests/component/deb/test_push.py:TestPush.test_push_failure
+pytest tests/component/deb/test_push.py::TestPush::test_push_failure
 ```
 
 If you want to keep any temporary repos around for inspection use
 `GBP_TESTS_NOCLEAN`:
 
 ```sh
-GBP_TESTS_NOCLEAN=1 pytest tests/component/deb/test_push.py:TestPush.test_push_failure
+GBP_TESTS_NOCLEAN=1 pytest tests/component/deb/test_push.py::TestPush::test_push_failure
 ```
 
 Building the API Docs
