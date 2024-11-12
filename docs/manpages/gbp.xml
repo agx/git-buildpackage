@@ -30,7 +30,10 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp; is used to maintain &debian; source packages in the &git; version control system.
+    &gbp; is used to maintain &debian; source packages in the &git; version
+    control system. For a complete description of concepts, git repository
+    layout and recommended workflows, see the online manual at
+    https://gbp.sigxcpu.org/manual/.
     </para>
   </refsect1>
   <refsect1>

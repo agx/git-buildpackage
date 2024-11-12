@@ -70,7 +70,9 @@
     <title>DESCRIPTION</title>
     <para>
       &gbp-buildpackage; is used to build &debian; source and .deb packages from
-      a &git; repository.
+      a &git; repository. For a complete description of concepts, git repository
+      layout and recommended workflows, see the online manual at
+      https://gbp.sigxcpu.org/manual/
     </para>
     <para>
       &gbp-buildpackage; will, in order:

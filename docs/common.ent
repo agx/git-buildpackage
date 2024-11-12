@@ -76,5 +76,5 @@
   <!ENTITY changelog " <filename>debian/changelog</filename>">
 
   <!ENTITY dep14       "<ulink url='https://dep-team.pages.debian.net/deps/dep14/'><citetitle>DEP-14</citetitle></ulink>">
-  <!ENTITY manual      "<ulink url='https://honk.sigxcpu.org/piki/projects/git-buildpackage'>honk.sigxcpu.org/piki/projects/git-buildpackage</ulink>">
+  <!ENTITY manual      "<ulink url='https://gbp.sigxcpu.org/manual/'>gbp.sigxcpu.org/manual</ulink>">
   <!ENTITY pyformat    "<ulink url='https://docs.python.org/2/library/stdtypes.html#string-formatting'><citetitle>Python format string</citetitle></ulink>">
