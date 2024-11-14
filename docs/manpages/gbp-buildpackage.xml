@@ -391,9 +391,11 @@
               the build from a branch named
               <replaceable>debian/wheezy-backports</replaceable> the
               distribution is set
-              to <replaceable>wheezy-backports</replaceable>. If the
-              branch is named <replaceable>downstream/sid</replaceable>
-              the distribution is set
+              to <replaceable>wheezy-backports</replaceable> or if the branch is
+              named <replaceable>debian/12-bookworm</replaceable> the
+              distribution is set to <replaceable>bookworm</replaceable> (the
+              numeric prefix is stripped). If the branch is named
+              <replaceable>downstream/sid</replaceable> the distribution is set
               to <replaceable>downstream_sid</replaceable>.
             </para>
           </listitem>

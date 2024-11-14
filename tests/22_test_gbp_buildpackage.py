@@ -26,6 +26,14 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
                          self.options.pbuilder_dist)
 
     @patch('gbp.deb.get_vendor', return_value='Debian')
+    def test_get_pbuilder_dist_dep14_debian_latest(self, patch):
+        branch = 'debian/latest'
+        self.repo.create_branch(branch)
+        self.repo.set_branch(branch)
+        self.assertEqual(get_pbuilder_dist(self.options, self.repo), '')
+        patch.assert_called_once_with()
+
+    @patch('gbp.deb.get_vendor', return_value='Debian')
     def test_get_pbuilder_dist_dep14_debian_sid(self, patch):
         branch = 'debian/sid'
         self.repo.create_branch(branch)
@@ -47,6 +55,14 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         self.repo.create_branch(branch)
         self.repo.set_branch(branch)
         self.assertEqual(get_pbuilder_dist(self.options, self.repo), 'squeeze-lts')
+        patch.assert_called_once_with()
+
+    @patch('gbp.deb.get_vendor', return_value='Debian')
+    def test_get_pbuilder_dist_dep14_debian_12_bookworm(self, patch):
+        branch = 'debian/12-bookworm'
+        self.repo.create_branch(branch)
+        self.repo.set_branch(branch)
+        self.assertEqual(get_pbuilder_dist(self.options, self.repo), 'bookworm')
         patch.assert_called_once_with()
 
     @patch('gbp.deb.get_vendor', return_value='Debian')
