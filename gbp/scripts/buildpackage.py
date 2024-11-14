@@ -216,7 +216,8 @@ def get_pbuilder_dist(options, repo, native=False):
             # e.g. '12-bookworm' or '24.04-noble'
             suite = re.sub(r'^[0-9][0-9.]*-', '', suite)
             if vendor == parts[0]:
-                dist = '' if suite in ['sid', 'master', 'main', 'latest'] else suite
+                # Keep 'dist' empty for Debian unstable, otherwise populate it with 'suite'
+                dist = '' if suite in ['latest', 'master', 'main', 'sid'] else suite
             else:
                 dist = '%s_%s' % (parts[0], suite)
         # Branches in Debian often omit the debian/ prefix
