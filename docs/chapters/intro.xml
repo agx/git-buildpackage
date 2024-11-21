@@ -2,9 +2,9 @@
     <title>Introduction</title>
     <para>
       Welcome to git-buildpackage (short &gbp;), a system that integrates the
-      <ulink url="http://www.debian.org/">Debian</ulink> package build
-      system with <ulink url="http://git.or.cz/">Git</ulink>. The most
-      recent version of this manual can be found &manual;.
+      <ulink url="https://www.debian.org/">Debian</ulink> package build
+      system with <ulink url="https://git-scm.com/doc">Git</ulink>. The most
+      recent version of this manual can be found at &manual;.
     </para>
     <para>
       This is what &gbp; can do for you:
@@ -69,7 +69,7 @@
 	Every patch-queue branch is related to a
 	<option>debian-branch</option>. If the <option>debian-branch</option> is called
 	<emphasis>master</emphasis>, the corresponding patch-queue branch is
-	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is 
+	called <emphasis>patch-queue/master</emphasis>. The patch-queue branch is
 	the &debian; branch plus the contents of
 	<emphasis>debian/patches</emphasis> applied. These branches are managed
 	with &gbp-pq;.
@@ -94,7 +94,7 @@
 	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
 	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
-	url="http://git.debian.org/">git.debian.org</ulink>; this can be
+	url="https://salsa.debian.org/">salsa.debian.org</ulink>; this can be
 	automated with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
 </sect1>

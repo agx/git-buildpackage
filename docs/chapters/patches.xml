@@ -264,7 +264,7 @@
 </para>
 
 <programlisting>
-    &gitcmd; rebase -i debian/sid
+    &gitcmd; rebase -i debian/latest
 </programlisting>
 
   <para>

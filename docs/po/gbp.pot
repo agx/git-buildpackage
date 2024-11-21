@@ -1286,7 +1286,7 @@ msgstr ""
 #: chapters/import.xml:344
 #, no-wrap
 msgid ""
-"  <command>git clone</command> --no-checkout -o upstream "
+"  <command>git clone</command> --no-checkout -o upstreamvcs "
 "git://git.example.com/libgbp.git\n"
 "  <command>cd</command> libgbp\n"
 "  <command>git checkout</command> -b debian/sid v1.0\n"
