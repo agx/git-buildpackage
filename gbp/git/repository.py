@@ -1835,6 +1835,7 @@ class GitRepository(object):
             options.add('--', paths)
         if abbrev is not None:
             config_args.add('core.abbrev=%d' % abbrev)
+        config_args.add('diff.noprefix=false')
         output, stderr, ret = self._git_inout('diff',
                                               options.args,
                                               config_args=config_args.args)
