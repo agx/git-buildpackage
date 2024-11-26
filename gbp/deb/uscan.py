@@ -143,7 +143,7 @@ class Uscan(object):
 
         @returns: C{True} if a new version was downloaded
         """
-        cmd = ['uscan', '--symlink', '--destdir=%s' % destdir, '--dehs']
+        cmd = ['uscan', '--destdir=%s' % destdir, '--dehs']
         if download_version:
             cmd += ['--download-debversion', download_version]
         p = subprocess.Popen(cmd, cwd=self._dir, stdout=subprocess.PIPE)
