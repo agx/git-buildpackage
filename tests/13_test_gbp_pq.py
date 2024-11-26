@@ -433,5 +433,22 @@ class TestFromTAG(testutils.DebianGitTestRepo):
                                                      'added-bar.patch')))
 
 
+class TestGuessPatchStrip(unittest.TestCase):
+    def test_strip1(self):
+        patch = gbp.patch_series.Patch(_patch_path('rpm/rpmbuild/SOURCES/my.patch'))
+        strip = patch._guess_strip()
+        self.assertEqual(strip, 0)
+
+    def test_strip2(self):
+        patch = gbp.patch_series.Patch(_patch_path('rpm/rpmbuild/SOURCES/my2.patch'))
+        strip = patch._guess_strip()
+        self.assertEqual(strip, 1)
+
+    def test_strip3(self):
+        patch = gbp.patch_series.Patch(_patch_path('rpm/rpmbuild/SOURCES/my3.patch'))
+        strip = patch._guess_strip()
+        self.assertEqual(strip, 1)
+
+
 def _patch_path(name):
     return os.path.join(context.projectdir, 'tests/data', name)
