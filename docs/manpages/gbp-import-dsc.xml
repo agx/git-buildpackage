@@ -29,6 +29,7 @@
       <arg><option>--keyid=</option><replaceable>gpg-keyid</replaceable></arg>
       <arg><option>--[no-]create-missing-branches</option></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
+      <arg><option>--[no-]pristine-lfs</option></arg>
       <arg><option>--[no-]sign-tags</option></arg>
       <arg><option>--skip-debian-tag</option></arg>
       <arg><option>--upstream-branch=</option><replaceable>branch_name</replaceable></arg>
@@ -189,6 +190,15 @@
         <listitem>
           <para>
           Generate pristine-tar delta file.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-lfs</option>
+        </term>
+        <listitem>
+          <para>
+          Import tarballs into pristine-lfs.
           </para>
         </listitem>
       </varlistentry>

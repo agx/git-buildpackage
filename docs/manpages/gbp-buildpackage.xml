@@ -60,6 +60,8 @@
       <arg><option>--git-export=</option><replaceable>TREEISH</replaceable></arg>
       <arg><option>--git-[no-]pristine-tar</option></arg>
       <arg><option>--git-[no-]pristine-tar-commit</option></arg>
+      <arg><option>--git-[no-]pristine-lfs</option></arg>
+      <arg><option>--git-[no-]pristine-lfs-commit</option></arg>
       <arg><option>--git-[no-]-purge</option></arg>
       <arg><option>--git-tag-only</option></arg>
       <arg><option>--git-retag</option></arg>
@@ -105,7 +107,7 @@
       </listitem>
       <listitem>
         <para>
-          Build an orig tarball if it doesn't exist. Optionally using &pristine-tar;.
+          Build an orig tarball if it doesn't exist. Optionally using &pristine-lfs; or &pristine-tar;.
         </para>
       </listitem>
       <listitem>
@@ -150,7 +152,8 @@
     <refsect2>
       <title>Upstream tarball creation options</title>
       <para>When &gbp-buildpackage; doesn't find a suitable upstream
-	tarball it will create one either using &pristine-tar;
+        tarball, it will first try to check it out from &pristine-lfs;. If &pristine-lfs;
+        doesn't produce a tarball, &gbp-buildpackage; will create one either using &pristine-tar;
 	or <command>git archive</command>. These options determine how the tarball is created:
       </para>
       <variablelist>
@@ -163,6 +166,26 @@
               it doesn't exist. If this mode is enabled
               the <option>--git-upstream-tag</option>, <option>--git-upstream-tree</option>
               options have no effect when creating tarballs.
+            </para>
+            <para>
+              If both <option>--git-pristine-tar</option> and <option>--git-pristine-lfs</option>
+              are specified, <option>--git-pristine-lfs</option> takes precedence.
+            </para>
+          </listitem>
+        </varlistentry>
+	<varlistentry>
+          <term><option>--git-pristine-lfs</option>
+          </term>
+          <listitem>
+            <para>
+              Use pristine-lfs when generating the upstream tarball if
+              it doesn't exist. If this mode is enabled
+              the <option>--git-upstream-tag</option>, <option>--git-upstream-tree</option>
+              options have no effect when creating tarballs.
+            </para>
+            <para>
+              If both <option>--git-pristine-tar</option> and <option>--git-pristine-lfs</option>
+              are specified, <option>--git-pristine-lfs</option> takes precedence.
             </para>
           </listitem>
 	</varlistentry>
@@ -254,6 +277,16 @@
             <para>
               Commit the pristine-tar delta to the pristine-tar branch if a new
               tarball was generated and the pristine-tar data isn't already there.
+            </para>
+          </listitem>
+        </varlistentry>
+	<varlistentry>
+          <term><option>--git-pristine-lfs-commit</option>
+          </term>
+          <listitem>
+            <para>
+              Commit the tarball to the pristine-lfs branch if a new
+              tarball was generated and is hasn't been already imported there.
             </para>
           </listitem>
 	</varlistentry>

@@ -32,6 +32,8 @@
       <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--[no-]pristine-tar-commit</option></arg>
+      <arg><option>--[no-]pristine-lfs</option></arg>
+      <arg><option>--[no-]pristine-lfs-commit</option></arg>
       <arg><option>--upstream-signatures=</option>[auto|on|off]</arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -137,7 +139,7 @@
           </para>
           <para>
           This doesn't have any effect if <option>--pristine-tar</option>
-          is being used.
+          or <option>--pristine-lfs</option> is being used.
           </para>
         </listitem>
       </varlistentry>
@@ -203,7 +205,8 @@
         <listitem>
           <para>
           Use pristine-tar when generating the upstream tarball if it doesn't
-          exist.
+            exist. If used with <option>--pristine-lfs</option>, pristine-tar
+            is only used when pristine-lfs didn’t produce a tarball.
           </para>
         </listitem>
       </varlistentry>
@@ -214,6 +217,27 @@
           <para>
             Commit the pristine-tar delta to the pristine-tar branch if a new
             tarball was generated and the pristine-tar data isn't already there.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-lfs</option>
+        </term>
+        <listitem>
+          <para>
+          Use pristine-lfs when generating the upstream tarball if it doesn't
+            exist. If used with <option>--pristine-tar</option>, pristine-tar
+            is only used when pristine-lfs didn’t produce a tarball.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--pristine-lfs-commit</option>
+        </term>
+        <listitem>
+          <para>
+            Commit the tarball to the pristine-lfs branch if a new
+            tarball was generated and is hasn't been already imported there.
           </para>
         </listitem>
       </varlistentry>

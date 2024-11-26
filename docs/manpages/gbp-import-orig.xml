@@ -34,6 +34,7 @@
       <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
       <arg><option>--[no-]pristine-tar</option></arg>
       <arg><option>--[no-]filter-pristine-tar</option></arg>
+      <arg><option>--[no-]pristine-lfs</option></arg>
       <arg><option>--[no-]symlink-orig</option></arg>
       <arg><option>--postimport=cmd</option></arg>
       <arg><option>--postunpack=cmd</option></arg>
@@ -286,6 +287,15 @@
           <para>
           If using a filter, also filter the files out of the tarball
           passed to <command>pristine-tar</command>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--[no-]pristine-lfs</option>
+        </term>
+        <listitem>
+          <para>
+          Import tarballs into <command>pristine-lfs</command>.
           </para>
         </listitem>
       </varlistentry>
