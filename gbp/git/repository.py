@@ -840,7 +840,7 @@ class GitRepository(object):
             args.add(commit, '--')
             self._git_command("reset", args.args)
 
-    def _status(self, porcelain, ignore_untracked, paths):
+    def _status(self, porcelain, ignore_untracked, ignore_pattern, paths):
         args = GitArgs()
         args.add_true(ignore_untracked, '-uno')
         args.add_true(porcelain, '--porcelain')
@@ -853,11 +853,15 @@ class GitRepository(object):
         out, ret = self._git_getoutput('status',
                                        args.args + paths,
                                        extra_env={'LC_ALL': 'C'})
+        if ignore_pattern:
+            regex = re.compile(ignore_pattern.encode('utf-8'))
+            out = [i for i in out if not regex.search(i)]
+
         if ret:
             raise GitRepositoryError("Can't get repository status")
         return out
 
-    def is_clean(self, ignore_untracked=False, paths=None):
+    def is_clean(self, ignore_untracked=False, paths=None, ignore_pattern=None):
         """
         Does the repository contain any uncommitted modifications?
 
@@ -870,16 +874,19 @@ class GitRepository(object):
             and Git's status message
         @rtype: C{tuple}
         """
+
         if self.bare:
             return (True, '')
 
         out = self._status(porcelain=True,
                            ignore_untracked=ignore_untracked,
+                           ignore_pattern=ignore_pattern,
                            paths=paths)
         if out:
             # Get a more helpful error message.
             out = self._status(porcelain=False,
                                ignore_untracked=ignore_untracked,
+                               ignore_pattern=ignore_pattern,
                                paths=paths)
             return (False, "".join([e.decode() for e in out]))
         else:
