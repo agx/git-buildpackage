@@ -17,7 +17,7 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         DebianGitTestRepo.setUp(self)
         self.add_file('doesnotmatter')
         self.options = self.Options()
-        self.options.pbuilder_dist = 'DEP14'
+        self.options.pbuilder_dist = 'DEP-14'
 
     @patch('gbp.deb.get_vendor', return_value='Debian')
     def test_get_pbuilder_dist_no_dep14(self, patch):

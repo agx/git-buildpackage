@@ -202,7 +202,7 @@ def get_pbuilder_dist(options, repo, native=False):
     Determine the dist to build for with pbuilder/cowbuilder
     """
     dist = None
-    if options.pbuilder_dist == 'DEP14':
+    if options.pbuilder_dist == 'DEP-14' or options.pbuilder_dist == 'DEP14':
         vendor = du.get_vendor().lower()
         branch = repo.branch
         if not branch:
