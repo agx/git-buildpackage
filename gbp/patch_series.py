@@ -275,7 +275,7 @@ class Dep3Patch(Patch):
 
     def _check_dep3(self):
         """
-        Read DEP3 patch information into a structured form
+        Read DEP-3 patch information into a structured form
         """
         if not os.path.exists(self.path):
             return

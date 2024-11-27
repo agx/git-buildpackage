@@ -388,7 +388,7 @@
               via <option>--git-pbuilder</option>, <option>--git-qemubuilder</option>
               or the corresponding configuration file options).  If
               unset build for the unstable distribution. The special
-              value <symbol>DEP14</symbol> will set the distribution to
+              value <symbol>DEP-14</symbol> will set the distribution to
               build for from the branch name. I.e. if you're starting
               the build from a branch named
               <replaceable>debian/wheezy-backports</replaceable> the
