@@ -462,7 +462,7 @@ upstream-tag = v%(version%.%_)s
 	  </term>
 	  <listitem>
 	    <para>
-	      the latest upstream sources.
+	      the latest upstream release sources.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -482,6 +482,21 @@ upstream-tag = v%(version%.%_)s
 	In case &pristine-tar; is being used, there will be a single <emphasis>pristine-tar</emphasis>
 	branch that keeps all binary deltas.
       </para>
+      <para>
+        Note that the <emphasis>upstream/latest</emphasis> branch is to contain
+        the upstream source code as it was at the time of the upstream release,
+        which was imported into Debian packaging. The
+        <emphasis>upstream/latest</emphasis> ref is not intended to point to the
+        tip of upstream's development branch.
+      </para>
+      <tip><para>
+      Using upstream tarballs is recommended as it allows signature verification
+      of the tarballs. If upstream uses git and tags their releases, it is recommended to
+      also use &gbp-import-orig;'s <option>--upstream-vcs-tag</option> to have a
+      fully traceable path from upstream git tag, to tarball contents, to what
+      was imported into Debian. As this brings the upstream development history into the
+      packaging repository it also makes cherry picking upstream commits simple.
+      </para></tip>
     </sect1>
 </chapter>
 

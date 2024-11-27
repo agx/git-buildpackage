@@ -46,17 +46,20 @@
 	line and config file options</para></footnote> is used:
 	</para>
 	<itemizedlist>
-	<listitem><para>The <option>debian-branch</option> (the default branch
-	name used in the &git; repository is <emphasis>master</emphasis>) holds
-	your current development work.  That's the branch you usually cut your
-	releases from and the default branch new upstream releases are merged
-	onto.</para></listitem>
+	<listitem><para>The <option>debian-branch</option> (the default branch name
+	used in the &git; repository is <emphasis>master</emphasis> and in DEP-14
+	<emphasis>debian/latest</emphasis>) holds your current development work.
+	That's the branch you usually cut your releases from and the default branch
+	new upstream releases are merged onto.</para></listitem>
 
-	<listitem><para> The <option>upstream-branch</option> (the default
-	branch name used in the &git; repository is
-	<emphasis>upstream</emphasis>) holds the upstream releases. This can
-	either be a branch you import to or a branch of an upstream &git; repository
-	you pull from.</para></listitem>
+	<listitem><para> The <option>upstream-branch</option> (the default branch name
+	used in the &git; repository is <emphasis>upstream</emphasis> and in DEP-14
+	<emphasis>upstream/latest</emphasis>) holds the upstream releases. Note that
+	this branch is to contain the upstream source code as it was at the time of
+	the upstream release, which was imported into Debian packaging. It is not
+	intended to point to the tip of the upstream development branch. The branch
+	contents is updated by extracting the upstream source tarball into it, or by
+	pulling from an upstream release tag.</para></listitem>
 
 	<listitem><para> The <option>pristine-tar branch</option> (the default
 	branch name used in the &git; repository is
@@ -88,9 +91,9 @@
 	<option>upstream-branch</option>&mdash;it doesn't matter if these branches
 	are maintained with &gbp-import-orig; or not.</para>
         <para>
-        A recommended branch layout is described in <xref linkend="gbp.branch.naming"/>.
+        A flexible, recommended branch layout compatible with DEP-14 is
+        described in the section <xref linkend="gbp.branch.naming"/>.
         </para>
-
 	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
 	you have to use <command>git push</command> in order to publish your
 	changes to remote repositories like <ulink
