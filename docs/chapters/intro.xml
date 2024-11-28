@@ -30,6 +30,18 @@
       <listitem><para>Generate <filename>debian/changelog</filename> automatically</para></listitem>
       <listitem><para>Manage your quilt patches when using 3.0 (quilt)
 	  source format</para></listitem>
+      <listitem>
+        <para>
+          Pull changes from remote repositories like
+          <ulink url="https://salsa.debian.org/">salsa.debian.org</ulink>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Publish changes to remote packaging repositories like
+          <ulink url="https://salsa.debian.org/">salsa.debian.org</ulink>
+        </para>
+      </listitem>
     </itemizedlist>
     All of this is (hopefully) being done without restricting the user to certain usage patterns.
     </para>
