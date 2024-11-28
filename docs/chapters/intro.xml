@@ -107,8 +107,9 @@
         described in the section <xref linkend="gbp.branch.naming"/>.
         </para>
 	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
-	you have to use <command>git push</command> in order to publish your
-	changes to remote repositories like <ulink
+	you have to use <command>git push</command> or <command>gbp
+        push</command>in order to publish your changes to remote repositories
+        like <ulink
 	url="https://salsa.debian.org/">salsa.debian.org</ulink>; this can be
 	automated with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
