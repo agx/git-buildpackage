@@ -9,7 +9,7 @@
     <para>
       This is what &gbp; can do for you:
     <itemizedlist>
-      <listitem><para>Initially import an existing &debian; package into &git;</para></listitem>
+      <listitem><para>Import existing &debian; packages into &git;</para></listitem>
       <listitem><para>Incrementally import new versions of a Debian
       package into &git; e.g. for importing NMUs or to maintain
       downstream modifications</para></listitem>
