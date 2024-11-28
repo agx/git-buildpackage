@@ -27,7 +27,7 @@
       </listitem>
       <listitem><para>Integrate the build process with cowbuilder or other builders</para></listitem>
       <listitem><para>Export to a clean build area before building the package</para></listitem>
-      <listitem><para>Generate debian/changelog automatically</para></listitem>
+      <listitem><para>Generate <filename>debian/changelog</filename> automatically</para></listitem>
       <listitem><para>Manage your quilt patches when using 3.0 (quilt)
 	  source format</para></listitem>
     </itemizedlist>
