@@ -5,7 +5,7 @@
     &gbp-buildpackage;. This builds the upstream tarball (as will be described below) and
     invokes &debuild; to build the package. To use another build command, you
     can use the <option>--git-builder</option> option as described later in the manual,
-    but &debuild; is nice since it can invoke <productname>lintian</productname>.
+    but &debuild; is nice since it can invoke &lintian;.
     During the development phase (when you're either not on the
     <emphasis>debian-branch</emphasis> or when you have uncommitted changes in
     your repository), you'll usually use:
@@ -80,8 +80,7 @@ export-dir=../build-area
     build: immediately before a build (<option>prebuild</option>),
     after a successful build (<option>postbuild</option>), and after
     creating a tag (<option>posttag</option>). Typical applications are running
-    <productname>lintian</productname> or pushing changes into a remote
-    repository.
+    &lintian; or pushing changes into a remote repository.
     </para>
     <sect2 id="gbp.building.lintian">
     <title>Running lintian</title>

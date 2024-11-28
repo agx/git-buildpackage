@@ -43,10 +43,12 @@
   <!ENTITY git-qemubuilder	"<command>git-pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
+  <!ENTITY lintian              "<command>lintian</command>">
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">
   <!ENTITY pdebuildcmd		"<command>pdebuild</command>">
   <!ENTITY quilt                "<command>quilt</command>">
   <!ENTITY rpmbuild             "<command>rpmbuild</command>">
+  <!ENTITY rpmlint              "<command>rpmlint</command>">
   <!ENTITY uscan                "<command>uscan</command>">
   <!ENTITY wget                 "<command>wget</command>">
 
