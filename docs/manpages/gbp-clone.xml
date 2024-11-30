@@ -15,7 +15,7 @@
   <refnamediv>
     <refname>gbp-clone</refname>
 
-    <refpurpose>Clone a repository from remote</refpurpose>
+    <refpurpose>Clone a Debian packaging repository with necessary branches from a remote</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -42,10 +42,15 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-    &gbp-clone; clones a remote repository and sets up tracking branches for
-    the <emphasis>debian</emphasis>, <emphasis>upstream</emphasis> and
-    <emphasis>pristine-tar</emphasis> branches. This way you can easily update
-    later using &gbp-pull;.
+      Unlike a regular <command>git clone</command>, the &gbp-clone; will parse
+      the <emphasis>debian/gbp.conf</emphasis> options and clone the remote
+      repository with correct branches tracked.
+    </para>
+    <para>
+      Likewise, it is recommended to use &gbp-pull; and &gbp-push; to later
+      update the repository as it will spare from having to run
+      <command>git pull</command> and <command>git push</command> multiple times
+      or with lenghty arguments to sync each tracked branch.
     </para>
   </refsect1>
   <refsect1>
@@ -207,30 +212,36 @@
       </varlistentry>
     </variablelist>
   </refsect1>
-    <refsect1>
+  <refsect1>
     <title>EXAMPLES</title>
     <para>
-      Clone a repository and setup a tracking branch for pristine-tar
-      as well:
+      Clone the Debian packaging repository and the upstream repository in one go:
     </para>
-    <screen>
-      &gbp-clone; --pristine-tar git://honk.sigxcpu.org/git/git-buildpackage.git</screen>
+    <screen>&gbp-clone; -add-upstream-vcs vcs-git:entr</screen>
+    <para>
+      The branches, tags and pristine-tar will be automatically setup correctly
+      following the contents of debian/gbp.conf in the package, and there will
+      be an additional git remote with the name <emphasis>upstreamvcs</emphasis>
+      that points to the upstream Entr repository on GitHub.
+    </para>
+    <para>
+      A parameter on the command line would override anything in the
+      debian/gbp.conf file. For example, clone a repository and setup a tracking
+      branch for pristine-tar as well:
+    </para>
+    <screen>&gbp-clone; --pristine-tar git://honk.sigxcpu.org/git/git-buildpackage.git</screen>
     <para>
       Clone from the <emphasis>Git-Vcs</emphasis> URL of a package:
     </para>
-    <screen>
-    &gbp-clone; vcs-git:libvirt
-    &gbp-clone; vcsgit:libvirt</screen>
+    <screen>&gbp-clone; vcs-git:libvirt</screen>
     <para>
-      Clone a repository from salsa (Debian's code hosting):
+      Clone a repository from Salsa (Debian's code hosting):
     </para>
-    <screen>
-      &gbp-clone; salsa:agx/git-buildpackage</screen>
-        <para>
-      Clone from a github repository:
+    <screen>&gbp-clone; salsa:agx/git-buildpackage</screen>
+    <para>
+      Clone from a GitHub repository:
     </para>
-    <screen>
-      &gbp-clone; github:agx/git-buildpackage</screen>
+    <screen>&gbp-clone; github:agx/git-buildpackage</screen>
   </refsect1>
   <refsect1>
       &man.gbp.config-files;
