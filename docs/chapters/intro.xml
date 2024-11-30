@@ -9,7 +9,7 @@
     <para>
       This is what &gbp; can do for you:
     <itemizedlist>
-      <listitem><para>Initially import an existing &debian; package into &git;</para></listitem>
+      <listitem><para>Import existing &debian; packages into &git;</para></listitem>
       <listitem><para>Incrementally import new versions of a Debian
       package into &git; e.g. for importing NMUs or to maintain
       downstream modifications</para></listitem>
@@ -27,9 +27,21 @@
       </listitem>
       <listitem><para>Integrate the build process with cowbuilder or other builders</para></listitem>
       <listitem><para>Export to a clean build area before building the package</para></listitem>
-      <listitem><para>Generate debian/changelog automatically</para></listitem>
+      <listitem><para>Generate <filename>debian/changelog</filename> automatically</para></listitem>
       <listitem><para>Manage your quilt patches when using 3.0 (quilt)
 	  source format</para></listitem>
+      <listitem>
+        <para>
+          Pull changes from remote repositories like
+          <ulink url="https://salsa.debian.org/">salsa.debian.org</ulink>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Publish changes to remote packaging repositories like
+          <ulink url="https://salsa.debian.org/">salsa.debian.org</ulink>
+        </para>
+      </listitem>
     </itemizedlist>
     All of this is (hopefully) being done without restricting the user to certain usage patterns.
     </para>
@@ -95,8 +107,9 @@
         described in the section <xref linkend="gbp.branch.naming"/>.
         </para>
 	<para>Since &gbp-buildpackage; only works with local &git;-repositories,
-	you have to use <command>git push</command> in order to publish your
-	changes to remote repositories like <ulink
+	you have to use <command>git push</command> or <command>gbp
+        push</command>in order to publish your changes to remote repositories
+        like <ulink
 	url="https://salsa.debian.org/">salsa.debian.org</ulink>; this can be
 	automated with &gbp-buildpackage;'s <option>post-tag</option>
 	hook.</para>
