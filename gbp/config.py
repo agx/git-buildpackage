@@ -155,7 +155,7 @@ class GbpOptionParser(OptionParser):
                 'meta-closes': 'Closes|LP',
                 'meta-closes-bugnum': r'(?:bug|issue)?\#?\s?\d+',
                 'multimaint': 'True',
-                'multimaint-merge': 'False',
+                'multimaint-merge': 'True',
                 'no-create-orig': 'False',
                 'notify': 'auto',
                 'overlay': 'False',

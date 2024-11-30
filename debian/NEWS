@@ -1,3 +1,10 @@
+git-buildpackage (0.9.38) unstable; urgency=medium
+
+  Starting from this version the option 'multimaint-merge' is enabled by
+  default.
+
+ -- Otto Kekäläinen <otto@debian.org>  Tue, 14 Jan 2025 21:32:38 -0800
+
 git-buildpackage (0.8.14) experimental; urgency=medium
 
   gbp import-orig's --merge-mode option now defaults to 'auto' selecting
