@@ -118,8 +118,7 @@
       </listitem>
       <listitem>
         <para>
-        (Optionally) call a post build hook - e.g. to run
-        <productname>rpmlint</productname>.
+        (Optionally) call a post build hook - e.g. to run &rpmlint;.
         </para>
       </listitem>
       <listitem>

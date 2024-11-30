@@ -43,35 +43,39 @@
   <!ENTITY git-qemubuilder	"<command>git-pbuilder</command>">
   <!ENTITY gitcmd		"<command>git</command>">
   <!ENTITY gitkcmd		"<command>gitk</command>">
+  <!ENTITY lintian              "<command>lintian</command>">
   <!ENTITY pbuildercmd		"<command>pbuilder</command>">
   <!ENTITY pdebuildcmd		"<command>pdebuild</command>">
   <!ENTITY quilt                "<command>quilt</command>">
   <!ENTITY rpmbuild             "<command>rpmbuild</command>">
+  <!ENTITY rpmlint              "<command>rpmlint</command>">
   <!ENTITY uscan                "<command>uscan</command>">
   <!ENTITY wget                 "<command>wget</command>">
 
   <!ENTITY debian-branch        "<option>debian-branch</option>">
   <!ENTITY upstream-branch      "<option>upstream-branch</option>">
 
-  <!ENTITY apt-get     "<productname>apt-get</productname>">
-  <!ENTITY cowbuilder  "<productname>Cowbuilder</productname>">
-  <!ENTITY dch	       "<productname>dch</productname>">
-  <!ENTITY debian      "<productname>Debian</productname>">
-  <!ENTITY debuild     "<productname>Debuild</productname>">
-  <!ENTITY dget        "<productname>dget</productname>">
-  <!ENTITY dpkg-buildpackage "<productname>Dpkg-buildpackage</productname>">
-  <!ENTITY dpkg-source "<productname>Dpkg-source</productname>">
-  <!ENTITY git	       "<productname>Git</productname>">
-  <!ENTITY gitloaddirs "<productname>Git_load_dirs</productname>">
-  <!ENTITY gnu         "<acronym>GNU</acronym>">
-  <!ENTITY gpg 	       "<productname>GPG</productname>">
-  <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
-  <!ENTITY lintian     "<productname>lintian</productname>">
-  <!ENTITY mock        "<productname>mock</productname>">
-  <!ENTITY pbuilder    "<productname>Pbuilder</productname>">
-  <!ENTITY pk4         "<productname>pk4</productname>">
-  <!ENTITY pristine-tar "<productname>pristine-tar</productname>">
-  <!ENTITY svn-buildpackage "<productname>svn-buildpackage</productname>">
+  <!ENTITY debian               "<productname>Debian</productname>">
+
+  <!ENTITY gnu                  "<acronym>GNU</acronym>">
+  <!ENTITY gpl                  "&gnu; <acronym>GPL</acronym>">
+
+  <!ENTITY apt-get              "<application>apt-get</application>">
+  <!ENTITY cowbuilder           "<application>Cowbuilder</application>">
+  <!ENTITY dch                  "<application>dch</application>">
+  <!ENTITY debuild              "<application>Debuild</application>">
+  <!ENTITY dget                 "<application>dget</application>">
+  <!ENTITY dpkg-buildpackage    "<application>Dpkg-buildpackage</application>">
+  <!ENTITY dpkg-source          "<application>Dpkg-source</application>">
+  <!ENTITY git                  "<application>Git</application>">
+  <!ENTITY gitloaddirs          "<application>Git_load_dirs</application>">
+  <!ENTITY gpg                  "<application>GPG</application>">
+  <!ENTITY lintian              "<application>lintian</application>">
+  <!ENTITY mock                 "<application>mock</application>">
+  <!ENTITY pbuilder             "<application>Pbuilder</application>">
+  <!ENTITY pk4                  "<application>pk4</application>">
+  <!ENTITY pristine-tar         "<application>pristine-tar</application>">
+  <!ENTITY svn-buildpackage     "<application>svn-buildpackage</application>">
 
   <!ENTITY changelog " <filename>debian/changelog</filename>">
 
