@@ -8,13 +8,15 @@
     </para>
     <para>
       This is what &gbp; can do for you:
+    </para>
     <itemizedlist>
       <listitem><para>Import existing &debian; packages into &git;</para></listitem>
       <listitem><para>Incrementally import new versions of a Debian
       package into &git; e.g. for importing NMUs or to maintain
       downstream modifications</para></listitem>
-      <listitem><para>Import new upstream versions from tarballs with optionally filters applied</para></listitem>
-      <listitem><para>Recreate the upstream tarball from information stored in &git;</para></listitem>
+      <listitem><para>Import new upstream versions from tarballs or git tags, or both at the same time</para></listitem>
+      <listitem><para>Automatically apply debian/copyright filters for DFSG-clean imports</para></listitem>
+      <listitem><para>Recreate (bit-for-bit with pristine-tar) the upstream tarball from information stored in &git;</para></listitem>
       <listitem><para>Maintain a consistent branch and tag naming within a &git; repository, across
 	  repositories or across a team of developers</para></listitem>
       <listitem><para>Automatically sign generated tags</para></listitem>
@@ -28,8 +30,7 @@
       <listitem><para>Integrate the build process with cowbuilder or other builders</para></listitem>
       <listitem><para>Export to a clean build area before building the package</para></listitem>
       <listitem><para>Generate <filename>debian/changelog</filename> automatically</para></listitem>
-      <listitem><para>Manage your quilt patches when using 3.0 (quilt)
-	  source format</para></listitem>
+      <listitem><para>Add, edit and rebase the <filename>debian/patche</filename> without having to use GNU Quilt</para></listitem>
       <listitem>
         <para>
           Pull changes from remote repositories like
@@ -43,6 +44,7 @@
         </para>
       </listitem>
     </itemizedlist>
+   <para>
     All of this is (hopefully) being done without restricting the user to certain usage patterns.
     </para>
 
