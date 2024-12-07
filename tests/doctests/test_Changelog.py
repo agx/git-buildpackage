@@ -240,10 +240,10 @@ def test_get_changes():
     19
     >>> len(cl.get_changes('0.5.31').split('\\n'))
     7
-    >>> cl['Changes'].split('\\n')[0]
-    ' git-buildpackage (0.5.32) unstable; urgency=low'
-    >>> len(cl['Changes'])
-    187
+    >>> cl['Changes'].split('\\n')[0].strip()
+    'git-buildpackage (0.5.32) unstable; urgency=low'
+    >>> len(cl['Changes'].strip())
+    186
     """
 
 
