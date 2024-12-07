@@ -639,6 +639,26 @@
         Thanks to Raphaël Hertzog for the suggestion (Closes: #636088)</screen>
   </refsect1>
   <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+    Update the latest <filename>debian/changelog</filename> so package is ready
+    for release, and commit the change. A editor will be spawned so the entry
+    can be reviewed and manually refined easily.
+    </para>
+    <screen>
+       gbp dch --release --commit</screen>
+    <para>
+      Right after running <command>git import-orig --uscan</command>, create a
+      new <filename>debian/changelog</filename> entry for UNRELEASED, and include
+      only commits that modified something in the <filename>debian/</filename>
+      subdirectory so all upstream commits are ignored:
+    </para>
+    <screen>
+      gbp dch --distribution=UNRELEASED \
+      --commit --commit-msg="Update changelog after new upstream version import" \
+      -- debian</screen>
+  </refsect1>
+  <refsect1>
     &man.gbp.config-files;
   </refsect1>
   <refsect1>

@@ -283,8 +283,9 @@
       &gbp-import-dsc; http://http.debian.net/debian/pool/main/h/hello/hello_2.10-1.dsc
     </screen>
     <para>
-      Download and import a source package via <command>apt-get
-      source</command> from unstable:
+      Ensure that the local git repository has the latest version of the package
+      available in Debian unstable by downloading and attempting to import the
+      source package via <command>apt-get source</command>:
     </para>
     <screen>
       &gbp-import-dsc; apt:hello/sid

@@ -76,6 +76,17 @@ options shipped in the package source.</para>
     </para>
   </refsect1>
   <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+      When run in an empty directory, download all versions of package
+      <emphasis>entr</emphasis> available at Debian snapshots and import them
+      into a new git repository:
+    </para>
+    <screen>
+      gbp import-dscs --verbose --pristine-tar --create-missing-branches --debsnap entr
+    </screen>
+  </refsect1>
+  <refsect1>
     <title>SEE ALSO</title>
 
     <para>
