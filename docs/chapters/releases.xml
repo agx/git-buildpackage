@@ -91,7 +91,7 @@ git-buildpackage (0.3.7~1.gbp470ce2) UNRELEASED; urgency=low
 
   ** SNAPSHOT build @470ce29ec7877705c844474a2fd89869aea0406d **
 
-  * add support for automatic snapshot 
+  * add support for automatic snapshot
 </programlisting>
   <para>
     During subsequent calls with <option>--snapshot</option>, this

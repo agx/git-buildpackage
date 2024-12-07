@@ -16,4 +16,3 @@ elif [ -z "$VERSION" ]; then
 fi
 
 git svn tag -m"Tagging $PKG ($VERSION)" $VERSION
-

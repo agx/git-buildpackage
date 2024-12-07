@@ -194,7 +194,7 @@ postexport = crosstoolchain-expand.sh
 # A typical use is preparing a bootstrap gcc package that is needed
 # for building newlib and then preparing a full gcc package from the
 # same source tree. The user may specify the package flavor via
-# PKG_FLAVOR environmental variable. 
+# PKG_FLAVOR environmental variable.
 #
 #
 # The script expands/processes the following files:
