@@ -14,7 +14,6 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-config</refname>
-
     <refpurpose>Query configuration values</refpurpose>
   </refnamediv>
   <refsynopsisdiv>

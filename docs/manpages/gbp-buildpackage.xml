@@ -13,7 +13,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-buildpackage</refname>
-    <refpurpose>Build &debian; packages from a &git; repository</refpurpose>
+    <refpurpose>Build &debian; source and binary packages from a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

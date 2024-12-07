@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-pq</refname>
-    <refpurpose>Manage quilt patches on patch queue branches in git</refpurpose>
+    <refpurpose>Manage <filename>debian/patches</filename> in &git; without any need for GNU Quilt</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

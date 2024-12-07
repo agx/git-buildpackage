@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-dch</refname>
-    <refpurpose>Generate the &debian; changelog from git commit messages</refpurpose>
+    <refpurpose>Generate the <filename>debian/changelog</filename> from &git; commit history</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

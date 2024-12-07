@@ -14,8 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-pull</refname>
-
-    <refpurpose>Safely update a repository from remote</refpurpose>
+    <refpurpose>Update a &git; repository from a remote, aware of necessary packaging branch tracking</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

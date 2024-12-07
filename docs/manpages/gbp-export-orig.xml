@@ -13,7 +13,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-export-orig</refname>
-    <refpurpose>Export upstream tarballs from a &git; repository</refpurpose>
+    <refpurpose>Recreate upstream tarballs from a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

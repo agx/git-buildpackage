@@ -14,8 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-clone</refname>
-
-    <refpurpose>Clone a Debian packaging repository with necessary branches from a remote</refpurpose>
+    <refpurpose>Clone a &git; repository from a remote and set up the necessary branch tracking</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

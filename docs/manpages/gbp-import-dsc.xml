@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-import-dsc</refname>
-    <refpurpose>Import &debian; packages into a &git; repository</refpurpose>
+    <refpurpose>Import a &debian; source package into a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
