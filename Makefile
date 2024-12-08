@@ -20,7 +20,7 @@ test:
 	export DEBEMAIL=$$GIT_AUTHOR_EMAIL;             \
 	PYTHONPATH=.					\
 	LC_ALL=$(TEST_LOCALE)                           \
-	python3 -m pytest
+	python3 -m pytest $(PYTEST_ARGS)
 
 syntax-check:
 	flake8 $(FLAKE_OPTS)
