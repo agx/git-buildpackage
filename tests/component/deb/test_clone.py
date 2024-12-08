@@ -60,8 +60,7 @@ class TestClone(ComponentTestBase):
         """Test that cloning from vcs-git urls works"""
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
-        ret = clone(['arg0', "--add-upstream-vcs", "vcsgit:libvirt-glib", dest])
-        self.assertEqual(ret, 0)
+        self._check_success(clone(['arg0', "--add-upstream-vcs", "vcsgit:libvirt-glib", dest]))
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'debian/sid', ['debian/sid', 'upstream/latest'])
         assert cloned.has_remote_repo("upstreamvcs")
@@ -79,8 +78,7 @@ class TestClone(ComponentTestBase):
         """Test that cloning from github urls works"""
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
-        ret = clone(['arg0', "github:agx/git-buildpackage", dest])
-        self.assertEqual(ret, 0)
+        self._check_success(clone(['arg0', "github:agx/git-buildpackage", dest]))
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'master', ['master'])
 
@@ -89,8 +87,7 @@ class TestClone(ComponentTestBase):
         """Test that cloning a repo without harmful attrs does nothing"""
         dest = os.path.join(self._tmpdir,
                             'cloned_repo')
-        clone(['arg0',
-               repo.path, dest])
+        self._check_success(clone(['arg0', repo.path, dest]))
         cloned = ComponentTestGitRepository(dest)
         self._check_repo_state(cloned, 'master', ['master'])
 
