@@ -41,13 +41,25 @@ Actions:
 def import_tarballs(repo: DebianGitRepository,
                     source: DebianSource,
                     tarball: str, options: argparse.Namespace) -> DebianUpstreamTarballList:
-    sources = [DebianUpstreamSource(tarball)]
+    sig = '{}.asc'.format(tarball)
+    if os.path.exists(sig):
+        gbp.log.debug("Signature {} found for {}".format(tarball, sig))
+        signature = sig
+    else:
+        signature = None
+
+    sources = [DebianUpstreamSource(tarball, sig=signature)]
     sources += get_component_tarballs(source.sourcepkg,
                                       source.upstream_version,
                                       sources[0].path,
                                       options.components)
     upstream_tag = repo.version_to_tag(options.upstream_tag,
                                        source.upstream_version)
+
+    for upstream_source in sources:
+        # Enforce signature file exists with --upstream-signatures=on
+        if options.upstream_signatures.is_on() and not upstream_source.signaturefile:
+            raise GbpError("%s does not have a signature file" % upstream_source.path)
 
     repo.create_pristine_tar_commits(upstream_tag, sources)
     return sources
@@ -65,6 +77,9 @@ def build_parser(name):
                                   dest="upstream_tag")
     parser.add_config_file_option("component", action="append", metavar='COMPONENT',
                                   dest="components")
+    parser.add_config_file_option(option_name="upstream-signatures",
+                                  dest="upstream_signatures",
+                                  type='tristate')
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
