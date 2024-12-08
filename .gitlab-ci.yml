@@ -54,13 +54,15 @@ python-tests:
   variables:
     PYTEST_ARGS: --junit-xml=pytest-junit.xml
   before_script:
+    # Some tests need sources configured for e.g. "apt showsrc"
+    - echo "deb-src http://deb.debian.org/debian/ sid main" > /etc/apt/sources.list.d/sid-src.list
     - apt -y update
     - apt -y build-dep .
   script:
     - git submodule update --init -- tests/component/deb/data/
     - python3 setup.py build
     - make syntax-check
-    - make test
+    - GBP_NETWORK_TESTS=1 make test
   artifacts:
     paths:
       - pytest-junit.xml
