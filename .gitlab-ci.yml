@@ -19,6 +19,24 @@ python-lint:
     reports:
       junit: ruff-junit.xml
 
+python-tests:
+  stage: check
+  image: debian:sid
+  variables:
+    PYTEST_ARGS: --junit-xml=pytest-junit.xml
+  before_script:
+    - apt -y update
+    - apt -y build-dep .
+  script:
+    - python3 setup.py build
+    - make syntax-check
+    - make test
+  artifacts:
+    paths:
+      - pytest-junit.xml
+    reports:
+      junit: pytest-junit.xml
+
 python-typecheck:
   stage: check
   image: debian:sid
