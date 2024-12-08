@@ -11,6 +11,7 @@ gbp.egg-info/
 \#*#
 .#*
 *.log
+*-junit.xml
 
 docs/*.1
 docs/*.5

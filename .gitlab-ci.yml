@@ -1,0 +1,44 @@
+---
+stages:
+  - check
+  - package
+
+python-lint:
+  stage: check
+  image: debian:sid
+  before_script:
+    - apt -y update
+    - apt -y install ruff
+  script:
+    # Ruff is fast, run it twice to have junit and stout:
+    - ruff check --output-format=junit --output-file=ruff-junit.xml . || true
+    - ruff check .
+  artifacts:
+    paths:
+      - ruff-junit.xml
+    reports:
+      junit: ruff-junit.xml
+
+python-typecheck:
+  stage: check
+  image: debian:sid
+  variables:
+    MYPY_ARGS: --junit-xml=mypy-junit.xml
+  before_script:
+    - apt -y update
+    - apt -y build-dep .
+    - apt -y install mypy
+  script:
+    - python3 setup.py build
+    - make type-check
+  artifacts:
+    paths:
+      - mypy-junit.xml
+    reports:
+      junit: mypy-junit.xml
+
+salsaci:
+  stage: package
+  trigger:
+    include: debian/salsa-ci.yml
+    strategy: depend
