@@ -19,6 +19,24 @@ python-lint:
     reports:
       junit: ruff-junit.xml
 
+python-typecheck:
+  stage: check
+  image: debian:sid
+  variables:
+    MYPY_ARGS: --junit-xml=mypy-junit.xml
+  before_script:
+    - apt -y update
+    - apt -y build-dep .
+    - apt -y install mypy
+  script:
+    - python3 setup.py build
+    - make type-check
+  artifacts:
+    paths:
+      - mypy-junit.xml
+    reports:
+      junit: mypy-junit.xml
+
 salsaci:
   stage: package
   trigger:
