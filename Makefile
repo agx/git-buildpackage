@@ -27,7 +27,7 @@ syntax-check:
 	flake8 $(FLAKE_OPTS) $(PY_EXAMPLES)
 
 type-check:
-	mypy gbp
+	mypy $(MYPY_ARGS) gbp
 
 shell-check:
 	@echo "# Validating zsh completion"
