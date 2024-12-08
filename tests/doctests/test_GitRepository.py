@@ -482,12 +482,6 @@ def test_repo():
     Traceback (most recent call last):
     ...
     gbp.git.repository.GitRepositoryError: No Git repository at '/does/not/exist'
-    >>> # test_create_noperm():
-    >>> # Check that creating a repository at a path that isn't writeable fails
-    >>> gbp.git.GitRepository.create("/does/not/exist")
-    Traceback (most recent call last):
-    ...
-    gbp.git.repository.GitRepositoryError: Cannot create Git repository at '/does/not/exist': [Errno 13] Permission denied: '/does'
     >>> # test_checkout():
     >>> # Checkout treeishs
     >>> repo = gbp.git.GitRepository(dirs['repo'])
@@ -638,6 +632,19 @@ def test_repo():
     True
     >>> del os.environ['GIT_DIR']
     >>> teardown_module()
+    """
+
+
+def test_create_noperm():
+    """
+    Check that creating a repository at a path that isn't writeable fails
+
+    >>> import gbp.git, pytest, os
+    >>> if os.getenv('CI') == "true": pytest.skip("Skipping in CI, too many perms")
+    >>> gbp.git.GitRepository.create("/does/not/exist")
+    Traceback (most recent call last):
+    ...
+    gbp.git.repository.GitRepositoryError: Cannot create Git repository at '/does/not/exist': [Errno 13] Permission denied: '/does'
     """
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:
