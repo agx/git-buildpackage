@@ -22,6 +22,7 @@
 
       &man.common.options.synopsis;
       <arg><option>--upstream-tag=</option><replaceable>tag-format</replaceable></arg>
+      <arg><option>--upstream-signatures=</option>[auto|on|off]</arg>
       <arg rep='repeat'><option>--component=</option><replaceable>component</replaceable></arg>
       <group choice="plain">
         <arg><option>commit</option></arg>
@@ -53,6 +54,20 @@
           <para>
           use this tag format when tagging upstream versions,
           default is <replaceable>upstream/%(version)s</replaceable>
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--upstream-signatures=</option>[auto|on|off]</term>
+        <listitem>
+          <para>
+            Whether upstream signatures should be imported as well.
+            <emphasis>off</emphasis> turns this off completely while
+            <emphasis>on</emphasis> always tries to import a signature
+            (which can be useful if you want to fail if e.g. &uscan;
+            did not fetch a signature). The default
+            <emphasis>auto</emphasis> means to import a signature file
+            if present but do nothing otherwise.
           </para>
         </listitem>
       </varlistentry>

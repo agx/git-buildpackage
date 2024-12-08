@@ -40,6 +40,7 @@ from gbp.scripts.common.import_orig import (orig_needs_repack, cleanup_tmp_tree,
                                             repack_upstream, is_link_target, download_orig)
 from gbp.scripts.common.hook import Hook
 from gbp.deb.rollbackgit import RollbackDebianGitRepository
+from typing import Tuple
 
 
 def maybe_link(orig, link):
@@ -101,7 +102,7 @@ def upstream_import_commit_msg(options, version):
     return options.import_msg % dict(version=version)
 
 
-def detect_name_and_version(repo, source, options):
+def detect_name_and_version(repo, source, options) -> Tuple[str, str]:
     # Guess defaults for the package name and version from the
     # original tarball.
     guessed_package, guessed_version = source.guess_version()

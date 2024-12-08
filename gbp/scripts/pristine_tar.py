@@ -17,6 +17,7 @@
 #
 """Perform pristine-tar import into a Git repository"""
 
+import argparse
 import os
 import sys
 import gbp.log
@@ -24,7 +25,7 @@ from gbp.command_wrappers import CommandExecFailed
 from gbp.config import GbpOptionParserDebian
 from gbp.deb.git import (GitRepositoryError, DebianGitRepository)
 from gbp.deb.source import DebianSource
-from gbp.deb.upstreamsource import DebianUpstreamSource
+from gbp.deb.upstreamsource import DebianUpstreamSource, DebianUpstreamTarballList
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes, get_component_tarballs
 
@@ -35,6 +36,33 @@ def usage_msg():
 Actions:
    commit         recreate the pristine-tar commits on the pristine-tar branch
 """
+
+
+def import_tarballs(repo: DebianGitRepository,
+                    source: DebianSource,
+                    tarball: str, options: argparse.Namespace) -> DebianUpstreamTarballList:
+    sig = '{}.asc'.format(tarball)
+    if os.path.exists(sig):
+        gbp.log.debug("Signature {} found for {}".format(tarball, sig))
+        signature = sig
+    else:
+        signature = None
+
+    sources = [DebianUpstreamSource(tarball, sig=signature)]
+    sources += get_component_tarballs(source.sourcepkg,
+                                      source.upstream_version,
+                                      sources[0].path,
+                                      options.components)
+    upstream_tag = repo.version_to_tag(options.upstream_tag,
+                                       source.upstream_version)
+
+    for upstream_source in sources:
+        # Enforce signature file exists with --upstream-signatures=on
+        if options.upstream_signatures.is_on() and not upstream_source.signaturefile:
+            raise GbpError("%s does not have a signature file" % upstream_source.path)
+
+    repo.create_pristine_tar_commits(upstream_tag, sources)
+    return sources
 
 
 def build_parser(name):
@@ -49,6 +77,9 @@ def build_parser(name):
                                   dest="upstream_tag")
     parser.add_config_file_option("component", action="append", metavar='COMPONENT',
                                   dest="components")
+    parser.add_config_file_option(option_name="upstream-signatures",
+                                  dest="upstream_signatures",
+                                  type='tristate')
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
@@ -91,16 +122,9 @@ def main(argv):
         except GitRepositoryError:
             raise GbpError("%s is not a git repository" % (os.path.abspath('.')))
 
-        debsource = DebianSource('.')
-        # FIXME: this should be a single call
-        sources = [DebianUpstreamSource(tarball)]
-        sources += get_component_tarballs(debsource.sourcepkg,
-                                          debsource.upstream_version,
-                                          sources[0].path,
-                                          options.components)
-        upstream_tag = repo.version_to_tag(options.upstream_tag,
-                                           debsource.upstream_version)
-        repo.create_pristine_tar_commits(upstream_tag, sources)
+        source = DebianSource('.')
+
+        sources = import_tarballs(repo, source, tarball, options)
         ret = 0
     except (GitRepositoryError, GbpError, CommandExecFailed) as err:
         if str(err):
@@ -111,7 +135,7 @@ def main(argv):
     if not ret:
         comp_msg = (' with additional tarballs for %s'
                     % ", ".join([os.path.basename(t.path) for t in sources[1:]])) if sources[1:] else ''
-        gbp.log.info("Successfully committed pristine-tar data for version %s of %s%s" % (debsource.version,
+        gbp.log.info("Successfully committed pristine-tar data for version %s of %s%s" % (source.version,
                                                                                           tarball,
                                                                                           comp_msg))
     return ret

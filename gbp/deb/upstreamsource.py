@@ -68,3 +68,6 @@ class DebianAdditionalTarball(DebianUpstreamSource):
             os.chdir(olddir)
             if tmpdir is not None:
                 gbp.command_wrappers.RemoveTree(tmpdir)()
+
+
+type DebianUpstreamTarballList = list[DebianUpstreamSource | DebianAdditionalTarball]

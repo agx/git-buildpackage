@@ -51,6 +51,29 @@ class TestPristineTar(ComponentTestBase):
         assert pristine_tar(["arg0", "commit", orig]) == 0
         self._check_repo_state(repo, "master", ["master", "upstream", "pristine-tar"])
 
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--no-pristine-tar'])
+    def test_missing_upstream_signature(self, repo):
+        """
+        Test that adding pristine-tar commit works
+        """
+        orig = self._orig("2.6")
+        assert pristine_tar(["arg0", "--upstream-signature=on", "commit", orig]) == 1
+        self._check_log(-1, ".*/hello-debhelper_2.6.orig.tar.gz does not have a signature file")
+
+    @RepoFixtures.quilt30(DEFAULT_DSC, opts=['--no-pristine-tar'])
+    def test_upstream_signature(self, repo):
+        """
+        Test that adding pristine-tar commit works
+        """
+        orig = self._orig("2.8")
+        assert pristine_tar(["arg0", "--upstream-signature=on", "commit", orig]) == 0
+        self._check_repo_state(repo, "master", ["master", "upstream", "pristine-tar"])
+        assert repo.ls_tree("pristine-tar") == {
+            b"hello-debhelper_2.8.orig.tar.gz.id",
+            b"hello-debhelper_2.8.orig.tar.gz.delta",
+            b"hello-debhelper_2.8.orig.tar.gz.asc",
+        }
+
     @RepoFixtures.quilt30(_dsc_file('hello-debhelper',
                                     '2.8-1',
                                     dir='dsc-3.0-additional-tarballs'),
