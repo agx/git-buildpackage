@@ -28,6 +28,7 @@ python-tests:
     - apt -y update
     - apt -y build-dep .
   script:
+    - git submodule update --init -- tests/component/deb/data/
     - python3 setup.py build
     - make syntax-check
     - make test
