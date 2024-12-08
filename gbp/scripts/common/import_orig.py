@@ -146,7 +146,7 @@ def repack_upstream(upstream, name, version, tmpdir, filters):
     return (repacked, tmpdir)
 
 
-def download_orig(url):
+def download_orig(url: str) -> DebianUpstreamSource:
     """
     Download orig tarball from given URL
     @param url: the download URL
@@ -160,9 +160,6 @@ def download_orig(url):
     try:
         import requests
     except ImportError:
-        requests = None
-
-    if requests is None:
         raise GbpError("python3-requests not installed")
 
     tarball = os.path.basename(url)
@@ -185,6 +182,7 @@ def download_orig(url):
     sig = '{}.asc'.format(target)
     if os.path.exists(sig):
         gbp.log.debug("Signature {} found for {}".format(target, sig))
+        signature = sig
     else:
-        sig = None
-    return DebianUpstreamSource(target, sig=sig)
+        signature = None
+    return DebianUpstreamSource(target, sig=signature)

@@ -53,7 +53,10 @@ def is_download(args):
 
 
 # FIXME: this could become a method of DebianUpstreamSource
-def get_component_tarballs(name, version, tarball, components):
+def get_component_tarballs(name: str,
+                           version: str,
+                           tarball: str,
+                           components: list[str]) -> list[DebianAdditionalTarball]:
     """
     Figure out the paths to the component tarballs based on the main
     tarball.
