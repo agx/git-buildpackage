@@ -10,7 +10,14 @@ python-lint:
     - apt -y update
     - apt -y install ruff
   script:
+    # Ruff is fast, run it twice to have junit and stout:
+    - ruff check --output-format=junit --output-file=ruff-junit.xml . || true
     - ruff check .
+  artifacts:
+    paths:
+      - ruff-junit.xml
+    reports:
+      junit: ruff-junit.xml
 
 salsaci:
   stage: package
