@@ -20,10 +20,10 @@
 
 import os
 import os.path
-import pipes
 from gbp.git import GitRepositoryError
 from gbp.pkg.git import PkgGitRepository
 from gbp.errors import GbpError
+from gbp import pipes
 import gbp.log
 
 # when we want to reference the index in a treeish context we call it:

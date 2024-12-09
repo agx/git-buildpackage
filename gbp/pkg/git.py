@@ -17,14 +17,13 @@
 """A Git Repository that keeps a Distro Package"""
 
 import os
-import pipes
 import shutil
 import tempfile
 
 from gbp.command_wrappers import (CatenateTarArchive, CatenateZipArchive)
 from gbp.git import GitRepository, GitRepositoryError
 from gbp.deb.pristinetar import DebianPristineTar
-
+from gbp import pipes
 
 import gbp.log
 
