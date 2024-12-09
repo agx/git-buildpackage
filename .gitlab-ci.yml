@@ -52,7 +52,7 @@ python-tests:
   stage: check
   image: debian:sid
   variables:
-    PYTEST_ARGS: --junit-xml=pytest-junit.xml
+    PYTEST_ARGS: --junit-xml=pytest-junit.xml --cov --cov-report term --cov-report xml:coverage.xml
   before_script:
     # Some tests need sources configured for e.g. "apt showsrc"
     - echo "deb-src http://deb.debian.org/debian/ sid main" > /etc/apt/sources.list.d/sid-src.list
@@ -64,11 +64,15 @@ python-tests:
     - python3 setup.py build
     - make syntax-check
     - GBP_NETWORK_TESTS=1 make test
+  coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
       - pytest-junit.xml
     reports:
       junit: pytest-junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 python-typecheck:
   stage: check
