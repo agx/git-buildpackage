@@ -1,4 +1,33 @@
 ---
+include:
+  - remote: 'https://gitlab.freedesktop.org/freedesktop/ci-templates/-/raw/6a40df92957c8ce9ee741aaccc5daaaf70545b1e/templates/ci-fairy.yml'
+
+default:
+  # Protect CI infra from rogue jobs
+  timeout: 15 minutes
+  # Allow jobs to be caneled on new commits
+  interruptible: true
+  # Retry on infra hickups automatically
+  retry:
+    max: 1
+    when:
+      - 'api_failure'
+      - 'runner_system_failure'
+      - 'scheduler_failure'
+      - 'stuck_or_timeout_failure'
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    # Don't trigger a branch pipeline if there is an open MR
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH
+
+variables:
+  FDO_UPSTREAM_REPO: agx/git-buildpackage
+
 stages:
   - check
   - package
@@ -23,20 +52,27 @@ python-tests:
   stage: check
   image: debian:sid
   variables:
-    PYTEST_ARGS: --junit-xml=pytest-junit.xml
+    PYTEST_ARGS: --junit-xml=pytest-junit.xml --cov --cov-report term --cov-report xml:coverage.xml
   before_script:
+    # Some tests need sources configured for e.g. "apt showsrc"
+    - echo "deb-src http://deb.debian.org/debian/ sid main" > /etc/apt/sources.list.d/sid-src.list
     - apt -y update
+    - apt -y install curl python3-requests flake8
     - apt -y build-dep .
   script:
     - git submodule update --init -- tests/component/deb/data/
     - python3 setup.py build
     - make syntax-check
-    - make test
+    - GBP_NETWORK_TESTS=1 make test
+  coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
       - pytest-junit.xml
     reports:
       junit: pytest-junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 python-typecheck:
   stage: check
@@ -55,6 +91,31 @@ python-typecheck:
       - mypy-junit.xml
     reports:
       junit: mypy-junit.xml
+
+shellcheck:
+  stage: check
+  image: debian:sid
+  before_script:
+    - apt -y update
+    - apt -y install shellcheck bash zsh make
+  script:
+    - make shell-check
+
+# Sanity checks of MR settings and commit logs
+sanity:
+  extends:
+    - .fdo.ci-fairy
+  stage: check
+  variables:
+    GIT_DEPTH: "100"
+  needs: []
+  script: |
+    ci-fairy check-commits --signed-off-by --junit-xml=commit-message-junit-report.xml
+  artifacts:
+    reports:
+      junit: commit-message-junit-report.xml
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME'
 
 salsaci:
   stage: package

@@ -266,3 +266,10 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
             f.write(' ' or content)
         repo.add_files(name)
         repo.commit_files(name, 'New file %s' % name)
+
+    def _check_success(self, ret):
+        """
+        Check a commands exit status for success (0)
+        """
+        assert_msg = "Command failed with {}. Log output: {}".format(ret, "\n".join(self._get_log()))
+        assert ret == 0, assert_msg
