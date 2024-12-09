@@ -57,6 +57,7 @@ python-tests:
     # Some tests need sources configured for e.g. "apt showsrc"
     - echo "deb-src http://deb.debian.org/debian/ sid main" > /etc/apt/sources.list.d/sid-src.list
     - apt -y update
+    - apt -y install curl python3-requests flake8
     - apt -y build-dep .
   script:
     - git submodule update --init -- tests/component/deb/data/
