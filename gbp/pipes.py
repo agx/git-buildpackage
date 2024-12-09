@@ -1,3 +1,6 @@
+# This file was taken from Python 3.12 it is thus under the PFSL.
+# Changes are GPLv2
+
 """Conversion pipeline templates.
 
 The problem:
@@ -60,25 +63,22 @@ To create a new template object initialized to a given one:
 import re
 import os
 import tempfile
-import warnings
 # we import the quote function rather than the module for backward compat
 # (quote used to be an undocumented but used function in pipes)
 from shlex import quote
-
-warnings._deprecated(__name__, remove=(3, 13))
 
 __all__ = ["Template"]
 
 # Conversion step kinds
 
-FILEIN_FILEOUT = 'ff'                   # Must read & write real files
-STDIN_FILEOUT  = '-f'                   # Must write a real file
-FILEIN_STDOUT  = 'f-'                   # Must read a real file
-STDIN_STDOUT   = '--'                   # Normal pipeline element
-SOURCE         = '.-'                   # Must be first, writes stdout
-SINK           = '-.'                   # Must be last, reads stdin
+FILEIN_FILEOUT = 'ff'  # Must read & write real files
+STDIN_FILEOUT = '-f'   # Must write a real file
+FILEIN_STDOUT = 'f-'   # Must read a real file
+STDIN_STDOUT = '--'    # Normal pipeline element
+SOURCE = '.-'          # Must be first, writes stdout
+SINK = '-.'            # Must be last, reads stdin
 
-stepkinds = [FILEIN_FILEOUT, STDIN_FILEOUT, FILEIN_STDOUT, STDIN_STDOUT, \
+stepkinds = [FILEIN_FILEOUT, STDIN_FILEOUT, FILEIN_STDOUT, STDIN_STDOUT,
              SOURCE, SINK]
 
 
@@ -210,13 +210,13 @@ def makepipeline(infile, steps, outfile):
     #
     garbage = []
     for i in range(1, len(list)):
-        lkind = list[i-1][2]
+        lkind = list[i - 1][2]
         rkind = list[i][2]
         if lkind[1] == 'f' or rkind[0] == 'f':
             (fd, temp) = tempfile.mkstemp()
             os.close(fd)
             garbage.append(temp)
-            list[i-1][-1] = list[i][0] = temp
+            list[i - 1][-1] = list[i][0] = temp
     #
     for item in list:
         [inf, cmd, kind, outf] = item
