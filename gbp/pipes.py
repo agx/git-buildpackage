@@ -63,9 +63,7 @@ To create a new template object initialized to a given one:
 import re
 import os
 import tempfile
-# we import the quote function rather than the module for backward compat
-# (quote used to be an undocumented but used function in pipes)
-from shlex import quote
+import shlex
 
 __all__ = ["Template"]
 
@@ -221,13 +219,13 @@ def makepipeline(infile, steps, outfile):
     for item in list:
         [inf, cmd, kind, outf] = item
         if kind[1] == 'f':
-            cmd = 'OUT=' + quote(outf) + '; ' + cmd
+            cmd = 'OUT=' + shlex.quote(outf) + '; ' + cmd
         if kind[0] == 'f':
-            cmd = 'IN=' + quote(inf) + '; ' + cmd
+            cmd = 'IN=' + shlex.quote(inf) + '; ' + cmd
         if kind[0] == '-' and inf:
-            cmd = cmd + ' <' + quote(inf)
+            cmd = cmd + ' <' + shlex.quote(inf)
         if kind[1] == '-' and outf:
-            cmd = cmd + ' >' + quote(outf)
+            cmd = cmd + ' >' + shlex.quote(outf)
         item[1] = cmd
     #
     cmdlist = list[0][1]
@@ -243,8 +241,8 @@ def makepipeline(infile, steps, outfile):
     if garbage:
         rmcmd = 'rm -f'
         for file in garbage:
-            rmcmd = rmcmd + ' ' + quote(file)
-        trapcmd = 'trap ' + quote(rmcmd + '; exit') + ' 1 2 3 13 14 15'
+            rmcmd = rmcmd + ' ' + shlex.quote(file)
+        trapcmd = 'trap ' + shlex.quote(rmcmd + '; exit') + ' 1 2 3 13 14 15'
         cmdlist = trapcmd + '\n' + cmdlist + '\n' + rmcmd
     #
     return cmdlist
