@@ -87,6 +87,15 @@ python-typecheck:
     reports:
       junit: mypy-junit.xml
 
+shellcheck:
+  stage: check
+  image: debian:sid
+  before_script:
+    - apt -y update
+    - apt -y install shellcheck bash zsh make
+  script:
+    - make shell-check
+
 # Sanity checks of MR settings and commit logs
 sanity:
   extends:

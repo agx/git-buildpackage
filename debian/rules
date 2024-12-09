@@ -6,7 +6,6 @@
 override_dh_auto_test:
 ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	make test
-	make shell-check
 endif
 
 execute_after_dh_auto_build:
