@@ -47,6 +47,23 @@
    <para>
     All of this is (hopefully) being done without restricting the user to certain usage patterns.
     </para>
+    <para>
+      Git-buildpackage utlizises among others
+      <ulink url="https://manpages.debian.org/unstable/devscripts/uscan.1.en.html">uscan</ulink>,
+      <ulink url="https://manpages.debian.org/unstable/pristine-tar/pristine-tar.1.en.html">pristine-tar</ulink>,
+      <ulink url="https://manpages.debian.org/unstable/devscripts/debchange.1.en.html">debchange</ulink>
+      and <ulink url="https://manpages.debian.org/unstable/devscripts/debuild.1.en.html">debuild</ulink>
+      (which in turn uses
+      <ulink url="https://manpages.debian.org/unstable/dpkg-dev/dpkg-buildpackage.1.en.html">dpkg-buildpackage</ulink>
+      and <ulink url="https://manpages.debian.org/unstable/lintian/lintian.1.en.html">lintian</ulink>).
+      Prior knowledge about these tools transfer easily to git-buildpackage as
+      for example the configuration options have the same names. However, people
+      learning Debian packaging do not need to know these tools as
+      git-buildpackage will by default use these tools correctly on behalf of
+      the user. Leveraging on these tools also means that git-buildpackage has
+      all the capabilities these tools have, and git-buildpackage is equally
+      compliant to all Debian policies as these tools are.
+    </para>
 
 <sect1 id="gbp.repository">
 	<title>Repository Layout and Terminology</title>
