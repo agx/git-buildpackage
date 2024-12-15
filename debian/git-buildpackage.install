@@ -15,6 +15,7 @@ usr/lib/python3.*/dist-packages/gbp/log.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/notifications.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/paths.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/patch_series.py usr/lib/python3/dist-packages/gbp/
+usr/lib/python3.*/dist-packages/gbp/pipes.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/pkg/ usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/scripts/buildpackage.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/clone.py usr/lib/python3/dist-packages/gbp/scripts/

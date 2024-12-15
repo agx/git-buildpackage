@@ -22,7 +22,6 @@ import os
 import shutil
 import tempfile
 import glob
-import pipes
 import time
 import gbp.command_wrappers as gbpc
 from gbp.deb.dscfile import DscFile
@@ -38,6 +37,7 @@ from gbp.config import (GbpOptionParserDebian, GbpOptionGroup,
 from gbp.errors import GbpError
 from gbp.scripts.common import ExitCodes, debug_exc
 from gbp.scripts.common import repo_setup
+from gbp import pipes
 import gbp.log
 
 

@@ -19,7 +19,6 @@
 
 import errno
 import os
-import pipes
 import re
 import shutil
 import shlex
@@ -575,7 +574,7 @@ def main(argv):
             # Finally build the package:
             gbp.log.info("Performing the build")
             RunAtCommand(options.builder,
-                         [pipes.quote(arg) for arg in dpkg_args],
+                         [shlex.quote(arg) for arg in dpkg_args],
                          shell=True,
                          extra_env=Hook.md(build_env,
                                            {'GBP_BUILD_DIR': build_dir})

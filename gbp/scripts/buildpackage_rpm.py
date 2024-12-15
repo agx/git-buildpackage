@@ -19,7 +19,7 @@
 """Build an RPM package out of a Git repository"""
 
 import os
-import pipes
+import shlex
 import shutil
 import sys
 
@@ -601,7 +601,7 @@ def main(argv):
                 else:
                     builder_args.append(spec.specfile)
                 RunAtCommand(options.builder,
-                             [pipes.quote(arg) for arg in builder_args],
+                             [shlex.quote(arg) for arg in builder_args],
                              shell=True,
                              extra_env={'GBP_BUILD_DIR': export_dir}
                              )(dir=export_dir)
