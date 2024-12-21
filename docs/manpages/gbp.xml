@@ -88,6 +88,15 @@
     </variablelist>
     <variablelist>
       <varlistentry>
+        <term>import-ref
+        </term>
+        <listitem>
+          <para>Merge upstream git commits onto your &debian-branch;</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <variablelist>
+      <varlistentry>
         <term>export-orig
         </term>
         <listitem>
