@@ -1,3 +1,152 @@
+git-buildpackage (0.9.36) unstable; urgency=medium
+
+  [ Michael R. Crusoe ]
+  * [aee0584] Idiomatic usage of pytest, remove almost all traces of nose
+    (Closes: #1018367)
+
+  [ Guido Günther ]
+  * [4c63abd] d/control: Drop dependency on pkg-resources (Closes: #1083415)
+  * [f243658] docs: Mardownify development hints
+  * [379e63f] docs: Adjust test invocations for pytest. It's different from
+    nose, sigh
+  * [1f1f7f2] docs: Link to hacking
+  * [a699d3b] docs: Add merge request URL
+  * [45b2d4f] docs: Clean up markdown. Make mdl happy.
+  * [5495aa6] docs: Use application instead of product.
+    Avoids the ™. See
+        https://tdg.docbook.org/tdg/5.1/application
+    While at that move all applications into their own block
+  * [ae431af] docs: Use entities for lintian and rpm-lint.
+    We use command rather than productname as the related text refers to
+    running external commands.
+  * [9c1ec80] dirlocals: Avoid tabs in xml mode
+  * [e19f76e] docs: intro: Make first point more crisp
+  * [e0e1102] docs: intro: Use <filename> around debian/changelog
+  * [dc42093] docs: intro: Mention that we support push and pull
+  * [12287be] docs: intro: Mention gbp push.
+    The initial paragraph was written before gbp push existed.
+  * [3d34a37] tests: Strip result.
+    This unbreaks CI and lets us work with recent and older
+    dpkg-parsechangelog.
+  * [8396466] build: Allow to pass args to mypy. Useful in CI
+  * [a3472d3] ci: Add upstream pipeline. Do the linting and checking before
+    running salsa-ci
+  * [f7c50a1] ci: Store ruff result as junit. Makes things easier to read in
+    gitlab
+  * [e228fed] ci: Run typecheck
+  * [59b3da2] upstreamsource: Add some types for tarball lists.
+    We need to slightly tweak the code for this 
+  * [80e5964] pristine-tar: Move import to its own function. Rename debsource
+    to source while at that to match other scripts
+  * [0365f5c] pristine-tar: Import upstream signatures too. Otherwise we're
+    not consistent with import-orig
+  * [55a5925] tests: Skip repo creation test in CI. We have too many perms
+  * [c8dfce0] build: Allow to pass extra args to pytest. Useful in ci.
+  * [0337772] ci: Run pytests. This allows us to run the tests that need
+    network as well
+  * [1930a4a] ci: Fetch deb packaging data.
+    Enables us to run the deb based component tests. We do this for the test
+    job only as the others don't need the submodules to work.
+    The rpm component tests need more work so we don't fetch the subodule
+    yet.
+  * [69f1fe7] packaging: Don't run flake8.
+    This makes the package build more robust as we don't have to worry about
+    new formatting warnings/errors which don't affect the functionality of
+    the package.
+  * [15fe75e] ci: Use ci pipelines and robustify CI runs. Cancel running jobs
+    to save resources
+  * [4f28776] ci: Run ci-fairy. This keeps commit messages sane
+  * [2c5d94d] tests: Ease checking exit status. Print the error log when exit
+    status is not 0
+  * [7a9c89c] tests/clone: Print logs on failure. Eases debugging in CI
+  * [83af90e] ci: Enable tests that need network access
+  * [fb6d859] ci: Run shell checks. We can drop them from the packaging run.
+  * [410df5f] packaging: Drop test dependencies. We run the tests in CI
+  * [b6aaa8e] tests: Enable coverage reports and coverage percentage
+  * [6ff6117] gbp: Add pipes module verbatim from Python 3.12.8
+  * [e401bae] pipes: Drop deprecation warning. Drop the deprecation warning,
+    add a copyright header and make flake8 happy.
+  * [43d4b3b] pipes: Use shlex.quote. Ensures we don't leak pipe.quote
+  * [87e5905] gbp: Use our bundled pipes module (Closes: #1084672)
+
+  [ Otto Kekäläinen ]
+  * [ea20cff] Support numerical prefix in suite names.
+    E.g. '12-bookworm' or '24.04-noble'.
+    Repositories that have many parallel releases in maintenance are easier
+    to manage when the suites have a number prefix so they sort alphabetically
+    correctly, and also causes less cognitive load in trying to remember what
+    release number and name to put in debian/changelog.
+  * [dd3bba9] Document vendor detection and sort names alphabetically
+  * [b8e75c6] docs: Consistently use 'upsreamvcs' as git remote for upstream
+  * [a92b54d] docs: Misc minor tweaks and fixes
+    * Fix one stray use of 'debian/sid' missed in 4dc9a6ce
+    * Mention DEP-14 layout on page about branches
+    * Update links to upstream Git homepage and to salsa.debian.org
+    * Replace link 'here' with actual manual URL to make the link readable
+    * Use https in links
+    * Remove trailing white space
+  * [14e2a30] docs: Use the shorter URL to online manual, and promote it in man pages too.
+    Shorter is better and prettier, so promote https://gbp.sigxcpu.org/manual/
+    over the long URL. Also promote this in the introduction of the most
+    important man pages, as currently the anyone reading the man pages will
+    not discover the online manual as the links are missing.
+    The only link in the manpages currently is a local link, which does not
+    render at all at e.g. https://manpages.debian.org/bookworm/git-buildpackage/git-buildpackage.1.en.html
+  * [7ae9847] docs: Clarify that 'upstream' branch doesn't mean actual upstream branch.
+    Correct common misunderstanding that the gbp 'upstream' branch is not
+    the actual upstream branch, but a custom branch that represents the
+    source code at the time of the release, and which together with the
+    pristine-tar is used to reconstruct the upstream source code as-is.
+    Co-authored-by: Guido Günther <agx@debian.org>
+  * [1187384] docs: gbp-clone: Clarify commands and include --add-upstream-vcs in example.
+    Also unify the use of `<screen>` syntax in examples to avoid excess
+    whitespace, and fix some indentation.
+    Use `vcs-git:` in examples to avoid confusing reader with multiple options
+    for the exact same thing. Choose this spelling as it will be correctly
+    associated with the `Vcs-Git:` field in the `debian/control` file in the
+    mind of Debian maintainers/developers.
+  * [74d059a] docs: Improve intro to better summarize what git-buildpackage can do
+  * [3fc948a] docs: Extend intro mentioning uscan, pristine-tar, debchange, debuild etc.
+    Extend the intro to mention that git-buildpackage uses under the hood
+    many existing core Debian packaging tools. This is important as it gives
+    new readers a better understanding of how git-buildpackage operates, in
+    particular if they are experienced Debian packagers.
+
+  [ Chris Lamb ]
+  * [c224b03] Prevent "pq export" (etc.) from creating unparsable diffs when diff.noprefix=true is set.
+    Using diff.noprefix=true globally makes Git nicer to use as a human, as it
+    makes it possible to copy file paths when running git diff (etc.) on the
+    command line.
+    Otherwise, you typically see filenames which technically don't exist. For
+    instance, these files aren't under a directory called "a" or "b" at all; they
+    are placeholders:
+      --- a/tochange.py
+      +++ b/tochange.py
+    However, when this global option is set, "pq export" will serialise the patch
+    branch into debian/patches with the filenames missing the prefix, which
+    dpkg-source then can't actually parse and it errors out. In other words, they
+    look like this:
+      --- tochange.py
+      +++ tochange.py
+    A patch is attached that overrides diff.noprefix when calling out to
+    "git diff", meaning that it will use "a/" and "b/" as expected. This
+    seems somewhat analogous to overriding the user's core.abbrev setting.
+    (Closes: #1088032)
+
+  [ Richard Lewis ]
+  * [c9cc8df] buildpackage: remove export_dir if build fails.
+    Previously, the export_dir was not removed if the build command
+    (set by --git-builder) failed, or was interrupted.
+    This commit ensures it is removed, unless --git-no-purge is used
+    Not removing is useful for debugging, but does not need to be the
+    default (Closes: #1088179)
+  * [663b3ff] gbp: Use shlex.quote rather than pipe.quote
+
+  [ Travis Wrightsman ]
+  * [2914c03] docs: Add import-ref to gbp(1)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 22 Dec 2024 13:48:23 +0100
+
 git-buildpackage (0.9.35) unstable; urgency=medium
 
   [ Guido Günther ]
