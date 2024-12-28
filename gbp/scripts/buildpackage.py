@@ -490,6 +490,7 @@ def main(argv):
     prefix = "git-"
     source = None
     hook_env = {}
+    export_dir = None
 
     options, gbp_args, dpkg_args = parse_args(argv, prefix)
 
@@ -606,7 +607,7 @@ def main(argv):
         drop_index(repo)
 
     if not options.tag_only:
-        if options.export_dir and options.purge:
+        if export_dir and options.purge:
             RemoveTree(export_dir)()
 
         if source:
