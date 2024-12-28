@@ -51,7 +51,8 @@
     <title>DESCRIPTION</title>
     <para>
       &gbp-import-orig; imports upstream sources into a &git;
-      repository. It can import from three sources:
+      repository optionally linking to upstream's git history. It can
+      import from three sources:
     </para>
     <orderedlist>
       <listitem>
@@ -98,6 +99,15 @@
       sources are not allowed in that format and so a 1:1 replacement
       of the upstream sources is almost always desired. It can
       be tweaked via the <option>--merge-mode</option>.
+    </para>
+    <para>
+      When using the <option>--upstream-vcs-tag</option> option the
+      tag matching the version of the imported release will be added
+      as additinoal parent of the commit created for the imported
+      tarball. This ties the upstream git commit history to the Debian
+      packaging history and allows for e.g. easy cherry-picking of
+      patches and comparision of upstream git and the upstream
+      tarball.
     </para>
     <para>In case of an error &gbp-import-orig; will rollback (undo)
       all changes it has done to the repository (see
