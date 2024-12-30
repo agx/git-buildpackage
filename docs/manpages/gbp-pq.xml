@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-pq</refname>
-    <refpurpose>Manage quilt patches on patch queue branches in git</refpurpose>
+    <refpurpose>Manage <filename>debian/patches</filename> in &git; without any need for GNU Quilt</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -344,6 +344,24 @@
         </listitem>
       </varlistentry>
     </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+      Create a temporary branches-applied branch from files currently in
+      <filename>debian/patches/*</filename>, and switch to it so that one can
+      easily modify the files directly and manage the metadata as git commits
+      modify the files with git commands (thus avoiding quilt) and manage the metadata as git commits:
+    </para>
+    <screen>
+      gbp pq switch --force</screen>
+    <para>
+      Re-create the contents of <filename>debian/patches/*</filename> using the
+      commits on the patches-applied branch, commit it on the actual Debian
+      packaging branch, and delete the temporary patches-applied branch::
+    </para>
+    <screen>
+      gbp pq export --drop --commit</screen>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>

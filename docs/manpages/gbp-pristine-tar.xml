@@ -35,12 +35,13 @@
   <refsect1>
     <title>DESCRIPTION</title>
     <para>
-      &gbp-pristine-tar; adds the pristine-tar commit for a given
-      upstream tarball to a &git; repository. This can be useful if a
-      original tarball has been already imported and the pristine-tar
-      commits should be added at a later time or if you're tracking
-      upstream git and want to create pristine-tar commits
-      nevertheless.
+      &gbp-pristine-tar; adds the pristine-tar commit for a given upstream
+      tarball to a &git; repository. This command is typically not invoked
+      manually, as creating new pristine-tar commits is done automatically by
+      e.g. &gbp-import-orig;. This command may howeer be useful if a original
+      tarball has been already imported and the pristine-tar commits should be
+      added at a later time or if you're tracking upstream git and want to
+      create pristine-tar commits nevertheless.
     </para>
   </refsect1>
   <refsect1>

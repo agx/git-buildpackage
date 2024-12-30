@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-import-dscs</refname>
-    <refpurpose>Import multiple versions of a Debian source packages into a Git repository</refpurpose>
+    <refpurpose>Import several versions of a &debian; source package into a &git; repository, sorted by version number</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -41,8 +41,8 @@
     <para>
     &gbp-import-dscs; imports several versions of a Debian source package into
     a &git; repository. To do so, it sorts the packages by their versions first,
-    and then imports them via calling &gbp-import-dsc; on each package. 
-    </para> 
+    and then imports them via calling &gbp-import-dsc; on each package.
+    </para>
 
     <para>
     If the current directory isn't a &git; repository already, the repository is
@@ -74,6 +74,17 @@ options shipped in the package source.</para>
     <para>
     All other options are passed on verbatim to &gbp-import-dsc;.
     </para>
+  </refsect1>
+  <refsect1>
+    <title>EXAMPLES</title>
+    <para>
+      When run in an empty directory, download all versions of package
+      <emphasis>entr</emphasis> available at Debian snapshots and import them
+      into a new git repository:
+    </para>
+    <screen>
+      gbp import-dscs --verbose --pristine-tar --create-missing-branches --debsnap entr
+    </screen>
   </refsect1>
   <refsect1>
     <title>SEE ALSO</title>

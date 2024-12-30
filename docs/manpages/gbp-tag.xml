@@ -13,7 +13,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-tag</refname>
-    <refpurpose>Tag a &debian; packages in a &git; repository</refpurpose>
+    <refpurpose>Tag a &debian; release in a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

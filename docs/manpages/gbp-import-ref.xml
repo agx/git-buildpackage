@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-import-ref</refname>
-    <refpurpose>Update upstream sources when using &git; only</refpurpose>
+    <refpurpose>Update upstream sources in a git only workflow</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

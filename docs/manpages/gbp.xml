@@ -73,7 +73,7 @@
         <term>buildpackage
         </term>
         <listitem>
-          <para>Build source and binary packages from a &git; repository</para>
+          <para>Build &debian; source and binary packages from a &git; repository</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -82,7 +82,7 @@
         <term>import-orig
         </term>
         <listitem>
-          <para>Import a new upstream version into a &git; repository</para>
+          <para>Import an upstream source from tarball, or git tag and tarball, into a git repository</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -109,7 +109,7 @@
         <term>import-dsc
         </term>
         <listitem>
-          <para>Import a &debian; source package into a &git; repository</para>
+          <para>Import a &debian; source packages into a &git; repository</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -118,8 +118,7 @@
         <term>import-dscs
         </term>
         <listitem>
-          <para>Import several &debian; source packages into a &git; repository, sorted
-	  by version number</para>
+          <para>Import several &debian; source packages into a &git; repository, sorted by version number</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -128,7 +127,7 @@
         <term>dch
         </term>
         <listitem>
-          <para>Generate the <filename>debian/changelog</filename> from  &git; commit history</para>
+          <para>Generate the <filename>debian/changelog</filename> from &git; commit history</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -137,7 +136,7 @@
         <term>pq
         </term>
         <listitem>
-          <para>Manage <filename>debian/patches</filename> using &git; <option>rebase</option></para>
+          <para>Manage <filename>debian/patches</filename> in &git; without any need for GNU Quilt</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -146,7 +145,7 @@
         <term>pull
         </term>
         <listitem>
-          <para>Update a &git; repository from a remote</para>
+          <para>Update a &git; repository from a remote, aware of necessary packaging branch tracking</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -155,7 +154,7 @@
         <term>clone
         </term>
         <listitem>
-          <para>Clone a &git; repository from a remote and set up the necessary branch tracking.</para>
+          <para>Clone a &git; repository from a remote and set up the necessary branch tracking</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -182,7 +181,7 @@
         <term>push
         </term>
         <listitem>
-          <para>Push packaging branches to a remote &git; repository</para>
+          <para>Push to a remote &git; repository, aware of necessary packaging branch tracking</para>
         </listitem>
       </varlistentry>
     </variablelist>

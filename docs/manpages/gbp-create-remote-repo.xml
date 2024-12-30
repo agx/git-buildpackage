@@ -14,8 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-create-remote-repo</refname>
-
-    <refpurpose>Create remote repositories</refpurpose>
+    <refpurpose>Create a remote &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

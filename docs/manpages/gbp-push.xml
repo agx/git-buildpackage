@@ -14,8 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-push</refname>
-
-    <refpurpose>Push &debian; packaging changes to a &git; remote</refpurpose>
+    <refpurpose>Push to a remote &git; repository, aware of necessary packaging branch tracking</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

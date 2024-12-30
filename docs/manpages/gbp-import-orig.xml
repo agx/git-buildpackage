@@ -14,7 +14,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-import-orig</refname>
-    <refpurpose>Import an upstream source into a git repository</refpurpose>
+    <refpurpose>Import an upstream source from tarball, or git tag and tarball, into a git repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

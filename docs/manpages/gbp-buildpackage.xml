@@ -13,7 +13,7 @@
   </refmeta>
   <refnamediv>
     <refname>gbp-buildpackage</refname>
-    <refpurpose>Build &debian; packages from a &git; repository</refpurpose>
+    <refpurpose>Build &debian; source and binary packages from a &git; repository</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -805,6 +805,22 @@
   </refsect1>
   <refsect1>
     <title>EXAMPLES</title>
+    <para>
+      Build a package without passing any arguments, simply using package
+      specific options from <emphasis>debian/gbp.conf</emphasis> and user
+      scpecific options from <emphasis>~/.gbp.conf</emphasis> (if any). By
+      default will run <command>debuild</command> in current
+      directory:
+    </para>
+    <screen>
+      gbp buildpackage
+    </screen>
+    <para>
+      Build a source-only package that can be signed and uploaded to &debian;:
+    </para>
+    <screen>
+      gbp buildpackage -S -d
+    </screen>
     <para>
       Build a &debian; package using &git-pbuilder; which in turn invokes
       &cowbuildercmd;.  Instruct cowbuilder to build within a Wheezy chroot for
