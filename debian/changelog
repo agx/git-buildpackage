@@ -1,3 +1,29 @@
+git-buildpackage (0.9.37) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [9551420] import-orig: Add mention of --upstream-vcs-tag to description.
+    This makes it hopefully easier to discover.
+  * [9a2507e] setup: Require python 3.11.
+    We don't test it on anything older. (Closes: #1091851)
+  * [005676a] buildpackage: Make sure export_dir is always set.
+    Fixes c9cc8df4 ("buildpackage: remove export_dir if build fails")
+    (Closes: #1091554)
+  * [ae6f841] repo-setup: Drop context manager for posix path.
+    Python's breaks backward compatibility without being helpful.
+    See https://github.com/python/cpython/issues/83863
+    This fixes running gbp with Pythone 3.13
+
+  [ Otto Kekäläinen ]
+  * [ec9ee37] docs: Clarify and unify the purpose of each command in the man pages.
+    Update the <refpurpose> field in each command to better capture the main
+    purpose of the command, and ensure the main `gbp (1)` man page uses the
+    same text to avoid them from diverging.
+  * [f3036fb] docs: Add examples sections where missing, and enrich examples.
+    Most commands should have an EXAMPLES section on the man page, and the
+    first 1-2 examples should show what are the most common invocations.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 09 Jan 2025 18:24:22 +0100
+
 git-buildpackage (0.9.36) unstable; urgency=medium
 
   [ Michael R. Crusoe ]
