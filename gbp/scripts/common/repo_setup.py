@@ -119,6 +119,6 @@ def setup_gitattributes(repo, treeish='HEAD'):
         "# Added by git-buildpackage to disable .gitattributes found in the upstream tree",
         "[attr]dgit-defuse-attrs  %s" % dgit_attr_macro_defn,
     ] + ['* %s' % attr for attr in attr_glob_defns]
-    with gitattrs.with_suffix('.new') as newattrs:
-        newattrs.write_text('\n'.join(new_attributes))
-        newattrs.rename(gitattrs)
+    newattrs = gitattrs.with_suffix('.new')
+    newattrs.write_text('\n'.join(new_attributes))
+    newattrs.rename(gitattrs)
