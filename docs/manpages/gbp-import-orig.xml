@@ -106,7 +106,7 @@
       as additinoal parent of the commit created for the imported
       tarball. This ties the upstream git commit history to the Debian
       packaging history and allows for e.g. easy cherry-picking of
-      patches and comparision of upstream git and the upstream
+      patches and comparison of upstream git and the upstream
       tarball.
     </para>
     <para>In case of an error &gbp-import-orig; will rollback (undo)
