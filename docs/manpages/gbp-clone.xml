@@ -49,7 +49,7 @@
       Likewise, it is recommended to use &gbp-pull; and &gbp-push; to later
       update the repository as it will spare from having to run
       <command>git pull</command> and <command>git push</command> multiple times
-      or with lenghty arguments to sync each tracked branch.
+      or with lengthy arguments to sync each tracked branch.
     </para>
   </refsect1>
   <refsect1>
