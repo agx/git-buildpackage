@@ -469,9 +469,8 @@
         <term><option>--[no-]multimaint-merge</option>
         </term>
         <listitem>
-          <para>
-          Merge commits by maintainer.
-          </para>
+          <para>This option is passed verbatim to dch(1) and is enabled by
+          default.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
