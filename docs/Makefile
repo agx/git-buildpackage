@@ -37,7 +37,7 @@ GBP_VERSION=../gbp/version.py
 DEB_VERSION=$(shell sed -ne 's/^gbp_version\s\+=\s\+"\([.a-z0-9~-]\+\)"/\1/p' $(GBP_VERSION))
 CHANGELOG=../debian/changelog
 MAN_DATE=$(shell dpkg-parsechangelog -l ../debian/changelog -SDate | TZ=UTC LC_ALL=C date -f- +'%d %B %Y')
-IMAGES=$(wildcard images/*png)
+IMAGES=$(wildcard images/*)
 DEST_IMAGES=$(subst images/,$(MANUAL)/images/,$(IMAGES))
 
 # Select python
@@ -77,7 +77,7 @@ $(MANUAL)/gbp.css $(MANUAL)/gbp.svg: gbp.css gbp.svg
 	cp gbp.css gbp.svg $(MANUAL)/
 
 html_images: $(DEST_IMAGES)
-$(MANUAL)/images/%.png: images/%.png
+$(MANUAL)/images/%: images/%
 	mkdir -p $(basename $@)
 	install $< $@
 
@@ -104,4 +104,3 @@ po4a:
 
 langs: po4a
 	$(MAKE) -C _gen/de -f ../../Makefile.lang
-

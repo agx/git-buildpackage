@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-roledescription="gitGraph" role="graphics-document document" viewBox="-170 -142 1200 630" xmlns="http://www.w3.org/2000/svg">
+ <g transform="scale(1.3) translate(38 -38)">
+  <style>
+    svg {
+      background: #fff;
+      font-family: verdana, arial, sans-serif;
+      font-size: 16px;
+    }
+    .branch { stroke: #fff; stroke-width: 1; stroke-dasharray: 2; }
+    .commit { fill: #08c; stroke: #08c; }
+    .commit-merge { fill: #fff4dd; stroke: #fff4dd; }
+    .commit-label { font-size: 10px; fill: #fff; }
+    .commit-label-bkg { font-size: 10px; fill: #000; opacity: 0.5; }
+    .tag-label { font-size: 10px; fill: #eee; }
+    .tag-label-bkg { fill: #f26522; stroke: #fff; }
+    .tag-hole { fill: #eee; }
+    .arrow { stroke-width: 8; stroke-linecap: round; fill: none; stroke: #08c; }
+    .arrow1 { stroke: #f26522; }
+    .arrow2 { stroke: #a02e1c; }
+  </style>
+  <line class="branch" x2="750"/>
+  <line class="branch" x2="750" y1="90" y2="90"/>
+  <line class="branch" x2="750" y1="180" y2="180"/>
+  <g class="branch-labels">
+   <rect x="-88" y="-9" width="53" height="21" rx="4" fill="#08c"/>
+   <text x="-79" y="5" fill="#fff">main</text>
+   <rect x="-163" y="81" width="128" height="21" rx="4" fill="#f26522"/>
+   <text x="-154" y="95" fill="#fff">upstream/latest</text>
+   <rect x="-144" y="171" width="109" height="21" rx="4" fill="#a02e1c"/>
+   <text x="-135" y="185" fill="#fff">debian/latest</text>
+  </g>
+  <g class="commit-arrows">
+   <path class="arrow arrow1" d="m10 0v70a20 20 0 0 0 20 20h30"/>
+   <path class="arrow arrow2" d="m60 90v70a20 20 0 0 0 20 20h30"/>
+   <path class="arrow arrow2" d="m110 180h50"/>
+   <path class="arrow arrow2" d="m160 180h50"/>
+   <path class="arrow" d="m10 0h250"/>
+   <path class="arrow" d="m260 0h50"/>
+   <path class="arrow" d="m310 0h50"/>
+   <path class="arrow arrow1" d="m60 90h350"/>
+   <path class="arrow" d="m360 0h30a20 20 0 0 1 20 20v70"/>
+   <path class="arrow arrow2" d="m210 180h250"/>
+   <path class="arrow arrow1" d="m410 90h30a20 20 0 0 1 20 20v70"/>
+   <path class="arrow arrow2" d="m460 180h50"/>
+   <path class="arrow arrow2" d="m510 180h50"/>
+   <path class="arrow arrow2" d="m560 180h50"/>
+   <path class="arrow arrow2" d="m610 180h50"/>
+   <path class="arrow" d="m360 0h350"/>
+  </g>
+  <g class="commits">
+   <circle cx="10" r="10"/>
+   <circle cx="60" cy="90" r="10"/>
+   <circle cx="110" cy="180" r="10"/>
+   <circle cx="160" cy="180" r="10"/>
+   <circle cx="210" cy="180" r="10"/>
+   <circle cx="260" r="10"/>
+   <circle cx="310" r="10"/>
+   <circle cx="360" r="10"/>
+   <circle cx="410" cy="90" r="9"/>
+   <circle class="commit-merge" cx="410" cy="90" r="6"/>
+   <circle cx="460" cy="180" r="9"/>
+   <circle class="commit-merge" cx="460" cy="180" r="6"/>
+   <circle cx="510" cy="180" r="10"/>
+   <circle cx="560" cy="180" r="10"/>
+   <circle cx="610" cy="180" r="10"/>
+   <circle cx="660" cy="180" r="10"/>
+   <circle cx="710" r="10"/>
+  </g>
+  <g class="labels">
+   <g transform="translate(-37 33) rotate(-45)">
+    <rect class="commit-label-bkg" x="-26" y="14" width="71" height="15"/>
+    <text class="commit-label" x="-24" y="25">Foo project 1.0</text>
+   </g>
+   <polygon class="tag-label-bkg" points="-12 -17 -12 -21 -4 -27 24 -27 24 -12 -4 -12"/>
+   <circle class="tag-hole" cx="-8" cy="-19" r="1.5"/>
+   <text class="tag-label" y="-16">v1.0</text>
+   <g transform="translate(-56 50) rotate(-45 50 90)">
+    <rect class="commit-label-bkg" y="104" width="121" height="15"/>
+    <text class="commit-label" x="2" y="115">New upstream version 1.0</text>
+   </g>
+   <polygon class="tag-label-bkg" points="19 73 19 69 27 63 93 63 93 78 27 78"/>
+   <circle class="tag-hole" cx="23" cy="71" r="1.5"/>
+   <text class="tag-label" x="31" y="74">upstream/1.0</text>
+   <g transform="translate(-93 83) rotate(-45 100 180)">
+    <rect class="commit-label-bkg" x="1" y="194" width="218" height="15"/>
+    <text class="commit-label" x="3" y="205">Update upstream source from tag 'upstream/1.0'</text>
+   </g>
+   <g transform="translate(-64 57) rotate(-45 150 180)">
+    <rect class="commit-label-bkg" x="89" y="194" width="142" height="15"/>
+    <text class="commit-label" x="91" y="205">Create initial Debian packaging</text>
+   </g>
+   <g transform="translate(-94 84) rotate(-45 200 180)">
+    <rect class="commit-label-bkg" x="100" y="194" width="221" height="15"/>
+    <text class="commit-label" x="102" y="205">Update changelog for 1.0-1 release into unstable</text>
+   </g>
+   <polygon class="tag-label-bkg" points="170 163 170 159 178 153 242 153 242 168 178 168"/>
+   <circle class="tag-hole" cx="174" cy="161" r="1.5"/>
+   <text class="tag-label" x="182" y="164">debian/1.0-1</text>
+   <g transform="translate(-36 32) rotate(-45 250 0)">
+    <rect class="commit-label-bkg" x="225" y="14" width="70" height="15"/>
+    <text class="commit-label" x="227" y="25">Foo commit a1</text>
+   </g>
+   <g transform="translate(-37 33) rotate(-45 300 0)">
+    <rect class="commit-label-bkg" x="275" y="14" width="71" height="15"/>
+    <text class="commit-label" x="277" y="25">Foo commit b2</text>
+   </g>
+   <g transform="translate(-37 33) rotate(-45 350 0)">
+    <rect class="commit-label-bkg" x="325" y="14" width="71" height="15"/>
+    <text class="commit-label" x="327" y="25">Foo project 1.1</text>
+   </g>
+   <polygon class="tag-label-bkg" points="339 -17 339 -21 347 -27 373 -27 373 -12 347 -12"/>
+   <circle class="tag-hole" cx="343" cy="-19" r="1.5"/>
+   <text class="tag-label" x="351" y="-16">v1.1</text>
+   <g transform="translate(-55 49) rotate(-45 400 90)">
+    <rect class="commit-label-bkg" x="350" y="104" width="120" height="15"/>
+    <text class="commit-label" x="352" y="115">New upstream version 1.1</text>
+   </g>
+   <polygon class="tag-label-bkg" points="369 73 369 69 377 63 443 63 443 78 377 78"/>
+   <circle class="tag-hole" cx="373" cy="71" r="1.5"/>
+   <text class="tag-label" x="381" y="74">upstream/1.1</text>
+   <g transform="translate(-93 83) rotate(-45 450 180)">
+    <rect class="commit-label-bkg" x="351" y="194" width="218" height="15"/>
+    <text class="commit-label" x="353" y="205">Update upstream source from tag 'upstream/1.1'</text>
+   </g>
+   <g transform="translate(-103 92) rotate(-45 500 180)">
+    <rect class="commit-label-bkg" x="387" y="194" width="247" height="15"/>
+    <text class="commit-label" x="389" y="205">Update changelog and refresh patches after 1.1 import</text>
+   </g>
+   <g transform="translate(-42 38) rotate(-45 550 180)">
+    <rect class="commit-label-bkg" x="517" y="194" width="85" height="15"/>
+    <text class="commit-label" x="519" y="205">Debian commit 1a</text>
+   </g>
+   <g transform="translate(-42 38) rotate(-45 600 180)">
+    <rect class="commit-label-bkg" x="567" y="194" width="85" height="15"/>
+    <text class="commit-label" x="569" y="205">Debian commit 2b</text>
+   </g>
+   <g transform="translate(-94 84) rotate(-45 650 180)">
+    <rect class="commit-label-bkg" x="550" y="194" width="221" height="15"/>
+    <text class="commit-label" x="552" y="205">Update changelog for 1.1-1 release into unstable</text>
+   </g>
+   <polygon class="tag-label-bkg" points="620 163 620 159 628 153 692 153 692 168 628 168"/>
+   <circle class="tag-hole" cx="624" cy="161" r="1.5"/>
+   <text class="tag-label" x="632" y="164">debian/1.1-1</text>
+   <g transform="translate(-36 32) rotate(-45 700 0)">
+    <rect class="commit-label-bkg" x="675" y="14" width="70" height="15"/>
+    <text class="commit-label" x="677" y="25">Foo commit c3</text>
+   </g>
+  </g>
+ </g>
+</svg>
