@@ -62,6 +62,9 @@ git-buildpackage on <http://bugs.debian.org/src:git-buildpackage> or
 open a merge request at
 <https://salsa.debian.org/agx/git-buildpackage/-/merge_requests>
 
+Please add a `Signed-off-by:` to commit messages to indicate that you agree to
+the [Developer's Certificate of Origin][].
+
 If you fix a regression or add a new feature please make sure this is covered
 by either a unittest (`tests/*.py`) or a component test that exercises one of the
 scripts (`tests/component/{deb,rpm}/*.py`).
@@ -97,3 +100,5 @@ When one invokes `gbp config <command>` `gbp/scripts/<command>.py` is imported b
 
 which then invokes it's *build_parser* function with the command name as argument.
 It is expected to return a `GbpConfigParser` with all config files parsed.
+
+[Developer's Certificate of Origin]: https://developercertificate.org/
