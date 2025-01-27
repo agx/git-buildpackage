@@ -101,6 +101,15 @@ shellcheck:
   script:
     - make shell-check
 
+codespell:
+  stage: check
+  image: debian:sid
+  before_script:
+    - apt -y update
+    - apt -y install codespell
+  script:
+    - codespell docs/
+
 # Sanity checks of MR settings and commit logs
 sanity:
   extends:
