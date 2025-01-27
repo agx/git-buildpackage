@@ -17,7 +17,7 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         DebianGitTestRepo.setUp(self)
         self.add_file('doesnotmatter')
         self.options = self.Options()
-        self.options.pbuilder_dist = 'DEP14'
+        self.options.pbuilder_dist = 'DEP-14'
 
     @patch('gbp.deb.get_vendor', return_value='Debian')
     def test_get_pbuilder_dist_no_dep14(self, patch):
@@ -105,7 +105,7 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
         self.repo.create_branch(branch)
         self.repo.set_branch(branch)
         with self.assertRaisesRegex(GbpError,
-                                    "DEP14 DIST: Current branch 'too/many/slashes' does not match vendor/suite"):
+                                    "DEP-14 DIST: Current branch 'too/many/slashes' does not match vendor/suite"):
             get_pbuilder_dist(self.options, self.repo)
 
 

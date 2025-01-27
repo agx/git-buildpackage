@@ -117,8 +117,8 @@ class TestPq(ComponentTestBase):
 
         self._append_patch(repo, 'foo', '''\
 Author: Mr. T. St <t@example.com>
-Description: Short DEP3 description
- Long DEP3 description
+Description: Short DEP-3 description
+ Long DEP-3 description
  .
  Continued
 --- /dev/null
@@ -129,12 +129,12 @@ Description: Short DEP3 description
         self._test_pq(repo, 'import', ['--force'])
 
         author, subject = repo.get_head_author_subject()
-        assert subject == "Short DEP3 description"
+        assert subject == "Short DEP-3 description"
         assert author == '"Mr. T. St" <t@example.com>'
 
     @RepoFixtures.quilt30()
     def test_import_poor_dep3_behaviour(self, repo):
-        """Demonstrate the issues with the current DEP3 support"""
+        """Demonstrate the issues with the current DEP-3 support"""
 
         pkg = "hello-debhelper"
         dsc = self._dsc_name(pkg, "2.6-2", "dsc-3.0")

@@ -202,7 +202,7 @@ def get_pbuilder_dist(options, repo, native=False):
     Determine the dist to build for with pbuilder/cowbuilder
     """
     dist = None
-    if options.pbuilder_dist == 'DEP14':
+    if options.pbuilder_dist == 'DEP-14' or options.pbuilder_dist == 'DEP14':
         vendor = du.get_vendor().lower()
         branch = repo.branch
         if not branch:
@@ -227,7 +227,7 @@ def get_pbuilder_dist(options, repo, native=False):
                 dist = branch
 
         if dist is None:
-            raise GbpError("DEP14 DIST: Current branch '%s' does not match vendor/suite" % branch)
+            raise GbpError("DEP-14 DIST: Current branch '%s' does not match vendor/suite" % branch)
     else:
         dist = options.pbuilder_dist
     return dist
