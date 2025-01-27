@@ -78,7 +78,7 @@
     <para>
       Since &cowbuilder; uses different command line arguments than
       &debuild; and &dpkg-buildpackage;, we can't simply pass the
-      options to run it on the command line. To simplifiy the
+      options to run it on the command line. To simplify the
       integration we use a separate helper named &git-pbuilder;.
       &gbp; has it's own command line option for this:
     </para>
@@ -176,7 +176,7 @@ EOF
     <title>Sloppy tarball creation</title>
     <para>
       By default &gbp-buildpackage; uses <filename>debian/changelog</filename> to detect
-      the upstream version and build the corrsponding tarball either via &pristine-tar; or
+      the upstream version and build the corresponding tarball either via &pristine-tar; or
       by using <command>git archive</command> directly. This ensures that the tarball matches
       what's in the Debian archive already.
     </para>

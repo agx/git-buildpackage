@@ -18,7 +18,7 @@ git commit -m"Smoketest" -a
 
 gbp buildpackage-rpm --help
 
-# Build an RPM of ourselfes if build-deps are available
+# Build an RPM of ourselves if build-deps are available
 if python3 -c "import setuptools"; then
   GBP_TEMPDIR=$(mktemp -d)
   gbp buildpackage-rpm --git-packaging-dir=packaging/ \

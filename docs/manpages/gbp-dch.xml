@@ -112,7 +112,7 @@
       created.
     </para>
     <para>
-      If one ore more paths are given as arguments &gbp-dch; will only
+      If one or more paths are given as arguments &gbp-dch; will only
       include changes in <filename>debian/changelog</filename> that
       affect these paths.  E.g. using
       <emphasis>debian/</emphasis> is a good choice if upstream uses

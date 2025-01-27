@@ -242,7 +242,7 @@ def setup_pbuilder(options, repo, native):
 
     *pbd_env* is used for the actual build command while *hook_env* is
     passed to all hooks. They both contain the same information but
-    *pbd_env* contains the depreated variable names not starting with
+    *pbd_env* contains the deprecated variable names not starting with
     *GBP_*.
     """
     pbd_env = {}

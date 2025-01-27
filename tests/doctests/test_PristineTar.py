@@ -8,7 +8,7 @@ and
 
     - L{gbp.deb.git.DebianGitRepository}
 
-This testcase creates this reposity:
+This testcase creates this repository:
 
     - A repository at I{dirs['repo']} called I{repo}
 
