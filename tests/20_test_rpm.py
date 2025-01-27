@@ -284,7 +284,7 @@ class TestSpecFile(RpmTestBase):
         spec_filepath = os.path.join(SPEC_DIR, 'gbp-test-quirks.spec')
         spec = SpecFile(spec_filepath)
 
-        # Check that we quess orig source and prefix correctly
+        # Check that we guess orig source and prefix correctly
         assert spec.orig_src["prefix"] == "foobar/"
 
     def test_tags(self):

@@ -151,7 +151,7 @@ def format_series_diff(added, removed, options):
 
 def commit_patches(repo, branch, patches, options, patch_dir):
     """
-    Commit chanages exported from patch queue
+    Commit changes exported from patch queue
     """
     clean, dummy = repo.is_clean()
     if clean:

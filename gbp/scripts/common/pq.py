@@ -79,7 +79,7 @@ def pq_branch_base(branch):
 
 def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
     """
-    Parses gbp commands from commit message. Args with and wthout
+    Parses gbp commands from commit message. Args with and without
     arguments are supported as is filtering out of commands from the
     commit body.
 
@@ -87,7 +87,7 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
     @param cmd_tag: the command tag
     @param noarg_cmds: commands without an argument
     @type  noarg_cmds: C{list} of C{str}
-    @param arg_cmds: command with an argumnt
+    @param arg_cmds: command with an argument
     @type  arg_cmds: C{list} of C{str}
     @param filter_cmds: commands to filter out of the passed in info
     @type  filter_cmds: C{list} of C{str}

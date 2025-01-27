@@ -46,7 +46,7 @@ def get_commit_and_version_to_merge(repo, options):
             raise GbpError("No upstream version given, try -u<version>")
         commit = repo.version_to_tag(options.upstream_tag, options.version)
     elif options.upstream_tree.upper() == 'BRANCH':
-        # Use head of upstrem branch
+        # Use head of upstream branch
         if not repo.has_branch(options.upstream_branch):
             raise GbpError("%s is not a valid branch" % options.upstream_branch)
         commit = options.upstream_branch

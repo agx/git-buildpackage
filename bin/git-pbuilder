@@ -37,7 +37,7 @@ shell_quote () {
     echo "$1" | sed -e "s/'/'\"'\"'/g" -e "1 s/^/'/" -e "\$ s/\$/'/"
 }
 
-# unset variables we inherited from the environment ourselfes
+# unset variables we inherited from the environment ourselves
 # Names like DIST are very generic and can trip up other build systems
 # so unset these and set some prefixed ones instead so they can e.g.
 # be used in .pbuilderrc.

@@ -865,7 +865,7 @@ class GitRepository(object):
             checking the repository status
         @type ignore_untracked: C{bool}
         @param paths: only check changes on paths
-        @type paths: C{list} of C{stings}
+        @type paths: C{list} of C{strings}
         @return: C{True} if the repository is clean, C{False} otherwise
             and Git's status message
         @rtype: C{tuple}

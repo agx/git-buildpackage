@@ -43,7 +43,7 @@ from gbp.pkg import Archive
 
 no_packaging_branch_msg = """
 Repository does not have branch '%s' for packaging/distribution sources.
-You need to reate it or use --packaging-branch to specify it.
+You need to create it or use --packaging-branch to specify it.
 """
 
 
