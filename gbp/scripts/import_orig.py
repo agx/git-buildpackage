@@ -544,7 +544,7 @@ def main(argv):
                 # git and check out debian branch instead.
                 if not repo.bare:
                     cur = repo.branch
-                    if cur != options.debian_branch:
+                    if cur not in [options.debian_branch, options.upstream_branch]:
                         repo.set_branch(options.debian_branch)
                         repo.delete_branch(cur)
             elif options.merge:
