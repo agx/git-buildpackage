@@ -1828,7 +1828,7 @@ class GitRepository(object):
         if isinstance(renames, bool):
             options.add('-M' if renames else '--no-renames')
         else:
-            options.add('-M=%s', renames)
+            options.add('-M%s', renames)
         options.add(obj1)
         options.add_true(obj2, obj2)
         if paths:
