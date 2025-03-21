@@ -80,8 +80,9 @@ class TestPq(ComponentTestBase):
             os.path.exists(patch))
         # Check the file was removed and added, not renamed
         with open(patch) as f:
-            self.assertTrue('rename from' not in f.read())
-            self.assertTrue('rename to' not in f.read())
+            p = f.read()
+        self.assertTrue('rename from' not in p)
+        self.assertTrue('rename to' not in p)
 
     @staticmethod
     def _dsc_name(pkg, version, dir):
