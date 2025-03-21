@@ -1795,7 +1795,8 @@ class GitRepository(object):
         self._git_command("apply", args)
 
     def diff(self, obj1, obj2=None, paths=None, stat=False, summary=False,
-             text=False, ignore_submodules=True, abbrev=None, renames=False):
+             text=False, ignore_submodules=True, abbrev=None, renames=False,
+             copies=False):
         """
         Diff two git repository objects
 
@@ -1813,6 +1814,15 @@ class GitRepository(object):
         @type text: C{bool}
         @param ignore_submodules: ignore changes to submodules
         @type ignore_submodules: C{bool}
+        @param renames: whether to detect renames.  Ignored if I{copies} is
+            truthy (it is not possible to disable rename detection when copy
+            detection is enabled).  If not a booleaen, the value is converted to
+            a string and appended to C{git diff}'s C{-M} option
+        @type renames: C{bool} or C{int} or C{str}
+        @param copies: whether to detect copies and renames.  If not a booleaen,
+            the value is converted to a string and appended to C{git diff}'s
+            C{-C} option
+        @type copies: C{bool} or C{int} or C{str}
         @return: diff
         @rtype: C{binary}
         """
@@ -1825,7 +1835,13 @@ class GitRepository(object):
         options.add_true(summary, '--summary')
         options.add_true(text, '--text')
         options.add_true(ignore_submodules, '--ignore-submodules=all')
-        if isinstance(renames, bool):
+        if copies:
+            if isinstance(copies, bool):
+                options.add('-C')
+            else:
+                options.add('-C%s', copies)
+            options.add('--find-copies-harder')
+        elif isinstance(renames, bool):
             options.add('-M' if renames else '--no-renames')
         else:
             options.add('-M%s', renames)
