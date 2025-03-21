@@ -32,12 +32,11 @@ EOF
 die() { { echo "ERROR: ${*}"; usage; } >&2; exit 1; }
 
 # convenience wrapper
-# shellcheck disable=SC2068  # re-splitting command arguments intentional
 container_build() {
     ${container_cmd} build \
         --force-rm="${DOCKER_BUILD_FORCE_RM:-false}" \
         --no-cache="${DOCKER_BUILD_NO_CACHE:-false}" \
-        ${@}
+        "${@}"
 }
 
 # take path to project dir; build docker image for base
