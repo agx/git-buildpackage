@@ -79,7 +79,7 @@ Depends: ${python3:Depends},
  python3-rpm (>= 4.16.1),
  rpm (>= 4.16.1),
 Recommends: pristine-tar (>= 0.5)
-Suggests: python3-notify, unzip, zipmerge, mock
+Suggests: python3-notify2, unzip, zipmerge, mock
 Description: Suite to help with RPM packages in Git repositories
  This package contains the following tools:
   * gbp buildpackage-rpm: build a package out of a Git repository, check for
