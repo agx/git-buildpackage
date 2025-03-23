@@ -1,3 +1,4 @@
+PYTHON=python3
 PY_EXAMPLES=$(shell grep -l /usr/bin/python examples/*)
 FLAKE_OPTS=$(shell test -w /dev/shm || echo '-j1')
 TEST_LOCALE?=C.UTF-8
@@ -20,7 +21,7 @@ test:
 	export DEBEMAIL=$$GIT_AUTHOR_EMAIL;             \
 	PYTHONPATH=.					\
 	LC_ALL=$(TEST_LOCALE)                           \
-	python3 -m pytest $(PYTEST_ARGS)
+	$(PYTHON) -m pytest $(PYTEST_ARGS)
 
 syntax-check:
 	flake8 $(FLAKE_OPTS)
@@ -45,7 +46,7 @@ apidocs:
 
 venv: venv/stamp
 venv/stamp:
-	python3 -m venv venv
+	$(PYTHON) -m venv venv
 	. venv/bin/activate && pip install -r dev_requirements.txt
 	touch '$@'
 
