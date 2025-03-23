@@ -69,7 +69,8 @@ RUN set -euvx \
 && apt-get update -y \
 && apt-get -y --no-install-recommends upgrade \
 && apt-get -y --no-install-recommends install \
-build-essential devscripts equivs
+build-essential devscripts equivs \
+&& apt-get clean
 COPY debian debian
 RUN mk-build-deps -r -i debian/control -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends'
 # To avoid constantly invalidating previous container layers, run the slow
