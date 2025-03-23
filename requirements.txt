@@ -1,1 +1,6 @@
+notify2
 python-dateutil
+pyyaml
+requests
+rpm
+setuptools
