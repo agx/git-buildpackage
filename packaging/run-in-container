@@ -118,17 +118,11 @@ EOF
 # create debian package artifacts, copy to host
 gbp_package() {
     base_build
-    container_build \
-        --build-arg="FROM_IMAGE=gbp-base:${debian_tag}" \
-        -t "gbp-package:${debian_tag}" -f- "${project_dir}" <<'EOF'
-ARG FROM_IMAGE
-FROM ${FROM_IMAGE}
-RUN dpkg-buildpackage -j$(nproc) -sa -us -uc
-EOF
     ${container_cmd} run --rm -iu0:0 \
         --mount="type=bind,source=${PWD},target=/mnt/host-volume" \
-        "gbp-package:${debian_tag}" sh <<EOF
+        "gbp-base:${debian_tag}" sh <<EOF
 set -euvx
+dpkg-buildpackage -j$(nproc) -sa -us -uc
 find .. -maxdepth 1 -mindepth 1 -type f \
     -exec chown -v $(id -u):$(id -g) {} + \
     -a -exec cp -vat /mnt/host-volume {} +
