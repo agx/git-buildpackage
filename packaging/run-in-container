@@ -87,9 +87,26 @@ EOF
 # run tests
 gbp_test() {
     base_build
+    # Build another image, this time with .git so that the tests.component tests
+    # aren't skipped, and with additional packages needed to run the full test
+    # suite.
+    container_build \
+        -t "gbp-test:${debian_tag}" -f- "${project_dir}" <<EOF
+FROM gbp-base:${debian_tag}
+USER 0:0
+RUN git config --global safe.directory '*'
+VOLUME /workdir/project
+RUN set -euvx \
+&& export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update -y \
+&& apt-get -y --no-install-recommends upgrade \
+&& apt-get -y --no-install-recommends install curl flake8 \
+&& apt-get clean
+EOF
     for L in C.UTF-8 C; do
         ${container_cmd} run --rm -ie"TEST_LOCALE=${L}" \
-        "gbp-base:${debian_tag}" sh <<'EOF'
+        --mount="type=bind,source=${project_dir},target=/workdir/project" \
+        "gbp-test:${debian_tag}" sh <<'EOF'
 set -euvx
 make all+net
 make -C docs
