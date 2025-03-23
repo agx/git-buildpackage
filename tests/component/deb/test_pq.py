@@ -71,18 +71,38 @@ class TestPq(ComponentTestBase):
     def test_rename(self, repo):
         patch = os.path.join(repo.path, 'debian/patches/0001-Rename.patch')
 
-        repo.set_config('diff.renames', 'true')
+        # gbp's behavior should override the user's configuration.
+        repo.set_config('diff.renames', 'false')
         self._test_pq(repo, 'import')
         repo.rename_file('configure.ac', 'renamed')
         repo.commit_all("Rename")
         self._test_pq(repo, 'export')
         self.assertTrue(
             os.path.exists(patch))
-        # Check the file was removed and added, not renamed
+        # Check the file was renamed, not removed and added
         with open(patch) as f:
             p = f.read()
-        self.assertTrue('rename from' not in p)
-        self.assertTrue('rename to' not in p)
+        self.assertTrue('rename from' in p)
+        self.assertTrue('rename to' in p)
+
+    @RepoFixtures.quilt30()
+    def test_copy(self, repo):
+        patch = os.path.join(repo.path, 'debian/patches/0001-Copy.patch')
+
+        # gbp's behavior should override the user's configuration.
+        repo.set_config('diff.renames', 'false')
+        self._test_pq(repo, 'import')
+        with open(os.path.join(repo.path, 'configure.ac'), mode='rb') as fin:
+            with open(os.path.join(repo.path, 'copied'), mode='wb') as fout:
+                fout.write(fin.read())
+        repo.add_files(['copied'])
+        repo.commit_all("Copy")
+        self._test_pq(repo, 'export')
+        self.assertTrue(os.path.exists(patch))
+        with open(patch) as f:
+            p = f.read()
+        self.assertTrue('copy from' in p)
+        self.assertTrue('copy to' in p)
 
     @staticmethod
     def _dsc_name(pkg, version, dir):
