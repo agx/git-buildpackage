@@ -43,4 +43,10 @@ docs:
 apidocs:
 	mkdir -p build
 
-.PHONY: docs
+venv: venv/stamp
+venv/stamp:
+	python3 -m venv venv
+	. venv/bin/activate && pip install -r dev_requirements.txt
+	touch '$@'
+
+.PHONY: docs venv

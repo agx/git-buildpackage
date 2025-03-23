@@ -29,3 +29,5 @@ debian/git-buildpackage*.substvars
 debian/git-buildpackage/
 debian/git-buildpackage-rpm/
 debian/tmp/
+
+/venv/
