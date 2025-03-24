@@ -67,7 +67,7 @@ def setup_requires():
     if os.getenv('WITHOUT_PYTESTS'):
         return []
     else:
-        return ['pytest', 'coverage>=2.85']
+        return ['pytest', 'pytest-cov']
 
 
 setup(name="gbp",
