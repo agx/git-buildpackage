@@ -1845,6 +1845,8 @@ class GitRepository(object):
             options.add('-M' if renames else '--no-renames')
         else:
             options.add('-M%s', renames)
+        # Reduce churn if different users configured different diff algorithms.
+        options.add('--diff-algorithm=default')
         options.add(obj1)
         options.add_true(obj2, obj2)
         if paths:
