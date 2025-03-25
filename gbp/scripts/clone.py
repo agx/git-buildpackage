@@ -238,6 +238,8 @@ def main(argv):
         if not options.defuse_gitattributes.is_off():
             if options.defuse_gitattributes.is_on() or not repo_setup.check_gitattributes(repo, 'HEAD'):
                 repo_setup.setup_gitattributes(repo)
+                # Ensure attibute changes are applied
+                repo.force_head('HEAD', hard=True)
 
         if options.add_upstream_vcs:
             add_upstream_vcs(repo)
