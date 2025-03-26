@@ -98,9 +98,13 @@ class TestClone(ComponentTestBase):
 
     @RepoFixtures.native()
     def test_clone_with_attrs(self, repo):
-        """Test that cloning a repo with harmful attrs disarms them"""
+        """Test that cloning a repo with harmful attrs disarms them and avoids line ending conversion"""
+        with open('test.csv', 'wb') as f:
+            f.write(b'line1\nline2\n')
+        repo.add_files('test.csv')
+        repo.commit_files('test.csv', msg="add test.csv")
         with open('.gitattributes', 'w') as f:
-            f.write('# not empty')
+            f.write('*.csv text eol=crlf')
         repo.add_files('.gitattributes')
         repo.commit_files('.gitattributes', msg="add .gitattributes")
 
@@ -125,3 +129,9 @@ class TestClone(ComponentTestBase):
             '[attr]dgit-defuse-attrs  -text -eol -crlf -ident -filter -working-tree-encoding',
         ]
         self.assertEqual(attrs, expected_gitattrs)
+
+        test_file = os.path.join(dest, 'test.csv')
+        with open(test_file, 'rb') as f:
+            test_contents = f.read()
+        expected_test_contents = b'line1\nline2\n'
+        self.assertEqual(test_contents, expected_test_contents)
