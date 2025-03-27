@@ -108,6 +108,7 @@ EOF
         --mount="type=bind,source=${project_dir},target=/workdir/project" \
         "gbp-test:${debian_tag}" sh <<'EOF'
 set -euvx
+export CI=true
 make all+net
 make -C docs
 EOF
