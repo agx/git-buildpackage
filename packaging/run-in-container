@@ -25,7 +25,7 @@ Actions:
     test       run tests (default)
 
 Example:
-    $(basename "${this}") -C ~/code/git-buildpackage -t stretch package
+    $(basename "${this}") -C ~/code/git-buildpackage -t trixie package
 EOF
 }
 
