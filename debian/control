@@ -20,6 +20,7 @@ Build-Depends:
  bzip2 <!nocheck>,
  cpio <!nocheck>,
  devscripts (>= 2.17.7~) <!nocheck>,
+ flake8 <!nocheck>,
  git (>= 1:2.40.1) <!nocheck>,
  pristine-tar (>= 1.14) <!nocheck>,
  python3-dateutil <!nocheck>,
