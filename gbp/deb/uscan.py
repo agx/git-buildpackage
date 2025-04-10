@@ -145,7 +145,7 @@ class Uscan(object):
         """
         cmd = ['uscan', '--symlink', '--destdir=%s' % destdir, '--dehs']
         if download_version:
-            cmd += ['--download-debversion', download_version]
+            cmd += ['--download-version', download_version]
         p = subprocess.Popen(cmd, cwd=self._dir, stdout=subprocess.PIPE)
         out = p.communicate()[0].decode()
         # uscan exits with 1 in case of up-to-date and when an error occurred.
