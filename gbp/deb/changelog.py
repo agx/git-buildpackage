@@ -285,7 +285,7 @@ class ChangeLog(object):
             args.append('[[[insert-git-dch-commit-message-here]]]')
         else:
             args.append('')
-        dch = Command('debchange', args, extra_env=env, capture_stderr=True)
+        dch = Command('debchange', args, extra_env=env, capture_stderr=False)
         dch.run_error = Command._f("Dch failed: {stderr_or_reason}")
         dch([], quiet=True)
         if msg:
