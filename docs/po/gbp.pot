@@ -6936,7 +6936,7 @@ msgstr ""
 #: manpages/gbp-import-orig.xml:117
 msgid ""
 "The upstream version number. With <option>--uscan</option>, passed to uscan "
-"as <option>--download-debversion</option>"
+"as <option>--download-version</option>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>

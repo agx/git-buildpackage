@@ -131,7 +131,7 @@
         <listitem>
           <para>
           The upstream version number. With <option>--uscan</option>, passed to
-          uscan as <option>--download-debversion</option>
+          uscan as <option>--download-version</option>
           </para>
         </listitem>
       </varlistentry>
