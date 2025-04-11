@@ -1,3 +1,83 @@
+git-buildpackage (0.9.38) unstable; urgency=medium
+
+  [ Otto Kekäläinen ]
+  * [b15709f] config: Enable 'multimaint-merge' by default.
+    There are currently 735 packages[1] that default to 'True' for this
+    option and seems most no maintainer would manually write a
+    debian/changelog with the same maintainer repeated, so this would be a
+    better default.
+    Also, devscripts itself recently changed this and will have it enabled
+    by default in version 2.25.1+.
+  * [f7ce004] docs: Add diagram to manual to help readers grasp the DEP-14 branches.
+
+  [ Andrew Kreimer ]
+  * [b44226e] docs: fix typos.
+
+  [ Guido Günther ]
+  * [89b0995] ci: Run codespell. We run it on th doc folder.
+  * [a6f65c1] docs: Mention DCO.Hopefully we get more commits with
+    `Signed-off-by:`.
+  * [2a30c7a] import-orig: Keep upstream branch on initial import.
+    When importing a new package we want to keep both upstream and debian
+    branch as otherwise the user has an extra manual step of recreating the
+    branch.
+  * [091b811] docs: Modernize creating a new package.  With upcoming support
+    for gbp.conf in dh_make let's modernize the docs a bit and use `*/latest`
+    there too.
+  * [462d5f7] clone: Ensure attribute changes are applied past clone.
+    This makes sure changes due to the added gitattributes take effect in
+    the checkout. This helps e.g. kotlin wich otherwise has
+      $ git status
+      [..snip..]
+      Changes not staged for commit:
+      (use "git add <file>..." to update what will be committed)
+      (use "git restore <file>..." to discard changes in working directory)
+    	modified:   compiler/cli/bin/kapt.bat
+    	modified:   compiler/cli/bin/kotlin-dce-js.bat
+    	modified:   compiler/cli/bin/kotlin.bat
+    	modified:   compiler/cli/bin/kotlinc-js.bat
+    	modified:   compiler/cli/bin/kotlinc-jvm.bat
+    	modified:   compiler/cli/bin/kotlinc.bat
+    after
+       gbp clone vcsgit:kotlin
+    Helps: #1092800
+  * [ed0bb53] tests: Check that git attributes are disarmed.
+    Add a test for
+       462d5f75 ("clone: Ensure attribute changes are applied past clone")
+    to ensure git attributes aren't applied and the working copy stays
+    clean. Based on bits from !38 by Julien Plissonneau Duquène
+  * [6512a0d] changelog: Don't capture dch's stderr.  Otherwise we'll never
+    see it
+
+  [ Gioele Barabucci ]
+  * [7beb71e] buildpackage: Allow both DEP-14 and DEP14 as values for `dist`
+  * [67baaae] Consistently use DEP-X in documentation and error messages.
+    The consensus on debian-devel is that "DEP-X" should be preferred
+    to "DEPX" and "DEP X".
+    See: https://lists.debian.org/debian-devel/2024/11/msg00141.html
+
+  [ Richard Hansen ]
+  * [69afa42] packaging: Bump Python version for `type` statement.
+    The `type` statement was added in Python 3.12.
+  * [ec76596] packaging: Remove unused python3-filelock dependency.
+    This reverts commit 5155e98b3cac28a32f20ac369e28e9fa78676fd4.
+  * [240fbb4] packaging: Mark test build dependencies as !nocheck
+  * [971d253] packaging: Fix python3-notify2 suggestion for git-buildpackage-rpm
+  * [117f3ed] build: Drop exact version requirement for flake8
+    v3.5.0 hasn't been supported since at least Python 3.9.
+  * [7b6408a] build: Change coverage dependency to pytest-cov.
+    Testing fails if pytest-cov isn't installed.
+  * [b4e2e8f] build: Add missing requirements to requirements.txt
+  * [ebd478d] build: Add a venv target to Makefile for convenience
+  * [f251b86] build: Make it easier to override python executable in Makefile.
+    Now users can do `make PYTHON=python3.12` to force a particular
+    version of Python if desired.
+
+  [ Julien Plissonneau Duquène ]
+  * [a738315] Pass --download-version to uscan
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 10 Apr 2025 15:36:33 +0200
+
 git-buildpackage (0.9.37) unstable; urgency=medium
 
   [ Guido Günther ]
