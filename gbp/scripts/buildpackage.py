@@ -182,11 +182,11 @@ def clean_working_tree(options, repo):
     """
     Command(options.cleaner, shell=True)()
     if not options.ignore_new:
-        (ret, out) = repo.is_clean()
+        (ret, out) = repo.is_clean(ignore_pattern=options.ignore_pattern)
         if not ret:
             gbp.log.err("You have uncommitted changes in your source tree:")
             gbp.log.err(out)
-            raise GbpError("Use --git-ignore-new to ignore.")
+            raise GbpError("Use --git-ignore-new or --git-ignore-pattern to ignore.")
 
 
 def check_tag(options, repo, source):
@@ -371,6 +371,8 @@ def build_parser(name, prefix=None):
         parser.add_option_group(group)
 
     parser.add_boolean_config_file_option(option_name="ignore-new", dest="ignore_new")
+    parser.add_option("--git-ignore-pattern", dest="ignore_pattern", default=None,
+                      help="regex to ignore new or dirty files")
     parser.add_option("--git-verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_config_file_option(option_name="color", dest="color", type='tristate')
