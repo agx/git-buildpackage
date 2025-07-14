@@ -25,19 +25,18 @@ Actions:
     test       run tests (default)
 
 Example:
-    $(basename "${this}") -C ~/code/git-buildpackage -t stretch package
+    $(basename "${this}") -C ~/code/git-buildpackage -t trixie package
 EOF
 }
 
 die() { { echo "ERROR: ${*}"; usage; } >&2; exit 1; }
 
 # convenience wrapper
-# shellcheck disable=SC2068  # re-splitting command arguments intentional
 container_build() {
     ${container_cmd} build \
         --force-rm="${DOCKER_BUILD_FORCE_RM:-false}" \
         --no-cache="${DOCKER_BUILD_NO_CACHE:-false}" \
-        ${@}
+        "${@}"
 }
 
 # take path to project dir; build docker image for base
@@ -66,9 +65,12 @@ FROM ${FROM_IMAGE}
 ENV DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
 WORKDIR /workdir/project
 RUN set -euvx \
+&& export DEBIAN_FRONTEND=noninteractive \
 && apt-get update -y \
+&& apt-get -y --no-install-recommends upgrade \
 && apt-get -y --no-install-recommends install \
-build-essential devscripts equivs
+build-essential devscripts equivs \
+&& apt-get clean
 COPY debian debian
 RUN mk-build-deps -r -i debian/control -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends'
 # To avoid constantly invalidating previous container layers, run the slow
@@ -85,10 +87,28 @@ EOF
 # run tests
 gbp_test() {
     base_build
+    # Build another image, this time with .git so that the tests.component tests
+    # aren't skipped, and with additional packages needed to run the full test
+    # suite.
+    container_build \
+        -t "gbp-test:${debian_tag}" -f- "${project_dir}" <<EOF
+FROM gbp-base:${debian_tag}
+USER 0:0
+RUN git config --global safe.directory '*'
+VOLUME /workdir/project
+RUN set -euvx \
+&& export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update -y \
+&& apt-get -y --no-install-recommends upgrade \
+&& apt-get -y --no-install-recommends install curl flake8 \
+&& apt-get clean
+EOF
     for L in C.UTF-8 C; do
         ${container_cmd} run --rm -ie"TEST_LOCALE=${L}" \
-        "gbp-base:${debian_tag}" sh <<'EOF'
+        --mount="type=bind,source=${project_dir},target=/workdir/project" \
+        "gbp-test:${debian_tag}" sh <<'EOF'
 set -euvx
+export CI=true
 make all+net
 make -C docs
 EOF
@@ -98,17 +118,11 @@ EOF
 # create debian package artifacts, copy to host
 gbp_package() {
     base_build
-    container_build \
-        --build-arg="FROM_IMAGE=gbp-base:${debian_tag}" \
-        -t "gbp-package:${debian_tag}" -f- "${project_dir}" <<'EOF'
-ARG FROM_IMAGE
-FROM ${FROM_IMAGE}
-RUN dpkg-buildpackage -j$(nproc) -sa -us -uc
-EOF
     ${container_cmd} run --rm -iu0:0 \
         --mount="type=bind,source=${PWD},target=/mnt/host-volume" \
-        "gbp-package:${debian_tag}" sh <<EOF
+        "gbp-base:${debian_tag}" sh <<EOF
 set -euvx
+dpkg-buildpackage -j$(nproc) -sa -us -uc
 find .. -maxdepth 1 -mindepth 1 -type f \
     -exec chown -v $(id -u):$(id -g) {} + \
     -a -exec cp -vat /mnt/host-volume {} +
