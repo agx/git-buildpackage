@@ -50,7 +50,7 @@ def vcs_git_url(pkg: str) -> str | None:
     repos = {}
 
     out = apt_showsrc(pkg)
-    vcs_re = re.compile(r'(x-)?vcs-git:\s*(?P<repo>[^ ]+)$', re.I)
+    vcs_re = re.compile(r'(x-)?vcs-git:\s*(?P<repo>[\S]+).*$', re.I)
     version_re = re.compile(r'Version:\s*(?P<version>.*)$', re.I)
     end_re = re.compile(r'\s*$')
 
