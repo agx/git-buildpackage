@@ -37,7 +37,7 @@ import gbp.log
 from functools import cmp_to_key
 
 
-def apt_showsrc(pkg):
+def apt_showsrc(pkg: str) -> str:
     try:
         aptsrc = Command("apt-cache", ["showsrc", pkg], capture_stdout=True)
         aptsrc(quiet=True)
@@ -46,7 +46,7 @@ def apt_showsrc(pkg):
         return ''
 
 
-def vcs_git_url(pkg):
+def vcs_git_url(pkg: str) -> str | None:
     repos = {}
 
     out = apt_showsrc(pkg)
@@ -78,7 +78,7 @@ def vcs_git_url(pkg):
     return repos[s[-1]]
 
 
-def repo_to_url(repo):
+def repo_to_url(repo: str) -> str | None:
     """
     >>> repo_to_url("https://foo.example.com")
     'https://foo.example.com'
@@ -177,7 +177,7 @@ def parse_args(argv):
     return (options, args)
 
 
-def main(argv):
+def main(argv) -> int:
     retval = 0
 
     (options, args) = parse_args(argv)
