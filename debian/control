@@ -20,6 +20,7 @@ Build-Depends:
  bzip2 <!nocheck>,
  cpio <!nocheck>,
  devscripts (>= 2.17.7~) <!nocheck>,
+ flake8 <!nocheck>,
  git (>= 1:2.40.1) <!nocheck>,
  pristine-tar (>= 1.14) <!nocheck>,
  python3-dateutil <!nocheck>,
@@ -30,7 +31,7 @@ Build-Depends:
  rpm (>= 4.16.1) <!nocheck>,
  unzip <!nocheck>,
  zipmerge <!nocheck>,
-Standards-Version: 4.6.1
+Standards-Version: 4.7.2
 Vcs-Git: https://salsa.debian.org/agx/git-buildpackage.git
 Vcs-Browser: https://salsa.debian.org/agx/git-buildpackage/
 Homepage: https://honk.sigxcpu.org/piki/projects/git-buildpackage/
