@@ -607,7 +607,7 @@ def main(argv):
         drop_index(repo)
 
     if not options.tag_only:
-        if export_dir and options.purge:
+        if options.export_dir and options.purge:
             RemoveTree(export_dir)()
 
         if source:
