@@ -1,3 +1,7 @@
-Tests: smoke-rpm
-Depends: @, @builddeps@
-Restrictions: allow-stderr
+Tests:
+ smoke-rpm,
+Depends:
+ @,
+ @builddeps@,
+Restrictions:
+ allow-stderr,

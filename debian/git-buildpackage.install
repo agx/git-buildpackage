@@ -1,8 +1,9 @@
-debian/zsh/_gbp                       usr/share/zsh/vendor-completions
 debian/pk4/gbp                        usr/share/pk4/hooks-available/unpack
+debian/zsh/_gbp                       usr/share/zsh/vendor-completions
 usr/bin/gbp
 usr/bin/git-pbuilder
 usr/lib/python3.*/dist-packages/gbp-* usr/lib/python3/dist-packages/
+usr/lib/python3.*/dist-packages/gbp/__init__.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/command_wrappers.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/config.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/dch.py usr/lib/python3/dist-packages/gbp/
@@ -10,25 +11,24 @@ usr/lib/python3.*/dist-packages/gbp/deb/ usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/errors.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/format.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/git/ usr/lib/python3/dist-packages/gbp/
-usr/lib/python3.*/dist-packages/gbp/__init__.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/log.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/notifications.py usr/lib/python3/dist-packages/gbp/
-usr/lib/python3.*/dist-packages/gbp/paths.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/patch_series.py usr/lib/python3/dist-packages/gbp/
+usr/lib/python3.*/dist-packages/gbp/paths.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/pipes.py usr/lib/python3/dist-packages/gbp/
 usr/lib/python3.*/dist-packages/gbp/pkg/ usr/lib/python3/dist-packages/gbp/
+usr/lib/python3.*/dist-packages/gbp/scripts/__init__.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/buildpackage.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/clone.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/common/ usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/config.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/create_remote_repo.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/dch.py usr/lib/python3/dist-packages/gbp/scripts/
+usr/lib/python3.*/dist-packages/gbp/scripts/export_orig.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/import_dsc.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/import_dscs.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/import_orig.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/import_ref.py usr/lib/python3/dist-packages/gbp/scripts/
-usr/lib/python3.*/dist-packages/gbp/scripts/export_orig.py usr/lib/python3/dist-packages/gbp/scripts/
-usr/lib/python3.*/dist-packages/gbp/scripts/__init__.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/pq.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/pristine_tar.py usr/lib/python3/dist-packages/gbp/scripts/
 usr/lib/python3.*/dist-packages/gbp/scripts/pull.py usr/lib/python3/dist-packages/gbp/scripts/

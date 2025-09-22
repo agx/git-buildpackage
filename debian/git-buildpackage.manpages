@@ -1,7 +1,5 @@
-docs/gbp.1
 docs/gbp-buildpackage.1
 docs/gbp-clone.1
-docs/gbp.conf.5
 docs/gbp-config.1
 docs/gbp-create-remote-repo.1
 docs/gbp-dch.1
@@ -16,4 +14,6 @@ docs/gbp-pull.1
 docs/gbp-push.1
 docs/gbp-setup-gitattributes.1
 docs/gbp-tag.1
+docs/gbp.1
+docs/gbp.conf.5
 docs/git-pbuilder.1
