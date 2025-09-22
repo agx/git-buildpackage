@@ -172,7 +172,7 @@ def find_upstream(use_uscan, args, version=None):
             raise GbpError("you can't pass both --uscan and a filename.")
 
         uscan = Uscan()
-        gbp.log.info("Launching uscan...")
+        gbp.log.info(f"Launching uscan{' for %s' % version if version else ''}...")
         try:
             if not uscan.scan(download_version=version):
                 gbp.log.info("package is up to date, nothing to do.")
