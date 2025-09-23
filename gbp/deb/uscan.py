@@ -137,7 +137,7 @@ class Uscan(object):
             msg = "Uscan failed - debug by running 'uscan --verbose'"
         raise UscanError(msg)
 
-    def scan(self, destdir='..', download_version=None):
+    def scan(self, destdir='..', download_version=None, download_debversion=None) -> bool:
         """
         Invoke uscan to fetch a new upstream version
 
@@ -146,6 +146,8 @@ class Uscan(object):
         cmd = ['uscan', '--symlink', '--destdir=%s' % destdir, '--dehs']
         if download_version:
             cmd += ['--download-version', download_version]
+        elif download_debversion:
+            cmd += ['--download-debversion', download_version]
         p = subprocess.Popen(cmd, cwd=self._dir, stdout=subprocess.PIPE)
         out = p.communicate()[0].decode()
         # uscan exits with 1 in case of up-to-date and when an error occurred.
@@ -154,6 +156,9 @@ class Uscan(object):
             return False
 
         if p.returncode:
+            # If we didn't find the given version retry as debian version
+            if download_version:
+                return self.scan(destdir, download_version=None, download_debversion=download_debversion)
             self._raise_error(out)
 
         self._parse(out)

@@ -146,7 +146,7 @@ def detect_name_and_version(repo, source, options) -> Tuple[str, str]:
     return (sourcepackage, version)
 
 
-def find_upstream(use_uscan, args, version=None):
+def find_upstream(use_uscan, args, version=None) -> DebianUpstreamSource | None:
     """Find the main tarball to import - either via uscan or via command line argument
     @return: upstream source filename or None if nothing to import
     @rtype: string
@@ -172,7 +172,7 @@ def find_upstream(use_uscan, args, version=None):
             raise GbpError("you can't pass both --uscan and a filename.")
 
         uscan = Uscan()
-        gbp.log.info("Launching uscan...")
+        gbp.log.info(f"Launching uscan{' for %s' % version if version else ''}...")
         try:
             if not uscan.scan(download_version=version):
                 gbp.log.info("package is up to date, nothing to do.")
@@ -193,9 +193,9 @@ def find_upstream(use_uscan, args, version=None):
         sig = '{}.asc'.format(args[0])
         if os.path.exists(sig):
             gbp.log.debug("Signature {} found for {}".format(args[0], sig))
+            return DebianUpstreamSource(args[0], sig=sig)
         else:
-            sig = None
-        return DebianUpstreamSource(args[0], sig=sig)
+            return DebianUpstreamSource(args[0], sig=None)
 
 
 def debian_branch_merge(repo, tag, version, options):
