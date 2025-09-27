@@ -23,7 +23,7 @@ from tests.component import ComponentTestGitRepository
 
 DEB_TEST_SUBMODULE = os.path.join('tests', 'component', 'deb', 'data')
 DEB_TEST_DATA_DIR = os.path.abspath(DEB_TEST_SUBMODULE)
-DEB_TEST_DOWNLOAD_URL = 'https://git.sigxcpu.org/cgit/gbp/deb-testdata/plain/'
+DEB_TEST_DOWNLOAD_URL = 'https://salsa.debian.org/gbp-team/deb-testdata/-/raw/master'
 
 
 def setup_module():

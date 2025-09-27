@@ -20,7 +20,7 @@ import tempfile
 
 @unittest.skipUnless(os.getenv("GBP_NETWORK_TESTS"), "network tests disabled")
 class TestImportOrigDownload(DebianGitTestRepo):
-    HOST = 'git.sigxcpu.org'
+    HOST = 'salsa.debian.org'
 
     def setUp(self):
         DebianGitTestRepo.setUp(self)
@@ -32,8 +32,7 @@ class TestImportOrigDownload(DebianGitTestRepo):
 
     def test_200_download(self):
         pkg = 'hello-debhelper_2.6.orig.tar.gz'
-        url = "https://{host}/cgit/gbp/deb-testdata/tree/dsc-3.0/{pkg}".format(host=self.HOST,
-                                                                               pkg=pkg)
+        url = 'https://{host}/gbp-team/deb-testdata/-/raw/master/dsc-3.0/{pkg}'.format(host=self.HOST, pkg=pkg)
         self.assertEqual(download_orig(url).path, '../%s' % pkg)
 
 
