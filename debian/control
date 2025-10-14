@@ -23,7 +23,7 @@ Build-Depends:
  python3,
  python3-dateutil <!nocheck>,
  python3-pytest <!nocheck>,
- python3-pytest-cov <!nocheck>,
+ python3-pytest-cov,
  python3-rpm <!nocheck>,
  python3-setuptools,
  python3-yaml <!nocheck>,
