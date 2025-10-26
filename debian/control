@@ -89,7 +89,6 @@ Depends:
 Recommends:
  pristine-tar (>= 0.5),
 Suggests:
- mock,
  python3-notify2,
  unzip,
  zipmerge,
