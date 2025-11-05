@@ -1,3 +1,76 @@
+git-buildpackage (0.9.39) unstable; urgency=medium
+
+  [ Richard Hansen ]
+  * [13517bc] run-in-container: Properly quote parameter expansion.
+    It's unclear why the comment "re-splitting command arguments
+    intentional" was added; nothing about the invocation of the function
+    suggests that it was intentional.
+  * [1b15033] run-in-container: Upgrade packages in image
+  * [8a89b3e] run-in-container: Install image packages noninteractively
+  * [5910d59] run-in-container: Reduce image size by deleting downloaded
+    packages
+  * [2589dcc] run-in-container: Run the full test suite
+  * [d79afe7] run-in-container: Skip test that fails when run as root
+  * [bcccae1] run-in-container: Bump example release to trixie
+  * [181ad5b] run-in-container: Build the package during run, not image build
+  * [0755e09] pq tests: Fix reading of patch file.
+    Reading a file that has already been read to EOF returns the empty
+    string, so the second check was always trivially true.
+  * [d8ec910] GitRepository diff: Remove `=` from `-M` argument.
+    Git's documentation says that the option has the form `-M[<n>]`, not
+    `-M[=<n>]`.
+  * [e6e5ee9] GitRepository diff: Add copy detection support.
+    This commit does not enable copy or rename detection (no behavior
+    changes are expected); it only adds the infrastructure needed to
+    enable copy detection in a future commit.
+  * [05a71f0] pq: Create rename and copy patches when exporting.
+    This produces smaller patches that are easier to review and easier to
+    refresh by devs that don't use git-buildpackage.
+    The quilt utility wraps patch, and GNU patch has supported Git's diff
+    features such as renames and copies since 2.7, released Sep 2012:
+    <https://git.savannah.gnu.org/cgit/patch.git/tree/NEWS?h=v2.7#n6>
+    Note: dpkg-source (specifically, Dpkg::Source::Patch) logs the
+    following warning with a rename-only patch (see #749070), but such
+    patches appear to be applied properly.
+    (Closes: #1100809)
+  * [34a63bf] GitRepository diff: Force diff algorithm for consistency
+    (Closes: #1030044)
+
+  [ Guido Günther ]
+  * [df5a12a] tests: Fetch test data from salsa.
+    Avoids a dependency on an external system that can fail.
+  * [5262ada] clone: Add some type annotations
+  * [17580fc] clone: Be less strict on vcs-git URLs.
+    This allows URLs that specify `-b <branch>` to
+    be matched. We don't care about the branch information
+    yet though as we take that from gbp.conf.
+  * [17d2826] Wrap and sort
+  * [5cf9a8d] import-orig: Be more helpful when invoking uscan with a version
+  * [7d509bf] uscan: Retry with --download-debversion if --download-version
+    failed. Otherwise using this in scripts that merely get the target Debian
+    version becomes really cumbersome
+  * [aaeb20a] tests: Switch download URLs to salsa.
+    This leaves merely the uscan test
+
+  [ Julien Plissonneau Duquène ]
+  * [69ccb15] Add a missing test dependency
+  * [6ebc8cd] Promote Standards-Version to 4.7.2 with no changes
+
+  [ Hannes von Haugwitz ]
+  * [68768a2] buildpackage: Fix build directory removal condition
+    * fixes regression in 005676a (buildpackage: Make sure export_dir is
+      always set)
+    * Closes: #1111340
+
+  [ Santiago Vila ]
+  * [cad78d8] Fix FTBFS with the nocheck build profile (Closes: #1116741)
+
+  [ Carles Pina i Estany ]
+  * [158f0db] Remove unused Suggests (not existing in Debian) "mock" package
+    (Closes: #1119013)
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 05 Nov 2025 09:46:25 +0100
+
 git-buildpackage (0.9.38) unstable; urgency=medium
 
   [ Otto Kekäläinen ]
