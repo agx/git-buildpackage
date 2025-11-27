@@ -300,7 +300,7 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
         if force:
             drop_pq(repo, branch)
         else:
-            raise GbpError("Patch queue branch '%s'. already exists. Try 'rebase' or 'switch' instead."
+            raise GbpError("Patch queue branch '%s' already exists. Try 'rebase' or 'switch' instead."
                            % pq_branch)
 
     maintainer = get_maintainer_from_control(repo)
