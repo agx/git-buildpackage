@@ -28,6 +28,7 @@ from email.charset import Charset, QP
 from email.policy import Compat32
 
 from gbp.git import GitRepository, GitRepositoryError
+from gbp.git.commit import GitCommitInfo
 from gbp.git.modifier import GitModifier, GitTz
 from gbp.errors import GbpError
 import gbp.log
@@ -80,7 +81,7 @@ def pq_branch_base(branch: str) -> str:
         return branch
 
 
-def parse_gbp_commands(info: dict,
+def parse_gbp_commands(info: GitCommitInfo,
                        cmd_tag: str | Sequence[str],
                        noarg_cmds: Sequence[str],
                        arg_cmds: Sequence[str],
@@ -101,7 +102,7 @@ def parse_gbp_commands(info: dict,
     cmd_re = re.compile(r'^%s:\s*(?P<cmd>[a-z-]+)(\s+(?P<args>\S.*))?' %
                         cmd_tag, flags=re.I)
     commands = {}
-    for line in info['body'].splitlines():
+    for line in info.body.splitlines():
         match = re.match(cmd_re, line)
         if match:
             cmd = match.group('cmd').lower()
@@ -110,12 +111,12 @@ def parse_gbp_commands(info: dict,
                     commands[cmd] = match.group('args')
                 else:
                     gbp.log.warn("Ignoring gbp-command '%s' in commit %s: "
-                                 "missing cmd arguments" % (line, info['id']))
+                                 "missing cmd arguments" % (line, info.commitish))
             elif noarg_cmds and cmd in noarg_cmds:
                 commands[cmd] = match.group('args')
             else:
                 gbp.log.warn("Ignoring unknown gbp-command '%s' in commit %s"
-                             % (line, info['id']))
+                             % (line, info.commitish))
             if filter_cmds is None or cmd not in filter_cmds:
                 body.append(line)
         else:
@@ -142,7 +143,7 @@ def patch_path_filter(file_status: dict[str, list[str]],
 
 
 def write_patch_file(filename: str,
-                     commit_info: dict,
+                     commit_info: GitCommitInfo,
                      diff: bytes) -> str | None:
     """Write patch file"""
     if not diff:
@@ -156,8 +157,8 @@ def write_patch_file(filename: str,
             charset.header_encoding = QP
 
             # Write headers
-            name = commit_info['author']['name']
-            email = commit_info['author']['email']
+            name = commit_info.author.name
+            email = commit_info.author.email
             # Git compat: put name in quotes if special characters found
             if re.search(r'[,.@()\[\]\\\:;]', name):
                 name = '"%s"' % name
@@ -168,19 +169,19 @@ def write_patch_file(filename: str,
                 from_header.append(name, charset)
             from_header.append('<%s>' % email)
             msg['From'] = from_header  # type: ignore
-            date = commit_info['author'].datetime
+            date = commit_info.author.datetime
             datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
             msg['Date'] = Header(datestr, 'us-ascii', header_name='date')  # type: ignore
             subject_header = Header(header_name='subject')
             try:
-                subject_header.append(commit_info['subject'], 'us-ascii')
+                subject_header.append(commit_info.subject, 'us-ascii')
             except UnicodeDecodeError:
-                subject_header.append(commit_info['subject'], charset)
+                subject_header.append(commit_info.subject, charset)
             msg['Subject'] = subject_header  # type: ignore
             # Write message body
-            if commit_info['body']:
+            if commit_info.body:
                 # Strip extra linefeeds
-                body = commit_info['body'].rstrip() + '\n'
+                body = commit_info.body.rstrip() + '\n'
                 try:
                     msg.set_payload(body.encode('us-ascii'))
                 except (UnicodeEncodeError):
@@ -243,12 +244,12 @@ def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
         filepath = os.path.join(outdir, filename)
 
     # Determine files to include
-    paths = patch_path_filter(commit_info['files'], path_exclude_regex)
+    paths = patch_path_filter(commit_info.files, path_exclude_regex)
 
     # Finally, create the patch
     patch = None
     if paths:
-        diff = repo.diff('%s^!' % commit_info['id'], paths=paths, stat=80,
+        diff = repo.diff('%s^!' % commit_info.commitish, paths=paths, stat=80,
                          summary=True, text=True, abbrev=abbrev, copies=True)
         patch = write_patch_file(filepath, commit_info, diff)
         if patch:
@@ -265,13 +266,22 @@ def format_diff(outdir: str,
                 path_exclude_regex: str | None = None) -> str | None:
     """Create a patch of diff between two repository objects"""
 
-    info = {'author': repo.get_author_info()}
+    author = repo.get_author_info()
     now = datetime.datetime.now().replace(tzinfo=GitTz(-time.timezone))
-    info['author'].set_date(now)
-    info['subject'] = "Raw diff %s..%s" % (start, end)
-    info['body'] = ("Raw diff between %s '%s' and\n%s '%s'\n" %
-                    (repo.get_obj_type(start), start,
-                     repo.get_obj_type(end), end))
+    author.set_date(now)
+    body = ("Raw diff between %s '%s' and\n%s '%s'\n" %
+            (repo.get_obj_type(start), start,
+             repo.get_obj_type(end), end))
+
+    info = GitCommitInfo(commitish=end,
+                         commit_sha=end,
+                         author=author,
+                         committer=author,
+                         subject="Raw diff %s..%s" % (start, end),
+                         patchname="",
+                         body=body,
+                         files={})
+
     if not filename:
         filename = '%s-to-%s.diff' % (start, end)
     filename = os.path.join(outdir, filename)

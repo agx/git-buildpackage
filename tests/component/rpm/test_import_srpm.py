@@ -331,10 +331,10 @@ class TestImportPacked(ComponentTestBase):
         assert set(tags) == set(["orig/2.0", "ver_2.0-rel_0"])
         # Check git committer/author
         info = repo.get_commit_info("pack")
-        assert info["author"].name == "Markus Lehtonen"
-        assert info["author"].email == "markus.lehtonen@linux.intel.com"
-        assert info["author"].name == info["committer"].name
-        assert info["author"].email == info["committer"].email
+        assert info.author.name == "Markus Lehtonen"
+        assert info.author.email == "markus.lehtonen@linux.intel.com"
+        assert info.author.name == info.committer.name
+        assert info.author.email == info.committer.email
 
         # Create a new commit by committing an empty tree
         commit = repo.commit_tree('4b825dc642cb6eb9a060e54bf8d69288fbee4904',

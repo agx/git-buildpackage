@@ -196,7 +196,7 @@ class TestImportOrig(ImportOrigTestBase):
         assert len(repo.get_commits(until="master")) == 1
         assert len(repo.get_commits(until="upstream")) == 1
         assert repo.get_tags() == ["upstream/1.0"]
-        added_files = repo.get_commit_info("upstream")["files"]["A"]
+        added_files = repo.get_commit_info("upstream").files["A"]
         assert set(added_files) == set([b"Makefile", b"README"])
 
     def test_noninteractive(self):

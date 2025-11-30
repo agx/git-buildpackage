@@ -25,7 +25,7 @@ from collections import defaultdict
 import gbp.log as log
 from gbp.errors import GbpError
 from gbp.git.modifier import GitModifier
-from gbp.git.commit import GitCommit
+from gbp.git.commit import GitCommit, GitCommitInfo
 from gbp.git.errors import GitError
 from gbp.git.args import GitArgs
 from gbp.paths import to_bin
@@ -1654,7 +1654,7 @@ class GitRepository(object):
         @return: the commit's subject
         @rtype: C{str}
         """
-        return self.get_commit_info(commit)['subject']
+        return self.get_commit_info(commit).subject
 
     def get_commit_info(self, commitish):
         """
@@ -1694,13 +1694,14 @@ class GitRepository(object):
             path = file_fields.pop(0)
             files[status].append(path)
 
-        return {'id': commitish,
-                'author': author,
-                'committer': committer,
-                'subject': fields[6].decode(),
-                'patchname': fields[7].decode(),
-                'body': fields[8].decode(),
-                'files': files}
+        return GitCommitInfo(commitish=commitish,
+                             commit_sha=commit_sha1,
+                             author=author,
+                             committer=committer,
+                             subject=fields[6].decode(),
+                             patchname=fields[7].decode(),
+                             body=fields[8].decode(),
+                             files=files)
 
 #{ Patches
     def format_patches(self, start, end, output_dir,

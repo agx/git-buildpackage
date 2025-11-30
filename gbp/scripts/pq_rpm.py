@@ -99,10 +99,10 @@ def generate_patches(repo, start, end, outdir, options):
     # Generate patches
     for commit in reversed(repo.get_commits(start, end_commit)):
         info = repo.get_commit_info(commit)
-        (cmds, info['body']) = parse_gbp_commands(info,
-                                                  'gbp-rpm',
-                                                  ('ignore'),
-                                                  ('if', 'ifarch'))
+        (cmds, info.body) = parse_gbp_commands(info,
+                                               'gbp-rpm',
+                                               ('ignore'),
+                                               ('if', 'ifarch'))
         if 'ignore' not in cmds:
             patch_fn = format_patch(outdir, repo, info, patches,
                                     numbered=options.patch_numbers,
@@ -110,7 +110,7 @@ def generate_patches(repo, start, end, outdir, options):
             if patch_fn:
                 commands[os.path.basename(patch_fn)] = cmds
         else:
-            gbp.log.info('Ignoring commit %s' % info['id'])
+            gbp.log.info('Ignoring commit %s' % info.commitish)
 
     # Generate diff to the tree-ish object
     if end_commit != end:

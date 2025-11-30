@@ -178,8 +178,8 @@ class RpmPkgPolicy(PkgPolicy):
             body = cls._extra_filter(body, kwargs['ignore_re'])
 
             # Generate changelog entry
-            subject = commit_info['subject']
-            commitid = commit_info['id']
+            subject = commit_info.subject
+            commitid = commit_info.commitish
             if kwargs['id_len']:
                 text = ["- [%s] %s" % (commitid[0:kwargs['id_len']], subject)]
             else:

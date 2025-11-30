@@ -215,7 +215,7 @@ class TestRpmCh(RpmRepoTestBase):
         orig_content = self.read_file('packaging/gbp-test-native.changes')
 
         assert mock_ch(["--full", "--since=HEAD^"]) == 0
-        commit_msg_body = repo.get_commit_info("HEAD")["body"]
+        commit_msg_body = repo.get_commit_info("HEAD").body
         full_msg = [line for line in commit_msg_body.splitlines() if line]
         content = self.read_file('packaging/gbp-test-native.changes')
         # New lines: header, 1 entry "header", entry "body" from commit message
@@ -228,7 +228,7 @@ class TestRpmCh(RpmRepoTestBase):
         orig_content = self.read_file('packaging/gbp-test-native.changes')
 
         assert mock_ch(["--full", "--since", "HEAD^", "--ignore-regex", "Signed-off-by:.*"]) == 0
-        commit_msg_body = repo.get_commit_info("HEAD")["body"]
+        commit_msg_body = repo.get_commit_info("HEAD").body
         full_msg = [
             line
             for line in commit_msg_body.splitlines()

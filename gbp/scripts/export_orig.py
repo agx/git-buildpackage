@@ -252,7 +252,7 @@ def guess_comp_type(comp_type, source, repo, tarball_dir):
                 gbp.log.debug("Found pristine-tar commit at '%s'" % commit)
             else:
                 commit = branch
-            tarball = repo.get_commit_info(commit)['subject']
+            tarball = repo.get_commit_info(commit).subject
             (base_name, archive_fmt, comp_type) = Archive.parse_filename(tarball)
             gbp.log.debug("Determined compression type '%s'" % comp_type)
             if not comp_type:

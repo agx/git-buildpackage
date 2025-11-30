@@ -67,7 +67,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('git-buildpackage')
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 1
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "git-buildpackage (0.01) unstable; urgency=low" in commitmsg
         assert "git-buildpackage (0.4.14) unstable; urgency=low" in commitmsg
 
@@ -76,7 +76,7 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 2
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg
         assert "git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg
 
@@ -84,7 +84,7 @@ class TestImportDsc(ComponentTestBase):
         assert import_dsc(['arg0', dsc]) == 0
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 3
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "git-buildpackage (0.4.14) unstable; urgency=low" not in commitmsg
         assert "git-buildpackage (0.4.15) unstable; urgency=low" not in commitmsg
         assert "git-buildpackage (0.4.16) unstable; urgency=low" in commitmsg
@@ -153,7 +153,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        commitmsg = repo.get_commit_info("HEAD")["body"]
+        commitmsg = repo.get_commit_info("HEAD").body
         assert "hello-debhelper (2.6-1) unstable; urgency=low" == commitmsg.split("\n")[0]
         assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
@@ -166,7 +166,7 @@ class TestImportDsc(ComponentTestBase):
                            '--upstream-branch=upstream',
                            dscfile]) == 0
         commits, expected = len(repo.get_commits()), 3
-        commitmsg = repo.get_commit_info("HEAD")["body"]
+        commitmsg = repo.get_commit_info("HEAD").body
         assert "hello-debhelper (2.6-2) unstable; urgency=medium" == commitmsg.split("\n")[0]
         assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
 
@@ -193,7 +193,7 @@ class TestImportDsc(ComponentTestBase):
         repo = ComponentTestGitRepository('hello-debhelper')
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
         commits, expected = len(repo.get_commits()), 2
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg
         assert "hello (1.3-7) experimental; urgency=LOW" in commitmsg
 
@@ -278,7 +278,7 @@ class TestImportDsc(ComponentTestBase):
         assert len(repo.get_commits()) == 2
         self._check_reflog(repo)
         self._check_repo_state(repo, 'master', ['master', 'pristine-tar', 'upstream'])
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "hello-debhelper (2.6-2) unstable; urgency=medium" in commitmsg
         assert "hello (1.3-7) experimental; urgency=LOW" in commitmsg
 
@@ -291,7 +291,7 @@ class TestImportDsc(ComponentTestBase):
                            dsc]) == 0
         commits, expected = len(repo.get_commits()), 4
         assert commits == expected, "Found %d commit instead of %d" % (commits, expected)
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "hello-debhelper (2.8-1) unstable; urgency=low" in commitmsg
         assert "ello-debhelper (2.7-1) unstable; urgency=low" in commitmsg
         assert "hello-debhelper (2.6-2) unstable; urgency=medium" not in commitmsg

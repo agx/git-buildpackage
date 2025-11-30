@@ -11,6 +11,7 @@ from gbp.deb.source import DebianSource
 from gbp.scripts import export_orig
 from gbp.deb import DebianPkgPolicy
 from gbp.errors import GbpError
+from gbp.git.commit import GitCommitInfo
 
 
 class MockGitRepository:
@@ -31,7 +32,10 @@ class MockGitRepository:
         return None
 
     def get_commit_info(self, commit):
-        return {'subject': self.subject}
+        return GitCommitInfo(
+            commit, '', '', '', subject=self.subject,
+            patchname='', body='', files=[],
+        )
 
 
 class MockedSource(DebianSource):

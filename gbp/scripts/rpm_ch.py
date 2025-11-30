@@ -271,7 +271,7 @@ def entries_from_commits(changelog, repo, commits, options):
                                                      ignore_re=options.ignore_regex,
                                                      id_len=options.idlen)
         if entry_text:
-            entries.append(changelog.create_entry(author=info['author'].name,
+            entries.append(changelog.create_entry(author=info.author.name,
                                                   text=entry_text))
     return entries
 

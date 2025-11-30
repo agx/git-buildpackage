@@ -41,5 +41,5 @@ class TestImportDscs(ComponentTestBase):
         repo = ComponentTestGitRepository('git-buildpackage')
         self._check_repo_state(repo, 'master', ['master'])
         assert len(repo.get_commits()) == 2
-        commitmsg = repo.get_commit_info('HEAD')['body']
+        commitmsg = repo.get_commit_info('HEAD').body
         assert "git-buildpackage (0.4.15) unstable; urgency=low" in commitmsg

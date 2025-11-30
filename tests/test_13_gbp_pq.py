@@ -22,6 +22,7 @@ import os
 import unittest
 
 from gbp.command_wrappers import GitCommand
+from gbp.git.commit import GitCommitInfo
 from gbp.scripts.pq import (generate_patches, export_patches,
                             import_quilt_patches, rebase_pq,
                             switch_pq,
@@ -59,7 +60,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         pq.apply_and_commit_patch(self.repo, patch, None)
         self.assertIn(b'foo', self.repo.list_files())
         info = self.repo.get_commit_info('HEAD')
-        self.assertEqual('[text] foobar', info['subject'])
+        self.assertEqual('[text] foobar', info.subject)
 
     def test_topic(self):
         """Test if setting a topic works"""
@@ -67,7 +68,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
         pq.apply_and_commit_patch(self.repo, patch, None, topic='foobar')
         info = self.repo.get_commit_info('HEAD')
-        self.assertIn('Gbp-Pq: Topic foobar', info['body'])
+        self.assertIn('Gbp-Pq: Topic foobar', info.body)
 
     def test_name(self):
         """Test if setting a name works"""
@@ -75,7 +76,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
         pq.apply_and_commit_patch(self.repo, patch, None, name='foobar')
         info = self.repo.get_commit_info('HEAD')
-        self.assertIn('Gbp-Pq: Name foobar', info['body'])
+        self.assertIn('Gbp-Pq: Name foobar', info.body)
 
     @testutils.skip_without_cmd('dpkg')
     def test_debian_missing_author(self):
@@ -104,7 +105,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
         pq.apply_and_commit_patch(self.repo, patch, maintainer)
         gbp.log.warn = orig_warn
         info = self.repo.get_commit_info('HEAD')
-        self.assertEqual(info['author'].email, 'gg@godiug.net')
+        self.assertEqual(info.author.email, 'gg@godiug.net')
         self.assertIn(b'foo', self.repo.list_files())
 
 
@@ -297,10 +298,17 @@ class TestExport(testutils.DebianGitTestRepo):
         self.assertIn(b"Drop patch2.diff:", repo.show('HEAD'))
 
 
+def commit_info_with_body(body):
+    return GitCommitInfo(
+        '', '', '', '', '', '',
+        body=body, files=[],
+    )
+
+
 class TestParseGbpCommand(unittest.TestCase):
     def test_empty_body(self):
         """Test command filtering with an empty body"""
-        info = {'body': ''}
+        info = commit_info_with_body('')
         (cmds, body) = pq.parse_gbp_commands(info, ['tag'], ['cmd1'], ['cmd2'])
         self.assertEqual(cmds, {})
         self.assertEqual(body, '')
@@ -308,7 +316,7 @@ class TestParseGbpCommand(unittest.TestCase):
     def test_noarg_cmd(self):
         orig_body = '\n'.join(["Foo",
                                "tag: cmd1"])
-        info = {'body': orig_body}
+        info = commit_info_with_body(orig_body)
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'])
         self.assertEqual(cmds, {'cmd': None})
         self.assertEqual(body, orig_body)
@@ -316,7 +324,7 @@ class TestParseGbpCommand(unittest.TestCase):
     def test_filter_cmd(self):
         orig_body = '\n'.join(["Foo",
                                "tag: cmd1"])
-        info = {'body': orig_body}
+        info = commit_info_with_body(orig_body)
         (cmds, body) = pq.parse_gbp_commands(info, 'tag', ['cmd'], ['argcmd'], ['cmd'])
         self.assertEqual(cmds, {'cmd': None})
         self.assertEqual(body, 'Foo')

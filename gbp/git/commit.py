@@ -18,6 +18,8 @@
 
 import re
 
+from gbp.git.modifier import GitModifier
+
 
 class GitCommit(object):
     """A git commit"""
@@ -43,3 +45,51 @@ class GitCommit(object):
         @rtype: C{bool}
         """
         return True if GitCommit.sha1_re.match(value) else False
+
+
+class GitCommitInfo(GitCommit):
+    """Metadata for a commit"""
+
+    def __init__(self,
+                 commitish: str,
+                 commit_sha: str,
+                 author: GitModifier,
+                 committer: GitModifier,
+                 subject: str,
+                 patchname: str,
+                 body: str,
+                 files: dict[str, list[str]]):
+        self.commitish = commitish
+        self.commit_sha = commit_sha
+        self.author = author
+        self.committer = committer
+        self.subject = subject
+        self.patchname = patchname
+        self.body = body
+        self.files = files
+
+    # GitCommitInfo can be used as a map (for dch format_changelog_entry)
+    def get(self, key: str, default=None):
+        if key in self.keys() or key == 'id':
+            return self.__getitem__(key)
+        else:
+            return default
+
+    def __getitem__(self, key):
+        if key == 'id':
+            return self.commitish
+        else:
+            return self.__dict__[key]
+
+    @staticmethod
+    def keys() -> list[str]:
+        return ['commitish', 'commit_sha', 'author', 'committer', 'subject'
+                'patchname', 'body', 'files']
+
+    def items(self) -> list[tuple]:
+        items = []
+        for key in self.keys():
+            val = self.__getitem__(key)
+            if val:
+                items.append((key, val))
+        return items

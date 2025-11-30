@@ -59,11 +59,11 @@ def generate_patches(repo, start, end, outdir, options):
     for commit in rev_list:
         info = repo.get_commit_info(commit)
         # Parse 'Gbp-Pq: ' style commands
-        (cmds, info['body']) = parse_gbp_commands(info,
-                                                  'gbp-pq',
-                                                  ('ignore'),
-                                                  ('topic', 'name'),
-                                                  ('topic', 'name'))
+        (cmds, info.body) = parse_gbp_commands(info,
+                                               'gbp-pq',
+                                               ('ignore'),
+                                               ('topic', 'name'),
+                                               ('topic', 'name'))
         if 'ignore' not in cmds:
             topic = ''
             if 'topic' in cmds:
@@ -75,7 +75,7 @@ def generate_patches(repo, start, end, outdir, options):
                          renumber=options.renumber,
                          patch_num_prefix_format=options.patch_num_format)
         else:
-            gbp.log.info('Ignoring commit %s' % info['id'])
+            gbp.log.info('Ignoring commit %s' % info.commitish)
 
     return patches
 
