@@ -743,7 +743,7 @@ class TestImportOrig(ComponentTestBase):
         """Test that importing via uscan works"""
         with open("debian/watch", 'w+', encoding='utf-8') as f:
             f.write("""version=4
-https://git.sigxcpu.org/cgit/gbp/deb-testdata/plain/dsc-3.0/ \
+https://people.debian.org/~agx/deb-testdata/dsc-3.0/ \
   @PACKAGE@_@ANY_VERSION@\\.orig\\.tar\\.gz
 """)
         repo.add_files(["debian/watch"])
