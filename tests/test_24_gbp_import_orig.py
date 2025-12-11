@@ -27,8 +27,9 @@ class TestImportOrigDownload(DebianGitTestRepo):
         os.chdir(self.repo.path)
 
     def test_404_download(self):
+        url = "https://{host}/gbp-team/deb-testdata/-/raw/master/does_not_exist".format(host=self.HOST)
         with self.assertRaisesRegex(GbpError, "404 Client Error: Not Found for url"):
-            download_orig("https://{host}/does_not_exist".format(host=self.HOST))
+            download_orig(url)
 
     def test_200_download(self):
         pkg = 'hello-debhelper_2.6.orig.tar.gz'

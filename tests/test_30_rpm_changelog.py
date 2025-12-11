@@ -18,6 +18,7 @@
 
 from datetime import datetime
 from tempfile import NamedTemporaryFile
+import unittest
 
 import pytest
 
@@ -66,10 +67,10 @@ class TestChangelogEntry(object):
         assert str(entry) == "- foo\n  bar\n"
 
 
-class TestChangelogSection(object):
+class TestChangelogSection(unittest.TestCase):
     """Test the _ChangelogSection class"""
 
-    def setup(self):
+    def setUp(self):
         """Initialize test"""
         time = datetime(2014, 1, 29, 12, 13, 14)
         self.default_sect = _ChangelogSection(RpmPkgPolicy, time, name="J. D.",
