@@ -22,7 +22,6 @@ import os
 import shutil
 import sys
 import tempfile
-import re
 from gbp.config import GbpOptionParserDebian
 from gbp.deb.source import DebianSource
 from gbp.deb.git import DebianGitRepository
@@ -44,27 +43,6 @@ PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR, "series")
 
 
-def parse_old_style_topic(commit_info):
-    """Parse 'gbp-pq-topic:' line(s) from commit info"""
-
-    commit = commit_info['id']
-    topic_regex = r'gbp-pq-topic:\s*(?P<topic>\S.*)'
-    mangled_body = ''
-    topic = ''
-    # Parse and filter commit message body
-    for line in commit_info['body'].splitlines():
-        match = re.match(topic_regex, line, flags=re.I)
-        if match:
-            topic = match.group('topic')
-            gbp.log.debug("Topic %s found for %s" % (topic, commit))
-            gbp.log.warn("Deprecated 'gbp-pq-topic: <topic>' in %s, please "
-                         "use 'Gbp[-Pq]: Topic <topic>' instead" % commit)
-            continue
-        mangled_body += line + '\n'
-    commit_info['body'] = mangled_body
-    return topic
-
-
 def generate_patches(repo, start, end, outdir, options):
     """
     Generate patch files from git
@@ -79,17 +57,14 @@ def generate_patches(repo, start, end, outdir, options):
     rev_list = reversed(repo.get_commits(start, end))
     for commit in rev_list:
         info = repo.get_commit_info(commit)
-        # Parse 'gbp-pq-topic:'
-        topic = parse_old_style_topic(info)
-        cmds = {'topic': topic} if topic else {}
         # Parse 'Gbp-Pq: ' style commands
-        (cmds_gbp_pq, info['body']) = parse_gbp_commands(info,
-                                                         'gbp-pq',
-                                                         ('ignore'),
-                                                         ('topic', 'name'),
-                                                         ('topic', 'name'))
-        cmds.update(cmds_gbp_pq)
+        (cmds, info['body']) = parse_gbp_commands(info,
+                                                  'gbp-pq',
+                                                  ('ignore'),
+                                                  ('topic', 'name'),
+                                                  ('topic', 'name'))
         if 'ignore' not in cmds:
+            topic = ''
             if 'topic' in cmds:
                 topic = cmds['topic']
             name = cmds.get('name', None)

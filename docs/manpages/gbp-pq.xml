@@ -333,16 +333,6 @@
           </para>
         </listitem>
       </varlistentry>
-      <varlistentry>
-        <term><option>Gbp-Pq-Topic:</option> <replaceable>topic</replaceable>
-        </term>
-        <listitem>
-          <para>
-          Deprecated: use <option>Gbp-Pq: Topic</option>
-          <replaceable>topic</replaceable> instead.
-          </para>
-        </listitem>
-      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
