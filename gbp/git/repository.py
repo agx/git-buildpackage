@@ -114,7 +114,7 @@ class GitRepository(object):
             raise GitRepositoryError("No Git repository at '%s'" % path)
         return ret
 
-    def __init__(self, path: str, toplevel=True):
+    def __init__(self, path: str, toplevel: bool = True):
         """
         @param path: path to git repo (or subdir)
         @param toplevel: whether path points to the toplevel dir of
