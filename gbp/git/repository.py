@@ -71,9 +71,7 @@ class GitRepository(object):
     repository is stored in a directory named I{.git/} below I{path}.
 
     @ivar _path: The path to the working tree
-    @type _path: C{str}
     @ivar _bare: Whether this is a bare repository
-    @type _bare: C{bool}
     @raises GitRepositoryError: on git errors GitRepositoryError is raised by
         all methods.
     """
@@ -116,13 +114,11 @@ class GitRepository(object):
             raise GitRepositoryError("No Git repository at '%s'" % path)
         return ret
 
-    def __init__(self, path, toplevel=True):
+    def __init__(self, path: str, toplevel=True):
         """
         @param path: path to git repo (or subdir)
-        @type path: C{str}
         @param toplevel: whether path points to the toplevel dir of
             git repository
-        @type toplevel: C{bool}
         """
         self._bare = False
         self._path = self._check_repo(path, toplevel)
@@ -243,7 +239,7 @@ class GitRepository(object):
             detail = stderr or stdout
             raise GitRepositoryError("Error running git %s: %s" % (command, detail.decode().strip()))
 
-    def _cmd_has_feature(self, command, feature):
+    def _cmd_has_feature(self, command, feature) -> bool:
         """
         Check if the git command has certain feature enabled.
 
@@ -288,27 +284,27 @@ class GitRepository(object):
         return False
 
     @property
-    def path(self):
+    def path(self) -> str:
         """The absolute path to the repository"""
         return self._path
 
     @property
-    def git_dir(self):
+    def git_dir(self) -> str:
         """The absolute path to git's metadata"""
         return os.path.join(self.path, self._git_dir)
 
     @property
-    def bare(self):
+    def bare(self) -> bool:
         """Whether this is a bare repository"""
         return self._bare
 
     @property
-    def tags(self):
+    def tags(self) -> list[str]:
         """List of all tags in the repository"""
         return self.get_tags()
 
     @property
-    def branch(self):
+    def branch(self) -> str | None:
         """The currently checked out branch"""
         try:
             return self.get_branch()
@@ -316,12 +312,12 @@ class GitRepository(object):
             return None
 
     @property
-    def head(self):
+    def head(self) -> str:
         """SHA1 of the current HEAD"""
         return self.rev_parse('HEAD')
 
 #{ Branches and Merging
-    def rename_branch(self, branch, newbranch):
+    def rename_branch(self, branch: str, newbranch: str):
         """
         Rename branch
 
@@ -331,7 +327,7 @@ class GitRepository(object):
         args = GitArgs("-m", branch, newbranch)
         self._git_command("branch", args.args)
 
-    def create_branch(self, branch, rev=None, force=False):
+    def create_branch(self, branch: str, rev: str | None = None, force: bool = False):
         """
         Create a new branch
 
@@ -346,12 +342,11 @@ class GitRepository(object):
         args.add_true(rev, rev)
         self._git_command("branch", args.args)
 
-    def delete_branch(self, branch, remote=False):
+    def delete_branch(self, branch: str, remote: bool = False):
         """
         Delete branch I{branch}
 
         @param branch: name of the branch to delete
-        @type branch: C{str}
         @param remote: delete a remote branch
         @param remote: C{bool}
         """
@@ -367,7 +362,7 @@ class GitRepository(object):
         else:
             raise GitRepositoryError("Can't delete the branch you're on")
 
-    def get_branch(self):
+    def get_branch(self) -> str | None:
         """
         On what branch is the current working copy
 
@@ -392,15 +387,13 @@ class GitRepository(object):
             branch = None  # empty repo
         return branch
 
-    def has_branch(self, branch, remote=False):
+    def has_branch(self, branch: str, remote: bool = False) -> bool:
         """
         Check if the repository has branch named I{branch}.
 
         @param branch: branch to look for
         @param remote: only look for remote branches
-        @type remote: C{bool}
         @return: C{True} if the repository has this branch, C{False} otherwise
-        @rtype: C{bool}
         """
         args = GitArgs('--verify')
 
@@ -412,12 +405,11 @@ class GitRepository(object):
             return False
         return True
 
-    def set_branch(self, branch):
+    def set_branch(self, branch: str):
         """
         Switch to branch I{branch}
 
         @param branch: name of the branch to switch to
-        @type branch: C{str}
         """
         if self.branch == branch:
             return
@@ -428,7 +420,7 @@ class GitRepository(object):
         else:
             self._git_command("checkout", [branch])
 
-    def get_merge_branch(self, branch):
+    def get_merge_branch(self, branch: str) -> str | None:
         """
         Get the branch we'd merge from
 
@@ -443,16 +435,13 @@ class GitRepository(object):
         remote += merge.replace("refs/heads", "", 1)
         return remote
 
-    def get_merge_base(self, commit1, commit2):
+    def get_merge_base(self, commit1: str, commit2: str) -> str:
         """
         Get the common ancestor between two commits
 
         @param commit1: commit SHA1 or name of a branch or tag
-        @type commit1: C{str}
         @param commit2: commit SHA1 or name of a branch or tag
-        @type commit2: C{str}
         @return: SHA1 of the common ancestor
-        @rtype: C{str}
         """
         args = GitArgs()
         args.add(commit1)
@@ -466,16 +455,13 @@ class GitRepository(object):
         else:
             raise GitRepositoryError("Failed to get common ancestor: %s" % stderr.decode().strip())
 
-    def merge(self, commit, verbose=False, edit=False):
+    def merge(self, commit, verbose: bool = False, edit: bool = False):
         """
         Merge changes from the named commit into the current branch
 
         @param commit: the commit to merge from (usually a branch name or tag)
-        @type commit: C{str}
         @param verbose: whether to print a summary after the merge
-        @type verbose: C{bool}
         @param edit: whether to invoke an editor to edit the merge message
-        @type edit: C{bool}
         """
         args = GitArgs()
         args.add_cond(verbose, '--summary', '--no-summary')
@@ -493,10 +479,10 @@ class GitRepository(object):
         """
         self._git_command("merge", ["--abort"])
 
-    def is_in_merge(self):
+    def is_in_merge(self) -> bool:
         return os.path.exists(os.path.join(self.git_dir, 'MERGE_HEAD'))
 
-    def is_fast_forward(self, from_branch, to_branch):
+    def is_fast_forward(self, from_branch, to_branch) -> tuple[bool, bool]:
         """
         Check if an update I{from from_branch} to I{to_branch} would be a fast
         forward or if the branch is up to date already.
@@ -527,14 +513,14 @@ class GitRepository(object):
         elif has_remote:
             return True, False
 
-    def _get_branches(self, remote=False):
+        return False, False
+
+    def _get_branches(self, remote=False) -> list[str]:
         """
         Get a list of branches
 
         @param remote: whether to list local or remote branches
-        @type remote: C{bool}
         @return: local or remote branches
-        @rtype: C{list}
         """
         args = ['--format=%(refname:short)']
         args += ['refs/remotes/'] if remote else ['refs/heads/']
@@ -559,19 +545,15 @@ class GitRepository(object):
         """
         return self._get_branches(remote=True)
 
-    def update_ref(self, ref, new, old=None, msg=None):
+    def update_ref(self, ref: str, new: str, old: str | None = None, msg: str | None = None):
         """
         Update ref I{ref} to commit I{new} if I{ref} currently points to
         I{old}
 
         @param ref: the ref to update
-        @type ref: C{str}
         @param new: the new value for ref
-        @type new: C{str}
         @param old: the old value of ref
-        @type old: C{str}
         @param msg: the reason for the update
-        @type msg: C{str}
         """
         args = GitArgs()
         args.add_true(msg, '-m', msg)
@@ -579,16 +561,13 @@ class GitRepository(object):
         args.add_true(old, old)
         self._git_command("update-ref", args.args)
 
-    def branch_contains(self, branch, commit, remote=False):
+    def branch_contains(self, branch: str, commit: str, remote: bool = False):
         """
         Check if branch I{branch} contains commit I{commit}
 
         @param branch: the branch the commit should be on
-        @type branch: C{str}
         @param commit: the C{str} commit to check
-        @type commit: C{str}
         @param remote: whether to check remote instead of local branches
-        @type remote: C{bool}
         """
         args = GitArgs()
         args.add_true(remote, '-r')
@@ -603,14 +582,12 @@ class GitRepository(object):
                 return True
         return False
 
-    def set_upstream_branch(self, local_branch, upstream):
+    def set_upstream_branch(self, local_branch: str, upstream: str):
         """
         Set upstream branches for local branch
 
         @param local_branch: name of the local branch
-        @type local_branch: C{str}
         @param upstream: Remote branch in the form remote/branch, e.g. origin/master
-        @type upstream: C{str}
         """
 
         # check if both branches exist
@@ -632,15 +609,12 @@ class GitRepository(object):
                 "Failed to set upstream branch '%s' for '%s': %s" %
                 (upstream, local_branch, err.strip()))
 
-    def get_upstream_branch(self, local_branch):
+    def get_upstream_branch(self, local_branch: str) -> str:
         """
         Get upstream branch for the local branch
 
         @param local_branch: name of the local branch
-        @type local_branch: C{str}
         @return: upstream (remote/branch) or  '' if no upstream found
-        @rtype: C{str}
-
         """
         args = GitArgs('--format=%(upstream:short)')
         if self.has_branch(local_branch, remote=False):
@@ -653,7 +627,7 @@ class GitRepository(object):
         return out[0].decode().strip()
 
     @staticmethod
-    def ensure_refs_heads(branch):
+    def ensure_refs_heads(branch: str):
         """
         Make sure a branch name is prefixed with `refs/heads'
         """
@@ -664,21 +638,21 @@ class GitRepository(object):
 
 #{ Tags
 
-    def create_tag(self, name, msg=None, commit=None, sign=False, keyid=None):
+    def create_tag(self,
+                   name: str,
+                   msg: str | None = None,
+                   commit: str | None = None,
+                   sign: bool = False,
+                   keyid: str | None = None):
         """
         Create a new tag.
 
         @param name: the tag's name
-        @type name: C{str}
         @param msg: The tag message.
-        @type msg: C{str}
         @param commit: the commit or object to create the tag at, default
             is I{HEAD}
-        @type commit: C{str}
         @param sign: Whether to sing the tag
-        @type sign: C{bool}
         @param keyid: the GPG keyid used to sign the tag
-        @type keyid: C{str}
         """
         args = []
         args += ['-m', msg] if msg else []
@@ -691,54 +665,49 @@ class GitRepository(object):
         args += [commit] if commit else []
         self._git_command("tag", args)
 
-    def delete_tag(self, tag):
+    def delete_tag(self, tag: str):
         """
         Delete a tag named I{tag}
 
         @param tag: the tag to delete
-        @type tag: C{str}
         """
         if self.has_tag(tag):
             self._git_command("tag", ["-d", tag])
 
-    def move_tag(self, old, new):
+    def move_tag(self, old: str, new: str):
         self._git_command("tag", [new, old])
         self.delete_tag(old)
 
-    def has_tag(self, tag):
+    def has_tag(self, tag: str):
         """
         Check if the repository has a tag named I{tag}.
 
         @param tag: tag to look for
-        @type tag: C{str}
         @return: C{True} if the repository has that tag, C{False} otherwise
-        @rtype: C{bool}
         """
         out, ret = self._git_getoutput('tag', ['-l', tag])
         return [False, True][len(out)]
 
-    def describe(self, commitish, pattern=None, longfmt=False, always=False,
-                 abbrev=None, tags=False, exact_match=False):
+    def describe(self,
+                 commitish: str,
+                 pattern: str | None = None,
+                 longfmt: bool = False,
+                 always: bool = False,
+                 abbrev: int | None = None,
+                 tags: bool = False,
+                 exact_match: bool = False):
         """
         Describe commit, relative to the latest tag reachable from it.
 
         @param commitish: the commit-ish to describe
-        @type commitish: C{str}
         @param pattern: only look for tags matching I{pattern}
-        @type pattern: C{str}
         @param longfmt: describe the commit in the long format
-        @type longfmt: C{bool}
         @param always: return commit sha1 as fallback if no tag is found
-        @type always: C{bool}
         @param abbrev: abbreviate sha1 to given length instead of the default
-        @type abbrev: None or C{long}
         @param tags: enable matching a lightweight (non-annotated) tag
-        @type tags: C{bool}
         @param exact_match: only output exact matches (a tag directly
         references the supplied commit)
-        @type exact_match: C{bool}
         @return: tag name plus/or the abbreviated sha1
-        @rtype: C{str}
         """
         args = GitArgs()
         args.add_true(pattern, ['--match', pattern])
@@ -762,54 +731,43 @@ class GitRepository(object):
                                      (commitish, err.decode().strip()))
         return tag.decode().strip()
 
-    def find_tag(self, commit, pattern=None):
+    def find_tag(self, commit: str, pattern: str | None = None):
         """
         Find the closest tag to a given commit
 
         @param commit: the commit to describe
-        @type commit: C{str}
         @param pattern: only look for tags matching I{pattern}
-        @type pattern: C{str}
         @return: the found tag
-        @rtype: C{str}
         """
         return self.describe(commit, pattern, abbrev=0)
 
-    def find_branch_tag(self, commit, branch, pattern=None):
+    def find_branch_tag(self, commit: str, branch: str, pattern: str | None = None):
         """
         Find the closest tag on a certain branch to a given commit
 
         @param commit: the commit to describe
-        @type commit: C{str}
-        @type branch: C{str}
         @param pattern: only look for tags matching I{pattern}
-        @type pattern: C{str}
         @return: the found tag
-        @rtype: C{str}
         """
         base_commit = self.get_merge_base(commit, branch)
         return self.describe(base_commit, pattern, abbrev=0)
 
-    def get_tags(self, pattern=None):
+    def get_tags(self, pattern: str | None = None) -> list[str]:
         """
         List tags
 
         @param pattern: only list tags matching I{pattern}
-        @type pattern: C{str}
         @return: tags
-        @rtype: C{list} of C{str}
         """
         args = ['-l', pattern] if pattern else []
         return [line.decode().strip() for line in self._git_getoutput('tag', args)[0]]
 
-    def verify_tag(self, tag):
+    def verify_tag(self, tag: str) -> bool:
         """
         Verify a signed tag
 
         @param tag: the tag's name
-        @type tag: C{str}
         @return: Whether the signature on the tag could be verified
-        @rtype: C{bool}
         """
         args = GitArgs('-v', tag)
 
@@ -820,13 +778,12 @@ class GitRepository(object):
         return True
 
 #}
-    def force_head(self, commit, hard=False):
+    def force_head(self, commit: str, hard: bool = False):
         """
         Force HEAD to a specific commit
 
         @param commit: commit to move HEAD to
         @param hard: also update the working copy
-        @type hard: C{bool}
         """
         if not GitCommit.is_sha1(commit):
             commit = self.rev_parse(commit)
@@ -840,7 +797,7 @@ class GitRepository(object):
             args.add(commit, '--')
             self._git_command("reset", args.args)
 
-    def _status(self, porcelain, ignore_untracked, paths):
+    def _status(self, porcelain: bool, ignore_untracked: bool, paths: list[str] | None):
         args = GitArgs()
         args.add_true(ignore_untracked, '-uno')
         args.add_true(porcelain, '--porcelain')
@@ -857,18 +814,15 @@ class GitRepository(object):
             raise GitRepositoryError("Can't get repository status")
         return out
 
-    def is_clean(self, ignore_untracked=False, paths=None):
+    def is_clean(self, ignore_untracked: bool = False, paths: list[str] | None = None) -> tuple[bool, str]:
         """
         Does the repository contain any uncommitted modifications?
 
         @param ignore_untracked: whether to ignore untracked files when
             checking the repository status
-        @type ignore_untracked: C{bool}
         @param paths: only check changes on paths
-        @type paths: C{list} of C{strings}
         @return: C{True} if the repository is clean, C{False} otherwise
             and Git's status message
-        @rtype: C{tuple}
         """
         if self.bare:
             return (True, '')
@@ -885,16 +839,13 @@ class GitRepository(object):
         else:
             return (True, '')
 
-    def clean(self, directories=False, force=False, dry_run=False):
+    def clean(self, directories: bool = False, force: bool = False, dry_run: bool = False):
         """
         Remove untracked files from the working tree.
 
         @param directories: remove untracked directories, too
-        @type directories: C{bool}
         @param force: satisfy git configuration variable clean.requireForce
-        @type force: C{bool}
         @param dry_run: don’t actually remove anything
-        @type dry_run: C{bool}
         """
         options = GitArgs()
         options.add_true(directories, '-d')
@@ -911,9 +862,7 @@ class GitRepository(object):
         Check status of repository.
 
         @param pathlist: List of paths to check status for
-        @type pathlist: C{list}
         @return C{dict} of C{lists} of paths, where key is a git status flag.
-        @rtype C{dict}
         """
         options = GitArgs('--porcelain', '-z')
         if pathlist:
