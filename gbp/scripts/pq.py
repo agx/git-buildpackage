@@ -82,12 +82,6 @@ def generate_patches(repo, start, end, outdir, options):
         # Parse 'gbp-pq-topic:'
         topic = parse_old_style_topic(info)
         cmds = {'topic': topic} if topic else {}
-        # Parse 'Gbp: ' style commands
-        (cmds_gbp, info['body']) = parse_gbp_commands(info, 'gbp',
-                                                      ('ignore'),
-                                                      ('topic', 'name'),
-                                                      ('topic', 'name'))
-        cmds.update(cmds)
         # Parse 'Gbp-Pq: ' style commands
         (cmds_gbp_pq, info['body']) = parse_gbp_commands(info,
                                                          'gbp-pq',

@@ -144,7 +144,7 @@
           The default is to export patches with patch numbers. Note,
           however, that this normally affects patches whose names are
           automatically generated, and has no effect on exporting patches
-          which have a <option>Gbp[-Pq]: Name</option> tag, since the
+          which have a <option>Gbp-Pq: Name</option> tag, since the
           name specified is preserved unless the <option>--renumber</option>
           option is used.
           </para>
@@ -302,7 +302,7 @@
     </para>
     <variablelist>
       <varlistentry>
-        <term><option>Gbp[-Pq]: Ignore</option>
+        <term><option>Gbp-Pq: Ignore</option>
         </term>
         <listitem>
           <para>
@@ -311,7 +311,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>Gbp[-Pq]: Name</option> <replaceable>name</replaceable>
+        <term><option>Gbp-Pq: Name</option> <replaceable>name</replaceable>
         </term>
         <listitem>
           <para>
@@ -323,7 +323,7 @@
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>Gbp[-Pq]: Topic</option> <replaceable>topic</replaceable>
+        <term><option>Gbp-Pq: Topic</option> <replaceable>topic</replaceable>
         </term>
         <listitem>
           <para>
@@ -338,7 +338,7 @@
         </term>
         <listitem>
           <para>
-          Deprecated: use <option>Gbp[-Pq]: Topic</option>
+          Deprecated: use <option>Gbp-Pq: Topic</option>
           <replaceable>topic</replaceable> instead.
           </para>
         </listitem>
