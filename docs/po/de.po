@@ -3758,7 +3758,7 @@ msgstr ""
 #: manpages/gbp.conf.xml:215 manpages/gbp-dch.xml:641
 #: manpages/gbp-export-orig.xml:232 manpages/gbp-import-dscs.xml:79
 #: manpages/gbp-import-dsc.xml:278 manpages/gbp-import-orig.xml:426
-#: manpages/gbp-import-ref.xml:211 manpages/gbp-pq.xml:349
+#: manpages/gbp-import-ref.xml:211 manpages/gbp-pq.xml:339
 #: manpages/gbp-pristine-tar.xml:100 manpages/gbp-tag.xml:166
 msgid "EXAMPLES"
 msgstr ""
@@ -3805,7 +3805,7 @@ msgstr ""
 #: manpages/gbp-import-dscs.xml:90 manpages/gbp-import-dsc.xml:301
 #: manpages/gbp-import-orig.xml:447 manpages/gbp-import-ref.xml:234
 #: manpages/gbp-import-srpm.xml:270 manpages/gbp-pq-rpm.xml:262
-#: manpages/gbp-pq.xml:367 manpages/gbp-pristine-tar.xml:113
+#: manpages/gbp-pq.xml:357 manpages/gbp-pristine-tar.xml:113
 #: manpages/gbp-pull.xml:163 manpages/gbp-push.xml:162
 #: manpages/gbp-rpm-ch.xml:339 manpages/gbp-setup-gitattributes.xml:82
 #: manpages/gbp-tag.xml:184 manpages/gbp.xml:193
@@ -3829,7 +3829,7 @@ msgstr ""
 #: manpages/gbp-export-orig.xml:262 manpages/gbp-import-dscs.xml:102
 #: manpages/gbp-import-dsc.xml:325 manpages/gbp-import-orig.xml:462
 #: manpages/gbp-import-ref.xml:249 manpages/gbp-import-srpm.xml:281
-#: manpages/gbp-pq-rpm.xml:270 manpages/gbp-pq.xml:382
+#: manpages/gbp-pq-rpm.xml:270 manpages/gbp-pq.xml:372
 #: manpages/gbp-pristine-tar.xml:121 manpages/gbp-pull.xml:172
 #: manpages/gbp-push.xml:171 manpages/gbp-rpm-ch.xml:350
 #: manpages/gbp-setup-gitattributes.xml:98 manpages/gbp-tag.xml:192
@@ -4624,7 +4624,7 @@ msgstr ""
 #: manpages/gbp-create-remote-repo.xml:155 manpages/gbp-dch.xml:679
 #: manpages/gbp-export-orig.xml:264 manpages/gbp-import-dscs.xml:104
 #: manpages/gbp-import-dsc.xml:327 manpages/gbp-import-orig.xml:464
-#: manpages/gbp-import-ref.xml:251 manpages/gbp-pq.xml:384
+#: manpages/gbp-import-ref.xml:251 manpages/gbp-pq.xml:374
 #: manpages/gbp-pristine-tar.xml:123 manpages/gbp-pull.xml:174
 #: manpages/gbp-push.xml:173 manpages/gbp-tag.xml:194 manpages/gbp.xml:219
 msgid "&dhusername; &dhemail;"
@@ -8308,20 +8308,8 @@ msgid ""
 "structure below <filename>debian/patches</filename>."
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: manpages/gbp-pq.xml:337
-msgid "<option>Gbp-Pq-Topic:</option> <replaceable>topic</replaceable>"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: manpages/gbp-pq.xml:341
-msgid ""
-"Deprecated: use <option>Gbp-Pq: Topic</option> <replaceable>topic</"
-"replaceable> instead."
-msgstr ""
-
 #. type: Content of: <refentry><refsect1><para>
-#: manpages/gbp-pq.xml:351
+#: manpages/gbp-pq.xml:341
 msgid ""
 "Create a temporary branches-applied branch from files currently in "
 "<filename>debian/patches/*</filename>, and switch to it so that one can "
@@ -8331,13 +8319,13 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><screen>
-#: manpages/gbp-pq.xml:357
+#: manpages/gbp-pq.xml:347
 #, no-wrap
 msgid "      gbp pq switch --force"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: manpages/gbp-pq.xml:359
+#: manpages/gbp-pq.xml:349
 msgid ""
 "Re-create the contents of <filename>debian/patches/*</filename> using the "
 "commits on the patches-applied branch, commit it on the actual Debian "
@@ -8345,13 +8333,13 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><screen>
-#: manpages/gbp-pq.xml:364
+#: manpages/gbp-pq.xml:354
 #, no-wrap
 msgid "      gbp pq export --drop --commit"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: manpages/gbp-pq.xml:369
+#: manpages/gbp-pq.xml:359
 msgid ""
 "<xref linkend=\"man.gbp.buildpackage\"/>, <citerefentry> <refentrytitle>dpkg-"
 "source</refentrytitle> <manvolnum>1</manvolnum> </citerefentry>, "
