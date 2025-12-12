@@ -108,7 +108,7 @@ def move_old_export(target: str):
 
 
 def overlay_extract_origs(source: DebianSource,
-                          tarball_dir,
+                          tarball_dir: str,
                           dest_dir: str,
                           options: optparse.Values):
     """Overlay extract orig tarballs to export dir before exporting debian dir from git"""
@@ -117,11 +117,11 @@ def overlay_extract_origs(source: DebianSource,
                                 source,
                                 repo=None,
                                 tarball_dir=tarball_dir)
-    tarball = os.path.join(tarball_dir, source.upstream_tarball_name(comp_type))
-    gbp.log.info("Extracting '%s' to '%s'" % (os.path.basename(tarball), dest_dir))
+    main_tarball = os.path.join(tarball_dir, source.upstream_tarball_name(comp_type))
+    gbp.log.info("Extracting '%s' to '%s'" % (os.path.basename(main_tarball), dest_dir))
 
     move_old_export(dest_dir)
-    upstream = DebianUpstreamSource(tarball)
+    upstream = DebianUpstreamSource(main_tarball)
     upstream.unpack(dest_dir)
 
     # Check if tarball extracts into a single folder:
