@@ -67,7 +67,7 @@ class PkgPolicy(object):
         return True if cls.upstreamversion_re.match(version) else False
 
     @staticmethod
-    def guess_upstream_src_version(filename, extra_regex=r''):
+    def guess_upstream_src_version(filename):
         """
         Guess the package name and version from the filename of an upstream
         archive.
@@ -120,8 +120,6 @@ class PkgPolicy(object):
                 # Upstream 'package-<version>.tar.gz'
                 # or directory 'package-<version>':
                 r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)'))
-        if extra_regex:
-            version_filters = extra_regex + version_filters
 
         for filter in version_filters:
             m = re.match(filter, basename)

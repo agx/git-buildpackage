@@ -208,6 +208,5 @@ class UpstreamSource(object):
     def known_compressions():
         return Compressor.Exts.values()
 
-    def guess_version(self, extra_regex=r''):
-        return self._pkg_policy.guess_upstream_src_version(self.path,
-                                                           extra_regex)
+    def guess_version(self):
+        return self._pkg_policy.guess_upstream_src_version(self.path)
