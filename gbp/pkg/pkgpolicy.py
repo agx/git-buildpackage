@@ -18,7 +18,7 @@
 
 import os
 import re
-from typing import Pattern
+from typing import Callable, Pattern
 
 
 from gbp.pkg.archive import Archive
@@ -39,7 +39,7 @@ class PkgPolicy(object):
     upstreamversion_msg: str | None = None
 
     @classmethod
-    def is_valid_packagename(cls, name):
+    def is_valid_packagename(cls, name: str) -> bool:
         """
         Is this a valid package name?
 
@@ -53,7 +53,7 @@ class PkgPolicy(object):
         return True if cls.packagename_re.match(name) else False
 
     @classmethod
-    def is_valid_upstreamversion(cls, version):
+    def is_valid_upstreamversion(cls, version: str) -> bool:
         """
         Is this a valid upstream version number?
 
@@ -67,17 +67,13 @@ class PkgPolicy(object):
         return True if cls.upstreamversion_re.match(version) else False
 
     @staticmethod
-    def guess_upstream_src_version(filename):
+    def guess_upstream_src_version(filename: str) -> tuple[str, str]:
         """
         Guess the package name and version from the filename of an upstream
         archive.
 
         @param filename: filename (archive or directory) from which to guess
-        @type filename: C{string}
-        @param extra_regex: additional regex to apply, needs a 'package' and a
-                            'version' group
         @return: (package name, version) or ('', '')
-        @rtype: tuple
 
         >>> PkgPolicy.guess_upstream_src_version('foo-bar_0.2.orig.tar.gz')
         ('foo-bar', '0.2')
@@ -128,7 +124,7 @@ class PkgPolicy(object):
         return ('', '')
 
     @staticmethod
-    def has_origs(orig_files, dir):
+    def has_origs(orig_files: list[str], dir: str) -> bool:
         "Check orig tarball and additional tarballs exists in dir"
         for o in orig_files:
             if not os.path.exists(os.path.join(dir, o)):
@@ -136,11 +132,11 @@ class PkgPolicy(object):
         return True
 
     @classmethod
-    def has_orig(cls, orig_file, dir):
+    def has_orig(cls, orig_file: str, dir: str) -> bool:
         return cls.has_origs([orig_file], dir)
 
     @staticmethod
-    def symlink_origs(orig_files, orig_dir, output_dir, force=False):
+    def symlink_origs(orig_files, orig_dir: str, output_dir: str, force=False) -> list[str]:
         """
         symlink orig tarball from orig_dir to output_dir
         @return: [] if all links were created, list of
@@ -168,11 +164,11 @@ class PkgPolicy(object):
         return err
 
     @classmethod
-    def symlink_orig(cls, orig_file, orig_dir, output_dir, force=False):
+    def symlink_orig(cls, orig_file: str, orig_dir: str, output_dir: str, force=False) -> list[str]:
         return cls.symlink_origs([orig_file], orig_dir, output_dir, force=force)
 
     @classmethod
-    def version_subst(cls, format, version, sanitizer=lambda arg: arg):
+    def version_subst(cls, format: str, version: str, sanitizer: Callable[[str], str] = lambda arg: arg):
         """Generate a string from a given format and a version. The extracted
         version can be passed through the sanitizer function argument before
         being formatted into a string.
