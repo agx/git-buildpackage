@@ -51,6 +51,9 @@ class PkgGitRepository(GitRepository):
             return prefix.strip('/') + '/'
         return '/'
 
+    def has_pristine_tar_branch(self) -> bool:
+        assert False, "Implemented by derived classes"
+
     def archive_comp(self, treeish, output, prefix, comp, format='tar', submodules=False):
         """Create a compressed source tree archive with the given options"""
         if comp and not comp.is_known():
