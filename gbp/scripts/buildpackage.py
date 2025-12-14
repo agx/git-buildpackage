@@ -129,6 +129,7 @@ def overlay_extract_origs(source: DebianSource,
         # If it extracts a single folder, move its contents to dest_dir:
         gbp.log.debug("Moving %s to %s" % (upstream.unpacked, dest_dir))
         tmpdir = dest_dir + '.new'
+        assert upstream.unpacked is not None
         os.rename(upstream.unpacked, tmpdir)
         os.rmdir(dest_dir)
         os.rename(tmpdir, dest_dir)
