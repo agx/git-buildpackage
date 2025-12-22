@@ -19,6 +19,7 @@
 
 import errno
 import os
+import optparse
 import re
 import shutil
 import shlex
@@ -49,14 +50,12 @@ from gbp.pkg.pkgpolicy import PkgPolicy
 
 
 # Functions to handle export-dir
-def maybe_write_tree(repo, options):
+def maybe_write_tree(repo: DebianGitRepository, options: optparse.Values) -> str | None:
     """
     Write a tree of the index or working copy if necessary
 
     @param repo: the git repository we're acting on
-    @type repo: L{GitRepository}
     @return: the sha1 of the tree
-    @rtype: C{str}
     """
     if options.export_dir:
         if options.export == index_name:
@@ -72,12 +71,16 @@ def maybe_write_tree(repo, options):
     return tree
 
 
-def export_source(repo, tree, source, options, dest_dir, tarball_dir):
+def export_source(repo: DebianGitRepository,
+                  tree: str,
+                  source: DebianSource,
+                  options: optparse.Values,
+                  dest_dir: str,
+                  tarball_dir: str):
     """
     Export a version of the source tree when building in a separate directory
 
     @param repo: the git repository to export from
-    @type repo: L{gbp.git.GitRepository}
     @param source: the source package
     @param options: options to apply
     @param dest_dir: where to export the source to
@@ -95,7 +98,7 @@ def export_source(repo, tree, source, options, dest_dir, tarball_dir):
         raise GbpError
 
 
-def move_old_export(target):
+def move_old_export(target: str):
     """move a build tree away if it exists"""
     try:
         os.makedirs(target)
@@ -104,18 +107,21 @@ def move_old_export(target):
             os.rename(target, "%s.obsolete.%s" % (target, time.time()))
 
 
-def overlay_extract_origs(source, tarball_dir, dest_dir, options):
+def overlay_extract_origs(source: DebianSource,
+                          tarball_dir: str,
+                          dest_dir: str,
+                          options: optparse.Values):
     """Overlay extract orig tarballs to export dir before exporting debian dir from git"""
 
     comp_type = guess_comp_type(options.comp_type,
                                 source,
                                 repo=None,
                                 tarball_dir=tarball_dir)
-    tarball = os.path.join(tarball_dir, source.upstream_tarball_name(comp_type))
-    gbp.log.info("Extracting '%s' to '%s'" % (os.path.basename(tarball), dest_dir))
+    main_tarball = os.path.join(tarball_dir, source.upstream_tarball_name(comp_type))
+    gbp.log.info("Extracting '%s' to '%s'" % (os.path.basename(main_tarball), dest_dir))
 
     move_old_export(dest_dir)
-    upstream = DebianUpstreamSource(tarball)
+    upstream = DebianUpstreamSource(main_tarball)
     upstream.unpack(dest_dir)
 
     # Check if tarball extracts into a single folder:
@@ -123,6 +129,7 @@ def overlay_extract_origs(source, tarball_dir, dest_dir, options):
         # If it extracts a single folder, move its contents to dest_dir:
         gbp.log.debug("Moving %s to %s" % (upstream.unpacked, dest_dir))
         tmpdir = dest_dir + '.new'
+        assert upstream.unpacked is not None
         os.rename(upstream.unpacked, tmpdir)
         os.rmdir(dest_dir)
         os.rename(tmpdir, dest_dir)
@@ -148,7 +155,7 @@ def overlay_extract_origs(source, tarball_dir, dest_dir, options):
         tarball.unpack(dest_dir, [])
 
 
-def source_vfs(repo, options, tree):
+def source_vfs(repo: DebianGitRepository, options: optparse.Values, tree: str) -> DebianSource:
     """Init source package info either from git or from working copy"""
     vfs = GitVfs(repo, tree) if tree else FileVfs('.')
     try:
@@ -159,7 +166,7 @@ def source_vfs(repo, options, tree):
     return source
 
 
-def prepare_output_dir(dir):
+def prepare_output_dir(dir: str):
     """Prepare the directory where the build result will be put"""
     output_dir = os.path.abspath(dir or '..')
 
@@ -171,7 +178,7 @@ def prepare_output_dir(dir):
     return output_dir
 
 
-def clean_working_tree(options, repo):
+def clean_working_tree(options: optparse.Values, repo: DebianGitRepository):
     """
     Clean the working tree.
 
@@ -189,7 +196,7 @@ def clean_working_tree(options, repo):
             raise GbpError("Use --git-ignore-new to ignore.")
 
 
-def check_tag(options, repo, source):
+def check_tag(options, repo: DebianGitRepository, source):
     """Perform specified consistency checks on git history"""
     tag = repo.version_to_tag(options.debian_tag, source.version)
     if (options.tag or options.tag_only) and not options.retag:
@@ -197,7 +204,7 @@ def check_tag(options, repo, source):
             raise GbpError("Tag '%s' already exists" % tag)
 
 
-def get_pbuilder_dist(options, repo, native=False):
+def get_pbuilder_dist(options: optparse.Values, repo: DebianGitRepository, native: bool = False):
     """
     Determine the dist to build for with pbuilder/cowbuilder
     """
@@ -233,7 +240,7 @@ def get_pbuilder_dist(options, repo, native=False):
     return dist
 
 
-def setup_pbuilder(options, repo, native):
+def setup_pbuilder(options, repo: DebianGitRepository, native: bool):
     """
     Setup environment variables for git-pbuilder
 
@@ -274,7 +281,7 @@ def setup_pbuilder(options, repo, native):
     return pbd_env, hook_env
 
 
-def mangle_export_wc_opts(options):
+def mangle_export_wc_opts(options: optparse.Values):
     """
     Make building with --export=WC simpler
     """
@@ -283,7 +290,7 @@ def mangle_export_wc_opts(options):
         options.ignore_new = True
 
 
-def disable_hooks(options):
+def disable_hooks(options: optparse.Values):
     """Disable all hooks (except for builder)"""
     for hook in ['cleaner', 'preexport', 'postexport', 'prebuild', 'postbuild', 'posttag']:
         if getattr(options, hook):
@@ -291,7 +298,7 @@ def disable_hooks(options):
             setattr(options, hook, '')
 
 
-def changes_file_suffix(builder, dpkg_args, arch):
+def changes_file_suffix(builder: str, dpkg_args: list[str], arch: str):
     """
     >>> changes_file_suffix('debuild', ['-A'], '')
     'all'
@@ -315,7 +322,11 @@ def changes_file_suffix(builder, dpkg_args, arch):
         return arch or os.getenv('ARCH', None) or du.get_arch()
 
 
-def changes_file_name(source, build_dir, builder, dpkg_args, arch):
+def changes_file_name(source: DebianSource,
+                      build_dir: str,
+                      builder: str,
+                      dpkg_args: list[str],
+                      arch: str):
     return os.path.abspath("%s/../%s_%s_%s.changes" %
                            (build_dir,
                             source.changelog.name,
@@ -323,7 +334,7 @@ def changes_file_name(source, build_dir, builder, dpkg_args, arch):
                             changes_file_suffix(builder, dpkg_args, arch)))
 
 
-def check_branch(repo, options):
+def check_branch(repo: DebianGitRepository, options):
     """
     Check if we're on the right branch and bail out otherwise
 
@@ -345,7 +356,7 @@ def check_branch(repo, options):
     return branch
 
 
-def build_parser(name, prefix=None):
+def build_parser(name: str, prefix: str | None = None) -> GbpOptionParserDebian | None:
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
     except GbpError as err:
@@ -450,7 +461,7 @@ def build_parser(name, prefix=None):
     return parser
 
 
-def parse_args(argv, prefix):
+def parse_args(argv: list[str], prefix: str) -> tuple[optparse.Values | None, list[str] | None, list[str] | None]:
     args = [arg for arg in argv[1:] if arg.find('--%s' % prefix) == 0]
     dpkg_args = [arg for arg in argv[1:] if arg.find('--%s' % prefix) == -1]
 

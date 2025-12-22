@@ -29,7 +29,7 @@ class Archive(object):
                    'txz': ('tar', 'xz')}
 
     @staticmethod
-    def parse_filename(filename):
+    def parse_filename(filename: str) -> tuple[str, str | None, str | None]:
         """
         Given an filename return the basename (filename without the
         archive and compression extensions), archive format and

@@ -21,23 +21,26 @@ import os
 import gbp.log
 from gbp.command_wrappers import Command
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gbp.pkg.git import PkgGitRepository
+
 
 class PristineTar(Command):
     """The pristine-tar branch in a git repository"""
     branch = 'pristine-tar'
 
-    def __init__(self, repo):
+    def __init__(self, repo: 'PkgGitRepository'):
         self.repo = repo
         super(PristineTar, self).__init__('pristine-tar',
                                           cwd=repo.path,
                                           capture_stderr=True)
 
-    def _has_in_output(self, match):
+    def _has_in_output(self, match: str) -> bool:
         """
         Check if pristine_tar has a certain feature enabled.
 
         @param feature: feature / command option to check
-        @type feature: C{str}
         @return: True if feature is supported
         @rtype: C{bool}
         """
@@ -48,24 +51,23 @@ class PristineTar(Command):
                 return True
         return False
 
-    def has_feature_verify(self):
+    def has_feature_verify(self) -> bool:
         """Does this pristine-tar support tarball verification"""
         return self._has_in_output(".* pristine-tar .* verify")
 
-    def has_feature_sig(self):
+    def has_feature_sig(self) -> bool:
         """Does this pristine-tar support detached upstream signatures"""
         return self._has_in_output(r'.*--signature-file')
 
-    def has_commit(self, archive_regexp):
+    def has_commit(self, archive_regexp: str) -> bool:
         """
         Do we have a pristine-tar commit for a package matching I{archive_regexp}.
 
         @param archive_regexp: archive name to look for (regexp wildcards allowed)
-        @type archive_regexp: C{str}
         """
         return True if self.get_commit(archive_regexp)[0] else False
 
-    def _commit_contains_file(self, commit, regexp):
+    def _commit_contains_file(self, commit: str, regexp: str) -> bool:
         """Does the given commit contain a file with the given regex"""
         files = self.repo.get_commit_info(commit)['files']
         # CPython wants '+' (which is valid in source package names)
@@ -77,15 +79,13 @@ class PristineTar(Command):
                     return True
         return False
 
-    def get_commit(self, archive_regexp):
+    def get_commit(self, archive_regexp: str) -> tuple[str | None, bool]:
         """
         Get the pristine-tar commit of a package matching I{archive_regexp}.
         Checks also whether the commit contains a signature file.
 
         @param archive_regexp: archive name to look for (regexp wildcards allowed)
-        @type archive_regexp: C{str}
         @return: Commit, True if commit contains a signature file
-        @rtype: C{tuple} of C{str} and C{bool}
         """
         if not self.repo.has_pristine_tar_branch():
             return None, False
@@ -98,7 +98,7 @@ class PristineTar(Command):
             return commit, self._commit_contains_file(commit, '%s.asc' % archive_regexp)
         return None, False
 
-    def checkout(self, archive, quiet=False, signaturefile=None):
+    def checkout(self, archive: str, quiet=False, signaturefile: str | None = None):
         """
         Checkout an orig archive from pristine-tar branch
 
@@ -111,7 +111,7 @@ class PristineTar(Command):
             args += ['-s', signaturefile]
         self.__call__(args, quiet=quiet)
 
-    def commit(self, archive, upstream, quiet=False, signaturefile=None):
+    def commit(self, archive: str, upstream: str, quiet=False, signaturefile: str | None = None):
         """
         Commit an archive I{archive} to the pristine tar branch using upstream
         branch ${upstream}.
@@ -128,7 +128,7 @@ class PristineTar(Command):
             args += ['-s', signaturefile]
         self.__call__(args, quiet=quiet)
 
-    def verify(self, archive, quiet=False):
+    def verify(self, archive: str, quiet=False):
         """Verify an archive's I{archive} checksum using to the pristine tar branch"""
 
         self.run_error = 'Pristine-tar couldn\'t verify "%s": {stderr_or_reason}' % os.path.basename(archive)

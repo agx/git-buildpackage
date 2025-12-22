@@ -25,6 +25,8 @@ from gbp.pkg.pkgpolicy import PkgPolicy
 
 from gbp.errors import GbpError
 
+from typing_extensions import Self
+
 
 class UpstreamSource(object):
     """
@@ -36,10 +38,16 @@ class UpstreamSource(object):
     @type _orig: boolean
     @cvar _path: path to the upstream sources
     @type _path: string
-    @cvar _unpacked: path to the unpacked source tree
-    @type _unpacked: string
+    @cvar unpacked: path to the unpacked source tree
+    @type unpacked: string
+    n@cvar _sig: path to the signature file
+    @type _sig: string
     """
-    def __init__(self, name, unpacked=None, pkg_policy=PkgPolicy, sig=None):
+    def __init__(self,
+                 name: str,
+                 unpacked: str | None = None,
+                 pkg_policy: type[PkgPolicy] = PkgPolicy,
+                 sig: str | None = None):
         self._orig = False
         self._pkg_policy = pkg_policy
         self._path = name
@@ -80,7 +88,7 @@ class UpstreamSource(object):
         except IndexError:
             self._orig = False
 
-    def is_orig(self):
+    def is_orig(self) -> bool:
         """
         @return: C{True} if sources are suitable as orig tarball,
             C{False} otherwise
@@ -88,7 +96,7 @@ class UpstreamSource(object):
         """
         return self._orig
 
-    def is_dir(self):
+    def is_dir(self) -> bool:
         """
         @return: C{True} if if upstream sources are an unpacked directory,
             C{False} otherwise
@@ -97,18 +105,18 @@ class UpstreamSource(object):
         return True if os.path.isdir(self._path) else False
 
     @property
-    def path(self):
+    def path(self) -> str:
         return self._path.rstrip('/')
 
     @property
-    def signaturefile(self):
+    def signaturefile(self) -> str | None:
         return self._sig
 
     @signaturefile.setter
     def signaturefile(self, sig):
         self._sig = sig
 
-    def unpack(self, dir, filters=None):
+    def unpack(self, dir: str, filters: list[str] | None = None):
         """
         Unpack packed upstream sources into a given directory
         (filtering out files specified by filters) and determine the
@@ -126,7 +134,7 @@ class UpstreamSource(object):
         self._unpack_archive(dir, filters)
         self.unpacked = self._unpacked_toplevel(dir)
 
-    def _unpack_archive(self, dir, filters):
+    def _unpack_archive(self, dir: str, filters: list[str]):
         """
         Unpack packed upstream sources into a given directory
         allowing to filter out files in case of tar archives.
@@ -139,13 +147,13 @@ class UpstreamSource(object):
         else:
             self._unpack_tar(dir, filters)
 
-    def _unpack_zip(self, dir):
+    def _unpack_zip(self, dir: str):
         try:
             gbpc.UnpackZipArchive(self.path, dir)()
         except gbpc.CommandExecFailed:
             raise GbpError("Unpacking of %s failed" % self.path)
 
-    def _unpacked_toplevel(self, dir):
+    def _unpacked_toplevel(self, dir: str):
         """unpacked archives can contain a leading directory or not"""
         unpacked = glob.glob('%s/*' % dir)
         unpacked.extend(glob.glob("%s/.*" % dir))  # include hidden files and folders
@@ -155,7 +163,7 @@ class UpstreamSource(object):
         else:
             return dir
 
-    def _unpack_tar(self, dir, filters):
+    def _unpack_tar(self, dir: str, filters: list[str]):
         """
         Unpack a tarball to I{dir} applying a list of I{filters}. Leave the
         cleanup to the caller in case of an error.
@@ -167,16 +175,13 @@ class UpstreamSource(object):
             # unpackArchive already printed an error message
             raise GbpError
 
-    def pack(self, newarchive, filters=None):
+    def pack(self, newarchive: str, filters: list[str] | None = None) -> Self:
         """
         Recreate a new archive from the current one
 
         @param newarchive: the name of the new archive
-        @type newarchive: string
         @param filters: tar filters to apply
-        @type filters: array of strings
         @return: the new upstream source
-        @rtype: UpstreamSource
         """
         if not self.unpacked:
             raise GbpError("Need an unpacked source tree to pack")
@@ -203,6 +208,5 @@ class UpstreamSource(object):
     def known_compressions():
         return Compressor.Exts.values()
 
-    def guess_version(self, extra_regex=r''):
-        return self._pkg_policy.guess_upstream_src_version(self.path,
-                                                           extra_regex)
+    def guess_version(self):
+        return self._pkg_policy.guess_upstream_src_version(self.path)

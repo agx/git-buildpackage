@@ -18,6 +18,7 @@
 
 import os
 import re
+from typing import Iterable
 
 from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepositoryError
@@ -40,7 +41,7 @@ class DebianGitRepository(PkgGitRepository):
         super(DebianGitRepository, self).__init__(*args, **kwargs)
         self.pristine_tar = DebianPristineTar(self)
 
-    def tree_drop_dirs(self, tree, dirs):
+    def tree_drop_dirs(self, tree: str, dirs: Iterable[str]):
         """
         Drop the given top level dirs from the given git tree
         returning a new tree object.
@@ -55,7 +56,7 @@ class DebianGitRepository(PkgGitRepository):
         new_tree = self.make_tree(new_tree_objs)
         return new_tree
 
-    def tree_get_dir(self, tree, dir):
+    def tree_get_dir(self, tree: str, dir: str):
         """
         Get the SHA1 of directory in a given tree
         """
@@ -66,7 +67,7 @@ class DebianGitRepository(PkgGitRepository):
                 return s
         return None
 
-    def find_version(self, format, version):
+    def find_version(self, format: str, version: str) -> str | None:
         """
         Check if a certain version is stored in this repo and return the SHA1
         of the related commit. That is, an annotated tag is dereferenced to the
@@ -102,9 +103,12 @@ class DebianGitRepository(PkgGitRepository):
                     return None
         return None
 
-    def debian_version_from_upstream(self, upstream_tag_format,
-                                     upstream_branch, commit='HEAD',
-                                     epoch=None, debian_release=True):
+    def debian_version_from_upstream(self,
+                                     upstream_tag_format: str,
+                                     upstream_branch: str,
+                                     commit: str = 'HEAD',
+                                     epoch: str | None = None,
+                                     debian_release=True) -> str:
         """
         Build the Debian version that a package based on upstream commit
         I{commit} would carry taking into account a possible epoch.
@@ -124,6 +128,7 @@ class DebianGitRepository(PkgGitRepository):
         tag = self.find_branch_tag(commit, upstream_branch, pattern=pattern)
         version = self.tag_to_version(tag, upstream_tag_format)
 
+        assert version is not None
         if debian_release:
             version += "-1"
 
@@ -132,7 +137,7 @@ class DebianGitRepository(PkgGitRepository):
         return version
 
     @classmethod
-    def _upstream_version_from_debian_upstream(cls, version):
+    def _upstream_version_from_debian_upstream(cls, version: str) -> tuple[str | None, str | None]:
         """
         Convert a Debian upstream version to an upstream version.
         >>> DebianGitRepository._upstream_version_from_debian_upstream(
@@ -183,13 +188,13 @@ class DebianGitRepository(PkgGitRepository):
         # If version matches a git snapshot pattern, return the git revision.
         m = re.search(r'[~+]git[0-9]{8}(\.[0-9]+)?\.([0-9a-f]+)', version)
         if m:
-            return (None, m.group(2))
+            return (None, str(m.group(2)))
 
         # Strip off common extensions starting with [+~] and return the rest.
         return (re.split(r'[+~]({})'.format('|'.join(cls.splitexts)), version)[0], None)
 
     @staticmethod
-    def _build_legacy_tag(format, version):
+    def _build_legacy_tag(format, version: str) -> str:
         """
         Legacy tags (prior to 0.5.5) dropped epochs and didn't honor the '~'
 
@@ -202,7 +207,7 @@ class DebianGitRepository(PkgGitRepository):
         return format % dict(version=version)
 
     @classmethod
-    def version_to_tag(cls, format, version):
+    def version_to_tag(cls, format: str, version: str) -> str:
         """Generate a tag from a given format and a version
 
         %(version)s provides a clean version that works as a git tag.
@@ -228,7 +233,7 @@ class DebianGitRepository(PkgGitRepository):
         return PkgPolicy.version_subst(format, version, cls._sanitize_version)
 
     @classmethod
-    def _mangle_version(cls, format, version):
+    def _mangle_version(cls, format: str, version: str) -> tuple[str, str]:
         """
         Basic version mangling to replace single characters
 
@@ -244,7 +249,7 @@ class DebianGitRepository(PkgGitRepository):
             return format, version
 
     @classmethod
-    def _unmangle_format(cls, format):
+    def _unmangle_format(cls, format: str) -> str:
         """
         Reverse of _mangle_version for format
         """
@@ -255,7 +260,7 @@ class DebianGitRepository(PkgGitRepository):
             return format
 
     @classmethod
-    def _unmangle_version(cls, format, tag):
+    def _unmangle_version(cls, format: str, tag: str) -> str:
         """
         Reverse of _mangle_version for version
         """
@@ -267,7 +272,7 @@ class DebianGitRepository(PkgGitRepository):
             return tag
 
     @staticmethod
-    def _sanitize_version(version):
+    def _sanitize_version(version: str) -> str:
         """sanitize a version so git accepts it as a tag
         as described in DEP-14
 
@@ -288,7 +293,7 @@ class DebianGitRepository(PkgGitRepository):
         return v.replace('~', '_').replace(':', '%')
 
     @staticmethod
-    def _unsanitize_version(tag):
+    def _unsanitize_version(tag: str) -> str:
         """Reverse _sanitize_version
         as described in DEP-14
 
@@ -300,7 +305,7 @@ class DebianGitRepository(PkgGitRepository):
         return tag.replace('_', '~').replace('%', ':').replace('#', '')
 
     @classmethod
-    def tag_to_version(cls, tag, format):
+    def tag_to_version(cls, tag: str, format: str) -> str | None:
         """Extract the version from a tag
 
         >>> DebianGitRepository.tag_to_version("upstream/1%2_3-4", "upstream/%(version)s")
@@ -322,14 +327,14 @@ class DebianGitRepository(PkgGitRepository):
         return None
 
     @property
-    def pristine_tar_branch(self):
+    def pristine_tar_branch(self) -> str:
         """
         The name of the pristine-tar branch, whether it already exists or
         not.
         """
         return DebianPristineTar.branch
 
-    def has_pristine_tar_branch(self):
+    def has_pristine_tar_branch(self) -> bool:
         """
         Whether the repo has a I{pristine-tar} branch.
 
