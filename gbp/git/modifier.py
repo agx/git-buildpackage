@@ -43,6 +43,9 @@ class GitTz(datetime.tzinfo):
     def dst(self, dt):
         return datetime.timedelta(0)
 
+    def tzname(self, dt: datetime.datetime | None) -> str:
+        return "GitTz(%d)" % self._offset
+
 
 class GitModifier(object):
     """Stores authorship/committer information"""

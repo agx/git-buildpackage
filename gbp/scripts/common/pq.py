@@ -27,15 +27,18 @@ from email.header import Header
 from email.charset import Charset, QP
 from email.policy import Compat32
 
-from gbp.git import GitRepositoryError
+from gbp.git import GitRepository, GitRepositoryError
 from gbp.git.modifier import GitModifier, GitTz
 from gbp.errors import GbpError
 import gbp.log
+from gbp.patch_series import Patch
+
+from typing import Sequence
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 
 
-def is_pq_branch(branch):
+def is_pq_branch(branch: str) -> bool:
     """
     is branch a patch-queue branch?
 
@@ -47,7 +50,7 @@ def is_pq_branch(branch):
     return [False, True][branch.startswith(PQ_BRANCH_PREFIX)]
 
 
-def pq_branch_name(branch):
+def pq_branch_name(branch: str) -> str:
     """
     get the patch queue branch corresponding to branch
 
@@ -62,7 +65,7 @@ def pq_branch_name(branch):
         return branch
 
 
-def pq_branch_base(branch):
+def pq_branch_base(branch: str) -> str:
     """
     get the branch corresponding to the given patch queue branch
 
@@ -77,7 +80,11 @@ def pq_branch_base(branch):
         return branch
 
 
-def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
+def parse_gbp_commands(info: dict,
+                       cmd_tag: str | Sequence[str],
+                       noarg_cmds: Sequence[str],
+                       arg_cmds: Sequence[str],
+                       filter_cmds: Sequence[str] | None = None) -> tuple[dict, str]:
     """
     Parses gbp commands from commit message. Args with and without
     arguments are supported as is filtering out of commands from the
@@ -86,11 +93,8 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
     @param info: the commit into to parse for commands
     @param cmd_tag: the command tag
     @param noarg_cmds: commands without an argument
-    @type  noarg_cmds: C{list} of C{str}
     @param arg_cmds: command with an argument
-    @type  arg_cmds: C{list} of C{str}
     @param filter_cmds: commands to filter out of the passed in info
-    @type  filter_cmds: C{list} of C{str}
     @returns: the parsed commands and the filtered commit body.
     """
     body = []
@@ -120,7 +124,8 @@ def parse_gbp_commands(info, cmd_tag, noarg_cmds, arg_cmds, filter_cmds=None):
     return (commands, msg)
 
 
-def patch_path_filter(file_status, exclude_regex=None):
+def patch_path_filter(file_status: dict[str, list[str]],
+                      exclude_regex: str | None = None) -> list[str]:
     """
     Create patch include paths, i.e. a "negation" of the exclude paths.
     """
@@ -136,7 +141,9 @@ def patch_path_filter(file_status, exclude_regex=None):
     return include_paths
 
 
-def write_patch_file(filename, commit_info, diff):
+def write_patch_file(filename: str,
+                     commit_info: dict,
+                     diff: bytes) -> str | None:
     """Write patch file"""
     if not diff:
         gbp.log.debug("I won't generate empty diff %s" % filename)
@@ -145,7 +152,7 @@ def write_patch_file(filename, commit_info, diff):
         with open(filename, 'wb') as patch:
             msg = Message()
             charset = Charset('utf-8')
-            charset.body_encoding = None
+            charset.body_encoding = None  # type: ignore
             charset.header_encoding = QP
 
             # Write headers
@@ -160,16 +167,16 @@ def write_patch_file(filename, commit_info, diff):
             except UnicodeDecodeError:
                 from_header.append(name, charset)
             from_header.append('<%s>' % email)
-            msg['From'] = from_header
+            msg['From'] = from_header  # type: ignore
             date = commit_info['author'].datetime
             datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
-            msg['Date'] = Header(datestr, 'us-ascii', header_name='date')
+            msg['Date'] = Header(datestr, 'us-ascii', header_name='date')  # type: ignore
             subject_header = Header(header_name='subject')
             try:
                 subject_header.append(commit_info['subject'], 'us-ascii')
             except UnicodeDecodeError:
                 subject_header.append(commit_info['subject'], charset)
-            msg['Subject'] = subject_header
+            msg['Subject'] = subject_header  # type: ignore
             # Write message body
             if commit_info['body']:
                 # Strip extra linefeeds
@@ -249,7 +256,13 @@ def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
     return patch
 
 
-def format_diff(outdir, filename, repo, start, end, abbrev, path_exclude_regex=None):
+def format_diff(outdir: str,
+                filename: str,
+                repo: GitRepository,
+                start: str,
+                end: str,
+                abbrev: int,
+                path_exclude_regex: str | None = None) -> str | None:
     """Create a patch of diff between two repository objects"""
 
     info = {'author': repo.get_author_info()}
@@ -272,7 +285,7 @@ def format_diff(outdir, filename, repo, start, end, abbrev, path_exclude_regex=N
     return None
 
 
-def get_maintainer_from_control(repo):
+def get_maintainer_from_control(repo: GitRepository):
     """Get the maintainer from the control file"""
     control = os.path.join(repo.path, 'debian', 'control')
 
@@ -288,7 +301,7 @@ def get_maintainer_from_control(repo):
     return GitModifier()
 
 
-def switch_to_pq_branch(repo, branch):
+def switch_to_pq_branch(repo: GitRepository, branch: str):
     """
     Switch to patch-queue branch if not already on it.
     doesn't exist yet
@@ -305,13 +318,21 @@ def switch_to_pq_branch(repo, branch):
     repo.set_branch(pq_branch)
 
 
-def apply_single_patch(repo, branch, patch, fallback_author, topic=None):
+def apply_single_patch(repo: GitRepository,
+                       branch: str,
+                       patch: 'Patch',
+                       fallback_author: dict,
+                       topic: str | None = None):
     switch_to_pq_branch(repo, branch)
     apply_and_commit_patch(repo, patch, fallback_author, topic)
     gbp.log.info("Applied %s" % os.path.basename(patch.path))
 
 
-def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
+def apply_and_commit_patch(repo: GitRepository,
+                           patch: Patch,
+                           fallback_author: dict,
+                           topic: str | None = None,
+                           name: str | None = None):
     """apply a single patch 'patch', add topic 'topic' and commit it"""
     author = {'name': patch.author,
               'email': patch.email,
@@ -346,7 +367,7 @@ def apply_and_commit_patch(repo, patch, fallback_author, topic=None, name=None):
     repo.update_ref('HEAD', commit, msg="gbp-pq import %s" % patch.path)
 
 
-def drop_pq(repo, branch):
+def drop_pq(repo: GitRepository, branch: str):
     repo.checkout(pq_branch_base(branch))
     pq_branch = pq_branch_name(branch)
     if repo.has_branch(pq_branch):
