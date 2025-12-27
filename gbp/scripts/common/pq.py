@@ -163,7 +163,7 @@ def write_patch_file(filename, commit_info, diff):
             msg['From'] = from_header
             date = commit_info['author'].datetime
             datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
-            msg['Date'] = Header(datestr, 'us-ascii', 'date')
+            msg['Date'] = Header(datestr, 'us-ascii', header_name='date')
             subject_header = Header(header_name='subject')
             try:
                 subject_header.append(commit_info['subject'], 'us-ascii')
