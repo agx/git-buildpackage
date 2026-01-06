@@ -19,6 +19,7 @@
 
 import errno
 import os
+from optparse import Values
 import shutil
 import sys
 import tempfile
@@ -79,7 +80,7 @@ def generate_patches(repo, start, end, outdir, options):
     return patches
 
 
-def compare_series(old, new):
+def compare_series(old: list[str], new: list[str]) -> tuple[list[str], list[str]]:
     """
     Compare new paths to lists of patches already exported
 
@@ -93,7 +94,9 @@ def compare_series(old, new):
     return (list(added), removed)
 
 
-def format_series_diff(added, removed, options):
+def format_series_diff(added: list[str],
+                       removed: list[str],
+                       options: Values) -> str:
     """
     Format the patch differences into a suitable commit message
 
@@ -118,7 +121,11 @@ def format_series_diff(added, removed, options):
     return msg
 
 
-def commit_patches(repo, branch, patches, options, patch_dir):
+def commit_patches(repo: DebianGitRepository,
+                   branch: str,
+                   patches: list[str],
+                   options: Values,
+                   patch_dir: str) -> tuple[list[str], list[str]]:
     """
     Commit changes exported from patch queue
     """
@@ -139,13 +146,15 @@ def commit_patches(repo, branch, patches, options, patch_dir):
     added, removed = compare_series(oldpatches, newpatches)
     msg = format_series_diff(added, removed, options)
 
-    if not repo.is_clean(paths='debian/patches')[0]:
+    if not repo.is_clean(paths=['debian/patches'])[0]:
         repo.add_files(PATCH_DIR, force=True)
         repo.commit_staged(msg=msg)
     return added, removed
 
 
-def find_upstream_commit(repo, branch, upstream_tag):
+def find_upstream_commit(repo: DebianGitRepository,
+                         branch: str,
+                         upstream_tag: str) -> str:
     """
     Find commit corresponding to upstream version based on changelog
     """
@@ -158,13 +167,15 @@ def find_upstream_commit(repo, branch, upstream_tag):
     return upstream_commit
 
 
-def pq_on_upstream_tag(pq_from):
+def pq_on_upstream_tag(pq_from: str) -> bool:
     """Return True if the patch queue is based on the upstream tag,
     False if its based on the debian packaging branch"""
     return True if pq_from.upper() == 'TAG' else False
 
 
-def export_patches(repo, branch, options):
+def export_patches(repo: DebianGitRepository,
+                   branch: str,
+                   options: Values):
     """Export patches from the pq branch into a patch series"""
     patch_dir = os.path.join(repo.path, PATCH_DIR)
     series_file = os.path.join(repo.path, SERIES_FILE)
@@ -212,7 +223,7 @@ def export_patches(repo, branch, options):
         drop_pq(repo, branch)
 
 
-def safe_patches(series, repo):
+def safe_patches(series: str, repo: DebianGitRepository) -> tuple[str, str]:
     """
     Safe the current patches in a temporary directory
     below .git/
@@ -235,8 +246,13 @@ def safe_patches(series, repo):
     return (tmpdir, series)
 
 
-def import_quilt_patches(repo, branch, series, tries, force, pq_from,
-                         upstream_tag):
+def import_quilt_patches(repo: DebianGitRepository,
+                         branch: str,
+                         series: str,
+                         tries: int,
+                         force: bool,
+                         pq_from: str,
+                         upstream_tag: str) -> int:
     """
     apply a series of quilt patches in the series file 'series' to branch
     the patch-queue branch for 'branch'
@@ -322,19 +338,23 @@ def import_quilt_patches(repo, branch, series, tries, force, pq_from,
     return len(queue)
 
 
-def rebase_pq(repo, branch, options):
+def rebase_pq(repo: DebianGitRepository, branch: str, options: Values):
     maybe_import_pq(repo, branch, options)
     # Make sure we're on the pq branch
     switch_to_pq_branch(repo, branch)
     if pq_on_upstream_tag(options.pq_from):
         base = find_upstream_commit(repo, branch, options.upstream_tag)
     else:
-        base = pq_branch_base(repo.branch)
+        repo_branch = repo.get_branch()
+        if repo_branch is None:
+            raise GbpError("Currently not on a branch")
+
+        base = pq_branch_base(repo_branch)
 
     GitCommand("rebase", cwd=repo.path)([base])
 
 
-def import_pq(repo, branch, options):
+def import_pq(repo: DebianGitRepository, branch: str, options: Values):
     """Import quilt patches onto pq branch"""
     series = SERIES_FILE
     tries = options.time_machine if (options.time_machine > 0) else 1
@@ -345,7 +365,9 @@ def import_pq(repo, branch, options):
                  (num, series, repo.get_branch()))
 
 
-def maybe_import_pq(repo, branch, options):
+def maybe_import_pq(repo: DebianGitRepository,
+                    branch: str,
+                    options: Values) -> bool:
     """Import quilt patches onto pq branch if pq branch does not exist yet"""
     if not repo.has_branch(pq_branch_name(branch)):
         gbp.log.info("No pq branch found, importing patches")
@@ -354,7 +376,7 @@ def maybe_import_pq(repo, branch, options):
     return False
 
 
-def switch_pq(repo, branch, options):
+def switch_pq(repo: DebianGitRepository, branch: str, options: Values):
     """Switch to patch-queue branch if on base branch and vice versa"""
     if is_pq_branch(branch):
         base = pq_branch_base(branch)
@@ -365,7 +387,7 @@ def switch_pq(repo, branch, options):
         switch_to_pq_branch(repo, branch)
 
 
-def check_clean(repo, options):
+def check_clean(repo: DebianGitRepository, options: Values):
     if not options.ignore_new:
         (clean, out) = repo.is_clean()
         if not clean:
@@ -374,7 +396,7 @@ def check_clean(repo, options):
             raise GbpError("Use --ignore-new to ignore.")
 
 
-def usage_msg():
+def usage_msg() -> str:
     return """%prog [options] action - maintain patches on a patch queue branch
 Actions:
   export         export the patch queue associated to the current branch
@@ -388,7 +410,7 @@ Actions:
   switch         switch to patch-queue branch and vice versa"""
 
 
-def build_parser(name):
+def build_parser(name: str) -> GbpOptionParserDebian | None:
     try:
         parser = GbpOptionParserDebian(command=os.path.basename(name),
                                        usage=usage_msg())
@@ -419,7 +441,7 @@ def build_parser(name):
     return parser
 
 
-def parse_args(argv):
+def parse_args(argv: list[str]) -> tuple[Values | None, list[str] | None]:
     parser = build_parser(argv[0])
     if not parser:
         return None, None
