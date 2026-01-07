@@ -238,17 +238,17 @@ class Command(object):
         Traceback (most recent call last):
         ...
         gbp.command_wrappers.CommandExecFailed: execution failed: ...
-        >>> c = Command("/bin/true", capture_stdout=True,
+        >>> c = Command("/bin/sh", capture_stdout=True,
         ...             extra_env={'LC_ALL': 'C'})
-        >>> c.call(["--version"])
+        >>> c.call(["-c", "echo true; exit 0"])
         0
         >>> c.stdout.startswith('true')
         True
-        >>> c = Command("/bin/false", capture_stdout=True,
+        >>> c = Command("/bin/sh", capture_stdout=True,
         ...             extra_env={'LC_ALL': 'C'})
-        >>> c.call(["--help"])
+        >>> c.call(["-c", "echo false; exit 1"])
         1
-        >>> c.stdout.startswith('Usage:')
+        >>> c.stdout.startswith('false')
         True
         """
         ret = 1
