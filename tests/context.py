@@ -29,7 +29,6 @@ def chdir(dir):
 
 
 def new_tmpdir(name):
-    global _tmpdirs
     prefix = 'gbp_%s_' % name
     tmpdir = TmpDir(prefix)
     _tmpdirs.append(tmpdir)
