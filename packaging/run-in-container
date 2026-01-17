@@ -66,6 +66,7 @@ ENV DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
 WORKDIR /workdir/project
 RUN set -euvx \
 && export DEBIAN_FRONTEND=noninteractive \
+&& sed -i 's/Types\: deb/Types\: deb deb-src/' /etc/apt/sources.list.d/debian.sources \
 && apt-get update -y \
 && apt-get -y --no-install-recommends upgrade \
 && apt-get -y --no-install-recommends install \
