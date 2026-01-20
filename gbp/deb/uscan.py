@@ -143,7 +143,7 @@ class Uscan(object):
 
         @returns: C{True} if a new version was downloaded
         """
-        cmd = ['uscan', '--symlink', '--destdir=%s' % destdir, '--dehs']
+        cmd = ['uscan', '--destdir=%s' % destdir, '--dehs']
         if download_version:
             cmd += ['--download-version', download_version]
         elif download_debversion:
