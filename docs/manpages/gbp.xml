@@ -200,6 +200,7 @@
       <xref linkend="man.gbp.import.dsc"/>,
       <xref linkend="man.gbp.import.dscs"/>,
       <xref linkend="man.gbp.import.orig"/>,
+      <xref linkend="man.gbp.import.ref"/>,
       <xref linkend="man.gbp.pq"/>,
       <xref linkend="man.gbp.pristine.tar"/>,
       <xref linkend="man.gbp.pull"/>,
