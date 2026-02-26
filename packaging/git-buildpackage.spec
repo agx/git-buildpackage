@@ -157,7 +157,7 @@ Debian and the RPM tool set.
 %prep
 %setup -q -n %{name}-%{version}
 %if 0%{?centos_ver} && 0%{?centos_ver} >= 7
-%patch0 -p1
+%patch -P 0 -p1
 %endif
 
 
