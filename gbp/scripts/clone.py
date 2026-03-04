@@ -217,6 +217,8 @@ def main(argv) -> int:
             remotes = repo.get_remote_branches()
             for remote in remotes:
                 local = remote.replace("origin/", "", 1)
+                if local == remote:
+                    continue
                 if (not repo.has_branch(local) and
                         local != "HEAD"):
                     repo.create_branch(local, remote)
