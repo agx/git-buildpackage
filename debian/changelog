@@ -1,3 +1,106 @@
+git-buildpackage (0.9.40) unstable; urgency=medium
+
+  [ Guido Günther ]
+  * [34163bd] component: Move uscan test to people.debian.org.
+    This is more robust than VM that gets knocked off by AI scrapers
+    ever so often.
+  * [75d12bb] test-clone: Avoid pristine-tar
+    libvirt-glib added that making the test fail like
+    Disable pristine-tar as that doesn't add anything and only slows down
+    the tests.
+  * [af3254c] repository: Add some type annotations
+  * [1b97034] buildpackage: Add some type annotations
+  * [2e41ca0] buildpackage: Don't reuse tarball name
+  * [7ba18bf] buildpackage: Ensure upstream.unpacked isn't None.
+    This helps the type checker but also expresses our assumption
+  * [eef1cb8] upstreamsource: Add some type annotations
+  * [557be82] archive: Add types
+  * [9fa9f93] pkgpolicy: Simplify type annotations
+    `|` is easier to read than typing.Optional
+  * [727a06b] pkgpolicy: Drop unused extra_regex argument
+  * [3da9894] pkgpolicy: Add type annotations
+  * [3ddc72b] pristinetar: Add type annotations
+  * [fca9b17] deb.git: Add some type annotations
+  * [b8fba17] pkg.git: Add virtual method for `has_pristine_tar_branch`
+    All packaging git repo classes need to implement this.
+  * [6ecb5db] tests: No need for _tmpdirs to be declared as global
+  * [3f60396] clone: Skip branch when nothing got replaced
+    for-each-ref gives us the remote name as well, skip over that.
+    Tested-by: gregor herrmann <gregoa@debian.org> (Closes: #1040061)
+  * [4275337] git-pbuilder: Improve wording.
+    Thanks to Andrew Sayers (Closes: #1104798)
+
+  [ Wesley Hershberger ]
+  * [954d5d5] pq: Typo
+  * [0691eab] tests: Rename unittests so that they will be run by pytest
+  * [c5f39df] tests/fastimport: Use unittest.TestCase.
+    Rename so that pytest will run this test.
+  * [ef64349] tests/rpm_changelog: Use unittest.TestCase.
+    Rename so that pytest will run this test.
+  * [e5d04de] tests/gbp_import_orig: Ensure Salsa returns 404.
+    Salsa began offering a 302 redirect to a 200 sign-in page instead of a
+    404 at the previous URL.
+    Rename so that pytest will run this test.
+  * [e6232c8] tests/submodules: Refactor using unittest.TestCase.
+    Rename so that pytest will run this test.
+  * [54c532f] tests/rpm: Use unittest.TestCase and mark expectedFailure.
+    I've xfailed the failing ones as I don't have the knowledge of the RPM
+    ecosystem to resolve these - I suspect churn in the specfile format.
+  * [9b6e5d7] tests/rpm: Rename so that pytest will run this test
+  * [dd70ac8] pq: Remove plain `Gbp:`-style commands.
+    These have not worked for 10 years. `Gbp-Pq:` is preferred.
+  * [68f609b] po: Run `make langs`
+  * [2e9bfbc] pq: Remove `Gbp-Pq-Topic` command.
+    It has been deprecated since 2014.
+  * [1fd9543] po: Run `make langs`
+  * [4651533] pq: Fix header_name parameter for `Date` patch header
+    header_name is the fourth positional. 'date' should not be used as
+    `maxlinelen`.
+  * [22e5862] scripts.common.pq: Add some type annotations
+    datetime.tzinfo is an abstract class with @abstractmethod tzname; mypy
+    objects to the missing implementation. The return value is
+    unimportant/arbitrary.
+    charset.body_encoding is an int; skip the type check there as mypy
+    doesn't detect it as nullable.
+    Email headers are a rabbit hole: mypy expects `str` instead of `Header`.
+    Naive conversion to string results in suboptimal encoding/noise;
+    correctly converting to a str here requires the msg's policy's `fold`
+    method. Since this is a legacy (untyped) API, just leave it as is and
+    ignore the warnings rather than making a subtle mistake.
+  * [6d417c4] scripts.pq: Add some type annotaions
+  * [2c15d1c] packaging: Add deb-src to test container
+    vcsgit URLs require deb-src entries
+  * [aa2bad6] tests/deb_changelog: Fix dch fail regexes
+    dch stdout is no longer captured as of 6512a0d3b
+    Rename so that pytest will run this test.
+    Fixes: 6512a0d3 ("changelog: Don't capture dch's stderr")
+  * [e67a249] git: Replace commit_info dict with class.
+    Later I will add a method to GitCommitInfo
+
+  [ Simon Poirier ]
+  * [b111ab6] doctest: Fix failure with rust-coreutils.
+    Replace implicit behavior gnu of coreutils true/false in doctest by
+    explicit output and exit code. (LP: #2137580)
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * [fdc1d0b] setup.cfg: Add required modules from requirements.txt
+
+  [ Jonathan Dowland ]
+  * [99beba8] Add 'See also' from gbp(1) to gbp-import-ref(1)
+
+  [ Philippe Coval ]
+  * [9556625] spec: Update obsolete patch macro.
+    Since backward compatibility is broken with current tools (eg: rpm-6.0.1 
+    from fedora-43).
+    For the record: https://rpm.org/releases/4.20.0
+        Compatibility Notes The %patchN macro syntax (where N is a patch
+        number) is now obsolete and will produce a build error. Use %patch
+        N (or for maximum compatibility, %patch -P N) instead.
+    Origin: https://salsa.debian.org/agx/git-buildpackage/-/merge_requests/85
+    Forwarded: https://github.com/agx/git-buildpackage/pull/98
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 19 Apr 2026 09:18:51 +0200
+
 git-buildpackage (0.9.39) unstable; urgency=medium
 
   [ Richard Hansen ]
