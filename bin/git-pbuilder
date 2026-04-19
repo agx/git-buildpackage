@@ -488,8 +488,8 @@ current user run the appropriate builder command.
 
 =item ARCH
 
-Sets the target architecture.  For a B<cowbuilder> builder, this sets both
-the base path and is passed as the B<--architecture> option.  With
+Sets the target architecture.  For a B<cowbuilder> builder, this sets
+the base path and it is also passed as the B<--architecture> option.  With
 B<qemubuilder>, this controls the path to the configuration file.  With
 B<pbuilder>, this sets the tgz path and is passed as B<--architecture>.
 
