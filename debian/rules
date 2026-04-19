@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --buildsystem=pybuild
+	dh $@ --buildsystem=pybuild --no-guessing-deps
 
 override_dh_auto_test:
 ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
