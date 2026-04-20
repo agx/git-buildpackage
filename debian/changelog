@@ -1,3 +1,22 @@
+git-buildpackage (0.9.42) unstable; urgency=medium
+
+  [ Otto Kekäläinen ]
+  * [b4171e5] tree: Clean away excess whitespace to make editing and linting
+    files easier
+
+  [ Guido Günther ]
+  * [6eb904d] upstreamsource: Avoid using typing-extension.
+    It's not available in minimal containers and we can avoid the
+    dependency.
+    Thanks to Manuel Traut for the report
+
+  [ Philippe Coval ]
+  * [7e280b2] spec: Add support for Fedora.
+    It was tested on f43
+    Reference: https://src.fedoraproject.org/rpms/docbook2X
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 20 Apr 2026 10:48:34 +0200
+
 git-buildpackage (0.9.41) unstable; urgency=medium
 
   * [213723e] Don't let dh_python3 guess dependencies.
