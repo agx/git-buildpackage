@@ -62,7 +62,9 @@ BuildRequires:  python3
 BuildRequires:  python3-setuptools
 
 %if %{with docs}
-%if 0%{?centos_ver} && 0%{?centos_ver} >= 8
+%if 0%{?fedora} && 0%{?fedora} >= 41
+BuildRequires:  docbook2X
+%elif 0%{?centos_ver} && 0%{?centos_ver} >= 8
 BuildRequires:  docbook2X
 %else
 %if 0%{?centos_ver} && 0%{?centos_ver} == 7
