@@ -25,7 +25,7 @@ from gbp.pkg.pkgpolicy import PkgPolicy
 
 from gbp.errors import GbpError
 
-from typing_extensions import Self
+from typing import Self
 
 
 class UpstreamSource(object):
