@@ -1,3 +1,11 @@
+git-buildpackage (0.9.41) unstable; urgency=medium
+
+  * [213723e] Don't let dh_python3 guess dependencies.
+    It adds too much as some deps from requirements.txt
+    are optional (Closes: #1134414)
+
+ -- Guido Günther <agx@sigxcpu.org>  Mon, 20 Apr 2026 08:33:39 +0200
+
 git-buildpackage (0.9.40) unstable; urgency=medium
 
   [ Guido Günther ]
