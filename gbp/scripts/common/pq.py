@@ -200,9 +200,11 @@ def write_patch_file(filename: str,
 DEFAULT_PATCH_NUM_PREFIX_FORMAT = "%04d-"
 
 
-def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
+def format_patch(outdir: str, repo: GitRepository, commit_info, series: list[str],
+                 abbrev: str, numbered=True,
                  path_exclude_regex=None, topic='', name=None, renumber=False,
-                 patch_num_prefix_format=DEFAULT_PATCH_NUM_PREFIX_FORMAT):
+                 patch_num_prefix_format=DEFAULT_PATCH_NUM_PREFIX_FORMAT,
+                 find_copies=True):
     """Create patch of a single commit"""
 
     # Determine filename and path
@@ -250,7 +252,7 @@ def format_patch(outdir, repo, commit_info, series, abbrev, numbered=True,
     patch = None
     if paths:
         diff = repo.diff('%s^!' % commit_info.commitish, paths=paths, stat=80,
-                         summary=True, text=True, abbrev=abbrev, copies=True)
+                         summary=True, text=True, abbrev=abbrev, copies=find_copies)
         patch = write_patch_file(filepath, commit_info, diff)
         if patch:
             series.append(patch)

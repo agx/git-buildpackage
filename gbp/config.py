@@ -136,6 +136,7 @@ class GbpOptionParser(OptionParser):
                 'export-dir': '',
                 'filter': [],
                 'filter-pristine-tar': 'False',
+                'find-copies': 'True',
                 'force-create': 'False',
                 'full': 'False',
                 'git-author': 'False',
@@ -225,6 +226,8 @@ class GbpOptionParser(OptionParser):
         'debian-tag-msg':
             "Format string for signed debian-tag messages, "
             "default is '%(debian-tag-msg)s'",
+        'find-copies':
+            "Use copy detection, default is '%(find-copies)s'",
         'upstream-tag':
             "Format string for upstream tags, "
             "default is '%(upstream-tag)s'",

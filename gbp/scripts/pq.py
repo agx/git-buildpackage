@@ -44,12 +44,12 @@ PATCH_DIR = "debian/patches/"
 SERIES_FILE = os.path.join(PATCH_DIR, "series")
 
 
-def generate_patches(repo, start, end, outdir, options):
+def generate_patches(repo: DebianGitRepository, start: str, end: str, outdir: str, options) -> list[str]:
     """
     Generate patch files from git
     """
     gbp.log.info("Generating patches from git (%s..%s)" % (start, end))
-    patches = []
+    patches: list[str] = []
     for treeish in [start, end]:
         if not repo.has_treeish(treeish):
             raise GbpError('%s not a valid tree-ish' % treeish)
@@ -73,7 +73,8 @@ def generate_patches(repo, start, end, outdir, options):
                          numbered=options.patch_numbers,
                          topic=topic, name=name,
                          renumber=options.renumber,
-                         patch_num_prefix_format=options.patch_num_format)
+                         patch_num_prefix_format=options.patch_num_format,
+                         find_copies=options.find_copies)
         else:
             gbp.log.info('Ignoring commit %s' % info.commitish)
 
@@ -421,6 +422,7 @@ def build_parser(name: str) -> GbpOptionParserDebian | None:
     parser.add_boolean_config_file_option(option_name="patch-numbers", dest="patch_numbers")
     parser.add_config_file_option(option_name="patch-num-format", dest="patch_num_format")
     parser.add_boolean_config_file_option(option_name="renumber", dest="renumber")
+    parser.add_boolean_config_file_option(option_name="find-copies", dest="find_copies")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
                       help="verbose command execution")
     parser.add_option("--topic", dest="topic", help="in case of 'apply' topic (subdir) to put patch into")

@@ -37,6 +37,7 @@ class TestPqOptions(object):
     patch_num_format = '%04d-'
     patch_numbers = False
     renumber = False
+    find_copies = True
 
 
 class TestApplyAndCommit(testutils.DebianGitTestRepo):
