@@ -265,7 +265,7 @@ class GitRepository(object):
         optopt_re = re.compile(r'--\[(?P<prefix>[a-zA-Z\-]+)\]-?')
         man_section = None
         for line in help.decode().splitlines():
-            if man_section == "OPTIONS" and line.startswith('       -'):
+            if man_section == "OPTIONS" and line.startswith(('       -', '     -')):
                 opts = line.split(',')
                 for opt in opts:
                     opt = opt.strip()
