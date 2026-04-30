@@ -49,6 +49,8 @@
         <arg><option>--qa</option></arg>
         <arg><option>--security</option></arg>
         <arg><option>--team</option></arg>
+        <arg><option>--lts</option></arg>
+        <arg><option>--stable</option></arg>
         <arg><option>--local=</option><replaceable>suffix</replaceable></arg>
       </group>
       <arg><option>--distribution=</option><replaceable>name</replaceable></arg>
@@ -380,6 +382,28 @@
             Increment the Debian release number for a Debian Security
             Team non-maintainer upload, and add a "Security Team
             upload" changelog comment.
+            This option can't be set via &gbp.conf;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--lts</option>
+        </term>
+        <listitem>
+          <para>
+            Increment the Debian release number for a Debian LTS Team upload, and
+            add a LTS upload changelog comment.
+            This option can't be set via &gbp.conf;.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>--stable</option>
+        </term>
+        <listitem>
+          <para>
+            Increment the Debian release number for an upload to the
+            current stable release.
             This option can't be set via &gbp.conf;.
           </para>
         </listitem>

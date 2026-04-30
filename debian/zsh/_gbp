@@ -153,6 +153,8 @@ _gbp-dch () {
 		'--bpo[Increment the release number for a backports upload]' \
 		'--nmu[Increment the release number for a NMU upload]' \
 		'--qa[Increment the release number for a QA upload]' \
+		'--lts[Increment the release number for a LTS upload]' \
+		'--stable[Increment the release number for an upload to the current stable release]' \
 		'(--local -l)'{-l,--local}'=-[Increment the release number for a local build]' \
 		'--distribution=-[Set the distribution field]' \
 		'--force-distribution[Force distribution]' \
