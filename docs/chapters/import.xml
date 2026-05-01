@@ -362,7 +362,7 @@ upstream-tag = v%(version%.%_)s
 	  When updating to a new upstream version, we simply fetch from upstream and merge in the new tag. Afterwards, we
 	  update the changelog and build the package:
 <programlisting>
-  <command>git fetch</command> upstream
+  <command>git fetch</command> upstreamvcs
   <command>git merge</command> v1.1
   <command>gbp dch</command> --debian-branch=debian/latest --snapshot --auto debian/
   &gbp-buildpackage; --git-ignore-new --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s'
