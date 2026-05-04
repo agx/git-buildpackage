@@ -397,6 +397,12 @@ def build_parser(name):
     version_group.add_option("--security", dest="security", action="store_true", default=False,
                              help="Increment the Debian release number for a security upload and "
                              "add a security upload changelog comment.")
+    version_group.add_option("--lts", dest="lts", action="store_true", default=False,
+                             help="Increment the Debian release number for a LTS Team upload, "
+                             "and add a LTS upload changelog comment.")
+    version_group.add_option("--stable", dest="stable", action="store_true", default=False,
+                             help="Increment the Debian release number for an upload to "
+                             "the current stable release.")
     version_group.add_option("-l", "--local", dest="local_suffix", metavar="SUFFIX",
                              help="Add a suffix to the Debian version number for a local build.")
     version_group.add_boolean_config_file_option(option_name="git-author", dest="use_git_author")
@@ -510,7 +516,8 @@ def main(argv):
         add_section = False
         # add a new changelog section if:
         if (options.new_version or options.bpo or options.nmu or options.qa or
-                options.team or options.security or options.local_suffix):
+                options.team or options.security or options.lts or options.stable or
+                options.local_suffix):
             if options.bpo:
                 version_change['increment'] = '--bpo'
             elif options.nmu:
@@ -521,6 +528,10 @@ def main(argv):
                 version_change['increment'] = '--team'
             elif options.security:
                 version_change['increment'] = '--security'
+            elif options.lts:
+                version_change['increment'] = '--lts'
+            elif options.stable:
+                version_change['increment'] = '--stable'
             elif options.local_suffix:
                 version_change['increment'] = '--local=%s' % options.local_suffix
             else:
