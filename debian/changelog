@@ -1,3 +1,22 @@
+git-buildpackage (0.9.43) unstable; urgency=medium
+
+  [ Arnaud Rebillout ]
+  * [06dba64] Fix _cmd_has_feature.
+
+  [ Guido Günther ]
+  * [714dbf8] ci: Disable uscan. It's a Debian native package
+  * [5b9ced3] pq: Allow to disable copy detection (Closes: #1132914)
+  * [3bff95c] tmpfile: Add type annotations.
+    Fixes build with mypy 2.1.0
+
+  [ Bastian Triller ]
+  * [3aaabca] docs/import: Fix typo
+
+  [ Carlos Henrique Lima Melara ]
+  * [6da9dbe] dch: Add support to --stable and --lts options (Closes: #1135243)
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 26 May 2026 09:12:52 +0200
+
 git-buildpackage (0.9.42) unstable; urgency=medium
 
   [ Otto Kekäläinen ]
