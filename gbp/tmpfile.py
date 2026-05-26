@@ -24,7 +24,7 @@ import tempfile
 from gbp.errors import GbpError
 
 
-_old_tempdirs = []
+_old_tempdirs: list[tempfile.TemporaryDirectory] = []
 
 
 def init_tmpdir(path, prefix):
