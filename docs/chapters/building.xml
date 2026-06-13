@@ -58,6 +58,11 @@
     state of the current index, which can be used to include staged but uncommitted
     changes in the build. Whereas the special argument
     <replaceable>WC</replaceable> exports the current working copy as is.</para>
+    <para>By default uncommitted changes are not exported and
+    &gbp-buildpackage; aborts when it finds them. Passing
+    <option>--git-ignore-new</option> includes the uncommitted changes (both
+    modified and untracked files) in the exported tree, mirroring the behaviour
+    of building without <option>--git-export-dir</option>.</para>
     <para>If you want to default to build in a separate build area, you can
     specify the directory to use in the <filename>gbp.conf</filename> file.
 <programlisting>

@@ -62,6 +62,13 @@ def maybe_write_tree(repo: DebianGitRepository, options: optparse.Values) -> str
             tree = repo.write_tree()
         elif options.export == wc_name:
             tree = write_wc(repo)
+        elif options.ignore_new and options.export == 'HEAD':
+            # --git-ignore-new asks to build with the uncommitted changes
+            # in the source tree. Without an export-dir we build in the
+            # working copy and the changes are included, so export the
+            # working copy here too to keep the behaviour consistent
+            # (#1091531).
+            tree = write_wc(repo)
         else:
             tree = options.export
         if not repo.has_treeish(tree):
