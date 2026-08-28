@@ -558,7 +558,7 @@ def main(argv):
 
             # Export to another build dir if requested:
             if options.export_dir:
-                export_source(repo, tree, source, options, tmp_dir, tarball_dir)
+                export_source(repo, tree, source, options, tmp_dir, output_dir)
 
                 # Run postexport hook
                 if options.postexport:
