@@ -222,6 +222,37 @@ class TestBuildpackage(ComponentTestBase):
         self._test_buildpackage(repo, ["--git-export=WC", "--git-export-dir=../foo/bar"])
         assert os.path.exists("../foo/bar")
 
+    @RepoFixtures.quilt30()
+    def test_export_dir_ignore_new(self, repo):
+        """
+        Test that --git-ignore-new includes uncommitted changes in the export
+        when an export dir is used (#1091531).
+
+        Without an export dir the package is built in-place in the working copy
+        so uncommitted changes are always part of the build. With an export dir
+        the tree to export defaults to HEAD, which used to silently drop those
+        changes. Before the fix both assertions below failed because HEAD was
+        exported instead of the working copy.
+        """
+        # Uncommitted modification to a tracked file ...
+        rules = os.path.join(repo.path, 'debian', 'rules')
+        with open(rules, 'a') as f:
+            f.write('\n# uncommitted-marker\n')
+        # ... and an untracked new file
+        with open(os.path.join(repo.path, 'untracked.txt'), 'w') as f:
+            f.write('untracked')
+
+        self._test_buildpackage(repo, ['--git-ignore-new',
+                                       '--git-no-purge',
+                                       '--git-export-dir=../bdir'])
+
+        exported = '../bdir/hello-debhelper-2.8'
+        with open(os.path.join(exported, 'debian', 'rules')) as f:
+            assert '# uncommitted-marker' in f.read(), \
+                "Uncommitted change to tracked file was not exported"
+        assert os.path.exists(os.path.join(exported, 'untracked.txt')), \
+            "Untracked file was not exported"
+
     @RepoFixtures.native()
     def test_argument_quoting(self, repo):
         """Test that we quote arguments to builder (#850869)"""
