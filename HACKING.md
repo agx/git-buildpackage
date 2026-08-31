@@ -109,6 +109,32 @@ If you want to keep any temporary repos around for inspection use
 GBP_TESTS_NOCLEAN=1 pytest tests/component/deb/test_push.py::TestPush::test_push_failure
 ```
 
+If you use a virtual environment, tell `make` which interpreter to run the
+tests with:
+
+```sh
+make test PYTHON=./venv/bin/python
+```
+
+Seeing What Tests Failed or Were Skipped
+----------------------------------------
+
+`pytest` only summarizes failures and errors by default. `-r` adds a short
+summary section for the other outcomes as well, e.g. `-rs` lists every
+skipped test with its reason:
+
+```sh
+./venv/bin/python -m pytest -rs tests/
+```
+
+Use `-ra` for all non passing outcomes (failed, errored, skipped, xfailed and
+xpassed) or `-rA` for all results including the passing ones. To run the whole
+test suite like CI does but with the summary enabled use:
+
+```sh
+GBP_NETWORK_TESTS=1 make test PYTHON=./venv/bin/python PYTEST_ARGS="-ra"
+```
+
 Building the API Docs
 ---------------------
 
