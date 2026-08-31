@@ -135,6 +135,17 @@ test suite like CI does but with the summary enabled use:
 GBP_NETWORK_TESTS=1 make test PYTHON=./venv/bin/python PYTEST_ARGS="-ra"
 ```
 
+Checking the Syntax
+-------------------
+
+Besides the tests there are style and syntax checks. Make sure they pass too:
+
+```sh
+make syntax-check
+```
+
+A plain `make` runs these checks and the test suite.
+
 Building the API Docs
 ---------------------
 
