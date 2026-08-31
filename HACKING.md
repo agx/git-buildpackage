@@ -146,10 +146,26 @@ make syntax-check
 
 A plain `make` runs these checks and the test suite.
 
-Building the API Docs
----------------------
+Building the Documentation
+--------------------------
 
-You can build the API docs using
+Building the manual and the manpages needs some extra tools:
+
+```sh
+sudo apt install docbook2x gtk-doc-tools
+```
+
+With those in place build all of the documentation, including the API docs,
+via:
+
+```sh
+make docs
+```
+
+The rendered manual ends up in `docs/manual-html/` and the manpages in
+`docs/`.
+
+You can build the API docs alone using
 
 ```sh
 make apidocs
