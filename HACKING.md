@@ -1,3 +1,68 @@
+Using a Virtual Environment
+---------------------------
+
+Working in a virtual environment lets you run `gbp` from your working tree
+without installing it system wide. You need the `python3-venv` package for
+that:
+
+```sh
+sudo apt install python3-venv
+```
+
+Then create the environment and activate it:
+
+```sh
+make venv
+. venv/bin/activate
+```
+
+`make venv` creates `venv/` and installs `gbp` into it in editable mode
+(`venv/bin/python -m pip install -e .`), which gives you:
+
+    venv/bin/gbp
+
+so you can simply run:
+
+```sh
+gbp clone …
+```
+
+Because it is an editable install, changes you make under `gbp/` are picked
+up directly, there's no need to reinstall after each source edit.
+
+You can verify which `gbp` you're running with:
+
+```sh
+which gbp
+```
+
+which should print something like:
+
+    …/git-buildpackage/venv/bin/gbp
+
+If it still points at the system wide `gbp`, your shell likely remembers the
+location of the previously run command. Make it forget:
+
+```sh
+hash -d gbp
+```
+
+(in `zsh` use `rehash` instead).
+
+Since `make venv` is stamp based it doesn't rebuild an existing environment.
+If it ever gets out of sync, e.g. after changing dependencies or entry
+points, regenerate it from scratch:
+
+```sh
+rm -r venv && make venv
+```
+
+When you're done, return to your normal environment with:
+
+```sh
+deactivate
+```
+
 Running the Tests
 -----------------
 
