@@ -57,10 +57,8 @@ Contributing Patches
 --------------------
 
 Make sure the tests pass before sending in patch. You can either send
-it to the mailing list, add it to a bug report against
-git-buildpackage on <http://bugs.debian.org/src:git-buildpackage> or
-open a merge request at
-<https://salsa.debian.org/agx/git-buildpackage/-/merge_requests>
+it to the mailing list, add it to a [bug report][] against
+git-buildpackage or open a [merge request][].
 
 Please add a `Signed-off-by:` to commit messages to indicate that you agree to
 the [Developer's Certificate of Origin][].
@@ -101,4 +99,6 @@ When one invokes `gbp config <command>` `gbp/scripts/<command>.py` is imported b
 which then invokes it's *build_parser* function with the command name as argument.
 It is expected to return a `GbpConfigParser` with all config files parsed.
 
+[bug report]: https://bugs.debian.org/src:git-buildpackage
 [Developer's Certificate of Origin]: https://developercertificate.org/
+[merge request]: https://salsa.debian.org/agx/git-buildpackage/-/merge_requests
