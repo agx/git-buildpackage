@@ -1,3 +1,68 @@
+Using a Virtual Environment
+---------------------------
+
+Working in a virtual environment lets you run `gbp` from your working tree
+without installing it system wide. You need the `python3-venv` package for
+that:
+
+```sh
+sudo apt install python3-venv
+```
+
+Then create the environment and activate it:
+
+```sh
+make venv
+. venv/bin/activate
+```
+
+`make venv` creates `venv/` and installs `gbp` into it in editable mode
+(`venv/bin/python -m pip install -e .`), which gives you:
+
+    venv/bin/gbp
+
+so you can simply run:
+
+```sh
+gbp clone …
+```
+
+Because it is an editable install, changes you make under `gbp/` are picked
+up directly, there's no need to reinstall after each source edit.
+
+You can verify which `gbp` you're running with:
+
+```sh
+which gbp
+```
+
+which should print something like:
+
+    …/git-buildpackage/venv/bin/gbp
+
+If it still points at the system wide `gbp`, your shell likely remembers the
+location of the previously run command. Make it forget:
+
+```sh
+hash -d gbp
+```
+
+(in `zsh` use `rehash` instead).
+
+Since `make venv` is stamp based it doesn't rebuild an existing environment.
+If it ever gets out of sync, e.g. after changing dependencies or entry
+points, regenerate it from scratch:
+
+```sh
+rm -r venv && make venv
+```
+
+When you're done, return to your normal environment with:
+
+```sh
+deactivate
+```
+
 Running the Tests
 -----------------
 
@@ -44,10 +109,63 @@ If you want to keep any temporary repos around for inspection use
 GBP_TESTS_NOCLEAN=1 pytest tests/component/deb/test_push.py::TestPush::test_push_failure
 ```
 
-Building the API Docs
----------------------
+If you use a virtual environment, tell `make` which interpreter to run the
+tests with:
 
-You can build the API docs using
+```sh
+make test PYTHON=./venv/bin/python
+```
+
+Seeing What Tests Failed or Were Skipped
+----------------------------------------
+
+`pytest` only summarizes failures and errors by default. `-r` adds a short
+summary section for the other outcomes as well, e.g. `-rs` lists every
+skipped test with its reason:
+
+```sh
+./venv/bin/python -m pytest -rs tests/
+```
+
+Use `-ra` for all non passing outcomes (failed, errored, skipped, xfailed and
+xpassed) or `-rA` for all results including the passing ones. To run the whole
+test suite like CI does but with the summary enabled use:
+
+```sh
+GBP_NETWORK_TESTS=1 make test PYTHON=./venv/bin/python PYTEST_ARGS="-ra"
+```
+
+Checking the Syntax
+-------------------
+
+Besides the tests there are style and syntax checks. Make sure they pass too:
+
+```sh
+make syntax-check
+```
+
+A plain `make` runs these checks and the test suite.
+
+Building the Documentation
+--------------------------
+
+Building the manual and the manpages needs some extra tools:
+
+```sh
+sudo apt install docbook2x gtk-doc-tools
+```
+
+With those in place build all of the documentation, including the API docs,
+via:
+
+```sh
+make docs
+```
+
+The rendered manual ends up in `docs/manual-html/` and the manpages in
+`docs/`.
+
+You can build the API docs alone using
 
 ```sh
 make apidocs
@@ -57,10 +175,8 @@ Contributing Patches
 --------------------
 
 Make sure the tests pass before sending in patch. You can either send
-it to the mailing list, add it to a bug report against
-git-buildpackage on <http://bugs.debian.org/src:git-buildpackage> or
-open a merge request at
-<https://salsa.debian.org/agx/git-buildpackage/-/merge_requests>
+it to the mailing list, add it to a [bug report][] against
+git-buildpackage or open a [merge request][].
 
 Please add a `Signed-off-by:` to commit messages to indicate that you agree to
 the [Developer's Certificate of Origin][].
@@ -101,4 +217,6 @@ When one invokes `gbp config <command>` `gbp/scripts/<command>.py` is imported b
 which then invokes it's *build_parser* function with the command name as argument.
 It is expected to return a `GbpConfigParser` with all config files parsed.
 
+[bug report]: https://bugs.debian.org/src:git-buildpackage
 [Developer's Certificate of Origin]: https://developercertificate.org/
+[merge request]: https://salsa.debian.org/agx/git-buildpackage/-/merge_requests

@@ -44,10 +44,12 @@ docs:
 apidocs:
 	mkdir -p build
 
-venv: venv/stamp
 venv/stamp:
 	$(PYTHON) -m venv venv
-	. venv/bin/activate && pip install -r dev_requirements.txt
+	venv/bin/python -m pip install -e .
 	touch '$@'
+
+venv: venv/stamp
+	@echo "Activate the virtual environment with '. venv/bin/activate'"
 
 .PHONY: docs venv
