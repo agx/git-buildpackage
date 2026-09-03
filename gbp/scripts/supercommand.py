@@ -51,12 +51,12 @@ Use '--list-cmds' to list all available commands.
 """)
 
 
-def version(prog):
+def version():
     try:
         from gbp.version import gbp_version
     except ImportError:
         gbp_version = '[Unknown version]'
-    print("%s %s" % (os.path.basename(prog), gbp_version))
+    print("git-buildpackage %s" % gbp_version)
 
 
 def import_command(cmd):
@@ -127,7 +127,7 @@ def supercommand(argv=None):
         usage()
         return 0
     elif cmd in ['--version', 'version']:
-        version(argv[0])
+        version()
         return 0
     elif cmd in ['--list-cmds', 'list-cmds']:
         list_available_commands()

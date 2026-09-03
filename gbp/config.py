@@ -610,8 +610,8 @@ class GbpOptionParser(OptionParser):
 
         OptionParser.__init__(self, option_class=GbpOption,
                               prog="gbp %s" % self.command,
-                              usage=usage, version='%s %s' % (self.command,
-                                                              gbp_version))
+                              usage=usage,
+                              version='git-buildpackage %s' % gbp_version)
 
     def _is_boolean(self, dummy, *unused, **kwargs):
         """is option_name a boolean option"""
