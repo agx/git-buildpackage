@@ -263,7 +263,7 @@ class ComponentTestBase(unittest.TestCase, GbpLogTester):
     @staticmethod
     def add_file(repo, name, content=None):
         with open(name, 'w') as f:
-            f.write(' ' or content)
+            f.write(' ')
         repo.add_files(name)
         repo.commit_files(name, 'New file %s' % name)
 
