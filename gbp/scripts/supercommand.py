@@ -102,7 +102,7 @@ def list_available_commands():
         mod = import_command(cmd[0])
         doc = mod.__doc__
         print("    %s - %s" % (cmd[0].rjust(maxlen), doc))
-    print('')
+    print()
 
 
 def supercommand(argv=None):
