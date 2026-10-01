@@ -1364,7 +1364,7 @@ class GitRepository(object):
         @return: list of files as byte string
         @rtype: C{list} of C{str}
         """
-        all_types = ['cached', 'deleted', 'others', 'ignored', 'stage'
+        all_types = ['cached', 'deleted', 'others', 'ignored', 'stage',
                      'unmerged', 'killed', 'modified']
         args = ['-z']
 
