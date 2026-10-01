@@ -92,9 +92,9 @@ class TestPq(ComponentTestBase):
         # gbp's behavior should override the user's configuration.
         repo.set_config('diff.renames', 'false')
         self._test_pq(repo, 'import')
-        with open(os.path.join(repo.path, 'configure.ac'), mode='rb') as fin:
-            with open(os.path.join(repo.path, 'copied'), mode='wb') as fout:
-                fout.write(fin.read())
+        with (open(os.path.join(repo.path, 'configure.ac'), mode='rb') as fin,
+              open(os.path.join(repo.path, 'copied'), mode='wb') as fout):
+            fout.write(fin.read())
         repo.add_files(['copied'])
         repo.commit_all("Copy")
         self._test_pq(repo, 'export')
