@@ -35,7 +35,7 @@ class ExitCodes(object):
 
 def maybe_debug_raise():
     if 'raise' in os.getenv("GBP_DEBUG", '').split(','):
-        raise
+        raise  # noqa: PLE0704
 
 
 def is_download(args):
