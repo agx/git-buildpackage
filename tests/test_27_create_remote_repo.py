@@ -17,7 +17,7 @@
 
 import os
 import unittest
-import gbp.scripts.create_remote_repo as create_remote_repo
+from gbp.scripts import create_remote_repo
 
 
 class TestGbpCreateRemoteRepoCommand(unittest.TestCase):

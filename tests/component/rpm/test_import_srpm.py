@@ -23,7 +23,7 @@ from unittest.mock import Mock
 
 import pytest
 
-import gbp.scripts.import_srpm as import_srpm
+from gbp.scripts import import_srpm
 from gbp.git import GitRepository
 from gbp.rpm import SrcRpmFile
 

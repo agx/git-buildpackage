@@ -19,7 +19,7 @@ from . import context
 from . import testutils
 
 import gbp.log
-import gbp.scripts.import_dscs as import_dscs
+from gbp.scripts import import_dscs
 
 from gbp.errors import GbpError
 

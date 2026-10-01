@@ -25,7 +25,7 @@ import sys
 
 import gbp.log
 import gbp.notifications
-import gbp.rpm as rpm
+from gbp import rpm
 from gbp.command_wrappers import Command, RunAtCommand, CommandExecFailed
 from gbp.config import GbpOptionParserRpm, GbpOptionGroup
 from gbp.errors import GbpError

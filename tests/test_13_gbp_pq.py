@@ -27,7 +27,7 @@ from gbp.scripts.pq import (generate_patches, export_patches,
                             import_quilt_patches, rebase_pq,
                             switch_pq,
                             SERIES_FILE)
-import gbp.scripts.common.pq as pq
+from gbp.scripts.common import pq
 import gbp.patch_series
 
 

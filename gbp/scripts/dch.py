@@ -23,7 +23,7 @@ import typing
 import sys
 import shutil
 import gbp.command_wrappers as gbpc
-import gbp.dch as dch
+from gbp import dch
 import gbp.log
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup
 from gbp.errors import GbpError

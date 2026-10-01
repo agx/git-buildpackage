@@ -26,7 +26,7 @@ import sys
 from contextlib import contextmanager
 from tempfile import TemporaryFile
 
-import gbp.log as log
+from gbp import log
 
 
 class CommandExecFailed(Exception):

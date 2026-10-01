@@ -22,7 +22,7 @@ import re
 import sys
 from collections import defaultdict
 
-import gbp.log as log
+from gbp import log
 from gbp.errors import GbpError
 from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit, GitCommitInfo
