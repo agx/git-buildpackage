@@ -83,7 +83,7 @@ class GitCommitInfo(GitCommit):
 
     @staticmethod
     def keys() -> list[str]:
-        return ['commitish', 'commit_sha', 'author', 'committer', 'subject'
+        return ['commitish', 'commit_sha', 'author', 'committer', 'subject',
                 'patchname', 'body', 'files']
 
     def items(self) -> list[tuple]:
