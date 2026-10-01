@@ -31,7 +31,6 @@ import gbp.log as log
 
 class CommandExecFailed(Exception):
     """Exception raised by the Command class"""
-    pass
 
 
 @contextmanager

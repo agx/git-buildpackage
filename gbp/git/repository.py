@@ -33,7 +33,6 @@ from gbp.paths import to_bin
 
 class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
-    pass
 
 
 class GitRemote(object):

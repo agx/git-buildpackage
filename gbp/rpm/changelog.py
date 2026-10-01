@@ -40,7 +40,6 @@ def c_locale(category):
 
 class ChangelogError(Exception):
     """Problem parsing changelog"""
-    pass
 
 
 class _ChangelogHeader(object):

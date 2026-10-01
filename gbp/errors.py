@@ -19,6 +19,5 @@
 
 class GbpError(Exception):
     """Generic exception raised in git-buildpackage commands"""
-    pass
 
 # vim:et:ts=4:sw=4:et:sts=4:ai:set list listchars=tab\:»·,trail\:·:

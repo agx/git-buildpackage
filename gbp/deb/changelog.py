@@ -24,12 +24,10 @@ from gbp.command_wrappers import Command
 
 class NoChangeLogError(Exception):
     """No changelog found"""
-    pass
 
 
 class ParseChangeLogError(Exception):
     """Problem parsing changelog"""
-    pass
 
 
 class ChangeLogSection(object):

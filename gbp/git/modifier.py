@@ -28,7 +28,6 @@ from gbp.git.errors import GitError
 
 class GitModifierError(GitError):
     """Exception thrown by L{GitModifier}"""
-    pass
 
 
 class GitTz(datetime.tzinfo):

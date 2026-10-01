@@ -86,7 +86,6 @@ def fetch_snapshots(pkg, downloaddir):
         if debsnap.retcode == 2:
             gbp.log.err(e)
             gbp.log.warn("Some packages failed to download. Continuing.")
-            pass
         else:
             raise
 
