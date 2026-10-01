@@ -179,9 +179,9 @@ def download_orig(url: str) -> DebianUpstreamSource:
             os.unlink(target)
         raise GbpError("Failed to download %s: %s" % (url, e))
 
-    sig = '{}.asc'.format(target)
+    sig = f'{target}.asc'
     if os.path.exists(sig):
-        gbp.log.debug("Signature {} found for {}".format(target, sig))
+        gbp.log.debug(f"Signature {target} found for {sig}")
         signature = sig
     else:
         signature = None

@@ -87,9 +87,9 @@ def prepare_pristine_tar(archive, pkg, version):
     if os.path.basename(archive) != os.path.basename(link):
         try:
             linked = maybe_link(archive, link)
-            archive_sig = '{}.asc'.format(archive)
+            archive_sig = f'{archive}.asc'
             if os.path.exists(archive_sig):
-                maybe_link(archive_sig, '{}.asc'.format(link))
+                maybe_link(archive_sig, f'{link}.asc')
         except OSError as err:
             raise GbpError("Cannot symlink '%s' to '%s': %s" % (archive, link, err))
         return (link, linked)
@@ -189,9 +189,9 @@ def find_upstream(use_uscan, args, version=None) -> DebianUpstreamSource | None:
     elif len(args) == 0:
         raise GbpError("No archive to import specified. Try --help.")
     else:
-        sig = '{}.asc'.format(args[0])
+        sig = f'{args[0]}.asc'
         if os.path.exists(sig):
-            gbp.log.debug("Signature {} found for {}".format(args[0], sig))
+            gbp.log.debug(f"Signature {args[0]} found for {sig}")
             return DebianUpstreamSource(args[0], sig=sig)
         else:
             return DebianUpstreamSource(args[0], sig=None)

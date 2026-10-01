@@ -490,11 +490,11 @@ def main(argv):
 
         # unpack
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
-        sigfile = '{}.asc'.format(dsc.tgz)
+        sigfile = f'{dsc.tgz}.asc'
         sigfile = sigfile if sigfile in dsc.sigs else None
         sources = [DebianUpstreamSource(dsc.tgz, sig=sigfile)]
         for component, tarball in dsc.additional_tarballs.items():
-            sigfile = '{}.asc'.format(tarball)
+            sigfile = f'{tarball}.asc'
             sigfile = sigfile if sigfile in dsc.sigs else None
             sources.append(DebianAdditionalTarball(tarball, component))
         sources[0].unpack(dirs['tmp'], options.filters)

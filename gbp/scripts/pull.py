@@ -132,7 +132,7 @@ def get_remote(repo, current):
 
 
 def track_missing(repo, remote, branch, options):
-    upstream = "remotes/{}/{}".format(remote, branch)
+    upstream = f"remotes/{remote}/{branch}"
     if not repo.has_branch(branch):
         try:
             repo.fetch(remote, depth=options.depth, refspec=branch)

@@ -309,7 +309,7 @@ def get_maintainer_from_control(repo: GitRepository):
                 if m:
                     return GitModifier(m.group('name'), m.group('email'))
     except FileNotFoundError:
-        raise GbpError("Debian control file {} not found".format(control))
+        raise GbpError(f"Debian control file {control} not found")
     return GitModifier()
 
 

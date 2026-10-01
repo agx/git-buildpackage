@@ -41,9 +41,9 @@ Actions:
 def import_tarballs(repo: DebianGitRepository,
                     source: DebianSource,
                     tarball: str, options: argparse.Namespace) -> DebianUpstreamTarballList:
-    sig = '{}.asc'.format(tarball)
+    sig = f'{tarball}.asc'
     if os.path.exists(sig):
-        gbp.log.debug("Signature {} found for {}".format(tarball, sig))
+        gbp.log.debug(f"Signature {tarball} found for {sig}")
         signature = sig
     else:
         signature = None
