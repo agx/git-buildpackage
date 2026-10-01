@@ -67,7 +67,7 @@ def get_repo():
             repo = uri.rsplit(sep, 1)[1]
         except IndexError:  # no known separator
             repo = uri
-        repo = repo.rsplit(u'.git', 1)[0]
+        repo = repo.rsplit('.git', 1)[0]
     return repo, uri
 
 
@@ -81,7 +81,7 @@ def main(argv):
     #           * branch
     #           * log summary (git log -1 --format=%s HEAD)
     curdir = os.path.abspath(os.curdir).decode(sys.getfilesystemencoding())
-    uri = u"file://%s" % curdir
+    uri = "file://%s" % curdir
 
     repo, origin = get_repo()
     if not repo:
