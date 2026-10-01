@@ -740,8 +740,7 @@ class GbpOptionParser(OptionParser):
         for k, v in cls.def_config_files:
             if name == v:
                 return k
-        else:
-            return None
+        return None
 
     @classmethod
     def _set_config_file_value(cls, section, option, value, name=None, filename=None):
