@@ -43,7 +43,7 @@ def teardown():
     del _tmpdirs[:]
 
 
-class TmpDir(object):
+class TmpDir:
 
     def __init__(self, suffix='', prefix='tmp'):
         self.path = tempfile.mkdtemp(suffix=suffix, prefix=prefix)

@@ -25,7 +25,7 @@ from gbp.pkg.archive import Archive
 from gbp.format import format_str
 
 
-class PkgPolicy(object):
+class PkgPolicy:
     """
     Common helpers for packaging policy.
     """

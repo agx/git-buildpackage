@@ -44,7 +44,7 @@ DEFAULT_OVERLAY = os.path.join(DEB_TEST_DATA_DIR,
                                'hello-debhelper_%s.debian.tar.gz' % '2.8-1')
 
 
-class RepoFixtures(object):
+class RepoFixtures:
     @classmethod
     def native(cls, dsc=DEFAULT_NATIVE, opts=None):
         """Decorator to be used as Debian native test fixture"""

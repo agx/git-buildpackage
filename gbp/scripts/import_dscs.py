@@ -40,7 +40,7 @@ class DscCompareVersions(DpkgCompareVersions):
 
 def cmp_to_key(mycmp):
     'Convert a cmp= function into a key= function'
-    class K(object):
+    class K:
         def __init__(self, obj, *args):
             self.obj = obj
 
@@ -64,7 +64,7 @@ def cmp_to_key(mycmp):
     return K
 
 
-class GitImportDsc(object):
+class GitImportDsc:
     def __init__(self, args):
         self.args = args
 

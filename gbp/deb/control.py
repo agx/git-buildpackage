@@ -28,7 +28,7 @@ class ParseControlError(Exception):
     """Problem parsing control"""
 
 
-class Control(object):
+class Control:
     """A Debian control"""
 
     def __init__(self, contents=None, filename="debian/control"):

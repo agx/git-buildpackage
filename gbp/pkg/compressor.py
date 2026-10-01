@@ -16,7 +16,7 @@
 #    <http://www.gnu.org/licenses/>
 
 
-class Compressor(object):
+class Compressor:
     # Map frequently used names of compression types to the internal ones:
     Aliases = {'bz2': 'bzip2',
                'gz': 'gzip', }

@@ -51,7 +51,7 @@ class RpmUpstreamSource(UpstreamSource):
                                                 **kwargs)
 
 
-class SrcRpmFile(object):
+class SrcRpmFile:
     """Keeps all needed data read from a source rpm"""
     def __init__(self, srpmfile):
         # Do not required signed packages to be able to import
@@ -105,7 +105,7 @@ class SrcRpmFile(object):
         c(dir=dest_dir)
 
 
-class SpecFile(object):
+class SpecFile:
     """Class for parsing/modifying spec files"""
     tag_re = re.compile(r'^(?P<name>[a-z]+)(?P<num>[0-9]+)?\s*:\s*'
                         r'(?P<value>\S(.*\S)?)\s*$', flags=re.I)

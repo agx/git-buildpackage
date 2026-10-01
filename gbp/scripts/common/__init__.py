@@ -25,7 +25,7 @@ from gbp.pkg import Archive
 from gbp.deb.upstreamsource import DebianAdditionalTarball
 
 
-class ExitCodes(object):
+class ExitCodes:
     ok = 0,
     failed = 1               # All other errors
     no_value = 2             # Value does not exist (gbp config only)

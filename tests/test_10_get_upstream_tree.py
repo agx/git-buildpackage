@@ -9,7 +9,7 @@ import gbp.errors
 from gbp.scripts import export_orig
 
 
-class MockOptions(object):
+class MockOptions:
     def __init__(self,
                  upstream_branch=None,
                  upstream_tree=None,

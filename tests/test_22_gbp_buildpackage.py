@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 
 class TestGbpBuildpackageDep14(DebianGitTestRepo):
-    class Options(object):
+    class Options:
         pass
 
     def setUp(self):
@@ -110,7 +110,7 @@ class TestGbpBuildpackageDep14(DebianGitTestRepo):
 
 
 class TestGbpBuildpackageSetupPbuilder(DebianGitTestRepo):
-    class Options(object):
+    class Options:
         use_pbuilder = True
         pbuilder_dist = 'sid'
         pbuilder_arch = ''

@@ -25,7 +25,7 @@ TESTFILE_NAME = "testfile"
 TESTDIR_NAME = "testdir"
 
 
-class Submodule(object):
+class Submodule:
     """Class representing remote repo for Git submodule"""
     def __init__(self, name, tmpdir):
         self.name = name

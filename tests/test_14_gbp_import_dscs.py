@@ -24,7 +24,7 @@ from gbp.scripts import import_dscs
 from gbp.errors import GbpError
 
 
-class StubGitImportDsc(object):
+class StubGitImportDsc:
     """
     A Stub for GitImportDsc.
     """
@@ -42,7 +42,7 @@ class StubGitImportDsc(object):
         return 1 if dsc.filename == self.failfile else 0
 
 
-class DscStub(object):
+class DscStub:
     def __init__(self, filename, version):
         self.filename = filename
         self.version = version

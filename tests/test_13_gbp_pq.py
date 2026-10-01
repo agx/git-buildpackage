@@ -31,7 +31,7 @@ from gbp.scripts.common import pq
 import gbp.patch_series
 
 
-class TestPqOptions(object):
+class TestPqOptions:
     abbrev = 7
     drop = False
     patch_num_format = '%04d-'

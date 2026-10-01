@@ -64,7 +64,7 @@ def proxy_stdf():
             sys.stderr.write(tmp_stderr.read().decode())
 
 
-class Command(object):
+class Command:
     """
     Wraps a shell command, so we don't have to store any kind of command
     line options in one of the git-buildpackage commands

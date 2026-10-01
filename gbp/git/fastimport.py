@@ -23,7 +23,7 @@ from gbp.errors import GbpError
 from gbp.paths import to_bin
 
 
-class FastImport(object):
+class FastImport:
     """Add data to a git repository using I{git fast-import}"""
     _bufsize = 1024
 

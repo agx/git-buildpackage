@@ -26,7 +26,7 @@ from gbp.git.repository import GitRepository
 VALID_DEP3_ENDS = re.compile(r'(?:---|\*\*\*|Index:)[ \t][^ \t]|^diff -|^---')
 
 
-class Patch(object):
+class Patch:
     """
     A patch in a L{PatchSeries}
 

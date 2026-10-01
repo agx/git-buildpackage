@@ -23,7 +23,7 @@ from gbp.deb.changelog import ChangeLog
 from gbp.deb.control import Control
 
 
-class FileVfs(object):
+class FileVfs:
     def __init__(self, dir):
         """
         Access files in an unpacked Debian source package.
@@ -42,7 +42,7 @@ class DebianSourceError(Exception):
     pass
 
 
-class DebianSource(object):
+class DebianSource:
     """
     A debianized source tree
 

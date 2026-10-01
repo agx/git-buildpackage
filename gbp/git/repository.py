@@ -35,7 +35,7 @@ class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
 
 
-class GitRemote(object):
+class GitRemote:
     """Class representing a remote repository"""
     def __init__(self, name, fetch_url, push_urls):
         self._name = name
@@ -64,7 +64,7 @@ class GitRemote(object):
         return self._push_urls
 
 
-class GitRepository(object):
+class GitRepository:
     """
     Represents a git repository at I{path}. It's currently assumed that the git
     repository is stored in a directory named I{.git/} below I{path}.

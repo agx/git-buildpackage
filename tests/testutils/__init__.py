@@ -26,7 +26,7 @@ __all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
            'patch_popen', 'have_cmd', 'skip_without_cmd']
 
 
-class OsReleaseFile(object):
+class OsReleaseFile:
     """Represents a simple file with key-value pairs"""
 
     def __init__(self, filename="/etc/os-release"):

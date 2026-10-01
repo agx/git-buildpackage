@@ -20,7 +20,7 @@ A switch with three states: on|off|auto
 """
 
 
-class Tristate(object):
+class Tristate:
     """Tri-state value: on, off or auto """
     ON = True       # state is on == do it
     OFF = False     # state is off == don't do it

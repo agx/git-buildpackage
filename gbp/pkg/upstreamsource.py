@@ -28,7 +28,7 @@ from gbp.errors import GbpError
 from typing import Self
 
 
-class UpstreamSource(object):
+class UpstreamSource:
     """
     Upstream source. Can be either an unpacked dir, a tarball or another type
     of archive

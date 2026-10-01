@@ -33,7 +33,7 @@ DEFAULT_COLOR_SCHEME = {DEBUG: COLORS['green'],
                         CRITICAL: COLORS['red']}
 
 
-class GbpFilter(object):
+class GbpFilter:
     """Filter for enabling selective output"""
     def __init__(self, levels):
         self._levels = levels

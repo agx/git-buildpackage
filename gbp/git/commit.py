@@ -21,7 +21,7 @@ import re
 from gbp.git.modifier import GitModifier
 
 
-class GitCommit(object):
+class GitCommit:
     """A git commit"""
     sha1_re = re.compile(r'[0-9a-f]{40}$')
 

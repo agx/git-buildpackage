@@ -25,7 +25,7 @@ class UscanError(Exception):
     pass
 
 
-class Uscan(object):
+class Uscan:
     cmd = '/usr/bin/uscan'
 
     def __init__(self, dir='.'):
