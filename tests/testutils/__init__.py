@@ -18,11 +18,21 @@ from . debiangittestrepo import DebianGitTestRepo
 from . capture import capture_stdout, capture_stderr
 from . popen import patch_popen
 
-__all__ = ['GbpLogTester', 'DebianGitTestRepo', 'OsReleaseFile',
-           'MockedChangeLog', 'get_dch_default_urgency',
-           'capture_stderr', 'capture_stdout',
-           'ls_dir', 'ls_tar', 'ls_zip',
-           'patch_popen', 'have_cmd', 'skip_without_cmd']
+__all__ = [
+    'DebianGitTestRepo',
+    'GbpLogTester',
+    'MockedChangeLog',
+    'OsReleaseFile',
+    'capture_stderr',
+    'capture_stdout',
+    'get_dch_default_urgency',
+    'have_cmd',
+    'ls_dir',
+    'ls_tar',
+    'ls_zip',
+    'patch_popen',
+    'skip_without_cmd',
+]
 
 
 class OsReleaseFile:

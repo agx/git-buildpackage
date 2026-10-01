@@ -31,7 +31,7 @@ from .. testutils import GbpLogTester
 from gbp.git import GitRepository, GitRepositoryError
 
 
-__all__ = ['ComponentTestGitRepository', 'ComponentTestBase', 'GbpLogTester', 'skipUnless']
+__all__ = ['ComponentTestBase', 'ComponentTestGitRepository', 'GbpLogTester', 'skipUnless']
 
 
 class ComponentTestGitRepository(GitRepository):
