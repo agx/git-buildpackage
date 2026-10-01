@@ -3,5 +3,48 @@ line-length = 100
 
 [tool.ruff]
 line-length = 100
-# Ignore line length for now
-ignore = ["E501"]
+# Ignore line length (E501) for now
+# We fix the other ones one by one
+lint.ignore = [ "E501",
+          # Do not use mutable data structures for argument defaults
+          "B006",
+          "B018",
+          # Do not catch "Exception"
+          "BLE001",
+          "C403", "C404", "C405", "C408", "C417",
+          # Timezones
+          "DTZ001", "DTZ005", "DTZ007",
+          # Avoid "".join()
+          "FLY002",
+          # File writing
+          "FURB122",
+          # Drop .readlines()
+          "FURB129",
+          # Regex aliases
+          "FURB167",
+          # Unsorted imports
+          "I001",
+          # Invalid module name
+          "N999",
+          "PLW1509",
+          "RUF015", "RUF012", "RUF019", "RUF022", "RUF059", "RUF100",
+          # Use of exec
+          "S102",
+          # Use a single `if` statement instead of nested `if` statements
+          "SIM102",
+          # Return condition directly
+          "SIM103",
+          # Combine `if` branches using logical `or` operator
+          "SIM114",
+          # Use a context manager for opening files
+          "SIM115",
+          # Use `key in dict` instead of `key in dict.keys()`
+          "SIM118",
+          # Use `bool(...)` instead of `True if ... else False`
+          "SIM210",
+          # Use `not ...` instead of `False if ... else True`
+          "SIM211",
+	  # pyupgrade checks
+          "UP003", "UP008", "UP009", "UP012", "UP024", "UP025", "UP030", "UP031", "UP032", "UP034", "UP035",
+          "TRY002"
+         ]
