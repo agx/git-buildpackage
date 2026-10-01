@@ -73,7 +73,7 @@ class PristineTar(Command):
         # CPython wants '+' (which is valid in source package names)
         # escaped but git-grep doesn't so we do it that late:
         cregex = re.compile(regexp.replace('+', '\\+'))
-        for _, v in files.items():
+        for v in files.values():
             for f in v:
                 if cregex.match(f.decode()):
                     return True
