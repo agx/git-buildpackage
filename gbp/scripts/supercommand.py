@@ -96,13 +96,12 @@ def list_available_commands():
     print("Available commands in %s\n" % path)
     cmds = sorted(get_available_commands(path))
     for cmd in cmds:
-        if len(cmd[0]) > maxlen:
-            maxlen = len(cmd[0])
+        maxlen = max(maxlen, len(cmd[0]))
     for cmd in cmds:
         mod = import_command(cmd[0])
         doc = mod.__doc__
         print("    %s - %s" % (cmd[0].rjust(maxlen), doc))
-    print('')
+    print()
 
 
 def supercommand(argv=None):

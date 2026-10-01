@@ -21,7 +21,7 @@ import re
 from gbp.git.modifier import GitModifier
 
 
-class GitCommit(object):
+class GitCommit:
     """A git commit"""
     sha1_re = re.compile(r'[0-9a-f]{40}$')
 
@@ -83,7 +83,7 @@ class GitCommitInfo(GitCommit):
 
     @staticmethod
     def keys() -> list[str]:
-        return ['commitish', 'commit_sha', 'author', 'committer', 'subject'
+        return ['commitish', 'commit_sha', 'author', 'committer', 'subject',
                 'patchname', 'body', 'files']
 
     def items(self) -> list[tuple]:

@@ -49,7 +49,6 @@ You need to create it or use --packaging-branch to specify it.
 
 class SkipImport(Exception):
     """Nothing imported"""
-    pass
 
 
 def download_file(target_dir, url):

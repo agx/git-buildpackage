@@ -21,14 +21,14 @@ import gbp.scripts.config
 
 
 class TestGbpConfigCommand(unittest.TestCase):
-    class SingleValuePrintStub(object):
+    class SingleValuePrintStub:
         def __init__(self):
             self.result = None
 
         def __call__(self, arg):
             self.result = arg
 
-    class AllValuesPrintStub(object):
+    class AllValuesPrintStub:
         def __init__(self, cmd):
             self.cmd = cmd
             self.result = {}

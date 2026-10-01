@@ -28,7 +28,7 @@ from gbp.rpm.changelog import ChangelogParser, ChangelogError
 from gbp.rpm.policy import RpmPkgPolicy
 
 
-class TestChangelogHeader(object):
+class TestChangelogHeader:
     """Test the _ChangelogHeader class"""
 
     def test_str_format(self):
@@ -57,7 +57,7 @@ class TestChangelogHeader(object):
         assert "foo" not in header
 
 
-class TestChangelogEntry(object):
+class TestChangelogEntry:
     """Test the _ChangelogEntry class"""
 
     def test_str_format(self):
@@ -103,7 +103,7 @@ class TestChangelogSection(unittest.TestCase):
         assert str(section) == "* Thu Jan 30 2014 Jane <u@h> - 1.1\n- my change\n\n"
 
 
-class TestChangelogParser(object):
+class TestChangelogParser:
     """Test the default changelog parser"""
 
     cl_default_style = """\
@@ -212,7 +212,7 @@ class TestChangelogParser(object):
             self.parser.raw_parse_string(self.cl_broken_header_5)
 
 
-class TestChangelog(object):
+class TestChangelog:
     """Unit tests for the Changelog class"""
 
     def basic_test(self):

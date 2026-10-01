@@ -19,4 +19,3 @@
 
 class GitError(Exception):
     """Exception thrown by Git related classes"""
-    pass

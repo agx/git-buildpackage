@@ -182,9 +182,8 @@ class TestScriptDch(DebianGitTestRepo):
     def test_dch_main_new_upstream_version_with_snapshot_release(self):
         """Test dch.py like gbp dch script does: new upstream version - snapshot - release"""
         options = ["--snapshot", "--release"]
-        with capture_stderr() as c:
-            with self.assertRaises(SystemExit):
-                self.run_dch(options)
+        with capture_stderr() as c, self.assertRaises(SystemExit):
+            self.run_dch(options)
         self.assertTrue("'--snapshot' and '--release' are incompatible options" in c.output())
 
     def test_dch_main_new_upstream_version_with_distribution(self):

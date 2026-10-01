@@ -6,10 +6,10 @@ from . import context  # noqa: F401
 from . import testutils
 
 import gbp.errors
-import gbp.scripts.export_orig as export_orig
+from gbp.scripts import export_orig
 
 
-class MockOptions(object):
+class MockOptions:
     def __init__(self,
                  upstream_branch=None,
                  upstream_tree=None,

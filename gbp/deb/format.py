@@ -21,7 +21,7 @@ class DebianSourceFormatError(Exception):
     pass
 
 
-class DebianSourceFormat(object):
+class DebianSourceFormat:
     """
     Contents of debian/source/format
 

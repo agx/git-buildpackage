@@ -73,7 +73,7 @@ class RpmPkgPolicy(PkgPolicy):
             return True
         return False
 
-    class Changelog(object):
+    class Changelog:
         """Container for changelog related policy settings"""
 
         # Regexps for splitting/parsing the changelog section (of
@@ -89,7 +89,7 @@ class RpmPkgPolicy(PkgPolicy):
         header_time_format = "%a %b %d %Y"
         header_rev_format = "%(version)s"
 
-    class ChangelogEntryFormatter(object):
+    class ChangelogEntryFormatter:
         """Helper class for generating changelog entries from git commits"""
 
         # Maximum length for a changelog entry line

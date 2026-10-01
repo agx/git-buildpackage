@@ -25,7 +25,7 @@ from gbp.pkg import Archive
 from gbp.deb.upstreamsource import DebianAdditionalTarball
 
 
-class ExitCodes(object):
+class ExitCodes:
     ok = 0,
     failed = 1               # All other errors
     no_value = 2             # Value does not exist (gbp config only)
@@ -35,7 +35,7 @@ class ExitCodes(object):
 
 def maybe_debug_raise():
     if 'raise' in os.getenv("GBP_DEBUG", '').split(','):
-        raise
+        raise  # noqa: PLE0704
 
 
 def is_download(args):

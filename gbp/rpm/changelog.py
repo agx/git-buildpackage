@@ -40,10 +40,9 @@ def c_locale(category):
 
 class ChangelogError(Exception):
     """Problem parsing changelog"""
-    pass
 
 
-class _ChangelogHeader(object):
+class _ChangelogHeader:
     """The header part of one changelog section"""
 
     def __init__(self, pkgpolicy, time=None, **kwargs):
@@ -71,7 +70,7 @@ class _ChangelogHeader(object):
                                  "property %s" % err)
 
 
-class _ChangelogEntry(object):
+class _ChangelogEntry:
     """An entry (one 'change') in an RPM changelog"""
 
     def __init__(self, pkgpolicy, author, text):
@@ -101,7 +100,7 @@ class _ChangelogEntry(object):
         return string
 
 
-class _ChangelogSection(object):
+class _ChangelogSection:
     """One section (set of changes) in an RPM changelog"""
 
     def __init__(self, pkgpolicy, *args, **kwargs):
@@ -128,7 +127,7 @@ class _ChangelogSection(object):
         return entry
 
 
-class Changelog(object):
+class Changelog:
     """An RPM changelog"""
 
     def __init__(self, pkgpolicy):
@@ -152,7 +151,7 @@ class Changelog(object):
         return section
 
 
-class ChangelogParser(object):
+class ChangelogParser:
     """Parser for RPM changelogs"""
 
     def __init__(self, pkgpolicy):

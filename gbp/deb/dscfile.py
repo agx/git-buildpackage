@@ -24,7 +24,7 @@ from gbp.deb.upstreamsource import DebianUpstreamSource
 from gbp.deb.policy import DebianPkgPolicy
 
 
-class DscFile(object):
+class DscFile:
     """Keeps data read from a dscfile"""
     compressions = r"(%s)" % '|'.join(DebianUpstreamSource.known_compressions())
     pkg_re = re.compile(r'Source:\s+(?P<pkg>.+)\s*')

@@ -22,7 +22,7 @@ import re
 import sys
 from collections import defaultdict
 
-import gbp.log as log
+from gbp import log
 from gbp.errors import GbpError
 from gbp.git.modifier import GitModifier
 from gbp.git.commit import GitCommit, GitCommitInfo
@@ -33,10 +33,9 @@ from gbp.paths import to_bin
 
 class GitRepositoryError(GitError):
     """Exception thrown by L{GitRepository}"""
-    pass
 
 
-class GitRemote(object):
+class GitRemote:
     """Class representing a remote repository"""
     def __init__(self, name, fetch_url, push_urls):
         self._name = name
@@ -65,7 +64,7 @@ class GitRemote(object):
         return self._push_urls
 
 
-class GitRepository(object):
+class GitRepository:
     """
     Represents a git repository at I{path}. It's currently assumed that the git
     repository is stored in a directory named I{.git/} below I{path}.
@@ -1364,7 +1363,7 @@ class GitRepository(object):
         @return: list of files as byte string
         @rtype: C{list} of C{str}
         """
-        all_types = ['cached', 'deleted', 'others', 'ignored', 'stage'
+        all_types = ['cached', 'deleted', 'others', 'ignored', 'stage',
                      'unmerged', 'killed', 'modified']
         args = ['-z']
 

@@ -6,7 +6,7 @@ from io import StringIO
 import gbp.log
 
 
-class GbpLogTester(object):
+class GbpLogTester:
     """
     Helper class for tests that need to capture logging output
     """

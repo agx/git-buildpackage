@@ -22,15 +22,13 @@ import os
 
 class NoControlError(Exception):
     """No control found"""
-    pass
 
 
 class ParseControlError(Exception):
     """Problem parsing control"""
-    pass
 
 
-class Control(object):
+class Control:
     """A Debian control"""
 
     def __init__(self, contents=None, filename="debian/control"):

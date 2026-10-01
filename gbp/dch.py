@@ -29,7 +29,7 @@ def extract_git_dch_cmds(lines, options):
     commands = {}
     other_lines = []
     for line in lines:
-        if line.startswith('Git-Dch: ') or line.startswith('Gbp-Dch: '):
+        if line.startswith(('Git-Dch: ', 'Gbp-Dch: ')):
             cmd = line.split(' ', 1)[1].strip().lower()
             commands[cmd] = True
         else:

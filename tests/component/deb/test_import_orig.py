@@ -366,8 +366,8 @@ class TestImportOrig(ComponentTestBase):
                     "--pristine-tar",
                     "--filter-pristine-tar",
                     "--filter=README*",
-                    "--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
-                    "rm $GBP_SOURCES_DIR/TODO",
+                    ("--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
+                     "rm $GBP_SOURCES_DIR/TODO"),
                     "../tarballs/hello-debhelper_2.8.orig.tar.gz",
                 ]
             ) == 0
@@ -461,8 +461,8 @@ class TestImportOrig(ComponentTestBase):
                     "--pristine-tar",
                     "--filter-pristine-tar",
                     "--filter=README*",
-                    "--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
-                    "rm $GBP_SOURCES_DIR/TODO",
+                    ("--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
+                     "rm $GBP_SOURCES_DIR/TODO"),
                     "../hello-debhelper_2.8.orig.tar.gz",
                 ]
             ) == 0
@@ -504,8 +504,8 @@ class TestImportOrig(ComponentTestBase):
                     "--no-interactive",
                     "--pristine-tar",
                     "--filter-pristine-tar",
-                    "--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
-                    "rm $GBP_SOURCES_DIR/TODO; rm $GBP_SOURCES_DIR/README",
+                    ("--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
+                     "rm $GBP_SOURCES_DIR/TODO; rm $GBP_SOURCES_DIR/README"),
                     "../hello-debhelper_2.8.orig.tar.gz",
                 ]
             ) == 0
@@ -595,8 +595,8 @@ class TestImportOrig(ComponentTestBase):
                     "--pristine-tar",
                     "--filter-pristine-tar",
                     "--filter=README*",
-                    "--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
-                    "rm $GBP_SOURCES_DIR/TODO",
+                    ("--postunpack=printenv > $GBP_SOURCES_DIR/postunpack.out;"
+                     "rm $GBP_SOURCES_DIR/TODO"),
                     "../hello-2.8",
                 ]
             ) == 0

@@ -19,11 +19,10 @@
 
 import os.path
 import re
-import typing
 import sys
 import shutil
 import gbp.command_wrappers as gbpc
-import gbp.dch as dch
+from gbp import dch
 import gbp.log
 from gbp.config import GbpOptionParserDebian, GbpOptionGroup
 from gbp.errors import GbpError
@@ -34,7 +33,7 @@ from gbp.deb.changelog import ChangeLog, NoChangeLogError
 from gbp.scripts.common import ExitCodes, maybe_debug_raise
 from gbp.scripts.common.hook import Hook
 
-user_customizations: typing.Dict[str, str] = {}
+user_customizations: dict[str, str] = {}
 snapshot_re = re.compile(r'\s*\*\* SNAPSHOT build @(?P<commit>[a-z0-9]+)\s+\*\*')
 
 

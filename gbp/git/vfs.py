@@ -20,9 +20,9 @@ import io
 from gbp.git.repository import GitRepositoryError
 
 
-class GitVfs(object):
+class GitVfs:
 
-    class _File(object):
+    class _File:
         """
         A file like object representing a file in git
 

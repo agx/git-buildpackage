@@ -49,7 +49,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         for prefix in ['', 'git-']:
             parser = GbpOptionParser('%scmd2' % prefix)
             self.assertEqual(parser.config['single_git_override_option1'], 'single_git_override_value1')
-        for line in range(0, 2):
+        for line in range(2):
             self._check_log(line, r'.*Old style config section \[git-cmd2\] found please rename to \[cmd2\]')
 
     def test_single_gbp_override(self):
@@ -59,7 +59,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
         for prefix in ['', 'gbp-']:
             parser = GbpOptionParser('%scmd3' % prefix)
             self.assertEqual(parser.config['single_gbp_override_option1'], 'single_gbp_override_value1')
-        for line in range(0, 2):
+        for line in range(2):
             self._check_log(line, r'.*Old style config section \[gbp-cmd3\] found please rename to \[cmd3\]')
 
     def test_single_git_override_disabled_deprecations(self):
@@ -70,7 +70,7 @@ class TestConfigParser(unittest.TestCase, GbpLogTester):
             os.environ['GBP_DISABLE_SECTION_DEPRECATION'] = 'true'
             parser = GbpOptionParser('%scmd2' % prefix)
             self.assertEqual(parser.config['single_git_override_option1'], 'single_git_override_value1')
-        for line in range(0, 2):
+        for line in range(2):
             self._check_log_empty()
         os.environ.pop('GBP_DISABLE_SECTION_DEPRECATION')
 

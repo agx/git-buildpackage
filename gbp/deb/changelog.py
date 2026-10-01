@@ -24,15 +24,13 @@ from gbp.command_wrappers import Command
 
 class NoChangeLogError(Exception):
     """No changelog found"""
-    pass
 
 
 class ParseChangeLogError(Exception):
     """Problem parsing changelog"""
-    pass
 
 
-class ChangeLogSection(object):
+class ChangeLogSection:
     """A section in the changelog describing one particular version"""
     def __init__(self, package, version):
         self._package = package
@@ -62,7 +60,7 @@ class ChangeLogSection(object):
         return cls(package, version)
 
 
-class ChangeLog(object):
+class ChangeLog:
     """A Debian changelog"""
 
     def __init__(self, contents=None, filename=None):

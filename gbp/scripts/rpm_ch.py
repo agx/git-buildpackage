@@ -41,7 +41,7 @@ from gbp.tmpfile import init_tmpdir, del_tmpdir
 ChangelogEntryFormatter = RpmPkgPolicy.ChangelogEntryFormatter
 
 
-class ChangelogFile(object):
+class ChangelogFile:
     """Container for changelog file, whether it be a standalone changelog
        or a spec file"""
 

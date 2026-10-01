@@ -21,7 +21,7 @@ import collections.abc
 import gbp.log
 
 
-class LinkedListNode(object):
+class LinkedListNode:
     """Node of the linked list"""
 
     def __init__(self, data="", prev_node=None, next_node=None):

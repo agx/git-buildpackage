@@ -21,7 +21,7 @@ Git command argument handling helpers
 import collections.abc
 
 
-class GitArgs(object):
+class GitArgs:
     """
     Handle arguments to git commands
 

@@ -18,7 +18,7 @@
 from .compressor import Compressor
 
 
-class Archive(object):
+class Archive:
     # Supported archive formats
     Formats = ['tar', 'zip']
 
