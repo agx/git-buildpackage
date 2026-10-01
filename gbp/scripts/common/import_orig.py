@@ -50,8 +50,8 @@ def orig_needs_repack(upstream_source, options):
      4. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
         and want to use a post-unpack script
     """
-    if ((options.pristine_tar and options.filter_pristine_tar and
-       (options.filters or options.postunpack))):
+    if (options.pristine_tar and options.filter_pristine_tar and
+       (options.filters or options.postunpack)):
         return True
     elif not upstream_source.is_orig():
         if len(options.filters):
