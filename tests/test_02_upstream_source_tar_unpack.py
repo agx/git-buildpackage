@@ -47,7 +47,7 @@ class TestUnpack(unittest.TestCase):
         context.teardown()
 
     def test_upstream_source_type(self):
-        for (comp, archive) in self.archives.items():
+        for archive in self.archives.values():
             source = gbp.pkg.UpstreamSource(archive[0])
             assert source.is_orig() is True
             assert source.is_dir() is False
