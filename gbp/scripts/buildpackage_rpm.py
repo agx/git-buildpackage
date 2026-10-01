@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2006-2011,2015-2017 Guido Günther <agx@sigxcpu.org>
 # (C) 2012-2015 Intel Corporation <markus.lehtonen@linux.intel.com>

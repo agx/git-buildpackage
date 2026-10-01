@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 """Test L{gbp.scripts.import_orig}"""
 
 import os

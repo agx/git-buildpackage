@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 """Check if --help works"""
 

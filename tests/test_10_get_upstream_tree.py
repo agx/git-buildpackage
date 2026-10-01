@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 """Test  L{export_orig}'s git_archive_get_upstream_tree method"""
 

@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2018 Guido Günther <agx@sigxcpu.org>
 """A git repository for Debian packages that can roll back operations"""

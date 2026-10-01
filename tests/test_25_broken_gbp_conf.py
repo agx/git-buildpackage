@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 """Check if we fail correcdtly on broken gbp.conf"""
 

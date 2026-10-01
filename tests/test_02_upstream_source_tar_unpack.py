@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 """Test L{UpstreamSource}'s tarball unpack"""
 

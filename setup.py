@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# vim: set fileencoding=utf-8 :
 # Copyright (C) 2006-2024 Guido Günther <agx@sigxcpu.org>
 #
 #    This program is free software; you can redistribute it and/or modify

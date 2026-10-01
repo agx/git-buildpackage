@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 from gbp.scripts.create_remote_repo import (build_remote_script,  # noqa: F401
                                             parse_url)            # noqa: F401

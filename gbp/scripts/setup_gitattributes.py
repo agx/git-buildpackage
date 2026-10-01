@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2021 Andrej Shadura <andrew@shadura.me>
 # (C) 2021 Collabora Limited

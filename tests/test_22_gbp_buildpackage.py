@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 """Test L{gbp.command_wrappers.Command}'s tarball unpack"""
 
 from gbp.scripts.buildpackage import (get_pbuilder_dist,

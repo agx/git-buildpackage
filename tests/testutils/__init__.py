@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 from .. import context  # noqa: F401
 
