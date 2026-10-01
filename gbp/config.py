@@ -593,7 +593,7 @@ class GbpOptionParser(OptionParser):
             to parse
         @type sections: C{list} of C{str}
         """
-        self.command = command[:-3] if command.endswith('.py') else command
+        self.command = command.removesuffix('.py')
         self.sections = sections
         self.prefix = prefix
         self.config = {}
