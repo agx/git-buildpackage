@@ -554,7 +554,7 @@ def main(argv):
                     dst = os.path.join(source_dir, fname)
                 try:
                     shutil.copy2(src, dst)
-                except IOError as err:
+                except OSError as err:
                     raise GbpError("Error exporting packaging files: %s" % err)
             spec.specdir = os.path.abspath(spec_dir)
 

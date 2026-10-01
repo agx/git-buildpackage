@@ -153,7 +153,7 @@ class DscFile:
     def parse(cls, filename):
         try:
             dsc = cls(filename)
-        except IOError as err:
+        except OSError as err:
             raise GbpError("Error reading dsc file: %s" % err)
         return dsc
 

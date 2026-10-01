@@ -240,7 +240,7 @@ def is_30_quilt(repo, options):
     format_file = DebianSourceFormat.format_file
     try:
         content = GitVfs(repo, options.debian_branch).open(format_file).read()
-    except IOError:
+    except OSError:
         return False
     return str(DebianSourceFormat(content)) == "3.0 (quilt)"
 

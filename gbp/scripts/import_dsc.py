@@ -102,7 +102,7 @@ def get_changes(dir, repo, debian_branch):
         try:
             with vfs.open('debian/changelog') as f:
                 version = ChangeLog(contents=f.read()).version
-        except IOError:
+        except OSError:
             version = "0~"  # Use full history if debian branch has no changelog
     cl = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
     return cl.get_changes(version)

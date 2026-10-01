@@ -41,7 +41,7 @@ class OsReleaseFile:
                         pass
                     else:
                         self._values[key] = value.strip()
-        except IOError as err:
+        except OSError as err:
             gbp.log.info('Failed to read OS release file %s: %s' %
                          (filename, err))
 

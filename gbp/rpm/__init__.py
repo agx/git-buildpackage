@@ -138,7 +138,7 @@ class SpecFile:
                 with open(filename) as spec_file:
                     for line in spec_file.readlines():
                         self._content.append(line)
-            except IOError as err:
+            except OSError as err:
                 raise NoSpecError("Unable to read spec file: %s" % err)
         else:
             self.specfile = None
@@ -815,7 +815,7 @@ def parse_srpm(srpmfile):
     """parse srpm by creating a SrcRpmFile object"""
     try:
         srcrpm = SrcRpmFile(srpmfile)
-    except IOError as err:
+    except OSError as err:
         raise GbpError("Error reading src.rpm file: %s" % err)
     except librpm.error as err:
         raise GbpError("RPM error while reading src.rpm: %s" % err)

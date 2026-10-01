@@ -184,7 +184,7 @@ class ChangelogParser:
         try:
             with open(changelog) as ch_file:
                 return self.raw_parse_string(ch_file.read())
-        except IOError as err:
+        except OSError as err:
             raise ChangelogError("Unable to read changelog file: %s" % err)
 
     @c_locale(locale.LC_TIME)

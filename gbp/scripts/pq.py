@@ -138,7 +138,7 @@ def commit_patches(repo: DebianGitRepository,
     try:
         with vfs.open('debian/patches/series') as oldseries:
             oldpatches = [p.strip() for p in oldseries.readlines()]
-    except IOError:
+    except OSError:
         # No series file yet
         oldpatches = []
     newpatches = [p[len(patch_dir):] for p in patches]

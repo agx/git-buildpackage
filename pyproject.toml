@@ -45,6 +45,6 @@ lint.ignore = [ "E501",
           # Use `not ...` instead of `False if ... else True`
           "SIM211",
 	  # pyupgrade checks
-          "UP003", "UP008", "UP009", "UP012", "UP024", "UP031", "UP035",
+          "UP003", "UP008", "UP009", "UP012", "UP031", "UP035",
           "TRY002"
          ]

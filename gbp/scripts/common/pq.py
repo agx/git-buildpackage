@@ -192,7 +192,7 @@ def write_patch_file(filename: str,
             # Write diff
             patch.write(b'---\n')
             patch.write(diff)
-    except IOError as err:
+    except OSError as err:
         raise GbpError('Unable to create patch file: %s' % err)
     return filename
 
