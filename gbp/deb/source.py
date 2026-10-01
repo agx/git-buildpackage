@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2013 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -72,12 +71,12 @@ class DebianSource:
                 f = DebianSourceFormat(ff.read())
             if f.type:
                 return f.type == 'native'
-        except IOError:
+        except OSError:
             pass  # Fall back to changelog parsing
 
         try:
             return '-' not in self.changelog.version
-        except IOError as e:
+        except OSError as e:
             raise DebianSourceError("Failed to determine source format: %s" % e)
 
     def is_releasable(self):
@@ -97,7 +96,7 @@ class DebianSource:
             try:
                 with self._vfs.open('debian/changelog', 'rb') as clf:
                     self._changelog = ChangeLog(clf.read().decode('utf-8'))
-            except IOError as err:
+            except OSError as err:
                 raise DebianSourceError('Failed to read changelog: %s' % err)
         return self._changelog
 
@@ -110,7 +109,7 @@ class DebianSource:
             try:
                 with self._vfs.open('debian/control', 'rb') as cf:
                     self._control = Control(cf.read().decode('utf-8'))
-            except IOError as err:
+            except OSError as err:
                 raise DebianSourceError('Failed to read control file: %s' % err)
         return self._control
 

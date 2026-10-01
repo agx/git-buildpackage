@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2017 Guido Günther <agx@sigxcpu.org>
 #
@@ -113,15 +112,15 @@ class TestPq(ComponentTestBase):
     @staticmethod
     def _append_patch(repo, name, contents):
         with open(os.path.join(repo.path, 'debian/patches/series'), 'a') as series_file:
-            series_file.write('{}.patch\n'.format(name))
+            series_file.write(f'{name}.patch\n')
 
-        with open(os.path.join(repo.path, 'debian/patches/{}.patch'.format(name)), 'w') as patch:
+        with open(os.path.join(repo.path, f'debian/patches/{name}.patch'), 'w') as patch:
             patch.write(contents)
 
-        repo.add_files('debian/patches/{}.patch'.format(name))
-        repo.commit_files(msg='Add patch: {}.patch'.format(name),
+        repo.add_files(f'debian/patches/{name}.patch')
+        repo.commit_files(msg=f'Add patch: {name}.patch',
                           files=['debian/patches/series',
-                                 'debian/patches/{}.patch'.format(name)])
+                                 f'debian/patches/{name}.patch'])
 
     @RepoFixtures.quilt30()
     def test_import(self, repo):

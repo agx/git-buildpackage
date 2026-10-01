@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2012, 2015 Intel Corporation <markus.lehtonen@linux.intel.com>
 #    This program is free software; you can redistribute it and/or modify

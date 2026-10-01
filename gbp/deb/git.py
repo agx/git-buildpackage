@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2011,2014 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 
 import os
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepositoryError

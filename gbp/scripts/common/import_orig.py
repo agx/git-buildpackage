@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2006, 2007, 2009, 2011 Guido Günther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
@@ -50,8 +49,8 @@ def orig_needs_repack(upstream_source, options):
      4. we don't have a suitable upstream tarball (e.g. zip archive or unpacked dir)
         and want to use a post-unpack script
     """
-    if ((options.pristine_tar and options.filter_pristine_tar and
-       (options.filters or options.postunpack))):
+    if (options.pristine_tar and options.filter_pristine_tar and
+       (options.filters or options.postunpack)):
         return True
     elif not upstream_source.is_orig():
         if len(options.filters):
@@ -179,9 +178,9 @@ def download_orig(url: str) -> DebianUpstreamSource:
             os.unlink(target)
         raise GbpError("Failed to download %s: %s" % (url, e))
 
-    sig = '{}.asc'.format(target)
+    sig = f'{target}.asc'
     if os.path.exists(sig):
-        gbp.log.debug("Signature {} found for {}".format(target, sig))
+        gbp.log.debug(f"Signature {target} found for {sig}")
         signature = sig
     else:
         signature = None

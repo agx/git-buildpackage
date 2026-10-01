@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 import functools
 from unittest import mock

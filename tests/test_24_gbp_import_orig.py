@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 """Test L{gbp.scripts.import_orig}"""
 
 import os
@@ -27,13 +26,13 @@ class TestImportOrigDownload(DebianGitTestRepo):
         os.chdir(self.repo.path)
 
     def test_404_download(self):
-        url = "https://{host}/gbp-team/deb-testdata/-/raw/master/does_not_exist".format(host=self.HOST)
+        url = f"https://{self.HOST}/gbp-team/deb-testdata/-/raw/master/does_not_exist"
         with self.assertRaisesRegex(GbpError, "404 Client Error: Not Found for url"):
             download_orig(url)
 
     def test_200_download(self):
         pkg = 'hello-debhelper_2.6.orig.tar.gz'
-        url = 'https://{host}/gbp-team/deb-testdata/-/raw/master/dsc-3.0/{pkg}'.format(host=self.HOST, pkg=pkg)
+        url = f'https://{self.HOST}/gbp-team/deb-testdata/-/raw/master/dsc-3.0/{pkg}'
         self.assertEqual(download_orig(url).path, '../%s' % pkg)
 
 
@@ -115,15 +114,15 @@ class TestGbpBuildpackagePreparePristineTar(unittest.TestCase):
         self.assertEqual(ret, (None, False))
 
     def test_tar(self):
-        archive = '{}/foo.tgz'.format(self._tmpdir)
+        archive = f'{self._tmpdir}/foo.tgz'
         ret = prepare_pristine_tar(archive, 'foo', '1.0')
         self.assertEqual(ret, ('../foo_1.0.orig.tar.gz', True))
         self.assertTrue(os.path.islink(
             os.path.join(self._tmpdir, 'foo_1.0.orig.tar.gz')))
 
     def test_signature(self):
-        archive = '{}/foo.tgz'.format(self._tmpdir)
-        signature = '{}.asc'.format(archive)
+        archive = f'{self._tmpdir}/foo.tgz'
+        signature = f'{archive}.asc'
         with open(signature, 'w') as f:
             f.write('')
         ret = prepare_pristine_tar(archive, 'foo', '1.0')

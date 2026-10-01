@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2007,2008,2009,2010,2013,2015,2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -469,7 +468,7 @@ def main(argv):
     try:
         old_cwd = os.path.abspath(os.path.curdir)
         for var in ['EMAIL', 'DEBEMAIL']:
-            if var in os.environ and os.environ[var]:
+            if os.environ.get(var):
                 break
         else:
             raise GbpError("Either 'EMAIL' or 'DEBEMAIL' must be set in the environment for 'dch' to work")

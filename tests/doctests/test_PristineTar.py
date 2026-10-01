@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 """
 Test pristine-tar related methods in
 

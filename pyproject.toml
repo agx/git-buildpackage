@@ -11,7 +11,14 @@ lint.ignore = [ "E501",
           "B018",
           # Do not catch "Exception"
           "BLE001",
-          "C403", "C404", "C405", "C408", "C417",
+          # List comprehension
+          "C403",
+          # Dict comprehension
+          "C404",
+          # Literal
+          "C405", "C408",
+          # Generator expression
+          "C417",
           # Timezones
           "DTZ001", "DTZ005", "DTZ007",
           # Avoid "".join()
@@ -27,7 +34,14 @@ lint.ignore = [ "E501",
           # Invalid module name
           "N999",
           "PLW1509",
-          "RUF015", "RUF012", "RUF019", "RUF022", "RUF059", "RUF100",
+          # Prefer `next(...)` over single element slice
+          "RUF015",
+          # Mutable default value for class attribute
+          "RUF012",
+          # Use _ for unused vars
+          "RUF059",
+          # Remove unused noqa (conflicts with flake8)
+          "RUF100",
           # Use of exec
           "S102",
           # Use a single `if` statement instead of nested `if` statements
@@ -44,7 +58,11 @@ lint.ignore = [ "E501",
           "SIM210",
           # Use `not ...` instead of `False if ... else True`
           "SIM211",
-	  # pyupgrade checks
-          "UP003", "UP008", "UP009", "UP012", "UP024", "UP025", "UP030", "UP031", "UP032", "UP034", "UP035",
+          # pyupgrade checks
+          "UP003",
+          # Use plain super()
+          "UP008",
+          # Use format specifiers instead of percent format
+          "UP031",
           "TRY002"
          ]

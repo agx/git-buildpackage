@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 # (C) 2012,2015 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -97,7 +96,7 @@ class TestApplyAndCommit(testutils.DebianGitTestRepo):
 
         # Fake a control file
         self.add_file("debian/control",
-                      "Maintainer: Guido Günther <gg@godiug.net>".encode('utf-8'),
+                      "Maintainer: Guido Günther <gg@godiug.net>".encode(),
                       mode='wb+')
 
         maintainer = pq.get_maintainer_from_control(self.repo)

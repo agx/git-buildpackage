@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2009,2013,2017,2018 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -132,7 +131,7 @@ def get_remote(repo, current):
 
 
 def track_missing(repo, remote, branch, options):
-    upstream = "remotes/{}/{}".format(remote, branch)
+    upstream = f"remotes/{remote}/{branch}"
     if not repo.has_branch(branch):
         try:
             repo.fetch(remote, depth=options.depth, refspec=branch)

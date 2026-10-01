@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2011,2015,2017 Guido Günther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
@@ -34,7 +33,7 @@ from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import Patch
 
-from typing import Sequence
+from collections.abc import Sequence
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 
@@ -192,7 +191,7 @@ def write_patch_file(filename: str,
             # Write diff
             patch.write(b'---\n')
             patch.write(diff)
-    except IOError as err:
+    except OSError as err:
         raise GbpError('Unable to create patch file: %s' % err)
     return filename
 
@@ -309,7 +308,7 @@ def get_maintainer_from_control(repo: GitRepository):
                 if m:
                     return GitModifier(m.group('name'), m.group('email'))
     except FileNotFoundError:
-        raise GbpError("Debian control file {} not found".format(control))
+        raise GbpError(f"Debian control file {control} not found")
     return GitModifier()
 
 

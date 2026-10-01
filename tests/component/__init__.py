@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
 #     2013,2017 Guido Günther <agx@sigxcpu.org>
@@ -32,7 +31,7 @@ from .. testutils import GbpLogTester
 from gbp.git import GitRepository, GitRepositoryError
 
 
-__all__ = ['ComponentTestGitRepository', 'ComponentTestBase', 'GbpLogTester', 'skipUnless']
+__all__ = ['ComponentTestBase', 'ComponentTestGitRepository', 'GbpLogTester', 'skipUnless']
 
 
 class ComponentTestGitRepository(GitRepository):

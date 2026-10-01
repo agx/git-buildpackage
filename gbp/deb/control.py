@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2012 Daniel Dehennin <daniel.dehennin@baby-gnu.org>
 #    This program is free software; you can redistribute it and/or modify

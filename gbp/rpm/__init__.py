@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2006,2007 Guido Günther <agx@sigxcpu.org>
 # (C) 2012 Intel Corporation <markus.lehtonen@linux.intel.com>
@@ -138,7 +137,7 @@ class SpecFile:
                 with open(filename) as spec_file:
                     for line in spec_file.readlines():
                         self._content.append(line)
-            except IOError as err:
+            except OSError as err:
                 raise NoSpecError("Unable to read spec file: %s" % err)
         else:
             self.specfile = None
@@ -815,7 +814,7 @@ def parse_srpm(srpmfile):
     """parse srpm by creating a SrcRpmFile object"""
     try:
         srcrpm = SrcRpmFile(srpmfile)
-    except IOError as err:
+    except OSError as err:
         raise GbpError("Error reading src.rpm file: %s" % err)
     except librpm.error as err:
         raise GbpError("RPM error while reading src.rpm: %s" % err)
@@ -968,12 +967,12 @@ def compose_version_str(evr):
     '2:1.0-2.3'
     >>> compose_version_str({'epoch': '2', 'upstreamversion': '', 'release': '2.3'})
     """
-    if 'upstreamversion' in evr and evr['upstreamversion']:
+    if evr.get('upstreamversion'):
         version = ""
-        if 'epoch' in evr and evr['epoch']:
+        if evr.get('epoch'):
             version += "%s:" % evr['epoch']
         version += evr['upstreamversion']
-        if 'release' in evr and evr['release']:
+        if evr.get('release'):
             version += "-%s" % evr['release']
         if version:
             return version

@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 
 """Test L{Changelog}'s guess_version_from_upstream"""
 

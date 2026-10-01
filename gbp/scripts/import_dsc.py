@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2006, 2007, 2011, 2012, 2015-2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -102,7 +101,7 @@ def get_changes(dir, repo, debian_branch):
         try:
             with vfs.open('debian/changelog') as f:
                 version = ChangeLog(contents=f.read()).version
-        except IOError:
+        except OSError:
             version = "0~"  # Use full history if debian branch has no changelog
     cl = ChangeLog(filename=os.path.join(dir, 'debian/changelog'))
     return cl.get_changes(version)
@@ -490,11 +489,11 @@ def main(argv):
 
         # unpack
         dirs['tmp'] = os.path.abspath(tempfile.mkdtemp(dir='..'))
-        sigfile = '{}.asc'.format(dsc.tgz)
+        sigfile = f'{dsc.tgz}.asc'
         sigfile = sigfile if sigfile in dsc.sigs else None
         sources = [DebianUpstreamSource(dsc.tgz, sig=sigfile)]
         for component, tarball in dsc.additional_tarballs.items():
-            sigfile = '{}.asc'.format(tarball)
+            sigfile = f'{tarball}.asc'
             sigfile = sigfile if sigfile in dsc.sigs else None
             sources.append(DebianAdditionalTarball(tarball, component))
         sources[0].unpack(dirs['tmp'], options.filters)

@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 from gbp.scripts.clone import vcs_git_url
 
 import unittest

@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2017 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -41,9 +40,9 @@ Actions:
 def import_tarballs(repo: DebianGitRepository,
                     source: DebianSource,
                     tarball: str, options: argparse.Namespace) -> DebianUpstreamTarballList:
-    sig = '{}.asc'.format(tarball)
+    sig = f'{tarball}.asc'
     if os.path.exists(sig):
-        gbp.log.debug("Signature {} found for {}".format(tarball, sig))
+        gbp.log.debug(f"Signature {tarball} found for {sig}")
         signature = sig
     else:
         signature = None

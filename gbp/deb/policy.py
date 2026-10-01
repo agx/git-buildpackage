@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2006,2007,2011 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
@@ -91,7 +90,7 @@ class DebianPkgPolicy(PkgPolicy):
             ext = Compressor.Exts[compression]
         except KeyError:
             raise GbpError("Unknown compression type '%s'" % compression)
-        sub = '-{0}'.format(component) if component else ''
+        sub = f'-{component}' if component else ''
         tarball = "%s_%s.orig%s.tar.%s" % (name, version, sub, ext)
         if dir:
             tarball = os.path.join(dir, tarball)

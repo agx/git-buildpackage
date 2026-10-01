@@ -1,4 +1,3 @@
-# vim: set fileencoding=utf-8 :
 #
 # (C) 2016 Guido Günther <agx@sigxcpu.org>
 #    This program is free software; you can redistribute it and/or modify
