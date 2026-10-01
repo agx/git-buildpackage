@@ -33,7 +33,7 @@ from gbp.errors import GbpError
 import gbp.log
 from gbp.patch_series import Patch
 
-from typing import Sequence
+from collections.abc import Sequence
 
 PQ_BRANCH_PREFIX = "patch-queue/"
 

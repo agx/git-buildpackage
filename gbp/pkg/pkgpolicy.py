@@ -17,7 +17,8 @@
 
 import os
 import re
-from typing import Callable, Pattern
+from re import Pattern
+from collections.abc import Callable
 
 
 from gbp.pkg.archive import Archive

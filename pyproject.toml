@@ -44,7 +44,11 @@ lint.ignore = [ "E501",
           "SIM210",
           # Use `not ...` instead of `False if ... else True`
           "SIM211",
-	  # pyupgrade checks
-          "UP003", "UP008", "UP031", "UP035",
+          # pyupgrade checks
+          "UP003",
+          # Use plain super()
+          "UP008",
+          # Use format specifiers instead of percent format
+          "UP031",
           "TRY002"
          ]

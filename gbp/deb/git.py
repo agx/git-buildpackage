@@ -17,7 +17,7 @@
 
 import os
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 from gbp.command_wrappers import CommandExecFailed
 from gbp.git import GitRepositoryError
