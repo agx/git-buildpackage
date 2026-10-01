@@ -27,7 +27,11 @@ lint.ignore = [ "E501",
           # Invalid module name
           "N999",
           "PLW1509",
-          "RUF015", "RUF012", "RUF019", "RUF022", "RUF059", "RUF100",
+          "RUF015", "RUF012", "RUF022",
+          # Use _ for unused vars
+          "RUF059",
+          # Remove unused noqa (conflicts with flake8)
+          "RUF100",
           # Use of exec
           "S102",
           # Use a single `if` statement instead of nested `if` statements

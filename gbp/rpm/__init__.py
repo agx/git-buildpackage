@@ -967,12 +967,12 @@ def compose_version_str(evr):
     '2:1.0-2.3'
     >>> compose_version_str({'epoch': '2', 'upstreamversion': '', 'release': '2.3'})
     """
-    if 'upstreamversion' in evr and evr['upstreamversion']:
+    if evr.get('upstreamversion'):
         version = ""
-        if 'epoch' in evr and evr['epoch']:
+        if evr.get('epoch'):
             version += "%s:" % evr['epoch']
         version += evr['upstreamversion']
-        if 'release' in evr and evr['release']:
+        if evr.get('release'):
             version += "-%s" % evr['release']
         if version:
             return version
