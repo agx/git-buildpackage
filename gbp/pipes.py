@@ -198,7 +198,7 @@ def makepipeline(infile, steps, outfile):
     if kind[0] == 'f' and not infile:
         list.insert(0, ['', 'cat', '--', ''])
     list[0][0] = infile
-    #
+
     [cmd, kind] = list[-1][1:3]
     if kind[1] == 'f' and not outfile:
         list.append(['', 'cat', '--', ''])
@@ -215,7 +215,7 @@ def makepipeline(infile, steps, outfile):
             os.close(fd)
             garbage.append(temp)
             list[i - 1][-1] = list[i][0] = temp
-    #
+
     for item in list:
         [inf, cmd, kind, outf] = item
         if kind[1] == 'f':
@@ -227,7 +227,7 @@ def makepipeline(infile, steps, outfile):
         if kind[1] == '-' and outf:
             cmd = cmd + ' >' + shlex.quote(outf)
         item[1] = cmd
-    #
+
     cmdlist = list[0][1]
     for item in list[1:]:
         [cmd, kind] = item[1:3]
@@ -237,12 +237,12 @@ def makepipeline(infile, steps, outfile):
             cmdlist = cmdlist + ' |\n' + cmd
         else:
             cmdlist = cmdlist + '\n' + cmd
-    #
+
     if garbage:
         rmcmd = 'rm -f'
         for file in garbage:
             rmcmd = rmcmd + ' ' + shlex.quote(file)
         trapcmd = 'trap ' + shlex.quote(rmcmd + '; exit') + ' 1 2 3 13 14 15'
         cmdlist = trapcmd + '\n' + cmdlist + '\n' + rmcmd
-    #
+
     return cmdlist
