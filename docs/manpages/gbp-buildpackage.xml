@@ -758,7 +758,11 @@
             <para>
               Don't abort if there are uncommitted changes in the source tree or
               the current branch doesn't match the
-              <replaceable>DEBIAN-BRANCH</replaceable>.
+              <replaceable>DEBIAN-BRANCH</replaceable>. The uncommitted changes
+              are included in the build. This holds whether or not
+              <option>--git-export-dir</option> is used, as long as
+              <option>--git-export</option> is left at its default
+              (<replaceable>HEAD</replaceable>).
             </para>
           </listitem>
 	</varlistentry>
